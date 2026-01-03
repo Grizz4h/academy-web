@@ -1,77 +1,103 @@
 nohup: ignoring input
-INFO:     Started server process [335810]
+INFO:     Started server process [367877]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:35262 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35272 - "GET /api/sessions/test_1767439684 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35276 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37146 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37162 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37166 - "POST /api/sessions/test_1767439684/post HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52846 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52846 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52846 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52846 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:39004 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:39004 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:39004 - "POST /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:39004 - "GET /api/sessions/demo_1767439834 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52392 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52392 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52392 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52392 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52392 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:45424 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42338 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42338 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42338 - "OPTIONS /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42338 - "POST /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:42338 - "GET /api/sessions/demo_1767440072 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38890 - "GET /api/sessions/demo_1767440072 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57862 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38674 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41106 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37178 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37178 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37178 - "OPTIONS /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37178 - "POST /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:37178 - "GET /api/sessions/demo_1767440443 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:43650 - "GET /api/sessions/demo_1767440443 HTTP/1.1" 200 OK
-INFO:     31.129.22.95:50776 - "GET / HTTP/1.1" 404 Not Found
-WARNING:  Invalid HTTP request received.
-WARNING:  Invalid HTTP request received.
-INFO:     45.82.78.100:37156 - "GET / HTTP/1.1" 404 Not Found
-INFO:     45.131.155.111:48452 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-WARNING:  Invalid HTTP request received.
-INFO:     3.130.96.91:53420 - "GET / HTTP/1.1" 404 Not Found
-INFO:     3.130.96.91:45200 - "GET / HTTP/1.1" 404 Not Found
-INFO:     204.76.203.93:40696 - "GET http%3A//httpbin.org/ip HTTP/1.1" 404 Not Found
-INFO:     95.214.55.246:33706 - "POST / HTTP/1.1" 404 Not Found
-INFO:     95.214.55.246:33718 - "POST /_next HTTP/1.1" 404 Not Found
-INFO:     95.214.55.246:33728 - "POST /api HTTP/1.1" 404 Not Found
-INFO:     95.214.55.246:33744 - "POST /_next/server HTTP/1.1" 404 Not Found
-INFO:     95.214.55.246:33748 - "POST /app HTTP/1.1" 404 Not Found
-INFO:     95.214.55.246:33756 - "POST /api/route HTTP/1.1" 404 Not Found
-INFO:     205.210.31.251:62808 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45264 - "POST /api/sessions/test_1767479891/abort HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45266 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58164 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44382 - "HEAD /api/curriculum HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:58684 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58684 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55892 - "OPTIONS /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55892 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55892 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55904 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55904 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55904 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55904 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55458 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55458 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35156 - "OPTIONS /api/sessions/demo_1767439455/post HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35156 - "POST /api/sessions/demo_1767439455/post HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35156 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35156 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35156 - "OPTIONS /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35168 - "POST /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35168 - "GET /api/sessions/demo_1767480287 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33248 - "OPTIONS /api/sessions/demo_1767480287/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33248 - "POST /api/sessions/demo_1767480287/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33248 - "GET /api/sessions/demo_1767480287 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33250 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33250 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33250 - "POST /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33250 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58202 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58202 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34260 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34902 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45896 - "POST /api/sessions HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/main.py", line 92, in create_session
+  File "/opt/academy-web/backend/main.py", line 50, in load_json
+    def load_json(file_path: str):
+                   ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 293 column 19 (char 12629)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [367877]

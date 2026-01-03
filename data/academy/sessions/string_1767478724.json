@@ -1,0 +1,16 @@
+{
+  "id": "string_1767478724",
+  "user": "string",
+  "module_id": "string",
+  "goal": "string",
+  "confidence": 0,
+  "state": "PRE",
+  "created_at": "2026-01-03T23:18:44.488650",
+  "drills": [],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [],
+  "post": null
+}

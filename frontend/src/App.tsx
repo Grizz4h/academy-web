@@ -2,27 +2,10 @@ import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Dashboard from './pages/Dashboard'
 import Curriculum from './pages/Curriculum'
+import SessionSetup from './pages/SessionSetup'
 import SessionPage from './pages/Session'
-
-function History() {
-  console.log('History rendering')
-  return (
-    <div>
-      <h1>History</h1>
-      <p>Deine abgeschlossenen Sessions.</p>
-    </div>
-  )
-}
-
-function Progress() {
-  console.log('Progress rendering')
-  return (
-    <div>
-      <h1>Progress</h1>
-      <p>Dein Lernfortschritt.</p>
-    </div>
-  )
-}
+import History from './pages/History'
+import Progress from './pages/Progress'
 
 function App() {
   console.log('App component rendering')
@@ -44,6 +27,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/curriculum" element={<Curriculum />} />
+          <Route path="/setup/:moduleId" element={<SessionSetup />} />
           <Route path="/session/:id" element={<SessionPage />} />
           <Route path="/history" element={<History />} />
           <Route path="/progress" element={<Progress />} />

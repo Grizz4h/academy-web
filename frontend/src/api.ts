@@ -19,9 +19,16 @@ export interface Module {
   title: string
   summary: string
   description?: string
-  difficulty?: string
+  difficulty?: number
   duration?: number
   drills: Drill[]
+  learningGoals?: string[]
+  recommendedSessionMethod?: string
+  defaultFocus?: string
+  evaluation?: {
+    metrics: string[]
+    reportType: string
+  }
 }
 
 export type CurriculumModule = Module
@@ -30,6 +37,7 @@ export interface Drill {
   id: string
   title: string
   drill_type: string
+  description?: string
   config: any
 }
 
@@ -48,6 +56,20 @@ export interface Session {
   }
   checkins: Checkin[]
   post?: Post
+  game_info?: {
+    team_home: string
+    team_away: string
+    date: string
+    league: string
+  }
+  abort?: {
+    reason: string
+    note?: string
+    aborted_at: string
+  }
+  focus?: string
+  sessionMethod?: string
+  drill_id?: string
 }
 
 export interface Checkin {
@@ -84,7 +106,7 @@ export const api = {
     return res.json()
   },
 
-  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number }): Promise<Session> => {
+  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string }): Promise<Session> => {
     const res = await fetch(`${API_BASE}/sessions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -127,6 +149,16 @@ export const api = {
       body: JSON.stringify(data)
     })
     if (!res.ok) throw new Error('Failed to complete session')
+    return res.json()
+  },
+
+  abortSession: async (id: string, data: { reason: string; note?: string }): Promise<Session> => {
+    const res = await fetch(`${API_BASE}/sessions/${id}/abort`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    if (!res.ok) throw new Error('Failed to abort session')
     return res.json()
   }
 }

@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { api } from '../api'
-import type { Session } from '../api'
 import DrillRenderer from '../components/DrillRenderer'
 import { useState, useEffect } from 'react'
 
@@ -32,6 +31,14 @@ export default function SessionPage() {
 
   const completeMutation = useMutation({
     mutationFn: (data: { summary: string; unclear?: string; next_module?: string; helpfulness: number }) => api.completeSession(id!, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session', id] })
+      queryClient.invalidateQueries({ queryKey: ['sessions'] })
+    }
+  })
+
+  const abortMutation = useMutation({
+    mutationFn: (data: { reason: string; note?: string }) => api.abortSession(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['session', id] })
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
@@ -76,6 +83,17 @@ export default function SessionPage() {
     })
   }
 
+  const handleSessionAbort = () => {
+    const reason = prompt("Warum möchtest du die Session abbrechen?\n- time: Zeit knapp\n- wrong_game: Falsches Spiel\n- no_motivation: Keine Motivation\n- bad_session: Session war schlecht\n- other: Anderer Grund")
+    if (reason) {
+      const note = prompt("Optionale Notiz:")
+      abortMutation.mutate({
+        reason,
+        note: note || undefined
+      })
+    }
+  }
+
   const getPhaseTitle = (phase: string) => {
     if (phase === 'PRE') return 'Pre-Match Check-in'
     if (phase === 'P1') return 'Nach 1. Drittel'
@@ -93,9 +111,15 @@ export default function SessionPage() {
 
       <div className="card">
         <h2>Spiel-Info</h2>
-        <p><strong>Teams:</strong> {session.game_info?.team_home} vs {session.game_info?.team_away}</p>
-        <p><strong>Datum:</strong> {session.game_info?.date}</p>
-        <p><strong>Liga:</strong> {session.game_info?.league}</p>
+        {session.game_info ? (
+          <>
+            <p><strong>Teams:</strong> {session.game_info.team_home} vs {session.game_info.team_away}</p>
+            <p><strong>Datum:</strong> {session.game_info.date}</p>
+            <p><strong>Liga:</strong> {session.game_info.league}</p>
+          </>
+        ) : (
+          <p>Keine Spiel-Info verfügbar</p>
+        )}
         <p><strong>Ziel:</strong> {session.goal}</p>
         <p><strong>Status:</strong> {session.state}</p>
       </div>
@@ -124,19 +148,11 @@ export default function SessionPage() {
           {(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') && (
             <div>
               <p>Analysiere das letzte Drittel und gib Feedback.</p>
-              <DrillRenderer drill={{
-                id: 'period_checkin',
-                title: 'Period Check-in',
-                drill_type: 'period_checkin',
-                config: {
-                  questions: [
-                    { key: 'center_position', type: 'radio', label: 'Center-Position', options: ['low', 'middle', 'high'] },
-                    { key: 'triangle_rating', type: 'slider', label: 'Dreieck-Qualität (1-5)', min: 1, max: 5 },
-                    { key: 'breakout_quality', type: 'radio', label: 'Breakout-Qualität', options: ['clean', 'mixed', 'chaotic'] },
-                    { key: 'note', type: 'text', label: 'Notiz', max_chars: 120 }
-                  ]
-                }
-              }} onComplete={handleDrillComplete} />
+              {session.drills && session.drills.length > 0 ? (
+                <DrillRenderer drill={session.drills[0]} onComplete={handleDrillComplete} />
+              ) : (
+                <p>Keine Drills für diese Session verfügbar.</p>
+              )}
             </div>
           )}
 
@@ -146,6 +162,20 @@ export default function SessionPage() {
               <button onClick={handleSessionComplete} className="btn">Session abschließen</button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Abbrechen-Button für laufende Sessions */}
+      {!isCompleted && session.state !== 'ABORTED' && (
+        <div className="card">
+          <button
+            onClick={handleSessionAbort}
+            className="btn"
+            style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}
+            disabled={abortMutation.isPending}
+          >
+            {abortMutation.isPending ? 'Breche ab...' : 'Session abbrechen'}
+          </button>
         </div>
       )}
 
@@ -168,6 +198,16 @@ export default function SessionPage() {
         <div className="card">
           <h2>Session abgeschlossen! 🎉</h2>
           <p>Alle Phasen wurden erfolgreich absolviert.</p>
+          <a href="/dashboard" className="btn">Zurück zum Dashboard</a>
+        </div>
+      )}
+
+      {session.state === 'ABORTED' && (
+        <div className="card">
+          <h2>Session abgebrochen</h2>
+          <p><strong>Grund:</strong> {session.abort?.reason}</p>
+          {session.abort?.note && <p><strong>Notiz:</strong> {session.abort.note}</p>}
+          <p><strong>Abgebrochen am:</strong> {session.abort?.aborted_at ? new Date(session.abort.aborted_at).toLocaleString() : 'Unbekannt'}</p>
           <a href="/dashboard" className="btn">Zurück zum Dashboard</a>
         </div>
       )}

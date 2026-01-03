@@ -1,11 +1,11 @@
 {
-  "id": "demo_1767439455",
+  "id": "demo_1767480287",
   "user": "demo",
   "module_id": "A1",
   "goal": "Lernen: Rink IQ & Rollenverständnis",
   "confidence": 3,
-  "state": "COMPLETED",
-  "created_at": "2026-01-03T12:24:15.456105",
+  "state": "P1",
+  "created_at": "2026-01-03T23:44:47.542157",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,50 +102,9 @@
       "answers": {},
       "feedback": "Gut gemacht!",
       "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-03T23:43:51.193872"
-    },
-    {
-      "phase": "P1",
-      "answers": {
-        "center_position": "middle",
-        "triangle_rating": 2,
-        "breakout_quality": "mixed",
-        "note": "jkkb"
-      },
-      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
-      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
-      "timestamp": "2026-01-03T23:44:14.734973"
-    },
-    {
-      "phase": "P2",
-      "answers": {
-        "center_position": "middle",
-        "triangle_rating": 2,
-        "breakout_quality": "mixed",
-        "note": "jkkb"
-      },
-      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
-      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
-      "timestamp": "2026-01-03T23:44:16.847827"
-    },
-    {
-      "phase": "P3",
-      "answers": {
-        "center_position": "middle",
-        "triangle_rating": 2,
-        "breakout_quality": "chaotic",
-        "note": "jkkb"
-      },
-      "feedback": "Breakout chaotisch - verbessere Puck-Bewegung.",
-      "next_task": "Center sollte high stehen für Anspielstation.",
-      "timestamp": "2026-01-03T23:44:29.192436"
+      "timestamp": "2026-01-03T23:44:58.324632"
     }
   ],
-  "post": {
-    "summary": "Live-Session erfolgreich abgeschlossen",
-    "unclear": null,
-    "next_module": null,
-    "helpfulness": 5,
-    "completed_at": "2026-01-03T23:44:41.000852"
-  }
+  "post": null,
+  "game_info": null
 }

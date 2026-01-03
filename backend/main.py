@@ -26,6 +26,10 @@ class SessionCreate(BaseModel):
     module_id: str
     goal: str
     confidence: int  # 1-5
+    game_info: Optional[dict] = None
+    focus: Optional[str] = None  # Module-specific focus area
+    session_method: Optional[str] = None  # "live_watch" oder andere
+    drill_id: Optional[str] = None  # Specific drill to use
 
 class CheckinData(BaseModel):
     phase: str  # PRE, P1, P2, P3
@@ -38,6 +42,10 @@ class PostData(BaseModel):
     unclear: Optional[str] = None
     next_module: Optional[str] = None
     helpfulness: int  # 1-5
+
+class AbortData(BaseModel):
+    reason: str  # "time", "wrong_game", "no_motivation", "bad_session", "other"
+    note: Optional[str] = None
 
 # Hilfsfunktionen
 def load_json(file_path: str):
@@ -89,7 +97,15 @@ async def create_session(session: SessionCreate):
     for track in curriculum.get("tracks", []):
         for module in track.get("modules", []):
             if module["id"] == session.module_id:
-                module_drills = module.get("drills", [])
+                if session.drill_id:
+                    # Wenn drill_id spezifiziert, nur diesen Drill laden
+                    for drill in module.get("drills", []):
+                        if drill["id"] == session.drill_id:
+                            module_drills = [drill]
+                            break
+                else:
+                    # Sonst alle Drills des Moduls
+                    module_drills = module.get("drills", [])
                 break
         if module_drills:
             break
@@ -100,6 +116,9 @@ async def create_session(session: SessionCreate):
         "module_id": session.module_id,
         "goal": session.goal,
         "confidence": session.confidence,
+        "focus": session.focus,  # Store focus area
+        "session_method": session.session_method,  # Store session method
+        "drill_id": session.drill_id,  # Store selected drill
         "state": "PRE",
         "created_at": datetime.now().isoformat(),
         "drills": module_drills,
@@ -108,7 +127,8 @@ async def create_session(session: SessionCreate):
             "completed_drills": []
         },
         "checkins": [],
-        "post": None
+        "post": None,
+        "game_info": session.game_info
     }
 
     save_json(os.path.join(sessions_dir, f"{session_id}.json"), session_data)
@@ -186,6 +206,25 @@ async def complete_session(session_id: str, post: PostData):
         "completed_at": datetime.now().isoformat()
     }
     session["state"] = "COMPLETED"
+
+    save_json(session_path, session)
+    return session
+
+@app.post("/api/sessions/{session_id}/abort")
+async def abort_session(session_id: str, abort: AbortData):
+    """Session abbrechen"""
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    session["abort"] = {
+        "reason": abort.reason,
+        "note": abort.note,
+        "aborted_at": datetime.now().isoformat()
+    }
+    session["state"] = "ABORTED"
 
     save_json(session_path, session)
     return session

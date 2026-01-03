@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import type { CurriculumTrack, CurriculumModule } from '../api'
 
 export default function Curriculum() {
+  const navigate = useNavigate()
   const { data: curriculum, isLoading, error } = useQuery({
     queryKey: ['curriculum'],
     queryFn: () => api.getCurriculum()
@@ -25,32 +27,33 @@ export default function Curriculum() {
               <div key={module.id} style={{ border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '0.5rem' }}>
                 <h3>{module.title}</h3>
                 <p>{module.summary}</p>
-                <a
-                  href={`/session/${module.id}`}
+                {module.description && (
+                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.5rem' }}>
+                    {module.description}
+                  </p>
+                )}
+                {module.learningGoals && module.learningGoals.length > 0 && (
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>
+                    <strong>Lernziele:</strong>
+                    <ul style={{ marginTop: '0.25rem', paddingLeft: '1rem' }}>
+                      {module.learningGoals.map((goal, i) => (
+                        <li key={i}>{goal}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                  Schwierigkeit: {module.difficulty || 1} | Dauer: {module.duration || 45} Min
+                </div>
+                <button
                   className="btn"
-                  style={{ marginTop: '0.5rem', display: 'inline-block' }}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    // Erstelle eine neue Session für dieses Modul
-                    fetch('http://localhost:8000/api/sessions', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        user: 'demo',
-                        module_id: module.id,
-                        goal: `Lernen: ${module.title}`,
-                        confidence: 3
-                      })
-                    })
-                    .then(res => res.json())
-                    .then(session => {
-                      window.location.href = `/session/${session.id}`
-                    })
-                    .catch(err => console.error('Fehler beim Erstellen der Session:', err))
+                  style={{ marginTop: '0.5rem' }}
+                  onClick={() => {
+                    navigate(`/setup/${module.id}`)
                   }}
                 >
                   Starten
-                </a>
+                </button>
               </div>
             ))}
           </div>

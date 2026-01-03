@@ -1,0 +1,136 @@
+{
+  "id": "demo_1767482684",
+  "user": "demo",
+  "module_id": "A1",
+  "goal": "hkhk",
+  "confidence": 3,
+  "focus": "Center",
+  "session_method": "role-focus",
+  "drill_id": "A1_D1",
+  "state": "COMPLETED",
+  "created_at": "2026-01-04T00:24:44.488367",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Center & Struktur",
+      "drill_type": "period_checkin",
+      "description": "Schneller Überblick pro Drittel. Ideal für Live-Spiel. Fokus: Center-Position, Dreiecke, Breakout.",
+      "config": {
+        "questions": [
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position (meistens)",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ],
+            "help": "Wo steht der Center ohne Puck meist?"
+          },
+          {
+            "key": "triangle_rating",
+            "type": "slider",
+            "label": "Dreiecke / Anspielstationen",
+            "min": 1,
+            "max": 5,
+            "help": "1=kaum, 3=situativ, 5=konstant"
+          },
+          {
+            "key": "breakout_quality",
+            "type": "radio",
+            "label": "Breakout-Eindruck",
+            "options": [
+              "clean",
+              "mixed",
+              "chaotic"
+            ],
+            "help": "Wie sauber war der Exit?"
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Freie Notiz (optional)",
+            "max_chars": 120
+          }
+        ],
+        "coaching_rules": [
+          {
+            "condition": "triangle_rating <= 2 && breakout_quality == 'chaotic'",
+            "feedback": "Struktur reißt früh. Exit wird blind/unter Druck.",
+            "next_task": "Fokus: Center früher als Outlet anbieten (middle-low Position)"
+          },
+          {
+            "condition": "center_position == 'high' && breakout_quality != 'clean'",
+            "feedback": "Center hängt, Outlet fehlt.",
+            "next_task": "Fokus: Center früher absinken, Supportdreieck herstellen"
+          },
+          {
+            "condition": "triangle_rating >= 4 && breakout_quality == 'clean'",
+            "feedback": "Struktur ist stabil!",
+            "next_task": "Erkenne warum: Winger close? D-Support? Nächstes Drittel gleiche Mechanik beobachten."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {
+        "expectations": "hbhk"
+      },
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-04T00:24:49.987543"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_position": "middle",
+        "triangle_rating": 2,
+        "note": "hb",
+        "breakout_quality": "mixed"
+      },
+      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
+      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
+      "timestamp": "2026-01-04T00:25:06.151571"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "center_position": "middle",
+        "triangle_rating": 2,
+        "note": "hb",
+        "breakout_quality": "mixed"
+      },
+      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
+      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
+      "timestamp": "2026-01-04T00:25:10.788863"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "center_position": "middle",
+        "triangle_rating": 2,
+        "note": "hb",
+        "breakout_quality": "mixed"
+      },
+      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
+      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
+      "timestamp": "2026-01-04T00:25:13.671064"
+    }
+  ],
+  "post": {
+    "summary": "Live-Session erfolgreich abgeschlossen",
+    "unclear": null,
+    "next_module": null,
+    "helpfulness": 5,
+    "completed_at": "2026-01-04T00:25:16.867209"
+  },
+  "game_info": null
+}

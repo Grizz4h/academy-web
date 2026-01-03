@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import type { Drill } from '../api'
 
 interface DrillRendererProps {
@@ -19,6 +19,10 @@ export default function DrillRenderer({ drill, onComplete }: DrillRendererProps)
 
   if (drill.drill_type === 'micro_quiz') {
     return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} onSubmit={handleSubmit} />
+  }
+
+  if (drill.drill_type === 'shift_tracker') {
+    return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} onSubmit={handleSubmit} />
   }
 
   return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>
@@ -120,6 +124,68 @@ function MicroQuiz({ drill, answers, setAnswers, onSubmit }: any) {
         </div>
       ))}
       <button onClick={onSubmit} className="btn">Quiz abschließen</button>
+    </div>
+  )
+}
+
+function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
+  const shiftCount = drill.config.shift_count || 10
+  const questions = drill.config.questions || []
+  const completedShifts = Object.keys(answers).filter(k => k.startsWith('shift_')).length / questions.length
+
+  return (
+    <div className="card">
+      <h3>{drill.title}</h3>
+      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
+        Beobachte {shiftCount} Shifts. Pro Shift: nur schauen, nicht interpretieren.
+      </p>
+      
+      <div style={{ marginBottom: '1.5rem', padding: '0.5rem', backgroundColor: 'rgba(81,145,162,0.1)', borderRadius: '4px' }}>
+        Fortschritt: {Math.round((completedShifts / shiftCount) * 100)}% ({Math.floor(completedShifts)}/{shiftCount})
+        <progress value={completedShifts} max={shiftCount} style={{ width: '100%', marginTop: '0.5rem' }} />
+      </div>
+
+      {Array.from({ length: shiftCount }).map((_, shiftNum) => (
+        <div key={shiftNum} style={{ 
+          marginBottom: '1.5rem', 
+          padding: '1rem', 
+          border: '1px solid rgba(81,145,162,0.3)', 
+          borderRadius: '4px',
+          backgroundColor: answers[`shift_${shiftNum}_position`] ? 'rgba(81,145,162,0.05)' : 'transparent'
+        }}>
+          <h4>Shift {shiftNum + 1}</h4>
+          {questions.map((q: any) => (
+            <div key={q.key} style={{ marginBottom: '1rem' }}>
+              <label>{q.label}</label>
+              {q.type === 'radio' && (
+                <div>
+                  {q.options.map((opt: string) => (
+                    <label key={opt} style={{ display: 'block', margin: '0.5rem 0' }}>
+                      <input
+                        type="radio"
+                        name={`shift_${shiftNum}_${q.key}`}
+                        value={opt}
+                        checked={answers[`shift_${shiftNum}_${q.key}`] === opt}
+                        onChange={(e) => setAnswers({ ...answers, [`shift_${shiftNum}_${q.key}`]: e.target.value })}
+                      />
+                      {opt}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <button 
+        onClick={onSubmit} 
+        className="btn"
+        disabled={Math.floor(completedShifts) < shiftCount}
+        style={{ opacity: Math.floor(completedShifts) < shiftCount ? 0.5 : 1 }}
+      >
+        Alle {shiftCount} Shifts abschließen
+      </button>
     </div>
   )
 }

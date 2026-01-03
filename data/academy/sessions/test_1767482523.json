@@ -1,0 +1,230 @@
+{
+  "id": "test_1767482523",
+  "user": "test",
+  "module_id": "A1",
+  "goal": "Learn triangles",
+  "confidence": 4,
+  "focus": null,
+  "session_method": null,
+  "state": "PRE",
+  "created_at": "2026-01-04T00:22:03.582400",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Center & Struktur",
+      "drill_type": "period_checkin",
+      "description": "Schneller Überblick pro Drittel. Ideal für Live-Spiel. Fokus: Center-Position, Dreiecke, Breakout.",
+      "config": {
+        "questions": [
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position (meistens)",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ],
+            "help": "Wo steht der Center ohne Puck meist?"
+          },
+          {
+            "key": "triangle_rating",
+            "type": "slider",
+            "label": "Dreiecke / Anspielstationen",
+            "min": 1,
+            "max": 5,
+            "help": "1=kaum, 3=situativ, 5=konstant"
+          },
+          {
+            "key": "breakout_quality",
+            "type": "radio",
+            "label": "Breakout-Eindruck",
+            "options": [
+              "clean",
+              "mixed",
+              "chaotic"
+            ],
+            "help": "Wie sauber war der Exit?"
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Freie Notiz (optional)",
+            "max_chars": 120
+          }
+        ],
+        "coaching_rules": [
+          {
+            "condition": "triangle_rating <= 2 && breakout_quality == 'chaotic'",
+            "feedback": "Struktur reißt früh. Exit wird blind/unter Druck.",
+            "next_task": "Fokus: Center früher als Outlet anbieten (middle-low Position)"
+          },
+          {
+            "condition": "center_position == 'high' && breakout_quality != 'clean'",
+            "feedback": "Center hängt, Outlet fehlt.",
+            "next_task": "Fokus: Center früher absinken, Supportdreieck herstellen"
+          },
+          {
+            "condition": "triangle_rating >= 4 && breakout_quality == 'clean'",
+            "feedback": "Struktur ist stabil!",
+            "next_task": "Erkenne warum: Winger close? D-Support? Nächstes Drittel gleiche Mechanik beobachten."
+          }
+        ]
+      }
+    },
+    {
+      "id": "A1_D2",
+      "title": "Shift Chunk: Center-Position",
+      "drill_type": "shift_tracker",
+      "description": "Beobachte 10 Shifts. Nur schauen, nicht interpretieren. Trainiert konsistente Wahrnehmung.",
+      "config": {
+        "shift_count": 10,
+        "questions": [
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          {
+            "key": "is_playable",
+            "type": "radio",
+            "label": "Klar anspielbar?",
+            "options": [
+              "ja",
+              "nein"
+            ]
+          }
+        ],
+        "feedback_template": "Center oft in {position} → {playable}% anspielbar. Muster: {pattern}"
+      }
+    },
+    {
+      "id": "A1_D3",
+      "title": "Triangle Spotting",
+      "drill_type": "period_checkin",
+      "description": "Dreiecke bewusst sehen, nicht nur 'Gefühl von Ordnung'. Wo entstehen sie? Wann reißen sie?",
+      "config": {
+        "questions": [
+          {
+            "key": "triangle_frequency",
+            "type": "radio",
+            "label": "Wie oft hast du klare Dreiecke gesehen?",
+            "options": [
+              "selten",
+              "regelmäßig",
+              "konstant"
+            ],
+            "help": "Pro Drittel / Spielabschnitt"
+          },
+          {
+            "key": "triangle_zone",
+            "type": "radio",
+            "label": "Wo entstehen Dreiecke häufiger?",
+            "options": [
+              "DZ",
+              "NZ",
+              "OZ"
+            ],
+            "help": "Defensive, Neutral, Offensive Zone"
+          },
+          {
+            "key": "triangle_breaks_on",
+            "type": "radio",
+            "label": "Dreiecke reißen meist bei:",
+            "options": [
+              "Druck",
+              "Puckverlust",
+              "Line Change"
+            ],
+            "help": "Was triggert den Strukturbruch?"
+          }
+        ],
+        "coaching_rules": [
+          {
+            "condition": "triangle_breaks_on == 'Line Change'",
+            "feedback": "Dreiecke reißen meist bei Line Changes → Timing-Problem.",
+            "next_task": "Fokus: Übergänge beobachten. Wechsel zu früh/spät?"
+          },
+          {
+            "condition": "triangle_zone == 'NZ' && triangle_frequency == 'selten'",
+            "feedback": "Struktur stabil in DZ, instabil in NZ → Übergänge sind das Problem.",
+            "next_task": "Fokus: Wie löst das Team die NZ auf? Breakout-Qualität?"
+          }
+        ]
+      }
+    },
+    {
+      "id": "A1_D4",
+      "title": "Micro-Quiz: Rollenverständnis",
+      "drill_type": "micro_quiz",
+      "description": "Begriffe & Konzepte aktivieren. 60 Sekunden. Optional, aber empfohlen vor Live-Spiel.",
+      "config": {
+        "time_limit": 60,
+        "questions": [
+          {
+            "question": "Was ist die Hauptaufgabe des Centers ohne Puck?",
+            "options": [
+              "Nur verteidigen",
+              "Support & Outlet bereitstellen",
+              "Immer high stehen"
+            ],
+            "correct": 1,
+            "explanation": "Der Center ist die Anspielstation und muss variable Höhe haben (low/middle/high)."
+          },
+          {
+            "question": "Was ist ein Dreieck?",
+            "options": [
+              "Nur beim Powerplay",
+              "Positions-Formation: Center, Winger, Defenseman",
+              "Ein Offensiv-Formation"
+            ],
+            "correct": 1,
+            "explanation": "Ein Dreieck ist die 3er-Positions-Formation für Puck-Bewegung und Support."
+          },
+          {
+            "question": "Warum ist 'middle support' beim Breakout wichtig?",
+            "options": [
+              "Bessere Sicht",
+              "Outlet & Sicherheitsventil gleichzeitig",
+              "Längere Spielzüge"
+            ],
+            "correct": 1,
+            "explanation": "Middle position gibt dem Breakout Optionen und verhindert erzwungene Pässe."
+          },
+          {
+            "question": "Was passiert, wenn ein Dreieck reißt?",
+            "options": [
+              "Nichts besonderes",
+              "Struktur braucht Neuaufbau, höhere Turnover-Quote",
+              "Sofort Tor"
+            ],
+            "correct": 1,
+            "explanation": "Strukturbruch = neue Positionen nötig → höhere Fehlerquote → Chancen für Gegner."
+          },
+          {
+            "question": "Center 'Low' bedeutet:",
+            "options": [
+              "Dicht an gegnerischer blauer Linie",
+              "Dicht an eigener roter Linie",
+              "Mitten im Feld"
+            ],
+            "correct": 1,
+            "explanation": "Low = defensive Tiefe. High = offensiv näher am Gegner. Middle = Balance."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [],
+  "post": null,
+  "game_info": null
+}
