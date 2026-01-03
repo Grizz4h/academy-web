@@ -1,0 +1,77 @@
+nohup: ignoring input
+INFO:     Started server process [335810]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:35262 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35272 - "GET /api/sessions/test_1767439684 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35276 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37146 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37162 - "POST /api/sessions/test_1767439684/checkins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37166 - "POST /api/sessions/test_1767439684/post HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52846 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52846 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52846 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52846 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39004 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39004 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39004 - "POST /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39004 - "GET /api/sessions/demo_1767439834 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51044 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59844 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52392 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52392 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52392 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52392 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52392 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45424 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42338 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42338 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42338 - "OPTIONS /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42338 - "POST /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42338 - "GET /api/sessions/demo_1767440072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38890 - "GET /api/sessions/demo_1767440072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57862 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38674 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41106 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37178 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37178 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37178 - "OPTIONS /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37178 - "POST /api/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37178 - "GET /api/sessions/demo_1767440443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43650 - "GET /api/sessions/demo_1767440443 HTTP/1.1" 200 OK
+INFO:     31.129.22.95:50776 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.82.78.100:37156 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.131.155.111:48452 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.96.91:53420 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.96.91:45200 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.93:40696 - "GET http%3A//httpbin.org/ip HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:33706 - "POST / HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:33718 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:33728 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:33744 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:33748 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:33756 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     205.210.31.251:62808 - "GET / HTTP/1.1" 404 Not Found

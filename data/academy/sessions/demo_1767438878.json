@@ -1,0 +1,148 @@
+{
+  "id": "demo_1767438878",
+  "user": "demo",
+  "module_id": "A1",
+  "goal": "Lernen: Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "state": "COMPLETED",
+  "created_at": "2026-01-03T12:14:38.419833",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Dreieck & Center-Position",
+      "drill_type": "period_checkin",
+      "config": {
+        "questions": [
+          {
+            "id": "center_position",
+            "type": "radio",
+            "label": "Center-Position im D-Zone",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ],
+            "required": true
+          },
+          {
+            "id": "triangle_rating",
+            "type": "slider",
+            "label": "Dreieck-Qualität (1-5)",
+            "min": 1,
+            "max": 5,
+            "default": 3,
+            "required": true
+          },
+          {
+            "id": "breakout_quality",
+            "type": "radio",
+            "label": "Breakout-Qualität",
+            "options": [
+              "clean",
+              "mixed",
+              "chaotic"
+            ],
+            "required": true
+          },
+          {
+            "id": "note",
+            "type": "text",
+            "label": "Kurze Notiz (optional, max 120 Zeichen)",
+            "max_length": 120,
+            "required": false,
+            "user_filter": [
+              "christoph"
+            ]
+          }
+        ],
+        "coaching_rules": [
+          {
+            "condition": {
+              "field": "triangle_rating",
+              "operator": "<=",
+              "value": 2
+            },
+            "feedback": "⚠️ Dreiecke instabil. Achte auf: Flächenabdeckung der Forwards.",
+            "next_task": "Fokus P{next_period}: Welcher Forward verlässt Position zuerst?"
+          },
+          {
+            "condition": {
+              "field": "breakout_quality",
+              "operator": "==",
+              "value": "chaotic"
+            },
+            "feedback": "🔴 Breakout unter Druck. Pass-Optionen fehlen?",
+            "next_task": "Fokus P{next_period}: Wer bietet sich an? D oder Center?"
+          },
+          {
+            "condition": {
+              "field": "center_position",
+              "operator": "==",
+              "value": "high"
+            },
+            "feedback": "✅ Center hoch → Puckunterstützung gut.",
+            "next_task": "Beobachte: Winger-Anpassung wenn Center high steht."
+          }
+        ]
+      }
+    },
+    {
+      "id": "A1_Q1",
+      "title": "Micro-Quiz: Rollen & Dreiecke",
+      "drill_type": "micro_quiz",
+      "config": {
+        "time_limit": 60,
+        "questions": [
+          {
+            "id": "q1",
+            "question": "Welche Forward-Rolle ist primär für Puck-Retrieval in der D-Zone verantwortlich?",
+            "options": [
+              "Center",
+              "Left Wing",
+              "Right Wing",
+              "Beide Winger"
+            ],
+            "correct": "Center",
+            "explanation": "Der Center ist im klassischen D-Zone-System oft der erste Mann am Puck (low) und unterstützt die Defense beim Retrieval."
+          },
+          {
+            "id": "q2",
+            "question": "Was bedeutet 'Dreieck' in der D-Zone?",
+            "options": [
+              "Drei Forwards in einer Linie",
+              "Positionierung zur Flächenabdeckung mit Anspielstationen",
+              "Formation nur für Penalty Kill",
+              "Nur für Goalies relevant"
+            ],
+            "correct": "Positionierung zur Flächenabdeckung mit Anspielstationen",
+            "explanation": "Dreiecke schaffen Fläche, bieten Pass-Optionen und verhindern, dass der Gegner alle Anspielstationen gleichzeitig verteidigen kann."
+          },
+          {
+            "id": "q3",
+            "question": "Wann sollte der Center 'high' in der D-Zone stehen?",
+            "options": [
+              "Immer",
+              "Nie",
+              "Wenn Defense den Puck sicher hat und Breakout startet",
+              "Nur bei Unterzahl"
+            ],
+            "correct": "Wenn Defense den Puck sicher hat und Breakout startet",
+            "explanation": "Center geht high, um Anspielstation für den ersten Pass zu sein und den Breakout zu initiieren."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [],
+  "post": {
+    "summary": "Session erfolgreich abgeschlossen",
+    "unclear": null,
+    "next_module": null,
+    "helpfulness": 5,
+    "completed_at": "2026-01-03T12:23:36.983822"
+  }
+}

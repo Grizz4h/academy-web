@@ -12,110 +12,68 @@
           "drills": [
             {
               "id": "A1_D1",
-              "title": "Period Check-in: Dreieck & Center-Position",
+              "title": "Period Check-in",
               "drill_type": "period_checkin",
               "config": {
                 "questions": [
                   {
-                    "id": "center_position",
+                    "key": "center_position",
                     "type": "radio",
-                    "label": "Center-Position im D-Zone",
-                    "options": ["low", "middle", "high"],
-                    "required": true
+                    "label": "Center Position",
+                    "options": ["low", "middle", "high"]
                   },
                   {
-                    "id": "triangle_rating",
+                    "key": "triangle_rating",
                     "type": "slider",
-                    "label": "Dreieck-Qualität (1-5)",
+                    "label": "Triangle Rating",
                     "min": 1,
-                    "max": 5,
-                    "default": 3,
-                    "required": true
+                    "max": 5
                   },
                   {
-                    "id": "breakout_quality",
+                    "key": "breakout_quality",
                     "type": "radio",
-                    "label": "Breakout-Qualität",
-                    "options": ["clean", "mixed", "chaotic"],
-                    "required": true
+                    "label": "Breakout Quality",
+                    "options": ["clean", "mixed", "chaotic"]
                   },
                   {
-                    "id": "note",
+                    "key": "note",
                     "type": "text",
-                    "label": "Kurze Notiz (optional, max 120 Zeichen)",
-                    "max_length": 120,
-                    "required": false,
-                    "user_filter": ["christoph"]
+                    "label": "Note",
+                    "max_chars": 120
                   }
                 ],
                 "coaching_rules": [
                   {
-                    "condition": {
-                      "field": "triangle_rating",
-                      "operator": "<=",
-                      "value": 2
-                    },
-                    "feedback": "⚠️ Dreiecke instabil. Achte auf: Flächenabdeckung der Forwards.",
-                    "next_task": "Fokus P{next_period}: Welcher Forward verlässt Position zuerst?"
+                    "condition": "center_position == 'low'",
+                    "feedback": "Center position is low - focus on elevating play.",
+                    "next_task": "Work on puck movement to middle."
                   },
                   {
-                    "condition": {
-                      "field": "breakout_quality",
-                      "operator": "==",
-                      "value": "chaotic"
-                    },
-                    "feedback": "🔴 Breakout unter Druck. Pass-Optionen fehlen?",
-                    "next_task": "Fokus P{next_period}: Wer bietet sich an? D oder Center?"
-                  },
-                  {
-                    "condition": {
-                      "field": "center_position",
-                      "operator": "==",
-                      "value": "high"
-                    },
-                    "feedback": "✅ Center hoch → Puckunterstützung gut.",
-                    "next_task": "Beobachte: Winger-Anpassung wenn Center high steht."
+                    "condition": "triangle_rating <= 3",
+                    "feedback": "Triangle rating is low - improve positioning.",
+                    "next_task": "Practice triangle formations."
                   }
                 ]
               }
             },
             {
               "id": "A1_Q1",
-              "title": "Micro-Quiz: Rollen & Dreiecke",
+              "title": "Micro Quiz: Rink IQ Basics",
               "drill_type": "micro_quiz",
               "config": {
                 "time_limit": 60,
                 "questions": [
                   {
-                    "id": "q1",
-                    "question": "Welche Forward-Rolle ist primär für Puck-Retrieval in der D-Zone verantwortlich?",
-                    "options": ["Center", "Left Wing", "Right Wing", "Beide Winger"],
-                    "correct": "Center",
-                    "explanation": "Der Center ist im klassischen D-Zone-System oft der erste Mann am Puck (low) und unterstützt die Defense beim Retrieval."
+                    "question": "What is the role of a Center?",
+                    "options": ["Defensive positioning", "Puck distribution and playmaking", "Goal tending"],
+                    "correct": 1,
+                    "explanation": "Center handles puck distribution and creates plays."
                   },
                   {
-                    "id": "q2",
-                    "question": "Was bedeutet 'Dreieck' in der D-Zone?",
-                    "options": [
-                      "Drei Forwards in einer Linie",
-                      "Positionierung zur Flächenabdeckung mit Anspielstationen",
-                      "Formation nur für Penalty Kill",
-                      "Nur für Goalies relevant"
-                    ],
-                    "correct": "Positionierung zur Flächenabdeckung mit Anspielstationen",
-                    "explanation": "Dreiecke schaffen Fläche, bieten Pass-Optionen und verhindern, dass der Gegner alle Anspielstationen gleichzeitig verteidigen kann."
-                  },
-                  {
-                    "id": "q3",
-                    "question": "Wann sollte der Center 'high' in der D-Zone stehen?",
-                    "options": [
-                      "Immer",
-                      "Nie",
-                      "Wenn Defense den Puck sicher hat und Breakout startet",
-                      "Nur bei Unterzahl"
-                    ],
-                    "correct": "Wenn Defense den Puck sicher hat und Breakout startet",
-                    "explanation": "Center geht high, um Anspielstation für den ersten Pass zu sein und den Breakout zu initiieren."
+                    "question": "What does 'Triangle' refer to in hockey?",
+                    "options": ["Offensive formation", "Defensive positioning between players", "Faceoff circle"],
+                    "correct": 1,
+                    "explanation": "Triangle refers to the positioning between Center, Winger, and Defense."
                   }
                 ]
               }
@@ -137,161 +95,161 @@
         {
           "id": "A4",
           "title": "Faceoffs & Set-Plays – Grundlagen",
-          "summary": "Faceoff-Formationen und erste Reaktionen",
+          "summary": "",
           "drills": []
         },
         {
           "id": "A5",
-          "title": "Kommunikation & Bench-Management (Light)",
-          "summary": "Line Changes, Kommunikation auf dem Eis",
+          "title": "Kommunikation & Bench-Management",
+          "summary": "Light",
           "drills": []
         }
       ]
     },
     {
       "id": "B",
-      "title": "Defensive Zone (Struktur halten)",
-      "goal": "D-Zone-Systeme verstehen und Gegner unter Kontrolle halten",
+      "title": "Defensive Zone",
+      "goal": "Struktur halten",
       "modules": [
         {
           "id": "B1",
           "title": "D-Zone Coverage: Box, Box+1, Low Switch",
-          "summary": "Defensive Systeme und Abdeckungen",
+          "summary": "",
           "drills": []
         },
         {
           "id": "B2",
           "title": "Net-Front Play & Slot Control",
-          "summary": "Slot verteidigen, Gegner vor dem Tor binden",
+          "summary": "",
           "drills": []
         },
         {
           "id": "B3",
           "title": "Wall Battles & Defensive Exits",
-          "summary": "Bande-Kämpfe und saubere Exits",
+          "summary": "",
           "drills": []
         },
         {
           "id": "B4",
           "title": "D-Zone Faceoffs & Reaktionen",
-          "summary": "Faceoff-Formationen defensiv und erste Züge",
+          "summary": "",
           "drills": []
         },
         {
           "id": "B5",
           "title": "Penalty Kill Systeme",
-          "summary": "PK-Strukturen, Box, Diamond, aggressive PK",
+          "summary": "",
           "drills": []
         }
       ]
     },
     {
       "id": "C",
-      "title": "Neutral Zone (Spiel kontrollieren)",
-      "goal": "N-Zone als Kontrollzone nutzen: Pressure aufbauen oder Transition verteidigen",
+      "title": "Neutral Zone",
+      "goal": "Spiel kontrollieren",
       "modules": [
         {
           "id": "C1",
           "title": "Neutral-Zone Forecheck & Traps",
-          "summary": "1-1-3, 1-3-1, 1-2-2 Systeme",
+          "summary": "1-1-3, 1-3-1, 1-2-2",
           "drills": []
         },
         {
           "id": "C2",
           "title": "Regroup & Counter-Attacks",
-          "summary": "Regroup als Reset, schnelle Gegenstöße",
+          "summary": "",
           "drills": []
         },
         {
           "id": "C3",
           "title": "Controlled Entries vs. Chip & Chase",
-          "summary": "Entry-Strategien und wann welche einsetzen",
+          "summary": "",
           "drills": []
         },
         {
           "id": "C4",
-          "title": "Transition Defense (Rush verteidigen)",
-          "summary": "Odd-Man-Rushes verteidigen, Gap Control",
+          "title": "Transition Defense",
+          "summary": "Rush verteidigen",
           "drills": []
         },
         {
           "id": "C5",
           "title": "Line Changes & Shift-Management",
-          "summary": "Wechsel unter Druck, lange Shifts vermeiden",
+          "summary": "",
           "drills": []
         }
       ]
     },
     {
       "id": "D",
-      "title": "Offensive Zone (Druck erzeugen)",
-      "goal": "O-Zone-Strukturen verstehen und Chancen kreieren",
+      "title": "Offensive Zone",
+      "goal": "Druck erzeugen",
       "modules": [
         {
           "id": "D1",
-          "title": "OZ-Strukturen: 2-3, 1-2-2, 1-3-1",
-          "summary": "Offensive Formationen und Positionierung",
+          "title": "OZ-Strukturen",
+          "summary": "2-3, 1-2-2, 1-3-1",
           "drills": []
         },
         {
           "id": "D2",
           "title": "Low Plays & Behind-the-Net Game",
-          "summary": "Spielzüge hinter dem Tor, Cycle",
+          "summary": "",
           "drills": []
         },
         {
           "id": "D3",
           "title": "Point Activation & Shot Selection",
-          "summary": "Verteidiger einbinden, gute Schüsse wählen",
+          "summary": "",
           "drills": []
         },
         {
           "id": "D4",
           "title": "O-Zone Faceoffs & Plays",
-          "summary": "Offensiv-Faceoffs und direkte Spielzüge",
+          "summary": "",
           "drills": []
         },
         {
           "id": "D5",
           "title": "OZ-Spiel gegen Man- & Raumdeckung",
-          "summary": "Anpassungen je nach gegnerischer Verteidigung",
+          "summary": "",
           "drills": []
         }
       ]
     },
     {
       "id": "E",
-      "title": "Special Teams (Spiele entscheiden)",
-      "goal": "PP und PK meistern, Overtime-Situationen verstehen",
+      "title": "Special Teams",
+      "goal": "Spiele entscheiden",
       "modules": [
         {
           "id": "E1",
-          "title": "Powerplay-Architektur (1-3-1 Rollen)",
-          "summary": "PP-Struktur und Rollen verstehen",
+          "title": "Powerplay-Architektur",
+          "summary": "1-3-1 Rollen",
           "drills": []
         },
         {
           "id": "E2",
           "title": "Powerplay-Entries",
-          "summary": "Saubere Zone Entries im PP",
+          "summary": "",
           "drills": []
         },
         {
           "id": "E3",
           "title": "Penalty Kill – Advanced Reads",
-          "summary": "PK-Lesen und Anpassungen",
+          "summary": "",
           "drills": []
         },
         {
           "id": "E4",
           "title": "6-gegen-5 & Goalie Pull",
-          "summary": "Extra Attacker, Strategie und Risiken",
+          "summary": "",
           "drills": []
         },
         {
           "id": "E5",
           "title": "3-gegen-3 Overtime & Shootout-Strategie",
-          "summary": "OT-Taktik und Shootout-Analyse",
+          "summary": "",
           "drills": []
         }
       ]
@@ -299,36 +257,36 @@
     {
       "id": "F",
       "title": "Scouting, Analyse & Coaching-Mindset",
-      "goal": "Methoden für Analyse, Gegner-Scouting und Game-Preparation",
+      "goal": "",
       "modules": [
         {
           "id": "F1",
           "title": "Video-Tagging & Analyse-System",
-          "summary": "Systematisches Taggen von Szenen",
+          "summary": "",
           "drills": []
         },
         {
           "id": "F2",
           "title": "Gegnerprofile & Tendencies",
-          "summary": "Was verrät ein Team über sein System?",
+          "summary": "",
           "drills": []
         },
         {
           "id": "F3",
-          "title": "In-Game Adjustments (Between Periods)",
-          "summary": "Anpassungen zwischen Dritteln",
+          "title": "In-Game Adjustments",
+          "summary": "Between Periods",
           "drills": []
         },
         {
           "id": "F4",
-          "title": "Micro-Analytics (Entry %, Shot Quality)",
-          "summary": "Daten lesen und interpretieren",
+          "title": "Micro-Analytics",
+          "summary": "Entry %, Shot Quality",
           "drills": []
         },
         {
           "id": "F5",
           "title": "Game-Plan & Match-Preparation",
-          "summary": "Vorbereitung strukturieren, Plan erstellen",
+          "summary": "",
           "drills": []
         }
       ]
