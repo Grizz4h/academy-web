@@ -1,26 +1,210 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useUser } from '../context/UserContext'
+
+// NHL Teams mit Division als Metadaten
+const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
+  // Atlantic Division
+  { name: 'Boston Bruins', division: 'Atlantic', short: 'BOS' },
+  { name: 'Buffalo Sabres', division: 'Atlantic', short: 'BUF' },
+  { name: 'Detroit Red Wings', division: 'Atlantic', short: 'DET' },
+  { name: 'Florida Panthers', division: 'Atlantic', short: 'FLA' },
+  { name: 'Montreal Canadiens', division: 'Atlantic', short: 'MTL' },
+  { name: 'Ottawa Senators', division: 'Atlantic', short: 'OTT' },
+  { name: 'Tampa Bay Lightning', division: 'Atlantic', short: 'TBL' },
+  { name: 'Toronto Maple Leafs', division: 'Atlantic', short: 'TOR' },
+  // Metropolitan Division
+  { name: 'Carolina Hurricanes', division: 'Metropolitan', short: 'CAR' },
+  { name: 'Columbus Blue Jackets', division: 'Metropolitan', short: 'CBJ' },
+  { name: 'New Jersey Devils', division: 'Metropolitan', short: 'NJD' },
+  { name: 'New York Islanders', division: 'Metropolitan', short: 'NYI' },
+  { name: 'New York Rangers', division: 'Metropolitan', short: 'NYR' },
+  { name: 'Philadelphia Flyers', division: 'Metropolitan', short: 'PHI' },
+  { name: 'Pittsburgh Penguins', division: 'Metropolitan', short: 'PIT' },
+  { name: 'Washington Capitals', division: 'Metropolitan', short: 'WSH' },
+  // Central Division
+  { name: 'Arizona Coyotes', division: 'Central', short: 'ARI' },
+  { name: 'Chicago Blackhawks', division: 'Central', short: 'CHI' },
+  { name: 'Colorado Avalanche', division: 'Central', short: 'COL' },
+  { name: 'Dallas Stars', division: 'Central', short: 'DAL' },
+  { name: 'Minnesota Wild', division: 'Central', short: 'MIN' },
+  { name: 'Nashville Predators', division: 'Central', short: 'NSH' },
+  { name: 'St. Louis Blues', division: 'Central', short: 'STL' },
+  { name: 'Winnipeg Jets', division: 'Central', short: 'WPG' },
+  // Pacific Division
+  { name: 'Anaheim Ducks', division: 'Pacific', short: 'ANA' },
+  { name: 'Calgary Flames', division: 'Pacific', short: 'CGY' },
+  { name: 'Edmonton Oilers', division: 'Pacific', short: 'EDM' },
+  { name: 'Los Angeles Kings', division: 'Pacific', short: 'LAK' },
+  { name: 'San Jose Sharks', division: 'Pacific', short: 'SJS' },
+  { name: 'Seattle Kraken', division: 'Pacific', short: 'SEA' },
+  { name: 'Vancouver Canucks', division: 'Pacific', short: 'VAN' },
+  { name: 'Vegas Golden Knights', division: 'Pacific', short: 'VGK' }
+]
+
+// Helper: Finde Division für ein Team
+const getTeamDivision = (teamName: string): string | undefined => {
+  return NHL_TEAMS.find(t => t.name === teamName)?.division
+}
+
+function GlossaryTerm({ term, glossary }: { term: string; glossary?: { [key: string]: string } }) {
+  const [show, setShow] = useState(false)
+  const definition = glossary?.[term]
+  
+  if (!definition) return <span>{term}</span>
+  
+  return (
+    <span 
+      style={{ 
+        borderBottom: '1px dotted rgba(81,145,162,0.7)', 
+        cursor: 'help', 
+        position: 'relative',
+        color: '#5191a2'
+      }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+      onClick={() => setShow(!show)}
+    >
+      {term}
+      {show && (
+        <div style={{
+          position: 'absolute',
+          bottom: '100%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: '#1a1a2e',
+          border: '2px solid #5191a2',
+          padding: '0.75rem',
+          borderRadius: '6px',
+          fontSize: '0.85rem',
+          width: '280px',
+          zIndex: 1000,
+          marginBottom: '0.5rem',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+          whiteSpace: 'pre-line',
+          textAlign: 'left',
+          lineHeight: '1.5'
+        }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#5191a2' }}>{term}</div>
+          {definition}
+          <div style={{ 
+            position: 'absolute',
+            bottom: '-8px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 0,
+            height: 0,
+            borderLeft: '8px solid transparent',
+            borderRight: '8px solid transparent',
+            borderTop: '8px solid #5191a2'
+          }}/>
+        </div>
+      )}
+    </span>
+  )
+}
+
+function highlightGlossaryTerms(text: string, glossary?: { [key: string]: string }): React.ReactNode {
+  if (!glossary) return text
+  
+  const terms = Object.keys(glossary).sort((a, b) => b.length - a.length)
+  const parts: React.ReactNode[] = []
+  let lastIndex = 0
+  const matches: Array<{ start: number; end: number; term: string }> = []
+  
+  terms.forEach(term => {
+    const regex = new RegExp(`\\b${term}\\b`, 'gi')
+    let match
+    while ((match = regex.exec(text)) !== null) {
+      matches.push({ start: match.index, end: match.index + match[0].length, term: match[0] })
+    }
+  })
+  
+  matches.sort((a, b) => a.start - b.start)
+  const filtered = matches.filter((match, i) => {
+    if (i === 0) return true
+    const prev = matches[i - 1]
+    return match.start >= prev.end
+  })
+  
+  filtered.forEach((match, i) => {
+    if (match.start > lastIndex) {
+      parts.push(text.substring(lastIndex, match.start))
+    }
+    parts.push(<GlossaryTerm key={i} term={match.term} glossary={glossary} />)
+    lastIndex = match.end
+  })
+  
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex))
+  }
+  
+  return parts.length > 0 ? parts : text
+}
 
 export default function SessionSetup() {
   const { moduleId } = useParams<{ moduleId: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [focus, setFocus] = useState<string>('')
+  const { user } = useUser()
   const [goal, setGoal] = useState<string>('')
   const [confidence, setConfidence] = useState<number>(3)
   const [selectedDrill, setSelectedDrill] = useState<string>('')
+  const [league, setLeague] = useState<string>('')
+  const [teamHome, setTeamHome] = useState<string>('')
+  const [teamAway, setTeamAway] = useState<string>('')
+  const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
+
+  // Draft laden
+  useEffect(() => {
+    if (!draftKey) return
+    const saved = localStorage.getItem(draftKey)
+    if (!saved) return
+    try {
+      const parsed = JSON.parse(saved)
+      if (parsed.goal) setGoal(parsed.goal)
+      if (parsed.confidence) setConfidence(parsed.confidence)
+      if (parsed.league) setLeague(parsed.league)
+      if (parsed.teamHome) setTeamHome(parsed.teamHome)
+      if (parsed.teamAway) setTeamAway(parsed.teamAway)
+      if (parsed.selectedDrill) setSelectedDrill(parsed.selectedDrill)
+    } catch (e) {
+      console.warn('Draft konnte nicht geladen werden', e)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftKey])
+
+  // Draft speichern bei Änderungen
+  useEffect(() => {
+    if (!draftKey) return
+    const draft = {
+      goal,
+      confidence,
+      league,
+      teamHome,
+      teamAway,
+      selectedDrill
+    }
+    localStorage.setItem(draftKey, JSON.stringify(draft))
+  }, [draftKey, goal, confidence, league, teamHome, teamAway, selectedDrill])
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
     queryFn: () => api.getCurriculum()
   })
 
+  const { data: teamsResp } = useQuery({
+    queryKey: ['teams'],
+    queryFn: () => api.getTeams()
+  })
+
   const createSessionMutation = useMutation({
-    mutationFn: (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string }) => api.createSession(data),
+    mutationFn: (data: Parameters<typeof api.createSession>[0]) => api.createSession(data),
     onSuccess: (session) => {
-      queryClient.invalidateQueries({ queryKey: ['sessions'] })
+      queryClient.invalidateQueries({ queryKey: ['sessions', user] })
+      if (draftKey) localStorage.removeItem(draftKey)
       navigate(`/session/${session.id}`)
     }
   })
@@ -33,8 +217,24 @@ export default function SessionSetup() {
   }
 
   const handleCreateSession = () => {
+    if (!user?.trim()) {
+      alert('Bitte oben im Login einen Namen speichern, damit wir die Session zuordnen können.')
+      return
+    }
     if (!goal.trim()) {
       alert('Bitte ein Lernziel eingeben')
+      return
+    }
+    if (!league) {
+      alert('Bitte eine Liga wählen (z.B. NHL oder DEL).')
+      return
+    }
+    if (!teamHome || !teamAway) {
+      alert('Bitte beide Teams auswählen, die du dir anschaust.')
+      return
+    }
+    if (teamHome === teamAway) {
+      alert('Home- und Auswärtsteam müssen unterschiedlich sein.')
       return
     }
     if (!selectedDrill && currentModule.drills.length > 0) {
@@ -42,20 +242,48 @@ export default function SessionSetup() {
       return
     }
 
+    const gameInfo: any = {
+      league,
+      team_home: teamHome,
+      team_away: teamAway,
+      date: new Date().toISOString()
+    }
+    // Divisionen als Metadaten speichern (für spätere Filter-Funktionen)
+    if (league === 'NHL') {
+      const homeDivision = getTeamDivision(teamHome)
+      const awayDivision = getTeamDivision(teamAway)
+      if (homeDivision) gameInfo.home_division = homeDivision
+      if (awayDivision) gameInfo.away_division = awayDivision
+    }
+
     createSessionMutation.mutate({
-      user: 'demo',
+      user: user.trim(),
       module_id: moduleId!,
       goal,
       confidence,
-      focus: focus || currentModule.defaultFocus,
+      focus: currentModule.defaultFocus,
       session_method: currentModule.recommendedSessionMethod || 'live_watch',
-      drill_id: selectedDrill || undefined
+      drill_id: selectedDrill || undefined,
+      game_info: gameInfo
     })
   }
+
+  const availableTeams = (() => {
+    if (!league) return []
+    if (league === 'DEL') return teamsResp?.teams.map(t => t.name) || []
+    if (league === 'NHL') return NHL_TEAMS.map(t => t.name)
+    return []
+  })()
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <h1>Session Setup: {currentModule.title}</h1>
+
+      {!user && (
+        <div className="card" style={{ border: '1px solid #ffc107' }}>
+          <strong>Login nötig:</strong> Bitte oben im Navbar deinen Namen speichern. Wir merken ihn im Browser, damit Sessions dir zugeordnet sind.
+        </div>
+      )}
 
       <div className="card">
         <h2>Modul Info</h2>
@@ -71,26 +299,93 @@ export default function SessionSetup() {
       </div>
 
       <div className="card">
-        <h2>Dein Fokus</h2>
-        <p>Worauf möchtest du heute fokussieren?</p>
-        <select
-          value={focus}
-          onChange={(e) => setFocus(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '0.5rem',
-            marginTop: '0.5rem',
-            backgroundColor: '#050712',
-            color: '#f7f7ff',
-            border: '1px solid #5191a2'
-          }}
-        >
-          <option value="">-- Wähle Fokus --</option>
-          <option value={currentModule.defaultFocus}>{currentModule.defaultFocus} (empfohlen)</option>
-          {currentModule.defaultFocus && (
-            <option value="General">Allgemein</option>
-          )}
-        </select>
+        <h2>Spiel-Setup</h2>
+        <p>Welche Partie schaust du dir an?</p>
+
+        <label style={{ display: 'block', marginTop: '0.75rem' }}>
+          Liga auswählen
+          <select
+            value={league}
+            onChange={(e) => {
+              setLeague(e.target.value)
+              setTeamHome('')
+              setTeamAway('')
+            }}
+            style={{
+              width: '100%',
+              padding: '0.5rem',
+              marginTop: '0.35rem',
+              backgroundColor: '#050712',
+              color: '#f7f7ff',
+              border: '1px solid #5191a2'
+            }}
+          >
+            <option value="">-- Liga wählen --</option>
+            <option value="DEL">DEL</option>
+            <option value="NHL">NHL</option>
+          </select>
+        </label>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
+          <label style={{ display: 'block' }}>
+            Heimteam
+            <select
+              value={teamHome}
+              onChange={(e) => setTeamHome(e.target.value)}
+              disabled={!league}
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.35rem',
+                backgroundColor: '#050712',
+                color: '#f7f7ff',
+                border: '1px solid #5191a2'
+              }}
+            >
+              <option value="">-- Heimteam --</option>
+              {availableTeams.map((team) => (
+                <option key={team} value={team}>{team}</option>
+              ))}
+            </select>
+          </label>
+
+          <label style={{ display: 'block' }}>
+            Auswärtsteam
+            <select
+              value={teamAway}
+              onChange={(e) => setTeamAway(e.target.value)}
+              disabled={!league}
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.35rem',
+                backgroundColor: '#050712',
+                color: '#f7f7ff',
+                border: '1px solid #5191a2'
+              }}
+            >
+              <option value="">-- Auswärtsteam --</option>
+              {availableTeams.map((team) => (
+                <option key={team} value={team}>{team}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        {league === 'NHL' && teamHome && teamAway && (
+          <div style={{ 
+            marginTop: '1rem', 
+            padding: '0.75rem', 
+            backgroundColor: 'rgba(81,145,162,0.1)', 
+            borderRadius: '4px',
+            fontSize: '0.9rem'
+          }}>
+            <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#5191a2' }}>Spiel-Kontext</div>
+            <div>{teamHome} <span style={{ color: 'rgba(255,255,255,0.5)' }}>({getTeamDivision(teamHome)})</span></div>
+            <div style={{ textAlign: 'center', margin: '0.25rem 0', color: 'rgba(255,255,255,0.5)' }}>vs</div>
+            <div>{teamAway} <span style={{ color: 'rgba(255,255,255,0.5)' }}>({getTeamDivision(teamAway)})</span></div>
+          </div>
+        )}
       </div>
 
       {currentModule.drills && currentModule.drills.length > 0 && (
@@ -116,6 +411,40 @@ export default function SessionSetup() {
                 </div>
               </label>
             ))}
+          </div>
+        </div>
+      )}
+
+      {selectedDrill && currentModule.drills.find(d => d.id === selectedDrill)?.didactics && (
+        <div className="card">
+          <h2>Drill-Erklärung</h2>
+          <div style={{ marginTop: '0.5rem' }}>
+            <strong>Worum geht es?</strong>
+            <p style={{ marginTop: '0.35rem' }}>
+              {highlightGlossaryTerms(currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.goal, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}
+            </p>
+          </div>
+          <div style={{ marginTop: '0.75rem' }}>
+            <strong>Worauf achten?</strong>
+            <ul style={{ marginTop: '0.35rem' }}>
+              {currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.watch_for.map((t, i) => (
+                <li key={i}>{highlightGlossaryTerms(t, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}</li>
+              ))}
+            </ul>
+          </div>
+          <div style={{ marginTop: '0.75rem' }}>
+            <strong>Wie ausfüllen?</strong>
+            <ul style={{ marginTop: '0.35rem' }}>
+              {currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.how_to.map((t, i) => (
+                <li key={i}>{highlightGlossaryTerms(t, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}</li>
+              ))}
+            </ul>
+          </div>
+          <div style={{ marginTop: '0.75rem' }}>
+            <strong>Lernhinweis</strong>
+            <p style={{ marginTop: '0.35rem', color: 'rgba(255,255,255,0.8)' }}>
+              {highlightGlossaryTerms(currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.learning_hint, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}
+            </p>
           </div>
         </div>
       )}

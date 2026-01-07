@@ -9,17 +9,47 @@ export default function SessionPage() {
   const queryClient = useQueryClient()
   const [currentPhase, setCurrentPhase] = useState<string>('PRE')
   const [drillCompleted, setDrillCompleted] = useState(false)
+  const [answerDraft, setAnswerDraft] = useState<any>({})
+  const draftKey = id ? `academy.session.${id}.phase.${currentPhase}` : null
 
   const { data: session, isLoading, error } = useQuery({
     queryKey: ['session', id],
     queryFn: () => api.getSession(id!)
   })
 
+  // Draft laden beim Phasenwechsel
+  useEffect(() => {
+    if (!draftKey) return
+    const saved = localStorage.getItem(draftKey)
+    if (!saved) {
+      setAnswerDraft({})
+      return
+    }
+    try {
+      setAnswerDraft(JSON.parse(saved))
+    } catch (e) {
+      console.warn('Draft konnte nicht geladen werden', e)
+      setAnswerDraft({})
+    }
+  }, [draftKey])
+
+  // Draft bei Eingaben speichern
+  const handleDraftChange = (next: any) => {
+    setAnswerDraft(next)
+    if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next))
+  }
+
+  const clearDraft = () => {
+    setAnswerDraft({})
+    if (draftKey) localStorage.removeItem(draftKey)
+  }
+
   const checkinMutation = useMutation({
     mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string }) => api.saveCheckin(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['session', id] })
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
+      clearDraft()
       setDrillCompleted(true)
       // Auto-advance to next phase
       if (currentPhase === 'PRE') setCurrentPhase('P1')
@@ -141,7 +171,11 @@ export default function SessionPage() {
                     { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
                   ]
                 }
-              }} onComplete={handleDrillComplete} />
+              }} 
+              onComplete={handleDrillComplete}
+              initialAnswers={answerDraft}
+              onChangeAnswers={handleDraftChange}
+              />
             </div>
           )}
 
@@ -149,7 +183,12 @@ export default function SessionPage() {
             <div>
               <p>Analysiere das letzte Drittel und gib Feedback.</p>
               {session.drills && session.drills.length > 0 ? (
-                <DrillRenderer drill={session.drills[0]} onComplete={handleDrillComplete} />
+                <DrillRenderer 
+                  drill={session.drills[0]} 
+                  onComplete={handleDrillComplete}
+                  initialAnswers={answerDraft}
+                  onChangeAnswers={handleDraftChange}
+                />
               ) : (
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}

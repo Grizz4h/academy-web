@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import type { Session } from '../api'
+import { useUser } from '../context/UserContext'
 
 export default function Progress() {
+  const { user } = useUser()
   const { data: sessions, isLoading, error } = useQuery({
-    queryKey: ['sessions'],
-    queryFn: () => api.getSessions()
+    queryKey: ['sessions', user],
+    queryFn: () => api.getSessions(user || undefined),
+    enabled: Boolean(user)
   })
 
   const { data: curriculum } = useQuery({
@@ -13,6 +16,7 @@ export default function Progress() {
     queryFn: () => api.getCurriculum()
   })
 
+  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann können wir deinen Fortschritt anzeigen.</div>
   if (isLoading) return <div className="card">Lade Fortschritt...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
 

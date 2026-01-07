@@ -26,13 +26,88 @@
               "title": "Period Check-in: Center & Struktur",
               "drill_type": "period_checkin",
               "description": "Schneller Überblick pro Drittel. Ideal für Live-Spiel. Fokus: Center-Position, Dreiecke, Breakout.",
+              "didactics": {
+                "goal": "Du trainierst Überblick: Wo befindet sich der Center ohne Puck? Ist das Team strukturiert anspielbar oder nicht? Es geht nicht um Details oder einzelne Fehler.",
+                "watch_for": [
+                  "Center-Position (Low / Middle / High): Beobachte NUR Situationen, in denen der Center KEINEN Puck hat.",
+                  "Dreiecke / Anspielstationen: Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen und jeder mindestens eine Passoption hat.",
+                  "Breakout-Eindruck: Beurteile nicht das Ergebnis, sondern den Ablauf."
+                ],
+                "how_to": [
+                  "Grobe Einschätzung",
+                  "Kein Nachdenken über Einzelszenen",
+                  "Vergleichbarkeit ist wichtiger als Genauigkeit"
+                ],
+                "learning_hint": "Wenn du denkst: 'Das ist unscharf' - genau darum geht es hier. A1.1 ist absichtlich grob.",
+                "observation_rules": {
+                  "center_position": {
+                    "title": "Center-Position beobachten",
+                    "description": "Stell dir das Spielfeld in drei horizontale Zonen vor. Wo ist der Center MEISTENS, wenn der Puck hinten ist?",
+                    "examples": [
+                      "Low: Center ist tief im eigenen Drittel, hilft beim Spielaufbau, kommt dem Verteidiger entgegen",
+                      "Middle: Center steht zwischen Defense und Wingern, ist Bindeglied",
+                      "High: Center steht hoch, wartet, beteiligt sich kaum am Aufbau"
+                    ],
+                    "question": "Wo ist der Center MEISTENS, wenn er keinen Puck hat?"
+                  },
+                  "triangle_rating": {
+                    "title": "Dreiecke erkennen",
+                    "description": "Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen, jeder eine Passoption hat und Abstände spielbar sind.",
+                    "examples": [
+                      "Gute Anzeichen: Spieler stehen leicht versetzt, Puckführender kann nach links ODER rechts passen, Center bewegt sich",
+                      "Schlechte Anzeichen: Alle auf einer Linie, nur 'Bande raus' möglich, Spieler verstecken sich hinter Gegenspielern"
+                    ],
+                    "question": "Bewertung: 1=fast nie Struktur, 3=situativ, 5=fast immer Optionen"
+                  },
+                  "breakout_quality": {
+                    "title": "Breakout-Eindruck",
+                    "description": "Beurteile nicht das Ergebnis, sondern den Ablauf.",
+                    "examples": [
+                      "Clean: Pässe kommen an, wenig Zeitdruck, Struktur bleibt",
+                      "Mixed: einige saubere Exits, einige hektische",
+                      "Chaotic: Scheibe wird blind rausgehauen, Struktur bricht sofort"
+                    ],
+                    "question": "Wie sauber war der Ablauf?"
+                  }
+                },
+                "decision_help": [
+                  "Nicht jede Szene zählen – der Gesamteindruck zählt",
+                  "Erste Intuition zählt",
+                  "Wenn unsicher → grobe Mitte wählen"
+                ],
+                "ignore_list": [
+                  "Torchancen",
+                  "Einzelne Fehlpässe",
+                  "Emotionen ('wir waren besser!')"
+                ],
+                "glossary": {
+                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+                  "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
+                  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
+                  "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
+                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
+                  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
+                  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
+                  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
+                  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+                  "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
+                  "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
+                }
+              },
               "config": {
                 "questions": [
                   {
                     "key": "center_position",
                     "type": "radio",
                     "label": "Center-Position (meistens)",
-                    "options": ["low", "middle", "high"],
+                    "options": [
+                      "low",
+                      "middle",
+                      "high"
+                    ],
                     "help": "Wo steht der Center ohne Puck meist?"
                   },
                   {
@@ -47,7 +122,11 @@
                     "key": "breakout_quality",
                     "type": "radio",
                     "label": "Breakout-Eindruck",
-                    "options": ["clean", "mixed", "chaotic"],
+                    "options": [
+                      "clean",
+                      "mixed",
+                      "chaotic"
+                    ],
                     "help": "Wie sauber war der Exit?"
                   },
                   {
@@ -81,6 +160,66 @@
               "title": "Shift Chunk: Center-Position",
               "drill_type": "shift_tracker",
               "description": "Beobachte 10 Shifts. Nur schauen, nicht interpretieren. Trainiert konsistente Wahrnehmung.",
+              "didactics": {
+                "goal": "Du trainierst Konsequenz statt Gefühl. Nicht: 'Ich glaube, der Center war oft tief.' Sondern: 'Ich habe es 10× beobachtet.'",
+                "watch_for": [
+                  "Für 10 aufeinanderfolgende Shifts: Wo steht der Center, wenn sein Team in Ballbesitz kommt?",
+                  "Anspielbarkeit: Ein Center ist anspielbar, wenn er nicht gedeckt ist, nicht mit dem Rücken zum Spiel steht, und ein Pass realistisch möglich wäre."
+                ],
+                "how_to": [
+                  "Erste Intuition zählt",
+                  "Wenn du unsicher bist → Nein",
+                  "Nicht zurückspulen"
+                ],
+                "learning_hint": "Dieser Drill zeigt dir, dass dein Bauchgefühl oft falsch ist – Muster schlagen Erinnerung.",
+                "observation_rules": {
+                  "center_position": {
+                    "title": "Center-Position im Shift",
+                    "description": "Wo steht er, wenn sein Team in Ballbesitz kommt?",
+                    "examples": [
+                      "Low: tief im eigenen Drittel",
+                      "Middle: zwischen Defense und Wingern",
+                      "High: wartet hoch, kaum am Aufbau beteiligt"
+                    ],
+                    "question": "Wo steht der Center?"
+                  },
+                  "is_playable": {
+                    "title": "Anspielbarkeit",
+                    "description": "Es reicht: 'Ja, wäre möglich gewesen' oder 'Nein'",
+                    "examples": [
+                      "Ja: Nicht gedeckt, realistischer Pass möglich",
+                      "Nein: Gedeckt, Rücken zum Spiel, oder zu weit weg"
+                    ],
+                    "question": "Klar anspielbar?"
+                  }
+                },
+                "decision_help": [
+                  "Pro Shift zwei Klicks",
+                  "Keine Notizen",
+                  "Unsicher? Erste Intuition nehmen"
+                ],
+                "ignore_list": [
+                  "ob der Pass gespielt wurde",
+                  "ob der Center 'gut' ist",
+                  "Spielstand"
+                ],
+                "glossary": {
+                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+                  "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
+                  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
+                  "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
+                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
+                  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
+                  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
+                  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
+                  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+                  "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
+                  "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
+                }
+              },
               "config": {
                 "shift_count": 10,
                 "questions": [
@@ -88,13 +227,20 @@
                     "key": "center_position",
                     "type": "radio",
                     "label": "Center-Position",
-                    "options": ["low", "middle", "high"]
+                    "options": [
+                      "low",
+                      "middle",
+                      "high"
+                    ]
                   },
                   {
                     "key": "is_playable",
                     "type": "radio",
                     "label": "Klar anspielbar?",
-                    "options": ["ja", "nein"]
+                    "options": [
+                      "ja",
+                      "nein"
+                    ]
                   }
                 ],
                 "feedback_template": "Center oft in {position} → {playable}% anspielbar. Muster: {pattern}"
@@ -105,27 +251,110 @@
               "title": "Triangle Spotting",
               "drill_type": "period_checkin",
               "description": "Dreiecke bewusst sehen, nicht nur 'Gefühl von Ordnung'. Wo entstehen sie? Wann reißen sie?",
+              "didactics": {
+                "goal": "Du lernst, Struktur unabhängig vom Puck zu erkennen.",
+                "watch_for": [
+                  "Wann bilden sich Dreiecke? Typische Situationen: geordneter Spielaufbau, nach gewonnenem Zweikampf, nach Faceoff-Gewinn",
+                  "Wann reißen Dreiecke? Achte auf Gegnerdruck, Puckverlust, Line Changes, zu große Abstände"
+                ],
+                "how_to": [
+                  "Einschätzen, nicht zählen",
+                  "Zonen grob zuordnen (DZ / NZ / OZ)",
+                  "Ursache benennen, nicht Schuldigen"
+                ],
+                "learning_hint": "Du lernst hier nicht 'richtig oder falsch', sondern Ursachen erkennen.",
+                "observation_rules": {
+                  "triangle_frequency": {
+                    "title": "Wie oft entstehen Dreiecke?",
+                    "description": "Dreiecke entstehen NICHT zufällig, sondern durch Bewegung ohne Puck, bewusstes Absetzen, Kommunikation.",
+                    "examples": [
+                      "Selten: Fast nie klare Passoptionen",
+                      "Regelmäßig: Situativ, mal da mal nicht",
+                      "Konstant: Fast immer Struktur erkennbar"
+                    ],
+                    "question": "Wie oft siehst du klare Dreiecke?"
+                  },
+                  "triangle_zone": {
+                    "title": "Wo entstehen Dreiecke?",
+                    "description": "In welcher Zone ist die Struktur am stabilsten?",
+                    "examples": [
+                      "DZ (Defensive Zone): Eigene Zone",
+                      "NZ (Neutral Zone): Mittelzone",
+                      "OZ (Offensive Zone): Gegnerische Zone"
+                    ],
+                    "question": "Wo entstehen Dreiecke häufiger?"
+                  },
+                  "triangle_breaks_on": {
+                    "title": "Was triggert Strukturbruch?",
+                    "description": "Was war der Auslöser, dass plötzlich keine Option mehr da war?",
+                    "examples": [
+                      "Druck: Gegner attackiert, keine Zeit",
+                      "Puckverlust: Turnover, neue Ordnung nötig",
+                      "Line Change: Wechsel, Timing-Problem"
+                    ],
+                    "question": "Dreiecke reißen meist bei:"
+                  }
+                },
+                "decision_help": [
+                  "Nicht perfekt sein wollen",
+                  "Grobe Einschätzung reicht",
+                  "Ursache erkennen ist wichtiger als Schuldfrage"
+                ],
+                "ignore_list": [
+                  "einzelne gute Pässe",
+                  "einzelne schlechte Entscheidungen",
+                  "wer 'schuld' ist"
+                ],
+                "glossary": {
+                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+                  "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
+                  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
+                  "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
+                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
+                  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
+                  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
+                  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
+                  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+                  "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
+                  "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
+                }
+              },
               "config": {
                 "questions": [
                   {
                     "key": "triangle_frequency",
                     "type": "radio",
                     "label": "Wie oft hast du klare Dreiecke gesehen?",
-                    "options": ["selten", "regelmäßig", "konstant"],
+                    "options": [
+                      "selten",
+                      "regelmäßig",
+                      "konstant"
+                    ],
                     "help": "Pro Drittel / Spielabschnitt"
                   },
                   {
                     "key": "triangle_zone",
                     "type": "radio",
                     "label": "Wo entstehen Dreiecke häufiger?",
-                    "options": ["DZ", "NZ", "OZ"],
+                    "options": [
+                      "DZ",
+                      "NZ",
+                      "OZ"
+                    ],
                     "help": "Defensive, Neutral, Offensive Zone"
                   },
                   {
                     "key": "triangle_breaks_on",
                     "type": "radio",
                     "label": "Dreiecke reißen meist bei:",
-                    "options": ["Druck", "Puckverlust", "Line Change"],
+                    "options": [
+                      "Druck",
+                      "Puckverlust",
+                      "Line Change"
+                    ],
                     "help": "Was triggert den Strukturbruch?"
                   }
                 ],
@@ -148,36 +377,94 @@
               "title": "Micro-Quiz: Rollenverständnis",
               "drill_type": "micro_quiz",
               "description": "Begriffe & Konzepte aktivieren. 60 Sekunden. Optional, aber empfohlen vor Live-Spiel.",
+              "didactics": {
+                "goal": "Begriffe aktivieren → besser sehen. Kein Test. Ein Warm-up fürs Gehirn.",
+                "watch_for": [
+                  "Achte auf Begriffe, Rollen, Zusammenhänge",
+                  "Wenn du eine Frage nicht sicher weißt → perfekt"
+                ],
+                "how_to": [
+                  "Schnell",
+                  "Intuitiv",
+                  "Nicht nachdenken"
+                ],
+                "learning_hint": "Sprache schafft Wahrnehmung. Erst wenn du Begriffe hast, siehst du Muster.",
+                "decision_help": [
+                  "Nicht googlen",
+                  "Falsch ist gut",
+                  "Ziel ist Denken, nicht Wissen"
+                ],
+                "ignore_list": [
+                  "Perfekte Antworten",
+                  "Richtig/Falsch-Denken"
+                ],
+                "glossary": {
+                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+                  "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
+                  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
+                  "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
+                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
+                  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
+                  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
+                  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+                  "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
+                  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+                  "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
+                  "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
+                }
+              },
               "config": {
                 "time_limit": 60,
                 "questions": [
                   {
                     "question": "Was ist die Hauptaufgabe des Centers ohne Puck?",
-                    "options": ["Nur verteidigen", "Support & Outlet bereitstellen", "Immer high stehen"],
+                    "options": [
+                      "Nur verteidigen",
+                      "Support & Outlet bereitstellen",
+                      "Immer high stehen"
+                    ],
                     "correct": 1,
                     "explanation": "Der Center ist die Anspielstation und muss variable Höhe haben (low/middle/high)."
                   },
                   {
                     "question": "Was ist ein Dreieck?",
-                    "options": ["Nur beim Powerplay", "Positions-Formation: Center, Winger, Defenseman", "Ein Offensiv-Formation"],
+                    "options": [
+                      "Nur beim Powerplay",
+                      "Positions-Formation: Center, Winger, Defenseman",
+                      "Ein Offensiv-Formation"
+                    ],
                     "correct": 1,
                     "explanation": "Ein Dreieck ist die 3er-Positions-Formation für Puck-Bewegung und Support."
                   },
                   {
                     "question": "Warum ist 'middle support' beim Breakout wichtig?",
-                    "options": ["Bessere Sicht", "Outlet & Sicherheitsventil gleichzeitig", "Längere Spielzüge"],
+                    "options": [
+                      "Bessere Sicht",
+                      "Outlet & Sicherheitsventil gleichzeitig",
+                      "Längere Spielzüge"
+                    ],
                     "correct": 1,
                     "explanation": "Middle position gibt dem Breakout Optionen und verhindert erzwungene Pässe."
                   },
                   {
                     "question": "Was passiert, wenn ein Dreieck reißt?",
-                    "options": ["Nichts besonderes", "Struktur braucht Neuaufbau, höhere Turnover-Quote", "Sofort Tor"],
+                    "options": [
+                      "Nichts besonderes",
+                      "Struktur braucht Neuaufbau, höhere Turnover-Quote",
+                      "Sofort Tor"
+                    ],
                     "correct": 1,
                     "explanation": "Strukturbruch = neue Positionen nötig → höhere Fehlerquote → Chancen für Gegner."
                   },
                   {
                     "question": "Center 'Low' bedeutet:",
-                    "options": ["Dicht an gegnerischer blauer Linie", "Dicht an eigener roter Linie", "Mitten im Feld"],
+                    "options": [
+                      "Dicht an gegnerischer blauer Linie",
+                      "Dicht an eigener roter Linie",
+                      "Mitten im Feld"
+                    ],
                     "correct": 1,
                     "explanation": "Low = defensive Tiefe. High = offensiv näher am Gegner. Middle = Balance."
                   }
@@ -186,7 +473,11 @@
             }
           ],
           "evaluation": {
-            "metrics": ["role_map_center", "triangle_stability_trend", "breakout_quality_distribution"],
+            "metrics": [
+              "role_map_center",
+              "triangle_stability_trend",
+              "breakout_quality_distribution"
+            ],
             "reportType": "role_focus_report"
           }
         },
@@ -216,7 +507,11 @@
                     "key": "primary_zone",
                     "type": "radio",
                     "label": "Hauptzone des Drittels",
-                    "options": ["DZ", "MZ", "OZ"],
+                    "options": [
+                      "DZ",
+                      "MZ",
+                      "OZ"
+                    ],
                     "help": "Wo verbringt das Team die meiste Zeit?"
                   },
                   {
@@ -231,7 +526,12 @@
                     "key": "high_danger_chances",
                     "type": "radio",
                     "label": "High-Danger Chancen gesehen",
-                    "options": ["0", "1", "2", "3+"],
+                    "options": [
+                      "0",
+                      "1",
+                      "2",
+                      "3+"
+                    ],
                     "help": "Wie viele gefährliche Chancen entstanden?"
                   },
                   {
@@ -265,13 +565,21 @@
                 "questions": [
                   {
                     "question": "Der Slot ist:",
-                    "options": ["Außen vor dem Goal", "Der Bereich direkt vor dem Goal bis Faceoff-Circle", "Die Seitenwand"],
+                    "options": [
+                      "Außen vor dem Goal",
+                      "Der Bereich direkt vor dem Goal bis Faceoff-Circle",
+                      "Die Seitenwand"
+                    ],
                     "correct": 1,
                     "explanation": "Der Slot ist die hochgefährliche Zone direkt vor dem Goal."
                   },
                   {
                     "question": "Was bedeutet OZ?",
-                    "options": ["Offensive Zone", "Outside Zone", "Original Zone"],
+                    "options": [
+                      "Offensive Zone",
+                      "Outside Zone",
+                      "Original Zone"
+                    ],
                     "correct": 0,
                     "explanation": "OZ = Offensive Zone (gegnerische Zone)."
                   }
@@ -280,7 +588,11 @@
             }
           ],
           "evaluation": {
-            "metrics": ["zone_distribution", "slot_control_trend", "danger_chances_count"],
+            "metrics": [
+              "zone_distribution",
+              "slot_control_trend",
+              "danger_chances_count"
+            ],
             "reportType": "zone_focus_report"
           }
         },
@@ -307,7 +619,10 @@
             }
           ],
           "evaluation": {
-            "metrics": ["inside_position_won_rate", "angling_success_rate"],
+            "metrics": [
+              "inside_position_won_rate",
+              "angling_success_rate"
+            ],
             "reportType": "defense_fundamentals_report"
           }
         },
@@ -334,7 +649,10 @@
             }
           ],
           "evaluation": {
-            "metrics": ["faceoff_win_rate", "outcome_after_5s"],
+            "metrics": [
+              "faceoff_win_rate",
+              "outcome_after_5s"
+            ],
             "reportType": "transition_report"
           }
         },
@@ -361,7 +679,10 @@
             }
           ],
           "evaluation": {
-            "metrics": ["shift_length_violations", "communication_observations"],
+            "metrics": [
+              "shift_length_violations",
+              "communication_observations"
+            ],
             "reportType": "team_discipline_report"
           }
         }

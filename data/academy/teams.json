@@ -1,0 +1,20 @@
+{
+  "league": "DEL",
+  "season": "2025/2026",
+  "teams": [
+    { "id": "eisbaren_berlin", "name": "Eisbären Berlin", "city": "Berlin", "short": "BER" },
+    { "id": "adler_mannheim", "name": "Adler Mannheim", "city": "Mannheim", "short": "MAN" },
+    { "id": "red_bull_munchen", "name": "EHC Red Bull München", "city": "München", "short": "MUC" },
+    { "id": "erc_ingolstadt", "name": "ERC Ingolstadt", "city": "Ingolstadt", "short": "ING" },
+    { "id": "kolner_haie", "name": "Kölner Haie", "city": "Köln", "short": "KOE" },
+    { "id": "eislowen_dresden", "name": "Dresdner Eislöwen", "city": "Dresden", "short": "DRE" },
+    { "id": "grizzlys_wolfsburg", "name": "Grizzlys Wolfsburg", "city": "Wolfsburg", "short": "WOB" },
+    { "id": "schwenninger_wild_wings", "name": "Schwenninger Wild Wings", "city": "Schwenningen", "short": "SWW" },
+    { "id": "straubing_tigers", "name": "Straubing Tigers", "city": "Straubing", "short": "STR" },
+    { "id": "augsburger_panther", "name": "Augsburger Panther", "city": "Augsburg", "short": "AUG" },
+    { "id": "iserlohn_roosters", "name": "Iserlohn Roosters", "city": "Iserlohn", "short": "ISR" },
+    { "id": "nurnberg_ice_tigers", "name": "Nürnberg Ice Tigers", "city": "Nürnberg", "short": "NUE" },
+    { "id": "fischtown_pinguins", "name": "Fischtown Pinguins Bremerhaven", "city": "Bremerhaven", "short": "BRE" },
+    { "id": "lowen_frankfurt", "name": "Löwen Frankfurt", "city": "Frankfurt", "short": "FRA" }
+  ]
+}

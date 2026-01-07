@@ -65,6 +65,14 @@ async def get_curriculum():
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
+@app.get("/api/teams")
+async def get_teams():
+    """DEL Teams laden"""
+    try:
+        return load_json(os.path.join(DATA_DIR, "teams.json"))
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Teams not found")
+
 @app.get("/api/sessions")
 async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
     """Sessions filtern"""
@@ -228,6 +236,19 @@ async def abort_session(session_id: str, abort: AbortData):
 
     save_json(session_path, session)
     return session
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(session_id: str):
+    """Session löschen"""
+    sessions_dir = os.path.join(DATA_DIR, "sessions")
+    session_path = os.path.join(sessions_dir, f"{session_id}.json")
+    if not os.path.exists(session_path):
+        raise HTTPException(status_code=404, detail="Session not found")
+    try:
+        os.remove(session_path)
+        return {"status": "deleted", "id": session_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")
 
 if __name__ == "__main__":
     import uvicorn

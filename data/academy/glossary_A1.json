@@ -1,0 +1,16 @@
+{
+  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+  "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
+  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
+  "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
+  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
+  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
+  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
+  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+  "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
+  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+  "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
+  "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
+}

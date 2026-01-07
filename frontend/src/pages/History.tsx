@@ -1,17 +1,32 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { api } from '../api'
 import type { Session } from '../api'
+import { useUser } from '../context/UserContext'
 
 export default function History() {
+  const { user } = useUser()
+  const queryClient = useQueryClient()
   const { data: sessions, isLoading, error } = useQuery({
-    queryKey: ['sessions'],
-    queryFn: () => api.getSessions()
+    queryKey: ['sessions', user],
+    queryFn: () => api.getSessions(user || undefined),
+    enabled: Boolean(user)
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.deleteSession(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessions', user] })
+    },
+    onError: (err: any) => {
+      alert(`Löschen fehlgeschlagen: ${err?.message || err}`)
+    }
   })
 
   const [filterModule, setFilterModule] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
 
+  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deine Session-Historie.</div>
   if (isLoading) return <div className="card">Lade Historie...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
 
@@ -125,6 +140,18 @@ export default function History() {
                   >
                     Details
                   </a>
+                    <button
+                      onClick={() => {
+                        const ok = confirm('Diese Session wirklich löschen? Dieser Schritt kann nicht rückgängig gemacht werden.')
+                        if (!ok) return
+                        deleteMutation.mutate(session.id)
+                      }}
+                      className="btn"
+                      style={{ marginTop: '0.5rem', marginLeft: '0.5rem', display: 'inline-block', fontSize: '0.8rem', backgroundColor: '#dc3545', borderColor: '#dc3545' }}
+                      disabled={deleteMutation.isPending}
+                    >
+                      {deleteMutation.isPending ? 'Lösche...' : 'Löschen'}
+                    </button>
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import SessionSetup from './pages/SessionSetup'
 import SessionPage from './pages/Session'
 import History from './pages/History'
 import Progress from './pages/Progress'
+import UserBadge from './components/UserBadge'
 
 function App() {
   console.log('App component rendering')
@@ -14,11 +15,14 @@ function App() {
       <nav className="navbar">
         <div className="container">
           <span className="navbar-brand">Academy</span>
-          <div>
-            <a className="nav-link" href="/">Dashboard</a>
-            <a className="nav-link" href="/curriculum">Curriculum</a>
-            <a className="nav-link" href="/history">History</a>
-            <a className="nav-link" href="/progress">Progress</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div>
+              <a className="nav-link" href="/">Dashboard</a>
+              <a className="nav-link" href="/curriculum">Curriculum</a>
+              <a className="nav-link" href="/history">History</a>
+              <a className="nav-link" href="/progress">Progress</a>
+            </div>
+            <UserBadge />
           </div>
         </div>
       </nav>

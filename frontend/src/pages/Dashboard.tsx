@@ -1,13 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import type { Session } from '../api'
+import { useUser } from '../context/UserContext'
 
 export default function Dashboard() {
+  const { user } = useUser()
   const { data: sessions, isLoading, error } = useQuery({
-    queryKey: ['sessions'],
-    queryFn: () => api.getSessions()
+    queryKey: ['sessions', user],
+    queryFn: () => api.getSessions(user || undefined),
+    enabled: Boolean(user)
   })
 
+  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, damit wir deine Sessions laden können.</div>
   if (isLoading) return <div className="card">Lade Sessions...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
 

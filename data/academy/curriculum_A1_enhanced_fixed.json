@@ -1,0 +1,204 @@
+{
+  "A1_D1_didactics": {
+    "goal": "Du trainierst Überblick: Wo befindet sich der Center ohne Puck? Ist das Team strukturiert anspielbar oder nicht? Es geht nicht um Details oder einzelne Fehler.\",
+    \"watch_for": [
+      "Center-Position (Low / Middle / High): Beobachte NUR Situationen, in denen der Center KEINEN Puck hat.",
+      "Dreiecke / Anspielstationen: Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen und jeder mindestens eine Passoption hat.",
+      "Breakout-Eindruck: Beurteile nicht das Ergebnis, sondern den Ablauf."
+    ],
+    "how_to": [
+      "Grobe Einschätzung",
+      "Kein Nachdenken über Einzelszenen",
+      "Vergleichbarkeit ist wichtiger als Genauigkeit"
+    ],
+    "learning_hint": "Wenn du denkst: \\"Das ist unscharf\\" – genau darum geht es hier. A1.1 ist absichtlich grob.",
+    "observation_rules": {
+      "center_position": {
+        "title": "Center-Position beobachten\",
+        \"description": "Stell dir das Spielfeld in drei horizontale Zonen vor. Wo ist der Center MEISTENS, wenn der Puck hinten ist?",
+        "examples": [
+          "Low: Center ist tief im eigenen Drittel, hilft beim Spielaufbau, kommt dem Verteidiger entgegen",
+          "Middle: Center steht zwischen Defense und Wingern, ist Bindeglied",
+          "High: Center steht hoch, wartet, beteiligt sich kaum am Aufbau"
+        ],
+        "question": "Wo ist der Center MEISTENS, wenn er keinen Puck hat?\"
+      },
+      \"triangle_rating": {
+        "title": "Dreiecke erkennen\",
+        \"description": "Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen, jeder eine Passoption hat und Abstände spielbar sind.",
+        "examples": [
+          "Gute Anzeichen: Spieler stehen leicht versetzt, Puckführender kann nach links ODER rechts passen, Center bewegt sich",
+          "Schlechte Anzeichen: Alle auf einer Linie, nur 'Bande raus' möglich, Spieler verstecken sich hinter Gegenspielern"
+        ],
+        "question": "Bewertung: 1=fast nie Struktur, 3=situativ, 5=fast immer Optionen\"
+      },
+      \"breakout_quality": {
+        "title": "Breakout-Eindruck\",
+        \"description": "Beurteile nicht das Ergebnis, sondern den Ablauf.",
+        "examples": [
+          "Clean: Pässe kommen an, wenig Zeitdruck, Struktur bleibt",
+          "Mixed: einige saubere Exits, einige hektische",
+          "Chaotic: Scheibe wird blind rausgehauen, Struktur bricht sofort"
+        ],
+        "question": "Wie sauber war der Ablauf?\"
+      }
+    },
+    \"decision_help": [
+      "Nicht jede Szene zählen – der Gesamteindruck zählt",
+      "Erste Intuition zählt",
+      "Wenn unsicher → grobe Mitte wählen"
+    ],
+    "ignore_list": [
+      "Torchancen",
+      "Einzelne Fehlpässe",
+      "Emotionen ('wir waren besser!')"
+    ],
+    "glossary": {
+      "Center": "Mittelstürmer – zentrale Position, verantwortlich für Spielaufbau und Absicherung\",
+      \"Dreieck": "Positions-Formation aus drei Spielern in versetzten Linien, die Passoptionen schaffen",
+      "Breakout": "Spielaufbau aus der eigenen Zone heraus\",
+      \"Low/Middle/High": "Vertikale Position des Centers: tief (Low), mittig (Middle) oder hoch (High)",
+      "Anspielstation": "Spieler, der als Passempfänger verfügbar ist\",
+      \"Struktur": "Geordnete Positionierung, die mehrere Spieloptionen ermöglicht"
+    }
+  },
+  "A1_D2_didactics": {
+    "goal": "Du trainierst Konsequenz statt Gefühl. Nicht: 'Ich glaube, der Center war oft tief.' Sondern: 'Ich habe es 10× beobachtet.'\",
+    \"watch_for": [
+      "Für 10 aufeinanderfolgende Shifts: Wo steht der Center, wenn sein Team in Ballbesitz kommt?",
+      "Anspielbarkeit: Ein Center ist anspielbar, wenn er nicht gedeckt ist, nicht mit dem Rücken zum Spiel steht, und ein Pass realistisch möglich wäre."
+    ],
+    "how_to": [
+      "Erste Intuition zählt",
+      "Wenn du unsicher bist → Nein",
+      "Nicht zurückspulen"
+    ],
+    "learning_hint": "Dieser Drill zeigt dir, dass dein Bauchgefühl oft falsch ist – Muster schlagen Erinnerung.\",
+    \"observation_rules": {
+      "center_position": {
+        "title": "Center-Position im Shift\",
+        \"description": "Wo steht er, wenn sein Team in Ballbesitz kommt?",
+        "examples": [
+          "Low: tief im eigenen Drittel",
+          "Middle: zwischen Defense und Wingern",
+          "High: wartet hoch, kaum am Aufbau beteiligt"
+        ],
+        "question": "Wo steht der Center?\"
+      },
+      \"is_playable": {
+        "title": "Anspielbarkeit\",
+        \"description": "Es reicht: 'Ja, wäre möglich gewesen' oder 'Nein'",
+        "examples": [
+          "Ja: Nicht gedeckt, realistischer Pass möglich",
+          "Nein: Gedeckt, Rücken zum Spiel, oder zu weit weg"
+        ],
+        "question": "Klar anspielbar?\"
+      }
+    },
+    \"decision_help": [
+      "Pro Shift zwei Klicks",
+      "Keine Notizen",
+      "Unsicher? Erste Intuition nehmen"
+    ],
+    "ignore_list": [
+      "ob der Pass gespielt wurde",
+      "ob der Center 'gut' ist",
+      "Spielstand"
+    ],
+    "glossary": {
+      "Center": "Mittelstürmer – zentrale Position\",
+      \"Anspielbar": "Pass möglich, nicht gedeckt, gute Position",
+      "Shift": "Einzelner Einsatz eines Spielers (ca. 30-60 Sekunden)\"
+    }
+  },
+  \"A1_D3_didactics": {
+    "goal": "Du lernst, Struktur unabhängig vom Puck zu erkennen.\",
+    \"watch_for": [
+      "Wann bilden sich Dreiecke? Typische Situationen: geordneter Spielaufbau, nach gewonnenem Zweikampf, nach Faceoff-Gewinn",
+      "Wann reißen Dreiecke? Achte auf Gegnerdruck, Puckverlust, Line Changes, zu große Abstände"
+    ],
+    "how_to": [
+      "Einschätzen, nicht zählen",
+      "Zonen grob zuordnen (DZ / NZ / OZ)",
+      "Ursache benennen, nicht Schuldigen"
+    ],
+    "learning_hint": "Du lernst hier nicht 'richtig oder falsch', sondern Ursachen erkennen.\",
+    \"observation_rules": {
+      "triangle_frequency": {
+        "title": "Wie oft entstehen Dreiecke?\",
+        \"description": "Dreiecke entstehen NICHT zufällig, sondern durch Bewegung ohne Puck, bewusstes Absetzen, Kommunikation.",
+        "examples": [
+          "Selten: Fast nie klare Passoptionen",
+          "Regelmäßig: Situativ, mal da mal nicht",
+          "Konstant: Fast immer Struktur erkennbar"
+        ],
+        "question": "Wie oft siehst du klare Dreiecke?\"
+      },
+      \"triangle_zone": {
+        "title": "Wo entstehen Dreiecke?\",
+        \"description": "In welcher Zone ist die Struktur am stabilsten?",
+        "examples": [
+          "DZ (Defensive Zone): Eigene Zone",
+          "NZ (Neutral Zone): Mittelzone",
+          "OZ (Offensive Zone): Gegnerische Zone"
+        ],
+        "question": "Wo entstehen Dreiecke häufiger?\"
+      },
+      \"triangle_breaks_on": {
+        "title": "Was triggert Strukturbruch?\",
+        \"description": "Was war der Auslöser, dass plötzlich keine Option mehr da war?",
+        "examples": [
+          "Druck: Gegner attackiert, keine Zeit",
+          "Puckverlust: Turnover, neue Ordnung nötig",
+          "Line Change: Wechsel, Timing-Problem"
+        ],
+        "question": "Dreiecke reißen meist bei:\"
+      }
+    },
+    \"decision_help": [
+      "Nicht perfekt sein wollen",
+      "Grobe Einschätzung reicht",
+      "Ursache erkennen ist wichtiger als Schuldfrage"
+    ],
+    "ignore_list": [
+      "einzelne gute Pässe",
+      "einzelne schlechte Entscheidungen",
+      "wer 'schuld' ist"
+    ],
+    "glossary": {
+      "Dreieck": "Drei Spieler in versetzten Positionen mit Passoptionen\",
+      \"DZ/NZ/OZ": "Defensive/Neutral/Offensive Zone – Drittel des Spielfelds",
+      "Line Change": "Spielerwechsel während des Spiels\",
+      \"Struktur": "Geordnete Positionierung mit Spieloptionen"
+    }
+  },
+  "A1_D4_didactics": {
+    "goal": "Begriffe aktivieren → besser sehen. Kein Test. Ein Warm-up fürs Gehirn.\",
+    \"watch_for": [
+      "Achte auf Begriffe, Rollen, Zusammenhänge",
+      "Wenn du eine Frage nicht sicher weißt → perfekt"
+    ],
+    "how_to": [
+      "Schnell",
+      "Intuitiv",
+      "Nicht nachdenken"
+    ],
+    "learning_hint": "Sprache schafft Wahrnehmung. Erst wenn du Begriffe hast, siehst du Muster.\",
+    \"decision_help": [
+      "Nicht googlen",
+      "Falsch ist gut",
+      "Ziel ist Denken, nicht Wissen"
+    ],
+    "ignore_list": [
+      "Perfekte Antworten",
+      "Richtig/Falsch-Denken"
+    ],
+    "glossary": {
+      "Center": "Mittelstürmer\",
+      \"Winger": "Flügelstürmer",
+      "Defense": "Verteidiger\",
+      \"Breakout": "Spielaufbau aus eigener Zone",
+      "Support": "Unterstützung ohne Puck"
+    }
+  }
+}
