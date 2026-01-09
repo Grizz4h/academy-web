@@ -17,26 +17,55 @@ export default function SessionPage() {
     queryFn: () => api.getSession(id!)
   })
 
-  // Draft laden beim Phasenwechsel
+  // Session Continuation: Phase und Drafts laden
   useEffect(() => {
-    if (!draftKey) return
-    const saved = localStorage.getItem(draftKey)
-    if (!saved) {
-      setAnswerDraft({})
-      return
+    if (session) {
+      // Setze aktuelle Phase aus Session-Daten
+      if (session.current_phase) {
+        setCurrentPhase(session.current_phase)
+      }
+      // Lade Drafts aus Session-Daten statt localStorage
+      if (session.drafts && session.drafts[currentPhase]) {
+        setAnswerDraft(session.drafts[currentPhase])
+      } else {
+        setAnswerDraft({})
+      }
     }
-    try {
-      setAnswerDraft(JSON.parse(saved))
-    } catch (e) {
-      console.warn('Draft konnte nicht geladen werden', e)
-      setAnswerDraft({})
-    }
-  }, [draftKey])
+  }, [session, currentPhase])
 
-  // Draft bei Eingaben speichern
+  // Draft laden beim Phasenwechsel (Fallback für alte Sessions)
+  useEffect(() => {
+    if (!session || !session.drafts) {
+      if (!draftKey) return
+      const saved = localStorage.getItem(draftKey)
+      if (!saved) {
+        setAnswerDraft({})
+        return
+      }
+      try {
+        setAnswerDraft(JSON.parse(saved))
+      } catch (e) {
+        console.warn('Draft konnte nicht geladen werden', e)
+        setAnswerDraft({})
+      }
+    }
+  }, [draftKey, session])
+
+  // Draft bei Eingaben speichern (persistent im Backend)
   const handleDraftChange = (next: any) => {
     setAnswerDraft(next)
-    if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next))
+    if (id) {
+      // Speichere Drafts persistent im Backend
+      const drafts = { ...session?.drafts, [currentPhase]: next }
+      api.saveDrafts(id, drafts).catch(err => {
+        console.warn('Failed to save drafts:', err)
+        // Fallback: localStorage
+        if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next))
+      })
+    } else {
+      // Fallback für alte Sessions
+      if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next))
+    }
   }
 
   const clearDraft = () => {
@@ -51,11 +80,10 @@ export default function SessionPage() {
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
       clearDraft()
       setDrillCompleted(true)
-      // Auto-advance to next phase
-      if (currentPhase === 'PRE') setCurrentPhase('P1')
-      else if (currentPhase === 'P1') setCurrentPhase('P2')
-      else if (currentPhase === 'P2') setCurrentPhase('P3')
-      else if (currentPhase === 'P3') setCurrentPhase('POST')
+    },
+    onMutate: () => {
+    },
+    onError: () => {
     }
   })
 
@@ -72,6 +100,13 @@ export default function SessionPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['session', id] })
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
+    }
+  })
+
+  const updatePhaseMutation = useMutation({
+    mutationFn: (phaseData: {phase?: string, state?: string}) => api.updateSessionPhase(id!, phaseData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session', id] })
     }
   })
 
@@ -113,6 +148,58 @@ export default function SessionPage() {
     })
   }
 
+  const nextPhaseMap: Record<string, string | null> = {
+    PRE: 'P1',
+    P1: 'P2',
+    P2: 'P3',
+    P3: 'POST',
+    POST: null
+  }
+
+
+
+  const handleAdvanceToNext = () => {
+    // Always save current check-in before advancing
+    checkinMutation.mutate({
+      phase: currentPhase,
+      answers: answerDraft,
+      feedback: "Weiter zur nächsten Phase",
+      next_task: "Nächste Phase vorbereiten"
+    })
+    const next = nextPhaseMap[currentPhase]
+    if (next) {
+      setCurrentPhase(next)
+      setDrillCompleted(false)
+      // Update phase in backend for continuation
+      updatePhaseMutation.mutate({ phase: next })
+      // Load existing answers for next phase
+      const existingCheckin = session?.checkins?.find(c => c.phase === next)
+      setAnswerDraft(existingCheckin?.answers || {})
+    }
+  }
+
+  const handleGoBack = () => {
+    // Auto-save current answers if any
+    if (answerDraft && Object.keys(answerDraft).length > 0) {
+      checkinMutation.mutate({
+        phase: currentPhase,
+        answers: answerDraft,
+        feedback: "Automatisch gespeichert",
+        next_task: "Zurück zur vorherigen Phase"
+      })
+    }
+    const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)
+    if (prevPhase) {
+      setCurrentPhase(prevPhase)
+      setDrillCompleted(false)
+      // Update phase in backend for continuation
+      updatePhaseMutation.mutate({ phase: prevPhase })
+      // Load existing answers for previous phase
+      const existingCheckin = session?.checkins?.find(c => c.phase === prevPhase)
+      setAnswerDraft(existingCheckin?.answers || {})
+    }
+  }
+
   const handleSessionAbort = () => {
     const reason = prompt("Warum möchtest du die Session abbrechen?\n- time: Zeit knapp\n- wrong_game: Falsches Spiel\n- no_motivation: Keine Motivation\n- bad_session: Session war schlecht\n- other: Anderer Grund")
     if (reason) {
@@ -124,16 +211,24 @@ export default function SessionPage() {
     }
   }
 
+
+
+  const isCompleted = session.state === 'COMPLETED'
+
   const getPhaseTitle = (phase: string) => {
-    if (phase === 'PRE') return 'Pre-Match Check-in'
-    if (phase === 'P1') return 'Nach 1. Drittel'
-    if (phase === 'P2') return 'Nach 2. Drittel'
-    if (phase === 'P3') return 'Nach 3. Drittel'
-    if (phase === 'POST') return 'Post-Match Review'
+    if (phase === 'PRE') return 'Vor dem Spiel'
+    if (phase === 'P1') return '1. Drittel'
+    if (phase === 'P2') return '2. Drittel'
+    if (phase === 'P3') return '3. Drittel'
+    if (phase === 'POST') return 'Nach dem Spiel'
     return phase
   }
 
-  const isCompleted = session.state === 'COMPLETED'
+
+
+
+
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -176,6 +271,32 @@ export default function SessionPage() {
               initialAnswers={answerDraft}
               onChangeAnswers={handleDraftChange}
               />
+              {/* Navigation Buttons */}
+              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+                  Aktuelle Phase: {getPhaseTitle(currentPhase)}
+                  {nextPhaseMap[currentPhase] && ` → Weiter zu: ${getPhaseTitle(nextPhaseMap[currentPhase]!)}`}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && (
+                    <button
+                      onClick={handleGoBack}
+                      className="btn"
+                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
+                    >
+                      ← Zurück
+                    </button>
+                  )}
+                  {nextPhaseMap[currentPhase] && (
+                    <button
+                      onClick={handleAdvanceToNext}
+                      className="btn"
+                    >
+                      Weiter →
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
@@ -192,6 +313,34 @@ export default function SessionPage() {
               ) : (
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}
+
+              {/* Navigation Buttons */}
+              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+                  Aktuelle Phase: {getPhaseTitle(currentPhase)}
+                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && ` ← Zurück zu: ${getPhaseTitle(Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)!)}`}
+                  {nextPhaseMap[currentPhase] && ` → Weiter zu: ${getPhaseTitle(nextPhaseMap[currentPhase]!)}`}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && (
+                    <button
+                      onClick={handleGoBack}
+                      className="btn"
+                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
+                    >
+                      ← Zurück
+                    </button>
+                  )}
+                  {nextPhaseMap[currentPhase] && (
+                    <button
+                      onClick={handleAdvanceToNext}
+                      className="btn"
+                    >
+                      Weiter →
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
@@ -221,15 +370,19 @@ export default function SessionPage() {
       {/* Check-ins anzeigen */}
       {session.checkins && session.checkins.length > 0 && (
         <div className="card">
-          <h2>Check-in Historie</h2>
-          {session.checkins.map((checkin, i) => (
-            <div key={i} style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '5px' }}>
-              <h4>{getPhaseTitle(checkin.phase)} - {new Date(checkin.timestamp).toLocaleString()}</h4>
-              <pre style={{ fontSize: '0.8rem' }}>{JSON.stringify(checkin.answers, null, 2)}</pre>
-              {checkin.feedback && <p><strong>Feedback:</strong> {checkin.feedback}</p>}
-              {checkin.next_task && <p><strong>Next Task:</strong> {checkin.next_task}</p>}
-            </div>
-          ))}
+          <details>
+            <summary style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+              Check-in Historie (klicken zum Ausklappen)
+            </summary>
+            {session.checkins.map((checkin, i) => (
+              <div key={i} style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '5px' }}>
+                <h4>{getPhaseTitle(checkin.phase)} - {new Date(checkin.timestamp).toLocaleString()}</h4>
+                <pre style={{ fontSize: '0.8rem' }}>{JSON.stringify(checkin.answers, null, 2)}</pre>
+                {checkin.feedback && <p><strong>Feedback:</strong> {checkin.feedback}</p>}
+                {checkin.next_task && <p><strong>Next Task:</strong> {checkin.next_task}</p>}
+              </div>
+            ))}
+          </details>
         </div>
       )}
 

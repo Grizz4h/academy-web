@@ -1,103 +1,110 @@
 nohup: ignoring input
-INFO:     Started server process [367877]
+INFO:     Started server process [681275]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:45264 - "POST /api/sessions/test_1767479891/abort HTTP/1.1" 200 OK
-INFO:     127.0.0.1:45266 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58164 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44382 - "HEAD /api/curriculum HTTP/1.1" 405 Method Not Allowed
-INFO:     127.0.0.1:58684 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58684 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55892 - "OPTIONS /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55892 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55892 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55904 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55904 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55904 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55904 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55458 - "POST /api/sessions/demo_1767439455/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55458 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35156 - "OPTIONS /api/sessions/demo_1767439455/post HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35156 - "POST /api/sessions/demo_1767439455/post HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35156 - "GET /api/sessions/demo_1767439455 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35156 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35156 - "OPTIONS /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35168 - "POST /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35168 - "GET /api/sessions/demo_1767480287 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33248 - "OPTIONS /api/sessions/demo_1767480287/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33248 - "POST /api/sessions/demo_1767480287/checkins HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33248 - "GET /api/sessions/demo_1767480287 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33250 - "GET /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33250 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33250 - "POST /api/sessions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:33250 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58202 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58202 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34260 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:34902 - "GET /api/sessions/demo_1767480310 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:45896 - "POST /api/sessions HTTP/1.1" 500 Internal Server Error
-ERROR:    Exception in ASGI application
-Traceback (most recent call last):
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
-    result = await app(  # type: ignore[func-returns-value]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
-    return await self.app(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1135, in __call__
-    await super().__call__(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
-    raise exc
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
-    await self.app(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
-    await self.app(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 115, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 101, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 355, in app
-    raw_response = await run_endpoint_function(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/academy-web/backend/venv/lib/python3.12/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
-    return await dependant.call(**values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/academy-web/backend/main.py", line 92, in create_session
-  File "/opt/academy-web/backend/main.py", line 50, in load_json
-    def load_json(file_path: str):
-                   ^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/__init__.py", line 293, in load
-    return loads(fp.read(),
-           ^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/decoder.py", line 340, in decode
-    raise JSONDecodeError("Extra data", s, end)
-json.decoder.JSONDecodeError: Extra data: line 293 column 19 (char 12629)
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [367877]
+INFO:     127.0.0.1:37266 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36930 - "POST /api/sessions HTTP/1.1" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/drafts HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "PUT /api/sessions/christoph_1767943832/phase HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "POST /api/sessions/christoph_1767943832/checkins HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.166.154:0 - "GET /api/sessions/christoph_1767943832 HTTP/1.0" 200 OK

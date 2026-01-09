@@ -17,6 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/api/health")
+async def health():
+    return {"status": "ok"}
+
 # Daten-Verzeichnis
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 
@@ -88,6 +92,9 @@ async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
                 continue
             if state and session.get('state') != state:
                 continue
+            # Ensure created_by is set (fallback to user for old sessions)
+            if not session.get('created_by'):
+                session['created_by'] = session.get('user', 'Unbekannt')
             sessions.append(session)
     return sessions
 
@@ -121,13 +128,15 @@ async def create_session(session: SessionCreate):
     session_data = {
         "id": session_id,
         "user": session.user,
+        "created_by": session.user,  # Track who created the session
         "module_id": session.module_id,
         "goal": session.goal,
         "confidence": session.confidence,
         "focus": session.focus,  # Store focus area
         "session_method": session.session_method,  # Store session method
         "drill_id": session.drill_id,  # Store selected drill
-        "state": "PRE",
+        "state": "IN_PROGRESS",  # Start as in progress instead of PRE
+        "current_phase": "PRE",  # Track current phase for continuation
         "created_at": datetime.now().isoformat(),
         "drills": module_drills,
         "progress": {
@@ -135,6 +144,7 @@ async def create_session(session: SessionCreate):
             "completed_drills": []
         },
         "checkins": [],
+        "drafts": {},  # Store draft answers for continuation
         "post": None,
         "game_info": session.game_info
     }
@@ -184,15 +194,8 @@ async def save_checkin(session_id: str, checkin: CheckinData):
     }
     session["checkins"].append(checkin_data)
 
-    # Phase aktualisieren
-    if checkin.phase == "PRE":
-        session["state"] = "P1"
-    elif checkin.phase == "P1":
-        session["state"] = "P2"
-    elif checkin.phase == "P2":
-        session["state"] = "P3"
-    elif checkin.phase == "P3":
-        session["state"] = "POST"
+    # Phase nur aktualisieren wenn es ein echter Checkin ist (nicht nur Speicherung)
+    # Für Continuation wird die Phase separat über die phase-Route aktualisiert
 
     save_json(session_path, session)
     return session
@@ -237,6 +240,22 @@ async def abort_session(session_id: str, abort: AbortData):
     save_json(session_path, session)
     return session
 
+@app.delete("/api/sessions/{session_id}/checkins/{checkin_index}")
+async def delete_checkin(session_id: str, checkin_index: int):
+    """Checkin (Phase) löschen"""
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if checkin_index < 0 or checkin_index >= len(session.get("checkins", [])):
+        raise HTTPException(status_code=400, detail="Invalid checkin index")
+
+    session["checkins"].pop(checkin_index)
+    save_json(session_path, session)
+    return session
+
 @app.delete("/api/sessions/{session_id}")
 async def delete_session(session_id: str):
     """Session löschen"""
@@ -249,6 +268,36 @@ async def delete_session(session_id: str):
         return {"status": "deleted", "id": session_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")
+
+@app.put("/api/sessions/{session_id}/drafts")
+async def save_drafts(session_id: str, drafts: dict):
+    """Draft-Eingaben speichern für Session Continuation"""
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    session["drafts"] = drafts
+    save_json(session_path, session)
+    return {"status": "saved"}
+
+@app.put("/api/sessions/{session_id}/phase")
+async def update_session_phase(session_id: str, phase_data: dict):
+    """Aktuelle Phase der Session aktualisieren"""
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if "phase" in phase_data:
+        session["current_phase"] = phase_data["phase"]
+    if "state" in phase_data:
+        session["state"] = phase_data["state"]
+
+    save_json(session_path, session)
+    return session
 
 if __name__ == "__main__":
     import uvicorn

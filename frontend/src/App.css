@@ -1,7 +1,24 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
 .app {
   min-height: 100vh;
   background: #050712;
   color: #f7f7ff;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .navbar {
@@ -27,6 +44,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .card {
@@ -36,6 +56,8 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 1.5rem;
   margin-bottom: 1rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .btn {
@@ -54,8 +76,10 @@
 
 h1, h2, h3 {
   color: #f7f7ff;
+  word-break: break-word;
 }
 
 p {
   color: #d8e1ff;
+  word-break: break-word;
 }

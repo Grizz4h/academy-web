@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useUser } from '../context/UserContext'
+import { highlightGlossaryTerms } from '../components/GlossaryTerm'
 
 // NHL Teams mit Division als Metadaten
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
@@ -47,101 +48,6 @@ const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
 // Helper: Finde Division für ein Team
 const getTeamDivision = (teamName: string): string | undefined => {
   return NHL_TEAMS.find(t => t.name === teamName)?.division
-}
-
-function GlossaryTerm({ term, glossary }: { term: string; glossary?: { [key: string]: string } }) {
-  const [show, setShow] = useState(false)
-  const definition = glossary?.[term]
-  
-  if (!definition) return <span>{term}</span>
-  
-  return (
-    <span 
-      style={{ 
-        borderBottom: '1px dotted rgba(81,145,162,0.7)', 
-        cursor: 'help', 
-        position: 'relative',
-        color: '#5191a2'
-      }}
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-      onClick={() => setShow(!show)}
-    >
-      {term}
-      {show && (
-        <div style={{
-          position: 'absolute',
-          bottom: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: '#1a1a2e',
-          border: '2px solid #5191a2',
-          padding: '0.75rem',
-          borderRadius: '6px',
-          fontSize: '0.85rem',
-          width: '280px',
-          zIndex: 1000,
-          marginBottom: '0.5rem',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-          whiteSpace: 'pre-line',
-          textAlign: 'left',
-          lineHeight: '1.5'
-        }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#5191a2' }}>{term}</div>
-          {definition}
-          <div style={{ 
-            position: 'absolute',
-            bottom: '-8px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 0,
-            height: 0,
-            borderLeft: '8px solid transparent',
-            borderRight: '8px solid transparent',
-            borderTop: '8px solid #5191a2'
-          }}/>
-        </div>
-      )}
-    </span>
-  )
-}
-
-function highlightGlossaryTerms(text: string, glossary?: { [key: string]: string }): React.ReactNode {
-  if (!glossary) return text
-  
-  const terms = Object.keys(glossary).sort((a, b) => b.length - a.length)
-  const parts: React.ReactNode[] = []
-  let lastIndex = 0
-  const matches: Array<{ start: number; end: number; term: string }> = []
-  
-  terms.forEach(term => {
-    const regex = new RegExp(`\\b${term}\\b`, 'gi')
-    let match
-    while ((match = regex.exec(text)) !== null) {
-      matches.push({ start: match.index, end: match.index + match[0].length, term: match[0] })
-    }
-  })
-  
-  matches.sort((a, b) => a.start - b.start)
-  const filtered = matches.filter((match, i) => {
-    if (i === 0) return true
-    const prev = matches[i - 1]
-    return match.start >= prev.end
-  })
-  
-  filtered.forEach((match, i) => {
-    if (match.start > lastIndex) {
-      parts.push(text.substring(lastIndex, match.start))
-    }
-    parts.push(<GlossaryTerm key={i} term={match.term} glossary={glossary} />)
-    lastIndex = match.end
-  })
-  
-  if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex))
-  }
-  
-  return parts.length > 0 ? parts : text
 }
 
 export default function SessionSetup() {
@@ -200,12 +106,22 @@ export default function SessionSetup() {
     queryFn: () => api.getTeams()
   })
 
+  const [createError, setCreateError] = useState<string>('')
+  const lastPayloadRef = useRef<Parameters<typeof api.createSession>[0] | null>(null)
+
   const createSessionMutation = useMutation({
     mutationFn: (data: Parameters<typeof api.createSession>[0]) => api.createSession(data),
+    retry: 3,
+    retryDelay: (attempt: number) => Math.min(5000, attempt * 2000),
     onSuccess: (session) => {
       queryClient.invalidateQueries({ queryKey: ['sessions', user] })
       if (draftKey) localStorage.removeItem(draftKey)
+      setCreateError('')
       navigate(`/session/${session.id}`)
+    },
+    onError: (error: any) => {
+      const msg = String(error?.message || 'Unbekannter Fehler')
+      setCreateError(msg)
     }
   })
 
@@ -216,13 +132,16 @@ export default function SessionSetup() {
     return <div className="card">Modul nicht gefunden</div>
   }
 
+  // Ersten Drill standardmäßig vorauswählen (A1 UX: sofort startbar)
+  useEffect(() => {
+    if (!selectedDrill && currentModule?.drills?.length) {
+      setSelectedDrill(currentModule.drills[0].id)
+    }
+  }, [currentModule, selectedDrill])
+
   const handleCreateSession = () => {
     if (!user?.trim()) {
       alert('Bitte oben im Login einen Namen speichern, damit wir die Session zuordnen können.')
-      return
-    }
-    if (!goal.trim()) {
-      alert('Bitte ein Lernziel eingeben')
       return
     }
     if (!league) {
@@ -237,10 +156,7 @@ export default function SessionSetup() {
       alert('Home- und Auswärtsteam müssen unterschiedlich sein.')
       return
     }
-    if (!selectedDrill && currentModule.drills.length > 0) {
-      alert('Bitte einen Drill wählen')
-      return
-    }
+    // Drill optional auswählen – Standard: erster Drill des Moduls
 
     const gameInfo: any = {
       league,
@@ -248,29 +164,41 @@ export default function SessionSetup() {
       team_away: teamAway,
       date: new Date().toISOString()
     }
-    // Divisionen als Metadaten speichern (für spätere Filter-Funktionen)
-    if (league === 'NHL') {
-      const homeDivision = getTeamDivision(teamHome)
-      const awayDivision = getTeamDivision(teamAway)
-      if (homeDivision) gameInfo.home_division = homeDivision
-      if (awayDivision) gameInfo.away_division = awayDivision
-    }
+    // Hinweis: Divisionen NICHT an Backend senden, nur intern nutzen
 
-    createSessionMutation.mutate({
+    const effectiveGoal = goal.trim() || `Auto: ${currentModule.title}`
+    const chosenDrill = selectedDrill || currentModule.drills[0]?.id
+
+    const payload = {
       user: user.trim(),
       module_id: moduleId!,
-      goal,
+      goal: effectiveGoal,
       confidence,
       focus: currentModule.defaultFocus,
       session_method: currentModule.recommendedSessionMethod || 'live_watch',
-      drill_id: selectedDrill || undefined,
+      drill_id: chosenDrill || undefined,
       game_info: gameInfo
-    })
+    }
+    lastPayloadRef.current = payload
+    createSessionMutation.mutate(payload)
   }
 
   const availableTeams = (() => {
     if (!league) return []
-    if (league === 'DEL') return teamsResp?.teams.map(t => t.name) || []
+    if (league === 'DEL') {
+      const teams = teamsResp?.teams?.map(t => t.name) || []
+      // Fallback falls API nicht lädt
+      if (teams.length === 0) {
+        return [
+          'Eisbären Berlin', 'Adler Mannheim', 'EHC Red Bull München', 
+          'ERC Ingolstadt', 'Kölner Haie', 'Dresdner Eislöwen',
+          'Grizzlys Wolfsburg', 'Schwenninger Wild Wings', 'Straubing Tigers',
+          'Augsburger Panther', 'Iserlohn Roosters', 'Nürnberg Ice Tigers',
+          'Fischtown Pinguins Bremerhaven', 'Löwen Frankfurt'
+        ]
+      }
+      return teams
+    }
     if (league === 'NHL') return NHL_TEAMS.map(t => t.name)
     return []
   })()
@@ -287,7 +215,7 @@ export default function SessionSetup() {
 
       <div className="card">
         <h2>Modul Info</h2>
-        <p>{currentModule.description}</p>
+        <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{currentModule.description}</p>
         <div style={{ marginTop: '1rem' }}>
           <strong>Lernziele:</strong>
           <ul style={{ marginTop: '0.5rem' }}>
@@ -396,18 +324,18 @@ export default function SessionSetup() {
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
             {currentModule.drills.map((drill) => (
-              <label key={drill.id} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem', border: selectedDrill === drill.id ? '2px solid #5191a2' : '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', cursor: 'pointer', backgroundColor: selectedDrill === drill.id ? 'rgba(81,145,162,0.1)' : 'transparent' }}>
+              <label key={drill.id} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem', border: selectedDrill === drill.id ? '2px solid #5191a2' : '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', cursor: 'pointer', backgroundColor: selectedDrill === drill.id ? 'rgba(81,145,162,0.1)' : 'transparent', overflow: 'hidden' }}>
                 <input
                   type="radio"
                   name="drill"
                   value={drill.id}
                   checked={selectedDrill === drill.id}
                   onChange={(e) => setSelectedDrill(e.target.value)}
-                  style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                  style={{ marginRight: '0.5rem', cursor: 'pointer', flexShrink: 0 }}
                 />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 'bold' }}>{drill.title}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>{drill.description}</div>
+                <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                  <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.description}</div>
                 </div>
               </label>
             ))}
@@ -450,7 +378,7 @@ export default function SessionSetup() {
       )}
 
       <div className="card">
-        <h2>Lernziel für diese Session</h2>
+        <h2>Lernziel für diese Session (optional)</h2>
         <textarea
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
@@ -501,6 +429,30 @@ export default function SessionSetup() {
       >
         {createSessionMutation.isPending ? 'Erstelle Session...' : 'Session starten'}
       </button>
+
+      {createError && (
+        <div className="card" style={{ border: '1px solid #dc3545', background: 'rgba(220,53,69,0.08)' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#ff8e8e' }}>Session konnte nicht erstellt werden</div>
+          <div style={{ whiteSpace: 'pre-wrap', fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)' }}>{createError}</div>
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem' }}>
+            <button
+              className="btn"
+              onClick={() => {
+                if (lastPayloadRef.current) {
+                  setCreateError('')
+                  createSessionMutation.mutate(lastPayloadRef.current)
+                }
+              }}
+              disabled={createSessionMutation.isPending}
+            >
+              Erneut versuchen
+            </button>
+            {!navigator.onLine && (
+              <span style={{ alignSelf: 'center', color: 'rgba(255,255,255,0.7)' }}>Offline erkannt – bitte Internet prüfen</span>
+            )}
+          </div>
+        </div>
+      )}
 
       <button
         onClick={() => navigate('/curriculum')}

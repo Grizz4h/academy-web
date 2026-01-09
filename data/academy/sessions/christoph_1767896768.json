@@ -1,0 +1,212 @@
+{
+  "id": "christoph_1767896768",
+  "user": "christoph",
+  "module_id": "A1",
+  "goal": "Center lokalisieren und seine Anspielstationen erkennen",
+  "confidence": 5,
+  "focus": "Center",
+  "session_method": "role-focus",
+  "drill_id": "A1_D1",
+  "state": "COMPLETED",
+  "created_at": "2026-01-08T19:26:08.917744",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Center & Struktur",
+      "drill_type": "period_checkin",
+      "description": "Schneller Überblick pro Drittel. Ideal für Live-Spiel. Fokus: Center-Position, Dreiecke, Breakout.",
+      "didactics": {
+        "goal": "Du trainierst Überblick: Wo befindet sich der Center ohne Puck? Ist das Team strukturiert anspielbar oder nicht? Es geht nicht um Details oder einzelne Fehler.",
+        "watch_for": [
+          "Center-Position (Low / Middle / High): Beobachte NUR Situationen, in denen der Center KEINEN Puck hat.",
+          "Dreiecke / Anspielstationen: Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen und jeder mindestens eine Passoption hat.",
+          "Breakout-Eindruck: Beurteile nicht das Ergebnis, sondern den Ablauf."
+        ],
+        "how_to": [
+          "Grobe Einschätzung",
+          "Kein Nachdenken über Einzelszenen",
+          "Vergleichbarkeit ist wichtiger als Genauigkeit"
+        ],
+        "learning_hint": "Wenn du denkst: 'Das ist unscharf' - genau darum geht es hier. A1.1 ist absichtlich grob.",
+        "observation_rules": {
+          "center_position": {
+            "title": "Center-Position beobachten",
+            "description": "Stell dir das Spielfeld in drei horizontale Zonen vor. Wo ist der Center MEISTENS, wenn der Puck hinten ist?",
+            "examples": [
+              "Low: Center ist tief im eigenen Drittel, hilft beim Spielaufbau, kommt dem Verteidiger entgegen",
+              "Middle: Center steht zwischen Defense und Wingern, ist Bindeglied",
+              "High: Center steht hoch, wartet, beteiligt sich kaum am Aufbau"
+            ],
+            "question": "Wo ist der Center MEISTENS, wenn er keinen Puck hat?"
+          },
+          "triangle_rating": {
+            "title": "Dreiecke erkennen",
+            "description": "Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen, jeder eine Passoption hat und Abstände spielbar sind.",
+            "examples": [
+              "Gute Anzeichen: Spieler stehen leicht versetzt, Puckführender kann nach links ODER rechts passen, Center bewegt sich",
+              "Schlechte Anzeichen: Alle auf einer Linie, nur 'Bande raus' möglich, Spieler verstecken sich hinter Gegenspielern"
+            ],
+            "question": "Bewertung: 1=fast nie Struktur, 3=situativ, 5=fast immer Optionen"
+          },
+          "breakout_quality": {
+            "title": "Breakout-Eindruck",
+            "description": "Beurteile nicht das Ergebnis, sondern den Ablauf.",
+            "examples": [
+              "Clean: Pässe kommen an, wenig Zeitdruck, Struktur bleibt",
+              "Mixed: einige saubere Exits, einige hektische",
+              "Chaotic: Scheibe wird blind rausgehauen, Struktur bricht sofort"
+            ],
+            "question": "Wie sauber war der Ablauf?"
+          }
+        },
+        "decision_help": [
+          "Nicht jede Szene zählen – der Gesamteindruck zählt",
+          "Erste Intuition zählt",
+          "Wenn unsicher → grobe Mitte wählen"
+        ],
+        "ignore_list": [
+          "Torchancen",
+          "Einzelne Fehlpässe",
+          "Emotionen ('wir waren besser!')"
+        ],
+        "glossary": {
+          "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+          "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
+          "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
+          "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
+          "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
+          "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
+          "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
+          "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+          "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+          "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+          "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
+          "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+          "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
+          "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
+        }
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position (meistens)",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ],
+            "help": "Wo steht der Center ohne Puck meist?"
+          },
+          {
+            "key": "triangle_rating",
+            "type": "slider",
+            "label": "Dreiecke / Anspielstationen",
+            "min": 1,
+            "max": 5,
+            "help": "1=kaum, 3=situativ, 5=konstant"
+          },
+          {
+            "key": "breakout_quality",
+            "type": "radio",
+            "label": "Breakout-Eindruck",
+            "options": [
+              "clean",
+              "mixed",
+              "chaotic"
+            ],
+            "help": "Wie sauber war der Exit?"
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Freie Notiz (optional)",
+            "max_chars": 120
+          }
+        ],
+        "coaching_rules": [
+          {
+            "condition": "triangle_rating <= 2 && breakout_quality == 'chaotic'",
+            "feedback": "Struktur reißt früh. Exit wird blind/unter Druck.",
+            "next_task": "Fokus: Center früher als Outlet anbieten (middle-low Position)"
+          },
+          {
+            "condition": "center_position == 'high' && breakout_quality != 'clean'",
+            "feedback": "Center hängt, Outlet fehlt.",
+            "next_task": "Fokus: Center früher absinken, Supportdreieck herstellen"
+          },
+          {
+            "condition": "triangle_rating >= 4 && breakout_quality == 'clean'",
+            "feedback": "Struktur ist stabil!",
+            "next_task": "Erkenne warum: Winger close? D-Support? Nächstes Drittel gleiche Mechanik beobachten."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {
+        "expectations": "denke wird eindeutig. Berlin grad wieder am fangen und Iserlohn ab und zu mal überzeugend, aber fette Flauten drin"
+      },
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-08T19:26:43.684146"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "triangle_rating": 2,
+        "center_position": "low",
+        "note": "43 Eder low low \n94 Kirk high high \n23 Byron \n17 Dea high.\n\n",
+        "breakout_quality": "mixed"
+      },
+      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
+      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
+      "timestamp": "2026-01-08T20:07:47.422480"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "center_position": "high",
+        "triangle_rating": 3,
+        "breakout_quality": "clean",
+        "note": "43 Eder low \n94 Kirk high high\n23 Byron high high low\n17 Dea high low"
+      },
+      "feedback": "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung.",
+      "next_task": "Achte auf Pass-Optionen im nächsten Drittel.",
+      "timestamp": "2026-01-08T20:59:09.259115"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "note": "94 Kirk high\n23 Byron low middle\n43 Eder low low\n17 Dea middle high",
+        "breakout_quality": "chaotic",
+        "center_position": "middle",
+        "triangle_rating": 2
+      },
+      "feedback": "Breakout chaotisch - verbessere Puck-Bewegung.",
+      "next_task": "Center sollte high stehen für Anspielstation.",
+      "timestamp": "2026-01-08T21:56:16.461879"
+    }
+  ],
+  "post": {
+    "summary": "Live-Session erfolgreich abgeschlossen",
+    "unclear": null,
+    "next_module": null,
+    "helpfulness": 5,
+    "completed_at": "2026-01-08T21:56:37.873584"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Iserlohn Roosters",
+    "team_away": "Eisbären Berlin",
+    "date": "2026-01-08T18:26:08.848Z"
+  }
+}

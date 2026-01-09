@@ -1,109 +1,12 @@
 import { useState, useEffect } from 'react'
 import type { Drill } from '../api'
+import { highlightGlossaryTerms } from './GlossaryTerm'
 
 interface DrillRendererProps {
   drill: Drill
   onComplete: (answers: any) => void
   initialAnswers?: any
   onChangeAnswers?: (answers: any) => void
-}
-
-function GlossaryTerm({ term, glossary }: { term: string; glossary?: { [key: string]: string } }) {
-  const [show, setShow] = useState(false)
-  const definition = glossary?.[term]
-  
-  if (!definition) return <span>{term}</span>
-  
-  return (
-    <span 
-      style={{ 
-        borderBottom: '1px dotted rgba(81,145,162,0.7)', 
-        cursor: 'help', 
-        position: 'relative',
-        color: '#5191a2'
-      }}
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-      onClick={() => setShow(!show)}
-    >
-      {term}
-      {show && (
-        <div style={{
-          position: 'absolute',
-          bottom: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: '#1a1a2e',
-          border: '2px solid #5191a2',
-          padding: '0.75rem',
-          borderRadius: '6px',
-          fontSize: '0.85rem',
-          width: '280px',
-          zIndex: 1000,
-          marginBottom: '0.5rem',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-          whiteSpace: 'pre-line',
-          textAlign: 'left',
-          lineHeight: '1.5'
-        }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#5191a2' }}>{term}</div>
-          {definition}
-          <div style={{ 
-            position: 'absolute',
-            bottom: '-8px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 0,
-            height: 0,
-            borderLeft: '8px solid transparent',
-            borderRight: '8px solid transparent',
-            borderTop: '8px solid #5191a2'
-          }}/>
-        </div>
-      )}
-    </span>
-  )
-}
-
-function highlightGlossaryTerms(text: string, glossary?: { [key: string]: string }): React.ReactNode {
-  if (!glossary) return text
-  
-  const terms = Object.keys(glossary).sort((a, b) => b.length - a.length)
-  const parts: React.ReactNode[] = []
-  let lastIndex = 0
-  const matches: Array<{ start: number; end: number; term: string }> = []
-  
-  // Find all matches
-  terms.forEach(term => {
-    const regex = new RegExp(`\\b${term}\\b`, 'gi')
-    let match
-    while ((match = regex.exec(text)) !== null) {
-      matches.push({ start: match.index, end: match.index + match[0].length, term: match[0] })
-    }
-  })
-  
-  // Sort and deduplicate overlapping matches
-  matches.sort((a, b) => a.start - b.start)
-  const filtered = matches.filter((match, i) => {
-    if (i === 0) return true
-    const prev = matches[i - 1]
-    return match.start >= prev.end
-  })
-  
-  // Build result
-  filtered.forEach((match, i) => {
-    if (match.start > lastIndex) {
-      parts.push(text.substring(lastIndex, match.start))
-    }
-    parts.push(<GlossaryTerm key={i} term={match.term} glossary={glossary} />)
-    lastIndex = match.end
-  })
-  
-  if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex))
-  }
-  
-  return parts.length > 0 ? parts : text
 }
 
 function ObservationGuide({ drill, currentQuestion }: { drill: Drill; currentQuestion?: string }) {
@@ -212,14 +115,15 @@ export default function DrillRenderer({ drill, onComplete, initialAnswers, onCha
   return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>
 }
 
-function PeriodCheckin({ drill, answers, setAnswers, onSubmit }: any) {
+function PeriodCheckin({ drill, answers, setAnswers }: any) {
   const questions = drill.config.questions || []
   const [currentQ, setCurrentQ] = useState<string | undefined>(undefined)
+  const glossary = drill.didactics?.glossary
 
   return (
     <div className="card">
-      <h3>{drill.title}</h3>
-      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>{drill.description}</p>
+      <h3 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{drill.title}</h3>
+      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', wordWrap: 'break-word', overflowWrap: 'break-word' }}>{drill.description}</p>
       
       <ObservationGuide drill={drill} currentQuestion={currentQ} />
 
@@ -228,9 +132,9 @@ function PeriodCheckin({ drill, answers, setAnswers, onSubmit }: any) {
           onFocus={() => setCurrentQ(q.key)}
         >
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
-            {q.label}
+            {highlightGlossaryTerms(q.label, glossary)}
           </label>
-          {q.help && <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.75rem' }}>{q.help}</p>}
+          {q.help && <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.75rem' }}>{highlightGlossaryTerms(q.help, glossary)}</p>}
           
           {q.type === 'radio' && (
             <div>
@@ -244,7 +148,7 @@ function PeriodCheckin({ drill, answers, setAnswers, onSubmit }: any) {
                     onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
                     style={{ marginRight: '0.5rem' }}
                   />
-                  {opt}
+                  {highlightGlossaryTerms(opt, glossary)}
                 </label>
               ))}
             </div>
@@ -275,7 +179,6 @@ function PeriodCheckin({ drill, answers, setAnswers, onSubmit }: any) {
           )}
         </div>
       ))}
-      <button onClick={onSubmit} className="btn" style={{ width: '100%', padding: '1rem' }}>Check-in speichern</button>
     </div>
   )
 }
@@ -335,6 +238,7 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
   const questions = drill.config.questions || []
   const completedShifts = Object.keys(answers).filter(k => k.startsWith('shift_')).length / questions.length
   const [currentQ, setCurrentQ] = useState<string | undefined>(undefined)
+  const glossary = drill.didactics?.glossary
 
   return (
     <div className="card">
@@ -361,7 +265,7 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
           <h4>Shift {shiftNum + 1}</h4>
           {questions.map((q: any) => (
             <div key={q.key} style={{ marginBottom: '1rem' }} onFocus={() => setCurrentQ(q.key)}>
-              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>{q.label}</label>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>{highlightGlossaryTerms(q.label, glossary)}</label>
               {q.type === 'radio' && (
                 <div>
                   {q.options.map((opt: string) => (
@@ -374,7 +278,7 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
                         onChange={(e) => setAnswers({ ...answers, [`shift_${shiftNum}_${q.key}`]: e.target.value })}
                         style={{ marginRight: '0.5rem' }}
                       />
-                      {opt}
+                      {highlightGlossaryTerms(opt, glossary)}
                     </label>
                   ))}
                 </div>

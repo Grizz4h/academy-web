@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { api } from '../api'
 import type { Session } from '../api'
 import { useUser } from '../context/UserContext'
+import SessionCard from '../components/SessionCard'
 
 export default function History() {
   const { user } = useUser()
@@ -25,6 +26,7 @@ export default function History() {
 
   const [filterModule, setFilterModule] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
+  const [filterCreator, setFilterCreator] = useState<string>('')
 
   if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deine Session-Historie.</div>
   if (isLoading) return <div className="card">Lade Historie...</div>
@@ -33,33 +35,12 @@ export default function History() {
   const filteredSessions = sessions?.filter(session => {
     if (filterModule && session.module_id !== filterModule) return false
     if (filterStatus && session.state !== filterStatus) return false
+    if (filterCreator && session.created_by !== filterCreator) return false
     return true
   }) || []
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'COMPLETED': return '#28a745'
-      case 'ABORTED': return '#dc3545'
-      case 'PRE': case 'P1': case 'P2': case 'P3': return '#ffc107'
-      case 'POST': return '#17a2b8'
-      default: return '#6c757d'
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'COMPLETED': return 'Abgeschlossen'
-      case 'ABORTED': return 'Abgebrochen'
-      case 'PRE': return 'Vorbereitung'
-      case 'P1': return 'Nach 1. Drittel'
-      case 'P2': return 'Nach 2. Drittel'
-      case 'P3': return 'Nach 3. Drittel'
-      case 'POST': return 'Debrief'
-      default: return status
-    }
-  }
-
   const uniqueModules = [...new Set(sessions?.map(s => s.module_id) || [])]
+  const uniqueCreators = [...new Set(sessions?.map(s => s.created_by).filter(Boolean) || [])]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -68,7 +49,20 @@ export default function History() {
       {/* Filter */}
       <div className="card">
         <h3>Filter</h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div>
+            <label>Ersteller:</label>
+            <select
+              value={filterCreator}
+              onChange={(e) => setFilterCreator(e.target.value)}
+              style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
+            >
+              <option value="">Alle</option>
+              {uniqueCreators.map(creator => (
+                <option key={creator} value={creator}>{creator}</option>
+              ))}
+            </select>
+          </div>
           <div>
             <label>Modul:</label>
             <select
@@ -110,51 +104,16 @@ export default function History() {
           </div>
         ) : (
           filteredSessions.map((session: Session) => (
-            <div key={session.id} className="card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h3>{session.module_id} - {session.goal}</h3>
-                  <p><strong>Erstellt:</strong> {new Date(session.created_at).toLocaleString()}</p>
-                  <p><strong>Check-ins:</strong> {session.checkins?.length || 0}</p>
-                  {session.abort && (
-                    <p><strong>Abbruchgrund:</strong> {session.abort.reason}</p>
-                  )}
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div
-                    style={{
-                      backgroundColor: getStatusColor(session.state),
-                      color: 'white',
-                      padding: '0.25rem 0.5rem',
-                      borderRadius: '4px',
-                      fontSize: '0.8rem',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {getStatusText(session.state)}
-                  </div>
-                  <a
-                    href={`/session/${session.id}`}
-                    className="btn"
-                    style={{ marginTop: '0.5rem', display: 'inline-block', fontSize: '0.8rem' }}
-                  >
-                    Details
-                  </a>
-                    <button
-                      onClick={() => {
-                        const ok = confirm('Diese Session wirklich löschen? Dieser Schritt kann nicht rückgängig gemacht werden.')
-                        if (!ok) return
-                        deleteMutation.mutate(session.id)
-                      }}
-                      className="btn"
-                      style={{ marginTop: '0.5rem', marginLeft: '0.5rem', display: 'inline-block', fontSize: '0.8rem', backgroundColor: '#dc3545', borderColor: '#dc3545' }}
-                      disabled={deleteMutation.isPending}
-                    >
-                      {deleteMutation.isPending ? 'Lösche...' : 'Löschen'}
-                    </button>
-                </div>
-              </div>
-            </div>
+            <SessionCard
+              key={session.id}
+              session={session}
+              onDelete={(id) => deleteMutation.mutate(id)}
+              isDeletingId={
+                deleteMutation.isPending
+                  ? deleteMutation.variables
+                  : undefined
+              }
+            />
           ))
         )}
       </div>

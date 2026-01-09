@@ -20,15 +20,15 @@ export default function Curriculum() {
       {curriculum?.tracks.map((track: CurriculumTrack) => (
         <div key={track.id} className="card">
           <h2>{track.title}</h2>
-          <p>{track.description}</p>
+          <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{track.description}</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '1rem', marginTop: '1rem' }}>
             {track.modules.map((module: CurriculumModule) => (
-              <div key={module.id} style={{ border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '0.5rem' }}>
-                <h3>{module.title}</h3>
-                <p>{module.summary}</p>
+              <div key={module.id} style={{ border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '0.5rem', minWidth: 0, overflow: 'hidden' }}>
+                <h3 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{module.title}</h3>
+                <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{module.summary}</p>
                 {module.description && (
-                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.5rem' }}>
+                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.5rem', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
                     {module.description}
                   </p>
                 )}
