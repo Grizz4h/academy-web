@@ -9,7 +9,7 @@
   "session_method": "role-focus",
   "drill_id": "A1_D2",
   "state": "IN_PROGRESS",
-  "current_phase": "P2",
+  "current_phase": "P3",
   "created_at": "2026-01-11T19:10:37.673070",
   "drills": [
     {
@@ -169,6 +169,62 @@
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
       "timestamp": "2026-01-11T19:33:47.074482"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "shift_0_center_position": "low",
+        "shift_0_is_playable": "ja",
+        "shift_1_center_position": "middle",
+        "shift_1_is_playable": "ja",
+        "shift_2_center_position": "high",
+        "shift_2_is_playable": "ja",
+        "shift_3_center_position": "middle",
+        "shift_3_is_playable": "ja",
+        "shift_4_center_position": "middle",
+        "shift_4_is_playable": "nein",
+        "shift_5_center_position": "low",
+        "shift_5_is_playable": "ja",
+        "shift_6_center_position": "middle",
+        "shift_6_is_playable": "ja",
+        "shift_7_center_position": "middle",
+        "shift_7_is_playable": "ja",
+        "shift_8_center_position": "middle",
+        "shift_8_is_playable": "nein",
+        "shift_9_center_position": "middle",
+        "shift_9_is_playable": "ja"
+      },
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-11T20:27:46.732333"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "shift_0_center_position": "low",
+        "shift_0_is_playable": "ja",
+        "shift_1_center_position": "middle",
+        "shift_1_is_playable": "ja",
+        "shift_2_center_position": "high",
+        "shift_2_is_playable": "ja",
+        "shift_3_center_position": "middle",
+        "shift_3_is_playable": "ja",
+        "shift_4_center_position": "middle",
+        "shift_4_is_playable": "nein",
+        "shift_5_center_position": "low",
+        "shift_5_is_playable": "ja",
+        "shift_6_center_position": "middle",
+        "shift_6_is_playable": "ja",
+        "shift_7_center_position": "middle",
+        "shift_7_is_playable": "ja",
+        "shift_8_center_position": "middle",
+        "shift_8_is_playable": "nein",
+        "shift_9_center_position": "middle",
+        "shift_9_is_playable": "ja"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-11T20:27:48.569129"
     }
   ],
   "drafts": {
@@ -193,6 +249,28 @@
       "shift_8_is_playable": "nein",
       "shift_9_center_position": "middle",
       "shift_9_is_playable": "nein"
+    },
+    "P2": {
+      "shift_0_center_position": "low",
+      "shift_0_is_playable": "ja",
+      "shift_1_center_position": "middle",
+      "shift_1_is_playable": "ja",
+      "shift_2_center_position": "high",
+      "shift_2_is_playable": "ja",
+      "shift_3_center_position": "middle",
+      "shift_3_is_playable": "ja",
+      "shift_4_center_position": "middle",
+      "shift_4_is_playable": "nein",
+      "shift_5_center_position": "low",
+      "shift_5_is_playable": "ja",
+      "shift_6_center_position": "middle",
+      "shift_6_is_playable": "ja",
+      "shift_7_center_position": "middle",
+      "shift_7_is_playable": "ja",
+      "shift_8_center_position": "middle",
+      "shift_8_is_playable": "nein",
+      "shift_9_center_position": "middle",
+      "shift_9_is_playable": "ja"
     }
   },
   "post": null,
