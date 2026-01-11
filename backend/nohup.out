@@ -1,0 +1,156 @@
+Traceback (most recent call last):
+  File "/Users/christoph/academy-web/backend/main.py", line 1, in <module>
+    from fastapi import FastAPI, HTTPException
+ModuleNotFoundError: No module named 'fastapi'
+INFO:     Started server process [18070]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50911 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50911 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50916 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50928 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50928 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50928 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50947 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50954 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50966 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50966 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50966 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50972 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50996 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51008 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51014 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51023 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51042 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51052 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51056 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51056 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51078 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51084 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51084 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51084 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51105 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51107 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51116 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51119 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51128 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51131 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51132 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51132 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51132 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51132 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51149 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51159 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51167 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51169 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51259 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51270 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51274 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51275 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51275 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51275 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51275 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51282 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51284 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51411 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     Started server process [22684]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:51478 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51478 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51482 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51486 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51486 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     Started server process [23482]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:51497 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51499 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51504 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51505 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51505 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51505 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51505 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51508 - "GET /api/teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51508 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51508 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51508 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51512 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51540 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     Started server process [23846]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:51558 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51558 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51562 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51571 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51579 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51587 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51599 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51601 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51603 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51605 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51614 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51619 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51621 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51627 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51644 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51646 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51652 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51673 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51675 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51684 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51688 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51693 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51695 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51712 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51714 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51716 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51719 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51721 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51731 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51741 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51743 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51746 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51756 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51766 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51776 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51779 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51788 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51792 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51796 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51806 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51819 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51824 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51826 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51831 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51840 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51854 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51856 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51860 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51862 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51870 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51877 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     Started server process [25806]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:51914 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51916 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51926 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51929 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51940 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51944 - "GET /api/curriculum HTTP/1.1" 200 OK

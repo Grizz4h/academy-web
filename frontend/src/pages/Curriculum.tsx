@@ -45,15 +45,22 @@ export default function Curriculum() {
                 <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
                   Schwierigkeit: {module.difficulty || 1} | Dauer: {module.duration || 45} Min
                 </div>
-                <button
-                  className="btn"
-                  style={{ marginTop: '0.5rem' }}
-                  onClick={() => {
-                    navigate(`/setup/${module.id}`)
-                  }}
-                >
-                  Starten
-                </button>
+                <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button
+                    className="btn"
+                    onClick={() => navigate(`/setup/${module.id}`)}
+                  >
+                    Starten
+                  </button>
+                  {(module.id === 'A1' || module.id === 'A2' || module.id === 'A3') && (
+                    <button
+                      className="btn"
+                      onClick={() => navigate(`/theory/${module.id}`)}
+                    >
+                      Theorie
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
