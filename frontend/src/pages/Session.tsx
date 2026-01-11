@@ -5,6 +5,8 @@ import DrillRenderer from '../components/DrillRenderer'
 import { useState, useEffect } from 'react'
 
 export default function SessionPage() {
+  // Notizfeld für Session-Info
+  const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
   const [currentPhase, setCurrentPhase] = useState<string>('PRE')
@@ -30,8 +32,14 @@ export default function SessionPage() {
       } else {
         setAnswerDraft({})
       }
+      // Lade Notiz aus localStorage (optional: später aus session.note)
+      const noteKey = id ? `academy.session.${id}.note` : null
+      if (noteKey) {
+        const savedNote = localStorage.getItem(noteKey)
+        if (savedNote !== null) setSessionNote(savedNote)
+      }
     }
-  }, [session, currentPhase])
+  }, [session, currentPhase, id])
 
   // Draft laden beim Phasenwechsel (Fallback für alte Sessions)
   useEffect(() => {
@@ -247,6 +255,22 @@ export default function SessionPage() {
         )}
         <p><strong>Ziel:</strong> {session.goal}</p>
         <p><strong>Status:</strong> {session.state}</p>
+        {/* Notizfeld für die Session */}
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="session-note" style={{ fontWeight: 500 }}>Notiz zur Session:</label>
+          <textarea
+            id="session-note"
+            value={sessionNote}
+            onChange={e => {
+              setSessionNote(e.target.value)
+              const noteKey = id ? `academy.session.${id}.note` : null
+              if (noteKey) localStorage.setItem(noteKey, e.target.value)
+            }}
+            rows={2}
+            style={{ width: '100%', minHeight: 48, maxHeight: 80, marginTop: 4, borderRadius: 4, padding: 6, resize: 'vertical', fontSize: '1rem', lineHeight: 1.4 }}
+            placeholder="Hier kannst du eine Notiz für die gesamte Session festhalten..."
+          />
+        </div>
       </div>
 
       {!isCompleted && (
@@ -347,7 +371,25 @@ export default function SessionPage() {
           {currentPhase === 'POST' && (
             <div>
               <p>Spiel beendet - fasse zusammen.</p>
-              <button onClick={handleSessionComplete} className="btn">Session abschließen</button>
+              {/* Navigation Buttons auch in POST-Phase */}
+              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+                  Aktuelle Phase: {getPhaseTitle(currentPhase)}
+                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && ` ← Zurück zu: ${getPhaseTitle(Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)!)}`}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && (
+                    <button
+                      onClick={handleGoBack}
+                      className="btn"
+                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
+                    >
+                      ← Zurück
+                    </button>
+                  )}
+                  <button onClick={handleSessionComplete} className="btn">Session abschließen</button>
+                </div>
+              </div>
             </div>
           )}
         </div>

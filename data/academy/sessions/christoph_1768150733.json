@@ -1,16 +1,16 @@
 {
-  "id": "christoph_1767943832",
+  "id": "christoph_1768150733",
   "user": "christoph",
   "created_by": "christoph",
   "module_id": "A1",
-  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 3,
+  "goal": "Center Position beobachten",
+  "confidence": 4,
   "focus": "Center",
   "session_method": "role-focus",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P2",
-  "created_at": "2026-01-09T08:30:32.045939",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-11T17:58:53.450958",
   "drills": [
     {
       "id": "A1_D1",
@@ -154,145 +154,73 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {
-        "expectations": "efre"
-      },
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-09T08:30:38.920448"
-    },
-    {
-      "phase": "P1",
-      "answers": {
-        "note": "dfrgv"
-      },
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-09T08:30:56.770233"
-    },
-    {
-      "phase": "PRE",
       "answers": {},
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-09T08:36:07.242561"
-    },
-    {
-      "phase": "P1",
-      "answers": {},
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-09T08:36:13.288187"
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-11T17:59:04.098860"
     },
     {
       "phase": "P1",
       "answers": {
         "center_position": "low",
-        "breakout_quality": "clean"
+        "breakout_quality": "mixed",
+        "triangle_rating": 2
       },
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-09T08:36:25.716292"
-    },
-    {
-      "phase": "P1",
-      "answers": {
-        "center_position": "low",
-        "breakout_quality": "clean"
-      },
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-09T08:36:36.473728"
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-11T17:59:26.578777"
     },
     {
       "phase": "P2",
-      "answers": {},
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-09T08:46:32.156093"
-    },
-    {
-      "phase": "P1",
       "answers": {
-        "center_position": "low",
-        "breakout_quality": "clean"
-      },
-      "feedback": "Automatisch gespeichert",
-      "next_task": "Zurück zur vorherigen Phase",
-      "timestamp": "2026-01-09T08:49:16.772459"
-    },
-    {
-      "phase": "PRE",
-      "answers": {},
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-09T08:49:20.954373"
-    },
-    {
-      "phase": "P1",
-      "answers": {
-        "center_position": "low",
-        "breakout_quality": "clean"
-      },
-      "feedback": "Automatisch gespeichert",
-      "next_task": "Zurück zur vorherigen Phase",
-      "timestamp": "2026-01-09T08:49:26.787511"
-    },
-    {
-      "phase": "PRE",
-      "answers": {
-        "expectations": "dsfsdffds"
+        "center_position": "middle",
+        "triangle_rating": 2,
+        "breakout_quality": "mixed"
       },
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-09T08:49:31.195974"
+      "timestamp": "2026-01-11T17:59:41.398966"
     },
     {
-      "phase": "P1",
+      "phase": "P3",
       "answers": {
-        "center_position": "low",
-        "breakout_quality": "clean"
-      },
-      "feedback": "Automatisch gespeichert",
-      "next_task": "Zurück zur vorherigen Phase",
-      "timestamp": "2026-01-09T08:49:33.091103"
-    },
-    {
-      "phase": "PRE",
-      "answers": {
-        "expectations": "dsfsdffd"
+        "center_position": "middle",
+        "breakout_quality": "chaotic",
+        "triangle_rating": 2
       },
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-09T08:49:35.635832"
-    },
-    {
-      "phase": "P1",
-      "answers": {
-        "center_position": "low",
-        "breakout_quality": "clean",
-        "note": "sdd"
-      },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-09T08:49:42.429104"
+      "timestamp": "2026-01-11T18:26:31.572299"
     }
   ],
   "drafts": {
     "P1": {
       "center_position": "low",
-      "breakout_quality": "clean",
-      "note": "sdd"
+      "breakout_quality": "mixed",
+      "triangle_rating": 2
     },
-    "PRE": {
-      "expectations": "dsfsdffd"
+    "P2": {
+      "center_position": "middle",
+      "triangle_rating": 2,
+      "breakout_quality": "mixed"
+    },
+    "P3": {
+      "center_position": "middle",
+      "breakout_quality": "chaotic",
+      "triangle_rating": 2
     }
   },
-  "post": null,
+  "post": {
+    "summary": "Live-Session erfolgreich abgeschlossen",
+    "unclear": null,
+    "next_module": null,
+    "helpfulness": 5,
+    "completed_at": "2026-01-11T18:32:01.219306"
+  },
   "game_info": {
     "league": "DEL",
-    "team_home": "Eisbären Berlin",
-    "team_away": "Kölner Haie",
-    "date": "2026-01-09T07:30:31.966Z"
+    "team_home": "Nürnberg Ice Tigers",
+    "team_away": "ERC Ingolstadt",
+    "date": "2026-01-11T16:58:53.414Z"
   }
 }

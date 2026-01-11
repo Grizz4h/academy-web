@@ -1,0 +1,205 @@
+{
+  "id": "christoph_1768155037",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 1,
+  "focus": "Center",
+  "session_method": "role-focus",
+  "drill_id": "A1_D2",
+  "state": "IN_PROGRESS",
+  "current_phase": "P2",
+  "created_at": "2026-01-11T19:10:37.673070",
+  "drills": [
+    {
+      "id": "A1_D2",
+      "title": "Shift Chunk: Center-Position",
+      "drill_type": "shift_tracker",
+      "description": "Beobachte 10 Shifts. Nur schauen, nicht interpretieren. Trainiert konsistente Wahrnehmung.",
+      "didactics": {
+        "goal": "Du trainierst Konsequenz statt Gefühl. Nicht: 'Ich glaube, der Center war oft tief.' Sondern: 'Ich habe es 10× beobachtet.'",
+        "watch_for": [
+          "Für 10 aufeinanderfolgende Shifts: Wo steht der Center, wenn sein Team in Ballbesitz kommt?",
+          "Anspielbarkeit: Ein Center ist anspielbar, wenn er nicht gedeckt ist, nicht mit dem Rücken zum Spiel steht, und ein Pass realistisch möglich wäre."
+        ],
+        "how_to": [
+          "Erste Intuition zählt",
+          "Wenn du unsicher bist → Nein",
+          "Nicht zurückspulen"
+        ],
+        "learning_hint": "Dieser Drill zeigt dir, dass dein Bauchgefühl oft falsch ist – Muster schlagen Erinnerung.",
+        "observation_rules": {
+          "center_position": {
+            "title": "Center-Position im Shift",
+            "description": "Wo steht er, wenn sein Team in Ballbesitz kommt?",
+            "examples": [
+              "Low: tief im eigenen Drittel",
+              "Middle: zwischen Defense und Wingern",
+              "High: wartet hoch, kaum am Aufbau beteiligt"
+            ],
+            "question": "Wo steht der Center?"
+          },
+          "is_playable": {
+            "title": "Anspielbarkeit",
+            "description": "Es reicht: 'Ja, wäre möglich gewesen' oder 'Nein'",
+            "examples": [
+              "Ja: Nicht gedeckt, realistischer Pass möglich",
+              "Nein: Gedeckt, Rücken zum Spiel, oder zu weit weg"
+            ],
+            "question": "Klar anspielbar?"
+          }
+        },
+        "decision_help": [
+          "Pro Shift zwei Klicks",
+          "Keine Notizen",
+          "Unsicher? Erste Intuition nehmen"
+        ],
+        "ignore_list": [
+          "Einzelne Fehlpässe",
+          "Schiri-Entscheidungen",
+          "Publikumsreaktionen"
+        ],
+        "glossary": {
+          "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
+          "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
+          "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'",
+          "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+          "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
+          "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'"
+        }
+      },
+      "config": {
+        "shift_count": 10,
+        "questions": [
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          {
+            "key": "is_playable",
+            "type": "radio",
+            "label": "Klar anspielbar?",
+            "options": [
+              "ja",
+              "nein"
+            ]
+          }
+        ],
+        "coaching_rules": [
+          {
+            "condition": "center_position == 'high'",
+            "feedback": "Center weit oben → Support fehlt.",
+            "next_task": "Achte auf frühere Absicherung durch Center (middle-low)."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-11T19:11:28.159106"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "shift_0_center_position": "low",
+        "shift_0_is_playable": "ja",
+        "shift_1_center_position": "low",
+        "shift_1_is_playable": "nein",
+        "shift_2_center_position": "middle",
+        "shift_2_is_playable": "nein",
+        "shift_3_center_position": "middle",
+        "shift_3_is_playable": "ja",
+        "shift_4_center_position": "high",
+        "shift_4_is_playable": "nein",
+        "shift_5_center_position": "middle",
+        "shift_5_is_playable": "nein",
+        "shift_6_center_position": "middle",
+        "shift_6_is_playable": "nein",
+        "shift_7_center_position": "low",
+        "shift_7_is_playable": "nein",
+        "shift_8_center_position": "high",
+        "shift_8_is_playable": "nein",
+        "shift_9_center_position": "middle",
+        "shift_9_is_playable": "nein"
+      },
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-11T19:33:45.093045"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "shift_0_center_position": "low",
+        "shift_0_is_playable": "ja",
+        "shift_1_center_position": "low",
+        "shift_1_is_playable": "nein",
+        "shift_2_center_position": "middle",
+        "shift_2_is_playable": "nein",
+        "shift_3_center_position": "middle",
+        "shift_3_is_playable": "ja",
+        "shift_4_center_position": "high",
+        "shift_4_is_playable": "nein",
+        "shift_5_center_position": "middle",
+        "shift_5_is_playable": "nein",
+        "shift_6_center_position": "middle",
+        "shift_6_is_playable": "nein",
+        "shift_7_center_position": "low",
+        "shift_7_is_playable": "nein",
+        "shift_8_center_position": "high",
+        "shift_8_is_playable": "nein",
+        "shift_9_center_position": "middle",
+        "shift_9_is_playable": "nein"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-11T19:33:47.074482"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "shift_0_center_position": "low",
+      "shift_0_is_playable": "ja",
+      "shift_1_center_position": "low",
+      "shift_1_is_playable": "nein",
+      "shift_2_center_position": "middle",
+      "shift_2_is_playable": "nein",
+      "shift_3_center_position": "middle",
+      "shift_3_is_playable": "ja",
+      "shift_4_center_position": "high",
+      "shift_4_is_playable": "nein",
+      "shift_5_center_position": "middle",
+      "shift_5_is_playable": "nein",
+      "shift_6_center_position": "middle",
+      "shift_6_is_playable": "nein",
+      "shift_7_center_position": "low",
+      "shift_7_is_playable": "nein",
+      "shift_8_center_position": "high",
+      "shift_8_is_playable": "nein",
+      "shift_9_center_position": "middle",
+      "shift_9_is_playable": "nein"
+    }
+  },
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Schwenninger Wild Wings",
+    "team_away": "Straubing Tigers",
+    "date": "2026-01-11T18:10:37.594Z"
+  }
+}
