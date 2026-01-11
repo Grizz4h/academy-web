@@ -17,7 +17,7 @@ function App() {
       <nav className="navbar">
         <div className="container">
           <span className="navbar-brand">Academy</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="nav-container">
             <div>
               <a className="nav-link" href="/">Dashboard</a>
               <a className="nav-link" href="/curriculum">Curriculum</a>
