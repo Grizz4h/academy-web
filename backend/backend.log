@@ -832,3 +832,46 @@ INFO:     141.78.132.135:0 - "POST /api/sessions/christoph_1768155037/checkins H
 INFO:     141.78.132.135:0 - "PUT /api/sessions/christoph_1768155037/phase HTTP/1.0" 200 OK
 INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
 INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     127.0.0.1:36818 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36818 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36818 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35228 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35228 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35228 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40256 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33950 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57218 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46532 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40112 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54314 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34310 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34310 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34310 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39140 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39140 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39140 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38198 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51388 - "GET /api/curriculum HTTP/1.1" 200 OK
+INFO:     95.214.55.246:49308 - "POST / HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:49316 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:49330 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:49342 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:49346 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     95.214.55.246:49358 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     2.136.219.168:55631 - "GET / HTTP/1.0" 404 Not Found
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "PUT /api/sessions/christoph_1768155037/drafts HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "PUT /api/sessions/christoph_1768155037/drafts HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "PUT /api/sessions/christoph_1768155037/drafts HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "PUT /api/sessions/christoph_1768155037/drafts HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "POST /api/sessions/christoph_1768155037/checkins HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "PUT /api/sessions/christoph_1768155037/phase HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "POST /api/sessions/christoph_1768155037/post HTTP/1.0" 200 OK
+INFO:     141.78.132.135:0 - "GET /api/sessions/christoph_1768155037 HTTP/1.0" 200 OK

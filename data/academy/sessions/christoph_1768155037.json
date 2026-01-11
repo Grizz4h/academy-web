@@ -8,8 +8,8 @@
   "focus": "Center",
   "session_method": "role-focus",
   "drill_id": "A1_D2",
-  "state": "IN_PROGRESS",
-  "current_phase": "P3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
   "created_at": "2026-01-11T19:10:37.673070",
   "drills": [
     {
@@ -225,6 +225,18 @@
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
       "timestamp": "2026-01-11T20:27:48.569129"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "shift_0_center_position": "middle",
+        "shift_0_is_playable": "ja",
+        "shift_1_center_position": "middle",
+        "shift_1_is_playable": "ja"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-11T21:20:07.910163"
     }
   ],
   "drafts": {
@@ -271,9 +283,21 @@
       "shift_8_is_playable": "nein",
       "shift_9_center_position": "middle",
       "shift_9_is_playable": "ja"
+    },
+    "P3": {
+      "shift_0_center_position": "middle",
+      "shift_0_is_playable": "ja",
+      "shift_1_center_position": "middle",
+      "shift_1_is_playable": "ja"
     }
   },
-  "post": null,
+  "post": {
+    "summary": "Live-Session erfolgreich abgeschlossen",
+    "unclear": null,
+    "next_module": null,
+    "helpfulness": 5,
+    "completed_at": "2026-01-11T21:20:11.483251"
+  },
   "game_info": {
     "league": "DEL",
     "team_home": "Schwenninger Wild Wings",
