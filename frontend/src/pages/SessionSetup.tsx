@@ -3,7 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useState, useEffect, useRef } from 'react'
 import { useUser } from '../context/UserContext'
-import { highlightGlossaryTerms } from '../components/GlossaryTerm'
+import { renderWithGlossary } from '../components/GlossaryTerm'
+import { DrillGuideCard } from '../components/DrillGuideCard'
+import type { DrillGuide } from '../components/DrillGuideCard'
 
 // NHL Teams mit Division als Metadaten
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
@@ -58,10 +60,18 @@ export default function SessionSetup() {
   const [goal, setGoal] = useState<string>('')
   const [confidence, setConfidence] = useState<number>(3)
   const [selectedDrill, setSelectedDrill] = useState<string>('')
-  const [league, setLeague] = useState<string>('')
+  const [league, setLeague] = useState<string>('DEL')
   const [teamHome, setTeamHome] = useState<string>('')
   const [teamAway, setTeamAway] = useState<string>('')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
+
+    // Setze DEL-Defaults für Teams, wenn DEL gewählt wird und noch keine Teams gesetzt sind
+    useEffect(() => {
+      if (league === 'DEL') {
+        if (!teamHome) setTeamHome('ERC Ingolstadt');
+        if (!teamAway) setTeamAway('Augsburger Panther');
+      }
+    }, [league]);
 
   // Draft laden
   useEffect(() => {
@@ -125,8 +135,19 @@ export default function SessionSetup() {
     }
   })
 
+
   // Finde aktuelles Modul
   const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
+
+  // Debug-Ausgaben: immer ganz oben, niemals nach einem return!
+  useEffect(() => {
+    console.log('SessionSetup Debug:', {
+      moduleId,
+      currentModule,
+      drills: currentModule?.drills,
+      selectedDrill
+    })
+  }, [moduleId, currentModule, selectedDrill])
 
   if (!currentModule) {
     return <div className="card">Modul nicht gefunden</div>
@@ -215,12 +236,12 @@ export default function SessionSetup() {
 
       <div className="card">
         <h2>Modul Info</h2>
-        <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{currentModule.description}</p>
+        <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{renderWithGlossary(currentModule.description ?? '')}</p>
         <div style={{ marginTop: '1rem' }}>
           <strong>Lernziele:</strong>
           <ul style={{ marginTop: '0.5rem' }}>
             {currentModule.learningGoals?.map((goal, i) => (
-              <li key={i}>{goal}</li>
+              <li key={i}>{renderWithGlossary(goal)}</li>
             ))}
           </ul>
         </div>
@@ -343,39 +364,124 @@ export default function SessionSetup() {
         </div>
       )}
 
-      {selectedDrill && currentModule.drills.find(d => d.id === selectedDrill)?.didactics && (
-        <div className="card">
-          <h2>Drill-Erklärung</h2>
-          <div style={{ marginTop: '0.5rem' }}>
-            <strong>Worum geht es?</strong>
-            <p style={{ marginTop: '0.35rem' }}>
-              {highlightGlossaryTerms(currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.goal, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}
-            </p>
+      {selectedDrill && (() => {
+        const drill = currentModule.drills.find(d => d.id === selectedDrill)
+        const didactics = drill?.didactics
+        if (!didactics) return null
+
+        // Neue Struktur: explanation, observation_guide, coaching_rules, evaluation_metrics, learning_hint
+        // Alte Struktur: goal, watch_for, how_to, learning_hint
+
+        // Extend didactics type to include coaching_rules and evaluation_metrics
+        type Didactics = {
+          explanation?: string
+          observation_guide?: { what_to_watch?: string[]; how_to_decide?: string[]; ignore?: string[] } | string[]
+          glossary?: { [key: string]: string }
+          goal?: string
+          watch_for?: string | string[]
+          how_to?: string | string[]
+          learning_hint?: string
+          coaching_rules?: string | string[]
+          evaluation_metrics?: string | string[]
+          ignore_list?: string[]
+        }
+
+        const didacticsTyped = drill?.didactics as Didactics | undefined
+        const hasOld = didacticsTyped?.goal || didacticsTyped?.watch_for || didacticsTyped?.how_to
+        const hasNew = didacticsTyped?.explanation || didacticsTyped?.observation_guide || didacticsTyped?.coaching_rules || didacticsTyped?.evaluation_metrics
+
+        return (
+          <div className="card">
+            <h2>Drill-Erklärung</h2>
+            {/* Neue Struktur */}
+            {hasNew && (
+              <>
+                {didactics.explanation && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <strong>Erklärung</strong>
+                    <p style={{ marginTop: '0.35rem' }}>{renderWithGlossary(didactics.explanation)}</p>
+                  </div>
+                )}
+                {/* observation_guide als Objekt oder Array */}
+                {didactics.observation_guide && (typeof didactics.observation_guide === 'object') && !Array.isArray(didactics.observation_guide) ? (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <DrillGuideCard guide={didactics.observation_guide as DrillGuide} />
+                  </div>
+                ) : didactics.observation_guide && Array.isArray(didactics.observation_guide) ? (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <strong>Beobachtungsleitfaden</strong>
+                    <ul style={{ marginTop: '0.35rem' }}>
+                      {didactics.observation_guide.map((t: string, i: number) => (
+                        <li key={i}>{renderWithGlossary(t)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {(didacticsTyped?.coaching_rules) && (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <strong>Coaching-Regeln</strong>
+                    <ul style={{ marginTop: '0.35rem' }}>
+                      {Array.isArray(didacticsTyped.coaching_rules) ? didacticsTyped.coaching_rules.map((t, i) => (
+                        <li key={i}>{renderWithGlossary(t)}</li>
+                      )) : <li>{renderWithGlossary(didacticsTyped.coaching_rules)}</li>}
+                    </ul>
+                  </div>
+                )}
+                {(didacticsTyped?.evaluation_metrics) && (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <strong>Bewertungskriterien</strong>
+                    <ul style={{ marginTop: '0.35rem' }}>
+                      {Array.isArray(didacticsTyped.evaluation_metrics) ? didacticsTyped.evaluation_metrics.map((t, i) => (
+                        <li key={i}>{renderWithGlossary(t)}</li>
+                      )) : <li>{renderWithGlossary(didacticsTyped.evaluation_metrics)}</li>}
+                    </ul>
+                  </div>
+                )}
+              </>
+            )}
+            {/* Alte Struktur */}
+            {hasOld && (
+              <>
+                {didactics.goal && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <strong>Worum geht es?</strong>
+                    <p style={{ marginTop: '0.35rem' }}>{renderWithGlossary(didactics.goal)}</p>
+                  </div>
+                )}
+                {didactics.watch_for && (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <strong>Worauf achten?</strong>
+                    <ul style={{ marginTop: '0.35rem' }}>
+                      {Array.isArray(didactics.watch_for) ? didactics.watch_for.map((t, i) => (
+                        <li key={i}>{renderWithGlossary(t)}</li>
+                      )) : <li>{renderWithGlossary(didactics.watch_for)}</li>}
+                    </ul>
+                  </div>
+                )}
+                {didactics.how_to && (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <strong>Wie ausfüllen?</strong>
+                    <ul style={{ marginTop: '0.35rem' }}>
+                      {Array.isArray(didactics.how_to) ? didactics.how_to.map((t, i) => (
+                        <li key={i}>{renderWithGlossary(t)}</li>
+                      )) : <li>{renderWithGlossary(didactics.how_to)}</li>}
+                    </ul>
+                  </div>
+                )}
+              </>
+            )}
+            {/* Lernhinweis (gemeinsam) */}
+            {didactics.learning_hint && (
+              <div style={{ marginTop: '0.75rem' }}>
+                <strong>Lernhinweis</strong>
+                <p style={{ marginTop: '0.35rem', color: 'rgba(255,255,255,0.8)' }}>
+                  {renderWithGlossary(didactics.learning_hint)}
+                </p>
+              </div>
+            )}
           </div>
-          <div style={{ marginTop: '0.75rem' }}>
-            <strong>Worauf achten?</strong>
-            <ul style={{ marginTop: '0.35rem' }}>
-              {currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.watch_for.map((t, i) => (
-                <li key={i}>{highlightGlossaryTerms(t, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}</li>
-              ))}
-            </ul>
-          </div>
-          <div style={{ marginTop: '0.75rem' }}>
-            <strong>Wie ausfüllen?</strong>
-            <ul style={{ marginTop: '0.35rem' }}>
-              {currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.how_to.map((t, i) => (
-                <li key={i}>{highlightGlossaryTerms(t, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}</li>
-              ))}
-            </ul>
-          </div>
-          <div style={{ marginTop: '0.75rem' }}>
-            <strong>Lernhinweis</strong>
-            <p style={{ marginTop: '0.35rem', color: 'rgba(255,255,255,0.8)' }}>
-              {highlightGlossaryTerms(currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.learning_hint, currentModule.drills.find(d => d.id === selectedDrill)!.didactics!.glossary)}
-            </p>
-          </div>
-        </div>
-      )}
+        )
+      })()}
 
       <div className="card">
         <h2>Lernziel für diese Session (optional)</h2>

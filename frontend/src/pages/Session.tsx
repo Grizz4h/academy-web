@@ -3,8 +3,10 @@ import { useParams } from 'react-router-dom'
 import { api } from '../api'
 import DrillRenderer from '../components/DrillRenderer'
 import { useState, useEffect } from 'react'
+import { renderWithGlossary } from '../components/GlossaryTerm'
 
 export default function SessionPage() {
+
   // Notizfeld für Session-Info
   const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
@@ -12,6 +14,12 @@ export default function SessionPage() {
   const [currentPhase, setCurrentPhase] = useState<string>('PRE')
   const [drillCompleted, setDrillCompleted] = useState(false)
   const [answerDraft, setAnswerDraft] = useState<any>({})
+  const [showMiniFeedback, setShowMiniFeedback] = useState(false)
+  const [miniFeedbackAnswer, setMiniFeedbackAnswer] = useState<string>('')
+  const [currentMiniQuestion, setCurrentMiniQuestion] = useState<string | null>(null)
+  // const [shownFeedbackPhases, setShownFeedbackPhases] = useState<Set<string>>(new Set())
+  // Feedback wird pro Session, Drill UND Phase angezeigt
+  // Micro-Feedback done pro Phase (persistiert in session.checkins)
   const draftKey = id ? `academy.session.${id}.phase.${currentPhase}` : null
 
   const { data: session, isLoading, error } = useQuery({
@@ -19,62 +27,55 @@ export default function SessionPage() {
     queryFn: () => api.getSession(id!)
   })
 
+
   // Session Continuation: Phase und Drafts laden
+  // Session-Phase und Drafts laden, ohne Hook-Order zu brechen
   useEffect(() => {
-    if (session) {
-      // Setze aktuelle Phase aus Session-Daten
-      if (session.current_phase) {
-        setCurrentPhase(session.current_phase)
-      }
-      // Lade Drafts aus Session-Daten statt localStorage
-      if (session.drafts && session.drafts[currentPhase]) {
-        setAnswerDraft(session.drafts[currentPhase])
-      } else {
-        setAnswerDraft({})
-      }
-      // Lade Notiz aus localStorage (optional: später aus session.note)
-      const noteKey = id ? `academy.session.${id}.note` : null
-      if (noteKey) {
-        const savedNote = localStorage.getItem(noteKey)
-        if (savedNote !== null) setSessionNote(savedNote)
-      }
+    if (!session) return;
+    // Setze aktuelle Phase aus Session-Daten, aber nur wenn sie sich unterscheidet
+    if (session.current_phase && session.current_phase !== currentPhase) {
+      setCurrentPhase(session.current_phase);
+      return; // Drafts werden im nächsten Render geladen
     }
-  }, [session, currentPhase, id])
+    // Lade Drafts aus Session-Daten statt localStorage
+    if (session.drafts && session.drafts[currentPhase]) {
+      setAnswerDraft(session.drafts[currentPhase]);
+    } else {
+      setAnswerDraft({});
+    }
+    // Lade Notiz aus localStorage (optional: später aus session.note)
+    const noteKey = id ? `academy.session.${id}.note` : null;
+    if (noteKey) {
+      const savedNote = localStorage.getItem(noteKey);
+      if (savedNote !== null) setSessionNote(savedNote);
+    }
+  }, [session, currentPhase, id]);
 
   // Draft laden beim Phasenwechsel (Fallback für alte Sessions)
   useEffect(() => {
-    if (!session || !session.drafts) {
-      if (!draftKey) return
-      const saved = localStorage.getItem(draftKey)
-      if (!saved) {
-        setAnswerDraft({})
-        return
-      }
-      try {
-        setAnswerDraft(JSON.parse(saved))
-      } catch (e) {
-        console.warn('Draft konnte nicht geladen werden', e)
-        setAnswerDraft({})
-      }
-    }
-  }, [draftKey, session])
-
-  // Draft bei Eingaben speichern (persistent im Backend)
-  const handleDraftChange = (next: any) => {
-    setAnswerDraft(next)
-    if (id) {
-      // Speichere Drafts persistent im Backend
-      const drafts = { ...session?.drafts, [currentPhase]: next }
-      api.saveDrafts(id, drafts).catch(err => {
-        console.warn('Failed to save drafts:', err)
-        // Fallback: localStorage
-        if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next))
-      })
+    if (!session) return;
+    // Lade Drafts aus Session-Daten, falls vorhanden
+    if (session.drafts && session.drafts[currentPhase]) {
+      setAnswerDraft(session.drafts[currentPhase]);
     } else {
-      // Fallback für alte Sessions
-      if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next))
+      // Fallback: localStorage
+      if (draftKey) {
+        const saved = localStorage.getItem(draftKey);
+        if (saved) {
+          setAnswerDraft(JSON.parse(saved));
+        } else {
+          setAnswerDraft({});
+        }
+      }
     }
-  }
+  }, [session, currentPhase, draftKey]);
+
+  // Draft speichern bei Änderungen
+  useEffect(() => {
+    if (draftKey) {
+      localStorage.setItem(draftKey, JSON.stringify(answerDraft));
+    }
+  }, [answerDraft, draftKey]);
 
   const clearDraft = () => {
     setAnswerDraft({})
@@ -82,7 +83,7 @@ export default function SessionPage() {
   }
 
   const checkinMutation = useMutation({
-    mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string }) => api.saveCheckin(id!, data),
+    mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string; mini_feedback?: string }) => api.saveCheckin(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['session', id] })
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
@@ -118,15 +119,35 @@ export default function SessionPage() {
     }
   })
 
+  // Mini-Feedback für alle A1-Drills (A1_D1 bis A1_D4)
+  function selectMiniQuestion(drill: any, answers: any): string | null {
+    if (!drill || !drill.miniFeedback || !Array.isArray(drill.miniFeedback.groups)) return null;
+
+    // Finde passendes 'when'-Kriterium aus miniFeedback.groups
+    for (const group of drill.miniFeedback.groups) {
+      const when = group.when;
+      // Prüfe, ob alle Bedingungen im 'when' erfüllt sind
+      const allMatch = Object.entries(when).every(([key, val]) => {
+        // answers kann string oder array sein
+        if (Array.isArray(answers[key])) {
+          return answers[key].includes(val);
+        }
+        return answers[key] === val;
+      });
+      if (allMatch && group.questions && group.questions.length > 0) {
+        // Zufällige Frage aus passender Gruppe
+        return group.questions[Math.floor(Math.random() * group.questions.length)];
+      }
+    }
+    return null;
+  }
+
   useEffect(() => {
     if (drillCompleted) {
       setDrillCompleted(false)
     }
   }, [currentPhase])
 
-  if (isLoading) return <div className="card">Lade Session...</div>
-  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
-  if (!session) return <div className="card">Session nicht gefunden.</div>
 
   const handleDrillComplete = (answers: any) => {
     let feedback = "Gut gemacht!"
@@ -166,23 +187,35 @@ export default function SessionPage() {
 
 
 
+
   const handleAdvanceToNext = () => {
-    // Always save current check-in before advancing
-    checkinMutation.mutate({
+    // Microfeedback-Guard: Nur Session-Flag zählt
+    const feedbackDone = Boolean(session?.microfeedback_done?.[currentPhase]);
+    if (["P1", "P2", "P3"].includes(currentPhase) && !feedbackDone) {
+      const drill = session?.drills?.[0];
+      const question = selectMiniQuestion(drill, answerDraft);
+      setCurrentMiniQuestion(question || null);
+      setShowMiniFeedback(true);
+      return;
+    }
+
+    // 2. Check-in speichern und Phase wechseln
+    const payload = {
       phase: currentPhase,
       answers: answerDraft,
       feedback: "Weiter zur nächsten Phase",
       next_task: "Nächste Phase vorbereiten"
-    })
-    const next = nextPhaseMap[currentPhase]
+      // mini_feedback NICHT mitsenden!
+    };
+    console.log("SAVE CHECKIN PAYLOAD", payload);
+    checkinMutation.mutate(payload);
+    const next = nextPhaseMap[currentPhase];
     if (next) {
-      setCurrentPhase(next)
-      setDrillCompleted(false)
-      // Update phase in backend for continuation
-      updatePhaseMutation.mutate({ phase: next })
-      // Load existing answers for next phase
-      const existingCheckin = session?.checkins?.find(c => c.phase === next)
-      setAnswerDraft(existingCheckin?.answers || {})
+      setCurrentPhase(next);
+      setDrillCompleted(false);
+      updatePhaseMutation.mutate({ phase: next });
+          const existingCheckin = session?.checkins?.find((c: any) => c.phase === next);
+      setAnswerDraft(existingCheckin?.answers || {});
     }
   }
 
@@ -194,7 +227,14 @@ export default function SessionPage() {
         answers: answerDraft,
         feedback: "Automatisch gespeichert",
         next_task: "Zurück zur vorherigen Phase"
-      })
+        // mini_feedback NICHT mitsenden!
+      });
+      console.log("SAVE CHECKIN PAYLOAD", {
+        phase: currentPhase,
+        answers: answerDraft,
+        feedback: "Automatisch gespeichert",
+        next_task: "Zurück zur vorherigen Phase"
+      });
     }
     const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)
     if (prevPhase) {
@@ -203,7 +243,7 @@ export default function SessionPage() {
       // Update phase in backend for continuation
       updatePhaseMutation.mutate({ phase: prevPhase })
       // Load existing answers for previous phase
-      const existingCheckin = session?.checkins?.find(c => c.phase === prevPhase)
+          const existingCheckin = session?.checkins?.find((c: any) => c.phase === prevPhase)
       setAnswerDraft(existingCheckin?.answers || {})
     }
   }
@@ -221,7 +261,7 @@ export default function SessionPage() {
 
 
 
-  const isCompleted = session.state === 'COMPLETED'
+  const isCompleted = session?.state === 'COMPLETED'
 
   const getPhaseTitle = (phase: string) => {
     if (phase === 'PRE') return 'Vor dem Spiel'
@@ -238,6 +278,16 @@ export default function SessionPage() {
 
 
 
+  function handleDraftChange(answers: any): void {
+    setAnswerDraft(answers);
+    if (draftKey) {
+      localStorage.setItem(draftKey, JSON.stringify(answers));
+    }
+  }
+  // Lade-/Fehler-Return nach allen Hooks
+  if (isLoading) return <div className="card">Lade Session...</div>
+  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
+  if (!session) return <div className="card">Session nicht gefunden.</div>
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <h1>Live Session: {session.module_id}</h1>
@@ -416,7 +466,7 @@ export default function SessionPage() {
             <summary style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>
               Check-in Historie (klicken zum Ausklappen)
             </summary>
-            {session.checkins.map((checkin, i) => (
+            {session.checkins.map((checkin: any, i: number) => (
               <div key={i} style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '5px' }}>
                 <h4>{getPhaseTitle(checkin.phase)} - {new Date(checkin.timestamp).toLocaleString()}</h4>
                 <pre style={{ fontSize: '0.8rem' }}>{JSON.stringify(checkin.answers, null, 2)}</pre>
@@ -445,6 +495,59 @@ export default function SessionPage() {
           <a href="/dashboard" className="btn">Zurück zum Dashboard</a>
         </div>
       )}
+
+      {showMiniFeedback && (() => {
+        return (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ maxWidth: '500px', width: '90%' }}>
+            <h3>💡 Mini-Feedback</h3>
+            <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', marginBottom: '1rem' }}>
+              <strong>
+                {(() => {
+                  const drill = session?.drills?.[0];
+                  if (drill?.miniFeedback?.reflectionTitle) return drill.miniFeedback.reflectionTitle;
+                  if (drill?.didactics?.explanation) return 'Reflexion – ' + (drill.title || 'Drill');
+                  return 'Reflexion';
+                })()}
+              </strong><br />
+              {(() => {
+                const drill = session?.drills?.[0];
+                if (drill?.miniFeedback?.reflectionText) return drill.miniFeedback.reflectionText;
+                if (drill?.didactics?.explanation) return drill.didactics.explanation;
+                return '';
+              })()}
+            </p>
+            <p>{renderWithGlossary(currentMiniQuestion || '')}</p>
+            <div style={{ marginTop: '1rem' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
+                Kurze Erkenntnis (1–2 Sätze)
+              </label>
+              <textarea
+                value={miniFeedbackAnswer}
+                onChange={(e) => setMiniFeedbackAnswer(e.target.value)}
+                placeholder="z. B. „Ich habe zu spät auf die Hüfte geachtet und war oft beim Puck.“"
+                rows={3}
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc' }}
+              />
+            </div>
+            <button
+              className="btn"
+              disabled={!miniFeedbackAnswer.trim()}
+              onClick={async () => {
+                const miniFeedback = miniFeedbackAnswer.trim();
+                if (!miniFeedback) return;
+                await api.saveMicroFeedback(id!, { phase: currentPhase, text: miniFeedback });
+                await queryClient.invalidateQueries({ queryKey: ['session', id] });
+                setShowMiniFeedback(false);
+                setMiniFeedbackAnswer('');
+              }}
+            >
+              Verstanden
+            </button>
+          </div>
+        </div>
+        );
+      })()}
     </div>
   )
 }

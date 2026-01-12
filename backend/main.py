@@ -35,11 +35,15 @@ class SessionCreate(BaseModel):
     session_method: Optional[str] = None  # "live_watch" oder andere
     drill_id: Optional[str] = None  # Specific drill to use
 
+class MicroFeedbackData(BaseModel):
+    phase: str  # P1, P2, P3
+    text: str
 class CheckinData(BaseModel):
     phase: str  # PRE, P1, P2, P3
     answers: dict
     feedback: Optional[str] = None
     next_task: Optional[str] = None
+    mini_feedback: Optional[str] = None
 
 class PostData(BaseModel):
     summary: str
@@ -65,7 +69,8 @@ def save_json(file_path: str, data):
 async def get_curriculum():
     """Curriculum laden"""
     try:
-        return load_json(os.path.join(DATA_DIR, "curriculum.json"))
+        curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
+        return curriculum
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
@@ -146,8 +151,38 @@ async def create_session(session: SessionCreate):
         "checkins": [],
         "drafts": {},  # Store draft answers for continuation
         "post": None,
-        "game_info": session.game_info
+        "game_info": session.game_info,
+        "microfeedback_done": {"P1": False, "P2": False, "P3": False}
     }
+# Neuer Endpoint: Microfeedback pro Phase setzen
+@app.post("/api/sessions/{session_id}/microfeedback")
+async def set_microfeedback(session_id: str, data: MicroFeedbackData):
+    """Microfeedback für eine Phase speichern und Flag setzen"""
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if data.phase not in ["P1", "P2", "P3"]:
+        raise HTTPException(status_code=400, detail="Invalid phase")
+    if not data.text or not data.text.strip():
+        raise HTTPException(status_code=400, detail="Text required")
+
+    # Optional: Feedback-Text speichern (z.B. in checkin oder extra Feld)
+    # Hier: in checkin für Phase ablegen, falls vorhanden
+    for c in session.get("checkins", []):
+        if c.get("phase") == data.phase:
+            c["mini_feedback_text"] = data.text
+            break
+
+    # Flag setzen
+    if "microfeedback_done" not in session:
+        session["microfeedback_done"] = {"P1": False, "P2": False, "P3": False}
+    session["microfeedback_done"][data.phase] = True
+
+    save_json(session_path, session)
+    return session
 
     save_json(os.path.join(sessions_dir, f"{session_id}.json"), session_data)
     return session_data
@@ -185,14 +220,33 @@ async def save_checkin(session_id: str, checkin: CheckinData):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    checkin_data = {
-        "phase": checkin.phase,
-        "answers": checkin.answers,
-        "feedback": checkin.feedback,
-        "next_task": checkin.next_task,
-        "timestamp": datetime.now().isoformat()
-    }
-    session["checkins"].append(checkin_data)
+    # Check ob für diese Phase schon ein Checkin existiert
+    existing = None
+    for c in session["checkins"]:
+        if c["phase"] == checkin.phase:
+            existing = c
+            break
+
+    if existing:
+        # Update/Merge nur die Felder, die im Request gesetzt sind
+        existing["answers"] = checkin.answers
+        if checkin.feedback is not None:
+            existing["feedback"] = checkin.feedback
+        if checkin.next_task is not None:
+            existing["next_task"] = checkin.next_task
+        if checkin.mini_feedback is not None:
+            existing["mini_feedback"] = checkin.mini_feedback
+        existing["timestamp"] = datetime.now().isoformat()
+    else:
+        checkin_data = {
+            "phase": checkin.phase,
+            "answers": checkin.answers,
+            "feedback": checkin.feedback,
+            "next_task": checkin.next_task,
+            "mini_feedback": checkin.mini_feedback,
+            "timestamp": datetime.now().isoformat()
+        }
+        session["checkins"].append(checkin_data)
 
     # Phase nur aktualisieren wenn es ein echter Checkin ist (nicht nur Speicherung)
     # Für Continuation wird die Phase separat über die phase-Route aktualisiert
@@ -301,4 +355,4 @@ async def update_session_phase(session_id: str, phase_data: dict):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

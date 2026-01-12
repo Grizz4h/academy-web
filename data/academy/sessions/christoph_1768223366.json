@@ -1,0 +1,139 @@
+{
+  "id": "christoph_1768223366",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D3",
+  "state": "IN_PROGRESS",
+  "current_phase": "PRE",
+  "created_at": "2026-01-12T14:09:26.230025",
+  "drills": [
+    {
+      "id": "A1_D3",
+      "title": "Winkel & Body Position: Lenkung beobachten",
+      "drill_type": "triangle_spotting",
+      "description": "Visuelles Wahrnehmungstraining. Einsatz: Re-Live oder ruhige Live-Phase. Dauer: 1–2 Minuten pro Sequenz.",
+      "didactics": {
+        "drill_intro": {
+          "title": "Worum geht es in diesem Drill?",
+          "text": "In diesem Drill beobachtest du, wie Spieler mit ihrem Körper den Gegner lenken. Es geht nicht darum, ob der Puck gewonnen wird, sondern ob der Gegner in eine ungefährliche Richtung gezwungen wird."
+        },
+        "observation_guide": {
+          "what_to_watch": [
+            "Körperachse: Zeigt der Oberkörper frontal oder leicht schräg?",
+            "Inside Position: Steht der Verteidiger zwischen Gegner und Tor?",
+            "Abstand: Kontrolliert (1–2 Stocklängen) oder überaggressiv?",
+            "Lenkung: Wird der Gegner nach außen oder zur Mitte geführt?",
+            "Timing: Wird früh gelenkt oder nur reagiert?"
+          ],
+          "how_to_decide": [
+            "Fokussiere auf Positionierung, nicht auf Ergebnis",
+            "Beobachte die Körperausrichtung vor dem Kontakt",
+            "Entscheide basierend auf Winkel und Raumkontrolle"
+          ],
+          "ignore": [
+            "Puckgewinn oder -verlust",
+            "Checks oder Härte",
+            "Torchancen oder Schüsse"
+          ]
+        },
+        "inline_explanations": {
+          "inside_position_gehalten": {
+            "meaning": "Spieler bleibt zwischen Gegner & Tor, Gegner wird nach außen gedrückt, Mitte / Slot bleibt geschlossen. Auch gültig, wenn kein Puckgewinn passiert."
+          },
+          "neutral_unklar": {
+            "meaning": "Situation zu kurz oder unübersichtlich, mehrere Spieler beeinflussen die Szene, Beobachter ist unsicher. Kein Fehler, sondern ehrliche Beobachtung."
+          },
+          "außen_freigegeben_schlechter_winkel": {
+            "meaning": "Gegner kann Richtung Mitte ziehen, Verteidiger ist seitlich oder hinter dem Gegner, Inside Position verloren. Oft Startpunkt für Kettenfehler."
+          }
+        },
+        "learning_hint": "Wenn es zu vage wirkt: genau darum geht es hier."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "triangles_seen": "häufig"
+            },
+            "questions": [
+              "Welche Passoption im Dreieck war am wichtigsten?",
+              "War das Dreieck stabil oder nur kurz vorhanden?",
+              "Hat sich das Dreieck mit dem Druck bewegt?",
+              "Wer hat das Dreieck aktiv ermöglicht?"
+            ]
+          },
+          {
+            "when": {
+              "triangles_seen": "selten"
+            },
+            "questions": [
+              "Was hat gefehlt – Abstand, Winkel oder Bewegung?",
+              "War das Fehlen strukturell oder situationsbedingt?",
+              "Hätte der Center das Dreieck herstellen können?"
+            ]
+          },
+          {
+            "when": {
+              "triangles_seen": "kaum"
+            },
+            "questions": [
+              "Was hat gefehlt – Abstand, Winkel oder Bewegung?",
+              "War das Fehlen strukturell oder situationsbedingt?",
+              "Hätte der Center das Dreieck herstellen können?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "winkel_body",
+            "type": "radio",
+            "label": "Winkel & Körperstellung",
+            "options": [
+              "Inside Position gehalten",
+              "Neutral / unklar",
+              "Außen freigegeben / schlechter Winkel"
+            ]
+          },
+          {
+            "key": "location",
+            "type": "radio",
+            "label": "Ort:",
+            "options": [
+              "OZ",
+              "NZ",
+              "DZ"
+            ]
+          },
+          {
+            "key": "structure_moment",
+            "type": "text",
+            "label": "Strukturmoment (1 Stichwort)",
+            "max_chars": 50
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Grizzlys Wolfsburg",
+    "date": "2026-01-12T11:41:05.327Z"
+  }
+}

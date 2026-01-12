@@ -1,0 +1,238 @@
+{
+  "id": "christoph_1768221795",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D1",
+  "state": "IN_PROGRESS",
+  "current_phase": "P2",
+  "created_at": "2026-01-12T13:43:15.259393",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Center & Struktur",
+      "drill_type": "period_checkin",
+      "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
+      "didactics": {
+        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Center-Position (Low / Middle / High)",
+            "Dreiecke / Anspielstationen",
+            "Abstände zwischen den Linien"
+          ],
+          "how_to_decide": [
+            "Gesamteindruck zählt",
+            "Erste Intuition ist valide",
+            "Unsicher → Mitte wählen"
+          ],
+          "ignore": [
+            "Torchancen",
+            "Einzelne Fehlpässe",
+            "Emotionale Narrative"
+          ]
+        },
+        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "center_mostly": "low"
+            },
+            "questions": [
+              "Welche Aufgabe hat der Center in dieser Tiefe primär erfüllt – Absicherung oder Spielaufbau?",
+              "Hat seine tiefe Position eher Ruhe oder Enge ins Spiel gebracht?",
+              "War der Center anspielbar oder nur absichernd präsent?",
+              "Wie hätte sich das Spiel verändert, wenn er früher nach Middle geschoben hätte?"
+            ]
+          },
+          {
+            "when": {
+              "center_mostly": "middle"
+            },
+            "questions": [
+              "Welche Vorteile entstehen, wenn der Center das Middle kontrolliert?",
+              "War seine Position eher verbindend oder passiv?",
+              "Hat er Passoptionen geschaffen oder nur Raum besetzt?"
+            ]
+          },
+          {
+            "when": {
+              "center_mostly": "high"
+            },
+            "questions": [
+              "Warum konnte sich der Center so hoch positionieren – Struktur oder Spielsituation?",
+              "Hat seine Höhe das Spiel beschleunigt oder risikoreicher gemacht?",
+              "Wer hat dann die Absicherung übernommen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "center_mostly",
+            "type": "radio",
+            "label": "Center meist:",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          {
+            "key": "structure_feeling",
+            "type": "radio",
+            "label": "Strukturgefühl:",
+            "options": [
+              "geordnet",
+              "chaotisch",
+              "mixed"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Auffälligkeit (optional, 1 Satz)",
+            "max_chars": 120
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:43:17.544761"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "low",
+        "structure_feeling": "geordnet"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:43:30.478416"
+    },
+    {
+      "phase": "P2",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:43:33.659617"
+    },
+    {
+      "phase": "P3",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:43:36.815297"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "center_mostly": "low",
+        "structure_feeling": "mixed"
+      },
+      "feedback": "Automatisch gespeichert",
+      "next_task": "Zurück zur vorherigen Phase",
+      "timestamp": "2026-01-12T13:43:47.642257"
+    },
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:43:55.181346"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "middle",
+        "structure_feeling": "geordnet"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:44:02.912503"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "structure_feeling": "mixed",
+        "center_mostly": "low"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:44:10.928886"
+    },
+    {
+      "phase": "P1",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:44:17.960603"
+    },
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:44:20.227221"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "middle",
+        "structure_feeling": "mixed"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:44:29.611615"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "low",
+        "structure_feeling": "geordnet"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:46:34.729882"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "structure_feeling": "mixed",
+        "center_mostly": "low"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-12T13:47:09.660910"
+    }
+  ],
+  "drafts": {
+    "PRE": {}
+  },
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "date": "2026-01-12T12:43:15.255Z"
+  }
+}

@@ -1,8 +1,10 @@
-from .drills import period_checkin, micro_quiz
+from .drills import period_checkin, shift_tracker, triangle_spotting, role_identification
 
 DRILL_REGISTRY = {
     "period_checkin": period_checkin.render,
-    "micro_quiz": micro_quiz.render
+    "shift_tracker": shift_tracker.render,
+    "triangle_spotting": triangle_spotting.render,
+    "role_identification": role_identification.render
 }
 
 def render_drill(drill, context):

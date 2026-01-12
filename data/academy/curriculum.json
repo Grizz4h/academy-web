@@ -9,148 +9,100 @@
         {
           "id": "A1",
           "title": "A1 – Rink IQ & Rollenverständnis",
-          "summary": "Center, Winger, Defense, Dreiecke – erkenne Rollen und Positionen",
-          "description": "Du lernst, die Grundrollen ohne Puck zu erkennen (Support, Absicherung, Outlet). Du erkennst Dreiecke/Anspielstationen und wann sie reißen. Du kannst Low/Middle/High labeln.",
+          "summary": "Grundlagen des Rink IQ und Rollenverständnis",
+          "description": "Einführung in die grundlegenden Konzepte des Eishockeys: Positionen, Rollen und Strukturen erkennen.",
           "learningGoals": [
             "Erkenne Grundrollen ohne Puck (Support, Absicherung, Outlet)",
             "Erkenne Dreiecke und Anspielstationen",
             "Labele Positionen: Low / Middle / High"
           ],
-          "recommendedSessionMethod": "role-focus",
-          "defaultFocus": "Center",
           "difficulty": 1,
-          "duration": 45,
+          "duration": 30,
           "drills": [
             {
               "id": "A1_D1",
               "title": "Period Check-in: Center & Struktur",
               "drill_type": "period_checkin",
-              "description": "Schneller Überblick pro Drittel. Ideal für Live-Spiel. Fokus: Center-Position, Dreiecke, Breakout.",
+              "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
               "didactics": {
-                "goal": "Du trainierst Überblick: Wo befindet sich der Center ohne Puck? Ist das Team strukturiert anspielbar oder nicht? Es geht nicht um Details oder einzelne Fehler.",
-                "watch_for": [
-                  "Center-Position (Low / Middle / High): Beobachte NUR Situationen, in denen der Center KEINEN Puck hat.",
-                  "Dreiecke / Anspielstationen: Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen und jeder mindestens eine Passoption hat.",
-                  "Breakout-Eindruck: Beurteile nicht das Ergebnis, sondern den Ablauf."
-                ],
-                "how_to": [
-                  "Grobe Einschätzung",
-                  "Kein Nachdenken über Einzelszenen",
-                  "Vergleichbarkeit ist wichtiger als Genauigkeit"
-                ],
-                "learning_hint": "Wenn du denkst: 'Das ist unscharf' - genau darum geht es hier. A1.1 ist absichtlich grob.",
-                "observation_rules": {
-                  "center_position": {
-                    "title": "Center-Position beobachten",
-                    "description": "Stell dir das Spielfeld in drei horizontale Zonen vor. Wo ist der Center MEISTENS, wenn der Puck hinten ist?",
-                    "examples": [
-                      "Low: Center ist tief im eigenen Drittel, hilft beim Spielaufbau, kommt dem Verteidiger entgegen",
-                      "Middle: Center steht zwischen Defense und Wingern, ist Bindeglied",
-                      "High: Center steht hoch, wartet, beteiligt sich kaum am Aufbau"
-                    ],
-                    "question": "Wo ist der Center MEISTENS, wenn er keinen Puck hat?"
-                  },
-                  "triangle_rating": {
-                    "title": "Dreiecke erkennen",
-                    "description": "Ein Dreieck existiert, wenn drei Spieler nicht auf einer Linie stehen, jeder eine Passoption hat und Abstände spielbar sind.",
-                    "examples": [
-                      "Gute Anzeichen: Spieler stehen leicht versetzt, Puckführender kann nach links ODER rechts passen, Center bewegt sich",
-                      "Schlechte Anzeichen: Alle auf einer Linie, nur 'Bande raus' möglich, Spieler verstecken sich hinter Gegenspielern"
-                    ],
-                    "question": "Bewertung: 1=fast nie Struktur, 3=situativ, 5=fast immer Optionen"
-                  },
-                  "breakout_quality": {
-                    "title": "Breakout-Eindruck",
-                    "description": "Beurteile nicht das Ergebnis, sondern den Ablauf.",
-                    "examples": [
-                      "Clean: Pässe kommen an, wenig Zeitdruck, Struktur bleibt",
-                      "Mixed: einige saubere Exits, einige hektische",
-                      "Chaotic: Scheibe wird blind rausgehauen, Struktur bricht sofort"
-                    ],
-                    "question": "Wie sauber war der Ablauf?"
-                  }
+                "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Center-Position (Low / Middle / High)",
+                    "Dreiecke / Anspielstationen",
+                    "Abstände zwischen den Linien"
+                  ],
+                  "how_to_decide": [
+                    "Gesamteindruck zählt",
+                    "Erste Intuition ist valide",
+                    "Unsicher → Mitte wählen"
+                  ],
+                  "ignore": [
+                    "Torchancen",
+                    "Einzelne Fehlpässe",
+                    "Emotionale Narrative"
+                  ]
                 },
-                "decision_help": [
-                  "Nicht jede Szene zählen – der Gesamteindruck zählt",
-                  "Erste Intuition zählt",
-                  "Wenn unsicher → grobe Mitte wählen"
-                ],
-                "ignore_list": [
-                  "Torchancen",
-                  "Einzelne Fehlpässe",
-                  "Emotionen ('wir waren besser!')"
-                ],
-                "glossary": {
-                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
-                  "Winger": "Die Winger spielen außen und geben Breite. Sie sind oft erste Anspielstationen an der Bande.\n\n👉 Beobachtungsfrage: 'Steht der Winger so, dass ein Pass möglich ist – oder versteckt er sich?'\n\nTypisch: stehen an der Bande, öffnen das Spiel, sichern gegnerische Verteidiger",
-                  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.\n\n👉 Beobachtungsfrage: 'Hat der Verteidiger beim Puckbesitz mehrere Passoptionen?'\n\nTypisch: kontrollieren Abstand zum Gegner, entscheiden über Tempo, halten Struktur",
-                  "Breakout": "Der Breakout ist der Spielaufbau aus dem eigenen Drittel heraus.\n\n👉 Beobachtungsfrage: 'Kommt das Team kontrolliert raus – oder wird die Scheibe nur weggeschlagen?'\n\n• Clean: Pässe kommen an, Struktur bleibt\n• Chaotic: Scheibe wird blind rausgehauen",
-                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'\n\nWichtig: Dreiecke sind Bewegung, nicht feste Positionen; sie entstehen durch Abstände und Winkel",
-                  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'\n\nNicht anspielbar: gedeckt, Rücken zum Spiel, zu weit entfernt",
-                  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet.\n\n👉 Beobachtungsfrage: 'Wirkt das Team vorbereitet oder reagiert es nur?'\n\nGute Struktur: klare Abstände, Dreiecke, wenig Hektik",
-                  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
-                  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
-                  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
-                  "Puckführender Spieler": "Der Spieler, der aktuell die Scheibe kontrolliert.\n\n👉 Beobachtungsfrage: 'Hat er Zeit und Optionen – oder nur Stress?'\n\nWichtig: nicht der Star, sondern der Ausgangspunkt für Struktur",
-                  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
-                  "Line Change": "Ein Line Change ist der Spielerwechsel während des Spiels.\n\n👉 Beobachtungsfrage: 'Reißt die Struktur beim Wechsel?'\n\nWichtig: viele Strukturprobleme entstehen hier, besonders in der Neutral Zone",
-                  "Shift": "Ein einzelner Einsatz eines Spielers, typischerweise 30-60 Sekunden lang."
-                }
+                "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": { "center_mostly": "low" },
+                    "questions": [
+                      "Welche Aufgabe hat der Center in dieser Tiefe primär erfüllt – Absicherung oder Spielaufbau?",
+                      "Hat seine tiefe Position eher Ruhe oder Enge ins Spiel gebracht?",
+                      "War der Center anspielbar oder nur absichernd präsent?",
+                      "Wie hätte sich das Spiel verändert, wenn er früher nach Middle geschoben hätte?"
+                    ]
+                  },
+                  {
+                    "when": { "center_mostly": "middle" },
+                    "questions": [
+                      "Welche Vorteile entstehen, wenn der Center das Middle kontrolliert?",
+                      "War seine Position eher verbindend oder passiv?",
+                      "Hat er Passoptionen geschaffen oder nur Raum besetzt?"
+                    ]
+                  },
+                  {
+                    "when": { "center_mostly": "high" },
+                    "questions": [
+                      "Warum konnte sich der Center so hoch positionieren – Struktur oder Spielsituation?",
+                      "Hat seine Höhe das Spiel beschleunigt oder risikoreicher gemacht?",
+                      "Wer hat dann die Absicherung übernommen?"
+                    ]
+                  }
+                ]
               },
               "config": {
                 "questions": [
                   {
-                    "key": "center_position",
+                    "key": "center_mostly",
                     "type": "radio",
-                    "label": "Center-Position (meistens)",
+                    "label": "Center meist:",
                     "options": [
                       "low",
                       "middle",
                       "high"
-                    ],
-                    "help": "Wo steht der Center ohne Puck meist?"
+                    ]
                   },
                   {
-                    "key": "triangle_rating",
-                    "type": "slider",
-                    "label": "Dreiecke / Anspielstationen",
-                    "min": 1,
-                    "max": 5,
-                    "help": "1=kaum, 3=situativ, 5=konstant"
-                  },
-                  {
-                    "key": "breakout_quality",
+                    "key": "structure_feeling",
                     "type": "radio",
-                    "label": "Breakout-Eindruck",
+                    "label": "Strukturgefühl:",
                     "options": [
-                      "clean",
-                      "mixed",
-                      "chaotic"
-                    ],
-                    "help": "Wie sauber war der Exit?"
+                      "geordnet",
+                      "chaotisch",
+                      "mixed"
+                    ]
                   },
                   {
                     "key": "note",
                     "type": "text",
-                    "label": "Freie Notiz (optional)",
+                    "label": "Auffälligkeit (optional, 1 Satz)",
                     "max_chars": 120
-                  }
-                ],
-                "coaching_rules": [
-                  {
-                    "condition": "triangle_rating <= 2 && breakout_quality == 'chaotic'",
-                    "feedback": "Struktur reißt früh. Exit wird blind/unter Druck.",
-                    "next_task": "Fokus: Center früher als Outlet anbieten (middle-low Position)"
-                  },
-                  {
-                    "condition": "center_position == 'high' && breakout_quality != 'clean'",
-                    "feedback": "Center hängt, Outlet fehlt.",
-                    "next_task": "Fokus: Center früher absinken, Supportdreieck herstellen"
-                  },
-                  {
-                    "condition": "triangle_rating >= 4 && breakout_quality == 'clean'",
-                    "feedback": "Struktur ist stabil!",
-                    "next_task": "Erkenne warum: Winger close? D-Support? Nächstes Drittel gleiche Mechanik beobachten."
                   }
                 ]
               }
@@ -159,212 +111,304 @@
               "id": "A1_D2",
               "title": "Shift Chunk: Center-Position",
               "drill_type": "shift_tracker",
-              "description": "Beobachte 10 Shifts. Nur schauen, nicht interpretieren. Trainiert konsistente Wahrnehmung.",
+              "description": "Serienbeobachtung. Einsatz: Live oder Re-Live. Dauer: 8–12 Shifts.",
               "didactics": {
-                "goal": "Du trainierst Konsequenz statt Gefühl. Nicht: 'Ich glaube, der Center war oft tief.' Sondern: 'Ich habe es 10× beobachtet.'",
-                "watch_for": [
-                  "Für 10 aufeinanderfolgende Shifts: Wo steht der Center, wenn sein Team in Ballbesitz kommt?",
-                  "Anspielbarkeit: Ein Center ist anspielbar, wenn er nicht gedeckt ist, nicht mit dem Rücken zum Spiel steht, und ein Pass realistisch möglich wäre."
-                ],
-                "how_to": [
-                  "Erste Intuition zählt",
-                  "Wenn du unsicher bist → Nein",
-                  "Nicht zurückspulen"
-                ],
-                "learning_hint": "Dieser Drill zeigt dir, dass dein Bauchgefühl oft falsch ist – Muster schlagen Erinnerung.",
-                "observation_rules": {
-                  "center_position": {
-                    "title": "Center-Position im Shift",
-                    "description": "Wo steht er, wenn sein Team in Ballbesitz kommt?",
-                    "examples": [
-                      "Low: tief im eigenen Drittel",
-                      "Middle: zwischen Defense und Wingern",
-                      "High: wartet hoch, kaum am Aufbau beteiligt"
-                    ],
-                    "question": "Wo steht der Center?"
-                  },
-                  "is_playable": {
-                    "title": "Anspielbarkeit",
-                    "description": "Es reicht: 'Ja, wäre möglich gewesen' oder 'Nein'",
-                    "examples": [
-                      "Ja: Nicht gedeckt, realistischer Pass möglich",
-                      "Nein: Gedeckt, Rücken zum Spiel, oder zu weit weg"
-                    ],
-                    "question": "Klar anspielbar?"
+                "rollenreferenz_center": {
+                  "title": "Rollenfokus: Center – was ist „strukturell korrekt“?",
+                  "text": "In diesem Drill dient der Center als Referenzpunkt für Ordnung. Du bewertest nicht seine Technik, sondern seine Rolle im Gesamtgefüge.",
+                  "typische_aufgaben": [
+                    "Bindeglied zwischen Defense und Wingern",
+                    "erste Absicherung nach Puckverlust",
+                    "beweglicher Anker im Middle",
+                    "Leser des Spiels, nicht der Jäger des Pucks"
+                  ],
+                  "kurz_gesagt": "Der Center sorgt dafür, dass immer jemand Ordnung hält, während andere Druck machen.",
+                  "wann_in_rolle": [
+                    "das Middle absichert, auch ohne Puck",
+                    "sich unter dem Spiel bewegt (nicht vor dem Spiel)",
+                    "Lücken schließt, bevor sie gefährlich werden",
+                    "bewusst nicht jedem Puck hinterhergeht"
+                  ],
+                  "nicht_aus_rolle_weil": [
+                    "er einen Zweikampf verliert",
+                    "ein Pass misslingt",
+                    "ein Gegner schneller ist"
+                  ],
+                  "aus_rolle_wenn": [
+                    "er unkoordiniert tief jagt",
+                    "das Middle ungesichert bleibt",
+                    "mehrere Spieler dieselbe Aufgabe machen",
+                    "niemand seine Position übernimmt"
+                  ],
+                  "merksatz": "Nicht der Fehler ist das Problem – sondern das fehlende Auffangen danach.",
+                  "beobachtungsanker": {
+                    "frage": "Wenn jetzt der Puck verloren geht – wer hält Ordnung?",
+                    "regel": "Wenn die Antwort niemand ist → Strukturbruch"
                   }
                 },
-                "decision_help": [
-                  "Pro Shift zwei Klicks",
-                  "Keine Notizen",
-                  "Unsicher? Erste Intuition nehmen"
-                ],
-                "ignore_list": [
-                  "Einzelne Fehlpässe",
-                  "Schiri-Entscheidungen",
-                  "Publikumsreaktionen"
-                ],
-                "glossary": {
-                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.\n\n👉 Beobachtungsfrage: 'Wo bietet sich der Center an, wenn sein Team die Scheibe hinten hat?'\n\nTypisch: hilft beim Spielaufbau, ist Anspielstation, sichert nach hinten ab",
-                  "Anspielbarkeit": "Ein Spieler ist anspielbar, wenn: er nicht gedeckt ist, der Pass realistisch möglich ist, der Pass nicht sofort zu Druck führt.\n\n👉 Beobachtungsfrage: 'Würde dieser Pass dem Team helfen oder Probleme machen?'",
-                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'",
-                  "High": "High = weit oben, wartet, beteiligt sich wenig am Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
-                  "Middle": "Middle = zwischen Defense und Angriff, Bindeglied.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'",
-                  "Low": "Low = tief im eigenen Drittel, hilft beim Aufbau.\n\n👉 Beobachtungsfrage: 'Wo hält sich der Center auf, wenn der Puck hinten ist?'"
-                }
+                "drill_intro": {
+                  "title": "Worum geht es in diesem Drill?",
+                  "text": "In diesem Drill beobachtest du nicht einzelne Aktionen, sondern die Ordnung eines gesamten Shifts. Entscheidend ist nicht, ob etwas gelingt, sondern ob die Struktur nach Aktionen erhalten bleibt."
+                },
+                "explanation": "Du trainierst hier die Positionsdisziplin des Centers über mehrere Shifts. Fokus auf wiederkehrende Muster und Timing, nicht auf einzelne Aktionen.",
+                "tooltips": {
+                  "shift": "Die Zeit, in der eine Line gemeinsam auf dem Eis ist (meist 30–50 Sekunden)."
+                },
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Center-Startposition",
+                    "Position 2 Sekunden nach Puckverlust",
+                    "Position beim Zonenwechsel"
+                  ],
+                  "how_to_decide": [
+                    "Nicht interpretieren, nur notieren",
+                    "Gesamtmuster erkennen",
+                    "Unsicher → neutral wählen"
+                  ],
+                  "ignore": [
+                    "Einzelne Pässe oder Schüsse",
+                    "Torchancen",
+                    "Spielerische Details"
+                  ]
+                },
+                "shift_marker_explanation": "Shift Marker (Beobachtungspunkt): Ein Shift Marker ist ein Moment im Shift, an dem du kurz prüfst: Ist die Ordnung noch da? Typische Marker: • nach einem Puckverlust • nach einem Zweikampf an der Bande • nach einem misslungenen Pass Du bewertest nicht die Aktion, sondern die Struktur danach.",
+                "inline_explanations": {
+                  "falls_out": {
+                    "not_means": [
+                      "Fehler machen",
+                      "Puck verlieren",
+                      "eine Torchance zulassen"
+                    ],
+                    "means": "Ein Spieler verlässt seine Rolle oder Position, ohne dass jemand diese Aufgabe übernimmt.",
+                    "example": "Beispiel: Der Center geht tief dem Puck nach, aber niemand sichert das Middle → Strukturbruch"
+                  }
+                },
+                "fill_hint": "Hinweis: Ein Shift kann gute Aktionen und Strukturbrüche enthalten. Antworte nicht emotional, sondern strukturell.",
+                "question_precision": {
+                  "falls_out": "Gemeint ist: Gab es mindestens einen Moment, in dem Rollen, Abstände oder Aufgaben kurz verloren gingen?"
+                },
+                "learning_hint": "Wenn es zu detailliert wirkt: genau darum geht es hier.",
+                "didactical_closing": "Warum dieser Drill wichtig ist: Strukturverlust erklärt oft, warum ein Team unter Druck gerät – nicht erst das Gegentor."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": { "falls_out": "nein" },
+                    "questions": [
+                      "Was hat die Ordnung stabil gehalten – Abstände oder Rollenverständnis?",
+                      "War die Struktur aktiv oder reaktiv?",
+                      "Hat sich die Ordnung mit dem Puck bewegt?"
+                    ]
+                  },
+                  {
+                    "when": { "falls_out": "ja" },
+                    "questions": [
+                      "Woran hast du Instabilität zuerst erkannt – Bewegung, Abstände oder Kommunikation?",
+                      "War die Instabilität dauerhaft oder situativ?",
+                      "Welche Rolle hätte der Center spielen können, um sie zu stabilisieren?"
+                    ]
+                  }
+                ]
               },
               "config": {
                 "shift_count": 10,
                 "questions": [
                   {
-                    "key": "center_position",
-                    "type": "radio",
-                    "label": "Center-Position",
-                    "options": [
-                      "low",
-                      "middle",
-                      "high"
-                    ]
+                    "key": "shift_marker",
+                    "type": "checkbox",
+                    "label": "Shift-Marker"
                   },
                   {
-                    "key": "is_playable",
+                    "key": "falls_out",
                     "type": "radio",
-                    "label": "Klar anspielbar?",
+                    "label": "Fällt aus Struktur?",
                     "options": [
                       "ja",
                       "nein"
                     ]
-                  }
-                ],
-                "coaching_rules": [
-                  {
-                    "condition": "center_position == 'high'",
-                    "feedback": "Center weit oben → Support fehlt.",
-                    "next_task": "Achte auf frühere Absicherung durch Center (middle-low)."
                   }
                 ]
               }
             },
             {
               "id": "A1_D3",
-              "title": "Triangle Spotting: Offense",
-              "drill_type": "micro_quiz",
-              "description": "Minutenschnelles Quiz: Wo siehst du stabile Dreiecke?",
+              "title": "Winkel & Body Position: Lenkung beobachten",
+              "drill_type": "triangle_spotting",
+              "description": "Visuelles Wahrnehmungstraining. Einsatz: Re-Live oder ruhige Live-Phase. Dauer: 1–2 Minuten pro Sequenz.",
               "didactics": {
-                "goal": "Du trainierst schnelle Mustererkennung, nicht Zeichnen. Drei Szenen reichen, um dein Auge zu schärfen.",
-                "watch_for": [
-                  "Dreiecke in der Offensive",
-                  "Puckführender hat mindestens zwei Optionen",
-                  "Abstände spielbar (nicht auf einer Linie)"
-                ],
-                "how_to": [
-                  "Schnell entscheiden",
-                  "Nicht zurückspulen",
-                  "Wenn unsicher → Mitte"
-                ],
-                "learning_hint": "Quiz baut dein Muster-Gedächtnis auf. Geht nicht um Regeln, sondern Wiederholung.",
-                "observation_rules": {
-                  "triangle_exists": {
-                    "title": "Dreieck vorhanden?",
-                    "description": "Drei Spieler so, dass Puckführender zwei Optionen hat",
-                    "examples": [
-                      "Ja: Spieler leicht versetzt, Winkel offen",
-                      "Nein: Alle auf einer Linie"
-                    ],
-                    "question": "Gibt es ein spielbares Dreieck?"
+                "drill_intro": {
+                  "title": "Worum geht es in diesem Drill?",
+                  "text": "In diesem Drill beobachtest du, wie Spieler mit ihrem Körper den Gegner lenken. Es geht nicht darum, ob der Puck gewonnen wird, sondern ob der Gegner in eine ungefährliche Richtung gezwungen wird."
+                },
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Körperachse: Zeigt der Oberkörper frontal oder leicht schräg?",
+                    "Inside Position: Steht der Verteidiger zwischen Gegner und Tor?",
+                    "Abstand: Kontrolliert (1–2 Stocklängen) oder überaggressiv?",
+                    "Lenkung: Wird der Gegner nach außen oder zur Mitte geführt?",
+                    "Timing: Wird früh gelenkt oder nur reagiert?"
+                  ],
+                  "how_to_decide": [
+                    "Fokussiere auf Positionierung, nicht auf Ergebnis",
+                    "Beobachte die Körperausrichtung vor dem Kontakt",
+                    "Entscheide basierend auf Winkel und Raumkontrolle"
+                  ],
+                  "ignore": [
+                    "Puckgewinn oder -verlust",
+                    "Checks oder Härte",
+                    "Torchancen oder Schüsse"
+                  ]
+                },
+                "inline_explanations": {
+                  "inside_position_gehalten": {
+                    "meaning": "Spieler bleibt zwischen Gegner & Tor, Gegner wird nach außen gedrückt, Mitte / Slot bleibt geschlossen. Auch gültig, wenn kein Puckgewinn passiert."
+                  },
+                  "neutral_unklar": {
+                    "meaning": "Situation zu kurz oder unübersichtlich, mehrere Spieler beeinflussen die Szene, Beobachter ist unsicher. Kein Fehler, sondern ehrliche Beobachtung."
+                  },
+                  "außen_freigegeben_schlechter_winkel": {
+                    "meaning": "Gegner kann Richtung Mitte ziehen, Verteidiger ist seitlich oder hinter dem Gegner, Inside Position verloren. Oft Startpunkt für Kettenfehler."
                   }
                 },
-                "decision_help": [
-                  "Intuition zählt",
-                  "Nicht überanalysieren"
-                ],
-                "ignore_list": [
-                  "Schiedsrichter",
-                  "Publikum"
-                ],
-                "glossary": {
-                  "Dreieck": "Ein Dreieck entsteht, wenn drei Spieler so stehen, dass der Puckführende mindestens zwei Passoptionen hat.\n\n👉 Beobachtungsfrage: 'Hat der Spieler am Puck mehr als eine sinnvolle Option?'",
-                  "Anspielstation": "Eine Anspielstation ist ein Spieler, der realistisch anspielbar ist.\n\n👉 Beobachtungsfrage: 'Könnte ich diesen Pass ohne großes Risiko spielen?'"
-                }
+                "learning_hint": "Wenn es zu vage wirkt: genau darum geht es hier."
               },
-              "config": {
-                "time_limit": 120,
-                "questions": [
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "question": "Gibt es ein klares Dreieck?",
-                    "options": [
-                      "Ja",
-                      "Nein"
-                    ],
-                    "correct": "Ja",
-                    "explanation": "Drei Spieler, Puckführender hat mindestens zwei Optionen"
+                    "when": { "triangles_seen": "häufig" },
+                    "questions": [
+                      "Welche Passoption im Dreieck war am wichtigsten?",
+                      "War das Dreieck stabil oder nur kurz vorhanden?",
+                      "Hat sich das Dreieck mit dem Druck bewegt?",
+                      "Wer hat das Dreieck aktiv ermöglicht?"
+                    ]
                   },
                   {
-                    "question": "Hat der Puckführende zwei Passoptionen?",
+                    "when": { "triangles_seen": "selten" },
+                    "questions": [
+                      "Was hat gefehlt – Abstand, Winkel oder Bewegung?",
+                      "War das Fehlen strukturell oder situationsbedingt?",
+                      "Hätte der Center das Dreieck herstellen können?"
+                    ]
+                  },
+                  {
+                    "when": { "triangles_seen": "kaum" },
+                    "questions": [
+                      "Was hat gefehlt – Abstand, Winkel oder Bewegung?",
+                      "War das Fehlen strukturell oder situationsbedingt?",
+                      "Hätte der Center das Dreieck herstellen können?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "winkel_body",
+                    "type": "radio",
+                    "label": "Winkel & Körperstellung",
                     "options": [
-                      "Ja",
-                      "Nein"
-                    ],
-                    "correct": "Nein",
-                    "explanation": "Alle stehen auf einer Linie"
+                      "Inside Position gehalten",
+                      "Neutral / unklar",
+                      "Außen freigegeben / schlechter Winkel"
+                    ]
+                  },
+                  {
+                    "key": "location",
+                    "type": "radio",
+                    "label": "Ort:",
+                    "options": [
+                      "OZ",
+                      "NZ",
+                      "DZ"
+                    ]
+                  },
+                  {
+                    "key": "structure_moment",
+                    "type": "text",
+                    "label": "Strukturmoment (1 Stichwort)",
+                    "max_chars": 50
                   }
                 ]
               }
             },
             {
               "id": "A1_D4",
-              "title": "Micro-Quiz: Rollen & Struktur",
-              "drill_type": "micro_quiz",
-              "description": "Kurzes Quiz, um Rollen und Struktur zu überprüfen.",
+              "title": "Rollen-Identifikation (Center erkennen)",
+              "drill_type": "role_identification",
+              "description": "Blindtest. Einsatz: Re-Live, fremdes Team. Dauer: ~1 Minute.",
               "didactics": {
-                "goal": "Schneller Check: Kennst du die Begriffe und erkennst du Struktur?",
-                "watch_for": [
-                  "Rollenverständnis",
-                  "Struktur",
-                  "Anspielstationen"
-                ],
-                "how_to": [
-                  "Schnell antworten",
-                  "Keine Recherche",
-                  "Intuition nutzen"
-                ],
-                "learning_hint": "Dieses Quiz verankert die Basics.",
-                "observation_rules": {},
-                "decision_help": [
-                  "Intuition nutzen",
-                  "Kurz nachdenken"
-                ],
-                "ignore_list": [
-                  "Detailfragen zur Taktik"
-                ],
-                "glossary": {
-                  "Center": "Der Center ist der Verbindungsspieler. Er verbindet Verteidigung und Angriff und ist oft der wichtigste Spieler ohne Puck.",
-                  "Winger": "Die Winger spielen außen und geben Breite.",
-                  "Defense": "Verteidiger sichern nach hinten und starten den Spielaufbau.",
-                  "Struktur": "Struktur bedeutet, dass ein Team geordnet steht und Optionen anbietet."
-                }
+                "explanation": "Du trainierst hier das Erkennen des Centers ohne Namen oder Nummern. Fokus auf Rollenverständnis und Intuition, nicht auf Bestätigung.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wer verbindet die Spieler?",
+                    "Wer bietet sich zwischen den Linien an?",
+                    "Wer sichert nach hinten ab?"
+                  ],
+                  "how_to_decide": [
+                    "Namen und Nummern ignorieren",
+                    "Erst raten, dann checken",
+                    "Intuition zählt"
+                  ],
+                  "ignore": [
+                    "Namen und Nummern",
+                    "Bestätigung vor dem Raten",
+                    "Einzelne Aktionen"
+                  ]
+                },
+                "learning_hint": "Wenn es zu unsicher wirkt: genau darum geht es hier."
               },
-              "config": {
-                "time_limit": 90,
-                "questions": [
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "question": "Was beschreibt ein Dreieck?",
-                    "options": [
-                      "Drei Spieler in einer Linie",
-                      "Drei Spieler mit mindestens zwei Passoptionen",
-                      "Zwei Spieler mit einer Passoption"
-                    ],
-                    "correct": "Drei Spieler mit mindestens zwei Passoptionen",
-                    "explanation": "Drei Spieler bilden ein Dreieck, wenn der Puckführende mindestens zwei Passoptionen hat."
+                    "when": { "confidence": "sicher" },
+                    "questions": [
+                      "Welche Aktion hatte den größten strukturellen Effekt?",
+                      "War die wichtigste Aktion mit oder ohne Puck?",
+                      "Hat der Center das Spiel aktiv gelenkt oder nur reagiert?"
+                    ]
                   },
                   {
-                    "question": "Wer ist meist Verbindungsspieler?",
+                    "when": { "confidence": "okay" },
+                    "questions": [
+                      "Lag das an seiner Rolle oder an fehlenden Optionen?",
+                      "War Passivität taktisch sinnvoll oder ein Problem?",
+                      "Welche Aktion hätte Ordnung schaffen können?"
+                    ]
+                  },
+                  {
+                    "when": { "confidence": "unsicher" },
+                    "questions": [
+                      "Lag das an seiner Rolle oder an fehlenden Optionen?",
+                      "War Passivität taktisch sinnvoll oder ein Problem?",
+                      "Welche Aktion hätte Ordnung schaffen können?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "guessed_center",
+                    "type": "text",
+                    "label": "Vermuteter Center:",
+                    "max_chars": 20
+                  },
+                  {
+                    "key": "confidence",
+                    "type": "radio",
+                    "label": "Sicherheit:",
                     "options": [
-                      "Winger",
-                      "Center",
-                      "Goalie"
-                    ],
-                    "correct": "Center",
-                    "explanation": "Center verbindet Defense und Angriff."
+                      "unsicher",
+                      "okay",
+                      "sicher"
+                    ]
                   }
                 ]
               }
@@ -376,6 +420,11 @@
           "title": "A2 – Raum, Linien & Breakout-Logik",
           "summary": "Zonen, Blue/Red Line, Breakouts & Exits, erste Optionen, Druck vs. Kontrolle",
           "description": "Eisfläche strukturiert lesen: D-/Neutral-/O-Zone, Linien als Entscheidungstrigger, saubere vs. unsaubere Exits und erste Passoptionen.",
+          "learningGoals": [
+            "Zonen und Linien als Entscheidungstrigger lesen",
+            "Breakouts strukturieren und erste Passoptionen identifizieren",
+            "Druck vs. Kontrolle unterscheiden"
+          ],
           "difficulty": 2,
           "duration": 45,
           "drills": [
@@ -385,55 +434,28 @@
               "drill_type": "period_checkin",
               "description": "Beobachte Breakouts nur aus der eigenen Zone. Fokus: Ordnung, erste Option, Abstände.",
               "didactics": {
-                "goal": "Verstehen, wie ein Breakout aufgebaut ist, unabhängig vom Ergebnis.",
-                "watch_for": [
-                  "Wer bietet sich zuerst an?",
-                  "Wo ist der Center?",
-                  "Wie breit stehen die Winger?",
-                  "Gibt es mindestens 2 Passoptionen?"
-                ],
-                "how_to": [
-                  "Nur Breakouts aus der eigenen Zone betrachten",
-                  "Gegner im ersten Durchlauf ignorieren",
-                  "Auf Formation, Abstände und Ordnung achten"
-                ],
-                "learning_hint": "Ein erfolgreicher Exit ist nicht automatisch ein guter Exit – Struktur vor Ergebnis.",
-                "observation_rules": {
-                  "structure_rating": {
-                    "title": "Breakout wirkt",
-                    "description": "Ordnung der Spieler und Klarheit der Optionen.",
-                    "examples": [
-                      "Strukturiert: Defense hat Optionen, Center bietet sich, Winger breit",
-                      "Improvisiert: Option sichtbar, aber Abstände schwanken",
-                      "Chaotisch: Keine klare Option, Pass wird erzwungen"
-                    ],
-                    "question": "Wie wirkt der Breakout?"
-                  },
-                  "first_option": {
-                    "title": "Erste Passoption",
-                    "description": "Wer ist die erste realistische Option?",
-                    "examples": [
-                      "Center tief anspielbar",
-                      "Winger an der Bande offen",
-                      "Reverse zum D-Partner"
-                    ],
-                    "question": "Wer ist erste Option?"
-                  }
+                "explanation": "Verstehen, wie ein Breakout aufgebaut ist, unabhängig vom Ergebnis.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wer bietet sich zuerst an?",
+                    "Wo ist der Center?",
+                    "Wie breit stehen die Winger?",
+                    "Gibt es mindestens 2 Passoptionen?"
+                  ],
+                  "how_to": [
+                    "Nur Breakouts aus der eigenen Zone betrachten",
+                    "Gegner im ersten Durchlauf ignorieren",
+                    "Auf Formation, Abstände und Ordnung achten",
+                    "Gesamteindruck vor Einzelszene",
+                    "Zwei Optionen = stabiler",
+                    "Keine Option = Chaos"
+                  ],
+                  "ignore": [
+                    "Ergebnis des Exits",
+                    "Gegnerdruck im ersten Durchlauf"
+                  ]
                 },
-                "decision_help": [
-                  "Gesamteindruck vor Einzelszene",
-                  "Zwei Optionen = stabiler",
-                  "Keine Option = Chaos"
-                ],
-                "ignore_list": [
-                  "Ergebnis des Exits",
-                  "Gegnerdruck im ersten Durchlauf"
-                ],
-                "glossary": {
-                  "Breakout": "Spielaufbau aus der eigenen Zone. Fokus: erste Optionen, Struktur, Abstände.",
-                  "Erste Passoption": "Der erste realistische Empfänger, der eine kontrollierte Fortsetzung erlaubt.",
-                  "Support": "Unterstützung in Passdistanz und Winkel, damit der Puckführende mehr als eine Option hat."
-                }
+                "learning_hint": "Ein erfolgreicher Exit ist nicht automatisch ein guter Exit – Struktur vor Ergebnis."
               },
               "config": {
                 "questions": [
@@ -441,13 +463,21 @@
                     "key": "structure_rating",
                     "type": "radio",
                     "label": "Breakout wirkt",
-                    "options": ["strukturiert", "improvisiert", "chaotisch"]
+                    "options": [
+                      "strukturiert",
+                      "improvisiert",
+                      "chaotisch"
+                    ]
                   },
                   {
                     "key": "first_option",
                     "type": "radio",
                     "label": "Erste Passoption",
-                    "options": ["Center", "Winger", "Reverse"]
+                    "options": [
+                      "Center",
+                      "Winger",
+                      "Reverse"
+                    ]
                   },
                   {
                     "key": "note",
@@ -464,52 +494,26 @@
               "drill_type": "period_checkin",
               "description": "Unterscheide kontrollierte Exits von reinen Befreiungen. Fokus auf den Moment nach der Blue Line.",
               "didactics": {
-                "goal": "Kontrollierte Exits erkennen und von Entlastungen trennen.",
-                "watch_for": [
-                  "Bleibt der Puck im Teambesitz?",
-                  "Wird die Blue Line kontrolliert überquert?",
-                  "Oder wird der Puck nur rausgehauen?"
-                ],
-                "how_to": [
-                  "5–10 Exits beobachten",
-                  "Nur den Moment nach der Blue Line bewerten",
-                  "Qualität vor Ergebnis"
-                ],
-                "learning_hint": "Ein Exit kann erfolgreich sein und trotzdem unkontrolliert – Besitz zählt.",
-                "observation_rules": {
-                  "exit_type": {
-                    "title": "Exit-Typ",
-                    "description": "Art des Exits und Grad der Kontrolle.",
-                    "examples": [
-                      "Kontrolliert: Pass oder Carry mit Anschluss",
-                      "Halbkontrolliert: Chip mit Plan",
-                      "Befreiung: Raus ohne Anschluss"
-                    ],
-                    "question": "Wie wurde die Blue Line überquert?"
-                  },
-                  "has_support": {
-                    "title": "Anschluss vorhanden?",
-                    "description": "Gibt es eine Anschlussoption nach der Blue Line?",
-                    "examples": [
-                      "Ja: Option sichtbar, Besitz bleibt",
-                      "Nein: Scheibe weg, kein Anschluss"
-                    ],
-                    "question": "War Anschluss da?"
-                  }
+                "explanation": "Kontrollierte Exits erkennen und von Entlastungen trennen.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Bleibt der Puck im Teambesitz?",
+                    "Wird die Blue Line kontrolliert überquert?",
+                    "Oder wird der Puck nur rausgehauen?"
+                  ],
+                  "how_to": [
+                    "5–10 Exits beobachten",
+                    "Nur den Moment nach der Blue Line bewerten",
+                    "Qualität vor Ergebnis",
+                    "Besitz nach der Blue Line ist Kernkriterium",
+                    "Chip nur dann positiv, wenn Anschluss da ist"
+                  ],
+                  "ignore": [
+                    "Wie der Angriff danach endet",
+                    "Zufällige Abpraller"
+                  ]
                 },
-                "decision_help": [
-                  "Besitz nach der Blue Line ist Kernkriterium",
-                  "Chip nur dann positiv, wenn Anschluss da ist"
-                ],
-                "ignore_list": [
-                  "Wie der Angriff danach endet",
-                  "Zufällige Abpraller"
-                ],
-                "glossary": {
-                  "Exit": "Das Verlassen der eigenen Zone mit dem Puck.",
-                  "Kontrollierter Exit": "Exit mit geplanter Anschlussoption (Pass oder Carry), Besitz bleibt.",
-                  "Blue Line": "Blaue Linie, trennt Defensiv- von Neutralzone; oft Turnover-Zone."
-                }
+                "learning_hint": "Ein Exit kann erfolgreich sein und trotzdem unkontrolliert – Besitz zählt."
               },
               "config": {
                 "questions": [
@@ -517,13 +521,20 @@
                     "key": "exit_type",
                     "type": "radio",
                     "label": "Exit-Typ",
-                    "options": ["kontrolliert", "halbkontrolliert", "befreiung"]
+                    "options": [
+                      "kontrolliert",
+                      "halbkontrolliert",
+                      "befreiung"
+                    ]
                   },
                   {
                     "key": "has_support",
                     "type": "radio",
                     "label": "Anschluss vorhanden?",
-                    "options": ["ja", "nein"]
+                    "options": [
+                      "ja",
+                      "nein"
+                    ]
                   },
                   {
                     "key": "note",
@@ -540,54 +551,26 @@
               "drill_type": "period_checkin",
               "description": "Warum entstehen Turnovers an der Blue Line? Beobachte Tempo, Abstände und Unterstützung.",
               "didactics": {
-                "goal": "Entscheidungen an der Blue Line verstehen und Turnover-Risiken erkennen.",
-                "watch_for": [
-                  "Tempo beim Überqueren",
-                  "Abstand Puckführer zu Mitspielern",
-                  "Unterstützung hinter dem Puck"
-                ],
-                "how_to": [
-                  "Achte auf Versatz statt Linie",
-                  "Sieh, ob Tempo rausgenommen wird oder blind durchgezogen wird"
-                ],
-                "learning_hint": "Viele Fehler passieren vor der Neutral Zone – Abstände entscheiden.",
-                "observation_rules": {
-                  "bl_decision": {
-                    "title": "Blue-Line-Entscheidung",
-                    "description": "Qualität der Entscheidung an der Linie.",
-                    "examples": [
-                      "Sauber: Tempo passend, Support vorhanden",
-                      "Riskant: Wenig Support, enge Abstände",
-                      "Unnötig: Blindes Reinfahren ohne Unterstützung"
-                    ],
-                    "question": "Wie war die Entscheidung an der Blue Line?"
-                  },
-                  "bl_cause": {
-                    "title": "Ursache",
-                    "description": "Hauptfaktor für Risiko oder Turnover.",
-                    "examples": [
-                      "Tempo-Abbruch: Kein Nachrücken",
-                      "Keine Unterstützung: Alle auf einer Linie",
-                      "Spacing-Problem: Zu eng, kein Passwinkel",
-                      "Blind Entry: Ohne Blick, keine Option"
-                    ],
-                    "question": "Was war die Ursache?"
-                  }
+                "explanation": "Entscheidungen an der Blue Line verstehen und Turnover-Risiken erkennen.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Tempo beim Überqueren",
+                    "Abstand Puckführer zu Mitspielern",
+                    "Unterstützung hinter dem Puck"
+                  ],
+                  "how_to": [
+                    "Achte auf Versatz statt Linie",
+                    "Sieh, ob Tempo rausgenommen wird oder blind durchgezogen wird",
+                    "Support hinter dem Puck ist Pflicht",
+                    "Versatz verhindert Turnover",
+                    "Tempo anpassen, nicht erzwingen"
+                  ],
+                  "ignore": [
+                    "Wie der Angriff danach endet",
+                    "Einzelaktionen ohne Kontext"
+                  ]
                 },
-                "decision_help": [
-                  "Support hinter dem Puck ist Pflicht",
-                  "Versatz verhindert Turnover",
-                  "Tempo anpassen, nicht erzwingen"
-                ],
-                "ignore_list": [
-                  "Wie der Angriff danach endet",
-                  "Einzelaktionen ohne Kontext"
-                ],
-                "glossary": {
-                  "Blue Line": "Blaue Linie, trennt D-Zone von Neutral Zone; häufige Turnover-Zone.",
-                  "Turnover": "Puckverlust zum Gegner, oft an Linien oder unter Druck.",
-                  "Support": "Unterstützung in Passdistanz und Winkel, damit der Puckführende Optionen hat."
-                }
+                "learning_hint": "Viele Fehler passieren vor der Neutral Zone – Abstände entscheiden."
               },
               "config": {
                 "questions": [
@@ -595,13 +578,22 @@
                     "key": "bl_decision",
                     "type": "radio",
                     "label": "Blue-Line-Entscheidung",
-                    "options": ["sauber", "riskant", "unnötig"]
+                    "options": [
+                      "sauber",
+                      "riskant",
+                      "unnötig"
+                    ]
                   },
                   {
                     "key": "bl_cause",
                     "type": "radio",
                     "label": "Ursache",
-                    "options": ["tempo_abbruch", "keine_unterstuetzung", "spacing_problem", "blind_entry"]
+                    "options": [
+                      "tempo_abbruch",
+                      "keine_unterstuetzung",
+                      "spacing_problem",
+                      "blind_entry"
+                    ]
                   },
                   {
                     "key": "note",
@@ -618,51 +610,25 @@
               "drill_type": "period_checkin",
               "description": "Beobachte nur den ersten Pass: Wer ist Option und wie ist die Qualität?",
               "didactics": {
-                "goal": "Verstehen, warum der erste Pass über Erfolg oder Chaos entscheidet.",
-                "watch_for": [
-                  "Wer ist erste sichtbare Option?",
-                  "Ist sie offen oder unter Druck?",
-                  "Ist rückwärts spielbar?"
-                ],
-                "how_to": [
-                  "Nur den ersten Pass beachten",
-                  "Ignoriere, was danach passiert"
-                ],
-                "learning_hint": "Der erste Pass definiert, ob Struktur bleibt oder bricht.",
-                "observation_rules": {
-                  "first_option": {
-                    "title": "Erste Option",
-                    "description": "Rolle der ersten realistischen Anspielstation.",
-                    "examples": [
-                      "Center tief anspielbar",
-                      "Winger an der Bande",
-                      "Defense-Partner für Reverse"
-                    ],
-                    "question": "Wer ist die erste Option?"
-                  },
-                  "pass_quality": {
-                    "title": "Passqualität",
-                    "description": "Grad der Kontrolle beim ersten Pass.",
-                    "examples": [
-                      "Klar: freier Pass",
-                      "Unter Druck: Gegner nah, aber spielbar",
-                      "Notlösung: Blind oder unsauber"
-                    ],
-                    "question": "Wie klar war der Pass?"
-                  }
+                "explanation": "Verstehen, warum der erste Pass über Erfolg oder Chaos entscheidet.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wer ist erste sichtbare Option?",
+                    "Ist sie offen oder unter Druck?",
+                    "Ist rückwärts spielbar?"
+                  ],
+                  "how_to": [
+                    "Nur den ersten Pass beachten",
+                    "Ignoriere, was danach passiert",
+                    "Offene Option priorisieren",
+                    "Unter Druck nur, wenn Anschluss sichtbar ist"
+                  ],
+                  "ignore": [
+                    "Outcome nach dem ersten Pass",
+                    "Wer später abschließt"
+                  ]
                 },
-                "decision_help": [
-                  "Offene Option priorisieren",
-                  "Unter Druck nur, wenn Anschluss sichtbar ist"
-                ],
-                "ignore_list": [
-                  "Outcome nach dem ersten Pass",
-                  "Wer später abschließt"
-                ],
-                "glossary": {
-                  "Erste Passoption": "Erster realistischer Empfänger, der Kontrolle ermöglicht.",
-                  "Support": "Unterstützung in Passdistanz/Winkel für mehr als eine Option."
-                }
+                "learning_hint": "Der erste Pass definiert, ob Struktur bleibt oder bricht."
               },
               "config": {
                 "questions": [
@@ -670,13 +636,21 @@
                     "key": "first_option",
                     "type": "radio",
                     "label": "Erste Option",
-                    "options": ["Center", "Winger", "Defense-Partner"]
+                    "options": [
+                      "Center",
+                      "Winger",
+                      "Defense-Partner"
+                    ]
                   },
                   {
                     "key": "pass_quality",
                     "type": "radio",
                     "label": "Passqualität",
-                    "options": ["klar", "unter_druck", "notloesung"]
+                    "options": [
+                      "klar",
+                      "unter_druck",
+                      "notloesung"
+                    ]
                   },
                   {
                     "key": "note",
@@ -693,40 +667,24 @@
               "drill_type": "period_checkin",
               "description": "Raumtiefe rund um die Blue Line einschätzen: offen, neutral, eng.",
               "didactics": {
-                "goal": "Ein Gefühl für Raumtiefe vor und über der Blue Line entwickeln.",
-                "watch_for": [
-                  "Abstand zur Blue Line",
-                  "Positionierung vor dem Exit",
-                  "Wird Raum geöffnet oder zugestellt?"
-                ],
-                "how_to": [
-                  "Bei jedem Exit fragen: Hat das Team Platz oder spielt es in Enge?"
-                ],
-                "learning_hint": "Raumgefühl entscheidet, ob ein Exit kontrolliert gelingt.",
-                "observation_rules": {
-                  "space_feel": {
-                    "title": "Raumgefühl",
-                    "description": "Subjektive Einschätzung der Raumtiefe.",
-                    "examples": [
-                      "Offen: viel Platz, Passoptionen",
-                      "Neutral: ok, aber nicht frei",
-                      "Eng: sofortiger Druck"
-                    ],
-                    "question": "Wie wirkt der Raum?"
-                  }
+                "explanation": "Ein Gefühl für Raumtiefe vor und über der Blue Line entwickeln.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Abstand zur Blue Line",
+                    "Positionierung vor dem Exit",
+                    "Wird Raum geöffnet oder zugestellt?"
+                  ],
+                  "how_to": [
+                    "Bei jedem Exit fragen: Hat das Team Platz oder spielt es in Enge?",
+                    "Offen = Geduld, Eng = schnell lösen",
+                    "Enge früh erkennen, um Turnover zu vermeiden"
+                  ],
+                  "ignore": [
+                    "Spätere Torchancen",
+                    "Gegnerische Systeme benennen"
+                  ]
                 },
-                "decision_help": [
-                  "Offen = Geduld, Eng = schnell lösen",
-                  "Enge früh erkennen, um Turnover zu vermeiden"
-                ],
-                "ignore_list": [
-                  "Spätere Torchancen",
-                  "Gegnerische Systeme benennen"
-                ],
-                "glossary": {
-                  "Blue Line": "Blaue Linie als Raumindikator: davor/kurz danach entscheiden sich viele Exits.",
-                  "Chip & Chase": "Puck tief chippen und selbst nachsetzen; hier nur als Begriff, nicht vertiefen."
-                }
+                "learning_hint": "Raumgefühl entscheidet, ob ein Exit kontrolliert gelingt."
               },
               "config": {
                 "questions": [
@@ -734,7 +692,11 @@
                     "key": "space_feel",
                     "type": "radio",
                     "label": "Raumgefühl",
-                    "options": ["offen", "neutral", "eng"]
+                    "options": [
+                      "offen",
+                      "neutral",
+                      "eng"
+                    ]
                   },
                   {
                     "key": "note",
@@ -752,6 +714,11 @@
           "title": "A3 – Transition & Tempo",
           "summary": "Turnovers, Rush, Backchecking, Gap Control, Tempoveränderungen",
           "description": "Umschaltmomente erkennen und lesen: Winkel, Tempo, Abstände und Entscheidungen in Transition.",
+          "learningGoals": [
+            "Umschaltmomente (Turnovers) erkennen",
+            "Tempoveränderungen lesen",
+            "Gap Control und Backchecking verstehen"
+          ],
           "difficulty": 2,
           "duration": 50,
           "drills": [
@@ -761,54 +728,27 @@
               "drill_type": "period_checkin",
               "description": "Den exakten Moment erkennen, in dem Puckbesitz kippt.",
               "didactics": {
-                "goal": "Den exakten Moment erkennen, in dem Puckbesitz kippt.",
-                "watch_for": [
-                  "Wo passiert der Turnover?",
-                  "Wer verliert / gewinnt den Puck?",
-                  "Wie viele Spieler reagieren sofort?"
-                ],
-                "how_to": [
-                  "Beobachte nur Turnovers",
-                  "Blende das Ergebnis aus (kein Fokus auf Torchance)",
-                  "Stoppe mental exakt beim Puckverlust"
-                ],
-                "learning_hint": "Ergebnis ausblenden und den Kipppunkt selbst bewerten.",
-                "observation_rules": {
-                  "turnover_zone": {
-                    "title": "Turnover-Zone",
-                    "description": "Ort des Ballbesitzwechsels.",
-                    "examples": [
-                      "D-Zone",
-                      "Neutral Zone",
-                      "O-Zone"
-                    ],
-                    "question": "Wo passiert der Turnover?"
-                  },
-                  "reaction": {
-                    "title": "Reaktion",
-                    "description": "Sofortiges oder verzögertes Umschalten nach Puckverlust/-gewinn.",
-                    "examples": [
-                      "Sofort: mehrere reagieren direkt",
-                      "Verzögert: Zögern vor dem Umschalten",
-                      "Keine: kaum Reaktion"
-                    ],
-                    "question": "Wie schnell kommt die Reaktion?"
-                  }
+                "explanation": "Den exakten Moment erkennen, in dem Puckbesitz kippt.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wo passiert der Turnover?",
+                    "Wer verliert / gewinnt den Puck?",
+                    "Wie viele Spieler reagieren sofort?"
+                  ],
+                  "how_to": [
+                    "Beobachte nur Turnovers",
+                    "Blende das Ergebnis aus (kein Fokus auf Torchance)",
+                    "Stoppe mental exakt beim Puckverlust",
+                    "Unsauberer Pass",
+                    "Druck an der Bande",
+                    "Fehlende Unterstützung"
+                  ],
+                  "ignore": [
+                    "Torchancen nach dem Turnover",
+                    "Ergebnis des Angriffs"
+                  ]
                 },
-                "decision_help": [
-                  "Unsauberer Pass",
-                  "Druck an der Bande",
-                  "Fehlende Unterstützung"
-                ],
-                "ignore_list": [
-                  "Torchancen nach dem Turnover",
-                  "Ergebnis des Angriffs"
-                ],
-                "glossary": {
-                  "Transition": "Umschaltmoment zwischen Puckverlust und -gewinn; entscheidet über Tempo.",
-                  "Turnover": "Puckverlust zum Gegner, oft durch Fehler oder Druck.",
-                  "Numbers Advantage": "Zahlenvorteil oder -nachteil direkt nach dem Puckgewinn/-verlust."
-                }
+                "learning_hint": "Ergebnis ausblenden und den Kipppunkt selbst bewerten."
               },
               "config": {
                 "questions": [
@@ -816,13 +756,21 @@
                     "key": "turnover_zone",
                     "type": "radio",
                     "label": "Turnover-Zone",
-                    "options": ["D-Zone", "Neutral Zone", "O-Zone"]
+                    "options": [
+                      "D-Zone",
+                      "Neutral Zone",
+                      "O-Zone"
+                    ]
                   },
                   {
                     "key": "reaction",
                     "type": "radio",
                     "label": "Reaktion",
-                    "options": ["sofort", "verzögert", "keine"]
+                    "options": [
+                      "sofort",
+                      "verzögert",
+                      "keine"
+                    ]
                   },
                   {
                     "key": "note",
@@ -839,41 +787,25 @@
               "drill_type": "period_checkin",
               "description": "Die ersten 3 Sekunden nach einem Turnover lesen lernen.",
               "didactics": {
-                "goal": "Die ersten 3 Sekunden nach einem Turnover lesen lernen.",
-                "watch_for": [
-                  "Wer beschleunigt?",
-                  "Wer stoppt?",
-                  "Wer schaut nur zu?"
-                ],
-                "how_to": [
-                  "Zähle im Kopf: 1 – 2 – 3",
-                  "Beobachte nur Bewegung, nicht den Puck"
-                ],
-                "learning_hint": "Gute Teams reagieren instinktiv, schlechte Teams reagieren verzögert.",
-                "observation_rules": {
-                  "team_reaction": {
-                    "title": "Teamreaktion",
-                    "description": "Verhalten in den ersten 3 Sekunden nach einem Turnover.",
-                    "examples": [
-                      "Aggressiv: sofort Druck oder Beschleunigung",
-                      "Geordnet: klares Umschalten ohne Hektik",
-                      "Passiv: kein sichtbarer Impuls"
-                    ],
-                    "question": "Wie reagiert das Team in den ersten 3 Sekunden?"
-                  }
+                "explanation": "Die ersten 3 Sekunden nach einem Turnover lesen lernen.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wer beschleunigt?",
+                    "Wer stoppt?",
+                    "Wer schaut nur zu?"
+                  ],
+                  "how_to": [
+                    "Zähle im Kopf: 1 – 2 – 3",
+                    "Beobachte nur Bewegung, nicht den Puck",
+                    "Gute Teams reagieren instinktiv",
+                    "Schlechte Teams reagieren verzögert"
+                  ],
+                  "ignore": [
+                    "Puckverlauf nach 3 Sekunden",
+                    "Abschluss oder Tor"
+                  ]
                 },
-                "decision_help": [
-                  "Gute Teams reagieren instinktiv",
-                  "Schlechte Teams reagieren verzögert"
-                ],
-                "ignore_list": [
-                  "Puckverlauf nach 3 Sekunden",
-                  "Abschluss oder Tor"
-                ],
-                "glossary": {
-                  "Transition": "Umschaltmoment zwischen Puckverlust und -gewinn; entscheidet über Tempo.",
-                  "Turnover": "Puckverlust zum Gegner, oft durch Fehler oder Druck."
-                }
+                "learning_hint": "Gute Teams reagieren instinktiv, schlechte Teams reagieren verzögert."
               },
               "config": {
                 "questions": [
@@ -881,7 +813,11 @@
                     "key": "team_reaction",
                     "type": "radio",
                     "label": "Teamreaktion",
-                    "options": ["aggressiv", "geordnet", "passiv"]
+                    "options": [
+                      "aggressiv",
+                      "geordnet",
+                      "passiv"
+                    ]
                   },
                   {
                     "key": "note",
@@ -898,53 +834,26 @@
               "drill_type": "period_checkin",
               "description": "Unterscheiden, wann ein Rush entsteht – und warum er stirbt.",
               "didactics": {
-                "goal": "Unterscheiden, wann ein Rush entsteht – und warum er stirbt.",
-                "watch_for": [
-                  "Zahlenverhältnis (2-gegen-1, 3-gegen-2)",
-                  "Unterstützung hinter dem Puck",
-                  "Geschwindigkeit der ersten Schritte"
-                ],
-                "how_to": [
-                  "Beobachte nur Rush-Situationen",
-                  "Ignoriere Abschluss & Tor"
-                ],
-                "learning_hint": "Typische Abbrüche: Kein Support, zu früher Pass, zu spätes Abbremsen.",
-                "observation_rules": {
-                  "rush_outcome": {
-                    "title": "Rush",
-                    "description": "Einschätzung der Rush-Szene.",
-                    "examples": [
-                      "Gefährlich",
-                      "Neutralisiert",
-                      "Verschenkt"
-                    ],
-                    "question": "Wie lief der Rush?"
-                  },
-                  "rush_reason": {
-                    "title": "Grund",
-                    "description": "Hauptgrund für das Ergebnis des Rushes.",
-                    "examples": [
-                      "Kein Support",
-                      "Zu früher Pass",
-                      "Zu spätes Abbremsen"
-                    ],
-                    "question": "Warum wurde der Rush so bewertet?"
-                  }
+                "explanation": "Unterscheiden, wann ein Rush entsteht – und warum er stirbt.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Zahlenverhältnis (2-gegen-1, 3-gegen-2)",
+                    "Unterstützung hinter dem Puck",
+                    "Geschwindigkeit der ersten Schritte"
+                  ],
+                  "how_to": [
+                    "Beobachte nur Rush-Situationen",
+                    "Ignoriere Abschluss & Tor",
+                    "Kein Support",
+                    "Zu früher Pass",
+                    "Zu spätes Abbremsen"
+                  ],
+                  "ignore": [
+                    "Abschluss & Tor",
+                    "Schussqualität"
+                  ]
                 },
-                "decision_help": [
-                  "Kein Support",
-                  "Zu früher Pass",
-                  "Zu spätes Abbremsen"
-                ],
-                "ignore_list": [
-                  "Abschluss & Tor",
-                  "Schussqualität"
-                ],
-                "glossary": {
-                  "Transition": "Umschaltmoment zwischen Puckverlust und -gewinn; entscheidet über Tempo.",
-                  "Rush": "Angriff mit Geschwindigkeit und Zahlenvorteil oder -gleichstand.",
-                  "Numbers Advantage": "Zahlenvorteil oder -nachteil direkt nach dem Puckgewinn/-verlust."
-                }
+                "learning_hint": "Typische Abbrüche: Kein Support, zu früher Pass, zu spätes Abbremsen."
               },
               "config": {
                 "questions": [
@@ -952,13 +861,21 @@
                     "key": "rush_outcome",
                     "type": "radio",
                     "label": "Rush",
-                    "options": ["gefährlich", "neutralisiert", "verschenkt"]
+                    "options": [
+                      "gefährlich",
+                      "neutralisiert",
+                      "verschenkt"
+                    ]
                   },
                   {
                     "key": "rush_reason",
                     "type": "radio",
                     "label": "Grund",
-                    "options": ["kein_support", "zu_frueher_pass", "zu_spaetes_abbremsen"]
+                    "options": [
+                      "kein_support",
+                      "zu_frueher_pass",
+                      "zu_spaetes_abbremsen"
+                    ]
                   },
                   {
                     "key": "note",
@@ -975,43 +892,26 @@
               "drill_type": "period_checkin",
               "description": "Verstehen, wie Defense schon vor der Defense beginnt.",
               "didactics": {
-                "goal": "Verstehen, wie Defense schon vor der Defense beginnt.",
-                "watch_for": [
-                  "Wie schnell kommen Forwards zurück?",
-                  "Wird Mitte geschlossen?",
-                  "Wird der Gegner nach außen gelenkt?"
-                ],
-                "how_to": [
-                  "Beobachte Spieler ohne Puck",
-                  "Achte auf Laufwege, Winkel, Einsatz"
-                ],
-                "learning_hint": "Typische Fehler: Gerade hinterherlaufen, keine Inside-Position, Tempoverlust.",
-                "observation_rules": {
-                  "backcheck_quality": {
-                    "title": "Rückwärtsarbeit",
-                    "description": "Qualität der Rückwärtsarbeit nach Puckverlust.",
-                    "examples": [
-                      "Diszipliniert",
-                      "Halbherzig",
-                      "Fehlt"
-                    ],
-                    "question": "Wie wirkt die Rückwärtsarbeit?"
-                  }
+                "explanation": "Verstehen, wie Defense schon vor der Defense beginnt.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wie schnell kommen Forwards zurück?",
+                    "Wird Mitte geschlossen?",
+                    "Wird der Gegner nach außen gelenkt?"
+                  ],
+                  "how_to": [
+                    "Beobachte Spieler ohne Puck",
+                    "Achte auf Laufwege, Winkel, Einsatz",
+                    "Gerade hinterherlaufen",
+                    "Keine Inside-Position",
+                    "Tempoverlust"
+                  ],
+                  "ignore": [
+                    "Puckführung des Gegners",
+                    "Abschluss"
+                  ]
                 },
-                "decision_help": [
-                  "Gerade hinterherlaufen",
-                  "Keine Inside-Position",
-                  "Tempoverlust"
-                ],
-                "ignore_list": [
-                  "Puckführung des Gegners",
-                  "Abschluss"
-                ],
-                "glossary": {
-                  "Backchecking": "Rückwärtsarbeit der Forwards, um Tempo und Mitte zu kontrollieren.",
-                  "Inside Position": "Innere Position zwischen Gegner und Tor, um Durchbrüche zu verhindern.",
-                  "Transition": "Umschaltmoment zwischen Puckverlust und -gewinn; entscheidet über Tempo."
-                }
+                "learning_hint": "Typische Fehler: Gerade hinterherlaufen, keine Inside-Position, Tempoverlust."
               },
               "config": {
                 "questions": [
@@ -1019,7 +919,11 @@
                     "key": "backcheck_quality",
                     "type": "radio",
                     "label": "Rückwärtsarbeit",
-                    "options": ["diszipliniert", "halbherzig", "fehlt"]
+                    "options": [
+                      "diszipliniert",
+                      "halbherzig",
+                      "fehlt"
+                    ]
                   },
                   {
                     "key": "standout",
@@ -1036,52 +940,25 @@
               "drill_type": "period_checkin",
               "description": "Erkennen, wie Verteidiger Tempo kontrollieren.",
               "didactics": {
-                "goal": "Erkennen, wie Verteidiger Tempo kontrollieren.",
-                "watch_for": [
-                  "Abstand zwischen Verteidiger und Angreifer",
-                  "Rückwärtsbewegung",
-                  "Zeitpunkt des Stellens"
-                ],
-                "how_to": [
-                  "Beobachte nur den Verteidiger",
-                  "Frage dich: Hält er Abstand oder wird er überspielt?"
-                ],
-                "learning_hint": "Gap entscheidet, ob der Verteidiger Tempo lesen und stellen kann.",
-                "observation_rules": {
-                  "gap_quality": {
-                    "title": "Gap",
-                    "description": "Abstand und Kontrolle zwischen Verteidiger und Angreifer.",
-                    "examples": [
-                      "Optimal",
-                      "Zu eng",
-                      "Zu weit"
-                    ],
-                    "question": "Wie ist der Gap?"
-                  },
-                  "consequence": {
-                    "title": "Konsequenz",
-                    "description": "Unmittelbare Auswirkung des Gaps.",
-                    "examples": [
-                      "Keine",
-                      "Druck",
-                      "Chance"
-                    ],
-                    "question": "Welche Konsequenz hatte das Gap?"
-                  }
+                "explanation": "Erkennen, wie Verteidiger Tempo kontrollieren.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Abstand zwischen Verteidiger und Angreifer",
+                    "Rückwärtsbewegung",
+                    "Zeitpunkt des Stellens"
+                  ],
+                  "how_to": [
+                    "Beobachte nur den Verteidiger",
+                    "Frage dich: Hält er Abstand oder wird er überspielt?",
+                    "Gap passend halten",
+                    "Nicht überspielen lassen"
+                  ],
+                  "ignore": [
+                    "Späteres Tor oder Abschluss",
+                    "Puckverlust nach dem ersten Stellversuch"
+                  ]
                 },
-                "decision_help": [
-                  "Gap passend halten",
-                  "Nicht überspielen lassen"
-                ],
-                "ignore_list": [
-                  "Späteres Tor oder Abschluss",
-                  "Puckverlust nach dem ersten Stellversuch"
-                ],
-                "glossary": {
-                  "Gap Control": "Kontrolle des Abstands zum Angreifer, um Tempo zu steuern.",
-                  "Inside Position": "Innere Position zwischen Gegner und Tor, um Durchbrüche zu verhindern.",
-                  "Transition": "Umschaltmoment zwischen Puckverlust und -gewinn; entscheidet über Tempo."
-                }
+                "learning_hint": "Gap entscheidet, ob der Verteidiger Tempo lesen und stellen kann."
               },
               "config": {
                 "questions": [
@@ -1089,13 +966,21 @@
                     "key": "gap_quality",
                     "type": "radio",
                     "label": "Gap",
-                    "options": ["optimal", "zu eng", "zu weit"]
+                    "options": [
+                      "optimal",
+                      "zu eng",
+                      "zu weit"
+                    ]
                   },
                   {
                     "key": "consequence",
                     "type": "radio",
                     "label": "Konsequenz",
-                    "options": ["keine", "druck", "chance"]
+                    "options": [
+                      "keine",
+                      "druck",
+                      "chance"
+                    ]
                   },
                   {
                     "key": "note",

@@ -1,22 +1,6 @@
-const resolveApiBase = () => {
-  const envBase = import.meta.env.VITE_API_BASE
-  if (envBase) return envBase.replace(/\/$/, '')
 
-  if (typeof window !== 'undefined') {
-    const { hostname, origin } = window.location
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:8000/api'
-    }
-    return `${origin}/api`
-  }
 
-  return 'http://localhost:8000/api'
-}
-
-const API_BASE = resolveApiBase()
-
-const buildUrl = (path: string) => `${API_BASE}${path}`
-
+// ==== Type Definitions ====
 export interface Curriculum {
   tracks: Track[]
 }
@@ -57,10 +41,19 @@ export interface Drill {
   description?: string
   config: any
   didactics?: {
-    goal: string
-    watch_for: string[]
-    how_to: string[]
-    learning_hint: string
+    explanation?: string
+    observation_guide?: {
+      what_to_watch?: string[]
+      how_to_decide?: string[]
+      ignore?: string[]
+    }
+    glossary?: {
+      [term: string]: string
+    }
+    learning_hint?: string
+    goal?: string
+    watch_for?: string[]
+    how_to?: string[]
     observation_rules?: {
       [key: string]: {
         title: string
@@ -71,9 +64,16 @@ export interface Drill {
     }
     decision_help?: string[]
     ignore_list?: string[]
-    glossary?: {
-      [term: string]: string
-    }
+  }
+  miniFeedback?: {
+    trigger?: string
+    oncePerSection?: boolean
+    groups: Array<{
+      when: Record<string, string>
+      questions: string[]
+    }>
+    reflectionTitle?: string;
+    reflectionText?: string;
   }
 }
 
@@ -85,7 +85,7 @@ export interface Session {
   goal: string
   confidence: number
   state: string
-  current_phase?: string  // For session continuation
+  current_phase?: string
   created_at: string
   drills: Drill[]
   progress: {
@@ -93,7 +93,7 @@ export interface Session {
     completed_drills: string[]
   }
   checkins: Checkin[]
-  drafts?: Record<string, any>  // Draft answers for continuation
+  drafts?: Record<string, any>
   post?: Post
   game_info?: GameInfo
   abort?: {
@@ -104,6 +104,7 @@ export interface Session {
   focus?: string
   sessionMethod?: string
   drill_id?: string
+  microfeedback_done?: Record<string, boolean>
 }
 
 export interface GameInfo {
@@ -119,6 +120,7 @@ export interface Checkin {
   feedback?: string
   next_task?: string
   timestamp: string
+  mini_feedback?: string;
 }
 
 export interface Post {
@@ -142,6 +144,28 @@ export interface TeamsResponse {
   teams: Team[]
 }
 
+// ==== API Helpers ====
+const resolveApiBase = () => {
+  const envBase = import.meta.env.VITE_API_BASE
+  if (envBase) return envBase.replace(/\/$/, '')
+
+  if (typeof window !== 'undefined') {
+    const { hostname, origin } = window.location
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:8000/api'
+    }
+    return `${origin}/api`
+  }
+
+  return 'http://localhost:8000/api'
+}
+
+const API_BASE = resolveApiBase()
+
+const buildUrl = (path: string) => `${API_BASE}${path}`
+
+
+
 export interface Team {
   id: string
   name: string
@@ -156,6 +180,16 @@ export interface TeamsResponse {
 }
 
 export const api = {
+    // Microfeedback pro Phase speichern
+    saveMicroFeedback: async (id: string, data: { phase: string; text: string }): Promise<any> => {
+      const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/microfeedback`), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('Failed to save microfeedback');
+      return res.json();
+    },
   // Curriculum
   getCurriculum: async (): Promise<Curriculum> => {
     const primaryUrl = buildUrl('/curriculum')

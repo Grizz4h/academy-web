@@ -17,22 +17,6 @@ def render(drill, context):
         elif q_type == 'text':
             responses[q_key] = st.text_area(q_label, max_chars=question.get('max_chars', 200), key=f"{context['session_id']}_{q_key}")
 
-    # Simple coaching feedback
-    if responses:
-        feedback = ""
-        next_task = ""
-        for rule in drill['config'].get('coaching_rules', []):
-            condition = rule['condition']
-            if eval_condition(condition, responses):
-                feedback = rule['feedback']
-                next_task = rule['next_task']
-                break
-
-        if feedback:
-            st.success(f"Feedback: {feedback}")
-        if next_task:
-            st.info(f"Next Task: {next_task}")
-
     return responses
 
 def eval_condition(condition, responses):

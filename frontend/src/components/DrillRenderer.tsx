@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Drill } from '../api'
-import { highlightGlossaryTerms } from './GlossaryTerm'
+import { renderWithGlossary, highlightGlossaryTerms } from './GlossaryTerm'
 
 interface DrillRendererProps {
   drill: Drill
@@ -9,11 +9,12 @@ interface DrillRendererProps {
   onChangeAnswers?: (answers: any) => void
 }
 
-function ObservationGuide({ drill, currentQuestion }: { drill: Drill; currentQuestion?: string }) {
-  const didactics = drill.didactics
-  if (!didactics) return null
+function ObservationGuide({ drill }: { drill: Drill }) {
+  const didactics = drill.didactics;
+  if (!didactics) return null;
 
-  const rule = currentQuestion && didactics.observation_rules?.[currentQuestion]
+  // Support both observation_guide and observation_guidance structures
+  const observationGuide = didactics.observation_guide || (didactics as any).observation_guidance;
 
   return (
     <div style={{ 
@@ -24,7 +25,9 @@ function ObservationGuide({ drill, currentQuestion }: { drill: Drill; currentQue
       borderRadius: '4px'
     }}>
       <h4 style={{ marginTop: 0, color: '#5191a2', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span>👀 Beobachtungsanleitung</span>
+        <span>
+          👀 Beobachtungsanleitung
+        </span>
         {didactics.glossary && (
           <span style={{ fontSize: '0.75rem', fontWeight: 'normal', color: 'rgba(255,255,255,0.6)' }}>
             💡 <span style={{ borderBottom: '1px dotted rgba(81,145,162,0.7)', color: '#5191a2' }}>Begriffe</span> = Hover/Tap
@@ -32,52 +35,46 @@ function ObservationGuide({ drill, currentQuestion }: { drill: Drill; currentQue
         )}
       </h4>
       
-      {rule && (
-        <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'rgba(81,145,162,0.15)', borderRadius: '4px' }}>
-          <strong>{rule.title}</strong>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-            {highlightGlossaryTerms(rule.description, didactics.glossary)}
-          </p>
-          {rule.examples && rule.examples.length > 0 && (
-            <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem', paddingLeft: '1.25rem' }}>
-              {rule.examples.map((ex, i) => (
-                <li key={i}>{highlightGlossaryTerms(ex, didactics.glossary)}</li>
-              ))}
-            </ul>
+      {observationGuide ? (
+        <>
+          {observationGuide.what_to_watch && observationGuide.what_to_watch.length > 0 && (
+            <div style={{ marginBottom: '1rem' }}>
+              <strong>Worauf achten?</strong>
+              <ul style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                {observationGuide.what_to_watch.map((item: string, i: number) => (
+                  <li key={i}>{renderWithGlossary(item)}</li>
+                ))}
+              </ul>
+            </div>
           )}
-          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', fontStyle: 'italic', color: 'rgba(255,255,255,0.8)' }}>
-            {highlightGlossaryTerms(rule.question, didactics.glossary)}
-          </p>
-        </div>
-      )}
-
-      {didactics.decision_help && didactics.decision_help.length > 0 && (
-        <details style={{ marginTop: '0.75rem' }}>
-          <summary style={{ cursor: 'pointer', color: '#5191a2', fontWeight: 'bold' }}>
-            Wie entscheiden?
-          </summary>
-          <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>
-            {didactics.decision_help.map((h, i) => (
-              <li key={i}>{highlightGlossaryTerms(h, didactics.glossary)}</li>
-            ))}
-          </ul>
-        </details>
-      )}
-
-      {didactics.ignore_list && didactics.ignore_list.length > 0 && (
-        <details style={{ marginTop: '0.75rem' }}>
-          <summary style={{ cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontWeight: 'bold' }}>
-            Was ignorieren?
-          </summary>
-          <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
-            {didactics.ignore_list.map((item, i) => (
-              <li key={i}>{highlightGlossaryTerms(item, didactics.glossary)}</li>
-            ))}
-          </ul>
-        </details>
+          {observationGuide.how_to_decide && observationGuide.how_to_decide.length > 0 && (
+            <div style={{ marginBottom: '1rem' }}>
+              <strong>Wie entscheiden?</strong>
+              <ul style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                {observationGuide.how_to_decide.map((item: string, i: number) => (
+                  <li key={i}>{renderWithGlossary(item)}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {observationGuide.ignore && observationGuide.ignore.length > 0 && (
+            <div style={{ marginBottom: '1rem' }}>
+              <strong>Was ignorieren?</strong>
+              <ul style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                {observationGuide.ignore.map((item: string, i: number) => (
+                  <li key={i}>{renderWithGlossary(item)}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      ) : (
+        <p style={{ fontStyle: 'italic', color: 'rgba(81,145,162,0.7)' }}>
+          Keine Beobachtungsanleitung verfügbar.
+        </p>
       )}
     </div>
-  )
+  );
 }
 
 export default function DrillRenderer({ drill, onComplete, initialAnswers, onChangeAnswers }: DrillRendererProps) {
@@ -112,12 +109,19 @@ export default function DrillRenderer({ drill, onComplete, initialAnswers, onCha
     return <ShiftTracker drill={drill} answers={answers} setAnswers={updateAnswers} onSubmit={handleSubmit} />
   }
 
+  if (drill.drill_type === 'triangle_spotting') {
+    return <TriangleSpotting drill={drill} answers={answers} setAnswers={updateAnswers} onSubmit={handleSubmit} />
+  }
+
+  if (drill.drill_type === 'role_identification') {
+    return <RoleIdentification drill={drill} answers={answers} setAnswers={updateAnswers} onSubmit={handleSubmit} />
+  }
+
   return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>
 }
 
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
   const questions = drill.config.questions || []
-  const [currentQ, setCurrentQ] = useState<string | undefined>(undefined)
   const glossary = drill.didactics?.glossary
 
   return (
@@ -125,11 +129,17 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
       <h3 style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{drill.title}</h3>
       <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', wordWrap: 'break-word', overflowWrap: 'break-word' }}>{drill.description}</p>
       
-      <ObservationGuide drill={drill} currentQuestion={currentQ} />
+      {drill.didactics?.explanation && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>Drill-Erklärung</h4>
+          <p>{drill.didactics.explanation}</p>
+        </div>
+      )}
+      
+      <ObservationGuide drill={drill} />
 
       {questions.map((q: any) => (
         <div key={q.key} style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid rgba(81,145,162,0.2)', borderRadius: '4px' }}
-          onFocus={() => setCurrentQ(q.key)}
         >
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
             {highlightGlossaryTerms(q.label, glossary)}
@@ -179,6 +189,13 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
           )}
         </div>
       ))}
+
+      {drill.didactics?.learning_hint && (
+        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>🧠 Lernhinweis</h4>
+          <p style={{ fontStyle: 'italic' }}>{drill.didactics.learning_hint}</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -237,8 +254,8 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
   const shiftCount = drill.config.shift_count || 10
   const questions = drill.config.questions || []
   const completedShifts = Object.keys(answers).filter(k => k.startsWith('shift_')).length / questions.length
-  const [currentQ, setCurrentQ] = useState<string | undefined>(undefined)
   const glossary = drill.didactics?.glossary
+  const [rollenreferenzExpanded, setRollenreferenzExpanded] = useState(false)
 
   return (
     <div className="card">
@@ -246,8 +263,70 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
       <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
         {drill.description || 'Beobachte Shifts konsequent – Muster erkennen, nicht raten.'}
       </p>
-
-      <ObservationGuide drill={drill} currentQuestion={currentQ} />
+      
+      {drill.didactics?.rollenreferenz_center && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #5191a2' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => setRollenreferenzExpanded(!rollenreferenzExpanded)}>
+            <h4 style={{ marginTop: 0, color: '#5191a2' }}>{drill.didactics.rollenreferenz_center.title}</h4>
+            <span style={{ fontSize: '1.2rem', color: '#5191a2' }}>{rollenreferenzExpanded ? '▲' : '▼'}</span>
+          </div>
+          {rollenreferenzExpanded && (
+            <>
+              <p>{drill.didactics.rollenreferenz_center.text}</p>
+              <h5>✅ Typische Aufgaben des Centers (vereinfacht, A1-Level)</h5>
+              <ul>
+                {drill.didactics.rollenreferenz_center.typische_aufgaben.map((item: string) => <li key={item}>{item}</li>)}
+              </ul>
+              <p><strong>Kurz gesagt:</strong> {drill.didactics.rollenreferenz_center.kurz_gesagt}</p>
+              <h5>⚠️ Wann ist ein Center in der Rolle?</h5>
+              <ul>
+                {drill.didactics.rollenreferenz_center.wann_in_rolle.map((item: string) => <li key={item}>{item}</li>)}
+              </ul>
+              <h5>❌ Wann fällt der Center aus der Rolle?</h5>
+              <p><strong>Ein Center fällt nicht aus der Rolle, weil:</strong></p>
+              <ul>
+                {drill.didactics.rollenreferenz_center.nicht_aus_rolle_weil.map((item: string) => <li key={item}>{item}</li>)}
+              </ul>
+              <p><strong>Ein Center fällt aus der Rolle, wenn:</strong></p>
+              <ul>
+                {drill.didactics.rollenreferenz_center.aus_rolle_wenn.map((item: string) => <li key={item}>{item}</li>)}
+              </ul>
+              <p><strong>👉 Merksatz für den Drill:</strong> {drill.didactics.rollenreferenz_center.merksatz}</p>
+              <h5>🎯 Beobachtungsanker (für A1_2)</h5>
+              <p><strong>Frage dich bei jedem Shift Marker:</strong> „{drill.didactics.rollenreferenz_center.beobachtungsanker.frage}“</p>
+              <p><strong>{drill.didactics.rollenreferenz_center.beobachtungsanker.regel}</strong></p>
+            </>
+          )}
+        </div>
+      )}
+      
+      {drill.didactics?.drill_intro && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #5191a2' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>{drill.didactics.drill_intro.title}</h4>
+          <p>{drill.didactics.drill_intro.text}</p>
+        </div>
+      )}
+      
+      {drill.didactics?.explanation && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #5191a2' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>Drill-Erklärung</h4>
+          <p>{drill.didactics.explanation}</p>
+        </div>
+      )}
+      
+      <ObservationGuide drill={drill} />
+      
+      {drill.didactics?.shift_marker_explanation && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #ffc107' }}>
+          <p>{drill.didactics.shift_marker_explanation}</p>
+        </div>
+      )}
+      
+      {drill.didactics?.fill_hint && (
+        <div style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #28a745' }}>
+          <strong>Hinweis:</strong> {drill.didactics.fill_hint}
+        </div>
+      )}
       
       <div style={{ marginBottom: '1.5rem', padding: '0.5rem', backgroundColor: 'rgba(81,145,162,0.1)', borderRadius: '4px' }}>
         Fortschritt: {Math.round((completedShifts / shiftCount) * 100)}% ({Math.floor(completedShifts)}/{shiftCount})
@@ -264,8 +343,24 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
         }}>
           <h4>Shift {shiftNum + 1}</h4>
           {questions.map((q: any) => (
-            <div key={q.key} style={{ marginBottom: '1rem' }} onFocus={() => setCurrentQ(q.key)}>
+            <div key={q.key} style={{ marginBottom: '1rem' }}>
               <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>{highlightGlossaryTerms(q.label, glossary)}</label>
+              {drill.didactics?.question_precision?.[q.key] && (
+                <div style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <em>{drill.didactics.question_precision[q.key]}</em>
+                </div>
+              )}
+              {drill.didactics?.inline_explanations?.[q.key] && (
+                <div style={{ marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #dc3545' }}>
+                  <strong>„{q.label}“ bedeutet NICHT:</strong>
+                  <ul>
+                    {drill.didactics.inline_explanations[q.key].not_means.map((item: string) => <li key={item}>{item}</li>)}
+                  </ul>
+                  <strong>Es bedeutet:</strong> {drill.didactics.inline_explanations[q.key].means}
+                  <br />
+                  <strong>{drill.didactics.inline_explanations[q.key].example}</strong>
+                </div>
+              )}
               {q.type === 'radio' && (
                 <div>
                   {q.options.map((opt: string) => (
@@ -296,6 +391,148 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
       >
         Alle {shiftCount} Shifts abschließen
       </button>
+
+      {drill.didactics?.didactical_closing && (
+        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #28a745' }}>
+          <h4 style={{ marginTop: 0, color: '#28a745' }}>Warum dieser Drill wichtig ist</h4>
+          <p>{drill.didactics.didactical_closing}</p>
+        </div>
+      )}
+
+      {drill.didactics?.learning_hint && (
+        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '4px solid #ffc107' }}>
+          <h4 style={{ marginTop: 0, color: '#ffc107' }}>Lernhinweis</h4>
+          <p style={{ fontStyle: 'italic' }}>{drill.didactics.learning_hint}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TriangleSpotting({ drill, answers, setAnswers, onSubmit }: any) {
+  const questions = drill.config.questions || []
+
+  return (
+    <div>
+      {drill.didactics?.drill_intro && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>{drill.didactics.drill_intro.title}</h4>
+          <p>{drill.didactics.drill_intro.text}</p>
+        </div>
+      )}
+      
+      <ObservationGuide drill={drill} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {questions.map((q: any) => (
+          <div key={q.key}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              {q.label}
+            </label>
+            {q.type === 'radio' && q.options && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                {q.options.map((opt: string) => (
+                  <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="radio"
+                      name={q.key}
+                      value={opt}
+                      checked={answers[q.key] === opt}
+                      onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+                    />
+                    {opt}
+                    {drill.didactics?.inline_explanations?.[opt.replace(/\s+/g, '_').toLowerCase()] && (
+                      <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginLeft: '0.5rem' }}>
+                        ({drill.didactics.inline_explanations[opt.replace(/\s+/g, '_').toLowerCase()].meaning})
+                      </span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            )}
+            {q.type === 'text' && (
+              <textarea
+                value={answers[q.key] || ''}
+                onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+                maxLength={q.max_chars || 200}
+                style={{ width: '100%', minHeight: '3rem', padding: '0.5rem' }}
+                placeholder="Deine Beobachtung..."
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      <button onClick={onSubmit} className="btn" style={{ width: '100%', marginTop: '1rem', padding: '1rem' }}>
+        Drill abschließen
+      </button>
+
+      {drill.didactics?.learning_hint && (
+        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>🧠 Lernhinweis</h4>
+          <p style={{ fontStyle: 'italic' }}>{drill.didactics.learning_hint}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RoleIdentification({ drill, answers, setAnswers, onSubmit }: any) {
+  const questions = drill.config.questions || []
+
+  return (
+    <div>
+      {drill.didactics?.explanation && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>Drill-Erklärung</h4>
+          <p>{drill.didactics.explanation}</p>
+        </div>
+      )}
+      
+      <ObservationGuide drill={drill} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {questions.map((q: any) => (
+          <div key={q.key}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              {q.label}
+            </label>
+            {q.type === 'radio' && q.options && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                {q.options.map((opt: string) => (
+                  <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="radio"
+                      name={q.key}
+                      value={opt}
+                      checked={answers[q.key] === opt}
+                      onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+                    />
+                    {opt}
+                  </label>
+                ))}
+              </div>
+            )}
+            {q.type === 'text' && (
+              <input
+                type="text"
+                value={answers[q.key] || ''}
+                onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+                maxLength={q.max_chars || 200}
+                style={{ width: '100%', padding: '0.5rem' }}
+                placeholder="Deine Vermutung..."
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      <button onClick={onSubmit} className="btn" style={{ width: '100%', marginTop: '1rem', padding: '1rem' }}>
+        Drill abschließen
+      </button>
+
+      {drill.didactics?.learning_hint && (
+        <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
+          <h4 style={{ marginTop: 0, color: '#5191a2' }}>🧠 Lernhinweis</h4>
+          <p style={{ fontStyle: 'italic' }}>{drill.didactics.learning_hint}</p>
+        </div>
+      )}
     </div>
   )
 }

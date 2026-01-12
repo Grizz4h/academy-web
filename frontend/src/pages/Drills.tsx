@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
+import { GlossaryTerm, renderWithGlossary } from '../components/GlossaryTerm'
 
 export default function Drills() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -37,36 +38,102 @@ export default function Drills() {
       <div style={{ display: 'grid', gap: '1rem' }}>
         {currentModule.drills.map((drill) => (
           <div key={drill.id} className="card">
-            <h3>{drill.title}</h3>
+            <h3>
+              <GlossaryTerm term={drill.title.toLowerCase()}>{drill.title}</GlossaryTerm>
+            </h3>
             <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
               Typ: {drill.drill_type}
             </p>
             {drill.description && (
-              <p style={{ marginBottom: '1rem' }}>{drill.description}</p>
+              <p style={{ marginBottom: '1rem' }}>
+                {renderWithGlossary(drill.description)}
+              </p>
             )}
 
             {drill.didactics && (
               <div style={{ marginTop: '1rem' }}>
-                <h4>Ziel:</h4>
-                <p>{drill.didactics.goal}</p>
-
-                {drill.didactics.watch_for && drill.didactics.watch_for.length > 0 && (
-                  <div style={{ marginTop: '1rem' }}>
-                    <h4>Beobachte:</h4>
-                    <ul>
-                      {drill.didactics.watch_for.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
+                {drill.didactics.explanation && (
+                  <>
+                    <h4>Drill-Erklärung</h4>
+                    <p>{drill.didactics.explanation}</p>
+                  </>
                 )}
 
-                {drill.didactics.how_to && drill.didactics.how_to.length > 0 && (
+                {drill.didactics.goal && (
+                  <>
+                    <h4>Ziel:</h4>
+                    <p>{drill.didactics.goal}</p>
+                  </>
+                )}
+
+                <details style={{ marginTop: '1rem' }}>
+                  <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+                    👀 Beobachtungsanleitung
+                  </summary>
+                  <div style={{ marginTop: '0.5rem' }}>
+                    {drill.didactics.observation_guide?.what_to_watch && (
+                      <div>
+                        <h5>Worauf achten?</h5>
+                        <ul>
+                          {drill.didactics.observation_guide.what_to_watch.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {drill.didactics.observation_guide?.how_to_decide && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <h5>Wie entscheiden?</h5>
+                        <ul>
+                          {drill.didactics.observation_guide.how_to_decide.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {drill.didactics.observation_guide?.ignore && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <h5>Was ignorieren?</h5>
+                        <ul>
+                          {drill.didactics.observation_guide.ignore.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {drill.didactics.watch_for && drill.didactics.watch_for.length > 0 && (
+                      <div>
+                        <h5>Beobachte:</h5>
+                        <ul>
+                          {drill.didactics.watch_for.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {drill.didactics.how_to && drill.didactics.how_to.length > 0 && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <h5>Durchführung:</h5>
+                        <ul>
+                          {drill.didactics.how_to.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </details>
+
+                {drill.didactics.glossary && Object.keys(drill.didactics.glossary).length > 0 && (
                   <div style={{ marginTop: '1rem' }}>
-                    <h4>Durchführung:</h4>
+                    <h4>💡 Begriffe</h4>
                     <ul>
-                      {drill.didactics.how_to.map((item, i) => (
-                        <li key={i}>{item}</li>
+                      {Object.entries(drill.didactics.glossary).map(([term, definition]) => (
+                        <li key={term}>
+                          <strong>{term}:</strong> {definition}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -74,7 +141,7 @@ export default function Drills() {
 
                 {drill.didactics.learning_hint && (
                   <div style={{ marginTop: '1rem' }}>
-                    <h4>Lernhinweis:</h4>
+                    <h4>🧠 Lernhinweis</h4>
                     <p style={{ fontStyle: 'italic' }}>{drill.didactics.learning_hint}</p>
                   </div>
                 )}
