@@ -152,37 +152,13 @@ async def create_session(session: SessionCreate):
         "drafts": {},  # Store draft answers for continuation
         "post": None,
         "game_info": session.game_info,
-        "microfeedback_done": {"P1": False, "P2": False, "P3": False}
+        "microfeedback": {
+            "P1": {"done": False, "text": ""},
+            "P2": {"done": False, "text": ""},
+            "P3": {"done": False, "text": ""}
+        }
     }
-# Neuer Endpoint: Microfeedback pro Phase setzen
-@app.post("/api/sessions/{session_id}/microfeedback")
-async def set_microfeedback(session_id: str, data: MicroFeedbackData):
-    """Microfeedback für eine Phase speichern und Flag setzen"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
 
-    if data.phase not in ["P1", "P2", "P3"]:
-        raise HTTPException(status_code=400, detail="Invalid phase")
-    if not data.text or not data.text.strip():
-        raise HTTPException(status_code=400, detail="Text required")
-
-    # Optional: Feedback-Text speichern (z.B. in checkin oder extra Feld)
-    # Hier: in checkin für Phase ablegen, falls vorhanden
-    for c in session.get("checkins", []):
-        if c.get("phase") == data.phase:
-            c["mini_feedback_text"] = data.text
-            break
-
-    # Flag setzen
-    if "microfeedback_done" not in session:
-        session["microfeedback_done"] = {"P1": False, "P2": False, "P3": False}
-    session["microfeedback_done"][data.phase] = True
-
-    save_json(session_path, session)
-    return session
 
     save_json(os.path.join(sessions_dir, f"{session_id}.json"), session_data)
     return session_data
@@ -204,9 +180,19 @@ async def update_session(session_id: str, updates: dict):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # Updates anwenden
+
+    # Merge-Logik für microfeedback
     for key, value in updates.items():
-        session[key] = value
+        if key == "microfeedback":
+            if "microfeedback" not in session:
+                session["microfeedback"] = {"P1": {"done": False, "text": ""}, "P2": {"done": False, "text": ""}, "P3": {"done": False, "text": ""}}
+            for phase, mf in value.items():
+                if phase in session["microfeedback"]:
+                    session["microfeedback"][phase].update(mf)
+                else:
+                    session["microfeedback"][phase] = mf
+        else:
+            session[key] = value
 
     save_json(session_path, session)
     return session

@@ -105,6 +105,12 @@ export interface Session {
   sessionMethod?: string
   drill_id?: string
   microfeedback_done?: Record<string, boolean>
+  microfeedback?: {
+    [phase: string]: {
+      done: boolean;
+      text: string;
+    }
+  }
 }
 
 export interface GameInfo {
@@ -182,10 +188,16 @@ export interface TeamsResponse {
 export const api = {
     // Microfeedback als Checkin speichern
     saveMicroFeedback: async (id: string, data: { phase: string; text: string }): Promise<any> => {
-      const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/checkins`), {
-        method: 'POST',
+      // Use PATCH to update microfeedback for the given phase
+      const patch = {
+        microfeedback: {
+          [data.phase]: { done: true, text: data.text }
+        }
+      };
+      const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phase: data.phase, answers: {}, feedback: data.text, next_task: null })
+        body: JSON.stringify(patch)
       });
       if (!res.ok) throw new Error('Failed to save microfeedback');
       return res.json();

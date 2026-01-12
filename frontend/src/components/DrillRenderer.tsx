@@ -135,7 +135,26 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
           <p>{drill.didactics.explanation}</p>
         </div>
       )}
-      
+
+      {/* Center-Rollenwissen: Nur anzeigen, wenn vorhanden */}
+      {drill.didactics?.role_context && (
+        <section style={{ marginTop: 12, fontSize: '0.9rem', opacity: 0.9 }}>
+          <h4>{drill.didactics.role_context.title}</h4>
+          <ul style={{ paddingLeft: 16 }}>
+            {drill.didactics.role_context.content.map((item: any, idx: number) => (
+              <li key={idx} style={{ marginBottom: 6 }}>
+                <strong>{item.label}:</strong> {item.text}
+              </li>
+            ))}
+          </ul>
+          {drill.didactics.role_context.hint && (
+            <p style={{ marginTop: 8, fontStyle: 'italic', opacity: 0.75 }}>
+              {drill.didactics.role_context.hint}
+            </p>
+          )}
+        </section>
+      )}
+
       <ObservationGuide drill={drill} />
 
       {questions.map((q: any) => (
@@ -200,7 +219,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
   )
 }
 
-function MicroQuiz({ drill, answers, setAnswers, onSubmit }: any) {
+function MicroQuiz({ drill, answers, setAnswers }: any) {
   const [startTime] = useState(Date.now())
   const timeLimit = drill.config.time_limit || 60
   const elapsed = Math.floor((Date.now() - startTime) / 1000)
@@ -212,7 +231,6 @@ function MicroQuiz({ drill, answers, setAnswers, onSubmit }: any) {
     return (
       <div className="card">
         <h3>Zeit abgelaufen!</h3>
-        <button onClick={onSubmit} className="btn">Quiz abschließen</button>
       </div>
     )
   }
@@ -245,7 +263,6 @@ function MicroQuiz({ drill, answers, setAnswers, onSubmit }: any) {
           )}
         </div>
       ))}
-      <button onClick={onSubmit} className="btn">Quiz abschließen</button>
     </div>
   )
 }
@@ -409,7 +426,7 @@ function ShiftTracker({ drill, answers, setAnswers, onSubmit }: any) {
   )
 }
 
-function TriangleSpotting({ drill, answers, setAnswers, onSubmit }: any) {
+function TriangleSpotting({ drill, answers, setAnswers }: any) {
   const questions = drill.config.questions || []
 
   return (
@@ -461,9 +478,8 @@ function TriangleSpotting({ drill, answers, setAnswers, onSubmit }: any) {
           </div>
         ))}
       </div>
-      <button onClick={onSubmit} className="btn" style={{ width: '100%', marginTop: '1rem', padding: '1rem' }}>
-        Drill abschließen
-      </button>
+
+
 
       {drill.didactics?.learning_hint && (
         <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
@@ -475,7 +491,7 @@ function TriangleSpotting({ drill, answers, setAnswers, onSubmit }: any) {
   )
 }
 
-function RoleIdentification({ drill, answers, setAnswers, onSubmit }: any) {
+function RoleIdentification({ drill, answers, setAnswers }: any) {
   const questions = drill.config.questions || []
 
   return (
@@ -517,15 +533,13 @@ function RoleIdentification({ drill, answers, setAnswers, onSubmit }: any) {
                 onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
                 maxLength={q.max_chars || 200}
                 style={{ width: '100%', padding: '0.5rem' }}
-                placeholder="Deine Vermutung..."
+                placeholder={q.placeholder || "Beschreibe die Rolle, die der Center hier einnimmt (z. B. absichernd, verbindend, passiv). Kein Name."}
               />
             )}
           </div>
         ))}
       </div>
-      <button onClick={onSubmit} className="btn" style={{ width: '100%', marginTop: '1rem', padding: '1rem' }}>
-        Drill abschließen
-      </button>
+
 
       {drill.didactics?.learning_hint && (
         <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>

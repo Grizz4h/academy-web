@@ -56,6 +56,7 @@ export default function Drills() {
                   <>
                     <h4>Drill-Erklärung</h4>
                     <p>{drill.didactics.explanation}</p>
+                 
                   </>
                 )}
 

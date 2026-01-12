@@ -1,22 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import DrillRenderer from '../components/DrillRenderer'
 import { useState, useEffect } from 'react'
-import { renderWithGlossary } from '../components/GlossaryTerm'
+
 
 export default function SessionPage() {
 
   // Notizfeld für Session-Info
   const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
+  const navigate = (window as any).appNavigate || useNavigate();
   const queryClient = useQueryClient()
-  const [currentPhase, setCurrentPhase] = useState<string>('PRE')
+  type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
+  const [currentPhase, setCurrentPhase] = useState<Phase>('PRE')
   const [drillCompleted, setDrillCompleted] = useState(false)
   const [answerDraft, setAnswerDraft] = useState<any>({})
-  const [showMiniFeedback, setShowMiniFeedback] = useState(false)
-  const [miniFeedbackAnswer, setMiniFeedbackAnswer] = useState<string>('')
-  const [currentMiniQuestion, setCurrentMiniQuestion] = useState<string | null>(null)
+  const [showMicroModal, setShowMicroModal] = useState(false);
+  const [pendingPhaseAdvance, setPendingPhaseAdvance] = useState<string|null>(null);
+  const [microText, setMicroText] = useState('');
   const [microFeedbackError, setMicroFeedbackError] = useState<string>('');
   // const [shownFeedbackPhases, setShownFeedbackPhases] = useState<Set<string>>(new Set())
   // Feedback wird pro Session, Drill UND Phase angezeigt
@@ -35,7 +37,7 @@ export default function SessionPage() {
     if (!session) return;
     // Setze aktuelle Phase aus Session-Daten, aber nur wenn sie sich unterscheidet
     if (session.current_phase && session.current_phase !== currentPhase) {
-      setCurrentPhase(session.current_phase);
+      setCurrentPhase(session.current_phase as Phase);
       return; // Drafts werden im nächsten Render geladen
     }
     // Lade Drafts aus Session-Daten statt localStorage
@@ -97,13 +99,6 @@ export default function SessionPage() {
     }
   })
 
-  const completeMutation = useMutation({
-    mutationFn: (data: { summary: string; unclear?: string; next_module?: string; helpfulness: number }) => api.completeSession(id!, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['session', id] })
-      queryClient.invalidateQueries({ queryKey: ['sessions'] })
-    }
-  })
 
   const abortMutation = useMutation({
     mutationFn: (data: { reason: string; note?: string }) => api.abortSession(id!, data),
@@ -121,27 +116,6 @@ export default function SessionPage() {
   })
 
   // Mini-Feedback für alle A1-Drills (A1_D1 bis A1_D4)
-  function selectMiniQuestion(drill: any, answers: any): string | null {
-    if (!drill || !drill.miniFeedback || !Array.isArray(drill.miniFeedback.groups)) return null;
-
-    // Finde passendes 'when'-Kriterium aus miniFeedback.groups
-    for (const group of drill.miniFeedback.groups) {
-      const when = group.when;
-      // Prüfe, ob alle Bedingungen im 'when' erfüllt sind
-      const allMatch = Object.entries(when).every(([key, val]) => {
-        // answers kann string oder array sein
-        if (Array.isArray(answers[key])) {
-          return answers[key].includes(val);
-        }
-        return answers[key] === val;
-      });
-      if (allMatch && group.questions && group.questions.length > 0) {
-        // Zufällige Frage aus passender Gruppe
-        return group.questions[Math.floor(Math.random() * group.questions.length)];
-      }
-    }
-    return null;
-  }
 
   useEffect(() => {
     if (drillCompleted) {
@@ -168,15 +142,28 @@ export default function SessionPage() {
       answers,
       feedback,
       next_task: nextTask
+    }, {
+      onSuccess: async () => {
+        queryClient.invalidateQueries({ queryKey: ['session', id] })
+        queryClient.invalidateQueries({ queryKey: ['sessions'] })
+        clearDraft()
+        setDrillCompleted(true)
+        if (currentPhase === 'POST') {
+          // Call backend to mark session as completed
+          try {
+            await api.completeSession(id!, {
+              summary: '',
+              unclear: '',
+              next_module: '',
+              helpfulness: 0
+            });
+          } catch (e) {}
+          navigate('/curriculum')
+        }
+      }
     })
   }
 
-  const handleSessionComplete = () => {
-    completeMutation.mutate({
-      summary: "Live-Session erfolgreich abgeschlossen",
-      helpfulness: 5
-    })
-  }
 
   const nextPhaseMap: Record<string, string | null> = {
     PRE: 'P1',
@@ -190,32 +177,27 @@ export default function SessionPage() {
 
 
   const handleAdvanceToNext = () => {
-    // Microfeedback-Guard: Nur Session-Flag zählt
-    const feedbackDone = Boolean(session?.microfeedback_done?.[currentPhase]);
-    // Mini-Feedback-Modal nur für P1, P2, P3 und wenn noch nicht erledigt
-    if (["P1", "P2", "P3"].includes(currentPhase) && !feedbackDone && !showMiniFeedback) {
-      const drill = session?.drills?.[0];
-      const question = selectMiniQuestion(drill, answerDraft);
-      setCurrentMiniQuestion(question || null);
-      setShowMiniFeedback(true);
+    const drill = session?.drills?.[0];
+    const micro = session?.microfeedback?.[currentPhase];
+    const needsMicro = ["P1", "P2", "P3"].includes(currentPhase) && drill && drill.miniFeedback && !(micro && micro.done);
+    const next = nextPhaseMap[currentPhase];
+    if (needsMicro) {
+      setPendingPhaseAdvance(next || null);
+      setShowMicroModal(true);
       return;
     }
-
     // 2. Check-in speichern und Phase wechseln
     const payload = {
       phase: currentPhase,
       answers: answerDraft,
       feedback: "Weiter zur nächsten Phase",
       next_task: "Nächste Phase vorbereiten"
-      // mini_feedback NICHT mitsenden!
     };
     checkinMutation.mutate(payload);
-    const next = nextPhaseMap[currentPhase];
     if (next) {
-      setCurrentPhase(next);
+      setCurrentPhase(next as Phase);
       setDrillCompleted(false);
       updatePhaseMutation.mutate({ phase: next });
-      // Antworten für die neue Phase laden (Draft oder Checkin)
       if (session?.drafts && session.drafts[next]) {
         setAnswerDraft(session.drafts[next]);
       } else {
@@ -244,7 +226,7 @@ export default function SessionPage() {
     }
     const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)
     if (prevPhase) {
-      setCurrentPhase(prevPhase);
+      setCurrentPhase(prevPhase as Phase);
       setDrillCompleted(false);
       updatePhaseMutation.mutate({ phase: prevPhase });
       // Antworten für die vorherige Phase laden (Draft oder Checkin)
@@ -312,10 +294,12 @@ export default function SessionPage() {
             <p><strong>Liga:</strong> {session.game_info.league}</p>
           </>
         ) : (
-          <p>Keine Spiel-Info verfügbar</p>
+          <>
+            <p>Keine Spiel-Info verfügbar</p>
+            <p><strong>Ziel:</strong> {session.goal}</p>
+            <p><strong>Status:</strong> {session.state}</p>
+          </>
         )}
-        <p><strong>Ziel:</strong> {session.goal}</p>
-        <p><strong>Status:</strong> {session.state}</p>
         {/* Notizfeld für die Session */}
         <div style={{ marginTop: '1rem' }}>
           <label htmlFor="session-note" style={{ fontWeight: 500 }}>Notiz zur Session:</label>
@@ -336,8 +320,7 @@ export default function SessionPage() {
 
       {!isCompleted && (
         <div className="card">
-          <h2>{getPhaseTitle(currentPhase)}</h2>
-          <p>Phase: {currentPhase}</p>
+          {/* Keine große Überschrift mehr, Phase nur noch unten anzeigen */}
 
           {currentPhase === 'PRE' && (
             <div>
@@ -356,18 +339,15 @@ export default function SessionPage() {
               initialAnswers={answerDraft}
               onChangeAnswers={handleDraftChange}
               />
-              {/* Navigation Buttons */}
-              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
-                  Aktuelle Phase: {getPhaseTitle(currentPhase)}
-                  {nextPhaseMap[currentPhase] && ` → Weiter zu: ${getPhaseTitle(nextPhaseMap[currentPhase]!)}`}
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              {/* Phase und Navigation Buttons */}
+              <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center', letterSpacing: '0.01em', marginBottom: '0.1em' }}>{getPhaseTitle(currentPhase)}</div>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
                   {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && (
                     <button
                       onClick={handleGoBack}
                       className="btn"
-                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
+                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}
                     >
                       ← Zurück
                     </button>
@@ -376,12 +356,32 @@ export default function SessionPage() {
                     <button
                       onClick={handleAdvanceToNext}
                       className="btn"
+                      style={{ minWidth: 120 }}
+                      disabled={(() => {
+                        // Disable if microfeedback required and not filled
+                        if (["P1", "P2", "P3"].includes(String(currentPhase))) {
+                          return false;
+                        }
+                        return false;
+                      })()}
                     >
                       Weiter →
                     </button>
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {currentPhase === 'POST' && (
+            <div>
+              <button
+                onClick={() => handleDrillComplete(answerDraft)}
+                className="btn btn-success"
+                style={{ minWidth: 120 }}
+              >
+                Drill abschließen
+              </button>
             </div>
           )}
 
@@ -399,19 +399,15 @@ export default function SessionPage() {
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}
 
-              {/* Navigation Buttons */}
-              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
-                  Aktuelle Phase: {getPhaseTitle(currentPhase)}
-                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && ` ← Zurück zu: ${getPhaseTitle(Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)!)}`}
-                  {nextPhaseMap[currentPhase] && ` → Weiter zu: ${getPhaseTitle(nextPhaseMap[currentPhase]!)}`}
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              {/* Phase und Navigation Buttons */}
+              <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center', letterSpacing: '0.01em', marginBottom: '0.1em' }}>{getPhaseTitle(currentPhase)}</div>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
                   {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && (
                     <button
                       onClick={handleGoBack}
                       className="btn"
-                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
+                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}
                     >
                       ← Zurück
                     </button>
@@ -420,36 +416,20 @@ export default function SessionPage() {
                     <button
                       onClick={handleAdvanceToNext}
                       className="btn"
+                      style={{ minWidth: 120 }}
+                      disabled={(() => {
+                        // Disable if microfeedback required and not filled
+                        if (["P1", "P2", "P3"].includes(String(currentPhase))) {
+                          return false;
+                        }
+                        return false;
+                      })()}
                     >
                       Weiter →
                     </button>
                   )}
                 </div>
-              </div>
-            </div>
-          )}
 
-          {currentPhase === 'POST' && (
-            <div>
-              <p>Spiel beendet - fasse zusammen.</p>
-              {/* Navigation Buttons auch in POST-Phase */}
-              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
-                  Aktuelle Phase: {getPhaseTitle(currentPhase)}
-                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && ` ← Zurück zu: ${getPhaseTitle(Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)!)}`}
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase) && (
-                    <button
-                      onClick={handleGoBack}
-                      className="btn"
-                      style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
-                    >
-                      ← Zurück
-                    </button>
-                  )}
-                  <button onClick={handleSessionComplete} className="btn">Session abschließen</button>
-                </div>
               </div>
             </div>
           )}
@@ -507,73 +487,93 @@ export default function SessionPage() {
         </div>
       )}
 
-      {(() => {
-        // Guard: Modal nur zeigen, wenn im Checkin für die aktuelle Phase das Feedback fehlt/leer ist
-        const checkin = session?.checkins?.find((c: any) => c.phase === currentPhase);
-        const feedbackMissing = !checkin || !checkin.feedback || checkin.feedback.trim() === '';
-        if (showMiniFeedback && feedbackMissing) {
-          return (
-            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-              <div className="card" style={{ maxWidth: '500px', width: '90%' }}>
-                <h3>💡 Mini-Feedback</h3>
-                <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', marginBottom: '1rem' }}>
-                  <strong>
-                    {(() => {
-                      const drill = session?.drills?.[0];
-                      if (drill?.miniFeedback?.reflectionTitle) return drill.miniFeedback.reflectionTitle;
-                      if (drill?.didactics?.explanation) return 'Reflexion – ' + (drill.title || 'Drill');
-                      return 'Reflexion';
-                    })()}
-                  </strong><br />
-                  {(() => {
-                    const drill = session?.drills?.[0];
-                    if (drill?.miniFeedback?.reflectionText) return drill.miniFeedback.reflectionText;
-                    if (drill?.didactics?.explanation) return drill.didactics.explanation;
-                    return '';
-                  })()}
-                </p>
-                <p>{renderWithGlossary(currentMiniQuestion || '')}</p>
-                <div style={{ marginTop: '1rem' }}>
-                  <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
-                    Kurze Erkenntnis (1–2 Sätze)
-                  </label>
-                  <textarea
-                    value={miniFeedbackAnswer}
-                    onChange={(e) => setMiniFeedbackAnswer(e.target.value)}
-                    placeholder="z. B. „Ich habe zu spät auf die Hüfte geachtet und war oft beim Puck.“"
-                    rows={3}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc' }}
-                  />
-                </div>
-                <button
-                  className="btn"
-                  disabled={!miniFeedbackAnswer.trim()}
-                  onClick={async () => {
-                    const miniFeedback = miniFeedbackAnswer.trim();
-                    if (!miniFeedback) return;
-                    try {
-                      await api.saveMicroFeedback(id!, { phase: currentPhase, text: miniFeedback });
-                      await queryClient.invalidateQueries({ queryKey: ['session', id] });
-                      setShowMiniFeedback(false);
-                      setMiniFeedbackAnswer('');
-                      setMicroFeedbackError('');
-                      // Nach Mini-Feedback: handleAdvanceToNext erneut aufrufen, um wirklich weiterzuschalten
-                      handleAdvanceToNext();
-                    } catch (err: any) {
-                      setMicroFeedbackError(err?.message || 'Speichern fehlgeschlagen');
-                    }
-                  }}
-                >
-                  Verstanden
-                </button>
-                {microFeedbackError && (
-                  <div style={{ color: 'red', marginTop: '1rem' }}>{microFeedbackError}</div>
-                )}
-              </div>
-            </div>
-          );
+
+      {/* Microfeedback Modal */}
+      {showMicroModal && (() => {
+        const drill = session?.drills?.[0];
+        if (!drill || !drill.miniFeedback) return null;
+        // Mini-Feedback selection based on answers and 'when' condition
+        let question = 'Bitte gib ein kurzes Feedback.';
+        if (Array.isArray(drill.miniFeedback.groups) && drill.miniFeedback.groups.length > 0) {
+          // Find the group whose 'when' matches the current answers
+          const answers = answerDraft || {};
+          let found = false;
+          for (const group of drill.miniFeedback.groups) {
+            let match = true;
+            for (const key in group.when) {
+              if (answers[key] !== group.when[key]) {
+                match = false;
+                break;
+              }
+            }
+            if (match && group.questions && group.questions.length > 0) {
+              // Use the first question (or all, if you want to show all)
+              question = group.questions[0];
+              found = true;
+              break;
+            }
+          }
+          // Fallback: if no match, use first group's first question
+          if (!found) {
+            const firstGroup = drill.miniFeedback.groups[0];
+            if (firstGroup && firstGroup.questions && firstGroup.questions.length > 0) {
+              question = firstGroup.questions[0];
+            }
+          }
         }
-        return null;
+        // Sets the error message for micro feedback modal
+        // setMicroFeedbackError is already defined via useState above.
+        // You can remove this function, as setMicroFeedbackError is the state setter from useState.
+        // Example usage: setMicroFeedbackError(true) or setMicroFeedbackError(false)
+        // No implementation needed here.
+        // setShowMicroModal is already defined via useState above.
+        // You can remove this function, as setShowMicroModal is the state setter from useState.
+        // Example usage: setShowMicroModal(true) or setShowMicroModal(false)
+        // No implementation needed here.
+        return (
+          <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.7)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <div className="card" style={{maxWidth:500,width:'95%',margin:'0 auto'}}>
+              <h3>💡 Mini-Feedback</h3>
+              <div style={{marginBottom:'1.2rem',fontWeight:500,textAlign:'center',color:'#b6e2f7'}}>{question}</div>
+              <textarea
+                value={microText}
+                onChange={e => setMicroText(e.target.value)}
+                placeholder="z. B. 'Ich habe zu spät auf die Hüfte geachtet und war oft beim Puck.'"
+                rows={3}
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc', marginBottom: 8 }}
+              />
+              <div style={{display:'flex',justifyContent:'flex-end',gap:8}}>
+                <button className="btn" style={{background:'#6c757d'}} onClick={() => { setShowMicroModal(false); setPendingPhaseAdvance(null); setMicroText(''); setMicroFeedbackError(''); }}>Abbrechen</button>
+                <button className="btn" disabled={!microText.trim()} onClick={async () => {
+                  if (!microText.trim()) return;
+                  try {
+                    await api.saveMicroFeedback(id!, { phase: currentPhase, text: microText.trim() });
+                    await queryClient.invalidateQueries({ queryKey: ['session', id] });
+                    setShowMicroModal(false);
+                    setMicroText('');
+                    setMicroFeedbackError('');
+                    // Advance to pending phase
+                    if (pendingPhaseAdvance) {
+                      setCurrentPhase(pendingPhaseAdvance as Phase);
+                      setDrillCompleted(false);
+                      updatePhaseMutation.mutate({ phase: pendingPhaseAdvance });
+                      if (session?.drafts && session.drafts[pendingPhaseAdvance]) {
+                        setAnswerDraft(session.drafts[pendingPhaseAdvance]);
+                      } else {
+                        const existingCheckin = session?.checkins?.find((c: any) => c.phase === pendingPhaseAdvance);
+                        setAnswerDraft(existingCheckin?.answers || {});
+                      }
+                      setPendingPhaseAdvance(null);
+                    }
+                  } catch (err: any) {
+                    setMicroFeedbackError(err?.message || 'Speichern fehlgeschlagen');
+                  }
+                }}>Speichern & Weiter</button>
+              </div>
+              {microFeedbackError && <div style={{ color: 'red', marginTop: '1rem' }}>{microFeedbackError}</div>}
+            </div>
+          </div>
+        );
       })()}
     </div>
   )

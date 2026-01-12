@@ -1,5 +1,5 @@
 {
-  "id": "christoph_1768227544",
+  "id": "christoph_1768253806",
   "user": "christoph",
   "created_by": "christoph",
   "module_id": "A1",
@@ -9,8 +9,8 @@
   "session_method": "live_watch",
   "drill_id": "A1_D1",
   "state": "IN_PROGRESS",
-  "current_phase": "P1",
-  "created_at": "2026-01-12T15:19:04.960149",
+  "current_phase": "POST",
+  "created_at": "2026-01-12T22:36:46.459943",
   "drills": [
     {
       "id": "A1_D1",
@@ -117,27 +117,21 @@
       "answers": {},
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-12T15:19:07.992312"
+      "timestamp": "2026-01-12T22:36:48.546827"
     },
     {
-      "phase": "P1",
-      "answers": {
-        "center_mostly": "low",
-        "structure_feeling": "chaotisch"
-      },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-12T15:19:26.507287"
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:37:17.454190"
     },
     {
-      "phase": "P1",
-      "answers": {
-        "center_mostly": "low",
-        "structure_feeling": "chaotisch"
-      },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-12T15:19:36.323946"
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:38:39.752948"
     }
   ],
   "drafts": {},
@@ -146,6 +140,12 @@
     "league": "DEL",
     "team_home": "ERC Ingolstadt",
     "team_away": "Augsburger Panther",
-    "date": "2026-01-12T14:19:04.952Z"
+    "date": "2026-01-12T21:36:46.380Z"
+  },
+  "microfeedback": {
+    "P3": {
+      "done": true,
+      "text": "sdfsfd"
+    }
   }
 }

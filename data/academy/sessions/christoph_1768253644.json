@@ -1,5 +1,5 @@
 {
-  "id": "christoph_1768236303",
+  "id": "christoph_1768253644",
   "user": "christoph",
   "created_by": "christoph",
   "module_id": "A1",
@@ -9,8 +9,8 @@
   "session_method": "live_watch",
   "drill_id": "A1_D1",
   "state": "IN_PROGRESS",
-  "current_phase": "P1",
-  "created_at": "2026-01-12T17:45:03.352536",
+  "current_phase": "POST",
+  "created_at": "2026-01-12T22:34:04.835253",
   "drills": [
     {
       "id": "A1_D1",
@@ -117,14 +117,49 @@
       "answers": {},
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-12T17:45:05.539154"
+      "timestamp": "2026-01-12T22:34:06.282342"
     },
     {
-      "phase": "P1",
+      "phase": "POST",
       "answers": {},
-      "feedback": "ccfssac",
-      "next_task": null,
-      "timestamp": "2026-01-12T17:45:16.664778"
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:34:26.709028"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:34:27.553633"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:34:33.839310"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:34:34.602486"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:34:34.959094"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-12T22:34:35.487525"
     }
   ],
   "drafts": {},
@@ -133,6 +168,12 @@
     "league": "DEL",
     "team_home": "ERC Ingolstadt",
     "team_away": "Augsburger Panther",
-    "date": "2026-01-12T16:45:03.296Z"
+    "date": "2026-01-12T21:34:04.766Z"
+  },
+  "microfeedback": {
+    "P3": {
+      "done": true,
+      "text": "werwrr"
+    }
   }
 }

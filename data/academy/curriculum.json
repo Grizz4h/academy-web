@@ -328,6 +328,16 @@
                     ]
                   },
                   {
+                    "key": "triangles_seen",
+                    "type": "radio",
+                    "label": "Dreiecke gesehen:",
+                    "options": [
+                      "häufig",
+                      "selten",
+                      "kaum"
+                    ]
+                  },
+                  {
                     "key": "structure_moment",
                     "type": "text",
                     "label": "Strukturmoment (1 Stichwort)",
@@ -343,6 +353,32 @@
               "description": "Blindtest. Einsatz: Re-Live, fremdes Team. Dauer: ~1 Minute.",
               "didactics": {
                 "explanation": "Du trainierst hier das Erkennen des Centers ohne Namen oder Nummern. Fokus auf Rollenverständnis und Intuition, nicht auf Bestätigung.",
+                "role_context": {
+                  "title": "Typische Aufgaben eines Centers",
+                  "content": [
+                    {
+                      "label": "Verbindender Center",
+                      "text": "Bewegt sich zwischen den Linien, schließt Abstände, hält das Team kompakt und anspielbar."
+                    },
+                    {
+                      "label": "Absichernder Center",
+                      "text": "Bleibt häufig hinter dem Puck, räumt Chaos auf, priorisiert defensive Ordnung."
+                    },
+                    {
+                      "label": "Antreibender Center",
+                      "text": "Fordert aktiv den Puck, beschleunigt Transitionen, setzt Tempoimpulse."
+                    },
+                    {
+                      "label": "Reaktiver / lesender Center",
+                      "text": "Passt sich stark an Spielsituationen an, wechselt flexibel zwischen tiefen und hohen Positionen."
+                    },
+                    {
+                      "label": "Verlorener Center",
+                      "text": "Wirkt isoliert oder zu spät, Mitte fehlt strukturell – oft ein Zeichen für Rollenbruch."
+                    }
+                  ],
+                  "hint": "Es geht nicht um richtige Antworten, sondern um Struktur-Gefühl. Unsicherheit ist Teil der Übung."
+                },
                 "observation_guide": {
                   "what_to_watch": [
                     "Wer verbindet die Spieler?",
@@ -369,25 +405,25 @@
                   {
                     "when": { "confidence": "sicher" },
                     "questions": [
-                      "Welche Aktion hatte den größten strukturellen Effekt?",
-                      "War die wichtigste Aktion mit oder ohne Puck?",
-                      "Hat der Center das Spiel aktiv gelenkt oder nur reagiert?"
+                      "Welche strukturellen Hinweise haben dich überzeugt?",
+                      "War es eher Positionierung, Absicherung oder Verbindung?",
+                      "Welche Rolle war für dich am klarsten erkennbar?"
                     ]
                   },
                   {
                     "when": { "confidence": "okay" },
                     "questions": [
-                      "Lag das an seiner Rolle oder an fehlenden Optionen?",
-                      "War Passivität taktisch sinnvoll oder ein Problem?",
-                      "Welche Aktion hätte Ordnung schaffen können?"
+                      "Was hat die Entscheidung erschwert?",
+                      "Gab es mehrere mögliche Rollenbilder?",
+                      "Welche Information hätte dir mehr Klarheit gegeben?"
                     ]
                   },
                   {
                     "when": { "confidence": "unsicher" },
                     "questions": [
-                      "Lag das an seiner Rolle oder an fehlenden Optionen?",
-                      "War Passivität taktisch sinnvoll oder ein Problem?",
-                      "Welche Aktion hätte Ordnung schaffen können?"
+                      "Was war strukturell unklar?",
+                      "War das Team insgesamt ungeordnet oder nur diese Rolle?",
+                      "Welche Szene hätte dir bei der Einordnung geholfen?"
                     ]
                   }
                 ]
@@ -398,7 +434,8 @@
                     "key": "guessed_center",
                     "type": "text",
                     "label": "Vermuteter Center:",
-                    "max_chars": 20
+                    "max_chars": 20,
+                    "placeholder": "Trage ein, welche Rolle der Center in dieser Situation vermutlich einnimmt – nicht einen Namen."
                   },
                   {
                     "key": "confidence",
