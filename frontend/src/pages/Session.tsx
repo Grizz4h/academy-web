@@ -17,6 +17,7 @@ export default function SessionPage() {
   const [showMiniFeedback, setShowMiniFeedback] = useState(false)
   const [miniFeedbackAnswer, setMiniFeedbackAnswer] = useState<string>('')
   const [currentMiniQuestion, setCurrentMiniQuestion] = useState<string | null>(null)
+  const [microFeedbackError, setMicroFeedbackError] = useState<string>('');
   // const [shownFeedbackPhases, setShownFeedbackPhases] = useState<Set<string>>(new Set())
   // Feedback wird pro Session, Drill UND Phase angezeigt
   // Micro-Feedback done pro Phase (persistiert in session.checkins)
@@ -191,7 +192,8 @@ export default function SessionPage() {
   const handleAdvanceToNext = () => {
     // Microfeedback-Guard: Nur Session-Flag zählt
     const feedbackDone = Boolean(session?.microfeedback_done?.[currentPhase]);
-    if (["P1", "P2", "P3"].includes(currentPhase) && !feedbackDone) {
+    // Mini-Feedback-Modal nur für P1, P2, P3 und wenn noch nicht erledigt
+    if (["P1", "P2", "P3"].includes(currentPhase) && !feedbackDone && !showMiniFeedback) {
       const drill = session?.drills?.[0];
       const question = selectMiniQuestion(drill, answerDraft);
       setCurrentMiniQuestion(question || null);
@@ -207,15 +209,19 @@ export default function SessionPage() {
       next_task: "Nächste Phase vorbereiten"
       // mini_feedback NICHT mitsenden!
     };
-    console.log("SAVE CHECKIN PAYLOAD", payload);
     checkinMutation.mutate(payload);
     const next = nextPhaseMap[currentPhase];
     if (next) {
       setCurrentPhase(next);
       setDrillCompleted(false);
       updatePhaseMutation.mutate({ phase: next });
-          const existingCheckin = session?.checkins?.find((c: any) => c.phase === next);
-      setAnswerDraft(existingCheckin?.answers || {});
+      // Antworten für die neue Phase laden (Draft oder Checkin)
+      if (session?.drafts && session.drafts[next]) {
+        setAnswerDraft(session.drafts[next]);
+      } else {
+        const existingCheckin = session?.checkins?.find((c: any) => c.phase === next);
+        setAnswerDraft(existingCheckin?.answers || {});
+      }
     }
   }
 
@@ -238,13 +244,16 @@ export default function SessionPage() {
     }
     const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)
     if (prevPhase) {
-      setCurrentPhase(prevPhase)
-      setDrillCompleted(false)
-      // Update phase in backend for continuation
-      updatePhaseMutation.mutate({ phase: prevPhase })
-      // Load existing answers for previous phase
-          const existingCheckin = session?.checkins?.find((c: any) => c.phase === prevPhase)
-      setAnswerDraft(existingCheckin?.answers || {})
+      setCurrentPhase(prevPhase);
+      setDrillCompleted(false);
+      updatePhaseMutation.mutate({ phase: prevPhase });
+      // Antworten für die vorherige Phase laden (Draft oder Checkin)
+      if (session?.drafts && session.drafts[prevPhase]) {
+        setAnswerDraft(session.drafts[prevPhase]);
+      } else {
+        const existingCheckin = session?.checkins?.find((c: any) => c.phase === prevPhase);
+        setAnswerDraft(existingCheckin?.answers || {});
+      }
     }
   }
 
@@ -283,6 +292,8 @@ export default function SessionPage() {
     if (draftKey) {
       localStorage.setItem(draftKey, JSON.stringify(answers));
     }
+    // Optional: Draft auch im Backend speichern
+    // api.saveDraft(id!, { [currentPhase]: answers });
   }
   // Lade-/Fehler-Return nach allen Hooks
   if (isLoading) return <div className="card">Lade Session...</div>
@@ -496,57 +507,73 @@ export default function SessionPage() {
         </div>
       )}
 
-      {showMiniFeedback && (() => {
-        return (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="card" style={{ maxWidth: '500px', width: '90%' }}>
-            <h3>💡 Mini-Feedback</h3>
-            <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', marginBottom: '1rem' }}>
-              <strong>
-                {(() => {
-                  const drill = session?.drills?.[0];
-                  if (drill?.miniFeedback?.reflectionTitle) return drill.miniFeedback.reflectionTitle;
-                  if (drill?.didactics?.explanation) return 'Reflexion – ' + (drill.title || 'Drill');
-                  return 'Reflexion';
-                })()}
-              </strong><br />
-              {(() => {
-                const drill = session?.drills?.[0];
-                if (drill?.miniFeedback?.reflectionText) return drill.miniFeedback.reflectionText;
-                if (drill?.didactics?.explanation) return drill.didactics.explanation;
-                return '';
-              })()}
-            </p>
-            <p>{renderWithGlossary(currentMiniQuestion || '')}</p>
-            <div style={{ marginTop: '1rem' }}>
-              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
-                Kurze Erkenntnis (1–2 Sätze)
-              </label>
-              <textarea
-                value={miniFeedbackAnswer}
-                onChange={(e) => setMiniFeedbackAnswer(e.target.value)}
-                placeholder="z. B. „Ich habe zu spät auf die Hüfte geachtet und war oft beim Puck.“"
-                rows={3}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc' }}
-              />
+      {(() => {
+        // Guard: Modal nur zeigen, wenn im Checkin für die aktuelle Phase das Feedback fehlt/leer ist
+        const checkin = session?.checkins?.find((c: any) => c.phase === currentPhase);
+        const feedbackMissing = !checkin || !checkin.feedback || checkin.feedback.trim() === '';
+        if (showMiniFeedback && feedbackMissing) {
+          return (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+              <div className="card" style={{ maxWidth: '500px', width: '90%' }}>
+                <h3>💡 Mini-Feedback</h3>
+                <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', marginBottom: '1rem' }}>
+                  <strong>
+                    {(() => {
+                      const drill = session?.drills?.[0];
+                      if (drill?.miniFeedback?.reflectionTitle) return drill.miniFeedback.reflectionTitle;
+                      if (drill?.didactics?.explanation) return 'Reflexion – ' + (drill.title || 'Drill');
+                      return 'Reflexion';
+                    })()}
+                  </strong><br />
+                  {(() => {
+                    const drill = session?.drills?.[0];
+                    if (drill?.miniFeedback?.reflectionText) return drill.miniFeedback.reflectionText;
+                    if (drill?.didactics?.explanation) return drill.didactics.explanation;
+                    return '';
+                  })()}
+                </p>
+                <p>{renderWithGlossary(currentMiniQuestion || '')}</p>
+                <div style={{ marginTop: '1rem' }}>
+                  <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
+                    Kurze Erkenntnis (1–2 Sätze)
+                  </label>
+                  <textarea
+                    value={miniFeedbackAnswer}
+                    onChange={(e) => setMiniFeedbackAnswer(e.target.value)}
+                    placeholder="z. B. „Ich habe zu spät auf die Hüfte geachtet und war oft beim Puck.“"
+                    rows={3}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc' }}
+                  />
+                </div>
+                <button
+                  className="btn"
+                  disabled={!miniFeedbackAnswer.trim()}
+                  onClick={async () => {
+                    const miniFeedback = miniFeedbackAnswer.trim();
+                    if (!miniFeedback) return;
+                    try {
+                      await api.saveMicroFeedback(id!, { phase: currentPhase, text: miniFeedback });
+                      await queryClient.invalidateQueries({ queryKey: ['session', id] });
+                      setShowMiniFeedback(false);
+                      setMiniFeedbackAnswer('');
+                      setMicroFeedbackError('');
+                      // Nach Mini-Feedback: handleAdvanceToNext erneut aufrufen, um wirklich weiterzuschalten
+                      handleAdvanceToNext();
+                    } catch (err: any) {
+                      setMicroFeedbackError(err?.message || 'Speichern fehlgeschlagen');
+                    }
+                  }}
+                >
+                  Verstanden
+                </button>
+                {microFeedbackError && (
+                  <div style={{ color: 'red', marginTop: '1rem' }}>{microFeedbackError}</div>
+                )}
+              </div>
             </div>
-            <button
-              className="btn"
-              disabled={!miniFeedbackAnswer.trim()}
-              onClick={async () => {
-                const miniFeedback = miniFeedbackAnswer.trim();
-                if (!miniFeedback) return;
-                await api.saveMicroFeedback(id!, { phase: currentPhase, text: miniFeedback });
-                await queryClient.invalidateQueries({ queryKey: ['session', id] });
-                setShowMiniFeedback(false);
-                setMiniFeedbackAnswer('');
-              }}
-            >
-              Verstanden
-            </button>
-          </div>
-        </div>
-        );
+          );
+        }
+        return null;
       })()}
     </div>
   )

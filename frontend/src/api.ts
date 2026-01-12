@@ -180,12 +180,12 @@ export interface TeamsResponse {
 }
 
 export const api = {
-    // Microfeedback pro Phase speichern
+    // Microfeedback als Checkin speichern
     saveMicroFeedback: async (id: string, data: { phase: string; text: string }): Promise<any> => {
-      const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/microfeedback`), {
+      const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/checkins`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ phase: data.phase, answers: {}, feedback: data.text, next_task: null })
       });
       if (!res.ok) throw new Error('Failed to save microfeedback');
       return res.json();

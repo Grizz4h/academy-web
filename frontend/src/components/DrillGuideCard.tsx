@@ -1,4 +1,4 @@
-import React from 'react';
+// ...existing code...
 import { renderWithGlossary } from './GlossaryTerm';
 
 export type DrillGuide = {
