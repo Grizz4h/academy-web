@@ -502,7 +502,26 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
           <p>{drill.didactics.explanation}</p>
         </div>
       )}
-      
+
+      {/* Rollenreferenz unterhalb der Drillerklärung anzeigen */}
+      {drill.didactics?.role_context && (
+        <section style={{ marginTop: 12, fontSize: '0.9rem', opacity: 0.9 }}>
+          <h4>{drill.didactics.role_context.title}</h4>
+          <ul style={{ paddingLeft: 16 }}>
+            {drill.didactics.role_context.content.map((item: any, idx: number) => (
+              <li key={idx} style={{ marginBottom: 6 }}>
+                <strong>{item.label}:</strong> {item.text}
+              </li>
+            ))}
+          </ul>
+          {drill.didactics.role_context.hint && (
+            <p style={{ marginTop: 8, fontStyle: 'italic', opacity: 0.75 }}>
+              {drill.didactics.role_context.hint}
+            </p>
+          )}
+        </section>
+      )}
+
       <ObservationGuide drill={drill} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {questions.map((q: any) => (
@@ -539,7 +558,6 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
           </div>
         ))}
       </div>
-
 
       {drill.didactics?.learning_hint && (
         <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(81,145,162,0.05)', borderRadius: '4px' }}>
