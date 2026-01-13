@@ -36,7 +36,11 @@ def render_session_setup():
                 'team_away': team_away
             }
             user = st.session_state.get('user', 'martin')  # Default user
-            session = create_session(user, module_id, goal, confidence, game_info)
+            # Drill-ID aus erstem Drill des Moduls bestimmen
+            drill_id = 'unknown'
+            if module and module.get('drills') and len(module['drills']) > 0:
+                drill_id = module['drills'][0].get('id', 'unknown')
+            session = create_session(user, module_id, drill_id, goal, confidence, game_info)
             st.session_state.current_session = session['id']
             st.rerun()
 

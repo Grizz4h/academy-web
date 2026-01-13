@@ -106,7 +106,7 @@ export default function History() {
           filteredSessions.map((session: Session) => (
             <SessionCard
               key={session.id}
-              session={session}
+              session={{ ...session, observed_team: session.game_info?.observed_team }}
               onDelete={(id) => deleteMutation.mutate(id)}
               isDeletingId={
                 deleteMutation.isPending

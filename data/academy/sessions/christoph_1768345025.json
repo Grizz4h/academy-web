@@ -1,5 +1,5 @@
 {
-  "id": "christoph_1768310314",
+  "id": "christoph_1768345025",
   "user": "christoph",
   "created_by": "christoph",
   "module_id": "A1",
@@ -9,8 +9,8 @@
   "session_method": "live_watch",
   "drill_id": "A1_D1",
   "state": "IN_PROGRESS",
-  "current_phase": "P1",
-  "created_at": "2026-01-13T14:18:34.577786",
+  "current_phase": "P2",
+  "created_at": "2026-01-13T23:57:05.030982",
   "drills": [
     {
       "id": "A1_D1",
@@ -18,7 +18,7 @@
       "drill_type": "period_checkin",
       "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
       "didactics": {
-        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.",
+        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren.",
         "observation_guide": {
           "what_to_watch": [
             "Center-Position (Low / Middle / High)",
@@ -37,7 +37,7 @@
             "Emotionale Narrative"
           ]
         },
-        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren."
+        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
       },
       "miniFeedback": {
         "trigger": "onNext",
@@ -116,16 +116,26 @@
     {
       "phase": "PRE",
       "answers": {},
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-13T14:18:36.494084"
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T23:57:07.525269"
     },
     {
       "phase": "PRE",
       "answers": {},
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-13T14:18:38.675700"
+      "timestamp": "2026-01-13T23:57:08.162763"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "middle",
+        "structure_feeling": "geordnet"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T23:57:12.964170"
     }
   ],
   "drafts": {},
@@ -134,6 +144,13 @@
     "league": "DEL",
     "team_home": "ERC Ingolstadt",
     "team_away": "Augsburger Panther",
-    "date": "2026-01-13T13:18:34.476Z"
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-01-13T22:57:04.948Z"
+  },
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "kbk"
+    }
   }
 }

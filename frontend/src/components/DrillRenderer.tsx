@@ -1,3 +1,4 @@
+// This file has been deprecated. Use src/renderers/v1/DrillRenderer.tsx (A1) or src/renderers/v2/DrillRenderer.tsx (A2+) instead.
 // /frontend/src/components/DrillRenderer.tsx
 import { useEffect, useState } from "react";
 import type { Drill } from "../api";

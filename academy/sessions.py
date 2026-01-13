@@ -1,3 +1,12 @@
+import re
+import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
+def _safe_slug(s: str) -> str:
+    s = (s or "").strip()
+    s = re.sub(r"[^a-zA-Z0-9_-]+", "_", s)
+    s = re.sub(r"_+", "_", s)
+    return s.strip("_") or "NA"
 import json
 import os
 from datetime import datetime
@@ -6,24 +15,31 @@ SESSIONS_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'academy', 
 
 os.makedirs(SESSIONS_DIR, exist_ok=True)
 
-def create_session(user, module_id, goal, confidence, game_info=None):
-    session_id = f"{user}_{module_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+def create_session(payload: dict):
+    user = _safe_slug(payload.get("user", "NA"))
+    drill = _safe_slug(payload.get("drill_id") or payload.get("drill") or payload.get("module_id") or "NA")
+    date_prefix = datetime.now(ZoneInfo("Europe/Berlin")).strftime("%Y%m%d")
+    ts = int(time.time())
+    session_id = f"{date_prefix}_{user}_{drill}_{ts}"
+
     session = {
-        'id': session_id,
-        'user': user,
-        'module_id': module_id,
-        'goal': goal,
-        'confidence': confidence,
-        'game_info': game_info or {},
-        'state': 'active',
-        'created_at': datetime.now().isoformat(),
-        'checkins': [],
-        'post': None
+        "id": session_id,
+        "user": payload.get("user"),
+        "module_id": payload.get("module_id"),
+        "drill_id": payload.get("drill_id"),
+        "goal": payload.get("goal"),
+        "confidence": payload.get("confidence"),
+        "created_at": datetime.now(ZoneInfo("Europe/Berlin")).isoformat(),
+        "checkins": [],
+        "post": None
     }
+    if "game_info" in payload:
+        session["game_info"] = payload["game_info"]
     save_session(session)
     return session
 
 def save_session(session):
+    # Speichere immer unter session['id']
     path = os.path.join(SESSIONS_DIR, f"{session['id']}.json")
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(session, f, indent=2, ensure_ascii=False)

@@ -1,12 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
-import DrillRenderer from '../components/DrillRenderer'
+
+// Patch: Extend Checkin type to allow microfeedback_done (for type safety)
+type CheckinWithMicro = {
+  phase: string;
+  answers: any;
+  feedback?: string;
+  next_task?: string;
+  microfeedback_done?: boolean;
+  [key: string]: any;
+};
+import DrillRendererV1 from '../renderers/v1/DrillRenderer'
+import DrillRendererV2 from '../renderers/v2/DrillRenderer'
 import { useState, useEffect } from 'react'
 
 
 export default function SessionPage() {
-
   // Notizfeld für Session-Info
   const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
@@ -15,6 +25,7 @@ export default function SessionPage() {
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
   const [currentPhase, setCurrentPhase] = useState<Phase>('PRE')
   const [drillCompleted, setDrillCompleted] = useState(false)
+  const [isAdvancing, setIsAdvancing] = useState(false)
   const [answerDraft, setAnswerDraft] = useState<any>({})
   const [showMicroModal, setShowMicroModal] = useState(false);
   const [pendingPhaseAdvance, setPendingPhaseAdvance] = useState<string|null>(null);
@@ -29,6 +40,9 @@ export default function SessionPage() {
     queryKey: ['session', id],
     queryFn: () => api.getSession(id!)
   })
+
+  // Renderer switch based on moduleId (A1 = v1, else v2)
+  const moduleId = session?.module_id;
 
 
   // Session Continuation: Phase und Drafts laden
@@ -176,34 +190,57 @@ export default function SessionPage() {
 
 
 
-  const handleAdvanceToNext = () => {
-    const drill = session?.drills?.[0];
-    const micro = session?.microfeedback?.[currentPhase];
-    const needsMicro = ["P1", "P2", "P3"].includes(currentPhase) && drill && drill.miniFeedback && !(micro && micro.done);
-    const next = nextPhaseMap[currentPhase];
-    if (needsMicro) {
-      setPendingPhaseAdvance(next || null);
-      setShowMicroModal(true);
-      return;
-    }
-    // 2. Check-in speichern und Phase wechseln
-    const payload = {
-      phase: currentPhase,
-      answers: answerDraft,
-      feedback: "Weiter zur nächsten Phase",
-      next_task: "Nächste Phase vorbereiten"
-    };
-    checkinMutation.mutate(payload);
-    if (next) {
-      setCurrentPhase(next as Phase);
-      setDrillCompleted(false);
-      updatePhaseMutation.mutate({ phase: next });
-      if (session?.drafts && session.drafts[next]) {
-        setAnswerDraft(session.drafts[next]);
-      } else {
-        const existingCheckin = session?.checkins?.find((c: any) => c.phase === next);
-        setAnswerDraft(existingCheckin?.answers || {});
+  // Option A: Save + Advance-Flow für V1 und V2
+  const handleAdvanceToNext = async () => {
+    // 0) Validation: Drill muss komplett sein (implementiere isDrillComplete nach Bedarf)
+    // if (!isDrillComplete(session?.drills?.[0], answerDraft)) return;
+
+    if (!id) return; // id muss vorhanden sein
+    setIsAdvancing(true);
+    try {
+      const phase = currentPhase;
+      const next = nextPhaseMap[phase];
+
+      // 1) Persist answers (Checkin)
+      await api.saveCheckin(id as string, {
+        phase,
+        answers: answerDraft,
+        feedback: "Weiter zur nächsten Phase",
+        next_task: "Nächste Phase vorbereiten"
+      });
+
+      // 2) refetch / invalidate session so checkins aktuell sind
+      await queryClient.invalidateQueries({ queryKey: ["session", id] });
+
+      // 3) Microfeedback-Guard (falls P1-P3) -> nur wenn miniFeedback im Drill vorhanden ist UND noch nicht erledigt
+      const sessionFresh = await queryClient.fetchQuery({ queryKey: ["session", id] });
+      // Typisierung für sessionFresh
+      const sessionObj = sessionFresh as typeof session;
+      const checkin = sessionObj?.checkins?.find((c: any) => c.phase === phase) as CheckinWithMicro | undefined;
+      const drill = sessionObj?.drills?.[0];
+      const hasMiniFeedback = drill && typeof drill.miniFeedback === 'object' && drill.miniFeedback !== null;
+      const needsMicro = hasMiniFeedback && (["P1", "P2", "P3"].includes(phase)) && !(checkin && checkin.microfeedback_done);
+      if (needsMicro) {
+        setPendingPhaseAdvance(next || null);
+        setShowMicroModal(true);
+        setIsAdvancing(false); // Button sofort wieder aktivieren
+        return;
       }
+
+      // 4) Phasewechsel
+      if (next) {
+        await api.updateSessionPhase(id as string, { phase: next });
+        setCurrentPhase(next as Phase);
+        setDrillCompleted(false);
+        if (sessionObj?.drafts && sessionObj.drafts[next]) {
+          setAnswerDraft(sessionObj.drafts[next]);
+        } else {
+          const existingCheckin = sessionObj?.checkins?.find((c: any) => c.phase === next) as CheckinWithMicro | undefined;
+          setAnswerDraft(existingCheckin?.answers || {});
+        }
+      }
+    } finally {
+      setIsAdvancing(false);
     }
   }
 
@@ -325,20 +362,38 @@ export default function SessionPage() {
           {currentPhase === 'PRE' && (
             <div>
               <p>Vorbereitung: Denke über die Erwartungen nach.</p>
-              <DrillRenderer drill={{
-                id: 'pre_checkin',
-                title: 'Pre-Match Check-in',
-                drill_type: 'period_checkin',
-                config: {
-                  questions: [
-                    { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
-                  ]
-                }
-              }} 
-              onComplete={handleDrillComplete}
-              initialAnswers={answerDraft}
-              onChangeAnswers={handleDraftChange}
-              />
+              {moduleId === 'A1' ? (
+                <DrillRendererV1
+                  drill={{
+                    id: 'pre_checkin',
+                    title: 'Pre-Match Check-in',
+                    drill_type: 'period_checkin',
+                    config: {
+                      questions: [
+                        { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
+                      ]
+                    }
+                  }}
+                  // onComplete entfernt, Steuerung zentral
+                  initialAnswers={answerDraft}
+                  onChangeAnswers={handleDraftChange}
+                />
+              ) : (
+                <DrillRendererV2
+                  drill={{
+                    id: 'pre_checkin',
+                    title: 'Pre-Match Check-in',
+                    drill_type: 'period_checkin',
+                    config: {
+                      questions: [
+                        { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
+                      ]
+                    }
+                  }}
+                  answers={answerDraft}
+                  setAnswers={setAnswerDraft}
+                />
+              )}
               {/* Phase und Navigation Buttons */}
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
                 <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center', letterSpacing: '0.01em', marginBottom: '0.1em' }}>{getPhaseTitle(currentPhase)}</div>
@@ -354,18 +409,12 @@ export default function SessionPage() {
                   )}
                   {nextPhaseMap[currentPhase] && (
                     <button
-                      onClick={handleAdvanceToNext}
+                      onClick={isAdvancing ? undefined : handleAdvanceToNext}
                       className="btn"
                       style={{ minWidth: 120 }}
-                      disabled={(() => {
-                        // Disable if microfeedback required and not filled
-                        if (["P1", "P2", "P3"].includes(String(currentPhase))) {
-                          return false;
-                        }
-                        return false;
-                      })()}
+                      disabled={isAdvancing}
                     >
-                      Weiter →
+                      {isAdvancing ? "Bitte warten…" : "Weiter →"}
                     </button>
                   )}
                 </div>
@@ -389,12 +438,20 @@ export default function SessionPage() {
             <div>
               <p>Analysiere das letzte Drittel und gib Feedback.</p>
               {session.drills && session.drills.length > 0 ? (
-                <DrillRenderer 
-                  drill={session.drills[0]} 
-                  onComplete={handleDrillComplete}
-                  initialAnswers={answerDraft}
-                  onChangeAnswers={handleDraftChange}
-                />
+                moduleId === 'A1' ? (
+                  <DrillRendererV1
+                    drill={session.drills[0]}
+                    // onComplete entfernt, Steuerung zentral
+                    initialAnswers={answerDraft}
+                    onChangeAnswers={handleDraftChange}
+                  />
+                ) : (
+                  <DrillRendererV2
+                    drill={session.drills[0]}
+                    answers={answerDraft}
+                    setAnswers={setAnswerDraft}
+                  />
+                )
               ) : (
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}

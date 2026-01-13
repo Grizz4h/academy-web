@@ -1,5 +1,5 @@
 {
-  "id": "christoph_1768310206",
+  "id": "christoph_1768336950",
   "user": "christoph",
   "created_by": "christoph",
   "module_id": "A1",
@@ -8,9 +8,9 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P1",
-  "created_at": "2026-01-13T14:16:46.447614",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-13T21:42:30.548441",
   "drills": [
     {
       "id": "A1_D1",
@@ -18,7 +18,7 @@
       "drill_type": "period_checkin",
       "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
       "didactics": {
-        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.",
+        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren.",
         "observation_guide": {
           "what_to_watch": [
             "Center-Position (Low / Middle / High)",
@@ -37,7 +37,7 @@
             "Emotionale Narrative"
           ]
         },
-        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren."
+        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
       },
       "miniFeedback": {
         "trigger": "onNext",
@@ -115,18 +115,86 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {},
+      "answers": {
+        "expectations": "schnelle Skater"
+      },
       "feedback": "Weiter zur nächsten Phase",
       "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-13T14:16:48.175728"
+      "timestamp": "2026-01-13T21:43:02.762092"
+    },
+    {
+      "phase": "PRE",
+      "answers": {
+        "expectations": "schnelle Skater"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T21:43:04.247146"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "high",
+        "structure_feeling": "geordnet"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T22:15:38.362375"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "center_mostly": "high",
+        "structure_feeling": "mixed"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T23:11:11.935162"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "structure_feeling": "mixed",
+        "center_mostly": "high"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T23:27:11.141893"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-13T23:27:18.307023"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-13T23:27:18.384325"
+  },
   "game_info": {
-    "league": "DEL",
-    "team_home": "ERC Ingolstadt",
-    "team_away": "Augsburger Panther",
-    "date": "2026-01-13T13:16:46.345Z"
+    "league": "NHL",
+    "team_home": "Chicago Blackhawks",
+    "team_away": "Edmonton Oilers",
+    "date": "2026-01-13T20:42:30.514Z"
+  },
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Struktur"
+    },
+    "P2": {
+      "done": true,
+      "text": "Struktur"
+    },
+    "P3": {
+      "done": true,
+      "text": "Struktur"
+    }
   }
 }

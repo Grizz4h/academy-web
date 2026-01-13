@@ -31,6 +31,7 @@ class SessionCreate(BaseModel):
     goal: str
     confidence: int  # 1-5
     game_info: Optional[dict] = None
+    observed_team: Optional[str] = None
     focus: Optional[str] = None  # Module-specific focus area
     session_method: Optional[str] = None  # "live_watch" oder andere
     drill_id: Optional[str] = None  # Specific drill to use
@@ -152,6 +153,7 @@ async def create_session(session: SessionCreate):
         "drafts": {},  # Store draft answers for continuation
         "post": None,
         "game_info": session.game_info,
+        "observed_team": session.observed_team,
         "microfeedback": {
             "P1": {"done": False, "text": ""},
             "P2": {"done": False, "text": ""},

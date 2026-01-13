@@ -58,6 +58,7 @@ export default function SessionSetup() {
   const queryClient = useQueryClient()
   const { user } = useUser()
   const [goal, setGoal] = useState<string>('')
+  const [observedTeam, setObservedTeam] = useState<string>('')
   const [confidence, setConfidence] = useState<number>(3)
   const [selectedDrill, setSelectedDrill] = useState<string>('')
   const [league, setLeague] = useState<string>('DEL')
@@ -101,10 +102,11 @@ export default function SessionSetup() {
       league,
       teamHome,
       teamAway,
-      selectedDrill
+      selectedDrill,
+      observedTeam
     }
     localStorage.setItem(draftKey, JSON.stringify(draft))
-  }, [draftKey, goal, confidence, league, teamHome, teamAway, selectedDrill])
+  }, [draftKey, goal, confidence, league, teamHome, teamAway, selectedDrill, observedTeam])
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
@@ -177,12 +179,17 @@ export default function SessionSetup() {
       alert('Home- und Auswärtsteam müssen unterschiedlich sein.')
       return
     }
+    if (!observedTeam) {
+      alert('Bitte wähle das beobachtete Team aus (Pflichtfeld).')
+      return
+    }
     // Drill optional auswählen – Standard: erster Drill des Moduls
 
     const gameInfo: any = {
       league,
       team_home: teamHome,
       team_away: teamAway,
+      observed_team: observedTeam,
       date: new Date().toISOString()
     }
     // Hinweis: Divisionen NICHT an Backend senden, nur intern nutzen
@@ -259,6 +266,7 @@ export default function SessionSetup() {
               setLeague(e.target.value)
               setTeamHome('')
               setTeamAway('')
+              setObservedTeam('')
             }}
             style={{
               width: '100%',
@@ -280,7 +288,10 @@ export default function SessionSetup() {
             Heimteam
             <select
               value={teamHome}
-              onChange={(e) => setTeamHome(e.target.value)}
+              onChange={(e) => {
+                setTeamHome(e.target.value)
+                if (observedTeam === teamHome) setObservedTeam('')
+              }}
               disabled={!league}
               style={{
                 width: '100%',
@@ -296,13 +307,27 @@ export default function SessionSetup() {
                 <option key={team} value={team}>{team}</option>
               ))}
             </select>
+            <div>
+              <input
+                type="radio"
+                checked={observedTeam === teamHome}
+                onChange={() => setObservedTeam(teamHome)}
+                disabled={!teamHome}
+                id="observe-home"
+                name="observed-team"
+              />
+              <label htmlFor="observe-home" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
+            </div>
           </label>
 
           <label style={{ display: 'block' }}>
             Auswärtsteam
             <select
               value={teamAway}
-              onChange={(e) => setTeamAway(e.target.value)}
+              onChange={(e) => {
+                setTeamAway(e.target.value)
+                if (observedTeam === teamAway) setObservedTeam('')
+              }}
               disabled={!league}
               style={{
                 width: '100%',
@@ -318,6 +343,17 @@ export default function SessionSetup() {
                 <option key={team} value={team}>{team}</option>
               ))}
             </select>
+            <div>
+              <input
+                type="radio"
+                checked={observedTeam === teamAway}
+                onChange={() => setObservedTeam(teamAway)}
+                disabled={!teamAway}
+                id="observe-away"
+                name="observed-team"
+              />
+              <label htmlFor="observe-away" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
+            </div>
           </label>
         </div>
 

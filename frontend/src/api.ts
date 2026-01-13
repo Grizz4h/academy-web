@@ -111,12 +111,14 @@ export interface Session {
       text: string;
     }
   }
+  observed_team?: string
 }
 
 export interface GameInfo {
   team_home: string
   team_away: string
   date: string
+  observed_team?: string
   league: string
 }
 
@@ -188,9 +190,12 @@ export interface TeamsResponse {
 export const api = {
     // Microfeedback als Checkin speichern
     saveMicroFeedback: async (id: string, data: { phase: string; text: string }): Promise<any> => {
-      // Use PATCH to update microfeedback for the given phase
+      // Bestehendes microfeedback laden und mergen, damit nicht überschrieben wird
+      const session = await api.getSession(id);
+      const prev = session.microfeedback || {};
       const patch = {
         microfeedback: {
+          ...prev,
           [data.phase]: { done: true, text: data.text }
         }
       };
