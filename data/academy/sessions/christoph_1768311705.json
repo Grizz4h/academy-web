@@ -1,0 +1,179 @@
+{
+  "id": "christoph_1768311705",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D2",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-01-13T14:41:45.831085",
+  "drills": [
+    {
+      "id": "A1_D2",
+      "title": "Shift Chunk: Center-Position",
+      "drill_type": "shift_tracker",
+      "description": "Serienbeobachtung. Einsatz: Live oder Re-Live. Dauer: 8–12 Shifts.",
+      "didactics": {
+        "explanation": "Du trainierst hier die Positionsdisziplin des Centers über mehrere Shifts. Fokus auf wiederkehrende Muster und Timing, nicht auf einzelne Aktionen.\n\nIn diesem Drill beobachtest du nicht einzelne Aktionen, sondern die Ordnung eines gesamten Shifts. Entscheidend ist nicht, ob etwas gelingt, sondern ob die Struktur nach Aktionen erhalten bleibt.",
+        "rollenreferenz_center": {
+          "title": "Rollenfokus: Center – was ist „strukturell korrekt“?",
+          "text": "In diesem Drill dient der Center als Referenzpunkt für Ordnung. Du bewertest nicht seine Technik, sondern seine Rolle im Gesamtgefüge.",
+          "typische_aufgaben": [
+            "Bindeglied zwischen Defense und Wingern",
+            "erste Absicherung nach Puckverlust",
+            "beweglicher Anker im Middle",
+            "Leser des Spiels, nicht der Jäger des Pucks"
+          ],
+          "kurz_gesagt": "Der Center sorgt dafür, dass immer jemand Ordnung hält, während andere Druck machen.",
+          "wann_in_rolle": [
+            "das Middle absichert, auch ohne Puck",
+            "sich unter dem Spiel bewegt (nicht vor dem Spiel)",
+            "Lücken schließt, bevor sie gefährlich werden",
+            "bewusst nicht jedem Puck hinterhergeht"
+          ],
+          "nicht_aus_rolle_weil": [
+            "er einen Zweikampf verliert",
+            "ein Pass misslingt",
+            "ein Gegner schneller ist"
+          ],
+          "aus_rolle_wenn": [
+            "er unkoordiniert tief jagt",
+            "das Middle ungesichert bleibt",
+            "mehrere Spieler dieselbe Aufgabe machen",
+            "niemand seine Position übernimmt"
+          ],
+          "merksatz": "Nicht der Fehler ist das Problem – sondern das fehlende Auffangen danach.",
+          "beobachtungsanker": {
+            "frage": "Wenn jetzt der Puck verloren geht – wer hält Ordnung?",
+            "regel": "Wenn die Antwort niemand ist → Strukturbruch"
+          }
+        },
+        "observation_guide": {
+          "what_to_watch": [
+            "Center-Startposition (low / middle / high)",
+            "Center-Position 2 Sekunden nach einem Marker",
+            "Center-Position beim Zonenwechsel"
+          ],
+          "how_to_decide": [
+            "Nicht interpretieren, nur notieren",
+            "Gesamtmuster erkennen",
+            "Unsicher → neutral wählen"
+          ],
+          "ignore": [
+            "Einzelne Pässe oder Schüsse",
+            "Torchancen als Bewertung",
+            "Spielerische Details (Technik/Skill)"
+          ]
+        },
+        "shift_marker_explanation": "Shift Marker (Beobachtungspunkt): Ein Shift Marker ist ein Moment im Shift, an dem du kurz prüfst: Ist die Ordnung noch da?\n\nTypische Marker:\n• nach einem Puckverlust\n• nach einem Zweikampf an der Bande\n• nach einem misslungenen Pass\n• beim Zonenwechsel / in der Wechselphase\n\nDu bewertest nicht die Aktion, sondern die Struktur danach.",
+        "inline_explanations": {
+          "structure_held": {
+            "not_means": [
+              "ob der Shift 'gut' aussieht",
+              "ob ein Pass ankommt",
+              "ob es eine Torchance gibt"
+            ],
+            "means": "Ob Rollen, Abstände und Aufgaben nach einem Marker stabil bleiben – also ob jemand Ordnung hält, während andere Druck machen.",
+            "example": "Beispiel: Nach Puckverlust bleibt der Center im Middle / sichert ab → Struktur gehalten. Wenn alle tief jagen und niemand das Middle hält → Struktur nicht gehalten."
+          }
+        },
+        "fill_hint": "Hinweis: Ein Shift kann gute Aktionen UND Strukturbrüche enthalten. Antworte nicht emotional, sondern strukturell.",
+        "question_precision": {
+          "center_position": "Gemeint ist die Position, in der der Center die meiste Zeit des Shifts strukturell 'lebt' – nicht seine Extremposition in 1–2 Sekunden.",
+          "shift_marker_type": "Wähle den Marker, bei dem du am klarsten geprüft hast, ob Ordnung noch da ist.",
+          "structure_held": "Gemeint ist: Nach dem Marker blieb die Rollenverteilung und Absicherung erkennbar – oder ist sie auseinandergefallen?"
+        },
+        "learning_hint": "Wenn es zu detailliert wirkt: genau darum geht es hier.",
+        "didactical_closing": "Warum dieser Drill wichtig ist: Strukturverlust erklärt oft, warum ein Team unter Druck gerät – nicht erst das Gegentor."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "structure_held": "ja"
+            },
+            "questions": [
+              "Was hat die Ordnung stabil gehalten – Abstände oder klares Rollenverständnis?",
+              "War die Struktur aktiv (geführt) oder eher reaktiv (nur überlebt)?",
+              "Hat sich die Ordnung mit dem Puck bewegt oder ist sie stehen geblieben?"
+            ]
+          },
+          {
+            "when": {
+              "structure_held": "nein"
+            },
+            "questions": [
+              "Woran hast du Instabilität zuerst erkannt – Bewegung, Abstände oder fehlende Absicherung?",
+              "War die Instabilität dauerhaft oder nur an einem Marker?",
+              "Welche Center-Entscheidung hätte am ehesten Ordnung wiederhergestellt?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "shift_count": 10,
+        "questions": [
+          {
+            "key": "shift_marker_type",
+            "type": "radio",
+            "label": "Shift-Marker (Auslöser)",
+            "options": [
+              "Puckverlust",
+              "Zonenwechsel",
+              "Banden-Zweikampf",
+              "Wechselphase",
+              "Forecheck-Druck",
+              "Icing/Unterbrechung"
+            ]
+          },
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position (die meiste Zeit im Shift)",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          {
+            "key": "structure_held",
+            "type": "radio",
+            "label": "Struktur gehalten?",
+            "options": [
+              "ja",
+              "nein"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T14:41:48.065449"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "date": "2026-01-13T13:41:45.781Z"
+  }
+}

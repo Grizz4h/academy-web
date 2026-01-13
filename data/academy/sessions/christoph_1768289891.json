@@ -1,0 +1,147 @@
+{
+  "id": "christoph_1768289891",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D4",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-01-13T08:38:11.462530",
+  "drills": [
+    {
+      "id": "A1_D4",
+      "title": "Rollen-Identifikation (Center erkennen)",
+      "drill_type": "role_identification",
+      "description": "Blindtest. Einsatz: Re-Live, fremdes Team. Dauer: ~1 Minute.",
+      "didactics": {
+        "explanation": "Du trainierst hier das Erkennen des Centers ohne Namen oder Nummern. Fokus auf Rollenverständnis und Intuition, nicht auf Bestätigung.",
+        "role_context": {
+          "title": "Typische Aufgaben eines Centers",
+          "content": [
+            {
+              "label": "Verbindender Center",
+              "text": "Bewegt sich zwischen den Linien, schließt Abstände, hält das Team kompakt und anspielbar."
+            },
+            {
+              "label": "Absichernder Center",
+              "text": "Bleibt häufig hinter dem Puck, räumt Chaos auf, priorisiert defensive Ordnung."
+            },
+            {
+              "label": "Antreibender Center",
+              "text": "Fordert aktiv den Puck, beschleunigt Transitionen, setzt Tempoimpulse."
+            },
+            {
+              "label": "Reaktiver / lesender Center",
+              "text": "Passt sich stark an Spielsituationen an, wechselt flexibel zwischen tiefen und hohen Positionen."
+            },
+            {
+              "label": "Verlorener Center",
+              "text": "Wirkt isoliert oder zu spät, Mitte fehlt strukturell – oft ein Zeichen für Rollenbruch."
+            }
+          ],
+          "hint": "Es geht nicht um richtige Antworten, sondern um Struktur-Gefühl. Unsicherheit ist Teil der Übung."
+        },
+        "observation_guide": {
+          "what_to_watch": [
+            "Wer verbindet die Spieler?",
+            "Wer bietet sich zwischen den Linien an?",
+            "Wer sichert nach hinten ab?"
+          ],
+          "how_to_decide": [
+            "Namen und Nummern ignorieren",
+            "Erst raten, dann checken",
+            "Intuition zählt"
+          ],
+          "ignore": [
+            "Namen und Nummern",
+            "Bestätigung vor dem Raten",
+            "Einzelne Aktionen"
+          ]
+        },
+        "learning_hint": "Wenn es zu unsicher wirkt: genau darum geht es hier. Was bedeutet Sicherheit?\n\n• unsicher: Nur Bauchgefühl oder ein einzelnes, schwaches Indiz.\n• okay: Mehrere (2–3) Indizien, aber nicht durchgehend oder eindeutig.\n• sicher: Mehrfach bestätigt – die Rolle zeigt sich klar über mehrere Sequenzen hinweg und ist gut begründbar."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "confidence": "sicher"
+            },
+            "questions": [
+              "Welche strukturellen Hinweise haben dich überzeugt?",
+              "War es eher Positionierung, Absicherung oder Verbindung?",
+              "Welche Rolle war für dich am klarsten erkennbar?"
+            ]
+          },
+          {
+            "when": {
+              "confidence": "okay"
+            },
+            "questions": [
+              "Was hat die Entscheidung erschwert?",
+              "Gab es mehrere mögliche Rollenbilder?",
+              "Welche Information hätte dir mehr Klarheit gegeben?"
+            ]
+          },
+          {
+            "when": {
+              "confidence": "unsicher"
+            },
+            "questions": [
+              "Was war strukturell unklar?",
+              "War das Team insgesamt ungeordnet oder nur diese Rolle?",
+              "Welche Szene hätte dir bei der Einordnung geholfen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "guessed_center",
+            "type": "text",
+            "label": "Vermuteter Center:",
+            "max_chars": 20,
+            "placeholder": "Trage ein, welche Rolle der Center in dieser Situation vermutlich einnimmt – nicht einen Namen."
+          },
+          {
+            "key": "confidence",
+            "type": "radio",
+            "label": "Sicherheit:",
+            "options": [
+              "unsicher",
+              "okay",
+              "sicher"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T08:38:13.253178"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "date": "2026-01-13T07:38:11.435Z"
+  }
+}

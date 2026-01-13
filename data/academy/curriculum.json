@@ -25,17 +25,19 @@
               "drill_type": "period_checkin",
               "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
               "didactics": {
-                "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.",
+                "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.",
                 "observation_guide": {
                   "what_to_watch": [
                     "Center-Position (Low / Middle / High)",
                     "Dreiecke / Anspielstationen",
-                    "Abstände zwischen den Linien"
+                    "Abstände zwischen den Linien",
+                    "Strukturgefühl: Wirkt das Team kompakt, verbunden und anspielbar – oder auseinandergezogen und reaktiv?"
                   ],
                   "how_to_decide": [
                     "Gesamteindruck zählt",
                     "Erste Intuition ist valide",
                     "Unsicher → Mitte wählen"
+
                   ],
                   "ignore": [
                     "Torchancen",
@@ -43,7 +45,7 @@
                     "Emotionale Narrative"
                   ]
                 },
-                "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
+                "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -109,124 +111,53 @@
             },
             {
               "id": "A1_D2",
-              "title": "Shift Chunk: Center-Position",
+              "title": "Shift Marker → 2-Sekunden-Scan (Center)",
               "drill_type": "shift_tracker",
               "description": "Serienbeobachtung. Einsatz: Live oder Re-Live. Dauer: 8–12 Shifts.",
               "didactics": {
-                "rollenreferenz_center": {
-                  "title": "Rollenfokus: Center – was ist „strukturell korrekt“?",
-                  "text": "In diesem Drill dient der Center als Referenzpunkt für Ordnung. Du bewertest nicht seine Technik, sondern seine Rolle im Gesamtgefüge.",
-                  "typische_aufgaben": [
-                    "Bindeglied zwischen Defense und Wingern",
-                    "erste Absicherung nach Puckverlust",
-                    "beweglicher Anker im Middle",
-                    "Leser des Spiels, nicht der Jäger des Pucks"
-                  ],
-                  "kurz_gesagt": "Der Center sorgt dafür, dass immer jemand Ordnung hält, während andere Druck machen.",
-                  "wann_in_rolle": [
-                    "das Middle absichert, auch ohne Puck",
-                    "sich unter dem Spiel bewegt (nicht vor dem Spiel)",
-                    "Lücken schließt, bevor sie gefährlich werden",
-                    "bewusst nicht jedem Puck hinterhergeht"
-                  ],
-                  "nicht_aus_rolle_weil": [
-                    "er einen Zweikampf verliert",
-                    "ein Pass misslingt",
-                    "ein Gegner schneller ist"
-                  ],
-                  "aus_rolle_wenn": [
-                    "er unkoordiniert tief jagt",
-                    "das Middle ungesichert bleibt",
-                    "mehrere Spieler dieselbe Aufgabe machen",
-                    "niemand seine Position übernimmt"
-                  ],
-                  "merksatz": "Nicht der Fehler ist das Problem – sondern das fehlende Auffangen danach.",
-                  "beobachtungsanker": {
-                    "frage": "Wenn jetzt der Puck verloren geht – wer hält Ordnung?",
-                    "regel": "Wenn die Antwort niemand ist → Strukturbruch"
-                  }
-                },
-                "drill_intro": {
-                  "title": "Worum geht es in diesem Drill?",
-                  "text": "In diesem Drill beobachtest du nicht einzelne Aktionen, sondern die Ordnung eines gesamten Shifts. Entscheidend ist nicht, ob etwas gelingt, sondern ob die Struktur nach Aktionen erhalten bleibt."
-                },
-                "explanation": "Du trainierst hier die Positionsdisziplin des Centers über mehrere Shifts. Fokus auf wiederkehrende Muster und Timing, nicht auf einzelne Aktionen.",
-                "tooltips": {
-                  "shift": "Die Zeit, in der eine Line gemeinsam auf dem Eis ist (meist 30–50 Sekunden)."
-                },
+                "explanation": "Du trainierst hier eine feste Beobachtungsroutine:\n\n1) Ein Ereignis (Shift Marker) tritt auf.\n2) Du schaust exakt 2 Sekunden auf den Center.\n3) Du notierst nur seine Position – ohne Bewertung.\n\nEs geht nicht um richtig oder falsch, sondern um Wiederholung und Mustererkennung.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Center-Startposition",
-                    "Position 2 Sekunden nach Puckverlust",
-                    "Position beim Zonenwechsel"
+                    "Wo befindet sich der Center ~2 Sekunden nach dem Marker?",
+                    "Ist er eher absichernd, verbindend oder jagend unterwegs?"
                   ],
                   "how_to_decide": [
-                    "Nicht interpretieren, nur notieren",
-                    "Gesamtmuster erkennen",
-                    "Unsicher → neutral wählen"
+                    "Marker erkennen → innerlich zählen → Position wählen",
+                    "Wenn unsicher: das wählen, was am nächsten dran ist",
+                    "Nicht erklären, nicht rechtfertigen"
                   ],
                   "ignore": [
-                    "Einzelne Pässe oder Schüsse",
-                    "Torchancen",
-                    "Spielerische Details"
+                    "Erfolg oder Misserfolg der Aktion",
+                    "Torchancen oder technische Details",
+                    "Emotionale Bewertung"
                   ]
                 },
-                "shift_marker_explanation": "Shift Marker (Beobachtungspunkt): Ein Shift Marker ist ein Moment im Shift, an dem du kurz prüfst: Ist die Ordnung noch da? Typische Marker: • nach einem Puckverlust • nach einem Zweikampf an der Bande • nach einem misslungenen Pass Du bewertest nicht die Aktion, sondern die Struktur danach.",
-                "inline_explanations": {
-                  "falls_out": {
-                    "not_means": [
-                      "Fehler machen",
-                      "Puck verlieren",
-                      "eine Torchance zulassen"
-                    ],
-                    "means": "Ein Spieler verlässt seine Rolle oder Position, ohne dass jemand diese Aufgabe übernimmt.",
-                    "example": "Beispiel: Der Center geht tief dem Puck nach, aber niemand sichert das Middle → Strukturbruch"
-                  }
-                },
-                "fill_hint": "Hinweis: Ein Shift kann gute Aktionen und Strukturbrüche enthalten. Antworte nicht emotional, sondern strukturell.",
-                "question_precision": {
-                  "falls_out": "Gemeint ist: Gab es mindestens einen Moment, in dem Rollen, Abstände oder Aufgaben kurz verloren gingen?"
-                },
-                "learning_hint": "Wenn es zu detailliert wirkt: genau darum geht es hier.",
-                "didactical_closing": "Warum dieser Drill wichtig ist: Strukturverlust erklärt oft, warum ein Team unter Druck gerät – nicht erst das Gegentor."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": { "falls_out": "nein" },
-                    "questions": [
-                      "Was hat die Ordnung stabil gehalten – Abstände oder Rollenverständnis?",
-                      "War die Struktur aktiv oder reaktiv?",
-                      "Hat sich die Ordnung mit dem Puck bewegt?"
-                    ]
-                  },
-                  {
-                    "when": { "falls_out": "ja" },
-                    "questions": [
-                      "Woran hast du Instabilität zuerst erkannt – Bewegung, Abstände oder Kommunikation?",
-                      "War die Instabilität dauerhaft oder situativ?",
-                      "Welche Rolle hätte der Center spielen können, um sie zu stabilisieren?"
-                    ]
-                  }
-                ]
+                "shift_marker_explanation": "Ein Shift Marker ist nur ein Auslöser für deine Beobachtung.\n\nTypische Marker:\n• Puckverlust\n• misslungener Pass\n• Zweikampf an der Bande\n• Zonenwechsel\n\nDer Marker selbst wird **nicht** bewertet.",
+                "learning_hint": "Je neutraler du bleibst, desto klarer werden die Muster."
               },
               "config": {
                 "shift_count": 10,
                 "questions": [
                   {
                     "key": "shift_marker",
-                    "type": "checkbox",
-                    "label": "Shift-Marker"
+                    "type": "radio",
+                    "label": "Was war der Shift Marker?",
+                    "options": [
+                      "Puckverlust",
+                      "misslungener Pass",
+                      "Zweikampf an der Bande",
+                      "Zonenwechsel",
+                      "sonstiger Moment"
+                    ]
                   },
                   {
-                    "key": "falls_out",
+                    "key": "center_position",
                     "type": "radio",
-                    "label": "Fällt aus Struktur?",
+                    "label": "Center-Position ~2 Sekunden nach dem Marker:",
                     "options": [
-                      "ja",
-                      "nein"
+                      "tief (unter dem Spiel / Absicherung)",
+                      "mittel (Middle / verbindend)",
+                      "hoch (vor dem Spiel / jagt)"
                     ]
                   }
                 ]
@@ -396,7 +327,7 @@
                     "Einzelne Aktionen"
                   ]
                 },
-                "learning_hint": "Wenn es zu unsicher wirkt: genau darum geht es hier."
+                "learning_hint": "Wenn es zu unsicher wirkt: genau darum geht es hier.\n\nWas bedeutet Sicherheit?\n\n• unsicher: Nur Bauchgefühl oder ein einzelnes, schwaches Indiz.\n• okay: Mehrere (2–3) Indizien, aber nicht durchgehend oder eindeutig.\n• sicher: Mehrfach bestätigt – die Rolle zeigt sich klar über mehrere Sequenzen hinweg und ist gut begründbar."
               },
               "miniFeedback": {
                 "trigger": "onNext",

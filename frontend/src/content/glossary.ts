@@ -352,5 +352,14 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     synonyms: ["Gegnerlenkung", "Deflection"],
     tags: ["Defensive", "Taktik"],
   },
+
+  strukturgefuehl: {
+    label: "Strukturgefühl",
+    short: "Subjektiver Gesamteindruck der teaminternen Ordnung.",
+    long:
+      "Es geht nicht um einzelne Aktionen, sondern um Abstände, Verbindungen und Wiedererkennbarkeit von Rollen über mehrere Sequenzen hinweg.\n\n• geordnet = klare Abstände, stabile Dreiecke, Spieler sind anspielbar\n• mixed = phasenweise Struktur, Ordnung bricht situativ\n• chaotisch = Abstände reißen, Mitte fehlt, keine klaren Optionen",
+    synonyms: ["Teamstruktur", "Ordnungsgefühl"],
+    tags: ["Taktik", "Wahrnehmung"],
+  }, 
   
 };

@@ -1,0 +1,84 @@
+{
+  "id": "christoph_1768312077",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D2",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-01-13T14:47:57.818744",
+  "drills": [
+    {
+      "id": "A1_D2",
+      "title": "Shift Marker: Center-Position (2-Sekunden-Scan)",
+      "drill_type": "shift_tracker",
+      "description": "Serienbeobachtung. Einsatz: Live oder Re-Live. Dauer: 8–12 Shifts.",
+      "didactics": {
+        "explanation": "Du trainierst hier eine einfache Routine: Nach einem Shift Marker schaust du exakt 2 Sekunden auf den Center.\n\nDu bewertest keine Aktion und keine Technik. Du notierst nur: Wo ist der Center relativ zum Puck und zur Mitte?",
+        "observation_guide": {
+          "what_to_watch": [
+            "Nach dem Marker: Wo steht der Center nach ~2 Sekunden?",
+            "Ist er eher unter dem Spiel (Absicherung), im Middle (Verbindung), oder vor dem Spiel (Jagen)?"
+          ],
+          "how_to_decide": [
+            "Marker → 2 Sekunden scannen → eine Option wählen",
+            "Wenn du unsicher bist: wähle neutral das, was am nächsten dran ist",
+            "Nicht diskutieren, nicht interpretieren – nur wiederholen"
+          ],
+          "ignore": [
+            "Ob die Aktion erfolgreich war",
+            "Torchancen, Schüsse, Pässe",
+            "Wer „Schuld“ hat"
+          ]
+        },
+        "shift_marker_explanation": "Shift Marker (Beobachtungspunkt) = ein kurzer Moment, in dem du deine Beobachtung „auslöst“.\n\nTypische Marker:\n• nach einem Puckverlust\n• nach einem misslungenen Pass\n• nach einem Zweikampf an der Bande\n\nDu bewertest nicht den Marker selbst – du nutzt ihn nur als Startsignal für den 2-Sekunden-Scan.",
+        "learning_hint": "Ziel ist Wiederholung. Nach 10 Markern merkst du Muster automatisch."
+      },
+      "config": {
+        "shift_count": 10,
+        "questions": [
+          {
+            "key": "marker_happened",
+            "type": "checkbox",
+            "label": "Shift Marker passiert?"
+          },
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position ~2 Sekunden nach Marker:",
+            "options": [
+              "tief (unter dem Spiel / Absicherung)",
+              "mittel (Middle / verbindend)",
+              "hoch (vor dem Spiel / jagt)"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T14:48:00.188274"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "date": "2026-01-13T13:47:57.766Z"
+  }
+}
