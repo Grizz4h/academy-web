@@ -502,5 +502,5 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
         </div>
       )}
     </div>
-  )
+  );
 }

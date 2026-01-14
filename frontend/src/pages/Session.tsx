@@ -13,7 +13,7 @@ type CheckinWithMicro = {
 };
 import DrillRendererV1 from '../renderers/v1/DrillRenderer'
 import DrillRendererV2 from '../renderers/v2/DrillRenderer'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 
 export default function SessionPage() {
@@ -31,6 +31,8 @@ export default function SessionPage() {
   const [pendingPhaseAdvance, setPendingPhaseAdvance] = useState<string|null>(null);
   const [microText, setMicroText] = useState('');
   const [microFeedbackError, setMicroFeedbackError] = useState<string>('');
+  // Double-submit hard guard
+  const advanceLockRef = useRef(false);
   // const [shownFeedbackPhases, setShownFeedbackPhases] = useState<Set<string>>(new Set())
   // Feedback wird pro Session, Drill UND Phase angezeigt
   // Micro-Feedback done pro Phase (persistiert in session.checkins)
@@ -191,11 +193,11 @@ export default function SessionPage() {
 
 
   // Option A: Save + Advance-Flow für V1 und V2
-  const handleAdvanceToNext = async () => {
-    // 0) Validation: Drill muss komplett sein (implementiere isDrillComplete nach Bedarf)
-    // if (!isDrillComplete(session?.drills?.[0], answerDraft)) return;
-
-    if (!id) return; // id muss vorhanden sein
+  const handleAdvanceToNext = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault?.();
+    // HARD GUARD: verhindert Double-Submit auch bei Race Conditions
+    if (advanceLockRef.current) return;
+    advanceLockRef.current = true;
     setIsAdvancing(true);
     try {
       const phase = currentPhase;
@@ -224,6 +226,7 @@ export default function SessionPage() {
         setPendingPhaseAdvance(next || null);
         setShowMicroModal(true);
         setIsAdvancing(false); // Button sofort wieder aktivieren
+        advanceLockRef.current = false;
         return;
       }
 
@@ -239,8 +242,11 @@ export default function SessionPage() {
           setAnswerDraft(existingCheckin?.answers || {});
         }
       }
+    } catch (err) {
+      // Optional: Fehlerbehandlung
     } finally {
       setIsAdvancing(false);
+      advanceLockRef.current = false;
     }
   }
 
@@ -409,12 +415,13 @@ export default function SessionPage() {
                   )}
                   {nextPhaseMap[currentPhase] && (
                     <button
-                      onClick={isAdvancing ? undefined : handleAdvanceToNext}
+                      type="button"
+                      onClick={(e) => handleAdvanceToNext(e)}
                       className="btn"
                       style={{ minWidth: 120 }}
                       disabled={isAdvancing}
                     >
-                      {isAdvancing ? "Bitte warten…" : "Weiter →"}
+                      {isAdvancing ? "Speichere…" : "Weiter →"}
                     </button>
                   )}
                 </div>
