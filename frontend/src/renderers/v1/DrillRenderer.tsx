@@ -134,6 +134,7 @@ export default function DrillRendererV1({ drill, initialAnswers, onChangeAnswers
 
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
+	
 	const glossary = drill?.didactics?.glossary;
 
 	return (

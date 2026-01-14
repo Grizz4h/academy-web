@@ -108,6 +108,7 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 // ----------------------------- PERIOD CHECKIN -----------------------------
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
+	
 	const glossary = drill?.didactics?.glossary;
 	return (
 		<div className="card">
