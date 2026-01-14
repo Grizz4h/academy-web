@@ -208,7 +208,17 @@ async def save_checkin(session_id: str, checkin: CheckinData):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # Check ob für diese Phase schon ein Checkin existiert
+    # --- DEDUP checkins: keep newest per phase ---
+    dedup = {}
+    for c in session.get("checkins", []):
+        ph = (c.get("phase") or "").strip()
+        ts = c.get("timestamp") or ""
+        # keep the newest timestamp
+        if ph not in dedup or ts > (dedup[ph].get("timestamp") or ""):
+            dedup[ph] = c
+    session["checkins"] = list(dedup.values())
+
+    # Check ob für diese Phase schon ein Checkin existiert (nach Cleanup)
     existing = None
     for c in session["checkins"]:
         if c["phase"] == checkin.phase:
