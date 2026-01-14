@@ -424,25 +424,25 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
                               </pre>
                             </div>
                           )}
-
-                          {checkin.feedback && (
+                          {/* Mini-Feedback aus Checkin (legacy, falls vorhanden) */}
+                          {checkin.mini_feedback && (
                             <div style={{ marginBottom: '0.75rem' }}>
                               <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>
-                                Feedback
+                                Mini-Feedback
                               </div>
                               <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5 }}>
-                                {checkin.feedback}
+                                {checkin.mini_feedback}
                               </div>
                             </div>
                           )}
-
-                          {checkin.next_task && (
-                            <div>
+                          {/* Microfeedback aus Session (empfohlen, persistent) */}
+                          {session.microfeedback && checkin.phase && session.microfeedback[checkin.phase] && session.microfeedback[checkin.phase].done && session.microfeedback[checkin.phase].text && (
+                            <div style={{ marginBottom: '0.75rem' }}>
                               <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>
-                                Nächste Aufgabe
+                                Feedback zu Fragen
                               </div>
                               <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5 }}>
-                                {checkin.next_task}
+                                {session.microfeedback[checkin.phase].text}
                               </div>
                             </div>
                           )}

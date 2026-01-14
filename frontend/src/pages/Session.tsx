@@ -141,23 +141,9 @@ export default function SessionPage() {
 
 
   const handleDrillComplete = (answers: any) => {
-    let feedback = "Gut gemacht!"
-    let nextTask = "Bereite nächste Phase vor"
-
-    if (currentPhase !== 'PRE' && answers.triangle_rating && answers.triangle_rating <= 3) {
-      feedback = "Dreieck-Qualität niedrig - fokussiere auf Forwards-Abdeckung."
-      nextTask = "Achte auf Pass-Optionen im nächsten Drittel."
-    }
-    if (currentPhase !== 'PRE' && answers.breakout_quality === 'chaotic') {
-      feedback = "Breakout chaotisch - verbessere Puck-Bewegung."
-      nextTask = "Center sollte high stehen für Anspielstation."
-    }
-
     checkinMutation.mutate({
       phase: currentPhase,
-      answers,
-      feedback,
-      next_task: nextTask
+      answers
     }, {
       onSuccess: async () => {
         queryClient.invalidateQueries({ queryKey: ['session', id] })
@@ -206,9 +192,7 @@ export default function SessionPage() {
       // 1) Persist answers (Checkin)
       await api.saveCheckin(id as string, {
         phase,
-        answers: answerDraft,
-        feedback: "Weiter zur nächsten Phase",
-        next_task: "Nächste Phase vorbereiten"
+        answers: answerDraft
       });
 
       // 2) refetch / invalidate session so checkins aktuell sind
@@ -255,16 +239,12 @@ export default function SessionPage() {
     if (answerDraft && Object.keys(answerDraft).length > 0) {
       checkinMutation.mutate({
         phase: currentPhase,
-        answers: answerDraft,
-        feedback: "Automatisch gespeichert",
-        next_task: "Zurück zur vorherigen Phase"
+        answers: answerDraft
         // mini_feedback NICHT mitsenden!
       });
       console.log("SAVE CHECKIN PAYLOAD", {
         phase: currentPhase,
-        answers: answerDraft,
-        feedback: "Automatisch gespeichert",
-        next_task: "Zurück zur vorherigen Phase"
+        answers: answerDraft
       });
     }
     const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase] === currentPhase)

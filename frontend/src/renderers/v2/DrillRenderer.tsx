@@ -142,18 +142,30 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 					<label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>{q.label}</label>
 					{q.type === "radio" && Array.isArray(q.options) && (
 						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-							{q.options.map((opt: string) => (
-								<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-									<input
-										type="radio"
-										name={q.key}
-										value={opt}
-										checked={answers[q.key] === opt}
-										onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-									/>
-									{highlightGlossaryTerms(opt, glossary)}
-								</label>
-							))}
+							{q.options.map((opt: string) => {
+								const inlineExplanations = drill.didactics?.inline_explanations || {};
+								const optKey = Object.keys(inlineExplanations).find(
+									k => k === opt || k.toLowerCase() === opt.toLowerCase()
+								);
+								const explanation = optKey ? inlineExplanations[optKey]?.meaning : undefined;
+								return (
+									<label key={opt} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
+										<span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+											<input
+												type="radio"
+												name={q.key}
+												value={opt}
+												checked={answers[q.key] === opt}
+												onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+											/>
+											{highlightGlossaryTerms(opt, glossary)}
+										</span>
+										{explanation && (
+											<span style={{ fontSize: "0.85em", color: "#aaa", marginLeft: 24 }}>{explanation}</span>
+										)}
+									</label>
+								);
+							})}
 						</div>
 					)}
 					{q.type === "text" && (
