@@ -58,6 +58,37 @@ export default function Dashboard() {
       return d >= weekAgo;
     });
 
+    // --- Drill-Fortschritt pro Track berechnen ---
+    // Map: trackId -> { total: number, completed: number, title: string }
+    let trackProgress: Record<string, { total: number; completed: number; title: string }> = {};
+    if (curriculum) {
+      for (const track of curriculum.tracks) {
+        let total = 0;
+        for (const module of track.modules) {
+          total += module.drills.length;
+        }
+        trackProgress[track.id] = { total, completed: 0, title: track.title };
+      }
+      // Completed Drills pro Track zählen
+      const completedDrillIds = new Set<string>();
+      for (const s of list) {
+        if (s.state === "COMPLETED") {
+          for (const d of s.drills || []) {
+            completedDrillIds.add(d.id);
+          }
+        }
+      }
+      for (const track of curriculum.tracks) {
+        let completed = 0;
+        for (const module of track.modules) {
+          for (const drill of module.drills) {
+            if (completedDrillIds.has(drill.id)) completed++;
+          }
+        }
+        trackProgress[track.id].completed = completed;
+      }
+    }
+
     // Streak wie gehabt
     const streak = (() => {
       if (!list.length) return 0;
@@ -147,6 +178,7 @@ export default function Dashboard() {
       recentSessions,
       totalDrills,
       completedDrills,
+      trackProgress,
     };
   }, [sessions, curriculum]);
 
@@ -295,7 +327,7 @@ export default function Dashboard() {
               </div>
 
               <div style={{ marginTop: 12 }}>
-                <div style={{ background: "#222", borderRadius: 6, height: 18, width: "100%", overflow: "hidden" }}>
+                <div style={{ background: "#222", borderRadius: 6, height: 18, width: "100%", overflow: "hidden", marginBottom: 8 }}>
                   <div
                     style={{
                       background: "#5191a2",
@@ -305,8 +337,26 @@ export default function Dashboard() {
                     }}
                   />
                 </div>
-                <div style={{ fontSize: "0.9rem", color: "#888", marginTop: 4 }}>
+                <div style={{ fontSize: "0.9rem", color: "#888", marginBottom: 8 }}>
                   Drill-Fortschritt: {derived.totalDrills ? Math.round((derived.completedDrills / derived.totalDrills) * 100) : 0}%
+                </div>
+                {/* Fortschritt pro Track */}
+                <div style={{ marginTop: 10 }}>
+                  <div style={{ fontWeight: 600, marginBottom: 4 }}>Prozentualer Drill-Fortschritt pro Track:</div>
+                  {Object.values(derived.trackProgress).map((track: any) => (
+                    <div key={track.title} style={{ marginBottom: 6 }}>
+                      <span style={{ color: '#5191a2', fontWeight: 500 }}>{track.title}:</span>
+                      <div style={{ background: '#333', borderRadius: 4, height: 12, width: '100%', margin: '2px 0', overflow: 'hidden' }}>
+                        <div style={{
+                          background: '#6ec1e4',
+                          height: '100%',
+                          width: `${track.total ? (track.completed / track.total) * 100 : 0}%`,
+                          transition: 'width 0.3s',
+                        }} />
+                      </div>
+                      <span style={{ fontSize: '0.9em', color: '#aaa' }}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
