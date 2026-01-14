@@ -348,16 +348,23 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 						{q.type === "radio" && Array.isArray(q.options) && (
 							<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
 								{q.options.map((opt: string) => (
-									<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-										<input
-											type="radio"
-											name={q.key}
-											value={opt}
-											checked={answers[q.key] === opt}
-											onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-										/>
-										{opt}
-									</label>
+									<div key={opt} style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+										<div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+											<input
+												type="radio"
+												name={q.key}
+												value={opt}
+												checked={answers[q.key] === opt}
+												onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+											/>
+											{opt}
+										</div>
+										{drill.didactics?.inline_explanations?.[opt]?.meaning && (
+											<div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+												{drill.didactics.inline_explanations[opt].meaning}
+											</div>
+										)}
+									</div>
 								))}
 							</div>
 						)}

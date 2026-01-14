@@ -1,3 +1,10 @@
+# PORT-KONFIGURATION (bitte IMMER beachten!)
+# Backend (uvicorn/FastAPI): Port 8000
+# Frontend (Dev/Build): Port 5174
+# Produktiv-Frontend: dist/ über nginx/Caddy, Subdomain (z.B. https://academy.highspeed-novadelta.de)
+# API-URL im Build: https://academy.highspeed-novadelta.de/api
+# Niemals Ports im Code ändern, außer explizit gewünscht!
+
 # Academy Web (separate repo scaffold)
 
 ## Zweck
@@ -41,6 +48,27 @@ Eigenständige Academy-App (React/HTML) als Subdomain, getrennt von MatchHub/Str
 4) `git add . && git commit -m "init academy web"`
 5) Remote setzen: `git remote add origin <dein-remote>`
 6) `git push -u origin main`
+
+## Häufige Probleme und Lösungen
+
+### Backend startet nicht: NameError: name 'app' is not defined
+**Symptom:** Beim Start von uvicorn/backend.main:app kommt sofort ein NameError, obwohl die Imports korrekt aussehen.
+
+**Ursache:** FastAPI-Dekoratoren (@app.post, @app.get, etc.) werden verwendet, bevor `app = FastAPI()` definiert ist. Das passiert, wenn Routen-Dekoratoren vor der app-Definition stehen.
+
+**Lösung:**
+1. Stelle sicher, dass in `backend/main.py` ganz oben (nach Imports, vor allen @app...-Dekoratoren) steht:
+   ```python
+   from fastapi import FastAPI
+   app = FastAPI()
+   ```
+2. Alle Routen-Dekoratoren (@app.post, @app.get, etc.) müssen NACH dieser Definition stehen.
+3. Wenn du APIRouter verwendest: Routen mit @router.post dekorieren und am Ende `app.include_router(router)` aufrufen.
+
+**Prüfung:** Schaue die ersten 40 Zeilen von `backend/main.py` an. Wenn @app... vor `app = FastAPI()` steht, ist das der Fehler.
+
+### Frontend starten: Immer build verwenden, nicht dev
+Für Produktion oder Tests: Immer `npm run build` im frontend-Ordner ausführen, dann `npm run preview` oder das gebaute dist/ über Server servieren. Dev-Modus (`npm run dev`) nur für Entwicklung.
 
 ## Nächste Schritte (wenn du startest)
 - `npm create vite@latest` (oder `npx create-next-app`) im Frontend-Ordner anlegen

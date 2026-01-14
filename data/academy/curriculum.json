@@ -176,120 +176,117 @@
     ]
   }
 },
-            {
-              "id": "A1_D3",
-              "title": "Winkel & Body Position: Lenkung beobachten",
-              "drill_type": "triangle_spotting",
-              "description": "Visuelles Wahrnehmungstraining. Einsatz: Re-Live oder ruhige Live-Phase. Dauer: 1–2 Minuten pro Sequenz.",
-              "didactics": {
-                "drill_intro": {
-                  "title": "Worum geht es in diesem Drill?",
-                  "text": "In diesem Drill beobachtest du, wie Spieler mit ihrem Körper den Gegner lenken. Es geht nicht darum, ob der Puck gewonnen wird, sondern ob der Gegner in eine ungefährliche Richtung gezwungen wird."
-                },
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Körperachse: Zeigt der Oberkörper frontal oder leicht schräg?",
-                    "Inside Position: Steht der Verteidiger zwischen Gegner und Tor?",
-                    "Abstand: Kontrolliert (1–2 Stocklängen) oder überaggressiv?",
-                    "Lenkung: Wird der Gegner nach außen oder zur Mitte geführt?",
-                    "Timing: Wird früh gelenkt oder nur reagiert?"
-                  ],
-                  "how_to_decide": [
-                    "Fokussiere auf Positionierung, nicht auf Ergebnis",
-                    "Beobachte die Körperausrichtung vor dem Kontakt",
-                    "Entscheide basierend auf Winkel und Raumkontrolle"
-                  ],
-                  "ignore": [
-                    "Puckgewinn oder -verlust",
-                    "Checks oder Härte",
-                    "Torchancen oder Schüsse"
-                  ]
-                },
-                "inline_explanations": {
-                  "inside_position_gehalten": {
-                    "meaning": "Spieler bleibt zwischen Gegner & Tor, Gegner wird nach außen gedrückt, Mitte / Slot bleibt geschlossen. Auch gültig, wenn kein Puckgewinn passiert."
-                  },
-                  "neutral_unklar": {
-                    "meaning": "Situation zu kurz oder unübersichtlich, mehrere Spieler beeinflussen die Szene, Beobachter ist unsicher. Kein Fehler, sondern ehrliche Beobachtung."
-                  },
-                  "außen_freigegeben_schlechter_winkel": {
-                    "meaning": "Gegner kann Richtung Mitte ziehen, Verteidiger ist seitlich oder hinter dem Gegner, Inside Position verloren. Oft Startpunkt für Kettenfehler."
-                  }
-                },
-                "learning_hint": "Wenn es zu vage wirkt: genau darum geht es hier."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": { "triangles_seen": "häufig" },
-                    "questions": [
-                      "Welche Passoption im Dreieck war am wichtigsten?",
-                      "War das Dreieck stabil oder nur kurz vorhanden?",
-                      "Hat sich das Dreieck mit dem Druck bewegt?",
-                      "Wer hat das Dreieck aktiv ermöglicht?"
-                    ]
-                  },
-                  {
-                    "when": { "triangles_seen": "selten" },
-                    "questions": [
-                      "Was hat gefehlt – Abstand, Winkel oder Bewegung?",
-                      "War das Fehlen strukturell oder situationsbedingt?",
-                      "Hätte der Center das Dreieck herstellen können?"
-                    ]
-                  },
-                  {
-                    "when": { "triangles_seen": "kaum" },
-                    "questions": [
-                      "Was hat gefehlt – Abstand, Winkel oder Bewegung?",
-                      "War das Fehlen strukturell oder situationsbedingt?",
-                      "Hätte der Center das Dreieck herstellen können?"
-                    ]
-                  }
-                ]
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "winkel_body",
-                    "type": "radio",
-                    "label": "Winkel & Körperstellung",
-                    "options": [
-                      "Inside Position gehalten",
-                      "Neutral / unklar",
-                      "Außen freigegeben / schlechter Winkel"
-                    ]
-                  },
-                  {
-                    "key": "location",
-                    "type": "radio",
-                    "label": "Ort:",
-                    "options": [
-                      "OZ",
-                      "NZ",
-                      "DZ"
-                    ]
-                  },
-                  {
-                    "key": "triangles_seen",
-                    "type": "radio",
-                    "label": "Dreiecke gesehen:",
-                    "options": [
-                      "häufig",
-                      "selten",
-                      "kaum"
-                    ]
-                  },
-                  {
-                    "key": "structure_moment",
-                    "type": "text",
-                    "label": "Strukturmoment (1 Stichwort)",
-                    "max_chars": 50
-                  }
-                ]
-              }
-            },
+ {
+  "id": "A1_D3",
+  "title": "Winkel & Body Position: Lenkung wahrnehmen",
+  "drill_type": "triangle_spotting",
+  "description": "Transfer-Drill zur Überprüfung deiner Wahrnehmungsstabilität. Einsatz: Re-Live oder ruhige Live-Phase. Dauer: 1–2 Minuten pro Sequenz.",
+  "didactics": {
+    "drill_intro": {
+      "title": "Worum geht es in diesem Drill?",
+      "text": "Dieser Drill prüft, ob du Lenkung inzwischen automatisch erkennst. Triff eine schnelle, ehrliche Einschätzung, ohne zu analysieren. Dreiecke werden nur mitgeloggt – der Fokus bleibt auf Lenkung."
+    },
+    "observation_guide": {
+      "what_to_watch": [
+        "Erster Eindruck der Körperstellung (Winkel/Schulterachse)",
+        "Gefühl für Raumkontrolle: bleibt die Mitte zu oder öffnet sie sich?",
+        "Wirkt die Szene stabil (geführt) oder rutschig (unkontrolliert)?"
+      ],
+      "how_to_decide": [
+        "Lenkung zuerst bewerten",
+        "Entscheide spontan und bleib bei deinem ersten Eindruck",
+        "Unklarheit ist erlaubt"
+      ],
+      "ignore": [
+        "Puckgewinn oder -verlust",
+        "Checks, Tempo oder Emotion",
+        "Torchancen und Shots"
+      ]
+    },
+    "inline_explanations": {
+      "Kontrolliert (Mitte zu / nach außen geführt)": {
+        "meaning": "Dein Eindruck ist: Der Gegner wird kontrolliert nach außen gehalten, die Mitte fühlt sich geschlossen an. Kein Puckgewinn nötig."
+      },
+      "Unklar (kein klares Bild)": {
+        "meaning": "Du hast kein klares Bild (zu kurz, zu chaotisch, zu viele Einflüsse). Das ist zulässig und Teil des Drills."
+      },
+      "Offen / instabil (Mitte auf / Kontrolle verloren)": {
+        "meaning": "Dein Eindruck ist: Die Mitte öffnet sich oder Kontrolle geht verloren (Verteidiger seitlich/hinter dem Gegner, Lenkung kippt)."
+      }
+    },
+    "learning_hint": "Wenn es sich grob anfühlt, ist das richtig: Du trainierst Wiedererkennen, nicht Analyse."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)" },
+        "questions": [
+          "Was war dein klarster Hinweis auf Kontrolle (Winkel, Abstand oder Timing)?",
+          "Fühlte es sich stabil an – oder eher knapp/fragil?",
+          "Hast du dich bei der Bewertung sicher gefühlt?"
+        ]
+      },
+      {
+        "when": { "winkel_body": "Unklar (kein klares Bild)" },
+        "questions": [
+          "Warum war es unklar: zu kurz, zu chaotisch oder schlechte Sicht?",
+          "Hattest du trotzdem einen ersten Impuls (eher kontrolliert oder eher offen)?",
+          "Was würdest du beim nächsten Mal als Erstes anschauen?"
+        ]
+      },
+      {
+        "when": { "winkel_body": "Offen / instabil (Mitte auf / Kontrolle verloren)" },
+        "questions": [
+          "Woran hast du Instabilität zuerst erkannt (Mitte offen, seitlich/hinterher, Abstand kippt)?",
+          "War die Lenkung von Anfang an instabil oder ist sie gekippt?",
+          "Hast du dich bei der Bewertung sicher gefühlt?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "winkel_body",
+        "type": "radio",
+        "label": "Lenkung (erster Eindruck):",
+        "options": [
+          "Kontrolliert (Mitte zu / nach außen geführt)",
+          "Unklar (kein klares Bild)",
+          "Offen / instabil (Mitte auf / Kontrolle verloren)"
+        ]
+      },
+      {
+        "key": "location",
+        "type": "radio",
+        "label": "Ort:",
+        "options": [
+          "Offensive Zone",
+          "Neutral Zone",
+          "Defensive Zone"
+        ]
+      },
+      {
+        "key": "triangles_seen",
+        "type": "radio",
+        "label": "Dreiecke gesehen:",
+        "options": [
+          "klar vorhanden",
+          "gelegentlich",
+          "kaum wahrnehmbar"
+        ]
+      },
+      {
+        "key": "structure_moment",
+        "type": "text",
+        "label": "Lenkungs-Moment (1 Stichwort)",
+        "max_chars": 50
+      }
+    ]
+  }
+},
             {
               "id": "A1_D4",
               "title": "Rollen-Identifikation (Center erkennen)",

@@ -296,6 +296,11 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
               </div>
               <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: '1.5' }}>
                 {session.goal}
+                {session.drills && session.drills.length > 0 && (
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
+                    Drill: {session.drills[0].title}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -424,17 +429,7 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
                               </pre>
                             </div>
                           )}
-                          {/* Mini-Feedback aus Checkin (legacy, falls vorhanden) */}
-                          {checkin.mini_feedback && (
-                            <div style={{ marginBottom: '0.75rem' }}>
-                              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>
-                                Mini-Feedback
-                              </div>
-                              <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5 }}>
-                                {checkin.mini_feedback}
-                              </div>
-                            </div>
-                          )}
+                          {/* Mini-Feedback entfernt, nur noch microfeedback aus session.microfeedback anzeigen */}
                           {/* Microfeedback aus Session (empfohlen, persistent) */}
                           {session.microfeedback && checkin.phase && session.microfeedback[checkin.phase] && session.microfeedback[checkin.phase].done && session.microfeedback[checkin.phase].text && (
                             <div style={{ marginBottom: '0.75rem' }}>

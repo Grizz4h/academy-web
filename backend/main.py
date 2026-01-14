@@ -1,17 +1,36 @@
-from fastapi import FastAPI, HTTPException
+
+# ...existing code...
+
+# ...existing code...
+# ...existing code...
+# ...alle anderen Endpunkte...
+
+# ...existing code...
+from fastapi import FastAPI, HTTPException, Request
+from uuid import uuid4
+from collections import Counter
 from fastapi.middleware.cors import CORSMiddleware
 import json
 import os
+import logging
 from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s',
+    handlers=[
+        logging.FileHandler("backend.log", encoding="utf-8"),
+        logging.StreamHandler()
+    ]
+)
 
 app = FastAPI(title="Academy API", version="1.0.0")
 
 # CORS für Frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000", "http://localhost:3001"],  # Frontend URLs
+    allow_origins=["http://localhost:5174", "http://localhost:5173", "http://localhost:5175", "http://localhost:3000", "http://localhost:3001"],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,9 +61,8 @@ class MicroFeedbackData(BaseModel):
 class CheckinData(BaseModel):
     phase: str  # PRE, P1, P2, P3
     answers: dict
-    feedback: Optional[str] = None
-    next_task: Optional[str] = None
-    mini_feedback: Optional[str] = None
+    feedback: Optional[str] = None  # Nur POST
+    next_task: Optional[str] = None  # Nur POST
 
 class PostData(BaseModel):
     summary: str
@@ -200,20 +218,26 @@ async def update_session(session_id: str, updates: dict):
     return session
 
 @app.post("/api/sessions/{session_id}/checkins")
-async def save_checkin(session_id: str, checkin: CheckinData):
+async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
     """Checkin speichern"""
+    req_id = uuid4().hex[:8]
+    phase_raw = checkin.phase
+    phase_norm = checkin.phase.strip().upper()
+    trace_id = request.headers.get("X-Trace-Id")
+    trace_action = request.headers.get("X-Trace-Action")
     session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
     try:
         session = load_json(session_path)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
+    counts_before = Counter((c.get("phase") or "") for c in session.get("checkins", []))
+
 
     # --- DEDUP checkins: keep newest per phase ---
     dedup = {}
     for c in session.get("checkins", []):
         ph = (c.get("phase") or "").strip()
         ts = c.get("timestamp") or ""
-        # keep the newest timestamp
         if ph not in dedup or ts > (dedup[ph].get("timestamp") or ""):
             dedup[ph] = c
     session["checkins"] = list(dedup.values())
@@ -224,32 +248,47 @@ async def save_checkin(session_id: str, checkin: CheckinData):
         if c["phase"] == checkin.phase:
             existing = c
             break
+    action = "update" if existing else "append"
+    logging.info(f"[checkin:{req_id}] session={session_id} phase_raw={phase_raw!r} phase_norm={phase_norm!r} action={action} trace_id={trace_id} trace_action={trace_action} counts_before={dict(counts_before)}")
+
+    # Feedback und next_task nur im POST speichern!
+    is_post = checkin.phase == "POST"
 
     if existing:
-        # Update/Merge nur die Felder, die im Request gesetzt sind
         existing["answers"] = checkin.answers
-        if checkin.feedback is not None:
-            existing["feedback"] = checkin.feedback
-        if checkin.next_task is not None:
-            existing["next_task"] = checkin.next_task
-        if checkin.mini_feedback is not None:
-            existing["mini_feedback"] = checkin.mini_feedback
+        if is_post:
+            if checkin.feedback is not None:
+                existing["feedback"] = checkin.feedback
+            if checkin.next_task is not None:
+                existing["next_task"] = checkin.next_task
+        else:
+            existing.pop("feedback", None)
+            existing.pop("next_task", None)
+        # Entferne jegliche micro/mini feedback Felder
+        existing.pop("mini_feedback", None)
+        existing.pop("micro_feedback", None)
+        existing.pop("microfeedback_done", None)
         existing["timestamp"] = datetime.now().isoformat()
     else:
         checkin_data = {
             "phase": checkin.phase,
             "answers": checkin.answers,
-            "feedback": checkin.feedback,
-            "next_task": checkin.next_task,
-            "mini_feedback": checkin.mini_feedback,
             "timestamp": datetime.now().isoformat()
         }
+        if is_post:
+            if checkin.feedback is not None:
+                checkin_data["feedback"] = checkin.feedback
+            if checkin.next_task is not None:
+                checkin_data["next_task"] = checkin.next_task
+        # Entferne jegliche micro/mini feedback Felder
         session["checkins"].append(checkin_data)
 
     # Phase nur aktualisieren wenn es ein echter Checkin ist (nicht nur Speicherung)
     # Für Continuation wird die Phase separat über die phase-Route aktualisiert
 
     save_json(session_path, session)
+    counts_after = Counter((c.get("phase") or "") for c in session.get("checkins", []))
+    logging.info(f"[checkin:{req_id}] session={session_id} counts_after={dict(counts_after)}")
     return session
 
 @app.post("/api/sessions/{session_id}/post")
@@ -351,6 +390,32 @@ async def update_session_phase(session_id: str, phase_data: dict):
     save_json(session_path, session)
     return session
 
+# Microfeedback-Endpoint muss nach app = FastAPI(...) deklariert werden
+
+@app.post("/api/sessions/{session_id}/microfeedback")
+async def add_microfeedback(session_id: str, data: MicroFeedbackData, request: Request):
+    """Microfeedback für P1/P2/P3 speichern (Session-Block, nicht Checkin)"""
+    valid_phases = {"P1", "P2", "P3"}
+    phase = data.phase.strip().upper()
+    if phase not in valid_phases:
+        raise HTTPException(status_code=400, detail="Invalid phase for microfeedback")
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+    if "microfeedback" not in session:
+        session["microfeedback"] = {p: {"done": False, "text": ""} for p in valid_phases}
+    session["microfeedback"][phase]["done"] = True
+    session["microfeedback"][phase]["text"] = data.text
+    session["microfeedback"][phase]["ts"] = datetime.now().isoformat()
+    # Logging
+    trace_id = request.headers.get("X-Trace-Id")
+    trace_action = request.headers.get("X-Trace-Action")
+    logging.info(f"[microfeedback] session={session_id} phase={phase} trace_id={trace_id} trace_action={trace_action} text_len={len(data.text)}")
+    save_json(session_path, session)
+    return {"status": "ok", "microfeedback": session["microfeedback"][phase]}
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

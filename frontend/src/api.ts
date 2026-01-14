@@ -65,16 +65,7 @@ export interface Drill {
     decision_help?: string[]
     ignore_list?: string[]
   }
-  miniFeedback?: {
-    trigger?: string
-    oncePerSection?: boolean
-    groups: Array<{
-      when: Record<string, string>
-      questions: string[]
-    }>
-    reflectionTitle?: string;
-    reflectionText?: string;
-  }
+  // miniFeedback entfernt, nur noch microfeedback auf Session-Ebene
 }
 
 export interface Session {
@@ -104,11 +95,11 @@ export interface Session {
   focus?: string
   sessionMethod?: string
   drill_id?: string
-  microfeedback_done?: Record<string, boolean>
   microfeedback?: {
     [phase: string]: {
       done: boolean;
       text: string;
+      ts?: string;
     }
   }
   observed_team?: string
@@ -128,7 +119,7 @@ export interface Checkin {
   feedback?: string
   next_task?: string
   timestamp: string
-  mini_feedback?: string;
+  // mini_feedback entfernt
 }
 
 export interface Post {
@@ -188,25 +179,23 @@ export interface TeamsResponse {
 }
 
 export const api = {
-    // Microfeedback als Checkin speichern
-    saveMicroFeedback: async (id: string, data: { phase: string; text: string }): Promise<any> => {
-      // Bestehendes microfeedback laden und mergen, damit nicht überschrieben wird
-      const session = await api.getSession(id);
-      const prev = session.microfeedback || {};
-      const patch = {
-        microfeedback: {
-          ...prev,
-          [data.phase]: { done: true, text: data.text }
-        }
-      };
-      const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(patch)
-      });
-      if (!res.ok) throw new Error('Failed to save microfeedback');
-      return res.json();
-    },
+  // Microfeedback: Session-Block, nicht Checkin
+  addMicrofeedback: async (id: string, phase: 'P1'|'P2'|'P3', text: string): Promise<any> => {
+    const trace = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Trace-Id': trace,
+      'X-Trace-Action': 'submitMicrofeedback',
+      'X-Client-Action': 'submitMicrofeedback'
+    };
+    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/microfeedback`), {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ phase, text })
+    });
+    if (!res.ok) throw new Error('Failed to save microfeedback');
+    return res.json();
+  },
   // Curriculum
   getCurriculum: async (): Promise<Curriculum> => {
     const primaryUrl = buildUrl('/curriculum')
@@ -269,14 +258,22 @@ export const api = {
     return res.json()
   },
 
-  saveCheckin: async (id: string, data: { phase: string; answers: any; feedback?: string; next_task?: string }): Promise<Session> => {
+  saveCheckin: async (id: string, data: { phase: string; answers: any; feedback?: string; next_task?: string; [key: string]: any }): Promise<Session> => {
+    const trace = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    console.log("[saveCheckin]", { trace, sessionId: id, phase: data.phase, at: new Date().toISOString() });
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Trace-Id': trace,
+      'X-Trace-Action': 'saveCheckin',
+      'X-Client-Action': 'saveCheckin'
+    };
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/checkins`), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
-    })
-    if (!res.ok) throw new Error('Failed to save checkin')
-    return res.json()
+    });
+    if (!res.ok) throw new Error('Failed to save checkin');
+    return res.json();
   },
 
   updateSession: async (id: string, updates: Partial<Session>): Promise<Session> => {
@@ -345,9 +342,16 @@ export const api = {
 
   // Update session phase for continuation
   updateSessionPhase: async (sessionId: string, phaseData: {phase?: string, state?: string}): Promise<Session> => {
+    const trace = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-Trace-Id': trace,
+      'X-Trace-Action': 'updateSessionPhase',
+      'X-Client-Action': 'updateSessionPhase'
+    };
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/phase`), {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(phaseData)
     })
     if (!res.ok) throw new Error('Failed to update session phase')

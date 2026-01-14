@@ -1,6 +1,750 @@
-INFO:     Started server process [60062]
+nohup: ignoring input
+INFO:     Started server process [880729]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:44844 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44854 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+[microfeedback] session=christoph_1768386502 phase=P1 trace_id=None trace_action=None text_len=4
+INFO:     127.0.0.1:33818 - "POST /api/sessions/christoph_1768386502/microfeedback HTTP/1.1" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386804 HTTP/1.0" 200 OK
+[checkin:e4113d83] session=christoph_1768386804 phase_raw='PRE' phase_norm='PRE' action=append trace_id=5be9b803-dcb1-4644-bfb9-8d79ec91b89b trace_action=saveCheckin counts_before={}
+[checkin:e4113d83] session=christoph_1768386804 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386804/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386804 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386804/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386804 HTTP/1.0" 200 OK
+[checkin:eb285d8a] session=christoph_1768386804 phase_raw='P1' phase_norm='P1' action=append trace_id=cf6516d4-11df-43bc-85a1-a3e709c9343b trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:eb285d8a] session=christoph_1768386804 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386804/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386804 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[checkin:87b330d7] session=christoph_1768386823 phase_raw='PRE' phase_norm='PRE' action=append trace_id=cf2a12e2-2918-41af-bd1a-edb69489e68c trace_action=saveCheckin counts_before={}
+[checkin:87b330d7] session=christoph_1768386823 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386823/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[checkin:6d8fb424] session=christoph_1768386823 phase_raw='P1' phase_norm='P1' action=append trace_id=ad4fd8a6-f815-47d2-8436-2b075329d5d8 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:6d8fb424] session=christoph_1768386823 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768386823 phase=P1 trace_id=f6497ca2-ed01-44a9-b04e-9d74a0f59811 trace_action=submitMicrofeedback text_len=5
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386823/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[checkin:bdc50aa7] session=christoph_1768386823 phase_raw='P1' phase_norm='P1' action=update trace_id=293c3583-2e61-4411-bd9c-d9a91dca3c86 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:bdc50aa7] session=christoph_1768386823 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386823/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386823/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[checkin:a90a133a] session=christoph_1768386823 phase_raw='P1' phase_norm='P1' action=update trace_id=cf22cdc4-9ef0-4f00-bd75-b78bdcdb7552 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:a90a133a] session=christoph_1768386823 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386823/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[checkin:ddf3a538] session=christoph_1768386823 phase_raw='P2' phase_norm='P2' action=append trace_id=d89a481a-7945-4c8c-a9bf-28dd6c092d23 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:ddf3a538] session=christoph_1768386823 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768386823 phase=P2 trace_id=0774d34c-b029-4507-99a4-a678021aa795 trace_action=submitMicrofeedback text_len=6
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768386823/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768386823/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+[checkin:bbd23b03] session=christoph_1768387010 phase_raw='PRE' phase_norm='PRE' action=append trace_id=27416703-ba9b-46c3-ad0e-bbb2d5e14e24 trace_action=saveCheckin counts_before={}
+[checkin:bbd23b03] session=christoph_1768387010 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387010/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387010/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+[checkin:6f18ef4b] session=christoph_1768387010 phase_raw='P1' phase_norm='P1' action=append trace_id=8fda2797-0693-47d3-a7cf-38bc1de3d1b9 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:6f18ef4b] session=christoph_1768387010 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387010/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387010 phase=P1 trace_id=cab30fb3-1cd2-4f5a-8de4-0268a7e6d7fb trace_action=submitMicrofeedback text_len=6
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387010/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387010/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+[checkin:1f5f8d6f] session=christoph_1768387010 phase_raw='P1' phase_norm='P1' action=update trace_id=09c2e4ff-388e-41dd-a329-e8d67bcb158e trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:1f5f8d6f] session=christoph_1768387010 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387010/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387010/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+[checkin:6f33e977] session=christoph_1768387010 phase_raw='P2' phase_norm='P2' action=append trace_id=b07def64-acf4-4f65-9309-2b9107115d4a trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:6f33e977] session=christoph_1768387010 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387010/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387010/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387010/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:5e64ed50] session=christoph_1768387071 phase_raw='PRE' phase_norm='PRE' action=append trace_id=dd0c6db9-dd45-4bb5-9d29-00f557bae0cc trace_action=saveCheckin counts_before={}
+[checkin:5e64ed50] session=christoph_1768387071 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:45ab99e0] session=christoph_1768387071 phase_raw='P1' phase_norm='P1' action=append trace_id=fa8346d4-e705-4f3f-9edc-49f95b8223e1 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:45ab99e0] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387071 phase=P1 trace_id=36ba9aef-5cb5-4ffb-8544-ff75dab926f6 trace_action=submitMicrofeedback text_len=11
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:6b322129] session=christoph_1768387071 phase_raw='P1' phase_norm='P1' action=update trace_id=82977b88-fe56-4ca8-a84c-6f23ccbf2987 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:6b322129] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+[checkin:59c5ad65] session=christoph_1768387071 phase_raw='P2' phase_norm='P2' action=append trace_id=09824425-87df-443c-8f14-47dd3ff9e307 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:59c5ad65] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:15ad5f43] session=christoph_1768387071 phase_raw='P1' phase_norm='P1' action=update trace_id=4401c2e1-08ab-4681-a12d-b28e7e900f51 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:15ad5f43] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:6bc68005] session=christoph_1768387071 phase_raw='P2' phase_norm='P2' action=update trace_id=d7b00a23-ab9c-46af-be74-4a11c1429396 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:6bc68005] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387071 phase=P2 trace_id=1c715134-e922-45cd-aabe-9d1cc014ebfa trace_action=submitMicrofeedback text_len=13
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+[checkin:6ad943e2] session=christoph_1768387071 phase_raw='P2' phase_norm='P2' action=update trace_id=5fcd5e92-3d5a-4fd8-a5f8-f4ecb62b33b1 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:6ad943e2] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:5d30624f] session=christoph_1768387071 phase_raw='P1' phase_norm='P1' action=update trace_id=d4354b36-12a9-4adc-8aa7-dd61d8d25d9c trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:5d30624f] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:61530b0a] session=christoph_1768387071 phase_raw='P2' phase_norm='P2' action=update trace_id=5214fc97-bb65-47fa-bb46-a93cc47e8db1 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:61530b0a] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:2ad8a190] session=christoph_1768387071 phase_raw='P3' phase_norm='P3' action=append trace_id=24db81d7-f499-419c-9678-b0928768b556 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:2ad8a190] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387071 phase=P3 trace_id=ebd1facb-11bd-4d85-b9fb-c632fd431554 trace_action=submitMicrofeedback text_len=12
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387071/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+[checkin:1a1e09ab] session=christoph_1768387071 phase_raw='POST' phase_norm='POST' action=append trace_id=0e43f934-d743-46b2-a728-71cd1862e2ae trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:1a1e09ab] session=christoph_1768387071 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387071/post HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     78.153.140.179:0 - "GET /api/.env0 HTTP/1.0" 404 Not Found
+INFO:     78.153.140.179:0 - "GET /api/.env~ HTTP/1.0" 404 Not Found
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[checkin:33360dee] session=christoph_1768387978 phase_raw='PRE' phase_norm='PRE' action=append trace_id=cf2fe2d1-74b4-4c95-9aae-5bb9d6e38807 trace_action=saveCheckin counts_before={}
+[checkin:33360dee] session=christoph_1768387978 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387978/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[checkin:96bf6317] session=christoph_1768387978 phase_raw='P1' phase_norm='P1' action=append trace_id=95c2b64a-3cc6-4236-85f1-f93854b69b30 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:96bf6317] session=christoph_1768387978 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387978 phase=P1 trace_id=10308f7c-8bb9-41b2-b803-577975bf27fd trace_action=submitMicrofeedback text_len=12
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387978/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[checkin:e05f228c] session=christoph_1768387978 phase_raw='P1' phase_norm='P1' action=update trace_id=664a7a7f-1566-4d09-acbd-7b96f60cd659 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:e05f228c] session=christoph_1768387978 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387978/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[checkin:ef554150] session=christoph_1768387978 phase_raw='P2' phase_norm='P2' action=append trace_id=0d8bed3c-ed1a-44f2-893e-a14d8aa8422f trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:ef554150] session=christoph_1768387978 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387978 phase=P2 trace_id=dd8dbb60-acff-4534-b27a-c6d290d845d1 trace_action=submitMicrofeedback text_len=11
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387978/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[checkin:eb444ddc] session=christoph_1768387978 phase_raw='P3' phase_norm='P3' action=append trace_id=2cfa26ac-878e-4771-9c6d-2e60d5373287 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:eb444ddc] session=christoph_1768387978 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768387978 phase=P3 trace_id=9e263e6a-bb61-4ba7-bd7d-28bfe3d14205 trace_action=submitMicrofeedback text_len=9
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768387978/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768387978/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[checkin:ef453679] session=christoph_1768388072 phase_raw='PRE' phase_norm='PRE' action=append trace_id=ffb4675f-a9d3-484b-a6f4-c38019a8842a trace_action=saveCheckin counts_before={}
+[checkin:ef453679] session=christoph_1768388072 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388072/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[checkin:9fdd8c56] session=christoph_1768388072 phase_raw='P1' phase_norm='P1' action=append trace_id=8dd704a1-e263-4ce9-a999-c8cdd83722d5 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:9fdd8c56] session=christoph_1768388072 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388072 phase=P1 trace_id=ef1d134f-4c61-431f-9dab-618491c784b1 trace_action=submitMicrofeedback text_len=7
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388072/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[checkin:022aa438] session=christoph_1768388072 phase_raw='P1' phase_norm='P1' action=update trace_id=be54f0fc-4f69-45b9-902c-beee45dd70a4 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:022aa438] session=christoph_1768388072 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388072/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[checkin:0b4c7933] session=christoph_1768388072 phase_raw='P2' phase_norm='P2' action=append trace_id=c2c87b0b-1567-4e61-93cf-18359f2510c3 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:0b4c7933] session=christoph_1768388072 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388072 phase=P2 trace_id=970a6034-a57f-416c-8d17-40d1e5fa58bf trace_action=submitMicrofeedback text_len=7
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388072/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[checkin:1724ea33] session=christoph_1768388072 phase_raw='P3' phase_norm='P3' action=append trace_id=283dbe37-1bbc-42c0-8f3c-18bd83d13ef0 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:1724ea33] session=christoph_1768388072 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388072 phase=P3 trace_id=c010fba1-c74e-47bb-8260-843f751618ed trace_action=submitMicrofeedback text_len=5
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388072/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+[checkin:f9cfa604] session=christoph_1768388072 phase_raw='POST' phase_norm='POST' action=append trace_id=520b6de0-bb30-42e8-abeb-ce09544d7287 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:f9cfa604] session=christoph_1768388072 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388072/post HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768387978 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768386804 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768388072 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768387010 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768386823 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768386502 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768387071 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[checkin:da36b1c1] session=christoph_1768388344 phase_raw='PRE' phase_norm='PRE' action=append trace_id=834a0008-18af-49b6-a3f8-b3d743aeec8b trace_action=saveCheckin counts_before={}
+[checkin:da36b1c1] session=christoph_1768388344 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388344/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[checkin:b6424195] session=christoph_1768388344 phase_raw='P1' phase_norm='P1' action=append trace_id=0b781e61-39f2-44d1-88f4-c8df41a7e171 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:b6424195] session=christoph_1768388344 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388344 phase=P1 trace_id=0b51e58f-9bc8-4da3-b5b8-059b0a51f250 trace_action=submitMicrofeedback text_len=8
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388344/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[checkin:04e3733a] session=christoph_1768388344 phase_raw='P1' phase_norm='P1' action=update trace_id=7a99bea6-58f9-47c9-af3a-9fb30a8ad605 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:04e3733a] session=christoph_1768388344 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388344/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[checkin:382f4211] session=christoph_1768388344 phase_raw='P2' phase_norm='P2' action=append trace_id=7bb94d4b-84d5-49e1-9bc8-d64a174e90f5 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:382f4211] session=christoph_1768388344 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388344 phase=P2 trace_id=c6c63a9b-80dc-4aa4-ba9d-75801f63d102 trace_action=submitMicrofeedback text_len=7
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388344/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[checkin:5928066c] session=christoph_1768388344 phase_raw='P3' phase_norm='P3' action=append trace_id=1f5fab9c-e7b9-491f-b5b5-0b38ad8ec6a9 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:5928066c] session=christoph_1768388344 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388344 phase=P3 trace_id=6464aa87-393e-49bf-b126-cefe65529f38 trace_action=submitMicrofeedback text_len=8
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388344/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+[checkin:44448527] session=christoph_1768388344 phase_raw='POST' phase_norm='POST' action=append trace_id=c68340d7-fa55-4167-aa87-400014fcf8c4 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:44448527] session=christoph_1768388344 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388344/post HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388393 HTTP/1.0" 200 OK
+[checkin:6b8c8421] session=christoph_1768388393 phase_raw='PRE' phase_norm='PRE' action=append trace_id=f11b5248-e7c8-4e68-a2c2-2e508fbfd50c trace_action=saveCheckin counts_before={}
+[checkin:6b8c8421] session=christoph_1768388393 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388393/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388393 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388393/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388393 HTTP/1.0" 200 OK
+[checkin:fd3bbd8c] session=christoph_1768388393 phase_raw='P1' phase_norm='P1' action=append trace_id=03b12f53-86f4-431d-b3ee-651641b76713 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:fd3bbd8c] session=christoph_1768388393 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388393/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388393 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+[checkin:01c20c36] session=christoph_1768388630 phase_raw='PRE' phase_norm='PRE' action=append trace_id=e4bd0c33-e9ef-49ed-a11c-efd9c82993e5 trace_action=saveCheckin counts_before={}
+[checkin:01c20c36] session=christoph_1768388630 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388630/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388630/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+[checkin:ce298d83] session=christoph_1768388630 phase_raw='P1' phase_norm='P1' action=append trace_id=f09eee70-3773-4525-99c4-43894e4d151c trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:ce298d83] session=christoph_1768388630 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388630/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388630 phase=P2 trace_id=77d112bc-a2f3-4863-a5b3-e7e6893507b6 trace_action=submitMicrofeedback text_len=4
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388630/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388630/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+[checkin:d7758acf] session=christoph_1768388630 phase_raw='P1' phase_norm='P1' action=update trace_id=00a01b94-b1f0-4250-9c81-59017983a920 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:d7758acf] session=christoph_1768388630 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388630/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+[checkin:a0287b0d] session=christoph_1768388630 phase_raw='P1' phase_norm='P1' action=update trace_id=9670d128-be53-490d-92f2-d12a772bcf84 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:a0287b0d] session=christoph_1768388630 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388630/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388630 phase=P2 trace_id=f6d631d4-0f84-4bc7-903c-1507d8665823 trace_action=submitMicrofeedback text_len=5
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388630/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388630/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388630/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768388630 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768388344 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768388393 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+[checkin:be2bf6b4] session=christoph_1768388908 phase_raw='PRE' phase_norm='PRE' action=append trace_id=58793f71-ee48-4d57-a155-e72ea3c30650 trace_action=saveCheckin counts_before={}
+[checkin:be2bf6b4] session=christoph_1768388908 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388908/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388908/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+[checkin:8f706d0c] session=christoph_1768388908 phase_raw='P1' phase_norm='P1' action=append trace_id=7a6a1d7e-0108-44bd-b2fd-9d50e5527244 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:8f706d0c] session=christoph_1768388908 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388908/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388908 phase=P2 trace_id=4643d8e5-5b5e-4b2a-a9f7-9dbb57e78f32 trace_action=submitMicrofeedback text_len=9
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388908/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388908/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+[checkin:b419f410] session=christoph_1768388908 phase_raw='P1' phase_norm='P1' action=update trace_id=4d56c676-bb23-4d98-9483-b81cc4486e4d trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:b419f410] session=christoph_1768388908 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388908/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768388908 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:cb9a0ada] session=christoph_1768388992 phase_raw='PRE' phase_norm='PRE' action=append trace_id=fcb7b727-31d2-43c9-9969-347eb7a734d4 trace_action=saveCheckin counts_before={}
+[checkin:cb9a0ada] session=christoph_1768388992 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:ce10955e] session=christoph_1768388992 phase_raw='P1' phase_norm='P1' action=append trace_id=cf22391e-48b8-4533-9d9b-15a4684bd025 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:ce10955e] session=christoph_1768388992 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388992 phase=P1 trace_id=236d4dae-d437-4676-bf02-3786673bd45c trace_action=submitMicrofeedback text_len=10
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:98a24cb2] session=christoph_1768388992 phase_raw='P1' phase_norm='P1' action=update trace_id=70f8298c-34e2-4966-90f7-5135759137cb trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:98a24cb2] session=christoph_1768388992 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:5f5daa50] session=christoph_1768388992 phase_raw='P1' phase_norm='P1' action=update trace_id=3a2179aa-b806-4f2b-9a05-3f4e47b600da trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:5f5daa50] session=christoph_1768388992 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:6cf02081] session=christoph_1768388992 phase_raw='P2' phase_norm='P2' action=append trace_id=338cb8e1-2b7e-470b-ad8a-cacde5c6cb1d trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:6cf02081] session=christoph_1768388992 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388992 phase=P2 trace_id=91c7ee18-ffe5-4292-aa3c-69427a98b0f3 trace_action=submitMicrofeedback text_len=8
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:6f4db02c] session=christoph_1768388992 phase_raw='P3' phase_norm='P3' action=append trace_id=3e6606cf-de6d-4c91-abd4-7910c7348fb8 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:6f4db02c] session=christoph_1768388992 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768388992 phase=P3 trace_id=c4938b2d-1889-4f78-b27d-b25f26506451 trace_action=submitMicrofeedback text_len=6
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768388992/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+[checkin:197165e8] session=christoph_1768388992 phase_raw='POST' phase_norm='POST' action=append trace_id=415816bf-772e-4d36-a074-8db0aa12cadc trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:197165e8] session=christoph_1768388992 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768388992/post HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[checkin:5825b03c] session=christoph_1768389042 phase_raw='PRE' phase_norm='PRE' action=append trace_id=4fe2af44-b415-44c2-9fa9-c0e4103fec55 trace_action=saveCheckin counts_before={}
+[checkin:5825b03c] session=christoph_1768389042 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389042/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[checkin:5b238dda] session=christoph_1768389042 phase_raw='P1' phase_norm='P1' action=append trace_id=20b51a15-0789-4306-9498-67477f6fd795 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:5b238dda] session=christoph_1768389042 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768389042 phase=P1 trace_id=06e69332-3ca5-43c7-84db-3a27b7b0d5da trace_action=submitMicrofeedback text_len=5
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389042/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[checkin:990c82fa] session=christoph_1768389042 phase_raw='P2' phase_norm='P2' action=append trace_id=b0306d35-8025-4710-bde9-6d293c3f642f trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:990c82fa] session=christoph_1768389042 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768389042 phase=P2 trace_id=efac015a-b605-432b-8667-0ce334d0884a trace_action=submitMicrofeedback text_len=8
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389042/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[checkin:f3f29a88] session=christoph_1768389042 phase_raw='P3' phase_norm='P3' action=append trace_id=97c6edb8-cde6-4a88-9352-a39ff162d235 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:f3f29a88] session=christoph_1768389042 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[microfeedback] session=christoph_1768389042 phase=P3 trace_id=db293ebd-9884-4e50-9990-1bbe427dd3e7 trace_action=submitMicrofeedback text_len=9
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389042/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+[checkin:b33f6c61] session=christoph_1768389042 phase_raw='POST' phase_norm='POST' action=append trace_id=3cdfdcfb-537a-4520-8a2e-9daadf7f41ff trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:b33f6c61] session=christoph_1768389042 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389042/post HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389188 HTTP/1.0" 200 OK
+[checkin:4fa3836b] session=christoph_1768389188 phase_raw='PRE' phase_norm='PRE' action=append trace_id=301aeca2-0dcd-4495-8560-238720f2c92a trace_action=saveCheckin counts_before={}
+[checkin:4fa3836b] session=christoph_1768389188 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389188/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389188 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389188/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389188 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768389188 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768389042 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "DELETE /api/sessions/christoph_1768388992 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389301 HTTP/1.0" 200 OK
+[checkin:24501348] session=christoph_1768389301 phase_raw='PRE' phase_norm='PRE' action=append trace_id=bf55fb37-57c2-4b7c-ba80-f32d9e482f27 trace_action=saveCheckin counts_before={}
+[checkin:24501348] session=christoph_1768389301 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389301/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389301 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389301/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389301 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389316 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389316 HTTP/1.0" 200 OK
+[checkin:635b2c80] session=christoph_1768389316 phase_raw='PRE' phase_norm='PRE' action=append trace_id=d01e1d48-f119-4c2a-af3f-bc9197ad5e11 trace_action=saveCheckin counts_before={}
+[checkin:635b2c80] session=christoph_1768389316 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389316/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389316 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389316/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389316 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389956 HTTP/1.0" 200 OK
+[checkin:e4c44a44] session=christoph_1768389956 phase_raw='PRE' phase_norm='PRE' action=append trace_id=39e0e344-11d7-413f-a52d-1a8790aab411 trace_action=saveCheckin counts_before={}
+[checkin:e4c44a44] session=christoph_1768389956 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768389956/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389956 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768389956/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768389956 HTTP/1.0" 200 OK
+INFO:     204.76.203.18:42366 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:38044 - "GET /bins/ HTTP/1.1" 404 Not Found
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     204.76.203.18:55240 - "GET /bin/ HTTP/1.1" 404 Not Found
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391767 HTTP/1.0" 200 OK
+[checkin:9ea3e1c2] session=christoph_1768391767 phase_raw='PRE' phase_norm='PRE' action=append trace_id=9f51cb2e-2be3-4889-b6d2-c98c748b1072 trace_action=saveCheckin counts_before={}
+[checkin:9ea3e1c2] session=christoph_1768391767 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768391767/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391767 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768391767/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391767 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391796 HTTP/1.0" 200 OK
+[checkin:f2c1f47f] session=christoph_1768391796 phase_raw='PRE' phase_norm='PRE' action=append trace_id=fba9fa40-58d5-4088-95b7-8ba71f68f1a4 trace_action=saveCheckin counts_before={}
+[checkin:f2c1f47f] session=christoph_1768391796 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768391796/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391796 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768391796/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391796 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391838 HTTP/1.0" 200 OK
+[checkin:ffe9dfd4] session=christoph_1768391838 phase_raw='PRE' phase_norm='PRE' action=append trace_id=6d011134-3d56-4a6b-b900-451151c875f4 trace_action=saveCheckin counts_before={}
+[checkin:ffe9dfd4] session=christoph_1768391838 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768391838/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391838 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768391838/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391838 HTTP/1.0" 200 OK
+[checkin:b9368573] session=christoph_1768391838 phase_raw='P1' phase_norm='P1' action=append trace_id=676faa92-8e74-42ba-98b7-19599364d8f7 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:b9368573] session=christoph_1768391838 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768391838/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768391838 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392139 HTTP/1.0" 200 OK
+[checkin:308e5dd2] session=christoph_1768392139 phase_raw='PRE' phase_norm='PRE' action=append trace_id=2bf4da81-4780-4748-be60-68d41b92b66a trace_action=saveCheckin counts_before={}
+[checkin:308e5dd2] session=christoph_1768392139 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768392139/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392139 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768392139/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392139 HTTP/1.0" 200 OK
+INFO:     204.76.203.18:35772 - "GET /backup/ HTTP/1.1" 404 Not Found
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392295 HTTP/1.0" 200 OK
+[checkin:05dec662] session=christoph_1768392295 phase_raw='PRE' phase_norm='PRE' action=append trace_id=e467038c-c23d-4536-bcde-7344808c6171 trace_action=saveCheckin counts_before={}
+[checkin:05dec662] session=christoph_1768392295 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768392295/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392295 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768392295/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392295 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392409 HTTP/1.0" 200 OK
+[checkin:01ad6e76] session=christoph_1768392409 phase_raw='PRE' phase_norm='PRE' action=append trace_id=c442f458-8fd6-4e1f-91d7-f2e4823f6ac7 trace_action=saveCheckin counts_before={}
+[checkin:01ad6e76] session=christoph_1768392409 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768392409/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392409 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768392409/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392409 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392452 HTTP/1.0" 200 OK
+[checkin:7830fa62] session=christoph_1768392452 phase_raw='PRE' phase_norm='PRE' action=append trace_id=8ea51c4d-0567-4992-9554-1b60c760a402 trace_action=saveCheckin counts_before={}
+[checkin:7830fa62] session=christoph_1768392452 counts_after={'PRE': 1}
+INFO:     141.78.161.7:0 - "POST /api/sessions/christoph_1768392452/checkins HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392452 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "PUT /api/sessions/christoph_1768392452/phase HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions/christoph_1768392452 HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
