@@ -1,7 +1,9 @@
+
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import type { CurriculumTrack, CurriculumModule } from '../api'
+import theoryData from '../data/theoryData.json'
 
 export default function Curriculum() {
   const navigate = useNavigate()
@@ -52,7 +54,7 @@ export default function Curriculum() {
                   >
                     Starten
                   </button>
-                  {(module.id === 'A1' || module.id === 'A2' || module.id === 'A3') && (
+                  {module.id in theoryData && (
                     <button
                       className="btn"
                       onClick={() => navigate(`/theory/${module.id}`)}

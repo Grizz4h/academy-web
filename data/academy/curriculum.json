@@ -1425,33 +1425,1338 @@
         {
           "id": "B1",
           "title": "B1 – Center-Detailarbeit",
-          "summary": "Unterstützung unter dem Puck; Low/Middle/High Reads; Dreiecksstabilität; defensive Verantwortung",
-          "drills": []
+          "summary": "Unterstützung, Reads und defensive Verantwortung des Centers",
+          "description": "Vertiefung der Center-Rolle: Unterstützung unter dem Puck, Dreiecksstabilität, Low/Middle/High-Reads und defensive Verantwortung im Spiel ohne Puck.",
+          "learningGoals": [
+            "Erkenne aktive vs. passive Unterstützung des Centers",
+            "Lese Low / Middle / High-Reads aus der Center-Perspektive",
+            "Verstehe Dreiecksstabilität als Entscheidungsgrundlage",
+            "Erkenne defensive Verantwortung des Centers ohne Puck"
+          ],
+          "difficulty": 1,
+          "duration": 45,
+          "drills": [
+            {
+              "id": "B1_D1",
+              "title": "Support unter dem Puck (Center-Reads)",
+              "drill_type": "period_checkin",
+              "description": "Beobachte den Center ohne Puck: Ist er echte Unterstützung oder nur in der Nähe?",
+              "didactics": {
+                "explanation": "Der Center ist der zentrale Verbindungsspieler. Gute Unterstützung entsteht nicht durch Nähe, sondern durch Winkel, Timing und Spielbarkeit. Dieser Drill schärft den Blick dafür, wann der Center den Puckführer wirklich entlastet.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Abstand des Centers zum Puckführer",
+                    "Winkel und Körperstellung zur Spielfortsetzung",
+                    "Timing: bewegt sich der Center vor oder nach dem Druck?"
+                  ],
+                  "how_to_decide": [
+                    "Beobachte nur den Center ohne Puck",
+                    "Frage dich: Ist der Center sofort anspielbar?",
+                    "Achte auf Winkel, nicht auf Meter",
+                    "Unterstützung muss vor dem Druck da sein, nicht danach"
+                  ],
+                  "ignore": [
+                    "Wie der Angriff endet",
+                    "Individuelle technische Fehler",
+                    "Abschluss oder Tor"
+                  ]
+                },
+                "learning_hint": "Gute Center-Unterstützung ist früh, spielbar und lösungsorientiert – nicht reaktiv."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": { "support_quality": "aktiv" },
+                    "questions": [
+                      "Wodurch war der Center klar spielbar?",
+                      "Welche Winkel oder Abstände haben geholfen?",
+                      "Wirkte die Unterstützung antizipiert oder spontan?"
+                    ]
+                  },
+                  {
+                    "when": { "support_quality": "passiv" },
+                    "questions": [
+                      "Was hat zur echten Unterstützung gefehlt?",
+                      "War der Abstand, der Winkel oder das Timing das Hauptproblem?",
+                      "Kam der Center zu spät oder stand er ungünstig?"
+                    ]
+                  },
+                  {
+                    "when": { "support_quality": "fehlt" },
+                    "questions": [
+                      "Warum war keine Unterstützung vorhanden?",
+                      "War der Center gedanklich gebunden oder schlecht positioniert?",
+                      "Wie hätte eine einfache Lösung aussehen können?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "support_quality",
+                    "type": "radio",
+                    "label": "Unterstützung des Centers",
+                    "options": [
+                      "aktiv",
+                      "passiv",
+                      "fehlt"
+                    ]
+                  },
+                  {
+                    "key": "timing",
+                    "type": "radio",
+                    "label": "Timing der Unterstützung",
+                    "options": [
+                      "früh",
+                      "gleichzeitig",
+                      "zu spät"
+                    ]
+                  },
+                  {
+                    "key": "note",
+                    "type": "text",
+                    "label": "Kurze Beobachtung",
+                    "max_chars": 140
+                  }
+                ]
+              }
+            },
+            {
+              "id": "B1_D2",
+              "title": "Dreiecksstabilität (Center als Verbindung)",
+              "drill_type": "period_checkin",
+              "description": "Beobachte, wie der Center Dreiecke stabil hält oder bricht.",
+              "didactics": {
+                "explanation": "Der Center ist die verbindende Rolle im Dreieck. Seine Position entscheidet, ob ein Dreieck spielbar bleibt oder kollabiert.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Abstand des Centers zu den beiden Mitspielern",
+                    "Winkel der Anspieloptionen",
+                    "Bewegung des Centers ohne Puck"
+                  ],
+                  "how_to_decide": [
+                    "Beurteile Abstand und Winkel gemeinsam",
+                    "Frage dich: Sind mindestens zwei Optionen spielbar?",
+                    "Achte auf kleine Positionskorrekturen",
+                    "Stabilität zählt mehr als Aktion"
+                  ],
+                  "ignore": [
+                    "Ob der Pass ankommt",
+                    "Was nach dem Dreieck passiert",
+                    "Individuelle Skills der Mitspieler"
+                  ]
+                },
+                "learning_hint": "Dreiecke brechen selten durch Druck – meist durch schlechte Abstände."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": { "triangle_state": "stabil" },
+                    "questions": [
+                      "Wodurch blieb das Dreieck stabil?",
+                      "Welche kleine Bewegung des Centers war entscheidend?",
+                      "Waren die Abstände aktiv gehalten oder zufällig?"
+                    ]
+                  },
+                  {
+                    "when": { "triangle_state": "instabil" },
+                    "questions": [
+                      "Wodurch verlor das Dreieck seine Stabilität?",
+                      "War der Center zu nah oder zu weit?",
+                      "Welche Option brach zuerst weg?"
+                    ]
+                  },
+                  {
+                    "when": { "triangle_state": "nicht_vorhanden" },
+                    "questions": [
+                      "Warum entstand kein echtes Dreieck?",
+                      "Fehlte Position, Timing oder Bewusstsein?",
+                      "Hätte der Center es aktiv herstellen können?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "triangle_state",
+                    "type": "radio",
+                    "label": "Dreieck",
+                    "options": [
+                      "stabil",
+                      "instabil",
+                      "nicht vorhanden"
+                    ]
+                  },
+                  {
+                    "key": "center_position",
+                    "type": "radio",
+                    "label": "Position des Centers",
+                    "options": [
+                      "passend",
+                      "zu nah",
+                      "zu weit"
+                    ]
+                  },
+                  {
+                    "key": "note",
+                    "type": "text",
+                    "label": "Kurze Beobachtung",
+                    "max_chars": 140
+                  }
+                ]
+              }
+            },
+                    {
+          "id": "B1_D3",
+          "title": "Low / Middle / High Reads (Center-Perspektive)",
+          "drill_type": "period_checkin",
+          "description": "Beobachte, wie der Center Räume Low, Middle und High liest und priorisiert.",
+          "didactics": {
+            "explanation": "Der Center verbindet die Zonen. Seine Aufgabe ist es, Raum nicht nur zu besetzen, sondern zu priorisieren.",
+            "observation_guide": {
+              "what_to_watch": [
+                "Welche Zone ist für den Center zuerst spielbar?",
+                "Bleibt der Center anspielbar zwischen den Linien?",
+                "Wechselt der Fokus zwischen Low, Middle und High?"
+              ],
+              "how_to_decide": [
+                "Bewerte nur die Raumwahl, nicht den Spielausgang",
+                "Achte auf Timing statt Geschwindigkeit",
+                "Bevorzuge Verfügbarkeit vor Aktion",
+                "Ein guter Read wirkt ruhig, nicht hektisch"
+              ],
+              "ignore": [
+                "Ob ein Pass gespielt wird",
+                "Ergebnis der Sequenz",
+                "Individuelle Fehler anderer Spieler"
+              ]
+            },
+            "learning_hint": "Gute Reads entstehen durch Positionierung – nicht durch Reaktion."
+          },
+          "miniFeedback": {
+            "trigger": "onNext",
+            "oncePerSection": true,
+            "groups": [
+              {
+                "when": { "zone_read": "Low" },
+                "questions": [
+                  "Warum war Low die stabilste Option?",
+                  "Hat der Center den Raum früh erkannt?",
+                  "War Unterstützung sichtbar oder antizipiert?"
+                ]
+              },
+              {
+                "when": { "zone_read": "Middle" },
+                "questions": [
+                  "Was machte Middle spielbar?",
+                  "War der Center zwischen den Linien präsent?",
+                  "Wie wirkten Abstand und Timing?"
+                ]
+              },
+              {
+                "when": { "zone_read": "High" },
+                "questions": [
+                  "Warum war High sinnvoll?",
+                  "War der Center entlastend oder aufbauend?",
+                  "Wurde Raum gesichert oder nur gefüllt?"
+                ]
+              }
+            ]
+          },
+          "config": {
+            "questions": [
+              {
+                "key": "zone_read",
+                "type": "radio",
+                "label": "Primärer Raum",
+                "options": [
+                  "Low",
+                  "Middle",
+                  "High"
+                ]
+              },
+              {
+                "key": "availability",
+                "type": "radio",
+                "label": "Anspielbarkeit",
+                "options": [
+                  "klar",
+                  "eingeschränkt",
+                  "nicht vorhanden"
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "label": "Kurze Begründung",
+                "max_chars": 140
+              }
+            ]
+          }
         },
-        {
+
+            {
+        "id": "B1_D4",
+        "title": "Support vs. Isolation",
+        "drill_type": "period_checkin",
+        "description": "Erkennen, ob der puckführende Spieler echte Unterstützung hat oder isoliert agiert.",
+        "didactics": {
+          "explanation": "Off-Puck-Spiel entscheidet, ob Aktionen tragfähig sind. Nicht der Puckführer ist das Problem, sondern fehlender Support.",
+          "observation_guide": {
+            "what_to_watch": [
+              "Abstände zum puckführenden Spieler",
+              "Anspielbare Optionen links / rechts / hinten",
+              "Bewegung der Spieler ohne Puck"
+            ],
+            "how_to_decide": [
+              "Beobachte die 1–2 Sekunden vor der Aktion",
+              "Zähle reale Optionen, nicht theoretische",
+              "Support muss erreichbar sein, nicht nur vorhanden aussehen",
+              "Beurteile Struktur, nicht Mut"
+            ],
+            "ignore": [
+              "Ob der Spielzug gelingt",
+              "Individuelle Technik des Puckführers"
+            ]
+          },
+          "learning_hint": "Isolation entsteht selten zufällig – sie ist fast immer ein Off-Puck-Fehler."
+        },
+        "miniFeedback": {
+          "trigger": "onNext",
+          "oncePerSection": true,
+          "groups": [
+            {
+              "when": { "support_state": "klar" },
+              "questions": [
+                "Wodurch war der Support klar erkennbar?",
+                "Welche Option war am stabilsten?",
+                "Wirkte das Off-Puck-Verhalten vorbereitet?"
+              ]
+            },
+            {
+              "when": { "support_state": "eingeschraenkt" },
+              "questions": [
+                "Was hat den Support begrenzt?",
+                "Lag es eher an Abstand oder Timing?",
+                "Gab es eine bessere Position ohne Puck?"
+              ]
+            },
+            {
+              "when": { "support_state": "isoliert" },
+              "questions": [
+                "Woran hast du die Isolation sofort erkannt?",
+                "Welche Rolle hätte Support geben müssen?",
+                "War die Isolation absehbar?"
+              ]
+            }
+          ]
+        },
+        "config": {
+          "questions": [
+            {
+              "key": "support_state",
+              "type": "radio",
+              "label": "Support-Situation",
+              "options": [
+                "klar",
+                "eingeschraenkt",
+                "isoliert"
+              ]
+            },
+            {
+              "key": "note",
+              "type": "text",
+              "label": "Kurze Begründung",
+              "max_chars": 140
+            }
+          ]
+        }
+      },
+          {
+      "id": "B1_D5",
+      "title": "Timing ohne Puck",
+      "drill_type": "period_checkin",
+      "description": "Erkennen, ob Bewegungen ohne Puck zum richtigen Zeitpunkt erfolgen.",
+      "didactics": {
+        "explanation": "Gutes Off-Puck-Spiel scheitert selten an der Idee, sondern am Timing. Zu früh öffnet Räume für den Gegner, zu spät nimmt Optionen.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Startpunkt der Bewegung ohne Puck",
+            "Bezug zur Situation des Puckführers",
+            "Synchronität zwischen mehreren Spielern"
+          ],
+          "how_to_decide": [
+            "Beobachte nur den Moment des Bewegungsstarts",
+            "Frage dich: War die Bewegung hilfreich oder störend?",
+            "Timing ist relativ zum Puck, nicht absolut",
+            "Beurteile Absicht vs. Wirkung"
+          ],
+          "ignore": [
+            "Ob der Pass ankommt",
+            "Wie der Spielzug endet"
+          ]
+        },
+        "learning_hint": "Richtiges Timing macht einfache Positionen wertvoll – falsches Timing zerstört gute Ideen."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": { "timing": "passend" },
+            "questions": [
+              "Woran hast du das passende Timing erkannt?",
+              "Welche Information wurde richtig gelesen?",
+              "Wirkte die Bewegung abgestimmt?"
+            ]
+          },
+          {
+            "when": { "timing": "zu_frueh" },
+            "questions": [
+              "Was ging durch das frühe Timing verloren?",
+              "Wurde Raum verschenkt?",
+              "Hätte Geduld geholfen?"
+            ]
+          },
+          {
+            "when": { "timing": "zu_spaet" },
+            "questions": [
+              "Welche Option war dadurch weg?",
+              "Kam die Bewegung reaktiv statt antizipativ?",
+              "War der Impuls erkennbar, aber verzögert?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "timing",
+            "type": "radio",
+            "label": "Timing",
+            "options": [
+              "passend",
+              "zu frueh",
+              "zu spaet"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung",
+            "max_chars": 140
+          }
+        ]
+      }
+    }
+
+          ]
+        },
+              {
           "id": "B2",
-          "title": "B2 – Winger-Detailarbeit",
-          "summary": "Wall Play; Outlet-Positionierung; Pinches erkennen; Defensivdisziplin",
-          "drills": []
+          "title": "B2 – Entscheidungen unter Druck",
+          "summary": "Zeit, Raum und Gegnerdruck lesen und Entscheidungen einordnen",
+          "description": "Spielentscheidungen entstehen unter Zeitdruck, Gegnernähe und unvollständiger Information. In diesem Track lernst du, Entscheidungsqualität unabhängig vom Ergebnis zu beurteilen.",
+          "learningGoals": [
+            "Drucksituationen erkennen und benennen",
+            "Entscheidungen unter Zeitmangel bewerten",
+            "Unterscheiden zwischen erzwungenen und freiwilligen Fehlern",
+            "Lesen, wann Vereinfachung sinnvoll ist"
+          ],
+          "difficulty": 3,
+          "duration": 55,
+          "drills": [
+                {
+      "id": "B2_D1",
+      "title": "Druck erkennen",
+      "drill_type": "period_checkin",
+      "description": "Erkennen, unter welchem Druck eine Entscheidung getroffen wird.",
+      "didactics": {
+        "explanation": "Nicht jede schlechte Aktion ist ein Fehler. Entscheidend ist, unter welchem Druck sie entsteht. Druck setzt sich aus Zeit, Gegnernähe und Bewegungsrichtung zusammen.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Zeit bis zum Gegnerkontakt",
+            "Anzahl der Gegner in Pucknähe",
+            "Bewegungsrichtung (vorwärts / rückwärts / stehend)"
+          ],
+          "how_to_decide": [
+            "Beurteile Druck vor der Aktion",
+            "Nicht erst beim Fehler hinschauen",
+            "Druck ist wahrnehmbar, bevor er sichtbar wird",
+            "Zeit ist oft limitierender als Raum"
+          ],
+          "ignore": [
+            "Ob der Pass ankommt",
+            "Ob der Spielzug erfolgreich ist"
+          ]
+        },
+        "learning_hint": "Druck bewerten heißt verstehen, welche Optionen realistisch waren."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": { "pressure": "hoch" },
+            "questions": [
+              "Wodurch entstand der hohe Druck?",
+              "War die Entscheidung unter diesen Umständen logisch?",
+              "Welche Optionen waren realistisch?"
+            ]
+          },
+          {
+            "when": { "pressure": "mittel" },
+            "questions": [
+              "Welche Option hätte Druck reduzieren können?",
+              "War mehr Geduld möglich?",
+              "Wurde der Druck richtig eingeschätzt?"
+            ]
+          },
+          {
+            "when": { "pressure": "gering" },
+            "questions": [
+              "Warum war trotzdem Stress im Spiel?",
+              "Wurde Raum oder Zeit verschenkt?",
+              "War der Fehler selbstgemacht?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "pressure",
+            "type": "radio",
+            "label": "Druckniveau",
+            "options": [
+              "hoch",
+              "mittel",
+              "gering"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung",
+            "max_chars": 140
+          }
+        ]
+      }
+    },
+    {
+  "id": "B2_D2",
+  "title": "Entscheidungstyp einordnen",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, welche Art von Entscheidung unter Druck getroffen wird.",
+  "didactics": {
+    "explanation": "Unter Druck wählen Spieler unterschiedliche Entscheidungstypen. Entscheidend ist nicht der Erfolg, sondern ob der gewählte Typ zur Situation passt.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wird Risiko reduziert oder erhöht?",
+        "Wird Zeit gewonnen oder sofort abgegeben?",
+        "Bleibt Struktur erhalten?"
+      ],
+      "how_to_decide": [
+        "Ordne die Aktion einem Entscheidungstyp zu",
+        "Beurteile nicht den Ausgang",
+        "Frage dich: Was war die Absicht?",
+        "Druck und Entscheidung immer zusammen denken"
+      ],
+      "ignore": [
+        "Tor oder Turnover",
+        "Einzelaktionen ohne Kontext"
+      ]
+    },
+    "learning_hint": "Gleiche Aktion kann richtig oder falsch sein – abhängig vom Druck davor."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "decision_type": "sichern" },
+        "questions": [
+          "War Sichern unter dem vorhandenen Druck sinnvoll?",
+          "Wurde Zeit gewonnen oder nur verzögert?",
+          "Blieb Struktur erhalten?"
+        ]
+      },
+      {
+        "when": { "decision_type": "loesen" },
+        "questions": [
+          "Welche Option hat den Druck tatsächlich gelöst?",
+          "War die Lösung aktiv oder reaktiv?",
+          "Hätte Sichern gereicht?"
+        ]
+      },
+      {
+        "when": { "decision_type": "riskieren" },
+        "questions": [
+          "Warum wurde Risiko gewählt?",
+          "Gab es eine sichere Alternative?",
+          "Passte das Risiko zum Druckniveau?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "decision_type",
+        "type": "radio",
+        "label": "Entscheidungstyp",
+        "options": [
+          "sichern",
+          "loesen",
+          "riskieren"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "B2_D3",
+  "title": "Fehler erzwingen vs. provozieren",
+  "drill_type": "period_checkin",
+  "description": "Unterscheiden, ob ein Fehler aktiv erzwungen oder nur passiv provoziert wird.",
+  "didactics": {
+    "explanation": "Nicht jeder gegnerische Fehler ist gleichwertig. Gute Teams erzwingen Fehler durch Struktur, Winkel und Timing – schwächere Teams hoffen auf Fehler.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wurde der Gegner zu einer Handlung gezwungen?",
+        "Gab es klare Winkel oder Laufwege, die Optionen nahmen?",
+        "War der Fehler die logische Folge des Drucks?"
+      ],
+      "how_to_decide": [
+        "Frage dich: Hatte der Gegner realistische Alternativen?",
+        "Beurteile Aktivität und Struktur des Drucks",
+        "Erzwungen = keine saubere Option mehr",
+        "Provoziert = Gegner hätte bessere Wahl gehabt"
+      ],
+      "ignore": [
+        "Ob der Fehler genutzt wurde",
+        "Was danach aus dem Spielzug entsteht"
+      ]
+    },
+    "learning_hint": "Erzwungene Fehler sind reproduzierbar – provozierte Fehler sind Glück."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "error_type": "erzwungen" },
+        "questions": [
+          "Wodurch wurde der Gegner konkret eingeschränkt?",
+          "Welche Option wurde ihm genommen?",
+          "War der Fehler unausweichlich?"
+        ]
+      },
+      {
+        "when": { "error_type": "provoziert" },
+        "questions": [
+          "Welche bessere Option hätte der Gegner gehabt?",
+          "War der Druck strukturiert oder nur präsent?",
+          "Warum hätte dieser Fehler auch ausbleiben können?"
+        ]
+      },
+      {
+        "when": { "error_type": "zufaellig" },
+        "questions": [
+          "Warum hatte der Fehler nichts mit Druck zu tun?",
+          "Gab es überhaupt Einfluss durch das verteidigende Team?",
+          "Wäre der Fehler unabhängig vom Gegner passiert?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "error_type",
+        "type": "radio",
+        "label": "Art des Fehlers",
+        "options": [
+          "erzwungen",
+          "provoziert",
+          "zufaellig"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "B2_D4",
+  "title": "Anschluss nach Fehler",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, wie das verteidigende Team nach einem Fehler reagiert: Tempo erzwingen oder Kontrolle sichern.",
+  "didactics": {
+    "explanation": "Ein Fehler ist nur wertvoll, wenn der Anschluss passt. Gute Teams wählen bewusst zwischen sofortigem Tempo und kontrollierter Sicherung.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Erster Kontakt nach dem Fehler",
+        "Entscheidung zwischen Beschleunigen und Sichern",
+        "Positionierung der nächsten Mitspieler"
+      ],
+      "how_to_decide": [
+        "Beobachte nur die ersten 2–3 Sekunden nach dem Fehler",
+        "Frage dich: Wird Tempo erzwungen oder Kontrolle aufgebaut?",
+        "Tempo = direkter Zugriff, Kontrolle = Stabilisierung",
+        "Bewerte Entscheidung, nicht Ausgang"
+      ],
+      "ignore": [
+        "Spätere Torchancen",
+        "Abschluss oder Turnover danach"
+      ]
+    },
+    "learning_hint": "Nicht jeder Fehler verlangt Tempo – manchmal ist Kontrolle die stärkere Fortsetzung."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "followup_type": "tempo" },
+        "questions": [
+          "Warum war sofortiges Tempo hier sinnvoll?",
+          "Gab es klare Unterzahl- oder Unordnungsmomente?",
+          "Wurde der Gegner weiter unter Druck gehalten?"
+        ]
+      },
+      {
+        "when": { "followup_type": "kontrolle" },
+        "questions": [
+          "Warum war Absichern die bessere Wahl?",
+          "Welche Gefahr hätte Tempo erzeugt?",
+          "Wirkte die Entscheidung bewusst oder automatisch?"
+        ]
+      },
+      {
+        "when": { "followup_type": "ungeordnet" },
+        "questions": [
+          "Woran hast du fehlende Struktur erkannt?",
+          "War der Fehler dadurch neutralisiert?",
+          "Was hätte Stabilität gebracht?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "followup_type",
+        "type": "radio",
+        "label": "Anschluss",
+        "options": [
+          "tempo",
+          "kontrolle",
+          "ungeordnet"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "B2_D5",
+  "title": "Druckkette vs. Einzelaktion",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, ob Druck als zusammenhängende Kette wirkt oder nur als einzelne Aktion verpufft.",
+  "didactics": {
+    "explanation": "Effektiver Druck entsteht selten durch eine einzelne Aktion. Entscheidend ist, ob nach dem ersten Druckmoment Anschluss entsteht – durch Nachgehen, Staffelung und erneuten Zugriff.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Folgt auf die erste Druckaktion sofort weiterer Druck?",
+        "Sind mehrere Spieler zeitlich und räumlich beteiligt?",
+        "Bleibt der Gegner unter Stress oder kann er neu ordnen?"
+      ],
+      "how_to_decide": [
+        "Beobachte Druck als Sequenz, nicht als Einzelmoment",
+        "Achte auf Nachgehen und Staffelung",
+        "Frage dich: Hört der Druck nach dem ersten Kontakt auf?"
+      ],
+      "ignore": [
+        "Ob direkt ein Turnover entsteht",
+        "Einzelne starke Zweikämpfe ohne Anschluss"
+      ]
+    },
+    "learning_hint": "Druck wirkt erst dann nachhaltig, wenn er fortgesetzt wird. Einzelaktionen beeindrucken – Druckketten entscheiden."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "pressure_sequence": "druckkette" },
+        "questions": [
+          "Wodurch blieb der Gegner dauerhaft unter Druck?",
+          "Welche Spieler hielten die Kette am Leben?",
+          "Wirkte der Druck geplant oder instinktiv?"
+        ]
+      },
+      {
+        "when": { "pressure_sequence": "einzelaktion" },
+        "questions": [
+          "Warum brach der Druck nach der ersten Aktion ab?",
+          "Fehlte Nachgehen, Staffelung oder Kommunikation?",
+          "Wie hätte die Situation verlängert werden können?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pressure_sequence",
+        "type": "radio",
+        "label": "Druckform",
+        "options": [
+          "druckkette",
+          "einzelaktion"
+        ]
+      },
+      {
+        "key": "impact",
+        "type": "radio",
+        "label": "Wirkung auf den Gegner",
+        "options": [
+          "dauerhaft_unter_stress",
+          "kurzzeitig",
+          "keine"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+
+          ]
         },
         {
           "id": "B3",
-          "title": "B3 – Defense-Detailarbeit",
-          "summary": "Gap Control; Blue-Line-Entscheidungen; Point Holds vs. Retreat; Net-Front Responsibility",
-          "drills": []
-        }
+          "title": "B3 – Defensive Stabilität & Zugriff",
+          "summary": "Zugriff, Drucktiming, Staffelung und kollektive Defensive",
+          "description": "Verstehen, wie defensive Stabilität entsteht: durch Timing, Staffelung, zweiten Zugriff und kollektive Entscheidungen – nicht durch Einzelaktionen.",
+          "learningGoals": [
+            "Erkenne, wann Zugriff wirksam ist",
+            "Verstehe Timing und Staffelung in der Defensive",
+            "Unterscheide Stören von Kontrollieren",
+            "Lies zweite und dritte defensive Aktionen"
+          ],
+          "difficulty": 3,
+          "duration": 55,
+          "drills": [
+            {
+              "id": "B3_D1",
+              "title": "Erster Zugriff: Stören oder Kontrollieren",
+              "drill_type": "period_checkin",
+              "description": "Unterscheide, ob der erste defensive Zugriff Kontrolle erzeugt oder nur stört.",
+              "didactics": {
+                "explanation": "Der erste Zugriff entscheidet nicht durch Härte, sondern durch Wirkung: Wird Zeit gekauft, Raum geschlossen oder nur kurz gestört?",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Zeitgewinn durch den ersten Zugriff",
+                    "Winkel und Körperstellung des Verteidigers",
+                    "Reaktion des Angreifers nach dem Kontakt"
+                  ],
+                  "how_to_decide": [
+                    "Beobachte nur den ersten Kontakt",
+                    "Bewerte Wirkung, nicht Intensität",
+                    "Frage dich: Hat der Angreifer weniger Optionen?"
+                  ],
+                  "ignore": [
+                    "Ob der Puck sofort verloren geht",
+                    "Härte oder Checks"
+                  ]
+                },
+                "learning_hint": "Ein guter erster Zugriff reduziert Optionen – er muss nichts erzwingen."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": { "first_contact": "kontrollierend" },
+                    "questions": [
+                      "Woran hast du erkannt, dass Optionen wirklich reduziert wurden?",
+                      "War der Winkel so, dass Hilfe/zweiter Zugriff möglich war?",
+                      "Hat der Gegner sichtbar Zeit verloren oder nur kurz gezuckt?"
+                    ]
+                  },
+                  {
+                    "when": { "first_contact": "störend" },
+                    "questions": [
+                      "Was hat gefehlt, damit daraus Kontrolle wird?",
+                      "War der Zugriff zu gerade, zu spät oder ohne Support?",
+                      "Konnten Mitspieler den Moment nutzen oder verpuffte er?"
+                    ]
+                  },
+                  {
+                    "when": { "first_contact": "wirkungslos" },
+                    "questions": [
+                      "Warum blieb der Gegner trotzdem handlungsfähig?",
+                      "War der Abstand/Winkel falsch oder kam der Zugriff zu spät?",
+                      "Welche minimale Anpassung hätte Wirkung erzeugt?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "first_contact",
+                    "type": "radio",
+                    "label": "Erster Zugriff",
+                    "options": [
+                      "kontrollierend",
+                      "störend",
+                      "wirkungslos"
+                    ]
+                  },
+                  {
+                    "key": "note",
+                    "type": "text",
+                    "label": "Kurze Begründung",
+                    "max_chars": 140
+                  }
+                ]
+              }
+            },
+            {
+  "id": "B3_D2",
+  "title": "Zweiter Zugriff & Staffelung",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, ob nach dem ersten Zugriff kollektive Defensive entsteht oder der Moment verpufft.",
+  "didactics": {
+    "explanation": "Der erste Zugriff gewinnt Zeit – der zweite Zugriff entscheidet über Kontrolle. Ohne Staffelung wird selbst ein guter erster Zugriff wirkungslos.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Position des zweiten Verteidigers / Forwards",
+        "Abstände zwischen erstem und zweitem Zugriff",
+        "Wird Raum geschlossen oder nur begleitet?"
+      ],
+      "how_to_decide": [
+        "Beobachte den Moment nach dem ersten Kontakt",
+        "Achte auf Winkel und Laufwege des zweiten Spielers",
+        "Frage dich: Entsteht echte Enge oder nur Bewegung?"
+      ],
+      "ignore": [
+        "Ob der Puck sofort gewonnen wird",
+        "Härte oder individuelle Duelle"
       ]
     },
+    "learning_hint": "Gute Defensive ist gestaffelt. Der zweite Zugriff entscheidet, ob aus Stören Kontrolle wird."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "second_access": "geschlossen" },
+        "questions": [
+          "Woran hast du die funktionierende Staffelung erkannt?",
+          "War der zweite Zugriff im richtigen Winkel?",
+          "Hatte der Gegner sichtbar weniger Optionen?"
+        ]
+      },
+      {
+        "when": { "second_access": "zu_spaet" },
+        "questions": [
+          "Was hat das Timing verzögert?",
+          "War der Abstand zu groß oder der Laufweg falsch?",
+          "Hätte früheres Antizipieren geholfen?"
+        ]
+      },
+      {
+        "when": { "second_access": "fehlt" },
+        "questions": [
+          "Warum blieb der erste Zugriff isoliert?",
+          "War keine Staffelung vorhanden oder wurde sie ignoriert?",
+          "Welche Rolle hätte eigentlich sichern müssen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "second_access",
+        "type": "radio",
+        "label": "Zweiter Zugriff",
+        "options": [
+          "geschlossen",
+          "zu spät",
+          "fehlt"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "B3_D3",
+  "title": "Drucktiming: Kollektiv oder Chaos",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, ob defensiver Druck abgestimmt erfolgt oder isoliert ins Leere läuft.",
+  "didactics": {
+    "explanation": "Druck wirkt nur dann, wenn er abgestimmt erfolgt. Einzelner Aktionismus erzeugt Tempo für den Gegner statt Kontrolle.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Zeitpunkt des Drucks",
+        "Anzahl der beteiligten Spieler",
+        "Absicherung hinter dem Druck"
+      ],
+      "how_to_decide": [
+        "Beobachte den Moment des Anlaufens",
+        "Frage dich: Wer geht mit?",
+        "Achte darauf, ob Passoptionen gleichzeitig geschlossen werden"
+      ],
+      "ignore": [
+        "Ob der Puck sofort verloren geht",
+        "Einzelne erfolgreiche Tacklings"
+      ]
+    },
+    "learning_hint": "Guter Druck ist gemeinsam getimt – nicht mutig, sondern abgestimmt."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "pressure_timing": "abgestimmt" },
+        "questions": [
+          "Woran hast du die Abstimmung erkannt?",
+          "Welche Passoptionen wurden gleichzeitig geschlossen?",
+          "Wirkte der Gegner sichtbar eingeengt?"
+        ]
+      },
+      {
+        "when": { "pressure_timing": "verzoegert" },
+        "questions": [
+          "Was hat die Abstimmung verzögert?",
+          "Kam der zweite Spieler zu spät oder zögerlich?",
+          "War das Timing knapp oder klar verpasst?"
+        ]
+      },
+      {
+        "when": { "pressure_timing": "isoliert" },
+        "questions": [
+          "Warum lief der Druck ins Leere?",
+          "Welche Absicherung fehlte?",
+          "Hat der Druck dem Gegner sogar Zeit verschafft?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pressure_timing",
+        "type": "radio",
+        "label": "Drucktiming",
+        "options": [
+          "abgestimmt",
+          "verzögert",
+          "isoliert"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "B3_D4",
+  "title": "Kontrollierte Enge vs. Überaggression",
+  "drill_type": "period_checkin",
+  "description": "Unterscheide, ob defensive Enge Kontrolle erzeugt oder dem Gegner neue Optionen öffnet.",
+  "didactics": {
+    "explanation": "Enge ist kein Selbstzweck. Gute Defensive reduziert Raum, ohne Struktur aufzugeben. Überaggression öffnet genau die Räume, die man schließen will.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Abstände zwischen den verteidigenden Spielern",
+        "Seitliche und rückwärtige Absicherung",
+        "Reaktion auf kleine Richtungswechsel des Gegners"
+      ],
+      "how_to_decide": [
+        "Beobachte die Teamform, nicht den einzelnen Zweikampf",
+        "Frage dich: Bleibt die Struktur stabil?",
+        "Achte darauf, ob Pässe durch Enge verhindert oder provoziert werden"
+      ],
+      "ignore": [
+        "Härte der Zweikämpfe",
+        "Kurzfristige Puckgewinne ohne Absicherung"
+      ]
+    },
+    "learning_hint": "Gute Enge nimmt Optionen. Schlechte Enge schenkt Durchbrüche."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "defensive_compactness": "kontrolliert" },
+        "questions": [
+          "Woran hast du die Stabilität der Enge erkannt?",
+          "Welche Optionen wurden dem Gegner sichtbar genommen?",
+          "Blieb die Staffelung auch nach Richtungswechsel stabil?"
+        ]
+      },
+      {
+        "when": { "defensive_compactness": "grenzwertig" },
+        "questions": [
+          "Wo wurde es knapp zwischen Druck und Risiko?",
+          "Welche Zone war kurz offen?",
+          "Hätte ein kleiner Abstand mehr Kontrolle gebracht?"
+        ]
+      },
+      {
+        "when": { "defensive_compactness": "ueberaggressiv" },
+        "questions": [
+          "Welche Räume wurden durch die Aggression geöffnet?",
+          "Wer musste kompensieren?",
+          "Warum kippte Kontrolle in Chaos?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "defensive_compactness",
+        "type": "radio",
+        "label": "Defensive Enge",
+        "options": [
+          "kontrolliert",
+          "grenzwertig",
+          "ueberaggressiv"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "B3_D5",
+  "title": "Defensive Sequenzen lesen (1.–2.–3. Aktion)",
+  "drill_type": "period_checkin",
+  "description": "Verstehe Defensive als Abfolge von Aktionen – nicht als Einzelmoment.",
+  "didactics": {
+    "explanation": "Gute Defensive besteht selten aus einer Aktion. Entscheidend ist, ob erste, zweite und dritte Aktion logisch aufeinander aufbauen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Was ist die erste defensive Aktion?",
+        "Wie reagiert das Team auf die nächste gegnerische Entscheidung?",
+        "Gibt es eine dritte, absichernde Aktion?"
+      ],
+      "how_to_decide": [
+        "Beobachte Sequenzen statt Einzelaktionen",
+        "Zähle gedanklich: 1 – 2 – 3",
+        "Frage dich: Bleibt Kontrolle über mehrere Momente bestehen?"
+      ],
+      "ignore": [
+        "Ob der Puck sofort gewonnen wird",
+        "Einzelne gute Zweikämpfe ohne Folgeaktion"
+      ]
+    },
+    "learning_hint": "Defensive Qualität zeigt sich in der Anschlussaktion – nicht im ersten Kontakt."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "sequence_quality": "stabil" },
+        "questions": [
+          "Welche Aktionen griffen sauber ineinander?",
+          "Wer sicherte die erste Aktion ab?",
+          "Wirkte das Verhalten abgestimmt oder automatisch?"
+        ]
+      },
+      {
+        "when": { "sequence_quality": "bruchstueckhaft" },
+        "questions": [
+          "Wo brach die Kette ab?",
+          "Kam die zweite oder dritte Aktion zu spät?",
+          "Lag es an Timing oder Positionierung?"
+        ]
+      },
+      {
+        "when": { "sequence_quality": "chaotisch" },
+        "questions": [
+          "Warum fehlte eine klare Abfolge?",
+          "Welche Aktion war isoliert?",
+          "Was hätte Struktur herstellen können?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "sequence_quality",
+        "type": "radio",
+        "label": "Defensive Sequenz",
+        "options": [
+          "stabil",
+          "bruchstueckhaft",
+          "chaotisch"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+          ]
+        }
+          ]
+        },
+
     {
       "id": "C",
       "title": "C – Zonen- & Team-Systeme",
       "goal": "Aus Lesen wird Systemverständnis",
       "modules": [
-        {
-          "id": "C1",
-          "title": "C1 – Defensive Zone Systeme",
-          "summary": "Box, Box+1, Switches, Slot Control",
-          "drills": []
+      {
+        "id": "C1",
+        "title": "C1 – Defensive Zone Systeme",
+        "summary": "Grundstrukturen, Staffelung und Raumkontrolle in der eigenen Zone",
+        "description": "Defensive Zonen-Systeme funktionieren nur, wenn Rollen, Abstände und Prioritäten klar sind. In diesem Track lernst du, defensive Ordnung zu erkennen, Systeme zu unterscheiden und deren Stabilität unabhängig vom Spielausgang zu bewerten.",
+        "learningGoals": [
+          "Erkenne grundlegende Defensive-Zonen-Strukturen",
+          "Verstehe Staffelung und Raumverantwortung",
+          "Unterscheide aktiven Druck von kontrollierter Absicherung",
+          "Lies Übergaben, Switches und Prioritätswechsel"
+        ],
+        "difficulty": 3,
+        "duration": 55,
+        "drills": [
+            {
+  "id": "C1_D1",
+  "title": "Slot-Kontrolle lesen",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, wie der Slot verteidigt wird – geschlossen, situativ offen oder dauerhaft offen.",
+  "didactics": {
+    "explanation": "Defensive Systeme unterscheiden sich nicht durch ihren Namen, sondern durch das, was sie schützen. Der Slot ist der zentrale Referenzraum.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionierung der Verteidiger relativ zum Slot",
+        "Abstände zwischen Slot und Puckseite",
+        "Reaktion auf Pässe oder Drives durch die Mitte"
+      ],
+      "how_to_decide": [
+        "Bewerte den Zustand des Slots, nicht das System",
+        "Achte auf Wiederholungen über mehrere Sequenzen",
+        "Frage dich: Wird der Slot aktiv geschützt?"
+      ],
+      "ignore": [
+        "Ob ein Tor fällt",
+        "Einzelne technische Fehler"
+      ]
+    },
+    "learning_hint": "Gute Defensiven definieren klar, was sie schützen – und was sie bewusst freigeben."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "slot_control": "geschlossen" },
+        "questions": [
+          "Woran hast du erkannt, dass der Slot Priorität hatte?",
+          "Welche Räume wurden dafür freigegeben?",
+          "Wirkte die Kontrolle geplant?"
+        ]
+      },
+      {
+        "when": { "slot_control": "situativ offen" },
+        "questions": [
+          "Warum öffnete sich der Slot?",
+          "War das Öffnen Teil des Systems oder erzwungen?",
+          "Wie schnell wurde reagiert?"
+        ]
+      },
+      {
+        "when": { "slot_control": "dauerhaft offen" },
+        "questions": [
+          "Warum blieb der Slot offen?",
+          "Lag es an System oder Staffelung?",
+          "Welche Gefahr entsteht daraus?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "slot_control",
+        "type": "radio",
+        "label": "Slot-Kontrolle",
+        "options": [
+          "geschlossen",
+          "situativ offen",
+          "dauerhaft offen"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+]
         },
         {
           "id": "C2",

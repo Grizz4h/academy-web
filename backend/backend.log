@@ -54,3 +54,5 @@ Traceback (most recent call last):
     @app.post("/api/sessions/{session_id}/microfeedback")
      ^^^
 NameError: name 'app' is not defined
+[checkin:362d2a1b] session=christoph_1769008772 phase_raw='PRE' phase_norm='PRE' action=append trace_id=6509f94f-650c-400c-a914-1a2654506dd0 trace_action=saveCheckin counts_before={}
+[checkin:362d2a1b] session=christoph_1769008772 counts_after={'PRE': 1}

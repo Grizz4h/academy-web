@@ -66,6 +66,11 @@ export default function SessionSetup() {
   const [teamAway, setTeamAway] = useState<string>('')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
     // Setze DEL-Defaults für Teams, wenn DEL gewählt wird und noch keine Teams gesetzt sind
     useEffect(() => {
       if (league === 'DEL') {

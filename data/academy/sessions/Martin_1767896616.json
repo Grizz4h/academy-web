@@ -149,15 +149,7 @@
     "current_drill_index": 0,
     "completed_drills": []
   },
-  "checkins": [
-    {
-      "phase": "PRE",
-      "answers": {},
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-08T19:24:39.665114"
-    }
-  ],
+  "checkins": [],
   "post": null,
   "game_info": {
     "league": "DEL",

@@ -1,0 +1,184 @@
+{
+  "id": "christoph_1768742300",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 4,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D1",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-18T14:18:20.670931",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Center & Struktur",
+      "drill_type": "period_checkin",
+      "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
+      "didactics": {
+        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Center-Position (Low / Middle / High)",
+            "Dreiecke / Anspielstationen",
+            "Abstände zwischen den Linien",
+            "Strukturgefühl: Wirkt das Team kompakt, verbunden und anspielbar – oder auseinandergezogen und reaktiv?"
+          ],
+          "how_to_decide": [
+            "Gesamteindruck zählt",
+            "Erste Intuition ist valide",
+            "Unsicher → Mitte wählen"
+          ],
+          "ignore": [
+            "Torchancen",
+            "Einzelne Fehlpässe",
+            "Emotionale Narrative"
+          ]
+        },
+        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "center_mostly": "low"
+            },
+            "questions": [
+              "Welche Aufgabe hat der Center in dieser Tiefe primär erfüllt – Absicherung oder Spielaufbau?",
+              "Hat seine tiefe Position eher Ruhe oder Enge ins Spiel gebracht?",
+              "War der Center anspielbar oder nur absichernd präsent?",
+              "Wie hätte sich das Spiel verändert, wenn er früher nach Middle geschoben hätte?"
+            ]
+          },
+          {
+            "when": {
+              "center_mostly": "middle"
+            },
+            "questions": [
+              "Welche Vorteile entstehen, wenn der Center das Middle kontrolliert?",
+              "War seine Position eher verbindend oder passiv?",
+              "Hat er Passoptionen geschaffen oder nur Raum besetzt?"
+            ]
+          },
+          {
+            "when": {
+              "center_mostly": "high"
+            },
+            "questions": [
+              "Warum konnte sich der Center so hoch positionieren – Struktur oder Spielsituation?",
+              "Hat seine Höhe das Spiel beschleunigt oder risikoreicher gemacht?",
+              "Wer hat dann die Absicherung übernommen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "center_mostly",
+            "type": "radio",
+            "label": "Center meist:",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          {
+            "key": "structure_feeling",
+            "type": "radio",
+            "label": "Strukturgefühl:",
+            "options": [
+              "geordnet",
+              "chaotisch",
+              "mixed"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Auffälligkeit (optional, 1 Satz)",
+            "max_chars": 120
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-01-18T14:18:23.633939"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "low",
+        "structure_feeling": "chaotisch"
+      },
+      "timestamp": "2026-01-18T14:56:20.591159"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "center_mostly": "high",
+        "structure_feeling": "mixed"
+      },
+      "timestamp": "2026-01-18T15:37:27.386136"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "structure_feeling": "chaotisch",
+        "center_mostly": "middle"
+      },
+      "timestamp": "2026-01-18T22:31:55.636165"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-01-18T22:32:10.243152"
+    }
+  ],
+  "drafts": {},
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-18T22:32:10.286396"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Löwen Frankfurt",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-01-18T13:18:20.626Z"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Absicherung",
+      "ts": "2026-01-18T14:56:27.942028"
+    },
+    "P2": {
+      "done": true,
+      "text": "eher durch die defensive Art der Frankfurter situativ",
+      "ts": "2026-01-18T15:37:47.488192"
+    },
+    "P3": {
+      "done": true,
+      "text": "schneller turnover",
+      "ts": "2026-01-18T22:32:08.061629"
+    }
+  }
+}

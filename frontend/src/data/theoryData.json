@@ -1,0 +1,3617 @@
+{
+  "A1": {
+    "badge": "TRACK A1",
+    "title": "Rink IQ & Rollenverständnis",
+    "subtitle": "Spiel lesen lernen: Ordnung erkennen, Chaos einordnen",
+    "overview": "<strong>Rink IQ & Rollenverständnis</strong> ist das Fundament des modernen Eishockeys. Es geht darum, das Spiel zu lesen, bevor es passiert – Antizipation statt Reaktion. Spieler mit hohem Rink IQ erkennen Ordnung im Chaos und verstehen ihre funktionalen Rollen (Center, Winger, Defense) sowie die Bedeutung von Dreiecken als kleinste spielbare Einheit.",
+    "sections": [
+      {
+        "id": "rinkIQ",
+        "title": "Was ist Rink IQ?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Rink IQeeee beschreibt die Fähigkeit eines Spielers, das Spiel zu lesen, <strong>bevor</strong> es sich vollständig entfaltet. Es geht nicht um Talent, Tempo oder Technik, sondern um <em>Antizipation</em>: Wer versteht, was gleich passieren wird, ist früher am richtigen Ort – oft ohne spektakuläre Aktionen."
+          },
+          {
+            "type": "paragraph",
+            "text": "Rink IQ zeigt sich nicht in Highlights, sondern in unscheinbaren, wiederholbaren Entscheidungen:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "richtige Position vor dem Pass",
+              "richtige Höhe im Angriff",
+              "richtige Unterstützung im Moment des Puckverlusts"
+            ]
+          },
+          {
+            "type": "highlight",
+            "text": "<strong>Kurz:</strong> Rink IQ ist mentale Ordnung im bewegten System Eishockey."
+          }
+        ]
+      },
+      {
+        "id": "warumZentral",
+        "title": "Warum ist Rink IQ zentral?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Eishockey ist kein Abfolge-Spiel („erst A, dann B\"), sondern ein <strong>permanenter Zustandswechsel</strong>:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Angriff → Umschalten",
+              "Druck → Absicherung",
+              "Ordnung → Chaos"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Spieler mit hohem Rink IQ <strong>reagieren nicht</strong>, sie <strong>antizipieren</strong>. Spieler mit niedrigem Rink IQ reagieren zu spät – und wirken hektisch, obwohl sie sich viel bewegen."
+          },
+          {
+            "type": "paragraph",
+            "text": "Rink IQ ist der Unterschied zwischen:"
+          },
+          {
+            "type": "comparison",
+            "items": [
+              {
+                "class": "bad",
+                "text": "„immer knapp zu spät\""
+              },
+              {
+                "class": "good",
+                "text": "„scheinbar mühelos richtig\""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rollenverstaendnis",
+        "title": "Rollenverständnis: Ordnung im Chaos",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Rollen sind keine starren Positionen, sondern <strong>Funktionszustände</strong>, die sich je nach Spielsituation verändern. Trotzdem gilt: Ohne klares Rollenverständnis entsteht Chaos – selbst bei talentierten Spielern."
+          }
+        ]
+      },
+      {
+        "id": "dreiecke",
+        "title": "Dreiecke – die kleinste funktionierende Einheit",
+        "content": [
+          {
+            "type": "concept-card",
+            "title": "Was ist ein Dreieck?",
+            "content": [
+              {
+                "type": "paragraph",
+                "text": "Ein Dreieck ist eine stabile Pass- und Absicherungsstruktur aus drei Spielern. Es entsteht ständig neu – im Breakout, im Forecheck, im Angriff."
+              },
+              {
+                "type": "paragraph",
+                "text": "Warum ist das wichtig?"
+              },
+              {
+                "type": "paragraph",
+                "text": "Dreiecke schaffen:"
+              },
+              {
+                "type": "list",
+                "items": [
+                  "zwei Passoptionen",
+                  "eine Absicherung",
+                  "klare Entscheidungslogik"
+                ]
+              },
+              {
+                "type": "paragraph",
+                "text": "Ohne Dreiecke gibt es nur Einzelaktionen."
+              },
+              {
+                "type": "paragraph",
+                "text": "Woran erkennt man funktionierende Dreiecke?"
+              },
+              {
+                "type": "list",
+                "items": [
+                  "Spieler stehen nicht auf einer Linie",
+                  "Abstände sind passfähig, nicht maximal",
+                  "ein Spieler ist immer „unterstützend\" positioniert"
+                ]
+              },
+              {
+                "type": "paragraph",
+                "text": "Typische Fehler"
+              },
+              {
+                "type": "list",
+                "items": [
+                  "alle laufen zum Puck",
+                  "Dreiecke brechen bei Druck sofort auseinander",
+                  "Fokus auf Zielraum statt Struktur"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ordnungChaos",
+        "title": "Ordnung vs. Chaos – das Grundprinzip",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Eishockey pendelt ständig zwischen geordneten Phasen und chaotischen Phasen."
+          },
+          {
+            "type": "phases",
+            "items": [
+              {
+                "title": "Ordnung",
+                "items": [
+                  "kontrollierter Aufbau",
+                  "klare Rollen"
+                ]
+              },
+              {
+                "title": "Chaos",
+                "items": [
+                  "Rebounds",
+                  "Turnovers",
+                  "Scramble"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Rink IQ bedeutet, zu erkennen: <strong>Wann halte ich Ordnung? Wann akzeptiere ich Chaos?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Spieler mit niedrigem Rink IQ versuchen, Chaos zu „gewinnen\". Spieler mit hohem Rink IQ <strong>überleben Chaos</strong> und stellen danach wieder Ordnung her."
+          }
+        ]
+      },
+      {
+        "id": "missverstaendnisse",
+        "title": "Häufige Missverständnisse",
+        "content": [
+          {
+            "type": "myths",
+            "items": [
+              {
+                "text": "<strong>❌ „Rink IQ = langsam, clever spielen\"</strong><br/>→ falsch. Rink IQ kann sehr schnell sein – aber zielgerichtet."
+              },
+              {
+                "text": "<strong>❌ „Rollen schränken Kreativität ein\"</strong><br/>→ falsch. Rollen ermöglichen Kreativität, weil sie Struktur geben."
+              },
+              {
+                "text": "<strong>❌ „Dreiecke sind ein System\"</strong><br/>→ nein. Dreiecke sind ein Prinzip, systemunabhängig."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zusammenfassung",
+        "title": "Kernzusammenfassung",
+        "content": [
+          {
+            "type": "summary-grid",
+            "items": [
+              {
+                "text": "<strong>Rink IQ</strong> = Antizipation + Strukturverständnis"
+              },
+              {
+                "text": "<strong>Rollen</strong> sind funktional, nicht statisch"
+              },
+              {
+                "text": "<strong>Center</strong> stabilisiert das Zentrum"
+              },
+              {
+                "text": "<strong>Winger</strong> geben Breite und Sicherheit"
+              },
+              {
+                "text": "<strong>Defense</strong> steuert Risiko und Tempo"
+              },
+              {
+                "text": "<strong>Dreiecke</strong> sind die Basis jeder Spielform"
+              },
+              {
+                "text": "<strong>Ordnung herstellen</strong> ist wichtiger als Chaos zu gewinnen"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "A2": {
+    "badge": "TRACK A2",
+    "title": "Raum, Linien & Breakout-Logik",
+    "subtitle": "Zonen verstehen, Entscheidungen lesen, Spiel eröffnen",
+    "overview": "<strong>Raum, Linien & Breakout-Logik</strong> beschreibt die räumliche Organisation des Eishockeys und wie Teams aus der eigenen Zone ins Spiel kommen. Es geht um Entscheidungslogik: Wo ist Raum? Wo ist Druck? Welche Linie ist Grenze, welche Chance? Breakouts sind Antworten auf Raum- und Drucksituationen, keine festen Spielzüge.",
+    "sections": [
+      {
+        "id": "raumLinienBreakout",
+        "title": "Was ist mit Raum, Linien & Breakout-Logik gemeint?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Dieses Modul beschreibt wie Eishockey räumlich organisiert ist und wie Teams aus der eigenen Zone ins Spiel kommen. Es geht nicht um ein bestimmtes System, sondern um Entscheidungslogik:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Wo ist Raum?",
+              "Wo ist Druck?",
+              "Welche Linie ist Grenze, welche ist Chance?",
+              "Wann ist ein Pass sinnvoll – und wann gefährlich?"
+            ]
+          },
+          {
+            "type": "highlight",
+            "text": "<strong>Breakouts sind keine festen Spielzüge. Sie sind Antworten auf Raum- und Drucksituationen.</strong>"
+          }
+        ]
+      },
+      {
+        "id": "zonenLinien",
+        "title": "Zonen & Linien – das räumliche Grundgerüst",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h3>Zonen: Defensiv, Neutral, Offensiv</h3>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist das?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Das Spielfeld ist in drei Zonen unterteilt:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "<strong>Defensivzone:</strong> eigener Schutzraum, höchster Risikobereich",
+              "<strong>Neutralzone:</strong> Übergangsraum, Tempo- und Strukturzone",
+              "<strong>Offensivzone:</strong> Angriffsraum, Zielzone"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Warum ist das wichtig?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Jede Zone hat andere Prioritäten:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "In der Defensivzone zählt Kontrolle",
+              "In der Neutralzone zählt Ordnung",
+              "In der Offensivzone zählt Kreativität"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Fehler entstehen, wenn Spieler mit der falschen Logik in der falschen Zone spielen.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Woran erkennt man Zonenverständnis im Spiel?</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Geduld tief hinten",
+              "klare Entscheidungen an den Linien",
+              "weniger Turnovers im Zentrum"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Typische Fehler</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Risiko-Pässe in der Defensivzone",
+              "unnötiges Dumpen in der Neutralzone",
+              "überhastete Abschlüsse in der Offensivzone"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "blueLine",
+        "title": "Die Blue Line – Grenze und Entscheidungspunkt",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist das?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Die blaue Linie ist keine Markierung, sondern eine Entscheidungsschwelle.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Warum ist sie wichtig?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "An der Blue Line entscheidet sich:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Puckbesitz oder Turnover",
+              "Angriff oder Gegentor",
+              "Kontrolle oder Chaos"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Woran erkennt man gutes Line-Management?</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Puck wird mit Kontrolle über die Linie gebracht oder bewusst abgelegt",
+              "Spieler sind in Bewegung, nicht statisch wartend",
+              "Support ist sichtbar vor der Linie"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Typische Fehler</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "„Noch schnell reinchippen\" ohne Support",
+              "stehende Mitspieler an der Linie",
+              "Puckverluste mit offenem Eis dahinter"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "breakoutLogik",
+        "title": "Breakout-Logik – Spiel eröffnen statt befreien",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist ein Breakout wirklich?</h4>"
+          },
+          {
+            "type": "comparison",
+            "items": [
+              {
+                "class": "bad",
+                "text": "<strong>Nicht:</strong><br/>„Puck raus aus der Zone\""
+              },
+              {
+                "class": "good",
+                "text": "<strong>Sondern:</strong><br/>geordneter Übergang von Verteidigung zu Angriff"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Ein guter Breakout:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "erhält Puckbesitz",
+              "erzeugt Struktur",
+              "zwingt den Gegner zur Rückwärtsbewegung"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "erstePassoption",
+        "title": "Erste Passoption – der Schlüssel",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist das?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Die erste Passoption ist die nächste sichere Entscheidung nach Puckgewinn.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Warum ist sie entscheidend?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Der erste Pass bestimmt:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Tempo",
+              "Ordnung",
+              "Erfolgswahrscheinlichkeit des gesamten Angriffs"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Woran erkennt man gute erste Optionen?</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Spieler bieten sich vor dem Puckgewinn an",
+              "klare Winkel, nicht direkt im Druck",
+              "Pass geht weg vom Forecheck, nicht hinein"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Typische Fehler</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "erst schauen, dann anbieten (zu spät)",
+              "Pässe entlang der Bande ohne Anschluss",
+              "vertikale Pässe durch den Slot unter Druck"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "raumgefuehl",
+        "title": "Raumgefühl – sehen, was nicht offensichtlich ist",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was bedeutet Raumgefühl?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Raumgefühl ist die Fähigkeit, freien Raum zu erkennen, bevor er genutzt wird.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Es geht nicht nur um offenen Raum, sondern um:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "entstehenden Raum",
+              "verlagerten Druck",
+              "freie Anschlusswege"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Warum ist das wichtig?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Gegner verteidigen Puck, nicht Raum. Wer Raum erkennt, spielt vor der Defensive.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Woran erkennt man gutes Raumgefühl?</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Spieler lösen sich früh aus Deckungsschatten",
+              "Puck wird verlagert, nicht erzwungen",
+              "Tempo entsteht durch Pass, nicht durch Sprint"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<h4>Typische Fehler</h4>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "alle Spieler bewegen sich zum Puck",
+              "freier Raum wird ignoriert, weil er „unauffällig\" ist",
+              "Tempo wird mit Geschwindigkeit verwechselt"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "linienlogik",
+        "title": "Linienlogik statt Systemdenken",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Ein häufiger Denkfehler:</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "„Wir spielen System X, also machen wir Y.\""
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>In Wahrheit gilt:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Druck entscheidet, nicht System",
+              "Raum entscheidet, nicht Playbook",
+              "Linien geben Regeln vor, keine Spielzüge"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Gute Teams passen ihre Breakouts situativ an:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "starker Forecheck → kürzer, sicherer",
+              "passiver Forecheck → breiter, kontrollierter",
+              "Wechselchaos → Tempo rausnehmen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "missverstaendnisseA2",
+        "title": "Typische Missverständnisse",
+        "content": [
+          {
+            "type": "comparison",
+            "items": [
+              {
+                "class": "bad",
+                "text": "<strong>❌ „Ein Breakout ist erfolgreich, wenn der Puck raus ist\"</strong><br/>→ nein. Erfolgreich ist er nur bei kontrolliertem Anschluss."
+              },
+              {
+                "class": "bad",
+                "text": "<strong>❌ „Die Bande ist immer sicher\"</strong><br/>→ nein. Die Bande ist oft eine Falle, wenn kein Support da ist."
+              },
+              {
+                "class": "bad",
+                "text": "<strong>❌ „Tempo löst Druck\"</strong><br/>→ nein. Struktur löst Druck, Tempo nutzt ihn."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zusammenfassungA2",
+        "title": "Kernzusammenfassung",
+        "content": [
+          {
+            "type": "summary-grid",
+            "items": [
+              {
+                "text": "<strong>Zonen</strong> verlangen unterschiedliche Entscheidungen"
+              },
+              {
+                "text": "<strong>Blue Line</strong> ist eine Risiko-Grenze"
+              },
+              {
+                "text": "<strong>Breakouts</strong> sind Entscheidungslogik, keine Spielzüge"
+              },
+              {
+                "text": "<strong>Erster Pass</strong> ist der wichtigste"
+              },
+              {
+                "text": "<strong>Raum</strong> entsteht durch Antizipation, nicht durch Sprint"
+              },
+              {
+                "text": "<strong>Linien</strong> geben Regeln vor, Systeme nur Rahmen"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "A3": {
+    "badge": "TRACK A3",
+    "title": "Transition & Tempo",
+    "subtitle": "Umschaltmomente erkennen, Tempo kontrollieren, Chaos nutzen",
+    "overview": "<strong>Transition & Tempo</strong> behandelt die gefährlichsten Momente im Eishockey: Umschaltmomente zwischen Angriff und Verteidigung. Es geht um das Erkennen von Turnovers, die Kontrolle von Tempo, effektives Backchecking und Gap Control. Transition entscheidet Spiele – nicht Systeme.",
+    "sections": [
+      {
+        "id": "transitionGrundlagen",
+        "title": "Was ist Transition im Eishockey?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Transition bezeichnet alle Umschaltmomente zwischen Angriff und Verteidigung – unabhängig davon, in welcher Zone sie passieren. Konkret heißt das:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Angriff → Verteidigung (nach Puckverlust)",
+              "Verteidigung → Angriff (nach Puckgewinn)"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Transition ist kein eigener Spielzustand, sondern der gefährlichste Moment im Spiel, weil:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Ordnung gerade zerfällt",
+              "Abstände instabil sind",
+              "Rollen sich neu sortieren müssen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "warumTransition",
+        "title": "Warum ist Transition so spielentscheidend?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Die meisten hochwertigen Torchancen entstehen nicht aus aufgebautem Spiel, sondern aus:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Turnovers",
+              "unklaren Zuständigkeiten",
+              "verzögerten Reaktionen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Teams verlieren Spiele nicht, weil ihr System schlecht ist, sondern weil sie Umschaltmomente schlecht lesen.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Transition entscheidet:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "ob ein Spiel schnell oder kontrolliert wird",
+              "ob Tempo für oder gegen dich wirkt",
+              "ob Chaos genutzt oder überlebt wird"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "tempoDefinition",
+        "title": "Tempo – mehr als Geschwindigkeit",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was bedeutet Tempo wirklich?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Tempo ist nicht gleich Geschwindigkeit.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Tempo beschreibt:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Entscheidungsgeschwindigkeit",
+              "Richtungswechsel",
+              "Timing von Aktionen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Ein langsamer Spieler kann hohes Tempo erzeugen, wenn er früh entscheidet. Ein schneller Spieler kann Tempo töten, wenn er zu spät reagiert.</strong>"
+          }
+        ]
+      },
+      {
+        "id": "warumTempo",
+        "title": "Warum ist Tempo wichtig?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Tempo zwingt den Gegner zu:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Reaktionen statt Aktionen",
+              "Rückwärtsbewegung",
+              "Improvisation"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Aber: Unkontrolliertes Tempo erzeugt eigene Fehler.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Die Kernfrage lautet immer:"
+          },
+          {
+            "type": "paragraph",
+            "text": "<em>Beschleunige ich das Spiel – oder beschleunigt es mich?</em>"
+          }
+        ]
+      },
+      {
+        "id": "turnovers",
+        "title": "Turnovers – Ursprung jeder Transition",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist ein Turnover?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Ein Turnover ist jeder ungeplante Wechsel des Puckbesitzes:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Fehlpass",
+              "abgefangener Pass",
+              "verlorener Zweikampf",
+              "geblockter Schuss mit direktem Gegenzug"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Nicht jeder Turnover ist gleich gefährlich. Gefährlich sind Turnovers:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "im Zentrum",
+              "an der Blue Line",
+              "bei offener Struktur"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "warumTurnovers",
+        "title": "Warum sind Turnovers kritisch?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Turnovers treffen Teams in einem Moment, in dem:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Rollen noch offensiv gedacht sind",
+              "Abstände groß sind",
+              "Blickrichtung nach vorne geht"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Ein Turnover ist kein Fehlerproblem, sondern ein Strukturproblem danach.</strong>"
+          }
+        ]
+      },
+      {
+        "id": "turnoverVerhalten",
+        "title": "Woran erkennt man gutes Turnover-Verhalten?",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "sofortige Rückwärtsbewegung",
+              "erstes Ziel: Mitte schließen, nicht Puck jagen",
+              "klare Priorität: Zeit kaufen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "turnoverFehler",
+        "title": "Typische Fehler",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "sofortiger Gegenangriff-Versuch nach Puckverlust",
+              "mehrere Spieler gehen auf den gleichen Gegenspieler",
+              "Centerraum bleibt offen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rushes",
+        "title": "Rush-Situationen – Angriff aus der Bewegung",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist ein Rush?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Ein Rush ist ein Angriff mit Geschwindigkeit, bei dem:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "der Gegner rückwärts läuft",
+              "Abstände noch nicht stabil sind",
+              "Entscheidungen unter Druck fallen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Rush ≠ Konter. Ein Rush kann auch aus kontrolliertem Aufbau entstehen.</strong>"
+          }
+        ]
+      },
+      {
+        "id": "warumRushes",
+        "title": "Warum sind Rushes so effektiv?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Weil Verteidiger:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Gap kontrollieren müssen",
+              "Pass und Schuss gleichzeitig verteidigen",
+              "keine Zeit für Hilfe haben"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Rushes bestrafen schlechte Transition, nicht schlechte Systeme.</strong>"
+          }
+        ]
+      },
+      {
+        "id": "rushEntscheidungen",
+        "title": "Woran erkennt man gute Rush-Entscheidungen?",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "Puckträger liest Verteidiger, nicht Tor",
+              "Breite wird gehalten",
+              "Trailer ist sichtbar eingebunden"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rushFehler",
+        "title": "Typische Fehler",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "zu frühes Abschließen ohne Support",
+              "alle Spieler fahren gleiche Spur",
+              "Querpass ohne Zug zum Tor"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "backchecking",
+        "title": "Backchecking – Struktur wiederherstellen",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist Backchecking?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Backchecking ist strukturierte Rückwärtsarbeit, nicht Sprinten. Ziel ist:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Raum zu schließen",
+              "Passoptionen zu nehmen",
+              "Zeit für die Defense zu gewinnen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "warumBackchecking",
+        "title": "Warum ist Backchecking entscheidend?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Gutes Backchecking:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "reduziert Rush-Gefahr",
+              "stabilisiert Abstände",
+              "ermöglicht kontrollierte Verteidigung"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Schlechtes Backchecking zwingt Defense zu:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Rückwärtsverteidigung ohne Support",
+              "Überaggressivität",
+              "Fouls oder Notlösungen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "backcheckingQualitaet",
+        "title": "Woran erkennt man gutes Backchecking?",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "Spieler laufen durch das Zentrum, nicht außen vorbei",
+              "Stöcke im Passweg",
+              "Blick nach innen, nicht nur zum Puck"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "backcheckingFehler",
+        "title": "Typische Fehler",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "„Alibi-Sprints\" ohne Einfluss",
+              "Fokus nur auf Puckträger",
+              "kein Timing (zu spät, zu hoch)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gapControl",
+        "title": "Gap Control – Distanz steuern",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<h4>Was ist Gap Control?</h4>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Gap Control beschreibt den Abstand zwischen Verteidiger und Angreifer. Nicht maximal eng – sondern kontrolliert variabel.</strong>"
+          }
+        ]
+      },
+      {
+        "id": "warumGapControl",
+        "title": "Warum ist Gap Control zentral für Transition?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Weil der Gap entscheidet:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "ob der Angreifer Zeit hat",
+              "ob der Verteidiger reagieren oder diktieren kann",
+              "ob Tempo gestoppt oder genutzt wird"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gapControlQualitaet",
+        "title": "Woran erkennt man gutes Gap Control?",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "Defense hält Angreifer außen",
+              "Geschwindigkeit wird angepasst",
+              "Abstand bleibt konstant trotz Richtungswechsel"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gapControlFehler",
+        "title": "Typische Fehler",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "zu früher Angriff → leicht überspielt",
+              "zu tiefer Rückzug → freier Abschluss",
+              "kein Abgleich mit Partner oder Backcheckern"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "umschaltmomente",
+        "title": "Umschaltmomente lesen – der Kern von Rink IQ",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Transition ist der Punkt, an dem Rink IQ sichtbar wird.</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Spieler mit hohem Rink IQ:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "erkennen Turnovers früh",
+              "passen Tempo an die Situation an",
+              "stellen Struktur wieder her, bevor Chaos entsteht"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Spieler mit niedrigem Rink IQ:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "reagieren verspätet",
+              "laufen dem Spiel hinterher",
+              "erzeugen Folgeprobleme"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "missverstaendnisseA3",
+        "title": "Typische Missverständnisse",
+        "content": [
+          {
+            "type": "comparison",
+            "items": [
+              {
+                "class": "bad",
+                "text": "<strong>❌ „Tempo heißt immer schneller spielen\"</strong><br/>→ nein. Tempo ist situativ."
+              },
+              {
+                "class": "bad",
+                "text": "<strong>❌ „Backchecking ist Einsatzfrage\"</strong><br/>→ nein. Es ist Positions- und Timingfrage."
+              },
+              {
+                "class": "bad",
+                "text": "<strong>❌ „Rush stoppen = Puck angreifen\"</strong><br/>→ nein. Raum kontrollieren ist entscheidender."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zusammenfassungA3",
+        "title": "Kernzusammenfassung",
+        "content": [
+          {
+            "type": "summary-grid",
+            "items": [
+              {
+                "text": "<strong>Transition</strong> ist der gefährlichste Spielmoment"
+              },
+              {
+                "text": "<strong>Tempo</strong> ist Entscheidung, nicht Geschwindigkeit"
+              },
+              {
+                "text": "<strong>Turnovers</strong> sind normal – Reaktionen danach entscheiden"
+              },
+              {
+                "text": "<strong>Rushes</strong> bestrafen schlechte Ordnung"
+              },
+              {
+                "text": "<strong>Backchecking</strong> stellt Struktur wieder her"
+              },
+              {
+                "text": "<strong>Gap Control</strong> steuert Risiko"
+              },
+              {
+                "text": "<strong>Umschaltmomente</strong> zeigen echten Rink IQ"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "B1": {
+    "badge": "TRACK B1",
+    "title": "Center-Detailarbeit",
+    "subtitle": "(Low / Middle / High – Zentrum lesen, Struktur sichern)",
+    "overview": "Der Center ist kein fixer Positionsspieler, sondern ein dynamischer Strukturspieler. Seine Aufgabe ist nicht primär Scoring, sondern Ordnung im Zentrum – offensiv wie defensiv. Die Center-Rolle lässt sich sinnvoll in drei Höhen-Zustände gliedern: Low, Middle, High Diese Zustände sind keine Zonen, sondern situative Rollen, die sich innerhalb weniger Sekunden ändern können.",
+    "sections": [
+      {
+        "id": "centerRolle",
+        "title": "Was ist die Center-Rolle im Detail?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Die Center-Rolle lässt sich sinnvoll in drei Höhen-Zustände gliedern:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Low",
+              "Middle",
+              "High"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Diese Zustände sind keine Zonen, sondern situative Rollen, die sich innerhalb weniger Sekunden ändern können."
+          }
+        ]
+      },
+      {
+        "id": "warumWichtig",
+        "title": "Warum ist der Center strukturell so wichtig?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Das Zentrum ist:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "defensiv: höchster Gefahrenraum",
+              "offensiv: größter Einflussraum"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Der Center ist der einzige Spieler, der:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "regelmäßig unterhalb der Goal Line",
+              "im Slot",
+              "und oberhalb der Circles agiert – oft im selben Shift."
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Fehlt dort Ordnung, muss das Team:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "mehr laufen",
+              "mehr reagieren",
+              "mehr improvisieren"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Das Spiel wird hektisch – selbst bei guter individueller Qualität."
+          }
+        ]
+      },
+      {
+        "id": "dreiZustaende",
+        "title": "Die drei Höhen-Zustände des Centers",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Die drei Höhen-Zustände beschreiben die verschiedenen Rollen, die der Center je nach Spielsituation einnimmt. Sie sind dynamisch und können sich schnell ändern."
+          }
+        ]
+      },
+      {
+        "id": "low",
+        "title": "Low – defensive Stabilisierung",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Was bedeutet „Low“?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Der Center spielt tief in der eigenen Zone, häufig:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "unterhalb der Hashmarks",
+              "im oder nahe des Slots",
+              "unterstützend hinter dem Tor"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Er agiert hier defensiv denkend, nicht puckjagend."
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Warum ist das wichtig?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Low-Positionierung:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "schützt den Slot",
+              "entlastet die Defense",
+              "schafft Überzahl in gefährlichen Räumen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Ohne einen Low-Center entstehen:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "offene Rebounds",
+              "freie Gegenspieler im Slot",
+              "Chaos bei Puckverlusten"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Woran erkennt man gutes Low-Play?</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Center hält Innenposition, nicht Mannorientierung",
+              "Blick ist nach innen gerichtet, nicht nur zum Puck",
+              "kurze, kontrollierte Bewegungen statt Sprints"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Typische Fehler</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Center geht zu tief und bleibt dort",
+              "Fokus auf Puck statt Raum",
+              "verlässt den Slot für unnötige Zweikämpfe"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "middle",
+        "title": "Middle – Verbindung und Umschaltpunkt",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Was bedeutet „Middle“?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Der Center agiert im zentralen Übergangsraum:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "zwischen Defense und Winger",
+              "zwischen Defensiv- und Neutralzone",
+              "als erste Anspielstation nach Puckgewinn"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Middle ist der aktivste Zustand."
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Warum ist Middle-Play entscheidend?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Im Middle entscheidet sich:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "ob ein Breakout sauber wird",
+              "ob Tempo kontrolliert entsteht",
+              "ob ein Turnover sofort gefährlich wird"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Der Center ist hier:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Strukturgeber",
+              "Tempo-Regler",
+              "Sicherheitsventil"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Woran erkennt man gutes Middle-Play?</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Center bietet sich vor dem Puckgewinn an",
+              "klare Winkel, nicht im Deckungsschatten",
+              "Passoptionen werden offen gehalten, nicht erzwungen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Typische Fehler</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Center steht zu hoch → keine Anspielstation",
+              "Center steht zu tief → kein Anschluss",
+              "Passforderung ohne Raumgefühl"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "high",
+        "title": "High – Angriffssicherung und Leseposition",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Was bedeutet „High“?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "High beschreibt die Rolle des Centers:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "oberhalb der Circles",
+              "zwischen den Point-Spielern",
+              "als Absicherung gegen Konter"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Der Center denkt hier präventiv."
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Warum ist High-Play wichtig?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "High-Positionierung:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "sichert die Blue Line",
+              "ermöglicht Rebounds & Second Chances",
+              "verhindert direkte Gegenzüge"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Ohne High-Center:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Defense wird isoliert",
+              "Turnovers führen sofort zu Rushes",
+              "Angriff verliert Nachhaltigkeit"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Woran erkennt man gutes High-Play?</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Center liest Point-Spieler, nicht Puck",
+              "Abstand zur Blue Line ist kontrolliert",
+              "schneller Richtungswechsel möglich"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Typische Fehler</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "zu tiefes Einrücken in den Slot",
+              "Jagd auf Abschlüsse statt Absicherung",
+              "fehlende Kommunikation mit Defense"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "uebergaenge",
+        "title": "Übergänge zwischen Low – Middle – High",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Der entscheidende Punkt ist nicht, die Rollen zu kennen, sondern rechtzeitig zwischen ihnen zu wechseln."
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Guter Center:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "löst sich früh aus Low, wenn Kontrolle da ist",
+              "fällt rechtzeitig aus High zurück",
+              "bleibt im Middle, solange Struktur fragil ist"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Schlechter Center:</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "bleibt zu lange in einem Zustand",
+              "reagiert statt zu antizipieren",
+              "läuft dem Spiel hinterher"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "turnovers",
+        "title": "Center & Verantwortung bei Turnovers",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Der Center ist primär verantwortlich für die erste Ordnung nach Puckverlust."
+          },
+          {
+            "type": "paragraph",
+            "text": "Das bedeutet:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "nicht sofort Druck auf den Puck",
+              "zuerst Zentrum schließen",
+              "Kommunikation und Orientierung geben"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Ein Center, der nach Turnover „attackiert\", öffnet oft genau den Raum, den er schützen müsste."
+          }
+        ]
+      },
+      {
+        "id": "missverstaendnisse",
+        "title": "Häufige Missverständnisse",
+        "content": [
+          {
+            "type": "myths",
+            "items": [
+              {
+                "text": "<strong>❌ „Center = Spielmacher nach vorne\"</strong><br/>→ falsch. Center = Strukturspieler in alle Richtungen."
+              },
+              {
+                "text": "<strong>❌ „Ein guter Center ist überall\"</strong><br/>→ falsch. Ein guter Center ist immer am richtigen Ort."
+              },
+              {
+                "text": "<strong>❌ „Low spielen heißt defensiv denken\"</strong><br/>→ falsch. Low ist Voraussetzung für sauberen Angriff."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zusammenfassung",
+        "title": "Kernzusammenfassung",
+        "content": [
+          {
+            "type": "summary-grid",
+            "items": [
+              {
+                "text": "<strong>Der Center ist der strukturelle Anker</strong>"
+              },
+              {
+                "text": "<strong>Low / Middle / High sind Zustände, keine Zonen</strong>"
+              },
+              {
+                "text": "<strong>Low sichert Slot und Ruhe</strong>"
+              },
+              {
+                "text": "<strong>Middle verbindet und steuert Tempo</strong>"
+              },
+              {
+                "text": "<strong>High sichert Angriff und verhindert Gegenzüge</strong>"
+              },
+              {
+                "text": "<strong>Übergänge sind wichtiger als Einzelpositionen</strong>"
+              },
+              {
+                "text": "<strong>Gute Center stellen Ordnung her, bevor Chaos entsteht</strong>"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  "B2": {
+    "badge": "TRACK B2",
+    "title": "Winger-Detailarbeit",
+    "subtitle": "(Wall Play, Outlet-Positionierung, Rückwärtsarbeit)",
+    "overview": "Dieses Modul beschreibt die Winger-Rolle als strukturelle Randfunktion im Teamspiel. Der Fokus liegt darauf, wie Winger durch Positionierung, Entscheidungsfindung und Rückwärtsarbeit den Spielaufbau stabilisieren oder destabilisieren. B2 ordnet ein, warum Spielzüge häufig an der Bande scheitern und welche Rolle Winger bei Breakouts, Übergängen und Turnovers spielen. Es erklärt die Winger-Rolle nicht als Abschlussposition, sondern als Schlüssel zur Spielordnung außerhalb des Zentrums.",
+    "sections": [
+      {
+        "id": "wingerRolle",
+        "title": "Was ist die Winger-Rolle im Detail?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Der Winger ist kein Randspieler, sondern ein raumdefinierender Strukturspieler."
+          },
+          {
+            "type": "paragraph",
+            "text": "Seine Hauptaufgabe ist nicht Scoring, sondern:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Breite halten",
+              "Anspielbarkeit sichern",
+              "Übergänge absichern"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Winger entscheiden, ob ein Team:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "geordnet aus der Zone kommt",
+              "Tempo aufbauen kann",
+              "oder sich selbst an der Bande festfährt"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "warumWichtig",
+        "title": "Warum ist die Winger-Rolle strukturell kritisch?",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Winger operieren in einem scheinbar einfachen Raum – der Bande."
+          },
+          {
+            "type": "paragraph",
+            "text": "Tatsächlich ist das:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "der engste Raum",
+              "der am stärksten verteidigte Raum",
+              "der häufigste Turnover-Ort"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Gutes Winger-Spiel:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "macht das Spiel lesbar",
+              "entlastet Center und Defense",
+              "hält Systeme stabil"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Schlechtes Winger-Spiel:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "zerstört Breakouts",
+              "isoliert Mitspieler",
+              "erzeugt Dauerstress"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "wallPlay",
+        "title": "Wall Play – Kontrolle am Rand",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Was ist Wall Play wirklich?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Wall Play ist keine Zweikampftechnik, sondern Raum- und Entscheidungsarbeit an der Bande."
+          },
+          {
+            "type": "paragraph",
+            "text": "Es geht um:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Puck sichern",
+              "Druck lesen",
+              "Anschluss ermöglichen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Warum ist Wall Play so wichtig?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Die Bande ist:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "kein sicherer Raum",
+              "keine neutrale Zone",
+              "oft eine taktische Falle"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Richtiges Wall Play:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "verlängert Puckbesitz",
+              "zieht Gegner aus der Mitte",
+              "öffnet Passfenster nach innen"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Woran erkennt man gutes Wall Play?</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Winger steht seitlich offen, nicht frontal",
+              "erster Kontakt ist kontrollierend, nicht klärend",
+              "Blick geht weg von der Bande, Richtung Mitte"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Typische Fehler</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Puck blind die Bande entlang spielen",
+              "Rücken komplett zur Spielfläche",
+              "Zweikampf suchen, obwohl keine Unterstützung da ist"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "outletPositionierung",
+        "title": "Outlet-Positionierung – anspielbar sein, bevor der Pass kommt",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Was ist Outlet-Positionierung?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Outlet-Positionierung beschreibt:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "wo der Winger steht",
+              "wann er sich anbietet",
+              "in welchem Winkel er anspielbar ist"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Nicht der Pass schafft die Option, sondern die Position vor dem Pass."
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Warum ist Outlet-Positionierung entscheidend?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Ohne saubere Outlets:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "wird jeder Breakout ein Befreiungsschlag",
+              "entstehen Turnovers an der Bande",
+              "bleibt das Team eingeschnürt"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Ein gut positionierter Winger:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "zwingt den Forechecker zur Entscheidung",
+              "gibt der Defense Zeit",
+              "hält das Spiel breit"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Woran erkennt man gute Outlet-Positionierung?</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Winger löst sich früh aus Deckungsschatten",
+              "Abstand zur Bande ist kontrolliert, nicht klebend",
+              "Blickkontakt zur Defense"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Typische Fehler</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "zu tiefes Stehen → kein Passwinkel",
+              "zu hohes Stehen → Pass unter Druck",
+              "passiv warten statt aktiv anbieten"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rueckwaertsArbeit",
+        "title": "Rückwärtsarbeit – Verantwortung ohne Puck",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "<strong>Was ist Rückwärtsarbeit beim Winger?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Rückwärtsarbeit ist:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "strukturierte Raumabsicherung",
+              "nicht bloß Sprinten nach hinten"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Der Winger ist häufig:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "erster Rückläufer",
+              "äußere Sicherung",
+              "Übergangsspieler zwischen Neutral- und Defensivzone"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Warum ist sie so entscheidend?</strong>"
+          },
+          {
+            "type": "paragraph",
+            "text": "Winger entscheiden:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "ob Rushes breit oder zentral laufen",
+              "ob Defense isoliert wird",
+              "ob Center überlastet wird"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Gute Rückwärtsarbeit:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "lenkt Gegner nach außen",
+              "schließt Passwege",
+              "stabilisiert Abstände"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Woran erkennt man gute Rückwärtsarbeit?</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Laufweg von außen nach innen",
+              "Stock aktiv im Passweg",
+              "Blick nach innen, nicht nur auf den Puck"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "<strong>Typische Fehler</strong>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "geradeaus hinterherlaufen",
+              "Fokus nur auf Puckträger",
+              "zu spätes Umschalten"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "wingerZentrum",
+        "title": "Winger & Zentrum – wissen, wann man es frei lässt",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Ein zentraler Unterschied zum Center:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Winger besetzen nicht dauerhaft das Zentrum",
+              "sie halten es frei, wenn nötig"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Guter Winger:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "erkennt, wann er einrücken darf",
+              "erkennt, wann er draußen bleiben muss"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Schlechter Winger:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "„hilft\" im Zentrum und zerstört Struktur"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "turnoversB2",
+        "title": "Verantwortung bei Turnovers",
+        "content": [
+          {
+            "type": "paragraph",
+            "text": "Nach Puckverlust:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Winger ist kein erster Aggressor",
+              "sondern Raumlenker"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Aufgabe:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Passlinie nach innen schließen",
+              "Gegner zur Bande zwingen",
+              "Zeit für Center und Defense kaufen"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "missverstaendnisseB2",
+        "title": "Häufige Missverständnisse",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "❌ „Winger sind Scorer an der Seite\" → falsch. Sie sind Raum- und Strukturspieler.",
+              "❌ „Bande = Sicherheit\" → falsch. Bande ist oft Hochrisikozone.",
+              "❌ „Rückwärtsarbeit ist Einsatzfrage\" → falsch. Sie ist Positions- und Winkelarbeit."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zusammenfassungB2",
+        "title": "Kernzusammenfassung",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "Winger definieren Breite und Ordnung",
+              "Wall Play ist Entscheidungsarbeit, kein Zweikampf",
+              "Outlet-Positionierung entsteht vor dem Pass",
+              "Rückwärtsarbeit lenkt Raum, nicht nur Gegner",
+              "Gute Winger entlasten Center und Defense",
+              "Schlechte Winger erzeugen Dauerchaos"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  
+  "B3": {
+    "badge": "TRACK B3",
+    "title": "Defense-Detailarbeit",
+    "subtitle": "(Gap Control, Blue-Line-Entscheidungen, Net-Front-Play)",
+    "overview": "Dieses Modul beschreibt die Defense-Rolle als entscheidende Steuerungsinstanz für Risiko, Tempo und Spielkontrolle. B3 ordnet ein, wie Verteidiger über Abstände, Entscheidungen an der Blue Line und Net-Front-Verhalten nicht nur verteidigen, sondern das Spiel formen. Der Fokus liegt darauf, warum viele Gegentore keine Systemfehler sind, sondern aus schlechten Reads einzelner Defense-Spieler entstehen.",
+    "sections": [
+      {
+        "id": "defenseRolle",
+        "title": "Was ist die Defense-Rolle im Detail?",
+        "content": [
+          { "type": "paragraph", "text": "Defense-Spieler sind keine reinen Zerstörer, sondern Risikomanager." },
+          { "type": "paragraph", "text": "Sie entscheiden fortlaufend:" },
+          { "type": "list", "items": [
+            "wie viel Raum der Gegner bekommt",
+            "wie viel Zeit sie ihm lassen",
+            "wie aggressiv oder passiv das Spiel wird"
+          ]},
+          { "type": "paragraph", "text": "Jede Defense-Entscheidung wirkt teamweit:" },
+          { "type": "list", "items": [
+            "nach vorne (Angriffsdauer)",
+            "zur Seite (Abstände der Mitspieler)",
+            "nach hinten (Konteranfälligkeit)"
+          ]}
+        ]
+      },
+      {
+        "id": "warumWichtig",
+        "title": "Warum ist die Defense-Rolle strukturell so wichtig?",
+        "content": [
+          { "type": "paragraph", "text": "Defense-Spieler agieren:" },
+          { "type": "list", "items": [
+            "mit dem Spiel vor sich",
+            "unter permanentem Zeitdruck",
+            "oft ohne direkte Hilfe"
+          ]},
+          { "type": "paragraph", "text": "Fehler auf dieser Position:" },
+          { "type": "list", "items": [
+            "sind sofort sichtbar",
+            "haben hohe Folgekosten",
+            "zwingen das Team in Reaktionen"
+          ]},
+          { "type": "paragraph", "text": "Gute Defense-Arbeit reduziert nicht nur Chancen, sie verhindert, dass Chaos überhaupt entsteht." }
+        ]
+      },
+      {
+        "id": "gapControl",
+        "title": "Gap Control – Distanz steuern statt angreifen",
+        "content": [
+          { "type": "paragraph", "text": "Was ist Gap Control?" },
+          { "type": "paragraph", "text": "Gap Control beschreibt den kontrollierten Abstand zwischen Verteidiger und Angreifer. Nicht maximal eng, nicht passiv – sondern situativ angepasst." },
+          { "type": "paragraph", "text": "Der Gap ist kein fixer Wert, sondern ein dynamischer Zustand, abhängig von:" },
+          { "type": "list", "items": [
+            "Geschwindigkeit",
+            "Unterstützung",
+            "Eisposition"
+          ]},
+          { "type": "paragraph", "text": "Warum ist Gap Control zentral?" },
+          { "type": "paragraph", "text": "Der Gap entscheidet:" },
+          { "type": "list", "items": [
+            "ob der Angreifer Zeit hat",
+            "ob der Verteidiger reagieren oder diktieren kann",
+            "ob Tempo gestoppt oder verstärkt wird"
+          ]},
+          { "type": "paragraph", "text": "Schlechter Gap:" },
+          { "type": "list", "items": [
+            "zwingt zum Rückzug oder Notangriff",
+            "öffnet Pass- oder Schussfenster",
+            "destabilisiert das gesamte Defensivverhalten"
+          ]},
+          { "type": "paragraph", "text": "Woran erkennt man gutes Gap Control?" },
+          { "type": "list", "items": [
+            "Verteidiger passt Geschwindigkeit an",
+            "Abstand bleibt konstant bei Richtungswechseln",
+            "Angreifer wird nach außen geführt"
+          ]},
+          { "type": "paragraph", "text": "Typische Fehler" },
+          { "type": "list", "items": [
+            "zu früher Angriff → leicht überspielt",
+            "zu tiefer Rückzug → freier Abschluss",
+            "kein Abgleich mit Partner oder Backcheckern"
+          ]}
+        ]
+      },
+      {
+        "id": "blueLineEntscheidungen",
+        "title": "Blue-Line-Entscheidungen – Risiko richtig bewerten",
+        "content": [
+          { "type": "paragraph", "text": "Was sind Blue-Line-Entscheidungen?" },
+          { "type": "paragraph", "text": "Blue-Line-Entscheidungen sind alle Situationen, in denen der Verteidiger:" },
+          { "type": "list", "items": [
+            "Puck hält oder abgibt",
+            "Druck macht oder absichert",
+            "Risiko eingeht oder verzichtet"
+          ]},
+          { "type": "paragraph", "text": "Sie sind keine Technikfrage, sondern eine Lesefrage." },
+          { "type": "paragraph", "text": "Warum sind sie so kritisch?" },
+          { "type": "paragraph", "text": "An der Blue Line entscheidet sich:" },
+          { "type": "list", "items": [
+            "Angriff verlängern oder Turnover erzeugen",
+            "Druck aufbauen oder Konter zulassen",
+            "Kontrolle halten oder verlieren"
+          ]},
+          { "type": "paragraph", "text": "Ein verlorener Puck an der Blue Line ist oft:" },
+          { "type": "list", "items": [
+            "ein freies Gegentor",
+            "ein langer Defensivshift",
+            "ein struktureller Bruch"
+          ]},
+          { "type": "paragraph", "text": "Woran erkennt man gute Entscheidungen?" },
+          { "type": "list", "items": [
+            "Verteidiger liest Support, nicht nur Puck",
+            "Puck wird bewusst gesichert oder abgelegt",
+            "Risiko ist kollektiv tragbar, nicht individuell"
+          ]},
+          { "type": "paragraph", "text": "Typische Fehler" },
+          { "type": "list", "items": [
+            "Halten ohne Absicherung",
+            "Schuss ohne Rebound-Struktur",
+            "riskanter Querpass ohne Staffelung"
+          ]}
+        ]
+      },
+      {
+        "id": "netFrontPlay",
+        "title": "Net-Front-Play – Kontrolle im gefährlichsten Raum",
+        "content": [
+          { "type": "paragraph", "text": "Was ist Net-Front-Play?" },
+          { "type": "paragraph", "text": "Net-Front-Play beschreibt das Verhalten des Verteidigers:" },
+          { "type": "list", "items": [
+            "vor dem eigenen Tor",
+            "bei Rebounds",
+            "bei Screens und Ablenkungen"
+          ]},
+          { "type": "paragraph", "text": "Es geht nicht primär um Härte, sondern um Positionierung und Timing." },
+          { "type": "paragraph", "text": "Warum ist Net-Front-Play so entscheidend?" },
+          { "type": "paragraph", "text": "Der Bereich vor dem Tor ist:" },
+          { "type": "list", "items": [
+            "der wertvollste Abschlussraum",
+            "der unübersichtlichste Bereich",
+            "der häufigste Ort für zweite Chancen"
+          ]},
+          { "type": "paragraph", "text": "Gutes Net-Front-Play:" },
+          { "type": "list", "items": [
+            "reduziert Chaos",
+            "erleichtert Goalie-Arbeit",
+            "beendet Angriffe frühzeitig"
+          ]},
+          { "type": "paragraph", "text": "Woran erkennt man gutes Net-Front-Play?" },
+          { "type": "list", "items": [
+            "Verteidiger hält Innenposition",
+            "Blick wechselt zwischen Puck und Gegenspieler",
+            "Kontakt ist kontrollierend, nicht blind"
+          ]},
+          { "type": "paragraph", "text": "Typische Fehler" },
+          { "type": "list", "items": [
+            "Fixierung auf den Puck",
+            "Überaggressives Schieben",
+            "Verlust der Innenposition"
+          ]}
+        ]
+      },
+      {
+        "id": "umschaltverantwortung",
+        "title": "Defense & Umschaltverantwortung",
+        "content": [
+          { "type": "paragraph", "text": "Nach Puckgewinn oder -verlust ist der Verteidiger:" },
+          { "type": "list", "items": [
+            "Tempo-Entscheider",
+            "Risikobremse",
+            "Strukturanker"
+          ]},
+          { "type": "paragraph", "text": "Gute Defense-Spieler:" },
+          { "type": "list", "items": [
+            "erkennen früh, wann Ruhe nötig ist",
+            "spielen nicht jeden Puck sofort nach vorne",
+            "stabilisieren das Spiel vor dem nächsten Angriff"
+          ]},
+          { "type": "paragraph", "text": "Schlechte Defense-Spieler:" },
+          { "type": "list", "items": [
+            "beschleunigen Chaos",
+            "spielen unter Druck zu schnell",
+            "verlagern Probleme statt sie zu lösen"
+          ]}
+        ]
+      },
+      {
+        "id": "missverstaendnisseB3",
+        "title": "Häufige Missverständnisse",
+        "content": [
+          { "type": "list", "items": [
+            "❌ „Gute Defense ist aggressiv“ → falsch. Gute Defense ist kontrolliert.",
+            "❌ „Gap Control heißt nah dran sein“ → falsch. Es heißt Distanz steuern.",
+            "❌ „Net-Front-Play ist Härtefrage“ → falsch. Es ist Positions- und Timingarbeit."
+          ]}
+        ]
+      },
+      {
+        "id": "zusammenfassungB3",
+        "title": "Kernzusammenfassung",
+        "content": [
+          { "type": "list", "items": [
+            "Defense-Spieler steuern Risiko und Tempo",
+            "Gap Control entscheidet über Kontrolle oder Reaktion",
+            "Blue-Line-Entscheidungen formen Angriffsdauer",
+            "Net-Front-Play reduziert Chaos",
+            "Gute Defense verhindert Probleme, bevor sie entstehen",
+            "Schlechte Defense erzeugt Kettenreaktionen"
+          ]}
+        ]
+      }
+    ]
+  },
+
+
+"C1": {
+  "badge": "TRACK C1",
+  "title": "Defensive-Zone-Systeme",
+  "subtitle": "(Box, Box+1, Switches, Slot-Kontrolle)",
+  "overview": "Dieses Modul beschreibt, wie Teams ihre Defensivzone kollektiv organisieren, um Raum zu priorisieren und Risiko zu verteilen. C1 ordnet ein, warum Defensive-Zone-Systeme keine starren Laufwege sind, sondern Entscheidungsrahmen, die Fehler überlebbar machen. Der Fokus liegt darauf zu verstehen, dass Systeme meist nicht scheitern, sondern durch schlechte Reads, fehlende Abstimmung oder mangelnde Slot-Kontrolle zusammenbrechen.",
+  "sections": [
+    {
+      "id": "wasSindDefensivsysteme",
+      "title": "Was sind Defensive-Zone-Systeme?",
+      "content": [
+        { "type": "paragraph", "text": "Defensive-Zone-Systeme sind kollektive Raumordnungen, die festlegen, welche Räume geschützt werden, wie Druck erzeugt wird und wer wann Verantwortung übernimmt." },
+        { "type": "paragraph", "text": "Sie sind keine starren Laufwege, sondern Entscheidungsrahmen für wiederkehrende Spielsituationen." },
+        { "type": "paragraph", "text": "Ein System beantwortet nicht die Frage, was ein Spieler exakt tun soll, sondern welche Priorität im jeweiligen Moment gilt." }
+      ]
+    },
+    {
+      "id": "warumSystemeWichtig",
+      "title": "Warum sind Defensive-Zone-Systeme entscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Die Defensivzone ist der gefährlichste, komplexeste und reaktivste Raum im Spiel." },
+        { "type": "paragraph", "text": "Ohne System reagieren Spieler individuell, Verantwortung wird doppelt oder gar nicht übernommen und zentrale Räume bleiben offen." },
+        { "type": "paragraph", "text": "Mit einem klaren System werden Prioritäten gesetzt, Verantwortung verteilt und Fehler abgefedert." },
+        { "type": "paragraph", "text": "Ein gutes System macht Fehler überlebbar. Ein schlecht interpretiertes System macht sie tödlich." }
+      ]
+    },
+    {
+      "id": "slotKontrolle",
+      "title": "Slot-Kontrolle – das übergeordnete Ziel",
+      "content": [
+        { "type": "paragraph", "text": "Was ist Slot-Kontrolle?" },
+        { "type": "paragraph", "text": "Slot-Kontrolle bedeutet, den Innenraum vor dem Tor konsequent zu priorisieren, gefährliche Abschlüsse zu verhindern und Gegner nach außen zu lenken." },
+        { "type": "paragraph", "text": "Slot-Kontrolle ist kein eigenes System, sondern das Ziel aller Defensive-Zone-Systeme." },
+        { "type": "paragraph", "text": "Warum ist Slot-Kontrolle zentral?" },
+        { "type": "list", "items": [
+          "die meisten Tore entstehen aus dem Slot",
+          "Rebounds und kurze Pässe ins Zentrum sind hochgefährlich",
+          "offener Slot führt zu dauerhaftem Chaos"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man gute Slot-Kontrolle?" },
+        { "type": "list", "items": [
+          "Innenposition wird gehalten",
+          "Center unterstützt tief",
+          "Abschlüsse kommen überwiegend von außen"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "Puckfixierung statt Raumpriorität",
+          "überaggressives Herauslaufen",
+          "unklare Zuständigkeiten bei Rebounds"
+        ]}
+      ]
+    },
+    {
+      "id": "boxSystem",
+      "title": "Box-System – Raum verdichten",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das Box-System?" },
+        { "type": "paragraph", "text": "Das Box-System organisiert vier Spieler kompakt um den Slot mit klarer Innenraumpriorität und wenig Druck nach außen." },
+        { "type": "paragraph", "text": "Warum wird Box gespielt?" },
+        { "type": "list", "items": [
+          "gegen puckstarke Gegner",
+          "bei hohem Druck",
+          "wenn Struktur wichtiger ist als Puckgewinne"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man eine funktionierende Box?" },
+        { "type": "list", "items": [
+          "konstante Abstände",
+          "geschlossener Slot",
+          "kein isoliertes Herauslaufen"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "zu passive Box",
+          "einzelnes Verlassen der Struktur",
+          "fehlender Druck trotz freiem Gegner außen"
+        ]}
+      ]
+    },
+    {
+      "id": "boxPlusEins",
+      "title": "Box+1 – Druck gezielt ergänzen",
+      "content": [
+        { "type": "paragraph", "text": "Was ist Box+1?" },
+        { "type": "paragraph", "text": "Box+1 kombiniert eine kompakte Box mit einem situativ aktiven Druckspieler." },
+        { "type": "paragraph", "text": "Warum Box+1?" },
+        { "type": "paragraph", "text": "Das System erlaubt gezielten Puckdruck, ohne die Slot-Sicherung aufzugeben." },
+        { "type": "paragraph", "text": "Woran erkennt man gutes Box+1-Spiel?" },
+        { "type": "list", "items": [
+          "+1-Spieler wird klar übergeben",
+          "Box verschiebt synchron",
+          "Druck erfolgt nur mit Absicherung"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "+1 jagt zu lange",
+          "verzögerte Reaktion der Box",
+          "Slot öffnet sich hinter dem Druck"
+        ]}
+      ]
+    },
+    {
+      "id": "switches",
+      "title": "Switches – Übergaben statt Verfolgung",
+      "content": [
+        { "type": "paragraph", "text": "Was sind Switches?" },
+        { "type": "paragraph", "text": "Switches sind geplante Übergaben von Gegenspielern, um Struktur und Raumordnung zu erhalten." },
+        { "type": "paragraph", "text": "Warum sind Switches notwendig?" },
+        { "type": "list", "items": [
+          "Vermeidung langer Laufwege",
+          "Verhinderung von Überkreuzungen",
+          "Erhalt der Systemstruktur"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man funktionierende Switches?" },
+        { "type": "list", "items": [
+          "klare Kommunikation",
+          "kurze, saubere Übergaben",
+          "kein Zögern beim Loslassen"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "zu langes Festhalten am Gegenspieler",
+          "zwei Spieler gehen auf einen",
+          "freier Raum bleibt unbesetzt"
+        ]}
+      ]
+    },
+    {
+      "id": "systemVsRead",
+      "title": "System vs. Read – der entscheidende Punkt",
+      "content": [
+        { "type": "paragraph", "text": "Ein Defensivsystem ersetzt kein Denken, sondern priorisiert Räume und reduziert Entscheidungsfreiheit." },
+        { "type": "paragraph", "text": "Gute Teams halten das System und passen ihre Reads situativ an." },
+        { "type": "paragraph", "text": "Schlechte Teams verlassen das System unter Stress, jagen individuell und verlieren Slot-Kontrolle." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseC1",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Ein System muss aggressiv sein“ → falsch. Es muss klar sein.",
+          "❌ „Box ist passiv“ → falsch. Sie ist priorisierend.",
+          "❌ „Switches sind Unsicherheit“ → falsch. Sie sind notwendig für Ordnung."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungC1",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Defensive-Zone-Systeme priorisieren Raum",
+          "Slot-Kontrolle ist das übergeordnete Ziel",
+          "Box sichert Raum, Box+1 ergänzt Druck",
+          "Switches erhalten Struktur",
+          "Systeme scheitern nicht – Reads tun es",
+          "Gute Systeme machen Fehler überlebbar"
+        ]}
+      ]
+    }
+  ]
+ },
+
+"C2": {
+  "badge": "TRACK C2",
+  "title": "Neutral-Zone-Systeme",
+  "subtitle": "(1-1-3, 1-3-1, 1-2-2, Regroup-Logiken)",
+  "overview": "Dieses Modul beschreibt, wie Teams die Neutralzone nutzen, um Tempo zu steuern, Spielrichtung zu kontrollieren und gegnerische Angriffe zu brechen, bevor sie gefährlich werden. C2 ordnet ein, warum Neutral-Zone-Systeme weniger über Forechecking entscheiden als über Geduld, Abstände und kollektive Disziplin. Der Fokus liegt darauf zu verstehen, dass die Neutralzone kein Übergangsraum ist, sondern ein strategisches Kontrollfeld.",
+  "sections": [
+    {
+      "id": "wasIstNeutralzone",
+      "title": "Was ist die Neutralzone aus taktischer Sicht?",
+      "content": [
+        { "type": "paragraph", "text": "Die Neutralzone ist der Raum zwischen Defensiv- und Offensivzone, in dem sich entscheidet, ob ein Angriff strukturiert oder chaotisch wird." },
+        { "type": "paragraph", "text": "Sie ist kein Durchgangsraum, sondern ein Filter, der Tempo reguliert und Entscheidungen erzwingt." },
+        { "type": "paragraph", "text": "Neutral-Zone-Systeme definieren, wo Druck entsteht, wo Raum bewusst angeboten wird und wann ein Gegner zur Umkehr gezwungen wird." }
+      ]
+    },
+    {
+      "id": "warumNeutralzoneWichtig",
+      "title": "Warum sind Neutral-Zone-Systeme entscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Die meisten erfolgreichen Angriffe beginnen nicht in der Offensivzone, sondern mit kontrollierten Eintritten durch die Neutralzone." },
+        { "type": "paragraph", "text": "Ohne Struktur in der Neutralzone entstehen:" },
+        { "type": "list", "items": [
+          "unkontrollierte Zone Entries",
+          "lange Rückwärtsbewegungen",
+          "ständiger Druck auf die eigene Defense"
+        ]},
+        { "type": "paragraph", "text": "Ein gutes Neutral-Zone-System zwingt den Gegner zu Entscheidungen, bevor er Geschwindigkeit aufnehmen kann." }
+      ]
+    },
+    {
+      "id": "einsEinsDrei",
+      "title": "1-1-3 – Tempo brechen und Spiel lenken",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das 1-1-3-System?" },
+        { "type": "paragraph", "text": "Das 1-1-3 staffelt einen Spieler vorne, einen im Mittelraum und drei tief, um den Raum vor der eigenen Blue Line zu schließen." },
+        { "type": "paragraph", "text": "Warum wird 1-1-3 gespielt?" },
+        { "type": "list", "items": [
+          "um gegnerisches Tempo zu bremsen",
+          "um kontrollierte Zone Entries zu verhindern",
+          "um Konterrisiko zu minimieren"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man funktionierendes 1-1-3?" },
+        { "type": "list", "items": [
+          "klare horizontale Abstände",
+          "geduldiger erster Druckspieler",
+          "geschlossene Linie vor der Blue Line"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "zu aggressiver erster Spieler",
+          "Auflösen der Dreierlinie",
+          "passives Warten ohne Lenkung"
+        ]}
+      ]
+    },
+    {
+      "id": "einsDreiEins",
+      "title": "1-3-1 – Raum kontrollieren statt jagen",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das 1-3-1-System?" },
+        { "type": "paragraph", "text": "1-3-1 positioniert drei Spieler quer in der Neutralzone, mit je einem Spieler davor und dahinter." },
+        { "type": "paragraph", "text": "Warum wird 1-3-1 eingesetzt?" },
+        { "type": "list", "items": [
+          "um Passwege zu blockieren",
+          "um Gegner zu Dumps zu zwingen",
+          "um Spielrichtung zu kontrollieren"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man gutes 1-3-1?" },
+        { "type": "list", "items": [
+          "seitliche Lenkung statt Frontalangriff",
+          "kompakte Querbewegung",
+          "keine vertikalen Lücken"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "zu große Abstände in der Dreierreihe",
+          "fehlende Rückabsicherung",
+          "individuelles Herausrücken"
+        ]}
+      ]
+    },
+    {
+      "id": "einsZweiZwei",
+      "title": "1-2-2 – Druck und Absicherung balancieren",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das 1-2-2-System?" },
+        { "type": "paragraph", "text": "Das 1-2-2 kombiniert frühen Druck mit einer gestaffelten Absicherung im Mittel- und Tiefenraum." },
+        { "type": "paragraph", "text": "Warum wird 1-2-2 gespielt?" },
+        { "type": "list", "items": [
+          "um aktiver Druck aufzubauen",
+          "um Puckgewinne zu erzwingen",
+          "um dennoch kompakt zu bleiben"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man gutes 1-2-2?" },
+        { "type": "list", "items": [
+          "synchroner Druck der beiden Mittelspieler",
+          "klare Rückversicherung",
+          "keine isolierten Vorstöße"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "unsynchroner Druck",
+          "offenes Zentrum",
+          "zu große Tiefe zwischen den Linien"
+        ]}
+      ]
+    },
+    {
+      "id": "regroupLogik",
+      "title": "Regroup-Logiken – Reset statt Zwang",
+      "content": [
+        { "type": "paragraph", "text": "Was ist ein Regroup?" },
+        { "type": "paragraph", "text": "Ein Regroup ist das bewusste Zurückziehen und Neuordnen, um Struktur und Kontrolle wiederherzustellen." },
+        { "type": "paragraph", "text": "Warum sind Regroups wichtig?" },
+        { "type": "list", "items": [
+          "Vermeidung von Turnovers",
+          "Tempo neu aufbauen",
+          "gegnerische Ordnung verschieben"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "Regroup als Schwäche interpretieren",
+          "zu spätes Zurückziehen",
+          "fehlende Kommunikation"
+        ]}
+      ]
+    },
+    {
+      "id": "missverstaendnisseC2",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Neutralzone ist nur Übergang“ → falsch. Sie ist Kontrollraum.",
+          "❌ „Aggressiver ist immer besser“ → falsch. Geduld ist oft effektiver.",
+          "❌ „Regroup heißt aufgeben“ → falsch. Es heißt Kontrolle zurückholen."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungC2",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Neutral-Zone-Systeme steuern Tempo und Richtung",
+          "1-1-3 bricht Geschwindigkeit",
+          "1-3-1 kontrolliert Passwege",
+          "1-2-2 balanciert Druck und Sicherheit",
+          "Regroups stellen Ordnung wieder her",
+          "Neutralzone entscheidet über Spielkontrolle"
+        ]}
+      ]
+    }
+  ]
+},
+
+"C3": {
+  "badge": "TRACK C3",
+  "title": "Offensive-Zone-Systeme",
+  "subtitle": "(2-3, 1-2-2, 1-3-1, Low Cycle, Point Play)",
+  "overview": "Dieses Modul beschreibt, wie Teams ihre Offensivzone organisieren, um nachhaltigen Druck zu erzeugen, Abschlüsse vorzubereiten und Gegentore nach Turnovers zu vermeiden. C3 ordnet ein, warum Offensive-Zone-Systeme weniger mit Kreativität beginnen als mit Struktur, Abständen und Wiederholbarkeit. Der Fokus liegt darauf zu verstehen, dass offensive Dominanz aus Ordnung entsteht – nicht aus Dauerchaos.",
+  "sections": [
+    {
+      "id": "wasSindOffensivsysteme",
+      "title": "Was sind Offensive-Zone-Systeme?",
+      "content": [
+        { "type": "paragraph", "text": "Offensive-Zone-Systeme sind kollektive Strukturierungen, die festlegen, wie Räume besetzt, Pucks verteilt und Abschlüsse vorbereitet werden." },
+        { "type": "paragraph", "text": "Sie sind keine festen Spielzüge, sondern wiederkehrende Ordnungen, aus denen Optionen entstehen." },
+        { "type": "paragraph", "text": "Ein gutes Offensivsystem sorgt dafür, dass Angriffe fortgesetzt werden können, selbst wenn der erste Abschluss nicht zum Tor führt." }
+      ]
+    },
+    {
+      "id": "warumOffensivsystemeWichtig",
+      "title": "Warum sind Offensive-Zone-Systeme entscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Viele Angriffe scheitern nicht an fehlender Technik, sondern an mangelnder Struktur nach dem ersten Kontakt in der Zone." },
+        { "type": "paragraph", "text": "Ohne System:" },
+        { "type": "list", "items": [
+          "werden Abschlüsse isoliert",
+          "entstehen schnelle Gegenzüge",
+          "geht Puckbesitz früh verloren"
+        ]},
+        { "type": "paragraph", "text": "Mit System entstehen Wiederholungen, zweite Chancen und kontrollierter Dauerdruck." }
+      ]
+    },
+    {
+      "id": "zweiDrei",
+      "title": "2-3 – Breite und Schussvolumen",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das 2-3-System?" },
+        { "type": "paragraph", "text": "Das 2-3-System positioniert zwei Spieler tief und drei Spieler hoch, häufig mit Fokus auf Pucks zur blauen Linie und Schussvolumen." },
+        { "type": "paragraph", "text": "Warum wird 2-3 gespielt?" },
+        { "type": "list", "items": [
+          "um Schüsse von der blauen Linie zu ermöglichen",
+          "um Rebounds zu erzeugen",
+          "um defensive Boxen auseinanderzuziehen"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man funktionierendes 2-3?" },
+        { "type": "list", "items": [
+          "klare Breite oben",
+          "Rebound-Präsenz im Slot",
+          "keine isolierten Point-Schüsse"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "Schüsse ohne Verkehr",
+          "fehlende Slot-Besetzung",
+          "Turnovers an der Blue Line"
+        ]}
+      ]
+    },
+    {
+      "id": "einsZweiZweiOffensiv",
+      "title": "1-2-2 – Tiefe sichern und Druck halten",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das offensive 1-2-2?" },
+        { "type": "paragraph", "text": "Im offensiven 1-2-2 agiert ein Spieler tief, zwei im mittleren Raum und zwei zur Absicherung an der blauen Linie." },
+        { "type": "paragraph", "text": "Warum wird es gespielt?" },
+        { "type": "list", "items": [
+          "um Puckverluste abzusichern",
+          "um Zyklen zu verlängern",
+          "um schnelle Gegenzüge zu verhindern"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "zu tiefe Fixierung",
+          "fehlende Anschlussoptionen",
+          "keine Balance zwischen Druck und Absicherung"
+        ]}
+      ]
+    },
+    {
+      "id": "einsDreiEinsOffensiv",
+      "title": "1-3-1 – Strukturierte Angriffskontrolle",
+      "content": [
+        { "type": "paragraph", "text": "Was ist das offensive 1-3-1?" },
+        { "type": "paragraph", "text": "Das 1-3-1 staffelt einen Spieler tief, drei Spieler auf einer Linie im Mittelraum und einen Spieler hoch an der blauen Linie." },
+        { "type": "paragraph", "text": "Warum wird 1-3-1 genutzt?" },
+        { "type": "list", "items": [
+          "um Passdreiecke zu schaffen",
+          "um Verteidiger horizontal zu bewegen",
+          "um kontrollierte Abschlüsse vorzubereiten"
+        ]},
+        { "type": "paragraph", "text": "Woran erkennt man gutes 1-3-1?" },
+        { "type": "list", "items": [
+          "klare Dreiecke",
+          "ruhige Puckzirkulation",
+          "geduldige Abschlussauswahl"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "stehende Spieler",
+          "Überladen einer Seite",
+          "Abschluss ohne Struktur"
+        ]}
+      ]
+    },
+    {
+      "id": "lowCycle",
+      "title": "Low Cycle – Raum unter Druck nutzen",
+      "content": [
+        { "type": "paragraph", "text": "Was ist der Low Cycle?" },
+        { "type": "paragraph", "text": "Der Low Cycle beschreibt das wiederholte Rotieren der Stürmer tief in der Zone, meist unterhalb der Goal Line." },
+        { "type": "paragraph", "text": "Warum ist der Low Cycle effektiv?" },
+        { "type": "list", "items": [
+          "Verteidiger werden gebunden",
+          "Räume öffnen sich im Slot",
+          "Druck bleibt konstant"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "zu lange Zyklen ohne Abschluss",
+          "fehlende Unterstützung von oben",
+          "Verlust der Übersicht"
+        ]}
+      ]
+    },
+    {
+      "id": "pointPlay",
+      "title": "Point Play – Kontrolle an der blauen Linie",
+      "content": [
+        { "type": "paragraph", "text": "Was ist Point Play?" },
+        { "type": "paragraph", "text": "Point Play beschreibt die Nutzung der Verteidiger an der blauen Linie zur Spielverlagerung, Schussvorbereitung und Zirkulation." },
+        { "type": "paragraph", "text": "Warum ist Point Play kritisch?" },
+        { "type": "list", "items": [
+          "Blue-Line-Turnovers sind hochgefährlich",
+          "gute Entscheidungen verlängern Angriffe",
+          "schlechte Entscheidungen erzeugen Konter"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "Schüsse ohne Verkehr",
+          "Halten ohne Absicherung",
+          "Querpass ohne Staffelung"
+        ]}
+      ]
+    },
+    {
+      "id": "missverstaendnisseC3",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Offensive heißt kreativ sein“ → falsch. Sie beginnt mit Struktur.",
+          "❌ „Viele Schüsse = guter Angriff“ → falsch. Qualität entsteht aus Ordnung.",
+          "❌ „Cycle ist Zeitspiel“ → falsch. Er ist Druckmanagement."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungC3",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Offensive-Zone-Systeme sichern Puckbesitz",
+          "2-3 erzeugt Breite und Schussvolumen",
+          "1-2-2 balanciert Druck und Absicherung",
+          "1-3-1 schafft kontrollierte Abschlüsse",
+          "Low Cycle bindet Defensive und öffnet Räume",
+          "Point Play entscheidet über Angriffsdauer oder Konter"
+        ]}
+      ]
+    }
+  ]
+},
+
+"D1": {
+  "badge": "TRACK D1",
+  "title": "Powerplay",
+  "subtitle": "(Überzahl-Logik, Raumprioritäten, Entscheidungsfindung)",
+  "overview": "Dieses Modul beschreibt das Powerplay als strukturierten Überzahlzustand, in dem Raum, Zeit und Geduld systematisch genutzt werden müssen. D1 ordnet ein, warum erfolgreiche Powerplays weniger von Kreativität als von klaren Prioritäten, Abständen und Entscheidungsqualität leben. Der Fokus liegt darauf zu verstehen, dass ein Powerplay kein Angriff im Chaos ist, sondern ein kontrollierter Prozess zur Erzeugung hochwertiger Abschlüsse.",
+  "sections": [
+    {
+      "id": "wasIstPowerplay",
+      "title": "Was ist ein Powerplay aus taktischer Sicht?",
+      "content": [
+        { "type": "paragraph", "text": "Ein Powerplay ist ein Spielzustand mit numerischer Überlegenheit, bei dem das angreifende Team strukturell mehr Zeit und Raum hat." },
+        { "type": "paragraph", "text": "Diese Überlegenheit erzeugt jedoch keinen Automatismus, sondern erhöht die Verantwortung für saubere Entscheidungen." },
+        { "type": "paragraph", "text": "Powerplay-Taktik bedeutet, diese Vorteile kontrolliert auszuspielen, ohne sich selbst durch Ungeduld zu destabilisieren." }
+      ]
+    },
+    {
+      "id": "warumPowerplayWichtig",
+      "title": "Warum ist das Powerplay spielentscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Special Teams entscheiden enge Spiele, weil sie unabhängig vom Fünf-gegen-Fünf-Verlauf wirken." },
+        { "type": "paragraph", "text": "Ein funktionierendes Powerplay:" },
+        { "type": "list", "items": [
+          "bestraft gegnerische Strafen",
+          "verändert Spielmomentum",
+          "zwingt Gegner zu disziplinierterem Spiel"
+        ]},
+        { "type": "paragraph", "text": "Ein schlechtes Powerplay wirkt hingegen entlastend für den Gegner und kann eigenes Momentum zerstören." }
+      ]
+    },
+    {
+      "id": "raumprioritaeten",
+      "title": "Raumprioritäten im Powerplay",
+      "content": [
+        { "type": "paragraph", "text": "Im Powerplay sind nicht alle Räume gleich wertvoll." },
+        { "type": "paragraph", "text": "Priorität haben:" },
+        { "type": "list", "items": [
+          "der Slot",
+          "der Raum zwischen den Bullykreisen",
+          "der Bereich vor dem Tor"
+        ]},
+        { "type": "paragraph", "text": "Außen- und Point-Räume sind Mittel zum Zweck, nicht das Ziel." }
+      ]
+    },
+    {
+      "id": "strukturVsKreativitaet",
+      "title": "Struktur vor Kreativität",
+      "content": [
+        { "type": "paragraph", "text": "Powerplay wird häufig als Bühne für Kreativität missverstanden." },
+        { "type": "paragraph", "text": "In Wirklichkeit ist Struktur die Voraussetzung dafür, dass kreative Lösungen überhaupt wirksam werden." },
+        { "type": "paragraph", "text": "Ohne klare Abstände, Rollen und Passoptionen führt Kreativität zu vorhersehbarem Chaos." }
+      ]
+    },
+    {
+      "id": "entscheidungsfindung",
+      "title": "Entscheidungsfindung unter Zeitvorteil",
+      "content": [
+        { "type": "paragraph", "text": "Der größte Vorteil im Powerplay ist zusätzliche Zeit." },
+        { "type": "paragraph", "text": "Diese Zeit muss genutzt werden, um:" },
+        { "type": "list", "items": [
+          "Penalty-Killer zu bewegen",
+          "Strukturen zu verschieben",
+          "hochwertige Abschlüsse vorzubereiten"
+        ]},
+        { "type": "paragraph", "text": "Unnötige Abschlüsse oder riskante Pässe neutralisieren diesen Vorteil." }
+      ]
+    },
+    {
+      "id": "puckverlustRisiko",
+      "title": "Puckverluste im Powerplay",
+      "content": [
+        { "type": "paragraph", "text": "Turnovers im Powerplay sind besonders gefährlich, da sie sofort Zeit und Struktur kosten." },
+        { "type": "paragraph", "text": "Nach Puckverlusten gilt:" },
+        { "type": "list", "items": [
+          "sofortige Rückwärtsorganisation",
+          "Tempo aus dem Spiel nehmen",
+          "schnelle Neuordnung"
+        ]},
+        { "type": "paragraph", "text": "Ein Powerplay scheitert oft nicht am fehlenden Abschluss, sondern an unnötigen Turnovers." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseD1",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Powerplay heißt schießen, so oft es geht“ → falsch. Es geht um Abschlussqualität.",
+          "❌ „Kreativität löst jede Box“ → falsch. Struktur bewegt die Box.",
+          "❌ „Zeit spielt keine Rolle“ → falsch. Zeit ist der größte Vorteil."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungD1",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Powerplay ist ein strukturierter Überzahlzustand",
+          "Raumpriorität liegt im Slot und vor dem Tor",
+          "Struktur ist Voraussetzung für Kreativität",
+          "Zeitvorteil muss bewusst genutzt werden",
+          "Turnovers zerstören Powerplay-Wirkung",
+          "Gute Powerplays erzwingen hochwertige Abschlüsse"
+        ]}
+      ]
+    }
+  ]
+},
+
+"D2": {
+  "badge": "TRACK D2",
+  "title": "Penalty Kill",
+  "subtitle": "(Unterzahl-Logik, Raumverknappung, Zeitmanagement)",
+  "overview": "Dieses Modul beschreibt das Penalty Kill als strukturierten Unterzahlzustand, in dem Raumverknappung, Disziplin und Zeitmanagement wichtiger sind als Puckgewinne. D2 ordnet ein, warum erfolgreiche Penalty Kills nicht aggressiv wirken müssen, sondern durch klare Prioritäten und saubere Abstimmung funktionieren. Der Fokus liegt darauf zu verstehen, dass ein gutes PK Chancen nicht verhindert, sondern ihre Qualität systematisch reduziert.",
+  "sections": [
+    {
+      "id": "wasIstPenaltyKill",
+      "title": "Was ist Penalty Kill aus taktischer Sicht?",
+      "content": [
+        { "type": "paragraph", "text": "Penalty Kill ist ein Spielzustand in numerischer Unterzahl, in dem das verteidigende Team bewusst auf Puckbesitz verzichtet, um Raum und Zeit zu kontrollieren." },
+        { "type": "paragraph", "text": "Das Ziel ist nicht, den Puck sofort zu erobern, sondern hochwertige Abschlüsse zu verhindern und Zeit von der Uhr zu nehmen." },
+        { "type": "paragraph", "text": "Unterzahl bedeutet Priorisierung: Nicht alles kann verteidigt werden." }
+      ]
+    },
+    {
+      "id": "warumPenaltyKillWichtig",
+      "title": "Warum ist das Penalty Kill spielentscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Penalty Kills entscheiden Spiele, weil sie gegnerische Powerplays neutralisieren und Momentum brechen können." },
+        { "type": "paragraph", "text": "Ein gutes Penalty Kill:" },
+        { "type": "list", "items": [
+          "reduziert Abschlussqualität",
+          "nimmt Zeit vom Powerplay",
+          "erhöht Frustration beim Gegner"
+        ]},
+        { "type": "paragraph", "text": "Ein schlechtes Penalty Kill wirkt hingegen einladend und beschleunigt gegnerische Abläufe." }
+      ]
+    },
+    {
+      "id": "raumverknappung",
+      "title": "Raumverknappung – Prioritäten setzen",
+      "content": [
+        { "type": "paragraph", "text": "Im Penalty Kill ist Raum die entscheidende Ressource." },
+        { "type": "paragraph", "text": "Priorität haben:" },
+        { "type": "list", "items": [
+          "der Slot",
+          "der Raum vor dem Tor",
+          "Pässe durch die Box"
+        ]},
+        { "type": "paragraph", "text": "Außenräume und Point-Zonen werden bewusst zugelassen, solange sie kontrollierbar bleiben." }
+      ]
+    },
+    {
+      "id": "zeitmanagement",
+      "title": "Zeitmanagement – Sekunden gewinnen",
+      "content": [
+        { "type": "paragraph", "text": "Zeit ist im Penalty Kill der wichtigste Erfolgsfaktor." },
+        { "type": "paragraph", "text": "Jede Aktion sollte darauf abzielen:" },
+        { "type": "list", "items": [
+          "Passwege zu verlängern",
+          "Powerplay-Rhythmus zu stören",
+          "Sekunden von der Uhr zu nehmen"
+        ]},
+        { "type": "paragraph", "text": "Ein erfolgreicher Penalty Kill fühlt sich für den Gegner länger an, als er tatsächlich ist." }
+      ]
+    },
+    {
+      "id": "druckVsGeduld",
+      "title": "Druck vs. Geduld im Penalty Kill",
+      "content": [
+        { "type": "paragraph", "text": "Nicht jeder Puckbesitz des Gegners erfordert Druck." },
+        { "type": "paragraph", "text": "Gutes Penalty Kill unterscheidet zwischen:" },
+        { "type": "list", "items": [
+          "kontrolliertem Gegnerbesitz ohne Gefahr",
+          "situativen Momenten für aktiven Druck"
+        ]},
+        { "type": "paragraph", "text": "Unkoordinierter Druck öffnet Passfenster und zerstört die Box-Struktur." }
+      ]
+    },
+    {
+      "id": "puckklaerungen",
+      "title": "Puckklärungen – Kontrolle statt Befreiung",
+      "content": [
+        { "type": "paragraph", "text": "Puckklärungen im Penalty Kill sind kein Befreiungsschlag, sondern ein Mittel zur Neuordnung." },
+        { "type": "paragraph", "text": "Eine gute Klärung:" },
+        { "type": "list", "items": [
+          "nimmt Zeit von der Uhr",
+          "ermöglicht einen Wechsel",
+          "erzwingt einen neuen Zone Entry"
+        ]},
+        { "type": "paragraph", "text": "Unkontrollierte Klärungen führen häufig zu sofortigem Re-Entry und erneutem Druck." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseD2",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Penalty Kill heißt aggressiv attackieren“ → falsch. Es heißt priorisieren.",
+          "❌ „Jeder Puck muss raus“ → falsch. Kontrolle ist wichtiger als Distanz.",
+          "❌ „Ein gutes PK erzeugt kaum Schüsse“ → falsch. Es reduziert ihre Qualität."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungD2",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Penalty Kill ist strukturierte Unterzahl",
+          "Raumverknappung ist wichtiger als Puckbesitz",
+          "Zeitmanagement entscheidet über Erfolg",
+          "Geduld schlägt unkoordinierten Druck",
+          "Kontrollierte Klärungen stabilisieren Struktur",
+          "Gute Penalty Kills neutralisieren Abschlussqualität"
+        ]}
+      ]
+    }
+  ]
+},
+
+"D3": {
+  "badge": "TRACK D3",
+  "title": "Entries",
+  "subtitle": "(Überzahl- & Gleichzahl-Zone-Entries, Kontrolle vs. Risiko)",
+  "overview": "Dieses Modul beschreibt Zone Entries als kritischen Entscheidungspunkt in Special Teams und im Fünf-gegen-Fünf. D3 ordnet ein, warum der Erfolg von Powerplay und Offensivphasen häufig nicht an Abschlüssen scheitert, sondern am kontrollierten Zonen-Eintritt. Der Fokus liegt darauf zu verstehen, dass Entries keine Spielzüge sind, sondern Risikoabwägungen unter Druck.",
+  "sections": [
+    {
+      "id": "wasSindEntries",
+      "title": "Was sind Zone Entries?",
+      "content": [
+        { "type": "paragraph", "text": "Zone Entries sind alle Situationen, in denen ein Team versucht, mit oder ohne Puckkontrolle in die Offensivzone zu gelangen." },
+        { "type": "paragraph", "text": "Sie entscheiden darüber, ob ein Angriff strukturiert beginnt oder sofort in Verteidigung umschlägt." },
+        { "type": "paragraph", "text": "Ein Entry ist kein Übergang, sondern ein Startpunkt für Ordnung oder Chaos." }
+      ]
+    },
+    {
+      "id": "warumEntriesWichtig",
+      "title": "Warum sind Entries spielentscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Viele Angriffe enden, bevor sie beginnen, weil der Zonen-Eintritt scheitert." },
+        { "type": "paragraph", "text": "Schlechte Entries führen zu:" },
+        { "type": "list", "items": [
+          "sofortigen Turnovers",
+          "langen Rückwärtsbewegungen",
+          "verlorenem Momentum"
+        ]},
+        { "type": "paragraph", "text": "Gute Entries schaffen Zeit, Raum und Anschluss für nachfolgende Strukturen." }
+      ]
+    },
+    {
+      "id": "kontrollierteEntries",
+      "title": "Kontrollierte Entries – Ordnung mit Puck",
+      "content": [
+        { "type": "paragraph", "text": "Was sind kontrollierte Entries?" },
+        { "type": "paragraph", "text": "Kontrollierte Entries erfolgen mit Puckbesitz, klaren Abständen und Supportoptionen." },
+        { "type": "paragraph", "text": "Warum sind sie wertvoll?" },
+        { "type": "list", "items": [
+          "höhere Angriffsdauer",
+          "bessere Abschlussqualität",
+          "weniger Konterrisiko"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "Überladen einer Seite",
+          "zu frühes Eindringen ohne Support",
+          "Querbewegung ohne Tempo"
+        ]}
+      ]
+    },
+    {
+      "id": "dumpEntries",
+      "title": "Dump & Chase – Risiko bewusst akzeptieren",
+      "content": [
+        { "type": "paragraph", "text": "Was ist Dump & Chase?" },
+        { "type": "paragraph", "text": "Dump & Chase ist ein kontrollierter Puckverlust mit dem Ziel, Raum, Zeit oder Ordnung zu gewinnen." },
+        { "type": "paragraph", "text": "Warum wird es eingesetzt?" },
+        { "type": "list", "items": [
+          "gegen kompakte Neutral-Zone-Systeme",
+          "bei fehlender Supportstruktur",
+          "zur Entlastung oder zum Wechsel"
+        ]},
+        { "type": "paragraph", "text": "Typische Fehler" },
+        { "type": "list", "items": [
+          "Dump ohne Druck",
+          "keine Staffelung im Nachgehen",
+          "Dump als Verlegenheitslösung"
+        ]}
+      ]
+    },
+    {
+      "id": "entriesImPowerplay",
+      "title": "Entries im Powerplay – Zeit ist der Vorteil",
+      "content": [
+        { "type": "paragraph", "text": "Im Powerplay sind Zone Entries besonders kritisch, da jeder gescheiterte Versuch wertvolle Zeit kostet." },
+        { "type": "paragraph", "text": "Gute Powerplay-Entries:" },
+        { "type": "list", "items": [
+          "sind geplant und wiederholbar",
+          "nutzen Breite und Verzögerung",
+          "priorisieren Kontrolle vor Geschwindigkeit"
+        ]},
+        { "type": "paragraph", "text": "Unnötige Dumps oder Einzelaktionen neutralisieren den Überzahlvorteil." }
+      ]
+    },
+    {
+      "id": "entscheidungskriterien",
+      "title": "Entscheidungskriterien beim Zonen-Eintritt",
+      "content": [
+        { "type": "paragraph", "text": "Die Wahl des Entry-Typs hängt nicht vom Playbook, sondern von der Situation ab." },
+        { "type": "paragraph", "text": "Entscheidend sind:" },
+        { "type": "list", "items": [
+          "Support in der Neutralzone",
+          "gegnerische Staffelung",
+          "eigene Wechsel- und Ermüdungssituation"
+        ]},
+        { "type": "paragraph", "text": "Ein guter Entry ist nicht spektakulär, sondern anschlussfähig." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseD3",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Kontrollierter Entry ist immer besser“ → falsch. Risiko muss passen.",
+          "❌ „Dump & Chase ist planlos“ → falsch. Es ist bewusstes Risiko.",
+          "❌ „Entries sind Aufgabe des Puckträgers“ → falsch. Sie sind Teamarbeit."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungD3",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Zone Entries entscheiden über Angriffsdauer",
+          "Kontrolle schlägt Tempo ohne Support",
+          "Dump & Chase ist situatives Werkzeug",
+          "Powerplay-Entries müssen Zeit schützen",
+          "Entries sind Risikoentscheidungen",
+          "Gute Entries erzeugen Ordnung statt Chaos"
+        ]}
+      ]
+    }
+  ]
+},
+
+"D4": {
+  "badge": "TRACK D4",
+  "title": "6-gegen-5 & Overtime",
+  "subtitle": "(Endgame-Logik, Risiko-Management, Entscheidungsprioritäten)",
+  "overview": "Dieses Modul beschreibt Spielsituationen mit maximaler Entscheidungsdichte: 6-gegen-5 und Overtime. D4 ordnet ein, warum diese Phasen weniger von Systemtreue als von klarer Risikoabwägung, Raumpriorisierung und Fehlervermeidung geprägt sind. Der Fokus liegt darauf zu verstehen, dass Endgame-Situationen keine Sonderfälle sind, sondern verdichtete Versionen aller taktischen Prinzipien.",
+  "sections": [
+    {
+      "id": "wasIstEndgame",
+      "title": "Was sind 6-gegen-5 und Overtime aus taktischer Sicht?",
+      "content": [
+        { "type": "paragraph", "text": "6-gegen-5 und Overtime sind Spielzustände mit veränderten Risiko-Gewichten, in denen klassische Abwägungen neu priorisiert werden." },
+        { "type": "paragraph", "text": "Raum, Zeit und Fehler haben hier eine andere Bedeutung als im Fünf-gegen-Fünf." },
+        { "type": "paragraph", "text": "Diese Situationen zwingen Teams zu bewussten Entscheidungen zwischen Absicherung und maximalem Ertrag." }
+      ]
+    },
+    {
+      "id": "sechsGegenFuenf",
+      "title": "6-gegen-5 – Kontrolle unter maximalem Risiko",
+      "content": [
+        { "type": "paragraph", "text": "Was ist 6-gegen-5?" },
+        { "type": "paragraph", "text": "6-gegen-5 entsteht meist durch das Herausnehmen des Torhüters, um eine numerische Überzahl im Angriff zu erzeugen." },
+        { "type": "paragraph", "text": "Warum ist 6-gegen-5 so riskant?" },
+        { "type": "list", "items": [
+          "kein Absicherungsanker im Tor",
+          "hohe Bestrafung bei Turnovers",
+          "verkürzte Reaktionszeit"
+        ]},
+        { "type": "paragraph", "text": "Ein gutes 6-gegen-5 priorisiert Kontrolle, nicht Abschluss-Hektik." }
+      ]
+    },
+    {
+      "id": "raumprioritaeten6v5",
+      "title": "Raumprioritäten im 6-gegen-5",
+      "content": [
+        { "type": "paragraph", "text": "Im 6-gegen-5 sind nicht alle Räume gleichwertig." },
+        { "type": "paragraph", "text": "Priorität haben:" },
+        { "type": "list", "items": [
+          "Slot und Net-Front",
+          "kontrollierte Passwege durch die Box",
+          "Absicherung oberhalb der Circles"
+        ]},
+        { "type": "paragraph", "text": "Point-Schüsse ohne Verkehr oder Absicherung erhöhen das Gegentor-Risiko massiv." }
+      ]
+    },
+    {
+      "id": "turnoverGefahr",
+      "title": "Turnover-Gefahr und Absicherung",
+      "content": [
+        { "type": "paragraph", "text": "Turnovers sind im 6-gegen-5 fast immer spielentscheidend." },
+        { "type": "paragraph", "text": "Nach Ballverlusten gilt:" },
+        { "type": "list", "items": [
+          "sofortige Rückwärtsorientierung",
+          "Zentrum schließen",
+          "Zeit kaufen statt Puckjagd"
+        ]},
+        { "type": "paragraph", "text": "Unkoordinierte Aggression beschleunigt das eigene Scheitern." }
+      ]
+    },
+    {
+      "id": "overtimeLogik",
+      "title": "Overtime – Raum maximieren, Fehler minimieren",
+      "content": [
+        { "type": "paragraph", "text": "Overtime ist durch mehr Eis, weniger Spieler und erhöhte Fehlerkosten geprägt." },
+        { "type": "paragraph", "text": "Der Fokus verschiebt sich von Dauerangriff zu:" },
+        { "type": "list", "items": [
+          "Puckkontrolle",
+          "Geduld",
+          "gezielte Isolationen"
+        ]},
+        { "type": "paragraph", "text": "Ein einzelner Fehler entscheidet häufiger als ein perfekt ausgespielter Angriff." }
+      ]
+    },
+    {
+      "id": "entscheidungsfindungOT",
+      "title": "Entscheidungsfindung in der Overtime",
+      "content": [
+        { "type": "paragraph", "text": "In der Overtime ist nicht jede Chance eine gute Chance." },
+        { "type": "paragraph", "text": "Gute Entscheidungen:" },
+        { "type": "list", "items": [
+          "vermeiden unnötige 50/50-Situationen",
+          "priorisieren Puckbesitz",
+          "akzeptieren Regroups"
+        ]},
+        { "type": "paragraph", "text": "Geduld erzeugt bessere Abschlüsse als Zwang." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseD4",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „6-gegen-5 heißt schießen um jeden Preis“ → falsch. Kontrolle ist entscheidend.",
+          "❌ „Overtime ist Freestyle“ → falsch. Fehlerkosten sind extrem hoch.",
+          "❌ „Regroup ist Zeitverlust“ → falsch. Er verhindert Niederlagen."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungD4",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "6-gegen-5 maximiert Risiko und Ertrag",
+          "Raumpriorisierung schlägt Schussfrequenz",
+          "Turnovers sind meist spielentscheidend",
+          "Overtime belohnt Geduld und Kontrolle",
+          "Regroups sind legitime Endgame-Tools",
+          "Endgame verdichtet alle taktischen Prinzipien"
+        ]}
+      ]
+    }
+  ]
+},
+
+"E1": {
+  "badge": "TRACK E1",
+  "title": "Tendenzen erkennen",
+  "subtitle": "(Muster, Wiederholungen, Spielverlauf lesen)",
+  "overview": "Dieses Modul beschreibt Analyse als Fähigkeit, wiederkehrende Muster im Spielverlauf zu erkennen und von Zufall zu trennen. E1 ordnet ein, warum gute Analyse nicht aus einzelnen Szenen besteht, sondern aus dem Erkennen von Tendenzen über Zeit. Der Fokus liegt darauf zu verstehen, wie sich kleine Wiederholungen zu klaren Aussagen über Spielkontrolle, Risiken und wahrscheinliche Entwicklungen verdichten.",
+  "sections": [
+    {
+      "id": "wasSindTendenzen",
+      "title": "Was sind Tendenzen im Eishockey?",
+      "content": [
+        { "type": "paragraph", "text": "Tendenzen sind wiederkehrende Muster im Verhalten von Spielern, Reihen oder Teams über mehrere Situationen hinweg." },
+        { "type": "paragraph", "text": "Sie entstehen nicht aus einzelnen Aktionen, sondern aus Häufungen ähnlicher Entscheidungen, Positionierungen oder Abläufe." },
+        { "type": "paragraph", "text": "Eine Tendenz beschreibt nicht, was passiert ist, sondern was wahrscheinlich wieder passieren wird." }
+      ]
+    },
+    {
+      "id": "warumTendenzenWichtig",
+      "title": "Warum ist das Erkennen von Tendenzen entscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Einzelaktionen sind laut, Tendenzen sind verlässlich." },
+        { "type": "paragraph", "text": "Wer nur Highlights oder Fehler bewertet, reagiert rückblickend statt vorausschauend." },
+        { "type": "paragraph", "text": "Tendenzen ermöglichen:" },
+        { "type": "list", "items": [
+          "frühzeitige Adjustments",
+          "gezielte taktische Eingriffe",
+          "realistische Spielprognosen"
+        ]}
+      ]
+    },
+    {
+      "id": "zufallVsMuster",
+      "title": "Zufall vs. Muster",
+      "content": [
+        { "type": "paragraph", "text": "Nicht jede Wiederholung ist eine Tendenz, und nicht jedes Ereignis ist relevant." },
+        { "type": "paragraph", "text": "Ein Muster wird zur Tendenz, wenn:" },
+        { "type": "list", "items": [
+          "es unter ähnlichen Bedingungen erneut auftritt",
+          "es unabhängig vom Gegner sichtbar ist",
+          "es strukturell erklärbar ist"
+        ]},
+        { "type": "paragraph", "text": "Zufall ist isoliert. Tendenzen sind reproduzierbar." }
+      ]
+    },
+    {
+      "id": "woTendenzenEntstehen",
+      "title": "Wo entstehen Tendenzen im Spiel?",
+      "content": [
+        { "type": "paragraph", "text": "Tendenzen zeigen sich besonders deutlich in wiederkehrenden Spielsituationen." },
+        { "type": "list", "items": [
+          "Zone Entries und Exits",
+          "Umschaltmomente",
+          "Defensive-Zone-Phasen",
+          "Special Teams"
+        ]},
+        { "type": "paragraph", "text": "Je standardisierter die Situation, desto aussagekräftiger die Tendenz." }
+      ]
+    },
+    {
+      "id": "beobachtungsfokus",
+      "title": "Beobachtungsfokus – was analysiert wird",
+      "content": [
+        { "type": "paragraph", "text": "Analyse beginnt mit klarer Fokussierung." },
+        { "type": "paragraph", "text": "Typische Analyseebenen sind:" },
+        { "type": "list", "items": [
+          "Raumnutzung (Zentrum vs. Außen)",
+          "Entscheidungszeit",
+          "Abstände zwischen Spielern",
+          "Reaktionen nach Turnovers"
+        ]},
+        { "type": "paragraph", "text": "Ohne Fokus wird Analyse zu Beschreibung." }
+      ]
+    },
+    {
+      "id": "zeitdimension",
+      "title": "Die Zeitdimension von Tendenzen",
+      "content": [
+        { "type": "paragraph", "text": "Tendenzen entfalten ihre Aussagekraft über Zeit." },
+        { "type": "paragraph", "text": "Relevant sind:" },
+        { "type": "list", "items": [
+          "erste fünf Minuten eines Drittels",
+          "Phasen nach Toren",
+          "lange Wechsel oder Ermüdungsphasen"
+        ]},
+        { "type": "paragraph", "text": "Kurzfristige Ausschläge sind oft emotional, langfristige Muster strukturell." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseE1",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Ein Fehler ist eine Tendenz“ → falsch. Wiederholung macht die Aussage.",
+          "❌ „Statistik ersetzt Beobachtung“ → falsch. Sie ergänzt sie.",
+          "❌ „Analyse ist rückwärtsgerichtet“ → falsch. Gute Analyse ist vorausschauend."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungE1",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Tendenzen sind wiederkehrende Muster, keine Einzelaktionen",
+          "Analyse trennt Zufall von Struktur",
+          "Wiederholungen unter gleichen Bedingungen sind entscheidend",
+          "Fokus bestimmt Analysequalität",
+          "Zeit macht Muster sichtbar",
+          "Tendenzen ermöglichen vorausschauende Entscheidungen"
+        ]}
+      ]
+    }
+  ]
+},
+
+"E2": {
+  "badge": "TRACK E2",
+  "title": "Adjustments",
+  "subtitle": "(Anpassungen im Spielverlauf, Ursachen statt Symptome)",
+  "overview": "Dieses Modul beschreibt Adjustments als gezielte, rationale Eingriffe in den Spielverlauf auf Basis erkannter Tendenzen. E2 ordnet ein, warum erfolgreiche Anpassungen nicht aus Aktionismus entstehen, sondern aus dem Verständnis von Ursachen. Der Fokus liegt darauf zu verstehen, dass Adjustments Probleme nicht kaschieren, sondern strukturell beheben müssen.",
+  "sections": [
+    {
+      "id": "wasSindAdjustments",
+      "title": "Was sind Adjustments?",
+      "content": [
+        { "type": "paragraph", "text": "Adjustments sind bewusste taktische Anpassungen während eines Spiels oder einer Serie." },
+        { "type": "paragraph", "text": "Sie zielen darauf ab, erkannte Tendenzen zu beeinflussen, zu neutralisieren oder auszunutzen." },
+        { "type": "paragraph", "text": "Ein Adjustment ist kein kompletter Systemwechsel, sondern eine präzise Veränderung innerhalb bestehender Strukturen." }
+      ]
+    },
+    {
+      "id": "warumAdjustmentsWichtig",
+      "title": "Warum sind Adjustments entscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Kein Gameplan überlebt ein Spiel unverändert." },
+        { "type": "paragraph", "text": "Gegner reagieren, Situationen verändern sich, Ermüdung tritt ein." },
+        { "type": "paragraph", "text": "Adjustments ermöglichen:" },
+        { "type": "list", "items": [
+          "Kontrolle über den Spielverlauf zurückzugewinnen",
+          "gegnerische Anpassungen zu kontern",
+          "eigene Schwächen zu stabilisieren"
+        ]}
+      ]
+    },
+    {
+      "id": "ursacheVsSymptom",
+      "title": "Ursache vs. Symptom",
+      "content": [
+        { "type": "paragraph", "text": "Der häufigste Fehler bei Adjustments ist die Behandlung von Symptomen statt Ursachen." },
+        { "type": "paragraph", "text": "Beispiele für Symptome:" },
+        { "type": "list", "items": [
+          "Gegner kommt häufig zum Abschluss",
+          "Breakouts scheitern",
+          "Rushes gegen die eigene Defense"
+        ]},
+        { "type": "paragraph", "text": "Die Ursache liegt meist früher im Ablauf, etwa in Abständen, Reads oder Übergängen." }
+      ]
+    },
+    {
+      "id": "zeitpunkt",
+      "title": "Der richtige Zeitpunkt für Adjustments",
+      "content": [
+        { "type": "paragraph", "text": "Nicht jedes Problem erfordert sofortige Anpassung." },
+        { "type": "paragraph", "text": "Adjustments sind sinnvoll, wenn:" },
+        { "type": "list", "items": [
+          "eine klare Tendenz erkennbar ist",
+          "das Problem reproduzierbar auftritt",
+          "das bestehende System strukturell unter Druck gerät"
+        ]},
+        { "type": "paragraph", "text": "Zu frühe Adjustments wirken hektisch, zu späte wirkungslos." }
+      ]
+    },
+    {
+      "id": "artenVonAdjustments",
+      "title": "Arten von Adjustments",
+      "content": [
+        { "type": "paragraph", "text": "Adjustments können auf unterschiedlichen Ebenen erfolgen." },
+        { "type": "list", "items": [
+          "Positionshöhen (z. B. tieferer Center)",
+          "Raumprioritäten (z. B. mehr Slot-Fokus)",
+          "Tempoanpassungen (z. B. bewusste Regroups)",
+          "Matchups (z. B. gezielte Zuordnungen)"
+        ]},
+        { "type": "paragraph", "text": "Kleine Adjustments sind oft effektiver als große Umstellungen." }
+      ]
+    },
+    {
+      "id": "kommunikation",
+      "title": "Kommunikation von Adjustments",
+      "content": [
+        { "type": "paragraph", "text": "Ein Adjustment ist nur wirksam, wenn es verstanden wird." },
+        { "type": "paragraph", "text": "Gute Kommunikation ist:" },
+        { "type": "list", "items": [
+          "klar und kurz",
+          "konkret auf Situationen bezogen",
+          "frei von Überfrachtung"
+        ]},
+        { "type": "paragraph", "text": "Unklare Anweisungen erzeugen Unsicherheit statt Stabilität." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseE2",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Adjustments heißen System wechseln“ → falsch. Sie verfeinern Systeme.",
+          "❌ „Mehr Druck löst jedes Problem“ → falsch. Oft verschärft er es.",
+          "❌ „Adjustments sind Reaktionen auf Gegentore“ → falsch. Gute kommen früher."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungE2",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Adjustments sind gezielte Eingriffe, keine Aktionismen",
+          "Ursachen sind wichtiger als Symptome",
+          "Timing entscheidet über Wirkung",
+          "Kleine Anpassungen sind oft ausreichend",
+          "Kommunikation bestimmt Umsetzung",
+          "Gute Adjustments stabilisieren Spielkontrolle"
+        ]}
+      ]
+    }
+  ]
+},
+
+"E3": {
+  "badge": "TRACK E3",
+  "title": "Micro-Analytics",
+  "subtitle": "(kleine Daten, große Wirkung, Kontext statt Zahlenfetisch)",
+  "overview": "Dieses Modul beschreibt Micro-Analytics als Analyseebene zwischen Bauchgefühl und klassischer Statistik. E3 ordnet ein, warum kleine, kontextuelle Datenpunkte oft aussagekräftiger sind als große Summenwerte. Der Fokus liegt darauf zu verstehen, wie Micro-Analytics helfen, Entscheidungen, Rollenverhalten und Spielkontrolle sichtbar zu machen – ohne das Spiel in Zahlen zu ertränken.",
+  "sections": [
+    {
+      "id": "wasSindMicroAnalytics",
+      "title": "Was sind Micro-Analytics?",
+      "content": [
+        { "type": "paragraph", "text": "Micro-Analytics sind kleinste, wiederkehrende Messpunkte im Spiel, die Entscheidungen und Prozesse abbilden – nicht nur Ergebnisse." },
+        { "type": "paragraph", "text": "Sie betrachten nicht, was am Ende herauskommt, sondern was vorher passiert." },
+        { "type": "paragraph", "text": "Micro-Analytics sind immer kontextabhängig und ohne Spielsituation wertlos." }
+      ]
+    },
+    {
+      "id": "warumMicroAnalytics",
+      "title": "Warum sind Micro-Analytics relevant?",
+      "content": [
+        { "type": "paragraph", "text": "Klassische Statistiken beschreiben Resultate, nicht Ursachen." },
+        { "type": "paragraph", "text": "Micro-Analytics helfen dabei:" },
+        { "type": "list", "items": [
+          "Entscheidungsqualität sichtbar zu machen",
+          "Rollenverhalten objektiver einzuordnen",
+          "frühe Warnsignale zu erkennen"
+        ]},
+        { "type": "paragraph", "text": "Sie erklären, warum ein Spiel kippt, bevor es im Ergebnis sichtbar wird." }
+      ]
+    },
+    {
+      "id": "typischeMicroDaten",
+      "title": "Typische Micro-Analytics im Eishockey",
+      "content": [
+        { "type": "paragraph", "text": "Micro-Analytics konzentrieren sich auf wiederkehrende Spielsituationen." },
+        { "type": "list", "items": [
+          "erste Passoption nach Puckgewinn",
+          "Abstände beim Zone Entry",
+          "Gap beim ersten Kontakt",
+          "Positionierung bei Rebounds",
+          "Entscheidungszeit unter Druck"
+        ]},
+        { "type": "paragraph", "text": "Ein einzelner Wert ist irrelevant – die Häufung macht die Aussage." }
+      ]
+    },
+    {
+      "id": "kontextVorZahl",
+      "title": "Kontext vor Zahl",
+      "content": [
+        { "type": "paragraph", "text": "Eine Zahl ohne Kontext ist bedeutungslos." },
+        { "type": "paragraph", "text": "Micro-Analytics müssen immer beantwortet werden mit:" },
+        { "type": "list", "items": [
+          "In welcher Zone?",
+          "Unter welchem Druck?",
+          "Mit welcher Unterstützung?",
+          "In welcher Spielsituation?"
+        ]},
+        { "type": "paragraph", "text": "Erst der Kontext macht aus Daten eine Analyse." }
+      ]
+    },
+    {
+      "id": "bezugZuTendenzen",
+      "title": "Micro-Analytics und Tendenzen",
+      "content": [
+        { "type": "paragraph", "text": "Micro-Analytics sind das Rohmaterial für Tendenzen." },
+        { "type": "paragraph", "text": "Sie zeigen, ob beobachtete Muster subjektiv wirken oder objektiv wiederkehren." },
+        { "type": "paragraph", "text": "Ohne Micro-Analytics bleiben Tendenzen oft vage und angreifbar." }
+      ]
+    },
+    {
+      "id": "grenzenVonMicroAnalytics",
+      "title": "Grenzen von Micro-Analytics",
+      "content": [
+        { "type": "paragraph", "text": "Micro-Analytics ersetzen kein Spielverständnis." },
+        { "type": "paragraph", "text": "Typische Grenzen:" },
+        { "type": "list", "items": [
+          "zu kleine Stichproben",
+          "Überinterpretation einzelner Werte",
+          "fehlende Vergleichsbasis"
+        ]},
+        { "type": "paragraph", "text": "Sie sind Werkzeuge, keine Wahrheiten." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseE3",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Mehr Daten = bessere Analyse“ → falsch. Relevanz schlägt Menge.",
+          "❌ „Micro-Analytics sind Statistik“ → falsch. Sie sind Kontextanalyse.",
+          "❌ „Zahlen ersetzen Beobachtung“ → falsch. Sie schärfen sie."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungE3",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Micro-Analytics analysieren Prozesse, nicht Ergebnisse",
+          "Kleine Datenpunkte erklären große Spielverläufe",
+          "Kontext ist wichtiger als der Zahlenwert",
+          "Häufung schafft Aussagekraft",
+          "Micro-Analytics stützen Tendenzen",
+          "Sie ergänzen Spielverständnis, ersetzen es nicht"
+        ]}
+      ]
+    }
+  ]
+},
+
+"E4": {
+  "badge": "TRACK E4",
+  "title": "Game-Plan-Denke",
+  "subtitle": "(Vorbereitung, Prioritäten, taktische Klarheit)",
+  "overview": "Dieses Modul beschreibt Game-Plan-Denke als strukturierten Prozess, mit dem Teams Spiele vorbereiten, priorisieren und steuern. E4 ordnet ein, warum ein Game Plan kein starres Drehbuch ist, sondern ein Entscheidungsrahmen für erwartbare Situationen. Der Fokus liegt darauf zu verstehen, dass gute Game Plans Klarheit schaffen, ohne Anpassungsfähigkeit zu verlieren.",
+  "sections": [
+    {
+      "id": "wasIstGamePlan",
+      "title": "Was ist ein Game Plan wirklich?",
+      "content": [
+        { "type": "paragraph", "text": "Ein Game Plan ist kein detaillierter Ablaufplan für jede Spielsituation." },
+        { "type": "paragraph", "text": "Er ist ein strukturierter Rahmen, der festlegt, welche Prioritäten im Spiel gelten und welche Risiken bewusst akzeptiert werden." },
+        { "type": "paragraph", "text": "Ein guter Game Plan beantwortet nicht jede Frage, sondern reduziert Entscheidungsunsicherheit." }
+      ]
+    },
+    {
+      "id": "warumGamePlanWichtig",
+      "title": "Warum ist Game-Plan-Denke entscheidend?",
+      "content": [
+        { "type": "paragraph", "text": "Spiele werden nicht nur auf dem Eis entschieden, sondern in der Vorbereitung." },
+        { "type": "paragraph", "text": "Game-Plan-Denke ermöglicht:" },
+        { "type": "list", "items": [
+          "klare Rollen- und Aufgabenverteilung",
+          "bewusste Risikoabwägung",
+          "schnellere Entscheidungen unter Druck"
+        ]},
+        { "type": "paragraph", "text": "Ohne Game Plan reagieren Teams auf das Spiel, statt es zu steuern." }
+      ]
+    },
+    {
+      "id": "prioritaeten",
+      "title": "Prioritäten statt Vollständigkeit",
+      "content": [
+        { "type": "paragraph", "text": "Ein häufiger Fehler ist der Versuch, alles gleichzeitig lösen zu wollen." },
+        { "type": "paragraph", "text": "Ein Game Plan priorisiert bewusst:" },
+        { "type": "list", "items": [
+          "welche Räume geschützt werden",
+          "welche Situationen vermieden werden",
+          "wo Chancen gezielt gesucht werden"
+        ]},
+        { "type": "paragraph", "text": "Was nicht priorisiert ist, wird bewusst in Kauf genommen." }
+      ]
+    },
+    {
+      "id": "gegnerbezug",
+      "title": "Game Plan und Gegnerbezug",
+      "content": [
+        { "type": "paragraph", "text": "Ein Game Plan existiert nicht im luftleeren Raum." },
+        { "type": "paragraph", "text": "Er berücksichtigt:" },
+        { "type": "list", "items": [
+          "gegnerische Stärken",
+          "gegnerische Schwächen",
+          "wahrscheinliche Tendenzen"
+        ]},
+        { "type": "paragraph", "text": "Ein guter Game Plan versucht nicht, den Gegner komplett zu neutralisieren, sondern seine Wirkung zu begrenzen." }
+      ]
+    },
+    {
+      "id": "umsetzungImSpiel",
+      "title": "Umsetzung im Spiel",
+      "content": [
+        { "type": "paragraph", "text": "Ein Game Plan ist nur so gut wie seine Umsetzbarkeit unter Spielbedingungen." },
+        { "type": "paragraph", "text": "Er muss:" },
+        { "type": "list", "items": [
+          "einfach kommunizierbar sein",
+          "unter Druck abrufbar bleiben",
+          "mit Adjustments kombinierbar sein"
+        ]},
+        { "type": "paragraph", "text": "Überkomplexe Game Plans scheitern meist an der Realität des Spiels." }
+      ]
+    },
+    {
+      "id": "gamePlanVsAdjustments",
+      "title": "Game Plan vs. Adjustments",
+      "content": [
+        { "type": "paragraph", "text": "Der Game Plan ist der Ausgangspunkt, Adjustments sind seine Weiterentwicklung." },
+        { "type": "paragraph", "text": "Ein stabiler Game Plan:" },
+        { "type": "list", "items": [
+          "gibt Adjustments eine Richtung",
+          "verhindert Aktionismus",
+          "hält das Team handlungsfähig"
+        ]},
+        { "type": "paragraph", "text": "Ohne klaren Game Plan verlieren Adjustments ihren Bezug." }
+      ]
+    },
+    {
+      "id": "missverstaendnisseE4",
+      "title": "Häufige Missverständnisse",
+      "content": [
+        { "type": "list", "items": [
+          "❌ „Ein Game Plan muss alles abdecken“ → falsch. Er priorisiert.",
+          "❌ „Game Plans sind starr“ → falsch. Sie sind anpassungsfähig.",
+          "❌ „Improvisation ersetzt Planung“ → falsch. Sie braucht Rahmen."
+        ]}
+      ]
+    },
+    {
+      "id": "zusammenfassungE4",
+      "title": "Kernzusammenfassung",
+      "content": [
+        { "type": "list", "items": [
+          "Game Plans sind Entscheidungsrahmen",
+          "Prioritäten sind wichtiger als Vollständigkeit",
+          "Gegnerbezug schärft den Plan",
+          "Umsetzbarkeit schlägt Komplexität",
+          "Adjustments bauen auf dem Game Plan auf",
+          "Gute Game-Plan-Denke steuert Spiele aktiv"
+        ]}
+      ]
+    }
+  ]
+}
+}
