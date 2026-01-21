@@ -3711,3 +3711,9 @@ INFO:     141.78.165.50:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 INFO:     141.78.165.50:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.165.50:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.165.50:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     Started server process [1192353]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

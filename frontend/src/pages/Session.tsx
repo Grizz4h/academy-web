@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 
-import DrillRendererV1 from '../renderers/v1/DrillRenderer'
-import DrillRendererV2 from '../renderers/v2/DrillRenderer'
+import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { useState, useEffect, useRef } from 'react'
 
 // Patch: Checkin type ohne microfeedback_done
@@ -56,7 +55,7 @@ export default function SessionPage() {
   })
 
   // Renderer switch based on moduleId (A1 = v1, else v2)
-  const moduleId = session?.module_id
+  // const moduleId = session?.module_id
 
   // Session Continuation: nur initial Phase aus Session übernehmen
   const firstLoadRef = useRef(true)
@@ -380,37 +379,23 @@ export default function SessionPage() {
           {currentPhase === 'PRE' && (
             <div>
               <p>Vorbereitung: Denke über die Erwartungen nach.</p>
-              {moduleId === 'A1' ? (
-                <DrillRendererV1
-                  drill={{
-                    id: 'pre_checkin',
-                    title: 'Pre-Match Check-in',
-                    drill_type: 'period_checkin',
-                    config: {
-                      questions: [
-                        { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
-                      ]
-                    }
-                  }}
-                  initialAnswers={answersByPhase[currentPhase]}
-                  onChangeAnswers={handleDraftChange}
-                />
-              ) : (
-                <DrillRendererV2
-                  drill={{
-                    id: 'pre_checkin',
-                    title: 'Pre-Match Check-in',
-                    drill_type: 'period_checkin',
-                    config: {
-                      questions: [
-                        { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
-                      ]
-                    }
-                  }}
-                  answers={answersByPhase[currentPhase]}
-                  setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
-                />
-              )}
+              <DrillRendererRouter
+                drill={{
+                  id: 'pre_checkin',
+                  title: 'Pre-Match Check-in',
+                  drill_type: 'period_checkin',
+                  config: {
+                    questions: [
+                      { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
+                    ]
+                  }
+                }}
+                answers={answersByPhase[currentPhase]}
+                setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
+                initialAnswers={answersByPhase[currentPhase]}
+                onChangeAnswers={handleDraftChange}
+                session={session}
+              />
 
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
                 <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center' }}>{getPhaseTitle(currentPhase)}</div>
@@ -451,19 +436,14 @@ export default function SessionPage() {
             <div>
               <p>Analysiere das letzte Drittel und gib Feedback.</p>
               {session.drills && session.drills.length > 0 ? (
-                moduleId === 'A1' ? (
-                  <DrillRendererV1
-                    drill={session.drills[0]}
-                    initialAnswers={answersByPhase[currentPhase]}
-                    onChangeAnswers={handleDraftChange}
-                  />
-                ) : (
-                  <DrillRendererV2
-                    drill={session.drills[0]}
-                    answers={answersByPhase[currentPhase]}
-                    setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
-                  />
-                )
+                <DrillRendererRouter
+                  drill={session.drills[0]}
+                  answers={answersByPhase[currentPhase]}
+                  setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
+                  initialAnswers={answersByPhase[currentPhase]}
+                  onChangeAnswers={handleDraftChange}
+                  session={session}
+                />
               ) : (
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}

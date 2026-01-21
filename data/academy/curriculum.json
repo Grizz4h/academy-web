@@ -4758,12 +4758,302 @@
       "title": "E – Spielmanagement & Analyse",
       "goal": "Denken wie ein Coach",
       "modules": [
-        {
-          "id": "E1",
-          "title": "E1 – Between-Periods Adjustments",
-          "summary": "Anpassen zwischen Dritteln, Prioritäten setzen",
-          "drills": []
+{
+  "id": "E1",
+  "title": "E1 – Between-Periods Adjustments",
+  "summary": "Zwischen Dritteln anpassen: Prioritäten setzen, Stellschrauben definieren",
+  "description": "Du lernst, zwischen Dritteln wie ein Coach zu denken: Was ist das echte Problem, was ist nur Symptom, und welche 1–2 Adjustments haben den größten Effekt, ohne das ganze Team zu überladen.",
+  "learningGoals": [
+    "Unterscheide Problem vs. Symptom",
+    "Formuliere 1–2 klare Adjustments pro Drittel",
+    "Setze Prioritäten statt Wunschliste",
+    "Begründe Adjustments anhand von Beobachtung, nicht Ergebnis"
+  ],
+  "difficulty": 4,
+  "duration": 55,
+  "drills": [
+    {
+      "id": "E1_D1",
+      "title": "Problem vs. Symptom (Zwischenanalyse)",
+      "drill_type": "period_checkin",
+      "description": "Nach einem Drittel: Was ist das Kernproblem – und was ist nur die sichtbare Folge?",
+      "didactics": {
+        "explanation": "Viele Teams reagieren auf Symptome (z. B. Gegentor, Druckphase), statt das Kernproblem zu adressieren (z. B. schlechte Exits, zu große Abstände, verlorene Mitte). Du trainierst hier, den Unterschied sauber zu benennen.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Wiederholt sich ein Muster oder war es ein Einzelfall?",
+            "Wo beginnt das Problem (z. B. Exit, Neutral Zone, O-Zone)?",
+            "Welche Rolle/Zone kippt zuerst (Low / Middle / High)?"
+          ],
+          "how_to_decide": [
+            "Suche 1 wiederholbares Muster, kein Highlight",
+            "Trenne Ereignis (Symptom) von Ursache (Problem)",
+            "Formuliere Ursache so, dass sie coachbar ist",
+            "Bewerte unabhängig vom Score"
+          ],
+          "ignore": [
+            "Ein einzelner Fehler ohne Wiederholung",
+            "Nur Tore/Chancen zählen",
+            "Schiedsrichter, Pech, Zufall"
+          ]
         },
+        "inline_explanations": {
+          "problem": {
+            "meaning": "Ursache, die wiederholt Struktur bricht (coachbar). Beispiel: Exit ohne Anschluss, Abstände zu groß, Mitte offen."
+          },
+          "symptom": {
+            "meaning": "Sichtbare Folge des Problems. Beispiel: lange Shift-Defence, Turnover an der Blue Line, Gegentor."
+          }
+        },
+        "learning_hint": "Wenn du das Problem richtig triffst, wirkt ein kleines Adjustment groß. Wenn du nur Symptome behandelst, jagst du dem Spiel hinterher."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": { "classification": "problem" },
+            "questions": [
+              "Warum ist das aus deiner Sicht die Ursache und nicht nur die Folge?",
+              "Woran würdest du im nächsten Shift erkennen, dass es besser wird?",
+              "Welche Rolle/Zone muss dafür am meisten ändern?"
+            ]
+          },
+          {
+            "when": { "classification": "symptom" },
+            "questions": [
+              "Welche Ursache steckt vermutlich hinter dem Symptom?",
+              "Was passiert immer davor, bevor das Symptom auftaucht?",
+              "Welche Beobachtung würdest du sammeln, um die Ursache sicherer zu machen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "classification",
+            "type": "radio",
+            "label": "Dein Fokus ist…",
+            "options": [
+              "problem",
+              "symptom"
+            ]
+          },
+          {
+            "key": "pattern_zone",
+            "type": "radio",
+            "label": "Wo beginnt es meistens?",
+            "options": [
+              "D-Zone",
+              "Neutral Zone",
+              "O-Zone"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung (ein Satz)",
+            "max_chars": 140
+          }
+        ]
+      }
+    },
+    {
+      "id": "E1_D2",
+      "title": "Top-2 Adjustments (Coach-Call)",
+      "drill_type": "period_checkin",
+      "description": "Formuliere genau 1–2 Adjustments für das nächste Drittel: konkret, coachbar, messbar.",
+      "didactics": {
+        "explanation": "Gute Adjustments sind klein, klar und überprüfbar. Du trainierst hier, aus Beobachtung eine kurze Ansage zu machen: Was ändern wir sofort – und woran sehen wir es?",
+        "observation_guide": {
+          "what_to_watch": [
+            "Welche Situation kippt am häufigsten (Entry, Exit, Turnover, Rush)?",
+            "Welche Abstände sind zu groß/klein?",
+            "Welche Entscheidung wird wiederholt falsch getroffen?"
+          ],
+          "how_to_decide": [
+            "Wähle maximal 2 Adjustments",
+            "Formuliere als Verhalten, nicht als Wunsch (z. B. 'früher stützen' statt 'mehr kämpfen')",
+            "Jedes Adjustment braucht ein sichtbares Signal (Woran merkt man’s?)",
+            "Ein Adjustment darf Tempo senken, wenn Stabilität fehlt"
+          ],
+          "ignore": [
+            "Zu viele Punkte auf einmal",
+            "Motivationsphrasen ohne Inhalt",
+            "Ergebnisfixierung (nur 'wir müssen ein Tor machen')"
+          ]
+        },
+        "inline_explanations": {
+          "tempo": {
+            "meaning": "Tempo anpassen heißt nicht langsam: es heißt kontrolliert. Stabilität vor Geschwindigkeit."
+          },
+          "abstand": {
+            "meaning": "Abstände entscheiden über Anschluss: zu groß = keine Option, zu klein = kein Raum."
+          },
+          "unterstuetzung": {
+            "meaning": "Support bedeutet: Optionen schaffen (hinter dem Puck, seitlich, kurz)."
+          }
+        },
+        "learning_hint": "Wenn du nichts Konkretes messen kannst, ist es kein Adjustment – dann ist es ein Gefühl."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": { "adjustment_count": "eins" },
+            "questions": [
+              "Warum reicht ein Adjustment hier aus?",
+              "Was ist dein Messsignal: Woran erkennst du sofort Wirkung?",
+              "Welche Folge wird dadurch indirekt besser?"
+            ]
+          },
+          {
+            "when": { "adjustment_count": "zwei" },
+            "questions": [
+              "Sind die zwei Adjustments kompatibel oder widersprechen sie sich?",
+              "Welches ist Priorität, falls nur eins klappt?",
+              "Was wäre das früheste Signal, dass ihr korrigieren müsst?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "adjustment_count",
+            "type": "radio",
+            "label": "Wie viele Adjustments?",
+            "options": [
+              "eins",
+              "zwei"
+            ]
+          },
+          {
+            "key": "adjustment_focus",
+            "type": "radio",
+            "label": "Hauptfokus",
+            "options": [
+              "tempo",
+              "abstand",
+              "unterstuetzung",
+              "entscheidungen"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Formuliere dein Adjustment (kurz, coachbar)",
+            "max_chars": 140
+          }
+        ]
+      }
+    },
+{
+  "id": "E1_D3",
+  "title": "Top-2 Ursachen + Priorität (Root-Cause Map)",
+  "drill_type": "period_checkin",
+  "description": "Wähle die zwei wahrscheinlichsten Ursachen (nicht Symptome) und setze eine klare Priorität für das nächste Drittel.",
+  "didactics": {
+    "explanation": "Du trainierst hier echtes Coaching-Denken: Ursachen priorisieren statt alles gleichzeitig 'besser' machen zu wollen. Du wählst genau 2 Ursachen und entscheidest, welche davon #1 ist.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Welche Situation wiederholt sich (nicht nur ein Highlight)?",
+        "Wo bricht Struktur zuerst (Exit, Blue Line, Neutral Zone, OZ-Entry)?",
+        "Welche Abstände/Unterstützung sind sichtbar falsch?"
+      ],
+      "how_to_decide": [
+        "Wähle exakt 2 Ursachen – keine Symptome",
+        "Setze eine klare Priorität (#1) – sonst ist es nur ein Gefühl",
+        "Formuliere Ursache so, dass sie coachbar ist (Verhalten/Abstände/Tempo)"
+      ],
+      "ignore": [
+        "Tore als alleiniger Beweis",
+        "Schiedsrichter, Pech, Einzelaktion ohne Wiederholung"
+      ]
+    },
+    "inline_explanations": {
+      "exit_ohne_anschluss": {
+        "meaning": "Puck kommt raus, aber ohne Option/Support – sofort wieder unter Druck."
+      },
+      "abstaende_zu_gross": {
+        "meaning": "Optionen sind zu weit weg: Passwege tot, keine Anschlussaktion möglich."
+      },
+      "mitte_offen": {
+        "meaning": "Slot/Innenbahn ist nicht geschlossen – Gegner hat direkte Optionen durch die Mitte."
+      },
+      "blindes_risiko": {
+        "meaning": "Entscheidung ohne Information/Support (z. B. Blind Entry, Blind Pass), oft an der Blue Line."
+      },
+      "schlechte_unterstuetzung": {
+        "meaning": "Zu wenig Spieler hinter/seitlich am Puck – keine zweite Option, keine Absicherung."
+      },
+      "tempo_zu_hoch": {
+        "meaning": "Tempo wird erzwungen obwohl Struktur fehlt – führt zu Turnovers und langen Defensiv-Shifts."
+      }
+    },
+    "learning_hint": "Wenn du #1 sauber priorisierst, wird #2 oft automatisch besser. Wenn du nicht priorisieren kannst, hast du das Problem noch nicht verstanden."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "priority": "ursache_1" },
+        "questions": [
+          "Warum ist Ursache 1 wichtiger als Ursache 2?",
+          "Woran erkennst du im nächsten Shift, dass Ursache 1 besser wird?",
+          "Welche kleinste Verhaltensänderung wäre der Hebel?"
+        ]
+      },
+      {
+        "when": { "priority": "ursache_2" },
+        "questions": [
+          "Warum ist Ursache 2 der größere Hebel?",
+          "Was ist das früheste Messsignal für Verbesserung?",
+          "Welche Rolle/Zone muss dafür am stärksten reagieren?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "causes",
+        "type": "multi",
+        "label": "Wähle genau 2 Ursachen",
+        "options": [
+          "exit_ohne_anschluss",
+          "abstaende_zu_gross",
+          "mitte_offen",
+          "blindes_risiko",
+          "schlechte_unterstuetzung",
+          "tempo_zu_hoch"
+        ],
+        "max_select": 2
+      },
+      {
+        "key": "priority",
+        "type": "radio",
+        "label": "Welche der beiden ist Priorität #1?",
+        "options": [
+          "ursache_1",
+          "ursache_2"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Formuliere dein #1-Adjustment (kurz, coachbar)",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+  ]
+},
         {
           "id": "E2",
           "title": "E2 – Tendenzen erkennen",
