@@ -29,7 +29,7 @@ html, body {
 .navbar-brand {
   color: #f7f7ff;
   font-weight: bold;
-  font-size: 1.25rem;
+  font-size: 1.20rem;
 }
 
 .nav-link-active, .navLinkActive {
@@ -73,18 +73,30 @@ html, body {
   position: relative;
   color: rgba(255,255,255,0.75) !important;
   text-decoration: none;
-  font-size: 1.18rem;
+  font-size: 1.05rem;
   line-height: 1.7;
   padding: 0 0.5rem;
-  margin: 0 1.5rem 0 0;
+  margin: 0 0.7rem 0 0;
   transition: color 0.15s ease;
 }
 
 .nav-container {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
-  margin-bottom: 1.2rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.nav-user {
+  margin-top: 1.1rem;
+  display: flex;
+  align-items: center;
 }
 
 .nav-link:hover,

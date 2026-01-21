@@ -4760,259 +4760,129 @@
       "modules": [
 {
   "id": "E1",
-  "title": "E1 – Between-Periods Adjustments",
-  "summary": "Zwischen Dritteln anpassen: Prioritäten setzen, Stellschrauben definieren",
-  "description": "Du lernst, zwischen Dritteln wie ein Coach zu denken: Was ist das echte Problem, was ist nur Symptom, und welche 1–2 Adjustments haben den größten Effekt, ohne das ganze Team zu überladen.",
+  "title": "E1 – Tendenzen erkennen",
+  "summary": "Wiederkehrende Muster im Spielverlauf erkennen und von Zufall trennen",
+  "description": "Analyse beginnt vor jeder Entscheidung. In diesem Track lernst du, wiederkehrende Muster im Spielverlauf zu erkennen, Einzelaktionen von strukturellen Tendenzen zu unterscheiden und Beobachtungen sauber einzuordnen – unabhängig von Ergebnis, Emotion oder Highlight-Plays. E1 trainiert das Lesen von Wiederholungen über Zeit, nicht das Lösen von Problemen.",
   "learningGoals": [
-    "Unterscheide Problem vs. Symptom",
-    "Formuliere 1–2 klare Adjustments pro Drittel",
-    "Setze Prioritäten statt Wunschliste",
-    "Begründe Adjustments anhand von Beobachtung, nicht Ergebnis"
+    "Unterscheide Einzelfälle von echten Tendenzen",
+    "Erkenne wiederkehrende Muster über mehrere Situationen hinweg",
+    "Ordne Beobachtungen zonal und strukturell ein",
+    "Bewerte Spielverlauf unabhängig vom Spielstand",
+    "Lege die analytische Basis für spätere Adjustments"
   ],
   "difficulty": 4,
   "duration": 55,
   "drills": [
-    {
-      "id": "E1_D1",
-      "title": "Problem vs. Symptom (Zwischenanalyse)",
-      "drill_type": "period_checkin",
-      "description": "Nach einem Drittel: Was ist das Kernproblem – und was ist nur die sichtbare Folge?",
-      "didactics": {
-        "explanation": "Viele Teams reagieren auf Symptome (z. B. Gegentor, Druckphase), statt das Kernproblem zu adressieren (z. B. schlechte Exits, zu große Abstände, verlorene Mitte). Du trainierst hier, den Unterschied sauber zu benennen.",
-        "observation_guide": {
-          "what_to_watch": [
-            "Wiederholt sich ein Muster oder war es ein Einzelfall?",
-            "Wo beginnt das Problem (z. B. Exit, Neutral Zone, O-Zone)?",
-            "Welche Rolle/Zone kippt zuerst (Low / Middle / High)?"
-          ],
-          "how_to_decide": [
-            "Suche 1 wiederholbares Muster, kein Highlight",
-            "Trenne Ereignis (Symptom) von Ursache (Problem)",
-            "Formuliere Ursache so, dass sie coachbar ist",
-            "Bewerte unabhängig vom Score"
-          ],
-          "ignore": [
-            "Ein einzelner Fehler ohne Wiederholung",
-            "Nur Tore/Chancen zählen",
-            "Schiedsrichter, Pech, Zufall"
-          ]
-        },
-        "inline_explanations": {
-          "problem": {
-            "meaning": "Ursache, die wiederholt Struktur bricht (coachbar). Beispiel: Exit ohne Anschluss, Abstände zu groß, Mitte offen."
-          },
-          "symptom": {
-            "meaning": "Sichtbare Folge des Problems. Beispiel: lange Shift-Defence, Turnover an der Blue Line, Gegentor."
-          }
-        },
-        "learning_hint": "Wenn du das Problem richtig triffst, wirkt ein kleines Adjustment groß. Wenn du nur Symptome behandelst, jagst du dem Spiel hinterher."
-      },
-      "miniFeedback": {
-        "trigger": "onNext",
-        "oncePerSection": true,
-        "groups": [
-          {
-            "when": { "classification": "problem" },
-            "questions": [
-              "Warum ist das aus deiner Sicht die Ursache und nicht nur die Folge?",
-              "Woran würdest du im nächsten Shift erkennen, dass es besser wird?",
-              "Welche Rolle/Zone muss dafür am meisten ändern?"
-            ]
-          },
-          {
-            "when": { "classification": "symptom" },
-            "questions": [
-              "Welche Ursache steckt vermutlich hinter dem Symptom?",
-              "Was passiert immer davor, bevor das Symptom auftaucht?",
-              "Welche Beobachtung würdest du sammeln, um die Ursache sicherer zu machen?"
-            ]
-          }
-        ]
-      },
-      "config": {
-        "questions": [
-          {
-            "key": "classification",
-            "type": "radio",
-            "label": "Dein Fokus ist…",
-            "options": [
-              "problem",
-              "symptom"
-            ]
-          },
-          {
-            "key": "pattern_zone",
-            "type": "radio",
-            "label": "Wo beginnt es meistens?",
-            "options": [
-              "D-Zone",
-              "Neutral Zone",
-              "O-Zone"
-            ]
-          },
-          {
-            "key": "note",
-            "type": "text",
-            "label": "Kurze Begründung (ein Satz)",
-            "max_chars": 140
-          }
-        ]
-      }
-    },
-    {
-      "id": "E1_D2",
-      "title": "Top-2 Adjustments (Coach-Call)",
-      "drill_type": "period_checkin",
-      "description": "Formuliere genau 1–2 Adjustments für das nächste Drittel: konkret, coachbar, messbar.",
-      "didactics": {
-        "explanation": "Gute Adjustments sind klein, klar und überprüfbar. Du trainierst hier, aus Beobachtung eine kurze Ansage zu machen: Was ändern wir sofort – und woran sehen wir es?",
-        "observation_guide": {
-          "what_to_watch": [
-            "Welche Situation kippt am häufigsten (Entry, Exit, Turnover, Rush)?",
-            "Welche Abstände sind zu groß/klein?",
-            "Welche Entscheidung wird wiederholt falsch getroffen?"
-          ],
-          "how_to_decide": [
-            "Wähle maximal 2 Adjustments",
-            "Formuliere als Verhalten, nicht als Wunsch (z. B. 'früher stützen' statt 'mehr kämpfen')",
-            "Jedes Adjustment braucht ein sichtbares Signal (Woran merkt man’s?)",
-            "Ein Adjustment darf Tempo senken, wenn Stabilität fehlt"
-          ],
-          "ignore": [
-            "Zu viele Punkte auf einmal",
-            "Motivationsphrasen ohne Inhalt",
-            "Ergebnisfixierung (nur 'wir müssen ein Tor machen')"
-          ]
-        },
-        "inline_explanations": {
-          "tempo": {
-            "meaning": "Tempo anpassen heißt nicht langsam: es heißt kontrolliert. Stabilität vor Geschwindigkeit."
-          },
-          "abstand": {
-            "meaning": "Abstände entscheiden über Anschluss: zu groß = keine Option, zu klein = kein Raum."
-          },
-          "unterstuetzung": {
-            "meaning": "Support bedeutet: Optionen schaffen (hinter dem Puck, seitlich, kurz)."
-          }
-        },
-        "learning_hint": "Wenn du nichts Konkretes messen kannst, ist es kein Adjustment – dann ist es ein Gefühl."
-      },
-      "miniFeedback": {
-        "trigger": "onNext",
-        "oncePerSection": true,
-        "groups": [
-          {
-            "when": { "adjustment_count": "eins" },
-            "questions": [
-              "Warum reicht ein Adjustment hier aus?",
-              "Was ist dein Messsignal: Woran erkennst du sofort Wirkung?",
-              "Welche Folge wird dadurch indirekt besser?"
-            ]
-          },
-          {
-            "when": { "adjustment_count": "zwei" },
-            "questions": [
-              "Sind die zwei Adjustments kompatibel oder widersprechen sie sich?",
-              "Welches ist Priorität, falls nur eins klappt?",
-              "Was wäre das früheste Signal, dass ihr korrigieren müsst?"
-            ]
-          }
-        ]
-      },
-      "config": {
-        "questions": [
-          {
-            "key": "adjustment_count",
-            "type": "radio",
-            "label": "Wie viele Adjustments?",
-            "options": [
-              "eins",
-              "zwei"
-            ]
-          },
-          {
-            "key": "adjustment_focus",
-            "type": "radio",
-            "label": "Hauptfokus",
-            "options": [
-              "tempo",
-              "abstand",
-              "unterstuetzung",
-              "entscheidungen"
-            ]
-          },
-          {
-            "key": "note",
-            "type": "text",
-            "label": "Formuliere dein Adjustment (kurz, coachbar)",
-            "max_chars": 140
-          }
-        ]
-      }
-    },
-{
-  "id": "E1_D3",
-  "title": "Top-2 Ursachen + Priorität (Root-Cause Map)",
+  {
+  "id": "E1_D1",
+  "title": "Tendenz oder Einzelfall?",
   "drill_type": "period_checkin",
-  "description": "Wähle die zwei wahrscheinlichsten Ursachen (nicht Symptome) und setze eine klare Priorität für das nächste Drittel.",
+  "description": "Unterscheide nach einem Drittel: Handelt es sich um ein wiederkehrendes Muster oder um einen isolierten Einzelfall?",
   "didactics": {
-    "explanation": "Du trainierst hier echtes Coaching-Denken: Ursachen priorisieren statt alles gleichzeitig 'besser' machen zu wollen. Du wählst genau 2 Ursachen und entscheidest, welche davon #1 ist.",
+    "explanation": "Analyse beginnt nicht mit Lösungen, sondern mit Einordnung. In diesem Drill lernst du, einzelne Ereignisse von echten Tendenzen zu trennen. Eine Tendenz entsteht nur durch Wiederholung unter ähnlichen Bedingungen.",
     "observation_guide": {
       "what_to_watch": [
-        "Welche Situation wiederholt sich (nicht nur ein Highlight)?",
-        "Wo bricht Struktur zuerst (Exit, Blue Line, Neutral Zone, OZ-Entry)?",
-        "Welche Abstände/Unterstützung sind sichtbar falsch?"
+        "Wiederholt sich eine ähnliche Situation mehrfach?",
+        "Tritt sie unter ähnlichen Bedingungen auf?",
+        "Passiert sie in derselben Zone oder nach demselben Trigger?"
       ],
       "how_to_decide": [
-        "Wähle exakt 2 Ursachen – keine Symptome",
-        "Setze eine klare Priorität (#1) – sonst ist es nur ein Gefühl",
-        "Formuliere Ursache so, dass sie coachbar ist (Verhalten/Abstände/Tempo)"
+        "Suche mindestens zwei ähnliche Situationen",
+        "Ignoriere Highlight-Plays und Einzelaktionen",
+        "Bewerte Struktur, nicht Ergebnis",
+        "Formuliere neutral, ohne Schuldzuweisung"
       ],
       "ignore": [
-        "Tore als alleiniger Beweis",
-        "Schiedsrichter, Pech, Einzelaktion ohne Wiederholung"
+        "Ein einzelnes Tor oder eine Einzelchance",
+        "Emotionale Spielsituationen",
+        "Statistiken ohne Kontext"
       ]
     },
     "inline_explanations": {
-      "exit_ohne_anschluss": {
-        "meaning": "Puck kommt raus, aber ohne Option/Support – sofort wieder unter Druck."
+      "tendenz": {
+        "meaning": "Ein wiederkehrendes Muster, das unter ähnlichen Bedingungen mehrfach auftritt und eine strukturelle Ursache hat."
       },
-      "abstaende_zu_gross": {
-        "meaning": "Optionen sind zu weit weg: Passwege tot, keine Anschlussaktion möglich."
-      },
-      "mitte_offen": {
-        "meaning": "Slot/Innenbahn ist nicht geschlossen – Gegner hat direkte Optionen durch die Mitte."
-      },
-      "blindes_risiko": {
-        "meaning": "Entscheidung ohne Information/Support (z. B. Blind Entry, Blind Pass), oft an der Blue Line."
-      },
-      "schlechte_unterstuetzung": {
-        "meaning": "Zu wenig Spieler hinter/seitlich am Puck – keine zweite Option, keine Absicherung."
-      },
-      "tempo_zu_hoch": {
-        "meaning": "Tempo wird erzwungen obwohl Struktur fehlt – führt zu Turnovers und langen Defensiv-Shifts."
+      "einzelfall": {
+        "meaning": "Ein isoliertes Ereignis ohne Wiederholung oder strukturelle Erklärung."
       }
     },
-    "learning_hint": "Wenn du #1 sauber priorisierst, wird #2 oft automatisch besser. Wenn du nicht priorisieren kannst, hast du das Problem noch nicht verstanden."
+    "learning_hint": "Was sich wiederholt, ist analysierbar. Was isoliert bleibt, ist oft Zufall."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "classification",
+        "type": "radio",
+        "label": "Deine Einordnung",
+        "options": [
+          "tendenz",
+          "einzelfall"
+        ]
+      },
+      {
+        "key": "repeat_zone",
+        "type": "radio",
+        "label": "Wo tritt es hauptsächlich auf?",
+        "options": [
+          "D-Zone",
+          "Neutral Zone",
+          "O-Zone",
+          "wechselnd"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurzbeschreibung des Musters (oder warum kein Muster)",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+ {
+  "id": "E1_D2",
+  "title": "Wiederholung oder Ausreißer?",
+  "drill_type": "period_checkin",
+  "description": "Bewerte, ob eine beobachtete Situation Teil einer Tendenz ist oder ein isolierter Ausreißer.",
+  "didactics": {
+    "explanation": "Nicht jede auffällige Szene ist relevant. Analyse wird erst dann belastbar, wenn sich eine Situation unter ähnlichen Bedingungen wiederholt. In diesem Drill trainierst du, Wiederholung von Zufall zu trennen – ohne zu interpretieren oder zu lösen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Tritt die Situation mehrfach auf?",
+        "Sind Bedingungen vergleichbar (Zone, Druck, Spielerrollen)?",
+        "Passiert es unabhängig vom Spielstand?"
+      ],
+      "how_to_decide": [
+        "Suche mindestens zwei ähnliche Situationen",
+        "Achte auf gleiche Auslöser (z. B. Turnover, Entry, langer Shift)",
+        "Bewerte nur Häufigkeit und Kontext – nicht die Wirkung"
+      ],
+      "ignore": [
+        "Ob daraus ein Gegentor entsteht",
+        "Emotionale Spielsituationen",
+        "Einzelne Highlights oder Fehler"
+      ]
+    },
+    "learning_hint": "Analyse beginnt mit Wiederholung. Ohne Wiederholung gibt es keine Tendenz – nur ein Ereignis."
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "priority": "ursache_1" },
+        "when": { "classification": "tendenz" },
         "questions": [
-          "Warum ist Ursache 1 wichtiger als Ursache 2?",
-          "Woran erkennst du im nächsten Shift, dass Ursache 1 besser wird?",
-          "Welche kleinste Verhaltensänderung wäre der Hebel?"
+          "Welche Gemeinsamkeit verbindet die Situationen?",
+          "Unter welchen Bedingungen tritt das Muster zuverlässig auf?",
+          "Woran würdest du erkennen, dass es sich fortsetzt?"
         ]
       },
       {
-        "when": { "priority": "ursache_2" },
+        "when": { "classification": "ausreisser" },
         "questions": [
-          "Warum ist Ursache 2 der größere Hebel?",
-          "Was ist das früheste Messsignal für Verbesserung?",
-          "Welche Rolle/Zone muss dafür am stärksten reagieren?"
+          "Was macht diese Situation einzigartig?",
+          "Welche Bedingung fehlt für eine Wiederholung?",
+          "Worauf würdest du achten, um eine Tendenz auszuschließen?"
         ]
       }
     ]
@@ -5020,32 +4890,117 @@
   "config": {
     "questions": [
       {
-        "key": "causes",
-        "type": "multi",
-        "label": "Wähle genau 2 Ursachen",
+        "key": "classification",
+        "type": "radio",
+        "label": "Deine Einordnung",
         "options": [
-          "exit_ohne_anschluss",
-          "abstaende_zu_gross",
-          "mitte_offen",
-          "blindes_risiko",
-          "schlechte_unterstuetzung",
-          "tempo_zu_hoch"
-        ],
-        "max_select": 2
+          "tendenz",
+          "ausreisser"
+        ]
       },
       {
-        "key": "priority",
+        "key": "context",
         "type": "radio",
-        "label": "Welche der beiden ist Priorität #1?",
+        "label": "Hauptkontext",
         "options": [
-          "ursache_1",
-          "ursache_2"
+          "D-Zone",
+          "Neutral Zone",
+          "O-Zone"
         ]
       },
       {
         "key": "note",
         "type": "text",
-        "label": "Formuliere dein #1-Adjustment (kurz, coachbar)",
+        "label": "Begründung (ein Satz)",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "E1_D3",
+  "title": "Trigger & Bedingungen erkennen",
+  "drill_type": "period_checkin",
+  "description": "Identifiziere die Bedingungen, unter denen eine Tendenz entsteht – nicht was danach passiert.",
+  "didactics": {
+    "explanation": "Tendenzen entstehen nicht zufällig. Sie werden durch bestimmte Auslöser und Rahmenbedingungen begünstigt. In diesem Drill trainierst du, diese Trigger sauber zu benennen, ohne bereits Lösungen oder Anpassungen abzuleiten.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Was passiert unmittelbar vor der Situation?",
+        "Welche Spielerrollen sind beteiligt?",
+        "In welcher Phase des Spiels tritt es auf?"
+      ],
+      "how_to_decide": [
+        "Formuliere den Trigger als Startpunkt (nicht als Folge)",
+        "Achte auf gleiche Auslöser bei mehreren Szenen",
+        "Trenne Bedingung (wann/wo) von Wirkung (was passiert)"
+      ],
+      "ignore": [
+        "Gegentor oder Abschluss",
+        "Emotionale Reaktionen",
+        "Spätere Korrekturen im Spielzug"
+      ]
+    },
+    "learning_hint": "Wer Trigger erkennt, kann Entwicklungen vorhersagen – wer nur Folgen sieht, reagiert zu spät."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "trigger_type": "strukturell" },
+        "questions": [
+          "Warum ist dieser Trigger systembedingt?",
+          "Tritt er auch bei anderen Reihen oder Gegnern auf?",
+          "Was macht ihn stabil über Zeit?"
+        ]
+      },
+      {
+        "when": { "trigger_type": "situativ" },
+        "questions": [
+          "Welche konkrete Spielsituation löst ihn aus?",
+          "Ist er abhängig von Tempo, Score oder Wechseln?",
+          "Wie leicht ist er reproduzierbar?"
+        ]
+      },
+      {
+        "when": { "trigger_type": "zufaellig" },
+        "questions": [
+          "Warum ist dieser Trigger nicht verlässlich?",
+          "Welche Bedingung fehlt für Wiederholung?",
+          "Woran würdest du erkennen, dass er bedeutungslos bleibt?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "trigger_type",
+        "type": "radio",
+        "label": "Art des Triggers",
+        "options": [
+          "strukturell",
+          "situativ",
+          "zufaellig"
+        ]
+      },
+      {
+        "key": "trigger_origin",
+        "type": "radio",
+        "label": "Auslöser beginnt meist bei…",
+        "options": [
+          "Exit",
+          "Entry",
+          "Turnover",
+          "langer Shift",
+          "Special Teams"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Trigger kurz formulieren",
         "max_chars": 140
       }
     ]

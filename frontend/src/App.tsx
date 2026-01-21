@@ -18,12 +18,14 @@ function App() {
         <div className="container">
           <span className="navbar-brand">Academy</span>
           <div className="nav-container">
-            <div>
+            <div className="nav-tabs">
               <a className={`nav-link${window.location.pathname === '/' ? ' nav-link-active' : ''}`} href="/">Dashboard</a>
               <a className={`nav-link${window.location.pathname.startsWith('/curriculum') ? ' nav-link-active' : ''}`} href="/curriculum">Curriculum</a>
               <a className={`nav-link${window.location.pathname.startsWith('/history') ? ' nav-link-active' : ''}`} href="/history">History</a>
               <a className={`nav-link${window.location.pathname.startsWith('/progress') ? ' nav-link-active' : ''}`} href="/progress">Progress</a>
             </div>
+          </div>
+          <div className="nav-user">
             <UserBadge />
           </div>
         </div>
