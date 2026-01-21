@@ -2755,20 +2755,832 @@
       }
     ]
   }
+},
+{
+  "id": "C1_D2",
+  "title": "Slot Control & Prioritäten",
+  "drill_type": "period_checkin",
+  "description": "Beurteile, wie konsequent der Slot geschützt wird und welche Prioritäten die Defensive setzt.",
+  "didactics": {
+    "explanation": "Defensive Stabilität entsteht durch klare Prioritäten: Der Slot hat Vorrang vor Druck an der Bande. Gute Teams schützen gefährliche Zonen konsequent.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionierung der Verteidiger im Slot",
+        "Abstände zwischen Slot-Spielern",
+        "Wann wird der Slot verlassen?"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere Aktionen nacheinander",
+        "Achte auf Wiederholungen, nicht auf Ausnahmen",
+        "Frage dich: Was wird zuerst verteidigt?"
+      ],
+      "ignore": [
+        "Schüsse von außen",
+        "Individuelle Fehler ohne Systembezug"
+      ]
+    },
+    "learning_hint": "Slot Control ist eine bewusste Priorität – kein Zufall."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "slot_control": "konsequent" },
+        "questions": [
+          "Wodurch blieb der Slot stabil besetzt?",
+          "Wurden Risiken an der Bande bewusst akzeptiert?",
+          "Wirkte die Staffelung klar abgestimmt?"
+        ]
+      },
+      {
+        "when": { "slot_control": "situativ" },
+        "questions": [
+          "Wann wurde der Slot gut kontrolliert – wann nicht?",
+          "Welche Situation brachte die Ordnung ins Wanken?",
+          "Lag es an Timing oder Rollenverteilung?"
+        ]
+      },
+      {
+        "when": { "slot_control": "vernachlässigt" },
+        "questions": [
+          "Warum wurde der Slot preisgegeben?",
+          "War der Druck an der Scheibe überpriorisiert?",
+          "Welche einfache Regel hätte geholfen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "slot_control",
+        "type": "radio",
+        "label": "Slot-Kontrolle",
+        "options": [
+          "konsequent",
+          "situativ",
+          "vernachlässigt"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C1_D3",
+  "title": "Switches & Übergaben",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, ob defensive Übergaben (Switches) klar kommuniziert und sauber ausgeführt werden.",
+  "didactics": {
+    "explanation": "Switches sind keine Einzelentscheidungen, sondern kollektive Absprachen. Gute Teams übergeben klar, schlechte verlieren Zuordnung oder Zeit.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Zeitpunkt der Übergabe",
+        "Abstände während des Switches",
+        "Reaktion beider beteiligter Spieler"
+      ],
+      "how_to_decide": [
+        "Beobachte nur die Übergabe, nicht den Ausgang",
+        "Achte auf Gleichzeitigkeit der Bewegung",
+        "Frage dich: War klar, wer wen übernimmt?"
+      ],
+      "ignore": [
+        "Ob daraus ein Abschluss entsteht",
+        "Einzelne technische Fehler"
+      ]
+    },
+    "learning_hint": "Ein guter Switch ist früh, klar und ohne Tempoverlust."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "switch_quality": "sauber" },
+        "questions": [
+          "Woran war die Klarheit der Übergabe erkennbar?",
+          "Blieb der Gegner unter Kontrolle?",
+          "Wirkte die Aktion abgestimmt oder automatisch?"
+        ]
+      },
+      {
+        "when": { "switch_quality": "unsicher" },
+        "questions": [
+          "Wo entstand der Moment der Unsicherheit?",
+          "Lag es an Timing oder Kommunikation?",
+          "Musste jemand improvisieren?"
+        ]
+      },
+      {
+        "when": { "switch_quality": "verpasst" },
+        "questions": [
+          "Warum kam es zu keiner Übergabe?",
+          "War die Situation früh genug erkennbar?",
+          "Welche einfache Regel hätte geholfen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "switch_quality",
+        "type": "radio",
+        "label": "Übergabe / Switch",
+        "options": [
+          "sauber",
+          "unsicher",
+          "verpasst"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C1_D4",
+  "title": "Box & Box+1 – Grundordnung erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkenne defensive Grundordnungen in der D-Zone und ihre Stabilität.",
+  "didactics": {
+    "explanation": "Box-Varianten funktionieren nur, wenn Abstände stimmen und Rollen klar sind. Entscheidend ist nicht das System, sondern die Ordnung darin.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Form der Box (kompakt vs. verzogen)",
+        "Abstände zum Slot",
+        "Rolle des +1-Spielers"
+      ],
+      "how_to_decide": [
+        "Beobachte die Grundordnung ohne Puckfokus",
+        "Achte auf Gleichmäßigkeit der Abstände",
+        "Frage dich: Wer schützt den Slot?"
+      ],
+      "ignore": [
+        "Schüsse von außen",
+        "Individuelle Checks"
+      ]
+    },
+    "learning_hint": "Gute Ordnung reduziert Optionen – auch ohne aktiven Druck."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "formation": "stabil" },
+        "questions": [
+          "Wodurch blieb die Ordnung stabil?",
+          "Welche Rolle hatte der +1-Spieler?",
+          "Wie wirkte der Slot-Schutz?"
+        ]
+      },
+      {
+        "when": { "formation": "instabil" },
+        "questions": [
+          "Wo brach die Ordnung zuerst?",
+          "Lag es an Abständen oder Rollen?",
+          "Welche einfache Anpassung hätte geholfen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "formation",
+        "type": "radio",
+        "label": "Grundordnung",
+        "options": [
+          "stabil",
+          "instabil"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "C1_D5",
+  "title": "Slot Control & Sticks im Raum",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, wie effektiv der Slot durch Positionierung und Schlägerarbeit kontrolliert wird.",
+  "didactics": {
+    "explanation": "Slot Control entsteht nicht durch Härte, sondern durch Positionierung, Stick-Lanes und antizipatives Verhalten. Gute Defensiven nehmen Optionen, bevor sie entstehen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Position der Verteidiger relativ zum Slot",
+        "Schlägerstellung in Passlinien",
+        "Körper- vs. Stickorientierung"
+      ],
+      "how_to_decide": [
+        "Beobachte nur den Raum vor dem Tor",
+        "Achte auf aktive Sticks statt Körperkontakt",
+        "Frage dich: Welche Passoptionen sind realistisch?"
+      ],
+      "ignore": [
+        "Schüsse von außen",
+        "Torwartaktionen"
+      ]
+    },
+    "learning_hint": "Guter Slot-Schutz nimmt Optionen, bevor sie gefährlich werden."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "slot_control": "sauber" },
+        "questions": [
+          "Welche Passwege waren klar geschlossen?",
+          "Wie aktiv waren die Sticks im Raum?",
+          "Wirkte die Ordnung bewusst oder reaktiv?"
+        ]
+      },
+      {
+        "when": { "slot_control": "lückenhaft" },
+        "questions": [
+          "Wo entstanden die Lücken?",
+          "Lag es eher an Position oder Stickarbeit?",
+          "Welche kleine Anpassung hätte gereicht?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "slot_control",
+        "type": "radio",
+        "label": "Slot-Kontrolle",
+        "options": [
+          "sauber",
+          "lückenhaft"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
 }
 ]
         },
-        {
-          "id": "C2",
-          "title": "C2 – Neutral Zone Systeme",
-          "summary": "1-1-3, 1-3-1, 1-2-2, Regroup-Logiken",
-          "drills": []
-        },
-        {
-          "id": "C3",
-          "title": "C3 – Offensive Zone Systeme",
-          "summary": "2-3, 1-2-2, 1-3-1, Low-Cycle vs. Point Play",
-          "drills": []
+{
+  "id": "C2",
+  "title": "C2 – Neutral Zone Systeme",
+  "summary": "Strukturen, Staffelungen und Lenkungsprinzipien zwischen den Linien",
+  "description": "Verstehen, wie Teams in der Neutral Zone Raum kontrollieren, Tempo brechen und Gegner lenken. Fokus liegt auf Staffelung, Abständen und kollektiven Bewegungen – nicht auf einzelnen Steals.",
+  "drills": [
+{
+  "id": "C1_D1",
+  "title": "Grundstruktur erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkenne die defensive Grundstruktur in der eigenen Zone.",
+  "didactics": {
+    "explanation": "Defensive Systeme erkennt man an Staffelung und Raumpriorität – nicht an einzelnen Zweikämpfen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionierung der vier Feldspieler ohne Puck",
+        "Abstände zum Slot",
+        "Reaktion auf Puckverlagerung"
+      ],
+      "how_to_decide": [
+        "Blende den Puck kurz aus",
+        "Erkenne Linien und Ebenen",
+        "Frage dich: Wird Raum oder Spieler verteidigt?"
+      ],
+      "ignore": [
+        "Schüsse von außen",
+        "Einzelne Checks"
+      ]
+    },
+    "learning_hint": "Systeme zeigen sich in Ordnung, nicht in Aktion."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "dz_structure",
+        "type": "radio",
+        "label": "Grundstruktur",
+        "options": [
+          "Box",
+          "Box+1",
+          "mannnah",
+          "unklar"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Woran hast du die Struktur erkannt?",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "C2_D2",
+  "title": "Lenkung statt Zugriff",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, wie Angriffe gelenkt werden – nicht wie der Puck erobert wird.",
+  "didactics": {
+    "explanation": "Gute Neutral-Zone-Defensive zwingt Gegner in vorhersehbare Räume. Zugriff ist Folge, nicht Ziel.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Laufwinkel der ersten Pressingaktion",
+        "Seitliche oder mittige Lenkung",
+        "Reaktion der zweiten Linie"
+      ],
+      "how_to_decide": [
+        "Beobachte nur die Richtung des Angriffs",
+        "Frage dich: Wohin darf der Gegner spielen?",
+        "Achte auf kollektive Bewegung"
+      ],
+      "ignore": [
+        "Ob der Puck sofort verloren geht",
+        "Checks oder Zweikämpfe"
+      ]
+    },
+    "learning_hint": "Kontrolle entsteht durch Richtung, nicht durch Tempo."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "direction",
+        "type": "radio",
+        "label": "Lenkung",
+        "options": [
+          "zur Bande",
+          "zur Mitte",
+          "keine erkennbare"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C2_D3",
+  "title": "Abstände zwischen den Linien",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, ob die Neutral-Zone-Staffelung kompakt oder löchrig ist.",
+  "didactics": {
+    "explanation": "Zu große Abstände öffnen Raum für Tempoaufnahmen, zu kleine Abstände öffnen Seitenwechsel.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Distanz zwischen erster und zweiter Linie",
+        "Gleichmäßigkeit der Abstände",
+        "Reaktion auf Tempowechsel"
+      ],
+      "how_to_decide": [
+        "Beurteile Abstände, nicht Positionen",
+        "Achte auf Gleichmäßigkeit",
+        "Frage dich: Wo entsteht Raum?"
+      ],
+      "ignore": [
+        "Individuelle Fehler",
+        "Abschlussaktionen"
+      ]
+    },
+    "learning_hint": "Neutral-Zone-Kontrolle ist ein Abstandsproblem."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "spacing",
+        "type": "radio",
+        "label": "Abstände",
+        "options": [
+          "kompakt",
+          "instabil",
+          "zu weit"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Warum?",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C2_D4",
+  "title": "Übergang erzwingen oder zulassen",
+  "drill_type": "period_checkin",
+  "description": "Beurteile, ob der Gegner bewusst Tempo aufnehmen darf oder gestoppt wird.",
+  "didactics": {
+    "explanation": "Nicht jeder kontrollierte Übergang ist ein Fehler – entscheidend ist, ob er geplant oder erzwungen ist.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Tempoaufnahme des Gegners",
+        "Reaktion der hinteren Linie",
+        "Rückzug oder Vorwärtsverteidigung"
+      ],
+      "how_to_decide": [
+        "Frage dich: War das einkalkuliert?",
+        "Beobachte kollektives Verhalten",
+        "Unterscheide Chaos von Kontrolle"
+      ],
+      "ignore": [
+        "Ob daraus ein Rush entsteht",
+        "Torabschlüsse"
+      ]
+    },
+    "learning_hint": "Nicht stoppen ist manchmal die bessere Entscheidung."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "transition",
+        "type": "radio",
+        "label": "Übergang",
+        "options": [
+          "bewusst zugelassen",
+          "ungewollt",
+          "verhindert"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Einschätzung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C2_D5",
+  "title": "Systemtreue unter Druck",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, ob die Neutral-Zone-Struktur auch unter Druck erhalten bleibt.",
+  "didactics": {
+    "explanation": "Gute Teams fallen unter Druck nicht auseinander – sie vereinfachen, ohne Struktur zu verlieren.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionsdisziplin bei Tempo",
+        "Reaktionen nach überspielter Linie",
+        "Kollektives Nachschieben"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere Aktionen hintereinander",
+        "Achte auf Wiederholung von Mustern",
+        "Frage dich: Bleibt die Ordnung erkennbar?"
+      ],
+      "ignore": [
+        "Einzelne Heldentaten",
+        "Zufällige Steals"
+      ]
+    },
+    "learning_hint": "Systeme erkennt man daran, was unter Druck übrig bleibt."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "system_integrity",
+        "type": "radio",
+        "label": "Systemtreue",
+        "options": [
+          "stabil",
+          "angepasst",
+          "zerfallen"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+
+          ]
+},
+{
+  "id": "C3",
+  "title": "C3 – Offensive Zone Systeme",
+  "summary": "Aufbau, Rotation und Raumverteilung in der Angriffszone",
+  "description": "Offensive Zonen-Systeme leben von Raumaufteilung, Timing und Rollenverständnis. In diesem Track lernst du, verschiedene OZ-Strukturen zu erkennen, Rotationen zu lesen und zu verstehen, warum bestimmte Angriffe stabil bleiben oder zerfallen.",
+  "learningGoals": [
+    "Erkenne grundlegende Offensive-Zonen-Strukturen",
+    "Verstehe Rollenverteilung High / Low / Net-Front",
+    "Lies Rotationen und Positionswechsel",
+    "Unterscheide Struktur von Chaos"
+  ],
+  "difficulty": 3,
+  "duration": 55,
+  "drills": [{
+  "id": "C3_D1",
+  "title": "Grundstruktur erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkenne die grundlegende Struktur in der Angriffszone.",
+  "didactics": {
+    "explanation": "Bevor Rotationen oder Plays bewertet werden können, muss die Grundstruktur klar sein. Dieser Drill trainiert reines Struktur-Erkennen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Anzahl Spieler oberhalb der Hashmarks",
+        "Positionierung an den Punkten und am Slot",
+        "Net-Front-Besetzung"
+      ],
+      "how_to_decide": [
+        "Beobachte die Formation über mehrere Sekunden",
+        "Ignoriere den Puck kurzzeitig",
+        "Ordne Spieler nach High / Middle / Low"
+      ],
+      "ignore": [
+        "Schüsse oder Abschlüsse",
+        "Individuelle Technik"
+      ]
+    },
+    "learning_hint": "Struktur erkennt man ohne Puck – wer nur dem Puck folgt, sieht kein System."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "oz_structure",
+        "type": "radio",
+        "label": "Offensive Grundstruktur",
+        "options": [
+          "2-3",
+          "1-2-2",
+          "unklar"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C3_D2",
+  "title": "Low Cycle vs. Point Play",
+  "drill_type": "period_checkin",
+  "description": "Unterscheide, ob der Angriff über Low Cycle oder über die blaue Linie organisiert wird.",
+  "didactics": {
+    "explanation": "Offensive Zonenangriffe lassen sich grob in Low-Cycle-orientierte und Point-orientierte Strukturen einteilen. Entscheidend ist nicht der Abschluss, sondern wo Überzahl, Zeit und Entscheidungsraum erzeugt werden.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wo findet der Ballbesitz überwiegend statt?",
+        "Wer initiiert den Angriff (Below Goal Line vs. Point)?",
+        "Wie wird Druck auf die Defensive aufgebaut?"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere Puckkontakte, nicht nur einen",
+        "Ordne nach Schwerpunkt, nicht nach Einzelaktion",
+        "Frage dich: Wo entsteht Entscheidungsstress für die Defensive?"
+      ],
+      "ignore": [
+        "Ob ein Schuss aufs Tor kommt",
+        "Ob der Angriff erfolgreich endet"
+      ]
+    },
+    "learning_hint": "Struktur zeigt sich über Wiederholung – nicht über den letzten Pass."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "oz_structure",
+        "type": "radio",
+        "label": "Angriffsstruktur",
+        "options": [
+          "Low Cycle",
+          "Point Play",
+          "gemischt"
+        ]
+      },
+      {
+        "key": "control_zone",
+        "type": "radio",
+        "label": "Kontrollzone",
+        "options": [
+          "untere Zone",
+          "blaue Linie",
+          "wechselnd"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C3_D3",
+  "title": "Überladungen & Rotationen",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, wann Überladungen und Rotationen defensive Ordnung verschieben.",
+  "didactics": {
+    "explanation": "Überladungen und Rotationen dienen nicht primär dem Abschluss, sondern dem Verschieben defensiver Prioritäten. Entscheidend ist, ob die Defensive gezwungen wird, Rollen zu tauschen oder Abstände aufzugeben.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Ballung mehrerer Angreifer in einem Bereich",
+        "Positionswechsel ohne Puck",
+        "Reaktionen der Verteidiger (Switch, Verzögerung, Übernahme)"
+      ],
+      "how_to_decide": [
+        "Beobachte Bewegungen ohne Puck",
+        "Achte darauf, ob Defensive ihre Zuordnung ändern muss",
+        "Frage dich: Wird Ordnung verschoben oder bleibt sie stabil?"
+      ],
+      "ignore": [
+        "Abschluss oder Tor",
+        "Einzelne Puckaktionen ohne Folgebewegung"
+      ]
+    },
+    "learning_hint": "Rotation wirkt nur, wenn sie Reaktionen erzwingt – nicht, wenn sie nur Bewegung ist."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "rotation_effect",
+        "type": "radio",
+        "label": "Wirkung der Rotation",
+        "options": [
+          "ordnung_verschoben",
+          "ordnung_gehalten",
+          "keine_wirkung"
+        ]
+      },
+      {
+        "key": "defensive_response",
+        "type": "radio",
+        "label": "Defensive Reaktion",
+        "options": [
+          "switch",
+          "verzoegert",
+          "klar_zugeordnet"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C3_D4",
+  "title": "Shot, Cycle oder Reset",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, welche Entscheidung aus der Struktur heraus getroffen wird.",
+  "didactics": {
+    "explanation": "In stabilen Offensivzonen-Strukturen ist nicht der Schuss entscheidend, sondern die Wahl: Abschluss, Weiterzirkulieren oder Neuaufbau. Gute Teams erzwingen nichts – sie wählen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Puckposition relativ zur Defensive",
+        "Druck auf den Puckführer",
+        "Anspieloptionen im Low- und High-Bereich"
+      ],
+      "how_to_decide": [
+        "Beobachte nur den Entscheidungszeitpunkt",
+        "Frage dich: Gab es Zeit und Raum?",
+        "Bewerte die Entscheidung unabhängig vom Ausgang"
+      ],
+      "ignore": [
+        "Ob der Schuss aufs Tor kommt",
+        "Ob der Angriff danach weiterläuft"
+      ]
+    },
+    "learning_hint": "Die richtige Entscheidung erhält Struktur – die falsche zerstört sie, auch ohne Turnover."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "oz_decision",
+        "type": "radio",
+        "label": "Entscheidung",
+        "options": [
+          "shot",
+          "cycle",
+          "reset"
+        ]
+      },
+      {
+        "key": "decision_quality",
+        "type": "radio",
+        "label": "Passend zur Situation?",
+        "options": [
+          "ja",
+          "grenzwertig",
+          "nein"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "C3_D5",
+  "title": "Struktur kippt: Ursache erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, wodurch eine stabile Offensivzonen-Struktur instabil wird.",
+  "didactics": {
+    "explanation": "Offensive Strukturen kippen selten zufällig. Meist liegt es an schlechter Entscheidung, fehlender Absicherung oder defensivem Zugriff. Ziel ist, den Kipppunkt zu erkennen – nicht das Ergebnis.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Moment des Strukturverlusts",
+        "Position der F3 / Absicherung",
+        "Druck auf den Puck im Kipppunkt"
+      ],
+      "how_to_decide": [
+        "Beobachte nur den Übergang von Kontrolle zu Chaos",
+        "Frage dich: Wer verliert welche Rolle?",
+        "Bewerte Ursache, nicht Folge"
+      ],
+      "ignore": [
+        "Konter oder Gegentor danach",
+        "Individuelle Fehler ohne Systembezug"
+      ]
+    },
+    "learning_hint": "Struktur kippt, wenn Rollen verschwimmen – nicht wenn der Gegner gut spielt."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "break_reason",
+        "type": "radio",
+        "label": "Warum kippte die Struktur?",
+        "options": [
+          "schlechte_entscheidung",
+          "fehlende_absicherung",
+          "defensiver_zugriff",
+          "unklar"
+        ]
+      },
+      {
+        "key": "timing",
+        "type": "radio",
+        "label": "Zeitpunkt",
+        "options": [
+          "nach_schuss",
+          "nach_pass",
+          "bei_rotation",
+          "sofort"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Einordnung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+]
         }
       ]
     },
@@ -2777,29 +3589,1167 @@
       "title": "D – Special Teams",
       "goal": "Spiele entscheiden",
       "modules": [
-        {
-          "id": "D1",
-          "title": "D1 – Powerplay-Strukturen",
-          "summary": "Setups, Rotationen, Entry-Varianten",
-          "drills": []
+  {
+  "id": "D1",
+  "title": "D1 – Powerplay-Strukturen",
+  "summary": "Setups, Rollen und Entscheidungslogik im Powerplay",
+  "description": "Powerplay ist kein Zufallsspiel. Es basiert auf klaren Rollen, Zonenbesetzung, Timing und Geduld. In diesem Track lernst du, Powerplay-Strukturen zu erkennen, Entscheidungen unabhängig vom Torerfolg zu bewerten und Stabilität von Chaos zu unterscheiden.",
+  "learningGoals": [
+    "Erkenne grundlegende Powerplay-Setups",
+    "Verstehe Rollen und Raumaufteilung",
+    "Unterscheide Struktur von Improvisation",
+    "Bewerte Entscheidungen unabhängig vom Ergebnis"
+  ],
+  "difficulty": 3,
+  "duration": 55,
+  "drills": [
+            {
+  "id": "D1_D1",
+  "title": "Powerplay-Setup erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, welche Grundstruktur im Powerplay gespielt wird.",
+  "didactics": {
+    "explanation": "Powerplay beginnt mit Struktur. Bevor Entscheidungen bewertet werden können, muss klar sein, welches Setup gespielt wird – unabhängig davon, ob es erfolgreich ist.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionierung der fünf Angreifer",
+        "Besetzung von Point, Halfwall, Slot und Net-Front",
+        "Stabilität der Formation vor Bewegung"
+      ],
+      "how_to_decide": [
+        "Beobachte nur stabile Phasen (keine Rebounds)",
+        "Blende Pucktempo aus",
+        "Frage dich: Wo ist der Fokuspunkt?"
+      ],
+      "ignore": [
+        "Abschluss oder Tor",
+        "Individuelle Fähigkeiten"
+      ]
+    },
+    "learning_hint": "Ein Powerplay ohne erkennbare Struktur ist kein Setup – es ist Improvisation."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pp_setup",
+        "type": "radio",
+        "label": "Powerplay-Setup",
+        "options": [
+          "1-3-1",
+          "2-3",
+          "umbrella",
+          "unklar"
+        ]
+      },
+      {
+        "key": "stability",
+        "type": "radio",
+        "label": "Strukturstabilität",
+        "options": [
+          "klar",
+          "instabil",
+          "nicht_erkennbar"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D1_D2",
+  "title": "Rollen & Verantwortungen im Powerplay",
+  "drill_type": "period_checkin",
+  "description": "Erkennen, ob die Spieler ihre Powerplay-Rollen klar und funktional ausfüllen.",
+  "didactics": {
+    "explanation": "Ein Powerplay funktioniert nur, wenn Rollen klar besetzt sind. Gute Ausführung zeigt sich nicht im Tor, sondern darin, ob jede Rolle ihren Zweck erfüllt.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wer besetzt Net-Front, Slot, Halfwall und Point?",
+        "Bleiben Rollen stabil oder werden sie chaotisch getauscht?",
+        "Erzeugt jede Rolle eine erkennbare Wirkung?"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere Puckzirkulationen",
+        "Bewerte Rollenerfüllung, nicht Talent",
+        "Frage dich: Hat jede Position einen klaren Zweck?"
+      ],
+      "ignore": [
+        "Schussstärke",
+        "Einzelaktionen"
+      ]
+    },
+    "learning_hint": "Rollen schaffen Optionen. Ohne Rollen gibt es nur Bewegung ohne Wirkung."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "role_clarity",
+        "type": "radio",
+        "label": "Rollenklarheit",
+        "options": [
+          "klar",
+          "teilweise",
+          "unklar"
+        ]
+      },
+      {
+        "key": "net_front",
+        "type": "radio",
+        "label": "Net-Front-Besetzung",
+        "options": [
+          "konstant",
+          "wechselnd",
+          "fehlt"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D1_D3",
+  "title": "Puckzirkulation & Geduld",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, ob das Powerplay Geduld aufbaut oder Chancen erzwingt.",
+  "didactics": {
+    "explanation": "Gute Powerplays erzeugen Druck durch Geduld und saubere Zirkulation. Schlechte Powerplays verlieren Struktur, weil sie zu früh abschließen wollen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Tempo der Puckbewegung",
+        "Positionswechsel ohne Puck",
+        "Zeit bis zum Abschluss"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere Passfolgen",
+        "Achte auf Ruhe trotz Druck",
+        "Frage dich: Wird eine Chance vorbereitet oder erzwungen?"
+      ],
+      "ignore": [
+        "Ob der Schuss aufs Tor kommt",
+        "Ob der Torwart hält oder nicht"
+      ]
+    },
+    "learning_hint": "Geduld ist kein Zögern – sie ist aktives Vorbereiten."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "circulation_quality",
+        "type": "radio",
+        "label": "Puckzirkulation",
+        "options": [
+          "geduldig",
+          "uneinheitlich",
+          "hektisch"
+        ]
+      },
+      {
+        "key": "shot_timing",
+        "type": "radio",
+        "label": "Abschluss-Timing",
+        "options": [
+          "vorbereitet",
+          "verfrüht",
+          "erzwungen"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D1_D4",
+  "title": "Shot Selection & Traffic",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, ob Schüsse im Powerplay vorbereitet sind und ob Traffic Wirkung erzeugt.",
+  "didactics": {
+    "explanation": "Nicht die Anzahl der Schüsse entscheidet, sondern deren Qualität. Traffic ohne Timing ist nutzlos, Schüsse ohne Screens leicht zu verteidigen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Position des Schützen",
+        "Timing von Traffic vor dem Tor",
+        "Reaktion der PK-Spieler auf den Schuss"
+      ],
+      "how_to_decide": [
+        "Achte auf den Moment des Schusses",
+        "Prüfe: Ist der Goalie gescreent?",
+        "Beurteile die Entscheidung, nicht das Resultat"
+      ],
+      "ignore": [
+        "Ob der Schuss reingeht",
+        "Abpraller-Zufälle"
+      ]
+    },
+    "learning_hint": "Guter Traffic ist getimt und aktiv – er steht nicht einfach im Weg."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "shot_quality",
+        "type": "radio",
+        "label": "Schussqualität",
+        "options": [
+          "vorbereitet",
+          "ok",
+          "schwach"
+        ]
+      },
+      {
+        "key": "traffic_effect",
+        "type": "radio",
+        "label": "Traffic-Wirkung",
+        "options": [
+          "wirksam",
+          "teilweise",
+          "keine"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurznotiz",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D1_D5",
+  "title": "Rebound-Read & Second Chance",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, ob nach dem ersten Schuss Anschluss entsteht oder die Situation sofort endet.",
+  "didactics": {
+    "explanation": "Gute Powerplays enden nicht mit dem ersten Schuss. Entscheidend ist, ob Spieler Rebounds antizipieren, Position halten und zweite Aktionen auslösen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionierung vor dem Schuss",
+        "Bewegung zum Rebound",
+        "Anschlussaktion nach erstem Kontakt"
+      ],
+      "how_to_decide": [
+        "Beobachte den Moment direkt nach dem Schuss",
+        "Achte auf Vororientierung der Offensivspieler",
+        "Bewerte Reaktion und Bereitschaft zur zweiten Aktion"
+      ],
+      "ignore": [
+        "Ob der Rebound zufällig zum Spieler springt",
+        "Abschlussqualität der zweiten Aktion"
+      ]
+    },
+    "learning_hint": "Second Chances entstehen durch Antizipation, nicht durch Glück."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "rebound_presence",
+        "type": "radio",
+        "label": "Rebound-Bereitschaft",
+        "options": [
+          "aktiv",
+          "reaktiv",
+          "keine"
+        ]
+      },
+      {
+        "key": "second_action",
+        "type": "radio",
+        "label": "Anschlussaktion",
+        "options": [
+          "sofort",
+          "verzögert",
+          "keine"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurznotiz",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+]
         },
-        {
-          "id": "D2",
-          "title": "D2 – PK-Reads",
-          "summary": "Formationen, Druckpunkte, Clears",
-          "drills": []
+{
+  "id": "D2",
+  "title": "D2 – Penalty Killing Reads",
+  "summary": "Formationen, Druckpunkte und Entscheidungslogik im Unterzahlspiel",
+  "description": "Penalty Killing ist kein passives Verteidigen, sondern ein strukturiertes Lesen von Raum, Timing und Auslösern. In diesem Track lernst du, PK-Formationen zu erkennen, Druckmomente richtig einzuordnen und Entscheidungen unabhängig vom Gegentor zu bewerten.",
+  "learningGoals": [
+    "Erkenne grundlegende PK-Formationen",
+    "Verstehe Druckpunkte und Auslöser im PK",
+    "Unterscheide aktiven Zugriff von passivem Blocken",
+    "Bewerte Clears, Pressure und Geduld unabhängig vom Ergebnis"
+  ],
+  "difficulty": 3,
+  "duration": 55,
+  "drills": [{
+  "id": "D2_D1",
+  "title": "PK-Grundstruktur erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkenne die Grundformation des Penalty Kill und wie sie Raum priorisiert.",
+  "didactics": {
+    "explanation": "Penalty Killing beginnt mit Struktur. Box, Diamond oder Hybrid – entscheidend ist nicht der Name, sondern welche Räume aktiv geschützt werden.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Grundform der vier Feldspieler",
+        "Abstände zwischen den Spielern",
+        "Welche Räume bewusst offen bleiben"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere Sekunden ohne Puckbewegung",
+        "Achte auf Staffelung, nicht auf Einzelspieler",
+        "Frage dich: Was will das PK schützen?"
+      ],
+      "ignore": [
+        "Schüsse von außen",
+        "Einzelne aggressive Vorstöße"
+      ]
+    },
+    "learning_hint": "Ein gutes PK definiert Räume – nicht nur Druck."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pk_structure",
+        "type": "radio",
+        "label": "PK-Struktur",
+        "options": [
+          "Box",
+          "Diamond",
+          "Hybrid"
+        ]
+      },
+      {
+        "key": "priority_space",
+        "type": "radio",
+        "label": "Priorisierter Raum",
+        "options": [
+          "Slot",
+          "Halfwall",
+          "Point"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D2_D2",
+  "title": "Drucktiming lesen",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, wann im PK Druck ausgelöst wird – und wann Geduld Stabilität bringt.",
+  "didactics": {
+    "explanation": "Im Penalty Kill entscheidet nicht der Wille zum Druck, sondern der richtige Moment. Zu früher Zugriff öffnet Räume, zu spätes Reagieren macht passiv.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Auslöser für Druck (schlechter Pass, Annahme, Blickrichtung)",
+        "Abstände zwischen erstem und zweitem Verteidiger",
+        "Reaktion der Formation auf den Druck"
+      ],
+      "how_to_decide": [
+        "Beobachte nur den Moment des Druckstarts",
+        "Frage dich: War der Druck vorbereitet?",
+        "Bewerte, ob Räume geschlossen oder geöffnet wurden"
+      ],
+      "ignore": [
+        "Ob der Puck sofort erobert wird",
+        "Ob ein Clear folgt oder nicht"
+      ]
+    },
+    "learning_hint": "Guter PK-Druck entsteht aus Vorbereitung, nicht aus Aktionismus."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "pressure_timing": "richtig" },
+        "questions": [
+          "Welcher Auslöser hat den Druck gerechtfertigt?",
+          "War der zweite Verteidiger rechtzeitig verfügbar?",
+          "Wirkte der Druck abgestimmt oder instinktiv?"
+        ]
+      },
+      {
+        "when": { "pressure_timing": "zu_frueh" },
+        "questions": [
+          "Welche Information wurde ignoriert?",
+          "Welcher Raum wurde dadurch geöffnet?",
+          "Wie hätte Geduld Stabilität erzeugt?"
+        ]
+      },
+      {
+        "when": { "pressure_timing": "zu_spaet" },
+        "questions": [
+          "Woran hast du die verpasste Gelegenheit erkannt?",
+          "Welche klare Einladung zum Druck wurde nicht genutzt?",
+          "Welche minimale Aktion hätte gereicht?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pressure_timing",
+        "type": "radio",
+        "label": "Drucktiming",
+        "options": [
+          "richtig",
+          "zu früh",
+          "zu spät"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D2_D3",
+  "title": "Clears: Kontrolle vs. Befreiung",
+  "drill_type": "period_checkin",
+  "description": "Unterscheide kontrollierte Clears von reinen Befreiungen im Penalty Kill.",
+  "didactics": {
+    "explanation": "Ein Clear ist nicht automatisch gut. Entscheidend ist, ob er Struktur erhält, Zeit verschafft oder nur kurz entlastet.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Situation vor dem Clear (Druck, Zeit, Balance)",
+        "Art des Clears (kontrolliert, unkontrolliert)",
+        "Reaktion der Formation nach dem Clear"
+      ],
+      "how_to_decide": [
+        "Bewerte den Moment der Entscheidung",
+        "Frage dich: Gab es eine kontrollierte Option?",
+        "Beurteile Wirkung, nicht Distanz"
+      ],
+      "ignore": [
+        "Wie lange der Clear letztlich anhält",
+        "Ob der Puck sofort zurückkommt"
+      ]
+    },
+    "learning_hint": "Ein guter Clear kauft Zeit oder Ordnung – nicht nur Meter."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "clear_type": "kontrolliert" },
+        "questions": [
+          "Wodurch war Kontrolle trotz Druck möglich?",
+          "Welche Option wurde bewusst gewählt?",
+          "Wie profitierte die Formation davon?"
+        ]
+      },
+      {
+        "when": { "clear_type": "befreiung" },
+        "questions": [
+          "Warum war keine kontrollierte Lösung realistisch?",
+          "War die Befreiung notwendig oder reflexhaft?",
+          "Welche Information fehlte im Moment?"
+        ]
+      },
+      {
+        "when": { "clear_type": "vermeidbar" },
+        "questions": [
+          "Welche bessere Option war vorhanden?",
+          "Was hätte mehr Zeit oder Ordnung gebracht?",
+          "Warum wurde diese Option nicht genutzt?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "clear_type",
+        "type": "radio",
+        "label": "Clear-Typ",
+        "options": [
+          "kontrolliert",
+          "befreiung",
+          "vermeidbar"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D2_D4",
+  "title": "PK-Stabilität über Zeit",
+  "drill_type": "period_checkin",
+  "description": "Beurteile, ob das Penalty Kill über mehrere Sequenzen stabil bleibt oder langsam zerfällt.",
+  "didactics": {
+    "explanation": "Gutes PK zeigt sich nicht im ersten Clear, sondern in der Wiederholbarkeit von Ordnung, Zugriff und Entscheidungsqualität.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Abstände innerhalb der Formation",
+        "Wiederherstellung der Grundordnung nach Druck",
+        "Qualität der zweiten und dritten Aktion"
+      ],
+      "how_to_decide": [
+        "Beobachte mehrere PK-Sequenzen hintereinander",
+        "Achte auf Ermüdung, Unruhe oder saubere Resets",
+        "Bewerte Stabilität, nicht einzelne Fehler"
+      ],
+      "ignore": [
+        "Ob ein Tor fällt",
+        "Einzelne Highlight-Aktionen"
+      ]
+    },
+    "learning_hint": "PK ist erfolgreich, wenn Ordnung reproduzierbar bleibt – nicht wenn einmal alles klappt."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "pk_stability": "stabil" },
+        "questions": [
+          "Wodurch blieb die Formation stabil?",
+          "Wie gut wurden Resets genutzt?",
+          "Wirkte das PK ruhig oder aktiv?"
+        ]
+      },
+      {
+        "when": { "pk_stability": "schwankend" },
+        "questions": [
+          "Wann kippte die Ordnung erstmals?",
+          "Lag es an Druck, Ermüdung oder Entscheidungen?",
+          "Gab es klare Warnzeichen?"
+        ]
+      },
+      {
+        "when": { "pk_stability": "instabil" },
+        "questions": [
+          "Wodurch ging die Ordnung verloren?",
+          "Fehlte Struktur oder Kommunikation?",
+          "Ab welchem Moment war das PK nur noch reaktiv?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pk_stability",
+        "type": "radio",
+        "label": "PK-Stabilität",
+        "options": [
+          "stabil",
+          "schwankend",
+          "instabil"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+]
         },
-        {
-          "id": "D3",
-          "title": "D3 – Entries & Clears",
-          "summary": "Ein-/Ausgetragen, Dump/Carry, unter Druck",
-          "drills": []
+{
+  "id": "D3",
+  "title": "D3 – Entries & Clears",
+  "summary": "Ein- und Austritte unter Druck lesen und bewerten",
+  "description": "Zone betreten und Zone verlassen sind Hochrisikomomente. In diesem Track lernst du, Entries und Clears nicht nach Erfolg zu bewerten, sondern nach Entscheidungsqualität, Vorbereitung und Unterstützung. Fokus liegt auf Kontrolle, Timing und bewusster Vereinfachung unter Druck.",
+  "learningGoals": [
+    "Unterscheide kontrollierte von erzwungenen Entries",
+    "Erkenne bewusste Clears vs. reine Entlastung",
+    "Bewerte Entscheidungen unabhängig vom Puckgewinn",
+    "Verstehe, wann Vereinfachung die richtige Lösung ist"
+  ],
+  "difficulty": 3,
+  "duration": 55,
+  "drills": [{
+  "id": "D3_D1",
+  "title": "Entry-Typ erkennen",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, wie Teams die Zone betreten: getragen, gedumpt oder erzwungen.",
+  "didactics": {
+    "explanation": "Der Zonen-Eintritt bestimmt, ob ein Team Kontrolle aufbauen kann oder sofort in einen Kampf gerät. Entscheidend ist nicht der Erfolg, sondern die gewählte Option unter den gegebenen Umständen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wie wird die Blue Line überquert?",
+        "Gibt es Kontrolle beim Eintritt?",
+        "Ist Unterstützung in Pucknähe vorhanden?"
+      ],
+      "how_to_decide": [
+        "Beobachte nur den Moment an der Blue Line",
+        "Bewerte die Entscheidung, nicht den Ausgang",
+        "Frage dich: War Kontrolle realistisch möglich?"
+      ],
+      "ignore": [
+        "Ob danach ein Schuss entsteht",
+        "Ob der Puck sofort verloren geht"
+      ]
+    },
+    "learning_hint": "Ein Dump ist nicht schlecht – wenn er bewusst gewählt ist."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "entry_type": "carry" },
+        "questions": [
+          "Warum war ein getragener Entry hier möglich?",
+          "Gab es genügend Unterstützung und Tempo?",
+          "Wirkte die Entscheidung kontrolliert oder erzwungen?"
+        ]
+      },
+      {
+        "when": { "entry_type": "dump" },
+        "questions": [
+          "War der Dump bewusst oder aus Mangel an Optionen?",
+          "Gab es realistische Forecheck-Unterstützung?",
+          "Wurde Raum hinter der Defense genutzt?"
+        ]
+      },
+      {
+        "when": { "entry_type": "erzwungen" },
+        "questions": [
+          "Woran hast du erkannt, dass die Entscheidung erzwungen war?",
+          "Welche Option fehlte?",
+          "Was hätte ein Reset ermöglicht?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "entry_type",
+        "type": "radio",
+        "label": "Entry-Typ",
+        "options": [
+          "carry",
+          "dump",
+          "erzwungen"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D3_D2",
+  "title": "Clear-Qualität unter Druck",
+  "drill_type": "period_checkin",
+  "description": "Unterscheide bewusste Clears von reiner Entlastung unter Gegnerdruck.",
+  "didactics": {
+    "explanation": "Ein Clear ist nicht automatisch gut, nur weil der Puck die Zone verlässt. Entscheidend ist, ob Zeit gewonnen, Struktur hergestellt oder nur panisch entlastet wird.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Art des Clears (kontrolliert vs. blind)",
+        "Drucksituation beim Ausspielen",
+        "Positionierung der Mitspieler vor dem Clear"
+      ],
+      "how_to_decide": [
+        "Bewerte nur den Moment des Clears",
+        "Frage dich: Wird Zeit gewonnen oder nur Luft geholt?",
+        "Achte auf Vorbereitung und Blick vor dem Ausspielen"
+      ],
+      "ignore": [
+        "Ob der Clear sofort zurückkommt",
+        "Was im nächsten Angriff passiert"
+      ]
+    },
+    "inline_explanations": {
+      "kontrolliert": {
+        "meaning": "Der Clear ist vorbereitet, gezielt und verschafft dem Team Zeit oder Ordnung."
+      },
+      "unter_druck": {
+        "meaning": "Der Clear erfolgt unter starkem Druck, aber mit bewusster Entscheidung (z. B. über Bande, hoch raus)."
+      },
+      "panik": {
+        "meaning": "Der Puck wird ohne Blick, Vorbereitung oder Struktur einfach weggeschlagen."
+      }
+    },
+    "learning_hint": "Nicht jeder kontrollierte Clear bleibt im Besitz – aber jeder gute Clear kauft Zeit."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "clear_type": "kontrolliert" },
+        "questions": [
+          "Woran hast du erkannt, dass der Clear bewusst gewählt war?",
+          "Wurde Zeit für einen Wechsel oder Neuaufbau gewonnen?",
+          "Wirkte das Team danach geordneter?"
+        ]
+      },
+      {
+        "when": { "clear_type": "unter Druck" },
+        "questions": [
+          "Was machte den Clear trotz Druck sinnvoll?",
+          "Gab es eine bessere Option oder war das Maximum erreicht?",
+          "Wie knapp war das Zeitfenster?"
+        ]
+      },
+      {
+        "when": { "clear_type": "panik" },
+        "questions": [
+          "Woran hast du die Panik erkannt?",
+          "Welche minimale Vorbereitung hätte geholfen?",
+          "War der Druck wirklich so hoch oder nur gefühlt?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "clear_type",
+        "type": "radio",
+        "label": "Clear-Typ",
+        "options": [
+          "kontrolliert",
+          "unter Druck",
+          "panik"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D3_D3",
+  "title": "Entry-Entscheidung: Carry oder Dump",
+  "drill_type": "period_checkin",
+  "description": "Beurteile, ob ein Entry bewusst gewählt oder erzwungen ist.",
+  "didactics": {
+    "explanation": "Ein Entry ist keine Stilfrage, sondern eine Entscheidungsfrage. Carry und Dump können beide richtig sein – abhängig von Tempo, Abstand und Unterstützung.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Tempo des Puckführers beim Erreichen der Blue Line",
+        "Abstand und Geschwindigkeit der Mitspieler",
+        "Positionierung der gegnerischen Verteidiger"
+      ],
+      "how_to_decide": [
+        "Beurteile die Entscheidung vor der Blue Line",
+        "Frage dich: Gab es eine echte Wahl?",
+        "Bewerte Vorbereitung, nicht Mut"
+      ],
+      "ignore": [
+        "Ob der Puckbesitz danach gehalten wird",
+        "Ob daraus eine Torchance entsteht"
+      ]
+    },
+    "inline_explanations": {
+      "carry": {
+        "meaning": "Der Puck wird kontrolliert über die Blue Line geführt, mit Anschluss- oder Schutzoption."
+      },
+      "dump": {
+        "meaning": "Der Puck wird bewusst tief gespielt, um Raum, Wechsel oder Zugriff zu erzwingen."
+      },
+      "erzwungen": {
+        "meaning": "Die Entscheidung entsteht aus Zeit- oder Raumverlust, nicht aus Planung."
+      }
+    },
+    "learning_hint": "Gute Entries entstehen aus Vorbereitung – nicht aus Hoffnung."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "entry_type": "carry" },
+        "questions": [
+          "Wodurch war der Carry vorbereitet?",
+          "Gab es Tempo- und Anschlussoptionen?",
+          "Wirkte die Entscheidung stabil oder riskant?"
+        ]
+      },
+      {
+        "when": { "entry_type": "dump" },
+        "questions": [
+          "Warum war der Dump hier sinnvoll?",
+          "Sollte Raum gewonnen oder Druck vermieden werden?",
+          "War der Dump geplant oder reaktiv?"
+        ]
+      },
+      {
+        "when": { "entry_type": "erzwungen" },
+        "questions": [
+          "Was ging vor der Blue Line verloren?",
+          "Welche Information fehlte für eine saubere Entscheidung?",
+          "Hätte ein früherer Reset geholfen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "entry_type",
+        "type": "radio",
+        "label": "Entry-Entscheidung",
+        "options": [
+          "carry",
+          "dump",
+          "erzwungen"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+{
+  "id": "D3_D4",
+  "title": "Retrieval & zweiter Zugriff",
+  "drill_type": "period_checkin",
+  "description": "Beurteile, ob nach einem Dump echter Zugriff entsteht oder der Puck sofort verloren geht.",
+  "didactics": {
+    "explanation": "Ein Dump ist nur dann sinnvoll, wenn er einen zweiten Zugriff ermöglicht. Ohne Staffelung, Timing und Laufwege wird aus Raumgewinn sofortiger Kontrollverlust.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wer ist erster Spieler am Puck?",
+        "Abstände und Laufwege der nachrückenden Spieler",
+        "Positionierung der Verteidiger beim Retrieval"
+      ],
+      "how_to_decide": [
+        "Beobachte nur den Moment des Puckgewinns oder -verlusts",
+        "Bewerte Timing und Staffelung, nicht Härte",
+        "Frage dich: Entsteht sofort neue Kontrolle?"
+      ],
+      "ignore": [
+        "Ob später eine Torchance entsteht",
+        "Einzelaktionen nach dem Retrieval"
+      ]
+    },
+    "inline_explanations": {
+      "sauber": {
+        "meaning": "Der Puck wird kontrolliert gewonnen oder gesichert, Anschluss ist sofort vorhanden."
+      },
+      "chaotisch": {
+        "meaning": "Der Zugriff ist unkoordiniert, Abstände stimmen nicht, Kontrolle entsteht nur zufällig."
+      },
+      "kein_zugriff": {
+        "meaning": "Der Puck geht direkt verloren oder wird ohne Druck geklärt."
+      }
+    },
+    "learning_hint": "Der zweite Zugriff entscheidet, ob ein Dump Angriff oder Geschenk ist."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "retrieval": "sauber" },
+        "questions": [
+          "Wodurch war der Zugriff gut vorbereitet?",
+          "Welche Laufwege oder Abstände waren entscheidend?",
+          "Wirkte das Timing abgestimmt?"
+        ]
+      },
+      {
+        "when": { "retrieval": "chaotisch" },
+        "questions": [
+          "Was hat die Kontrolle instabil gemacht?",
+          "Lag es an Timing, Abstand oder Rollen?",
+          "War der Zugriff planlos oder nur schlecht ausgeführt?"
+        ]
+      },
+      {
+        "when": { "retrieval": "kein_zugriff" },
+        "questions": [
+          "Warum kam kein echter Zugriff zustande?",
+          "War der Dump an sich schon problematisch?",
+          "Welche minimale Anpassung hätte Zugriff ermöglicht?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "retrieval",
+        "type": "radio",
+        "label": "Retrieval",
+        "options": [
+          "sauber",
+          "chaotisch",
+          "kein_zugriff"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+]
         },
-        {
-          "id": "D4",
-          "title": "D4 – 6-gegen-5",
-          "summary": "Struktur, Risiko, Entscheidungen",
-          "drills": []
+{
+  "id": "D4",
+  "title": "D4 – 6-gegen-5",
+  "summary": "Struktur, Risiko und Entscheidungsqualität mit Extra-Angreifer",
+  "description": "6-gegen-5 ist kein Chaos-Modus, sondern ein strukturiertes Risikospiel. In diesem Track lernst du, ob Teams mit Extra-Angreifer Ordnung halten, sinnvolle Entscheidungen treffen und wie stabil ihre Struktur unter maximalem Druck bleibt.",
+  "learningGoals": [
+    "Erkenne stabile vs. chaotische 6-gegen-5-Strukturen",
+    "Bewerte Entscheidungen unabhängig vom Torerfolg",
+    "Verstehe Rollenverteilung und Raumprioritäten",
+    "Unterscheide Geduld von Panik"
+  ],
+  "difficulty": 4,
+  "duration": 45,
+  "drills": [{
+  "id": "D4_D1",
+  "title": "Grundstruktur im 6-gegen-5",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, ob das angreifende Team eine klare Struktur hält oder zerfällt.",
+  "didactics": {
+    "explanation": "Auch im 6-gegen-5 gelten Struktur, Rollen und Raumaufteilung. Chaos entsteht nicht durch Risiko, sondern durch fehlende Ordnung.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Raumaufteilung High / Low / Net-Front",
+        "Abstände zwischen den Spielern",
+        "Bewegung ohne Puck"
+      ],
+      "how_to_decide": [
+        "Ignoriere das Ergebnis",
+        "Bewerte nur Positionierung und Ordnung",
+        "Frage dich: Weiß jeder, wo er sein soll?"
+      ],
+      "ignore": [
+        "Ob ein Tor fällt",
+        "Einzelaktionen"
+      ]
+    },
+    "learning_hint": "Risiko ohne Struktur ist Zufall – Struktur erlaubt Risiko."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "structure_quality",
+        "type": "radio",
+        "label": "Struktur",
+        "options": [
+          "klar",
+          "instabil",
+          "chaotisch"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Begründung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D4_D2",
+  "title": "Entscheidungen unter maximalem Druck",
+  "drill_type": "period_checkin",
+  "description": "Bewerte die Entscheidungsqualität bei Pässen, Schüssen und Verlagerungen.",
+  "didactics": {
+    "explanation": "Im 6-gegen-5 entscheidet nicht Schnelligkeit, sondern Entscheidungsqualität unter Stress.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Passauswahl",
+        "Schusszeitpunkt",
+        "Geduld vs. Hektik"
+      ],
+      "how_to_decide": [
+        "Beobachte nur die Entscheidung, nicht den Ausgang",
+        "War die Option vorbereitet?",
+        "Gab es bessere Alternativen?"
+      ],
+      "ignore": [
+        "Tor oder Save",
+        "Zufällige Abpraller"
+      ]
+    },
+    "learning_hint": "Gute Entscheidungen bleiben gut – auch wenn sie nicht belohnt werden."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "decision_quality",
+        "type": "radio",
+        "label": "Entscheidung",
+        "options": [
+          "geduldig",
+          "forciert",
+          "panisch"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Eigene Einschätzung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D4_D3",
+  "title": "Puckabsicherung & Risiko",
+  "drill_type": "period_checkin",
+  "description": "Beobachte, wie gut das Team Puckverluste absichert.",
+  "didactics": {
+    "explanation": "Nicht jeder Puckverlust ist ein Fehler – entscheidend ist, ob er einkalkuliert und abgesichert ist.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Positionierung hinter dem Puck",
+        "Absicherung gegen Clears",
+        "Reaktionszeit nach Puckverlust"
+      ],
+      "how_to_decide": [
+        "Beobachte nur Momente nach Ballverlust",
+        "Frage dich: War jemand vorbereitet?",
+        "Gab es sofortigen Zugriff?"
+      ],
+      "ignore": [
+        "Empty-Net-Tore",
+        "Spielstand"
+      ]
+    },
+    "learning_hint": "Risiko ohne Absicherung ist kein Mut, sondern Kontrollverlust."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "risk_control",
+        "type": "radio",
+        "label": "Risiko-Management",
+        "options": [
+          "abgesichert",
+          "teilweise",
+          "ungesichert"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beobachtung",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "D4_D4",
+  "title": "Mentale Ruhe im 6-gegen-5",
+  "drill_type": "period_checkin",
+  "description": "Erkenne, ob das Team Ruhe bewahrt oder hektisch wird.",
+  "didactics": {
+    "explanation": "6-gegen-5 ist ein Stresstest für kollektive Ruhe und Vertrauen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Körpersprache",
+        "Kommunikation",
+        "Tempo ohne Puck"
+      ],
+      "how_to_decide": [
+        "Achte auf unnötige Beschleunigung",
+        "Sieh, ob Spieler Verantwortung übernehmen",
+        "Wirkt das Team synchron?"
+      ],
+      "ignore": [
+        "Publikum",
+        "Kommentatoren"
+      ]
+    },
+    "learning_hint": "Ruhe ist ein taktischer Faktor."
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "team_composure",
+        "type": "radio",
+        "label": "Teamruhe",
+        "options": [
+          "ruhig",
+          "angespannt",
+          "chaotisch"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Woran erkennbar?",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+]
         }
       ]
     },
