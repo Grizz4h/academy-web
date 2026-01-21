@@ -88,28 +88,164 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 }
 
 export default function DrillRendererV3({ drill, answers, setAnswers }: DrillRendererV3Props) {
-	switch (drill.drill_type) {
-		case "period_checkin":
-			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "micro_quiz":
-			return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "shift_tracker":
-			return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "triangle_spotting":
-			return <TriangleSpotting drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "role_identification":
-			return <RoleIdentification drill={drill} answers={answers} setAnswers={setAnswers} />;
-		default:
-			return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
-	}
+	return (
+		<div>
+			<div style={{
+				background: '#1e293b',
+				color: '#fff',
+				padding: '6px 12px',
+				fontWeight: 700,
+				fontSize: '1.1rem',
+				borderRadius: 6,
+				marginBottom: 12,
+				textAlign: 'center',
+				letterSpacing: 1,
+				zIndex: 1000
+			}}>
+				[DrillRenderer V3 AKTIV]
+			</div>
+			{/* Drill-Rendering wie bisher */}
+			{
+				(() => {
+					switch (drill.drill_type) {
+						case "period_checkin":
+							return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+						case "micro_quiz":
+							return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
+						case "shift_tracker":
+							return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} />;
+						case "triangle_spotting":
+							return <TriangleSpotting drill={drill} answers={answers} setAnswers={setAnswers} />;
+						case "role_identification":
+							return <RoleIdentification drill={drill} answers={answers} setAnswers={setAnswers} />;
+						default:
+							return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
+					}
+				})()
+			}
+		</div>
+	);
 }
 
 
 // ----------------------------- PERIOD CHECKIN -----------------------------
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
-	const questions = drill?.config?.questions || [];
-	
-	const glossary = drill?.didactics?.glossary;
+  const questions = drill?.config?.questions || [];
+  const glossary = drill?.didactics?.glossary;
+
+  // Spezial-Layout für E1_D3
+  if (drill.id === 'E1_D3') {
+    // Annahme: Reihenfolge der questions im JSON: [Tendenz, Trigger1, Trigger2, Gültigkeit]
+    const tendenzQ = questions[0];
+    const trigger1Q = questions[1];
+    const trigger2Q = questions[2];
+    const validQ = questions[3];
+    return (
+      <div className="card">
+        <h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
+        {drill.description && (
+          <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.description}</p>
+        )}
+        {drill.didactics?.explanation && (
+          <div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+            <h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
+            <div style={{ whiteSpace: "pre-line" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
+          </div>
+        )}
+        {/* Block A: Beobachtete Tendenz */}
+        <section style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
+          <h4 style={{ margin: 0, color: '#5191a2' }}>Beobachtete Tendenz</h4>
+          <label style={{ fontWeight: 500, marginTop: 8, display: 'block' }}>{tendenzQ?.label || 'Welche Tendenz hast du über mehrere Szenen erkannt?'}</label>
+          <textarea
+            value={answers[tendenzQ?.key] || ""}
+            onChange={e => setAnswers({ ...answers, [tendenzQ?.key]: e.target.value })}
+            maxLength={tendenzQ?.max_chars || 140}
+            style={{ width: '100%', minHeight: 48, marginTop: 6, borderRadius: 4, padding: 6, fontSize: '1rem', background: '#050712', color: '#fff', border: '1px solid #5191a2' }}
+            placeholder={tendenzQ?.placeholder || 'z.B. „Team verliert nach Turnover in der NZ oft die Mitte“'}
+          />
+        </section>
+
+        {/* Block B: Trigger & Bedingungen */}
+        <section style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
+          <h4 style={{ margin: 0, color: '#5191a2' }}>Trigger & Bedingungen</h4>
+          {/* Trigger 1 */}
+          <div style={{ marginBottom: 12 }}>
+            <label style={{ fontWeight: 500, display: 'block' }}>Trigger 1 (Pflicht)</label>
+            <select
+              value={answers[trigger1Q?.key + '_type'] || ''}
+              onChange={e => setAnswers({ ...answers, [trigger1Q?.key + '_type']: e.target.value })}
+              required
+              style={{ marginRight: 8, minWidth: 120, padding: 4, borderRadius: 4, border: '1px solid #5191a2', background: '#050712', color: '#fff' }}
+            >
+              <option value="">Typ wählen…</option>
+              <option value="strukturell">strukturell</option>
+              <option value="situativ">situativ</option>
+              <option value="zufällig">zufällig</option>
+            </select>
+            <input
+              type="text"
+              value={answers[trigger1Q?.key] || ''}
+              onChange={e => setAnswers({ ...answers, [trigger1Q?.key]: e.target.value })}
+              placeholder="Kurzbeschreibung des Triggers"
+              style={{ width: '60%', marginLeft: 8, borderRadius: 4, padding: 6, fontSize: '1rem', background: '#050712', color: '#fff', border: '1px solid #5191a2' }}
+            />
+          </div>
+          {/* Trigger 2 (optional) */}
+          <div>
+            <label style={{ fontWeight: 500, display: 'block' }}>Trigger 2 (optional)</label>
+            <select
+              value={answers[trigger2Q?.key + '_type'] || ''}
+              onChange={e => setAnswers({ ...answers, [trigger2Q?.key + '_type']: e.target.value })}
+              style={{ marginRight: 8, minWidth: 120, padding: 4, borderRadius: 4, border: '1px solid #5191a2', background: '#050712', color: '#fff' }}
+            >
+              <option value="">Typ wählen…</option>
+              <option value="strukturell">strukturell</option>
+              <option value="situativ">situativ</option>
+              <option value="zufällig">zufällig</option>
+            </select>
+            <input
+              type="text"
+              value={answers[trigger2Q?.key] || ''}
+              onChange={e => setAnswers({ ...answers, [trigger2Q?.key]: e.target.value })}
+              placeholder="Kurzbeschreibung des Triggers (optional)"
+              style={{ width: '60%', marginLeft: 8, borderRadius: 4, padding: 6, fontSize: '1rem', background: '#050712', color: '#fff', border: '1px solid #5191a2' }}
+            />
+          </div>
+        </section>
+
+        {/* Block C: Gültigkeit der Analyse */}
+        <section style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
+          <h4 style={{ margin: 0, color: '#5191a2' }}>Analyse-Sicherheit</h4>
+          <label style={{ fontWeight: 500, display: 'block', marginBottom: 6 }}>{validQ?.label || 'Wie sicher bist du, dass diese Tendenz reproduzierbar ist?'}</label>
+          <div style={{ display: 'flex', gap: 24 }}>
+            {validQ?.options?.map((opt: string) => (
+              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 400 }}>
+                <input
+                  type="radio"
+                  name={validQ.key}
+                  value={opt}
+                  checked={answers[validQ.key] === opt}
+                  onChange={e => setAnswers({ ...answers, [validQ.key]: e.target.value })}
+                />
+                {opt}
+              </label>
+            ))}
+          </div>
+          <div style={{ fontSize: '0.95em', color: '#aaa', marginTop: 6 }}>
+            Wie sicher bist du, dass diese Tendenz reproduzierbar ist?
+          </div>
+        </section>
+
+        {drill.didactics?.learning_hint && (
+          <div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+            <h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
+            <p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
 	return (
 		<div className="card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>

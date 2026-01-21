@@ -39,6 +39,14 @@ export default function History() {
     return true
   }) || []
 
+  // Nach Datum absteigend sortieren (neueste oben)
+  const sortedSessions = [...filteredSessions].sort((a, b) => {
+    // created_at kann string oder Date sein
+    const dateA = new Date(a.created_at).getTime();
+    const dateB = new Date(b.created_at).getTime();
+    return dateB - dateA;
+  });
+
   const uniqueModules = [...new Set(sessions?.map(s => s.module_id) || [])]
   const uniqueCreators = [...new Set(sessions?.map(s => s.created_by).filter(Boolean) || [])]
 
@@ -98,12 +106,12 @@ export default function History() {
 
       {/* Sessions Liste */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {filteredSessions.length === 0 ? (
+        {sortedSessions.length === 0 ? (
           <div className="card">
             <p>Keine Sessions gefunden.</p>
           </div>
         ) : (
-          filteredSessions.map((session: Session) => (
+          sortedSessions.map((session: Session) => (
             <SessionCard
               key={session.id}
               session={{ ...session, observed_team: session.game_info?.observed_team }}
