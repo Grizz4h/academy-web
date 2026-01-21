@@ -1,17 +1,6 @@
-INFO:     Started server process [70463]
+INFO:     Started server process [2652]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     127.0.0.1:60545 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61149 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61172 - "GET /api/curriculum HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61174 - "GET /api/teams HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62529 - "GET /api/curriculum HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:62615 - "GET /api/curriculum HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:62629 - "GET /api/curriculum HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:62789 - "GET /api/curriculum HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:62799 - "GET /api/curriculum HTTP/1.1" 404 Not Found
-INFO:     Shutting down
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [70463]

@@ -1,0 +1,245 @@
+{
+  "A1": {
+    "title": "Rink IQ & Rollenverständnis",
+    "subtitle": "Spiel lesen lernen: Ordnung erkennen, Chaos einordnen",
+    "overview": "Rink IQ & Rollenverständnis ist das Fundament des modernen Eishockeys. Es geht darum, das Spiel zu lesen, bevor es passiert – Antizipation statt Reaktion. Spieler mit hohem Rink IQ erkennen Ordnung im Chaos und verstehen ihre funktionalen Rollen (Center, Winger, Defense) sowie die Bedeutung von Dreiecken als kleinste spielbare Einheit.",
+    "sections": [
+      {"key": "rinkIQ", "title": "Was ist Rink IQ?", "content": [
+        "Rink IQ beschreibt die Fähigkeit eines Spielers, das Spiel zu lesen, bevor es sich vollständig entfaltet. Es geht nicht um Talent, Tempo oder Technik, sondern um Antizipation: Wer versteht, was gleich passieren wird, ist früher am richtigen Ort – oft ohne spektakuläre Aktionen.",
+        "Rink IQ zeigt sich nicht in Highlights, sondern in unscheinbaren, wiederholbaren Entscheidungen:",
+        ["richtige Position vor dem Pass", "richtige Höhe im Angriff", "richtige Unterstützung im Moment des Puckverlusts"],
+        "Kurz: Rink IQ ist mentale Ordnung im bewegten System Eishockey."
+      ]},
+      {"key": "warumZentral", "title": "Warum ist Rink IQ zentral?", "content": [
+        "Eishockey ist kein Abfolge-Spiel ('erst A, dann B'), sondern ein permanenter Zustandswechsel:",
+        ["Angriff → Umschalten", "Druck → Absicherung", "Ordnung → Chaos"],
+        "Spieler mit hohem Rink IQ reagieren nicht, sie antizipieren. Spieler mit niedrigem Rink IQ reagieren zu spät – und wirken hektisch, obwohl sie sich viel bewegen.",
+        "Rink IQ ist der Unterschied zwischen: 'immer knapp zu spät' und 'scheinbar mühelos richtig'"
+      ]},
+      {"key": "rollenverstaendnis", "title": "Rollenverständnis: Ordnung im Chaos", "content": [
+        "Rollen sind keine starren Positionen, sondern Funktionszustände, die sich je nach Spielsituation verändern. Trotzdem gilt: Ohne klares Rollenverständnis entsteht Chaos – selbst bei talentierten Spielern."
+      ]},
+      {"key": "dreiecke", "title": "Dreiecke – die kleinste funktionierende Einheit", "content": [
+        {"subtitle": "Was ist ein Dreieck?", "text": "Ein Dreieck ist eine stabile Pass- und Absicherungsstruktur aus drei Spielern. Es entsteht ständig neu – im Breakout, im Forecheck, im Angriff."},
+        {"subtitle": "Warum ist das wichtig?", "text": "Dreiecke schaffen:", "list": ["zwei Passoptionen", "eine Absicherung", "klare Entscheidungslogik"]},
+        "Ohne Dreiecke gibt es nur Einzelaktionen.",
+        {"subtitle": "Woran erkennt man funktionierende Dreiecke?", "list": ["Spieler stehen nicht auf einer Linie", "Abstände sind passfähig, nicht maximal", "ein Spieler ist immer 'unterstützend' positioniert"]},
+        {"subtitle": "Typische Fehler", "list": ["alle laufen zum Puck", "Dreiecke brechen bei Druck sofort auseinander", "Fokus auf Zielraum statt Struktur"]}
+      ]},
+      {"key": "ordnungChaos", "title": "Ordnung vs. Chaos – das Grundprinzip", "content": [
+        "Eishockey pendelt ständig zwischen geordneten Phasen und chaotischen Phasen.",
+        {"phases": [
+          {"title": "Ordnung", "list": ["kontrollierter Aufbau", "klare Rollen"]},
+          {"title": "Chaos", "list": ["Rebounds", "Turnovers", "Scramble"]}
+        ]},
+        "Rink IQ bedeutet, zu erkennen: Wann halte ich Ordnung? Wann akzeptiere ich Chaos?",
+        "Spieler mit niedrigem Rink IQ versuchen, Chaos zu 'gewinnen'. Spieler mit hohem Rink IQ überleben Chaos und stellen danach wieder Ordnung her."
+      ]},
+      {"key": "missverstaendnisse", "title": "Häufige Missverständnisse", "content": [
+        {"myths": [
+          {"myth": "❌ 'Rink IQ = langsam, clever spielen' → falsch. Rink IQ kann sehr schnell sein – aber zielgerichtet."},
+          {"myth": "❌ 'Rollen schränken Kreativität ein' → falsch. Rollen ermöglichen Kreativität, weil sie Struktur geben."},
+          {"myth": "❌ 'Dreiecke sind ein System' → nein. Dreiecke sind ein Prinzip, systemunabhängig."}
+        ]}
+      ]},
+      {"key": "zusammenfassung", "title": "Kernzusammenfassung", "content": [
+        {"summary": [
+          "Rink IQ = Antizipation + Strukturverständnis",
+          "Rollen sind funktional, nicht statisch",
+          "Center stabilisiert das Zentrum",
+          "Winger geben Breite und Sicherheit",
+          "Defense steuert Risiko und Tempo",
+          "Dreiecke sind die Basis jeder Spielform",
+          "Ordnung herstellen ist wichtiger als Chaos zu gewinnen"
+        ]}
+      ]}
+    ]
+  },
+  "A2": {
+    "title": "Raum, Linien & Breakout-Logik",
+    "subtitle": "Zonen verstehen, Entscheidungen lesen, Spiel eröffnen",
+    "overview": "Raum, Linien & Breakout-Logik beschreibt die räumliche Organisation des Eishockeys und wie Teams aus der eigenen Zone ins Spiel kommen. Es geht um Entscheidungslogik: Wo ist Raum? Wo ist Druck? Welche Linie ist Grenze, welche Chance? Breakouts sind Antworten auf Raum- und Drucksituationen, keine festen Spielzüge.",
+    "sections": [
+      {"key": "raumLinienBreakout", "title": "Was ist mit Raum, Linien & Breakout-Logik gemeint?", "content": [
+        "Dieses Modul beschreibt wie Eishockey räumlich organisiert ist und wie Teams aus der eigenen Zone ins Spiel kommen.",
+        "Es geht nicht um ein bestimmtes System, sondern um Entscheidungslogik:",
+        ["Wo ist Raum?", "Wo ist Druck?", "Welche Linie ist Grenze, welche ist Chance?", "Wann ist ein Pass sinnvoll – und wann gefährlich?"],
+        "Breakouts sind keine festen Spielzüge. Sie sind Antworten auf Raum- und Drucksituationen."
+      ]},
+      {"key": "zonenLinien", "title": "Zonen & Linien – das räumliche Grundgerüst", "content": [
+        {"subtitle": "Zonen: Defensiv, Neutral, Offensiv", "text": "Das Spielfeld ist in drei Zonen unterteilt:", "list": ["Defensivzone: eigener Schutzraum, höchster Risikobereich", "Neutralzone: Übergangsraum, Tempo- und Strukturzone", "Offensivzone: Angriffsraum, Zielzone"]},
+        {"subtitle": "Warum ist das wichtig?", "text": "Jede Zone hat andere Prioritäten:", "list": ["In der Defensivzone zählt Kontrolle", "In der Neutralzone zählt Ordnung", "In der Offensivzone zählt Kreativität"]},
+        "Fehler entstehen, wenn Spieler mit der falschen Logik in der falschen Zone spielen.",
+        {"subtitle": "Woran erkennt man Zonenverständnis im Spiel?", "list": ["Geduld tief hinten", "klare Entscheidungen an den Linien", "weniger Turnovers im Zentrum"]},
+        {"subtitle": "Typische Fehler", "list": ["Risiko-Pässe in der Defensivzone", "unnötiges Dumpen in der Neutralzone", "überhastete Abschlüsse in der Offensivzone"]}
+      ]},
+      {"key": "blueLine", "title": "Die Blue Line – Grenze und Entscheidungspunkt", "content": [
+        {"subtitle": "Was ist das?", "text": "Die blaue Linie ist keine Markierung, sondern eine Entscheidungsschwelle."},
+        {"subtitle": "Warum ist sie wichtig?", "text": "An der Blue Line entscheidet sich:", "list": ["Puckbesitz oder Turnover", "Angriff oder Gegentor", "Kontrolle oder Chaos"]},
+        {"subtitle": "Woran erkennt man gutes Line-Management?", "list": ["Puck wird mit Kontrolle über die Linie gebracht oder bewusst abgelegt", "Spieler sind in Bewegung, nicht statisch wartend", "Support ist sichtbar vor der Linie"]},
+        {"subtitle": "Typische Fehler", "list": ["Noch schnell reinchippen ohne Support", "stehende Mitspieler an der Linie", "Puckverluste mit offenem Eis dahinter"]}
+      ]},
+      {"key": "breakoutLogik", "title": "Breakout-Logik – Spiel eröffnen statt befreien", "content": [
+        {"subtitle": "Was ist ein Breakout wirklich?", "comparison": {"bad": "Nicht: Puck raus aus der Zone", "good": "Sondern: geordneter Übergang von Verteidigung zu Angriff"}},
+        {"subtitle": "Ein guter Breakout:", "list": ["erhält Puckbesitz", "erzeugt Struktur", "zwingt den Gegner zur Rückwärtsbewegung"]}
+      ]},
+      {"key": "erstePassoption", "title": "Erste Passoption – der Schlüssel", "content": [
+        {"subtitle": "Was ist das?", "text": "Die erste Passoption ist die nächste sichere Entscheidung nach Puckgewinn."},
+        {"subtitle": "Warum ist sie entscheidend?", "text": "Der erste Pass bestimmt:", "list": ["Tempo", "Ordnung", "Erfolgswahrscheinlichkeit des gesamten Angriffs"]},
+        {"subtitle": "Woran erkennt man gute erste Optionen?", "list": ["Spieler bieten sich vor dem Puckgewinn an", "klare Winkel, nicht direkt im Druck", "Pass geht weg vom Forecheck, nicht hinein"]},
+        {"subtitle": "Typische Fehler", "list": ["erst schauen, dann anbieten (zu spät)", "Pässe entlang der Bande ohne Anschluss", "vertikale Pässe durch den Slot unter Druck"]}
+      ]},
+      {"key": "raumgefuehl", "title": "Raumgefühl – sehen, was nicht offensichtlich ist", "content": [
+        {"subtitle": "Was bedeutet Raumgefühl?", "text": "Raumgefühl ist die Fähigkeit, freien Raum zu erkennen, bevor er genutzt wird."},
+        "Es geht nicht nur um offenen Raum, sondern um:",
+        ["entstehenden Raum", "verlagerten Druck", "freie Anschlusswege"],
+        {"subtitle": "Warum ist das wichtig?", "text": "Gegner verteidigen Puck, nicht Raum. Wer Raum erkennt, spielt vor der Defensive."},
+        {"subtitle": "Woran erkennt man gutes Raumgefühl?", "list": ["Spieler lösen sich früh aus Deckungsschatten", "Puck wird verlagert, nicht erzwungen", "Tempo entsteht durch Pass, nicht durch Sprint"]},
+        {"subtitle": "Typische Fehler", "list": ["alle Spieler bewegen sich zum Puck", "freier Raum wird ignoriert, weil er unauffällig ist", "Tempo wird mit Geschwindigkeit verwechselt"]}
+      ]},
+      {"key": "linienlogik", "title": "Linienlogik statt Systemdenken", "content": [
+        "Ein häufiger Denkfehler:",
+        "Wir spielen System X, also machen wir Y.",
+        "In Wahrheit gilt:",
+        ["Druck entscheidet, nicht System", "Raum entscheidet, nicht Playbook", "Linien geben Regeln vor, keine Spielzüge"],
+        "Gute Teams passen ihre Breakouts situativ an:",
+        ["starker Forecheck → kürzer, sicherer", "passiver Forecheck → breiter, kontrollierter", "Wechselchaos → Tempo rausnehmen"]
+      ]},
+      {"key": "missverstaendnisseA2", "title": "Typische Missverständnisse", "content": [
+        {"myths": [
+          {"myth": "❌ Ein Breakout ist erfolgreich, wenn der Puck raus ist → nein. Erfolgreich ist er nur bei kontrolliertem Anschluss."},
+          {"myth": "❌ Die Bande ist immer sicher → nein. Die Bande ist oft eine Falle, wenn kein Support da ist."},
+          {"myth": "❌ Tempo löst Druck → nein. Struktur löst Druck, Tempo nutzt ihn."}
+        ]}
+      ]},
+      {"key": "zusammenfassungA2", "title": "Kernzusammenfassung", "content": [
+        {"summary": [
+          "Zonen verlangen unterschiedliche Entscheidungen",
+          "Blue Line ist eine Risiko-Grenze",
+          "Breakouts sind Entscheidungslogik, keine Spielzüge",
+          "Erster Pass ist der wichtigste",
+          "Raum entsteht durch Antizipation, nicht durch Sprint",
+          "Linien geben Regeln vor, Systeme nur Rahmen"
+        ]}
+      ]}
+    ]
+  },
+  "A3": {
+    "title": "Transition & Tempo",
+    "subtitle": "Umschaltmomente erkennen, Tempo kontrollieren, Chaos nutzen",
+    "overview": "Transition & Tempo behandelt die gefährlichsten Momente im Eishockey: Umschaltmomente zwischen Angriff und Verteidigung. Es geht um das Erkennen von Turnovers, die Kontrolle von Tempo, effektives Backchecking und Gap Control. Transition entscheidet Spiele – nicht Systeme.",
+    "sections": [
+      {"key": "transitionGrundlagen", "title": "Was ist Transition im Eishockey?", "content": [
+        "Transition bezeichnet alle Umschaltmomente zwischen Angriff und Verteidigung – unabhängig davon, in welcher Zone sie passieren.",
+        ["Angriff → Verteidigung (nach Puckverlust)", "Verteidigung → Angriff (nach Puckgewinn)"],
+        "Transition ist kein eigener Spielzustand, sondern der gefährlichste Moment im Spiel, weil:",
+        ["Ordnung gerade zerfällt", "Abstände instabil sind", "Rollen sich neu sortieren müssen"]
+      ]},
+      {"key": "warumTransition", "title": "Warum ist Transition so spielentscheidend?", "content": [
+        "Die meisten hochwertigen Torchancen entstehen nicht aus aufgebautem Spiel, sondern aus:",
+        ["Turnovers", "unklaren Zuständigkeiten", "verzögerten Reaktionen"],
+        "Teams verlieren Spiele nicht, weil ihr System schlecht ist, sondern weil sie Umschaltmomente schlecht lesen.",
+        "Transition entscheidet:",
+        ["ob ein Spiel schnell oder kontrolliert wird", "ob Tempo für oder gegen dich wirkt", "ob Chaos genutzt oder überlebt wird"]
+      ]},
+      {"key": "tempoDefinition", "title": "Tempo – mehr als Geschwindigkeit", "content": [
+        {"subtitle": "Was bedeutet Tempo wirklich?", "text": "Tempo ist nicht gleich Geschwindigkeit."},
+        "Tempo beschreibt:",
+        ["Entscheidungsgeschwindigkeit", "Richtungswechsel", "Timing von Aktionen"],
+        "Ein langsamer Spieler kann hohes Tempo erzeugen, wenn er früh entscheidet. Ein schneller Spieler kann Tempo töten, wenn er zu spät reagiert."
+      ]},
+      {"key": "warumTempo", "title": "Warum ist Tempo wichtig?", "content": [
+        "Tempo zwingt den Gegner zu:",
+        ["Reaktionen statt Aktionen", "Rückwärtsbewegung", "Improvisation"],
+        "Aber: Unkontrolliertes Tempo erzeugt eigene Fehler.",
+        "Die Kernfrage lautet immer:",
+        "Beschleunige ich das Spiel – oder beschleunigt es mich?"
+      ]},
+      {"key": "turnovers", "title": "Turnovers – Ursprung jeder Transition", "content": [
+        {"subtitle": "Was ist ein Turnover?", "text": "Ein Turnover ist jeder ungeplante Wechsel des Puckbesitzes:"},
+        ["Fehlpass", "abgefangener Pass", "verlorener Zweikampf", "geblockter Schuss mit direktem Gegenzug"],
+        "Nicht jeder Turnover ist gleich gefährlich. Gefährlich sind Turnovers:",
+        ["im Zentrum", "an der Blue Line", "bei offener Struktur"]
+      ]},
+      {"key": "warumTurnovers", "title": "Warum sind Turnovers kritisch?", "content": [
+        "Turnovers treffen Teams in einem Moment, in dem:",
+        ["Rollen noch offensiv gedacht sind", "Abstände groß sind", "Blickrichtung nach vorne geht"],
+        "Ein Turnover ist kein Fehlerproblem, sondern ein Strukturproblem danach."
+      ]},
+      {"key": "turnoverVerhalten", "title": "Woran erkennt man gutes Turnover-Verhalten?", "content": [
+        ["sofortige Rückwärtsbewegung", "erstes Ziel: Mitte schließen, nicht Puck jagen", "klare Priorität: Zeit kaufen"]
+      ]},
+      {"key": "turnoverFehler", "title": "Typische Fehler", "content": [
+        ["sofortiger Gegenangriff-Versuch nach Puckverlust", "mehrere Spieler gehen auf den gleichen Gegenspieler", "Centerraum bleibt offen"]
+      ]},
+      {"key": "rushes", "title": "Rush-Situationen – Angriff aus der Bewegung", "content": [
+        {"subtitle": "Was ist ein Rush?", "text": "Ein Rush ist ein Angriff mit Geschwindigkeit, bei dem:", "list": ["der Gegner rückwärts läuft", "Abstände noch nicht stabil sind", "Entscheidungen unter Druck fallen"]},
+        "Rush ≠ Konter. Ein Rush kann auch aus kontrolliertem Aufbau entstehen."
+      ]},
+      {"key": "warumRushes", "title": "Warum sind Rushes so effektiv?", "content": [
+        "Weil Verteidiger:",
+        ["Gap kontrollieren müssen", "Pass und Schuss gleichzeitig verteidigen", "keine Zeit für Hilfe haben"],
+        "Rushes bestrafen schlechte Transition, nicht schlechte Systeme."
+      ]},
+      {"key": "rushEntscheidungen", "title": "Woran erkennt man gute Rush-Entscheidungen?", "content": [
+        ["Puckträger liest Verteidiger, nicht Tor", "Breite wird gehalten", "Trailer ist sichtbar eingebunden"]
+      ]},
+      {"key": "rushFehler", "title": "Typische Fehler", "content": [
+        ["zu frühes Abschließen ohne Support", "alle Spieler fahren gleiche Spur", "Querpass ohne Zug zum Tor"]
+      ]},
+      {"key": "backchecking", "title": "Backchecking – Struktur wiederherstellen", "content": [
+        {"subtitle": "Was ist Backchecking?", "text": "Backchecking ist strukturierte Rückwärtsarbeit, nicht Sprinten. Ziel ist:", "list": ["Raum zu schließen", "Passoptionen zu nehmen", "Zeit für die Defense zu gewinnen"]}
+      ]},
+      {"key": "warumBackchecking", "title": "Warum ist Backchecking entscheidend?", "content": [
+        "Gutes Backchecking:",
+        ["reduziert Rush-Gefahr", "stabilisiert Abstände", "ermöglicht kontrollierte Verteidigung"],
+        "Schlechtes Backchecking zwingt Defense zu:",
+        ["Rückwärtsverteidigung ohne Support", "Überaggressivität", "Fouls oder Notlösungen"]
+      ]},
+      {"key": "backcheckingQualitaet", "title": "Woran erkennt man gutes Backchecking?", "content": [
+        ["Spieler laufen durch das Zentrum, nicht außen vorbei", "Stöcke im Passweg", "Blick nach innen, nicht nur zum Puck"]
+      ]},
+      {"key": "backcheckingFehler", "title": "Typische Fehler", "content": [
+        ["Alibi-Sprints ohne Einfluss", "Fokus nur auf Puckträger", "kein Timing (zu spät, zu hoch)"]
+      ]},
+      {"key": "gapControl", "title": "Gap Control – Distanz steuern", "content": [
+        {"subtitle": "Was ist Gap Control?", "text": "Gap Control beschreibt den Abstand zwischen Verteidiger und Angreifer. Nicht maximal eng – sondern kontrolliert variabel."}
+      ]},
+      {"key": "warumGapControl", "title": "Warum ist Gap Control zentral für Transition?", "content": [
+        "Weil der Gap entscheidet:",
+        ["ob der Angreifer Zeit hat", "ob der Verteidiger reagieren oder diktieren kann", "ob Tempo gestoppt oder genutzt wird"]
+      ]},
+      {"key": "gapControlQualitaet", "title": "Woran erkennt man gutes Gap Control?", "content": [
+        ["Defense hält Angreifer außen", "Geschwindigkeit wird angepasst", "Abstand bleibt konstant trotz Richtungswechsel"]
+      ]},
+      {"key": "gapControlFehler", "title": "Typische Fehler", "content": [
+        ["zu früher Angriff → leicht überspielt", "zu tiefer Rückzug → freier Abschluss", "kein Abgleich mit Partner oder Backcheckern"]
+      ]},
+      {"key": "umschaltmomente", "title": "Umschaltmomente lesen – der Kern von Rink IQ", "content": [
+        "Transition ist der Punkt, an dem Rink IQ sichtbar wird.",
+        "Spieler mit hohem Rink IQ:",
+        ["erkennen Turnovers früh", "passen Tempo an die Situation an", "stellen Struktur wieder her, bevor Chaos entsteht"],
+        "Spieler mit niedrigem Rink IQ:",
+        ["reagieren verspätet", "laufen dem Spiel hinterher", "erzeugen Folgeprobleme"]
+      ]},
+      {"key": "missverstaendnisseA3", "title": "Typische Missverständnisse", "content": [
+        {"myths": [
+          {"myth": "❌ Tempo heißt immer schneller spielen → nein. Tempo ist situativ."},
+          {"myth": "❌ Backchecking ist Einsatzfrage → nein. Es ist Positions- und Timingfrage."},
+          {"myth": "❌ Rush stoppen = Puck angreifen → nein. Raum kontrollieren ist entscheidender."}
+        ]}
+      ]},
+      {"key": "zusammenfassungA3", "title": "Kernzusammenfassung", "content": [
+        {"summary": [
+          "Transition ist der gefährlichste Spielmoment",
+          "Tempo ist Entscheidung, nicht Geschwindigkeit",
+          "Turnovers sind normal – Reaktionen danach entscheiden",
+          "Rushes bestrafen schlechte Ordnung",
+          "Backchecking stellt Struktur wieder her",
+          "Gap Control steuert Risiko",
+          "Umschaltmomente zeigen echten Rink IQ"
+        ]}
+      ]}
+    ]
+  }
+}
