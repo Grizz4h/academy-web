@@ -1,0 +1,172 @@
+{
+  "id": "christoph_1769202987",
+  "user": "christoph",
+  "created_by": "christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D2",
+  "state": "IN_PROGRESS",
+  "current_phase": "P3",
+  "created_at": "2026-01-23T22:16:27.159255",
+  "drills": [
+    {
+      "id": "A1_D2",
+      "title": "Shift Marker → 2-Sekunden-Scan (Center)",
+      "drill_type": "shift_tracker",
+      "description": "Serienbeobachtung. Einsatz: Live oder Re-Live. Dauer: 8–12 Shifts.",
+      "didactics": {
+        "explanation": "Du trainierst hier eine feste Beobachtungsroutine:\n\n1) Ein Ereignis (Shift Marker) tritt auf.\n2) Du schaust exakt 2 Sekunden auf den Center.\n3) Du notierst nur seine Position – ohne Bewertung.\n\nEs geht nicht um richtig oder falsch, sondern um Wiederholung und Mustererkennung.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Wo befindet sich der Center ~2 Sekunden nach dem Marker?",
+            "Bewegt er sich eher absichernd, verbindend oder jagend?"
+          ],
+          "how_to_decide": [
+            "Marker erkennen → innerlich zählen → Position wählen",
+            "Wenn unsicher: das wählen, was am nächsten dran ist",
+            "Nicht erklären, nicht rechtfertigen"
+          ],
+          "ignore": [
+            "Erfolg oder Misserfolg der Aktion",
+            "Torchancen oder technische Details",
+            "Emotionale Bewertung"
+          ]
+        },
+        "shift_marker_explanation": "Ein Shift Marker ist nur ein Auslöser für deine Beobachtung.\n\nTypische Marker:\n• Puckverlust\n• misslungener Pass\n• Zweikampf an der Bande\n• Zonenwechsel\n\nDer Marker selbst wird **nicht** bewertet.",
+        "learning_hint": "Je neutraler du bleibst, desto klarer werden die Muster."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "questions": [
+              "Welcher Shift-Marker kam bei dir am häufigsten vor?",
+              "Welche Center-Position hast du am häufigsten gewählt?",
+              "Gab es einen Marker, bei dem du kaum überlegen musstest?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "shift_count": 10,
+        "questions": [
+          {
+            "key": "shift_marker",
+            "type": "radio",
+            "label": "Was war der Shift Marker?",
+            "options": [
+              "Puckverlust",
+              "misslungener Pass",
+              "Zweikampf an der Bande",
+              "Zonenwechsel",
+              "sonstiger Moment"
+            ]
+          },
+          {
+            "key": "center_position",
+            "type": "radio",
+            "label": "Center-Position ~2 Sekunden nach dem Marker:",
+            "options": [
+              "tief (unter dem Spiel / Absicherung)",
+              "mittel (Middle / verbindend)",
+              "hoch (vor dem Spiel / jagt)"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-01-23T22:16:30.715341"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "shift_1_shift_marker": "misslungener Pass",
+        "shift_1_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_2_shift_marker": "Puckverlust",
+        "shift_2_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_4_shift_marker": "Puckverlust",
+        "shift_3_shift_marker": "misslungener Pass",
+        "shift_3_center_position": "mittel (Middle / verbindend)",
+        "shift_4_center_position": "tief (unter dem Spiel / Absicherung)",
+        "shift_5_shift_marker": "misslungener Pass",
+        "shift_5_center_position": "mittel (Middle / verbindend)",
+        "shift_6_shift_marker": "Puckverlust",
+        "shift_6_center_position": "mittel (Middle / verbindend)",
+        "shift_7_shift_marker": "Puckverlust",
+        "shift_7_center_position": "tief (unter dem Spiel / Absicherung)",
+        "shift_8_shift_marker": "Puckverlust",
+        "shift_8_center_position": "mittel (Middle / verbindend)",
+        "shift_9_shift_marker": "Puckverlust",
+        "shift_9_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_10_shift_marker": "Zweikampf an der Bande",
+        "shift_10_center_position": "hoch (vor dem Spiel / jagt)"
+      },
+      "timestamp": "2026-01-24T22:13:01.176548"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "shift_1_shift_marker": "Puckverlust",
+        "shift_1_center_position": "tief (unter dem Spiel / Absicherung)",
+        "shift_2_shift_marker": "misslungener Pass",
+        "shift_2_center_position": "mittel (Middle / verbindend)",
+        "shift_3_shift_marker": "Zweikampf an der Bande",
+        "shift_3_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_4_shift_marker": "Puckverlust",
+        "shift_4_center_position": "mittel (Middle / verbindend)",
+        "shift_5_shift_marker": "Puckverlust",
+        "shift_5_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_6_shift_marker": "misslungener Pass",
+        "shift_6_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_7_shift_marker": "misslungener Pass",
+        "shift_7_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_8_shift_marker": "misslungener Pass",
+        "shift_8_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_9_shift_marker": "Puckverlust",
+        "shift_9_center_position": "hoch (vor dem Spiel / jagt)",
+        "shift_10_shift_marker": "Zweikampf an der Bande",
+        "shift_10_center_position": "tief (unter dem Spiel / Absicherung)"
+      },
+      "timestamp": "2026-01-24T22:48:35.211357"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "NHL",
+    "team_home": "Nashville Predators",
+    "team_away": "Ottawa Senators",
+    "observed_team": "Ottawa Senators",
+    "date": "2026-01-23T21:16:26.895Z"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Puckverlust",
+      "ts": "2026-01-23T22:36:20.373326"
+    },
+    "P2": {
+      "done": true,
+      "text": "Fehlpass",
+      "ts": "2026-01-24T22:48:45.940506"
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}
