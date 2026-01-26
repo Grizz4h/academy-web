@@ -5009,24 +5009,896 @@
 
   ]
 },
-        {
-          "id": "E2",
-          "title": "E2 – Tendenzen erkennen",
-          "summary": "Patterns, Gegnerprofile, wiederkehrende Mechaniken",
-          "drills": []
-        },
-        {
-          "id": "E3",
-          "title": "E3 – Einfache Micro-Analytics",
-          "summary": "Zählbare Muster simpel erfassen (ohne Overkill)",
-          "drills": []
-        },
-        {
-          "id": "E4",
-          "title": "E4 – Game-Plan-Denke",
-          "summary": "Vom Lesen zum Plan: Kernpunkte ableiten",
-          "drills": []
-        }
+{
+  "id": "E2",
+  "title": "E2 – Adjustments ableiten",
+  "summary": "Von Analyse zu konkreten Spielanpassungen",
+  "description": "In diesem Track lernst du, aus erkannten Tendenzen gezielte Adjustments abzuleiten. Der Fokus liegt darauf, Ursachen von Symptomen zu trennen und kleine, wirksame Anpassungen zu formulieren, die Verhalten verändern – nicht nur Ergebnisse hoffen.",
+  "learningGoals": [
+    "Trenne Ursachen von Symptomen",
+    "Leite konkrete Adjustments aus Beobachtungen ab",
+    "Formuliere coachbare Verhaltensänderungen",
+    "Bewerte Adjustments unabhängig vom Ergebnis"
+  ],
+  "difficulty": 4,
+  "duration": 45,
+  "drills": [
+{
+  "id": "E2_D1",
+  "title": "Adjustment ableiten (Ursache → Maßnahme)",
+  "drill_type": "period_checkin",
+  "description": "Leite aus einer erkannten Ursache genau ein konkretes Adjustment für das nächste Drittel ab.",
+  "didactics": {
+    "explanation": "Ein gutes Adjustment ist klein, gezielt und coachbar. Es adressiert eine Ursache – nicht ein Symptom – und verändert Verhalten, nicht Hoffnung.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Welche Ursache kippt das Spiel wiederholt?",
+        "Welche Entscheidung oder welcher Ablauf ist instabil?",
+        "Wo entsteht der erste Kontrollverlust?"
+      ],
+      "how_to_decide": [
+        "Formuliere genau ein Adjustment",
+        "Beschreibe Verhalten, nicht Ergebnis",
+        "Das Adjustment muss im nächsten Shift sichtbar sein",
+        "Weniger ist besser als zu viel"
+      ],
+      "ignore": [
+        "Mehrere gleichzeitige Änderungen",
+        "Motivationssätze ohne Inhalt",
+        "Ergebnisdenken (Tor, Sieg, Momentum)"
+      ]
+    },
+    "inline_explanations": {
+      "adjustment": {
+        "meaning": "Eine konkrete, umsetzbare Verhaltensänderung innerhalb bestehender Struktur. Kein Systemwechsel."
+      },
+      "ursache": {
+        "meaning": "Der wiederholbare strukturelle Auslöser eines Problems, nicht dessen sichtbare Folge."
+      }
+    },
+    "learning_hint": "Wenn du dein Adjustment nicht klar sagen kannst, kannst du es auch nicht coachen."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "adjustment_clarity": "klar" },
+        "questions": [
+          "Warum adressiert dieses Adjustment genau die Ursache?",
+          "Welches Verhalten ändert sich konkret?",
+          "Woran erkennst du Wirkung innerhalb eines Shifts?"
+        ]
+      },
+      {
+        "when": { "adjustment_clarity": "unklar" },
+        "questions": [
+          "Was ist an deinem Adjustment zu allgemein?",
+          "Welches Verhalten bleibt trotz Ansage gleich?",
+          "Wie könntest du es vereinfachen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "adjustment_clarity",
+        "type": "radio",
+        "label": "Wie klar ist dein Adjustment?",
+        "options": [
+          "klar",
+          "unklar"
+        ]
+      },
+      {
+        "key": "focus_zone",
+        "type": "radio",
+        "label": "Wo greift es an?",
+        "options": [
+          "D-Zone",
+          "Neutral Zone",
+          "O-Zone"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Formuliere dein Adjustment (ein Satz, coachbar)",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "E2_D2",
+  "title": "Messsignal definieren",
+  "drill_type": "period_checkin",
+  "description": "Definiere ein klares Messsignal: Woran erkennst du innerhalb weniger Shifts, ob dein Adjustment wirkt?",
+  "didactics": {
+    "explanation": "Ein Adjustment ohne Messsignal ist nur eine Idee. Du trainierst hier, Wirkung sichtbar zu machen: nicht über Tore, sondern über Verhalten, Abstände und Wiederholungen.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Verändert sich das beobachtete Muster?",
+        "Tritt die vorherige Schwäche seltener auf?",
+        "Sind Entscheidungen früher, klarer oder ruhiger?"
+      ],
+      "how_to_decide": [
+        "Wähle ein Signal, das innerhalb weniger Shifts sichtbar ist",
+        "Beobachte Verhalten, nicht Ergebnis",
+        "Formuliere das Signal so, dass es eindeutig erkennbar ist",
+        "Ein gutes Signal ist binär: da / nicht da"
+      ],
+      "ignore": [
+        "Tore oder Schüsse zählen",
+        "Einzelaktionen ohne Wiederholung",
+        "Emotionale Spielmomente"
+      ]
+    },
+    "inline_explanations": {
+      "verhalten": {
+        "meaning": "Bewegung, Positionierung oder Entscheidung der Spieler (z. B. frühere Unterstützung, engerer Abstand)."
+      },
+      "struktur": {
+        "meaning": "Ordnung im Team: Dreiecke, Staffelung, klare Rollen bleiben erhalten."
+      },
+      "tempo": {
+        "meaning": "Nicht Geschwindigkeit, sondern Rhythmus: weniger Hektik, mehr Kontrolle."
+      }
+    },
+    "learning_hint": "Wenn du nicht weißt, woran du Wirkung erkennst, kannst du kein Adjustment bewerten."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "signal_type": "verhalten" },
+        "questions": [
+          "Welches konkrete Verhalten soll sich ändern?",
+          "Wie schnell müsste dieses Signal sichtbar werden?",
+          "Woran würdest du erkennen, dass es nicht greift?"
+        ]
+      },
+      {
+        "when": { "signal_type": "struktur" },
+        "questions": [
+          "Welche Struktur war vorher instabil?",
+          "Wie sieht dieselbe Situation stabil aus?",
+          "Wie oft müsste das Signal auftreten, um sicher zu sein?"
+        ]
+      },
+      {
+        "when": { "signal_type": "tempo" },
+        "questions": [
+          "Woran erkennst du kontrolliertes statt hektischem Tempo?",
+          "Welche Entscheidung wirkt dadurch ruhiger?",
+          "Kann das Signal auch bei Rückstand sichtbar sein?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "signal_type",
+        "type": "radio",
+        "label": "Art des Messsignals",
+        "options": [
+          "verhalten",
+          "struktur",
+          "tempo"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Beschreibe dein Messsignal (konkret, beobachtbar)",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "E2_D3",
+  "title": "Adjustment nachschärfen oder verwerfen",
+  "drill_type": "period_checkin",
+  "description": "Bewerte, ob ein Adjustment angepasst, vereinfacht oder verworfen werden muss.",
+  "didactics": {
+    "explanation": "Nicht jedes Adjustment greift sofort. Gute Analyse erkennt, ob ein Eingriff falsch war – oder nur unklar, zu komplex oder schlecht umgesetzt.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Ist das definierte Messsignal aufgetreten?",
+        "Gab es Teilerfolge oder gar keine Wirkung?",
+        "Wirkt das Team unsicher oder stabiler?"
+      ],
+      "how_to_decide": [
+        "Wenn kein Signal sichtbar ist: Ursache prüfen, nicht panisch wechseln",
+        "Unterscheide: falsches Adjustment vs. falsche Umsetzung",
+        "Vereinfache vor dem Verwerfen",
+        "Ein gutes Adjustment darf Zeit brauchen, aber nicht Orientierung kosten"
+      ],
+      "ignore": [
+        "Scoreline als alleinige Entscheidungsgrundlage",
+        "Einzelaktionen oder Zufall",
+        "Emotionale Reaktionen auf Gegentore"
+      ]
+    },
+    "inline_explanations": {
+      "nachschaerfen": {
+        "meaning": "Adjustment bleibt, wird aber klarer oder einfacher formuliert."
+      },
+      "vereinfachen": {
+        "meaning": "Teil des Adjustments wird gestrichen, Fokus wird enger."
+      },
+      "verwerfen": {
+        "meaning": "Adjustment war strukturell falsch und wird bewusst beendet."
+      }
+    },
+    "learning_hint": "Nicht jedes Problem braucht ein neues Adjustment – oft braucht es ein besseres."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "decision": "nachschaerfen" },
+        "questions": [
+          "Was war am Adjustment zu unklar oder zu weich formuliert?",
+          "Welche kleine Präzisierung könnte Wirkung erzeugen?",
+          "Woran würdest du die Verbesserung erkennen?"
+        ]
+      },
+      {
+        "when": { "decision": "vereinfachen" },
+        "questions": [
+          "Welcher Teil des Adjustments war zu viel?",
+          "Was ist der minimale Kern, der bleiben muss?",
+          "Wie ändert sich dadurch das Messsignal?"
+        ]
+      },
+      {
+        "when": { "decision": "verwerfen" },
+        "questions": [
+          "Woran hast du erkannt, dass es strukturell nicht passt?",
+          "Welche Annahme war falsch?",
+          "Was würdest du beim nächsten Drittel anders prüfen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "decision",
+        "type": "radio",
+        "label": "Umgang mit dem Adjustment",
+        "options": [
+          "nachschaerfen",
+          "vereinfachen",
+          "verwerfen"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Begründung (kurz & konkret)",
+        "max_chars": 140
+      }
+    ]
+  }
+}
+
+]
+},
+{
+  "id": "E3",
+  "title": "E3 – Micro-Analytics & Mustervergleich",
+  "summary": "Wiederholungen sichtbar machen, ohne Statistik-Overkill",
+  "description": "E3 erweitert Analyse um einfache, gezielte Micro-Analytics. Ziel ist nicht Statistik um der Statistik willen, sondern das bewusste Erfassen wiederkehrender Muster über Zeit. Du lernst, Beobachtungen zu strukturieren, Vergleiche sinnvoll zu ziehen und aus kleinen Datenpunkten belastbare Aussagen abzuleiten – ohne den Blick fürs Spiel zu verlieren.",
+  "learningGoals": [
+    "Wiederholungen systematisch erfassen",
+    "Beobachtungen über Drittel oder Spiele vergleichen",
+    "Relevante Muster von Rauschen trennen",
+    "Einfache Kennzahlen sinnvoll interpretieren",
+    "Analyse objektiver machen, ohne sie zu entmenschlichen"
+  ],
+  "difficulty": 4,
+  "duration": 60,
+  "drills": [
+    {
+  "id": "E3_D1",
+  "title": "Wiederholung zählen (Pattern-Check)",
+  "drill_type": "period_checkin",
+  "description": "Erfasse bewusst, ob ein beobachtetes Muster mehrfach auftritt oder nur einmalig ist.",
+  "didactics": {
+    "explanation": "Analyse wird belastbar, wenn Beobachtungen nicht isoliert bleiben. In diesem Drill trainierst du, ein konkretes Muster über mehrere Situationen hinweg zu verfolgen und bewusst zu entscheiden, ob es sich um eine Wiederholung oder einen Einzelfall handelt.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Tritt die gleiche Situation mehrfach auf?",
+        "Sind die Rahmenbedingungen ähnlich (Zone, Druck, Zeit)?",
+        "Wiederholt sich die Entscheidung oder das Verhalten?"
+      ],
+      "how_to_decide": [
+        "Definiere ein klares Muster (z. B. Exit ohne Anschluss)",
+        "Zähle nur vergleichbare Situationen",
+        "Ignoriere Ausreißer mit völlig anderen Bedingungen",
+        "Bewerte erst nach mehreren Beobachtungen"
+      ],
+      "ignore": [
+        "Einzelne Highlight-Szenen",
+        "Emotionale Reaktionen auf Tore",
+        "Zufällige Fehler ohne Wiederholung"
+      ]
+    },
+    "inline_explanations": {
+      "einzelfall": {
+        "meaning": "Eine isolierte Situation ohne erkennbare Wiederholung oder strukturelle Ursache."
+      },
+      "tendenz": {
+        "meaning": "Ein Muster, das unter ähnlichen Bedingungen mehrfach auftritt und Aussagekraft entwickelt."
+      }
+    },
+    "learning_hint": "Was du nicht zählen kannst, bleibt ein Gefühl. Was sich wiederholt, wird zur Aussage."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "pattern_type": "tendenz" },
+        "questions": [
+          "Wodurch wurde das Muster für dich eindeutig?",
+          "Ab welcher Wiederholung hattest du Sicherheit?",
+          "Welche Bedingungen waren konstant?"
+        ]
+      },
+      {
+        "when": { "pattern_type": "einzelfall" },
+        "questions": [
+          "Was fehlte, damit daraus eine Tendenz wird?",
+          "Welche Beobachtung würdest du weiter sammeln?",
+          "Ab wann würdest du neu bewerten?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "pattern_type",
+        "type": "radio",
+        "label": "Deine Einordnung",
+        "options": [
+          "tendenz",
+          "einzelfall"
+        ]
+      },
+      {
+        "key": "pattern_count",
+        "type": "radio",
+        "label": "Wie oft hast du es gesehen?",
+        "options": [
+          "einmal",
+          "zweimal",
+          "dreimal_oder_mehr"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurze Beschreibung des Musters",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "E3_D2",
+  "title": "Vergleich lesen (vorher vs. nachher)",
+  "drill_type": "period_checkin",
+  "description": "Vergleiche zwei Spielphasen gezielt: Hat sich ein Muster verändert, stabilisiert oder verschärft?",
+  "didactics": {
+    "explanation": "Analyse entsteht nicht nur durch Erkennen von Mustern, sondern durch deren Veränderung über Zeit. In diesem Drill lernst du, zwei Phasen bewusst zu vergleichen und zu beurteilen, ob ein Adjustment oder Spielverlauf tatsächlich Wirkung zeigt.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Tritt das gleiche Muster später erneut auf?",
+        "Verändert sich Häufigkeit oder Intensität?",
+        "Wirken Entscheidungen klarer oder hektischer?"
+      ],
+      "how_to_decide": [
+        "Vergleiche gleiche Situationen, nicht Ergebnisse",
+        "Achte auf Tempo, Abstände und Entscheidungszeit",
+        "Bewerte Richtung der Entwicklung, nicht Perfektion",
+        "Eine kleine Verbesserung ist relevant"
+      ],
+      "ignore": [
+        "Score-Veränderungen",
+        "Einzelaktionen ohne Kontext",
+        "Emotionale Momentum-Schwankungen"
+      ]
+    },
+    "inline_explanations": {
+      "verbessert": {
+        "meaning": "Das Muster tritt seltener, stabiler oder kontrollierter auf als zuvor."
+      },
+      "gleich": {
+        "meaning": "Keine erkennbare Veränderung in Häufigkeit oder Ausprägung."
+      },
+      "verschlechtert": {
+        "meaning": "Das Muster tritt häufiger, chaotischer oder unter höherem Druck auf."
+      }
+    },
+    "learning_hint": "Nicht jedes Adjustment wirkt sofort – aber jede Richtung ist lesbar."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "trend": "verbessert" },
+        "questions": [
+          "Woran hast du die Verbesserung konkret erkannt?",
+          "War sie strukturell oder nur situativ?",
+          "Welche Kleinigkeit hat vermutlich den Unterschied gemacht?"
+        ]
+      },
+      {
+        "when": { "trend": "gleich" },
+        "questions": [
+          "Was verhindert die Veränderung?",
+          "Reicht die Beobachtungszeit schon aus?",
+          "Was würdest du im nächsten Drittel genauer beobachten?"
+        ]
+      },
+      {
+        "when": { "trend": "verschlechtert" },
+        "questions": [
+          "Was hat sich negativ verstärkt?",
+          "Kam zusätzlicher Druck oder Ermüdung dazu?",
+          "Welche frühe Warnung gab es bereits?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "trend",
+        "type": "radio",
+        "label": "Vergleich",
+        "options": [
+          "verbessert",
+          "gleich",
+          "verschlechtert"
+        ]
+      },
+      {
+        "key": "comparison_focus",
+        "type": "radio",
+        "label": "Vergleichsfokus",
+        "options": [
+          "tempo",
+          "abstand",
+          "entscheidungen",
+          "struktur"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Kurzbegründung (Vergleich)",
+        "max_chars": 140
+      }
+    ]
+  }
+},
+
+{
+  "id": "E3_D3",
+  "title": "Aussage ableiten (Was bedeutet das?)",
+  "drill_type": "period_checkin",
+  "description": "Formuliere eine klare analytische Aussage: Was sagt der Verlauf über Kontrolle, Risiko oder wahrscheinliche Entwicklung aus?",
+  "didactics": {
+    "explanation": "Analyse ist wertlos ohne Schlussfolgerung. In diesem Drill lernst du, Beobachtung und Vergleich in eine präzise Aussage zu überführen – unabhängig von Score oder Bauchgefühl. Die Aussage beschreibt nicht, was war, sondern was das Spiel wahrscheinlich weiter tut.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Wer kontrolliert Tempo und Raum über Zeit?",
+        "Welche Seite muss reagieren, welche agiert?",
+        "Wird Risiko aktiv gewählt oder aufgezwungen?"
+      ],
+      "how_to_decide": [
+        "Formuliere eine Aussage, keinen Bericht",
+        "Beziehe dich auf Muster, nicht Szenen",
+        "Denke in Wahrscheinlichkeiten, nicht Gewissheiten",
+        "Die Aussage muss widersprechbar sein"
+      ],
+      "ignore": [
+        "Aktueller Spielstand",
+        "Einzelne Chancen oder Saves",
+        "Narrative wie Momentum oder Wille"
+      ]
+    },
+    "inline_explanations": {
+      "kontrolle": {
+        "meaning": "Die Fähigkeit, Struktur, Tempo und Entscheidungen über Zeit zu bestimmen."
+      },
+      "risiko": {
+        "meaning": "Grad der strukturellen Instabilität, nicht die Anzahl der Chancen."
+      },
+      "entwicklung": {
+        "meaning": "Die wahrscheinlichste Richtung des Spiels bei gleichbleibenden Bedingungen."
+      }
+    },
+    "learning_hint": "Eine gute Aussage fühlt sich unangenehm klar an – weil sie etwas festlegt."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "statement_type": "kontrolle" },
+        "questions": [
+          "Woran genau machst du Kontrolle fest?",
+          "Was müsste passieren, damit sich das Bild dreht?",
+          "Welche Zone ist dafür entscheidend?"
+        ]
+      },
+      {
+        "when": { "statement_type": "risiko" },
+        "questions": [
+          "Ist das Risiko selbst gewählt oder erzwungen?",
+          "Welche Struktur ist zuerst gefährdet?",
+          "Wie lange ist dieses Risiko tragbar?"
+        ]
+      },
+      {
+        "when": { "statement_type": "entwicklung" },
+        "questions": [
+          "Welche Entwicklung hältst du für am wahrscheinlichsten?",
+          "Was wäre das erste Gegenargument?",
+          "Welche Kleinigkeit könnte die Richtung kippen?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "statement_type",
+        "type": "radio",
+        "label": "Aussagetyp",
+        "options": [
+          "kontrolle",
+          "risiko",
+          "entwicklung"
+        ]
+      },
+      {
+        "key": "confidence",
+        "type": "radio",
+        "label": "Sicherheit deiner Aussage",
+        "options": [
+          "hoch",
+          "mittel",
+          "niedrig"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Formuliere deine Aussage (klar, prüfbar)",
+        "max_chars": 160
+      }
+    ]
+  }
+}
+]
+},
+
+ {
+  "id": "E4",
+  "title": "E4 – Prognose & Antizipation",
+  "summary": "Wahrscheinliche Entwicklungen erkennen, bevor sie sichtbar werden",
+  "description": "In diesem Track lernst du, Spielverläufe vorauszudenken. Prognose bedeutet nicht Vorhersage im Sinne von Gewissheit, sondern das Erkennen der wahrscheinlichsten Entwicklung auf Basis von Struktur, Tendenzen und Reaktionen. Ziel ist es, nicht hinter dem Spiel herzudenken, sondern einen Schritt voraus zu sein.",
+  "learningGoals": [
+    "Unterscheide Beobachtung von Antizipation",
+    "Leite Wahrscheinlichkeiten aus Spielstruktur ab",
+    "Erkenne frühe Warnsignale für Kippmomente",
+    "Denke in Szenarien statt in Ergebnissen"
+  ],
+  "difficulty": 4,
+  "duration": 60,
+  "drills": [{
+  "id": "E4_D1",
+  "title": "Wahrscheinlichste Entwicklung",
+  "drill_type": "period_checkin",
+  "description": "Formuliere, wie sich das Spiel bei unveränderten Bedingungen wahrscheinlich weiterentwickelt.",
+  "didactics": {
+    "explanation": "Antizipation bedeutet nicht Vorhersage, sondern Richtungsdenken. Du bewertest nicht, was passieren könnte, sondern was unter gleichbleibenden Bedingungen am wahrscheinlichsten passiert.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Welche Seite investiert mehr Aufwand für gleiche Ergebnisse?",
+        "Wer passt sich an, wer bleibt strukturell starr?",
+        "Wo entstehen erste Ermüdungs- oder Ordnungsbrüche?"
+      ],
+      "how_to_decide": [
+        "Gehe von gleichbleibenden Systemen aus",
+        "Formuliere eine Entwicklung, kein Ereignis",
+        "Denke in Vorteil/Nachteil, nicht in Toren",
+        "Begründe mit Struktur, nicht mit Momentum"
+      ],
+      "ignore": [
+        "Letzte Großchance",
+        "Emotionale Ausschläge",
+        "Einzelaktionen ohne Wiederholung"
+      ]
+    },
+    "inline_explanations": {
+      "wahrscheinlichkeit": {
+        "meaning": "Die logischste Fortsetzung der aktuellen Struktur – keine Gewissheit."
+      },
+      "kipppunkt": {
+        "meaning": "Der Moment, an dem kleine strukturelle Vorteile große Wirkung entfalten."
+      }
+    },
+    "learning_hint": "Gute Prognosen sind oft unspektakulär – aber stabil. Spektakulär ist meist falsch."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "outlook": "kontrolle_nimmt_zu" },
+        "questions": [
+          "Welche Struktur stabilisiert die Kontrolle?",
+          "Welche Zone trägt das am stärksten?",
+          "Welches Signal würde diese Prognose kippen?"
+        ]
+      },
+      {
+        "when": { "outlook": "spiel_wird_wilder" },
+        "questions": [
+          "Was treibt das Chaos strukturell?",
+          "Wer profitiert davon eher?",
+          "Ist das Chaos tragfähig oder kurzfristig?"
+        ]
+      },
+      {
+        "when": { "outlook": "gegner_uebernimmt" },
+        "questions": [
+          "Welche Anpassung blieb unbeantwortet?",
+          "Wo beginnt der strukturelle Nachteil?",
+          "Was ist das früheste Warnsignal?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "outlook",
+        "type": "radio",
+        "label": "Wahrscheinlichste Entwicklung",
+        "options": [
+          "kontrolle_nimmt_zu",
+          "spiel_wird_wilder",
+          "gegner_uebernimmt"
+        ]
+      },
+      {
+        "key": "time_horizon",
+        "type": "radio",
+        "label": "Zeithorizont",
+        "options": [
+          "naechste_5_min",
+          "rest_des_drittels",
+          "rest_des_spiels"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Begründung (strukturbezogen)",
+        "max_chars": 160
+      }
+    ]
+  }
+},
+
+{
+  "id": "E4_D2",
+  "title": "Frühe Warnsignale erkennen",
+  "drill_type": "period_checkin",
+  "description": "Identifiziere 1–2 frühe Signale, die anzeigen, dass sich das Spiel in eine problematische Richtung bewegt.",
+  "didactics": {
+    "explanation": "Gute Spielanalyse erkennt Probleme, bevor sie sichtbar eskalieren. Frühe Warnsignale sind kleine, wiederkehrende Abweichungen von stabiler Struktur.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Abstände vergrößern sich schleichend",
+        "Entscheidungszeit nimmt zu",
+        "Rollen kippen (z. B. Center dauerhaft zu tief)",
+        "Clears/Entries werden hektischer"
+      ],
+      "how_to_decide": [
+        "Wähle maximal 2 Signale",
+        "Signal muss vor Gegentoren sichtbar sein",
+        "Formuliere beobachtbar, nicht wertend",
+        "Signal muss wiederholbar sein"
+      ],
+      "ignore": [
+        "Einzelne Fehler",
+        "Emotionale Reaktionen",
+        "Scoreboard"
+      ]
+    },
+    "inline_explanations": {
+      "warnsignal": {
+        "meaning": "Eine kleine strukturelle Abweichung, die bei Wiederholung fast immer größere Probleme ankündigt."
+      },
+      "reaktionsfenster": {
+        "meaning": "Der Zeitraum, in dem ein kleines Adjustment noch große Wirkung hat."
+      }
+    },
+    "learning_hint": "Wenn ein Warnsignal erst beim Gegentor auffällt, war es kein Signal – sondern die Folge."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "signal_type": "abstand" },
+        "questions": [
+          "Wo genau wird der Abstand problematisch?",
+          "Welche Rolle müsste zuerst reagieren?",
+          "Was wäre das kleinste Gegenmittel?"
+        ]
+      },
+      {
+        "when": { "signal_type": "tempo" },
+        "questions": [
+          "Wird Tempo erzwungen oder bewusst gewählt?",
+          "Welche Situation kippt dadurch zuerst?",
+          "Wie könnte Tempo kontrolliert werden?"
+        ]
+      },
+      {
+        "when": { "signal_type": "entscheidungen" },
+        "questions": [
+          "Welche Entscheidung verzögert sich?",
+          "Ist fehlende Option oder Unsicherheit die Ursache?",
+          "Wie erkennst du sofort Besserung?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "signal_type",
+        "type": "radio",
+        "label": "Art des Warnsignals",
+        "options": [
+          "abstand",
+          "tempo",
+          "entscheidungen",
+          "rollenverschiebung"
+        ]
+      },
+      {
+        "key": "signal_zone",
+        "type": "radio",
+        "label": "Wo zeigt es sich zuerst?",
+        "options": [
+          "D-Zone",
+          "Neutral Zone",
+          "O-Zone"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Beschreibe das Warnsignal konkret",
+        "max_chars": 160
+      }
+    ]
+  }
+},
+
+{
+  "id": "E4_D3",
+  "title": "Eingreifen oder laufen lassen?",
+  "drill_type": "period_checkin",
+  "description": "Triff eine bewusste Entscheidung: Greifst du ein – oder lässt du das Spiel bewusst weiterlaufen?",
+  "didactics": {
+    "explanation": "Nicht jede erkannte Abweichung erfordert ein sofortiges Adjustment. Hohe Spielintelligenz zeigt sich darin zu wissen, wann Eingreifen Stabilität schafft – und wann Geduld bessere Kontrolle erzeugt.",
+    "observation_guide": {
+      "what_to_watch": [
+        "Stabilisiert sich das Spiel von selbst?",
+        "Reagieren Spieler bereits intuitiv?",
+        "Wird Risiko größer oder kleiner?",
+        "Bleiben die Probleme lokal oder breiten sie sich aus?"
+      ],
+      "how_to_decide": [
+        "Entscheide bewusst, nicht aus Unsicherheit",
+        "Beurteile Wirkung über mehrere Shifts",
+        "Trenne Unruhe von echtem Kontrollverlust",
+        "Denke in Folgen, nicht in Momenten"
+      ],
+      "ignore": [
+        "Publikumsreaktionen",
+        "Einzelne emotionale Szenen",
+        "Score-Druck"
+      ]
+    },
+    "inline_explanations": {
+      "eingreifen": {
+        "meaning": "Gezielte Anpassung, um eine erkennbare strukturelle Entwicklung zu stoppen oder zu lenken."
+      },
+      "laufen_lassen": {
+        "meaning": "Bewusste Entscheidung, nicht einzugreifen, weil Selbstkorrektur oder Stabilität erkennbar ist."
+      }
+    },
+    "learning_hint": "Nicht jede gute Entscheidung ist sichtbar. Manchmal ist das beste Coaching: nichts zu ändern."
+  },
+  "miniFeedback": {
+    "trigger": "onNext",
+    "oncePerSection": true,
+    "groups": [
+      {
+        "when": { "decision": "eingreifen" },
+        "questions": [
+          "Was wäre passiert, wenn du nicht eingegriffen hättest?",
+          "Welche Folge wolltest du konkret verhindern?",
+          "Woran erkennst du sofort, ob dein Eingriff wirkt?"
+        ]
+      },
+      {
+        "when": { "decision": "laufen_lassen" },
+        "questions": [
+          "Welche Signale zeigen dir Selbstkorrektur?",
+          "Wann würdest du spätestens eingreifen?",
+          "Welches Risiko akzeptierst du bewusst?"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "questions": [
+      {
+        "key": "decision",
+        "type": "radio",
+        "label": "Deine Entscheidung",
+        "options": [
+          "eingreifen",
+          "laufen_lassen"
+        ]
+      },
+      {
+        "key": "confidence",
+        "type": "radio",
+        "label": "Wie sicher bist du?",
+        "options": [
+          "hoch",
+          "mittel",
+          "niedrig"
+        ]
+      },
+      {
+        "key": "note",
+        "type": "text",
+        "label": "Begründung (kurz, strukturell)",
+        "max_chars": 160
+      }
+    ]
+  }
+}
+
+]
+}
       ]
     }
   ]
