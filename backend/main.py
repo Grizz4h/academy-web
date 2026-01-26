@@ -1,3 +1,45 @@
+import os
+import json
+import jwt
+from datetime import datetime, timedelta
+from fastapi import Header, HTTPException, Depends
+from auth_utils import hash_password, verify_password
+# JWT config
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
+USERS_FILE = os.path.join(DATA_DIR, "users.json")
+JWT_SECRET = os.environ.get("ACADEMY_JWT_SECRET", "dev-secret")
+JWT_ALGO = "HS256"
+JWT_EXP_DAYS = 7
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        print("[AUTH] USERS_FILE (not found):", USERS_FILE)
+        return {"users": []}
+    print("[AUTH] USERS_FILE =", USERS_FILE)
+    with open(USERS_FILE, "r") as f:
+        return json.load(f)
+
+def save_users(data):
+    tmp = USERS_FILE + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(data, f, indent=2)
+    os.replace(tmp, USERS_FILE)
+
+def get_current_user(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401)
+    token = authorization.split(" ")[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
+        return payload["sub"]
+    except:
+        raise HTTPException(status_code=401)
+# --- AUTH ENDPOINTS ---
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+from fastapi import Request
+
+
 
 # ...existing code...
 
@@ -123,12 +165,12 @@ async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
     return sessions
 
 @app.post("/api/sessions")
-async def create_session(session: SessionCreate):
-    """Neue Session erstellen"""
+async def create_session(session: SessionCreate, user=Depends(get_current_user)):
+    """Neue Session erstellen (auth required)"""
     sessions_dir = os.path.join(DATA_DIR, "sessions")
     os.makedirs(sessions_dir, exist_ok=True)
 
-    session_id = f"{session.user}_{int(datetime.now().timestamp())}"
+    session_id = f"{user}_{int(datetime.now().timestamp())}"
 
     # Lade Module-Drills aus Curriculum
     curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
@@ -151,8 +193,8 @@ async def create_session(session: SessionCreate):
 
     session_data = {
         "id": session_id,
-        "user": session.user,
-        "created_by": session.user,  # Track who created the session
+        "user": user,
+        "created_by": user,  # Track who created the session
         "module_id": session.module_id,
         "goal": session.goal,
         "confidence": session.confidence,
@@ -179,7 +221,7 @@ async def create_session(session: SessionCreate):
         }
     }
 
-
+    print(f"[AUTH] request by user={user} path=/api/sessions")
     save_json(os.path.join(sessions_dir, f"{session_id}.json"), session_data)
     return session_data
 
@@ -415,6 +457,41 @@ async def add_microfeedback(session_id: str, data: MicroFeedbackData, request: R
     logging.info(f"[microfeedback] session={session_id} phase={phase} trace_id={trace_id} trace_action={trace_action} text_len={len(data.text)}")
     save_json(session_path, session)
     return {"status": "ok", "microfeedback": session["microfeedback"][phase]}
+
+
+# Auth Endpoints nach finaler app-Definition (jetzt immer registriert)
+@app.post("/api/auth/signup")
+async def signup(payload: dict):
+    username = payload["username"].strip().lower()
+    password = payload["password"].strip()
+    users = load_users()
+    if any(u["username"].strip().lower() == username for u in users["users"]):
+        raise HTTPException(status_code=400, detail="User exists")
+    users["users"].append({
+        "username": username,
+        "password_hash": hash_password(password),
+        "created_at": datetime.utcnow().isoformat(),
+        "role": "user"
+    })
+    save_users(users)
+    print(f"[AUTH] signup ok user={username}")
+    return {"ok": True}
+
+@app.post("/api/auth/login")
+async def login(payload: dict):
+    username = payload["username"].strip().lower()
+    password = payload["password"].strip()
+    print(f"[AUTH] login attempt user={username} pw_len={len(password)}")
+    users = load_users()
+    user = next((u for u in users["users"] if u["username"].strip().lower() == username), None)
+    if not user or not verify_password(password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token = jwt.encode({
+        "sub": username,
+        "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
+    }, JWT_SECRET, algorithm=JWT_ALGO)
+    print(f"[AUTH] login ok user={username}")
+    return {"token": token, "username": username}
 
 if __name__ == "__main__":
     import uvicorn

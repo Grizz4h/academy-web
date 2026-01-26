@@ -3717,3 +3717,86 @@ INFO:     Application startup complete.
 ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/main.py", line 6, in <module>
+    from auth_utils import hash_password, verify_password
+  File "/opt/academy-web/backend/auth_utils.py", line 1, in <module>
+    from passlib.context import CryptContext
+ModuleNotFoundError: No module named 'passlib'
+INFO:     Started server process [1370374]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [1370870]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [1371591]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/main.py", line 1, in <module>
+    app = FastAPI(title="Academy API", version="1.0.0")
+          ^^^^^^^
+NameError: name 'FastAPI' is not defined
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/main.py", line 1, in <module>
+    app = FastAPI(title="Academy API", version="1.0.0")
+          ^^^^^^^
+NameError: name 'FastAPI' is not defined
+INFO:     Started server process [1372894]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/signup HTTP/1.0" 404 Not Found
+INFO:     127.0.0.1:51456 - "GET /api/auth/signup HTTP/1.1" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/signup HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/teams HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     127.0.0.1:57610 - "POST /api/auth/signup HTTP/1.1" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/signup HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/signup HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 404 Not Found

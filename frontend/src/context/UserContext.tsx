@@ -1,17 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { login as apiLogin } from '../api'
 
 type UserContextValue = {
   user: string | null
-  setUser: (username: string | null, password?: string) => boolean
+  setUser: (username: string | null, password?: string) => Promise<boolean>
   logout: () => void
 }
 
-// Simple credentials mapping (for demo/internal use only)
-const VALID_USERS: Record<string, string> = {
-  'tobi': 'tobi123',
-  'christoph': 'christoph123',
-  'martin': 'martin123'
-}
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
 
@@ -23,27 +18,34 @@ export function UserProvider({ children }: { children: ReactNode }) {
     if (stored) setUserState(stored)
   }, [])
 
-  const setUser = (username: string | null, password?: string): boolean => {
+  // setUser wird für API-Login neu implementiert
+  // Login via API, speichere Token und Username in localStorage
+  const setUser = async (username: string | null, password?: string): Promise<boolean> => {
     if (!username) {
       setUserState(null)
       localStorage.removeItem('academy.user')
+      localStorage.removeItem('academy.token')
       return true
     }
-
-    // Check credentials
-    const expectedPassword = VALID_USERS[username.toLowerCase()]
-    if (expectedPassword && password === expectedPassword) {
-      setUserState(username)
-      localStorage.setItem('academy.user', username)
+    if (!password) return false;
+    try {
+      const res = await apiLogin(username, password)
+      setUserState(res.username)
+      localStorage.setItem('academy.user', res.username)
+      localStorage.setItem('academy.token', res.token)
       return true
+    } catch (e) {
+      setUserState(null)
+      localStorage.removeItem('academy.user')
+      localStorage.removeItem('academy.token')
+      return false
     }
-
-    return false
   }
 
   const logout = () => {
     setUserState(null)
     localStorage.removeItem('academy.user')
+    localStorage.removeItem('academy.token')
   }
 
   const value = useMemo(() => ({ user, setUser, logout }), [user])

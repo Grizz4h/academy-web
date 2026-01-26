@@ -1,3 +1,42 @@
+// --- Signup ---
+export async function signup(username: string, password: string): Promise<{ ok: boolean }> {
+  const res = await fetch(buildUrl('/auth/signup'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  if (!res.ok) {
+    let detail = '';
+    try {
+      const txt = await res.text();
+      if (txt) detail = txt;
+    } catch {}
+    throw new Error(`Signup fehlgeschlagen (${res.status})${detail ? `: ${detail}` : ''}`);
+  }
+  return res.json();
+}
+// --- Auth-Header Helper ---
+function authHeaders(): Record<string, string> {
+  const token = localStorage.getItem('academy.token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+// --- Auth ---
+export async function login(username: string, password: string): Promise<{ token: string; username: string }> {
+  const res = await fetch(buildUrl('/auth/login'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  if (!res.ok) {
+    let detail = '';
+    try {
+      const txt = await res.text();
+      if (txt) detail = txt;
+    } catch {}
+    throw new Error(`Login fehlgeschlagen (${res.status})${detail ? `: ${detail}` : ''}`);
+  }
+  return res.json();
+}
 
 
 // ==== Type Definitions ====
@@ -179,6 +218,7 @@ export interface TeamsResponse {
 }
 
 export const api = {
+  signup: signup,
   // Microfeedback: Session-Block, nicht Checkin
   addMicrofeedback: async (id: string, phase: 'P1'|'P2'|'P3', text: string): Promise<any> => {
     const trace = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
@@ -230,7 +270,11 @@ export const api = {
     const params = new URLSearchParams()
     if (user) params.append('user', user)
     if (state) params.append('state', state)
-    const res = await fetch(buildUrl(`/sessions?${params}`))
+    const res = await fetch(buildUrl(`/sessions?${params}`), {
+      headers: {
+        ...authHeaders()
+      }
+    })
     if (!res.ok) throw new Error('Failed to fetch sessions')
     return res.json()
   },
@@ -238,7 +282,7 @@ export const api = {
   createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo }): Promise<Session> => {
     const res = await fetch(buildUrl('/sessions'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data)
     })
     if (!res.ok) {
@@ -253,7 +297,11 @@ export const api = {
   },
 
   getSession: async (id: string): Promise<Session> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`))
+    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
+      headers: {
+        ...authHeaders()
+      }
+    })
     if (!res.ok) throw new Error('Failed to fetch session')
     return res.json()
   },
@@ -269,7 +317,7 @@ export const api = {
     };
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/checkins`), {
       method: 'POST',
-      headers,
+      headers: { ...headers, ...authHeaders() },
       body: JSON.stringify(data)
     });
     if (!res.ok) throw new Error('Failed to save checkin');
@@ -279,7 +327,7 @@ export const api = {
   updateSession: async (id: string, updates: Partial<Session>): Promise<Session> => {
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(updates)
     })
     if (!res.ok) throw new Error('Failed to update session')
@@ -289,7 +337,7 @@ export const api = {
   completeSession: async (id: string, data: { summary: string; unclear?: string; next_module?: string; helpfulness: number }): Promise<Session> => {
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/post`), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data)
     })
     if (!res.ok) throw new Error('Failed to complete session')
@@ -299,7 +347,7 @@ export const api = {
   abortSession: async (id: string, data: { reason: string; note?: string }): Promise<Session> => {
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/abort`), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data)
     })
     if (!res.ok) throw new Error('Failed to abort session')
@@ -308,7 +356,8 @@ export const api = {
 
   deleteSession: async (id: string): Promise<{ status: string; id: string }> => {
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to delete session')
     return res.json()
@@ -316,7 +365,8 @@ export const api = {
 
   deleteCheckin: async (sessionId: string, checkinIndex: number): Promise<Session> => {
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/checkins/${checkinIndex}`), {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: { ...authHeaders() }
     })
     if (!res.ok) {
       let detail = ''
@@ -333,7 +383,7 @@ export const api = {
   saveDrafts: async (sessionId: string, drafts: Record<string, any>): Promise<{status: string}> => {
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/drafts`), {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(drafts)
     })
     if (!res.ok) throw new Error('Failed to save drafts')
@@ -351,7 +401,7 @@ export const api = {
     };
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/phase`), {
       method: 'PUT',
-      headers,
+      headers: { ...headers, ...authHeaders() },
       body: JSON.stringify(phaseData)
     })
     if (!res.ok) throw new Error('Failed to update session phase')
@@ -360,7 +410,9 @@ export const api = {
 
   // Teams
   getTeams: async (): Promise<TeamsResponse> => {
-    const res = await fetch(buildUrl('/teams'))
+    const res = await fetch(buildUrl('/teams'), {
+      headers: { ...authHeaders() }
+    })
     if (!res.ok) throw new Error('Failed to fetch teams')
     return res.json()
   }

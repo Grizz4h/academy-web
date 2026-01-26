@@ -11,6 +11,13 @@ export default function Dashboard() {
   const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
+  // Signup State
+  const [signupMode, setSignupMode] = useState(false);
+  const [signupName, setSignupName] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupPassword2, setSignupPassword2] = useState("");
+  const [signupError, setSignupError] = useState("");
+  const [signupSuccess, setSignupSuccess] = useState("");
 
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ["sessions", user],
@@ -33,13 +40,13 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const name = nameInput.trim();
     if (!name || !passwordInput) {
       setLoginError("Benutzername und Passwort erforderlich");
       return;
     }
-    const success = setUser(name, passwordInput);
+    const success = await setUser(name, passwordInput);
     if (!success) {
       setLoginError("Ungültige Anmeldedaten");
       setPasswordInput("");
@@ -188,80 +195,211 @@ export default function Dashboard() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <h1>Dashboard</h1>
         <div className="card">
-          <h2>Login</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "300px" }}>
-            <input
-              autoComplete="username"
-              placeholder="Name"
-              value={nameInput}
-              onChange={(e) => {
-                setNameInput(e.target.value);
-                setLoginError("");
-              }}
-              style={{
-                padding: "0.5rem",
-                borderRadius: "4px",
-                border: loginError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
-                background: "rgba(255,255,255,0.08)",
-                color: "#f7f7ff",
-              }}
-            />
-            <div style={{ position: "relative" }}>
+          <h2>{signupMode ? "Account erstellen" : "Login"}</h2>
+          {!signupMode ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "300px" }}>
               <input
-                autoComplete="current-password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Passwort"
-                value={passwordInput}
+                autoComplete="username"
+                placeholder="Name"
+                value={nameInput}
                 onChange={(e) => {
-                  setPasswordInput(e.target.value);
+                  setNameInput(e.target.value);
                   setLoginError("");
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleLogin();
-                }}
                 style={{
-                  padding: "0.5rem 2.5rem 0.5rem 0.5rem",
+                  padding: "0.5rem",
                   borderRadius: "4px",
                   border: loginError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
                   background: "rgba(255,255,255,0.08)",
                   color: "#f7f7ff",
-                  width: "100%",
+                }}
+              />
+              <div style={{ position: "relative" }}>
+                <input
+                  autoComplete="current-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Passwort"
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value);
+                    setLoginError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleLogin();
+                  }}
+                  style={{
+                    padding: "0.5rem 2.5rem 0.5rem 0.5rem",
+                    borderRadius: "4px",
+                    border: loginError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
+                    background: "rgba(255,255,255,0.08)",
+                    color: "#f7f7ff",
+                    width: "100%",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: "0.5rem",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255,255,255,0.6)",
+                    cursor: "pointer",
+                    padding: "0.25rem",
+                  }}
+                >
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogin}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "4px",
+                  border: "1px solid #5191a2",
+                  background: "#5191a2",
+                  color: "#050712",
+                  cursor: "pointer",
+                }}
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSignupMode(true);
+                  setSignupError("");
+                  setSignupSuccess("");
+                }}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "4px",
+                  border: "1px solid #888",
+                  background: "#222",
+                  color: "#f7f7ff",
+                  cursor: "pointer",
+                }}
+              >
+                Account erstellen
+              </button>
+              {loginError && <span style={{ fontSize: "0.9rem", color: "#ff6b6b" }}>{loginError}</span>}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "300px" }}>
+              <input
+                autoComplete="username"
+                placeholder="Name"
+                value={signupName}
+                onChange={(e) => {
+                  setSignupName(e.target.value);
+                  setSignupError("");
+                  setSignupSuccess("");
+                }}
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "4px",
+                  border: signupError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
+                  background: "rgba(255,255,255,0.08)",
+                  color: "#f7f7ff",
+                }}
+              />
+              <input
+                autoComplete="new-password"
+                type="password"
+                placeholder="Passwort"
+                value={signupPassword}
+                onChange={(e) => {
+                  setSignupPassword(e.target.value);
+                  setSignupError("");
+                  setSignupSuccess("");
+                }}
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "4px",
+                  border: signupError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
+                  background: "rgba(255,255,255,0.08)",
+                  color: "#f7f7ff",
+                }}
+              />
+              <input
+                autoComplete="new-password"
+                type="password"
+                placeholder="Passwort wiederholen"
+                value={signupPassword2}
+                onChange={(e) => {
+                  setSignupPassword2(e.target.value);
+                  setSignupError("");
+                  setSignupSuccess("");
+                }}
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "4px",
+                  border: signupError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
+                  background: "rgba(255,255,255,0.08)",
+                  color: "#f7f7ff",
                 }}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={async () => {
+                  setSignupError("");
+                  setSignupSuccess("");
+                  const name = signupName.trim();
+                  if (!name || !signupPassword || !signupPassword2) {
+                    setSignupError("Alle Felder erforderlich");
+                    return;
+                  }
+                  if (signupPassword !== signupPassword2) {
+                    setSignupError("Passwörter stimmen nicht überein");
+                    return;
+                  }
+                  try {
+                    await api.signup(name, signupPassword);
+                    setSignupSuccess("Account erstellt! Du wirst eingeloggt...");
+                    setTimeout(async () => {
+                      await setUser(name, signupPassword);
+                    }, 800);
+                  } catch (e: any) {
+                    setSignupError(e.message || "Signup fehlgeschlagen");
+                  }
+                }}
                 style={{
-                  position: "absolute",
-                  right: "0.5rem",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "none",
-                  border: "none",
-                  color: "rgba(255,255,255,0.6)",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "4px",
+                  border: "1px solid #5191a2",
+                  background: "#5191a2",
+                  color: "#050712",
                   cursor: "pointer",
-                  padding: "0.25rem",
                 }}
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                Account erstellen
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSignupMode(false);
+                  setSignupError("");
+                  setSignupSuccess("");
+                }}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "4px",
+                  border: "1px solid #888",
+                  background: "#222",
+                  color: "#f7f7ff",
+                  cursor: "pointer",
+                }}
+              >
+                Zurück zum Login
+              </button>
+              {signupError && <span style={{ fontSize: "0.9rem", color: "#ff6b6b" }}>{signupError}</span>}
+              {signupSuccess && <span style={{ fontSize: "0.9rem", color: "#4caf50" }}>{signupSuccess}</span>}
             </div>
-            <button
-              type="button"
-              onClick={handleLogin}
-              style={{
-                padding: "0.5rem 1rem",
-                borderRadius: "4px",
-                border: "1px solid #5191a2",
-                background: "#5191a2",
-                color: "#050712",
-                cursor: "pointer",
-              }}
-            >
-              Login
-            </button>
-            {loginError && <span style={{ fontSize: "0.9rem", color: "#ff6b6b" }}>{loginError}</span>}
-          </div>
+          )}
         </div>
       </div>
     );
