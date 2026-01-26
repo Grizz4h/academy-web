@@ -94,3 +94,21 @@ INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 200 OK
 INFO:     141.78.163.241:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.163.241:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+[AUTH] login attempt user=tobi pw_len=7
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 401 Unauthorized
+[AUTH] login attempt user=tobi pw_len=7
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=tobi
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/sessions?user=tobi HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/sessions?user=tobi HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/sessions?user=tobi HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] login attempt user=christoph pw_len=12
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=christoph
+INFO:     141.78.163.241:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK

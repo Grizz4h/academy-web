@@ -1,12 +1,52 @@
 {
   "users": [
-    {"username": "tobi", "password_hash": "$2b$12$8196PurrPL/dqSxO.YVaKurozCnVpEq38CxlrH7Qo1rzaCQg3ITYe", "created_at": "2024-01-01T00:00:00Z", "role": "user"},
-    {"username": "christoph", "password_hash": "$2b$12$MftrAvXs4zu1u.4SpZO2HOsai/tvOqZBIv3E6zaGXij2r/1KZcQZy", "created_at": "2026-01-26T18:20:19.080867", "role": "user"},
-    {"username": "martin", "password_hash": "$2b$12$bZpPlwmhDvKFAqiz2AsKlusTMB/n1qJ74SmS1qT/c8qYxI55xJoRi", "created_at": "2026-01-26T18:20:19.388900", "role": "user"},
-    {"username": "christophtest", "password_hash": "$2b$12$RkyCPKI.lf0ksNenyAZJPeb4PBtQkXJjornwdoQvKKaC962pHY3qq", "created_at": "2026-01-26T17:56:09.336063", "role": "user"},
-    {"username": "test123", "password_hash": "$2b$12$EZ8kl5E22tLHRAbGnQLos.xOTaG.GnueUA.0wM4SzG4HqTJGhcsOC", "created_at": "2026-01-26T18:10:28.324719", "role": "user"},
-    {"username": "testtest", "password_hash": "$2b$12$cBvPEI5ZOQC8ZjLDkTLsje0Y3KD5/A.cjdvGnYQ0DjfHXU/QFTaMG", "created_at": "2026-01-26T18:19:25.769417", "role": "user"},
-    {"username": "testtestefefefe", "password_hash": "$2b$12$TYlsRhkr7Q8dwU7TZSz8fOpBhusmEnokjRMsS4b2vcvAYLa4RP9.K", "created_at": "2026-01-26T18:20:48.289175", "role": "user"},
-    {"username": "testsetsetst", "password_hash": "$2b$12$rG3wHPOszJPM6HyJhUX3Dewqyx7a8Dl0Tlr/MkKSeNtz26GbEHKWO", "created_at": "2026-01-26T18:26:09.167983", "role": "user"}
+    {
+      "username": "tobi",
+      "password_hash": "$2b$12$/fMHAxG0w9Ouhp4Kv2rcreZM.dIRMSHSr2wmfKFvi6sesaB8V6DRK",
+      "created_at": "2026-01-26T18:37:45.154797",
+      "role": "user"
+    },
+    {
+      "username": "christoph",
+      "password_hash": "$2b$12$MftrAvXs4zu1u.4SpZO2HOsai/tvOqZBIv3E6zaGXij2r/1KZcQZy",
+      "created_at": "2026-01-26T18:20:19.080867",
+      "role": "user"
+    },
+    {
+      "username": "martin",
+      "password_hash": "$2b$12$bZpPlwmhDvKFAqiz2AsKlusTMB/n1qJ74SmS1qT/c8qYxI55xJoRi",
+      "created_at": "2026-01-26T18:20:19.388900",
+      "role": "user"
+    },
+    {
+      "username": "christophtest",
+      "password_hash": "$2b$12$RkyCPKI.lf0ksNenyAZJPeb4PBtQkXJjornwdoQvKKaC962pHY3qq",
+      "created_at": "2026-01-26T17:56:09.336063",
+      "role": "user"
+    },
+    {
+      "username": "test123",
+      "password_hash": "$2b$12$EZ8kl5E22tLHRAbGnQLos.xOTaG.GnueUA.0wM4SzG4HqTJGhcsOC",
+      "created_at": "2026-01-26T18:10:28.324719",
+      "role": "user"
+    },
+    {
+      "username": "testtest",
+      "password_hash": "$2b$12$cBvPEI5ZOQC8ZjLDkTLsje0Y3KD5/A.cjdvGnYQ0DjfHXU/QFTaMG",
+      "created_at": "2026-01-26T18:19:25.769417",
+      "role": "user"
+    },
+    {
+      "username": "testtestefefefe",
+      "password_hash": "$2b$12$TYlsRhkr7Q8dwU7TZSz8fOpBhusmEnokjRMsS4b2vcvAYLa4RP9.K",
+      "created_at": "2026-01-26T18:20:48.289175",
+      "role": "user"
+    },
+    {
+      "username": "testsetsetst",
+      "password_hash": "$2b$12$rG3wHPOszJPM6HyJhUX3Dewqyx7a8Dl0Tlr/MkKSeNtz26GbEHKWO",
+      "created_at": "2026-01-26T18:26:09.167983",
+      "role": "user"
+    }
   ]
 }
