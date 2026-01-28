@@ -29,55 +29,56 @@ html, body {
 .navbar-brand {
   color: #f7f7ff;
   font-weight: bold;
-  font-size: 1.20rem;
+  font-size: 2rem;
 }
 
-.nav-link-active, .navLinkActive {
-  color: #ffffff !important;
-  background: rgba(255,47,178,0.13);
-  border-radius: 4px 4px 0 0;
-}
-
-.nav-link-active::after, .navLinkActive::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ff2fb2, transparent);
-  opacity: 1 !important;
-  transform: scaleX(1) !important;
-  box-shadow: 0 0 12px rgba(255,47,178,0.6);
-  pointer-events: none;
-}
-
-.nav-link-active {
-  color: #fff !important;
-}
-
-.nav-link-active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ff2fb2, transparent);
-  opacity: 1;
-  transform: scaleX(1);
-  box-shadow: 0 0 12px rgba(255,47,178,0.6);
-}
-
+/* Navigation Items – Base Style */
 .nav-link, .navLink {
   position: relative;
-  color: rgba(255,255,255,0.75) !important;
+  padding: 8px 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
   text-decoration: none;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  padding: 0 0.5rem;
-  margin: 0 0.7rem 0 0;
-  transition: color 0.15s ease;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+/* Hover – subtil */
+.nav-link:hover,
+.nav-link:focus-visible,
+.navLink:hover,
+.navLink:focus-visible {
+  color: white;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Active Tab – Fläche + Tiefe */
+.nav-link-active, .navLinkActive,
+.nav-link.active {
+  color: white;
+  background: rgba(0,0,0,0.35);
+  box-shadow:
+    inset 0 -2px 0 #bd5ca9,
+    0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Optional: Magenta-Marker-Line unten */
+.nav-link-active::after, .navLinkActive::after,
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -6px;
+  height: 2px;
+  background: #bd5ca9;
+  border-radius: 2px;
+}
+
+/* Mobile/Touch – spürbar, nicht sichtbar */
+.nav-link:active,
+.navLink:active {
+  transform: translateY(1px);
 }
 
 .nav-container {
@@ -97,31 +98,6 @@ html, body {
   margin-top: 1.1rem;
   display: flex;
   align-items: center;
-}
-
-.nav-link:hover,
-.nav-link:focus-visible {
-  color: #ffffff !important;
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ff2fb2, transparent);
-  opacity: 0;
-  transform: scaleX(0);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  pointer-events: none;
-}
-
-.nav-link:hover::after,
-.nav-link:focus-visible::after {
-  opacity: 1;
-  transform: scaleX(1);
 }
 
 .container {
@@ -169,10 +145,8 @@ p {
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .nav-link:active::after {
-    opacity: 1;
-    background: linear-gradient(90deg, rgba(255,0,180,0.0) 0%, #bd5ca9 50%, rgba(255,0,180,0.0) 100%);
-    box-shadow: 0 2px 18px 0 rgba(255,0,180,0.38);
-    transition: opacity 0.1s, box-shadow 0.1s;
+  .nav-link:active,
+  .navLink:active {
+    transform: translateY(1px);
   }
 }
