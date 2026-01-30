@@ -150,3 +150,126 @@ p {
     transform: translateY(1px);
   }
 }
+
+.filtersMobile { display:none; }
+.filtersDesktop { display:block; }
+
+@media (max-width: 768px) {
+  .filtersMobile { display:block; }
+  .filtersDesktop { display:none; }
+}
+
+.filtersMobileBar {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  background: rgba(10,12,20,0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.filterButton {
+  padding:10px 12px;
+  border-radius:12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: white;
+}
+
+.filterButton:active {
+  transform: translateY(1px);
+}
+
+.filterSummary {
+  flex:1;
+  opacity:0.85;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.filterReset {
+  padding:8px 10px;
+  border-radius:10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+}
+
+.sheetOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  z-index: 9999;
+}
+
+.sheetPanel {
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  background: rgba(10,12,20,0.95);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  padding: 12px 14px;
+  overflow:hidden;
+}
+
+.sheetHeader {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding-bottom: 10px;
+}
+
+.sheetTitle { font-size: 18px; font-weight: 700; }
+
+.sheetClose {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 6px 10px;
+  color: white;
+}
+
+.sheetContent {
+  overflow:auto;
+  padding: 6px 0 12px;
+}
+
+.sheetSection { margin-top: 10px; }
+.sheetSectionTitle { opacity: 0.8; font-size: 13px; margin-bottom: 8px; }
+
+.grid2 {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stack {
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+.sheetFooter {
+  display:flex;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.sheetReset, .sheetApply {
+  flex:1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.sheetApply {
+  background: rgba(189,92,169,0.30);
+}

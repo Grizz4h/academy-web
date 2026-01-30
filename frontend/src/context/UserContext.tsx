@@ -30,8 +30,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     if (!password) return false;
     try {
       const res = await apiLogin(username, password)
-      setUserState(res.username)
-      localStorage.setItem('academy.user', res.username)
+      // Username immer mit erstem Buchstaben groß speichern
+      const normalized = res.username ? res.username.charAt(0).toUpperCase() + res.username.slice(1).toLowerCase() : res.username
+      setUserState(normalized)
+      localStorage.setItem('academy.user', normalized)
       localStorage.setItem('academy.token', res.token)
       return true
     } catch (e) {

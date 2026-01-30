@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api'
 import type { Session } from '../api'
 import { useUser } from '../context/UserContext'
 import SessionCard from '../components/SessionCard'
 
 export default function History() {
+  const [sheetOpen, setSheetOpen] = useState(false)
   const { user } = useUser()
   const queryClient = useQueryClient()
   const { data: sessions, isLoading, error } = useQuery({
@@ -27,12 +28,18 @@ export default function History() {
   const [filterModule, setFilterModule] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
   const [filterCreator, setFilterCreator] = useState<string>('')
-
-  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deine Session-Historie.</div>
-  if (isLoading) return <div className="card">Lade Historie...</div>
-  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
+  const [filterYear, setFilterYear] = useState<string>('')
+  const [filterMonth, setFilterMonth] = useState<string>('')
 
   const filteredSessions = sessions?.filter(session => {
+    if (filterYear) {
+      const year = new Date(session.created_at).getFullYear().toString()
+      if (year !== filterYear) return false
+    }
+    if (filterMonth) {
+      const month = (new Date(session.created_at).getMonth() + 1).toString()
+      if (month !== filterMonth) return false
+    }
     if (filterModule && session.module_id !== filterModule) return false
     if (filterStatus && session.state !== filterStatus) return false
     if (filterCreator && session.created_by !== filterCreator) return false
@@ -50,58 +57,202 @@ export default function History() {
   const uniqueModules = [...new Set(sessions?.map(s => s.module_id) || [])]
   const uniqueCreators = [...new Set(sessions?.map(s => s.created_by).filter(Boolean) || [])]
 
+  const { uniqueYears, monthsByYear } = useMemo(() => {
+    const yearsSet = new Set<string>()
+    const monthsMap = new Map<string, Set<string>>()
+
+    ;(sessions || []).forEach(session => {
+      const date = new Date(session.created_at)
+      if (Number.isNaN(date.getTime())) return
+      const year = date.getFullYear().toString()
+      const month = (date.getMonth() + 1).toString()
+
+      yearsSet.add(year)
+      if (!monthsMap.has(year)) monthsMap.set(year, new Set())
+      monthsMap.get(year)?.add(month)
+    })
+
+    const uniqueYears = Array.from(yearsSet).sort((a, b) => Number(b) - Number(a))
+    const monthsByYear = new Map<string, string[]>()
+    monthsMap.forEach((months, year) => {
+      monthsByYear.set(year, Array.from(months).sort((a, b) => Number(b) - Number(a)))
+    })
+
+    return { uniqueYears, monthsByYear }
+  }, [sessions])
+
+  useEffect(() => {
+    if (!sessions || sessions.length === 0) return
+    if (filterYear || filterMonth) return
+
+    const latestSession = sessions.reduce((latest, session) => {
+      const currentDate = new Date(session.created_at).getTime()
+      const latestDate = new Date(latest.created_at).getTime()
+      return currentDate > latestDate ? session : latest
+    }, sessions[0])
+
+    const latestDate = new Date(latestSession.created_at)
+    if (Number.isNaN(latestDate.getTime())) return
+    setFilterYear(latestDate.getFullYear().toString())
+    setFilterMonth((latestDate.getMonth() + 1).toString())
+  }, [sessions, filterYear, filterMonth])
+
+  useEffect(() => {
+    if (!filterYear) {
+      if (filterMonth) setFilterMonth('')
+      return
+    }
+    const months = monthsByYear.get(filterYear) || []
+    if (!months.includes(filterMonth)) {
+      setFilterMonth(months[0] || '')
+    }
+  }, [filterYear, filterMonth, monthsByYear])
+
+  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deine Session-Historie.</div>
+  if (isLoading) return <div className="card">Lade Historie...</div>
+  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
+
+  // Filter summary for mobile
+  const filterSummary = [
+    filterYear ? filterYear : 'Alle Jahre',
+    filterMonth ? `Monat ${filterMonth}` : 'Alle Monate',
+    filterModule ? filterModule : 'Alle Module',
+    filterCreator ? filterCreator : 'Alle Ersteller',
+    filterStatus ? filterStatus : 'Alle Stati'
+  ].join(' · ')
+
+  function resetFilters() {
+    setFilterYear(''); setFilterMonth(''); setFilterModule(''); setFilterCreator(''); setFilterStatus('');
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <h1>Session Historie</h1>
 
-      {/* Filter */}
-      <div className="card">
-        <h3>Filter</h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div>
-            <label>Ersteller:</label>
-            <select
-              value={filterCreator}
-              onChange={(e) => setFilterCreator(e.target.value)}
-              style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
-            >
-              <option value="">Alle</option>
-              {uniqueCreators.map(creator => (
-                <option key={creator} value={creator}>{creator}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label>Modul:</label>
-            <select
-              value={filterModule}
-              onChange={(e) => setFilterModule(e.target.value)}
-              style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
-            >
-              <option value="">Alle</option>
-              {uniqueModules.map(module => (
-                <option key={module} value={module}>{module}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label>Status:</label>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
-            >
-              <option value="">Alle</option>
-              <option value="COMPLETED">Abgeschlossen</option>
-              <option value="ABORTED">Abgebrochen</option>
-              <option value="PRE">Vorbereitung</option>
-              <option value="P1">Nach 1. Drittel</option>
-              <option value="P2">Nach 2. Drittel</option>
-              <option value="P3">Nach 3. Drittel</option>
-              <option value="POST">Debrief</option>
-            </select>
+      {/* Desktop Filter */}
+      <div className="filtersDesktop">
+        <div className="card">
+          <h3>Filter</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'flex-end', rowGap: '1rem', columnGap: '1rem', justifyContent: 'flex-start', width: '100%', maxWidth: '100%' }}>
+            <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
+              <label>Jahr:</label>
+              <select value={filterYear} onChange={e => setFilterYear(e.target.value)} style={{ marginLeft: '0.5rem', padding: '0.25rem' }}>
+                <option value="">Alle</option>
+                {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
+              </select>
+            </div>
+            <div style={{ minWidth: '120px', flex: '1 1 120px' }}>
+              <label>Monat:</label>
+              <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} style={{ marginLeft: '0.5rem', padding: '0.25rem' }} disabled={!filterYear}>
+                <option value="">Alle</option>
+                {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (<option key={month} value={month}>{month}</option>))}
+              </select>
+            </div>
+            <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
+              <label>Ersteller:</label>
+              <select value={filterCreator} onChange={e => setFilterCreator(e.target.value)} style={{ marginLeft: '0.5rem', padding: '0.25rem' }}>
+                <option value="">Alle</option>
+                {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+              </select>
+            </div>
+            <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
+              <label>Modul:</label>
+              <select value={filterModule} onChange={e => setFilterModule(e.target.value)} style={{ marginLeft: '0.5rem', padding: '0.25rem' }}>
+                <option value="">Alle</option>
+                {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
+              </select>
+            </div>
+            <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
+              <label>Status:</label>
+              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ marginLeft: '0.5rem', padding: '0.25rem' }}>
+                <option value="">Alle</option>
+                <option value="COMPLETED">Abgeschlossen</option>
+                <option value="ABORTED">Abgebrochen</option>
+                <option value="PRE">Vorbereitung</option>
+                <option value="P1">Nach 1. Drittel</option>
+                <option value="P2">Nach 2. Drittel</option>
+                <option value="P3">Nach 3. Drittel</option>
+                <option value="POST">Debrief</option>
+              </select>
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Mobile Filter Bar */}
+      <div className="filtersMobile">
+        <div className="filtersMobileBar">
+          <button className="filterButton" onClick={() => setSheetOpen(true)}>Filter</button>
+          <div className="filterSummary">{filterSummary}</div>
+          <button className="filterReset" onClick={resetFilters}>Reset</button>
+        </div>
+        {sheetOpen && (
+          <div className="sheetOverlay" onClick={() => setSheetOpen(false)}>
+            <div className="sheetPanel" onClick={e => e.stopPropagation()}>
+              <div className="sheetHeader">
+                <div className="sheetTitle">Filter</div>
+                <button className="sheetClose" onClick={() => setSheetOpen(false)}>✕</button>
+              </div>
+              <div className="sheetContent">
+                <div className="sheetSection">
+                  <div className="sheetSectionTitle">Zeitraum</div>
+                  <div className="grid2">
+                    <div>
+                      <label>Jahr:</label>
+                      <select value={filterYear} onChange={e => setFilterYear(e.target.value)}>
+                        <option value="">Alle</option>
+                        {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
+                      </select>
+                    </div>
+                    <div>
+                      <label>Monat:</label>
+                      <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} disabled={!filterYear}>
+                        <option value="">Alle</option>
+                        {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (<option key={month} value={month}>{month}</option>))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="sheetSection">
+                  <div className="sheetSectionTitle">Kontext</div>
+                  <div className="stack">
+                    <div>
+                      <label>Ersteller:</label>
+                      <select value={filterCreator} onChange={e => setFilterCreator(e.target.value)}>
+                        <option value="">Alle</option>
+                        {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+                      </select>
+                    </div>
+                    <div>
+                      <label>Modul:</label>
+                      <select value={filterModule} onChange={e => setFilterModule(e.target.value)}>
+                        <option value="">Alle</option>
+                        {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
+                      </select>
+                    </div>
+                    <div>
+                      <label>Status:</label>
+                      <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                        <option value="">Alle</option>
+                        <option value="COMPLETED">Abgeschlossen</option>
+                        <option value="ABORTED">Abgebrochen</option>
+                        <option value="PRE">Vorbereitung</option>
+                        <option value="P1">Nach 1. Drittel</option>
+                        <option value="P2">Nach 2. Drittel</option>
+                        <option value="P3">Nach 3. Drittel</option>
+                        <option value="POST">Debrief</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="sheetFooter">
+                <button className="sheetReset" onClick={resetFilters}>Zurücksetzen</button>
+                <button className="sheetApply" onClick={() => setSheetOpen(false)}>Anwenden</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Sessions Liste */}
