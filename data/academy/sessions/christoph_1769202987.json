@@ -8,8 +8,8 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D2",
-  "state": "IN_PROGRESS",
-  "current_phase": "P3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
   "created_at": "2026-01-23T22:16:27.159255",
   "drills": [
     {
@@ -141,10 +141,47 @@
         "shift_10_center_position": "tief (unter dem Spiel / Absicherung)"
       },
       "timestamp": "2026-01-24T22:48:35.211357"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "shift_1_shift_marker": "Puckverlust",
+        "shift_1_center_position": "mittel (Middle / verbindend)",
+        "shift_2_shift_marker": "Puckverlust",
+        "shift_2_center_position": "mittel (Middle / verbindend)",
+        "shift_3_shift_marker": "sonstiger Moment",
+        "shift_4_shift_marker": "Puckverlust",
+        "shift_4_center_position": "mittel (Middle / verbindend)",
+        "shift_3_center_position": "mittel (Middle / verbindend)",
+        "shift_5_shift_marker": "Puckverlust",
+        "shift_5_center_position": "tief (unter dem Spiel / Absicherung)",
+        "shift_6_shift_marker": "Zweikampf an der Bande",
+        "shift_6_center_position": "mittel (Middle / verbindend)",
+        "shift_7_shift_marker": "misslungener Pass",
+        "shift_7_center_position": "mittel (Middle / verbindend)",
+        "shift_8_shift_marker": "sonstiger Moment",
+        "shift_8_center_position": "tief (unter dem Spiel / Absicherung)",
+        "shift_9_shift_marker": "Zonenwechsel",
+        "shift_9_center_position": "tief (unter dem Spiel / Absicherung)",
+        "shift_10_shift_marker": "Puckverlust",
+        "shift_10_center_position": "tief (unter dem Spiel / Absicherung)"
+      },
+      "timestamp": "2026-01-30T19:06:03.879196"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-01-30T19:06:11.595977"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-30T19:06:11.681403"
+  },
   "game_info": {
     "league": "NHL",
     "team_home": "Nashville Predators",
@@ -165,8 +202,9 @@
       "ts": "2026-01-24T22:48:45.940506"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Puckverlust",
+      "ts": "2026-01-30T19:06:10.531520"
     }
   }
 }

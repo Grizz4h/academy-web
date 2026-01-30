@@ -1,0 +1,209 @@
+{
+  "id": "Christoph_1769790235",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-30T17:23:55.330262",
+  "drills": [
+    {
+      "id": "A1_D3",
+      "title": "Winkel & Body Position: Lenkung wahrnehmen",
+      "drill_type": "triangle_spotting",
+      "description": "Transfer-Drill zur Überprüfung deiner Wahrnehmungsstabilität. Einsatz: Re-Live oder ruhige Live-Phase. Dauer: 1–2 Minuten pro Sequenz.",
+      "didactics": {
+        "drill_intro": {
+          "title": "Worum geht es in diesem Drill?",
+          "text": "Dieser Drill prüft, ob du Lenkung inzwischen automatisch erkennst. Triff eine schnelle, ehrliche Einschätzung, ohne zu analysieren. Dreiecke werden nur mitgeloggt – der Fokus bleibt auf Lenkung."
+        },
+        "observation_guide": {
+          "what_to_watch": [
+            "Erster Eindruck der Körperstellung (Winkel/Schulterachse)",
+            "Gefühl für Raumkontrolle: bleibt die Mitte zu oder öffnet sie sich?",
+            "Wirkt die Szene stabil (geführt) oder rutschig (unkontrolliert)?"
+          ],
+          "how_to_decide": [
+            "Lenkung zuerst bewerten",
+            "Entscheide spontan und bleib bei deinem ersten Eindruck",
+            "Unklarheit ist erlaubt"
+          ],
+          "ignore": [
+            "Puckgewinn oder -verlust",
+            "Checks, Tempo oder Emotion",
+            "Torchancen und Shots"
+          ]
+        },
+        "inline_explanations": {
+          "Kontrolliert (Mitte zu / nach außen geführt)": {
+            "meaning": "Dein Eindruck ist: Der Gegner wird kontrolliert nach außen gehalten, die Mitte fühlt sich geschlossen an. Kein Puckgewinn nötig."
+          },
+          "Unklar (kein klares Bild)": {
+            "meaning": "Du hast kein klares Bild (zu kurz, zu chaotisch, zu viele Einflüsse). Das ist zulässig und Teil des Drills."
+          },
+          "Offen / instabil (Mitte auf / Kontrolle verloren)": {
+            "meaning": "Dein Eindruck ist: Die Mitte öffnet sich oder Kontrolle geht verloren (Verteidiger seitlich/hinter dem Gegner, Lenkung kippt)."
+          }
+        },
+        "learning_hint": "Wenn es sich grob anfühlt, ist das richtig: Du trainierst Wiedererkennen, nicht Analyse."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)"
+            },
+            "questions": [
+              "Was war dein klarster Hinweis auf Kontrolle (Winkel, Abstand oder Timing)?",
+              "Fühlte es sich stabil an – oder eher knapp/fragil?",
+              "Hast du dich bei der Bewertung sicher gefühlt?"
+            ]
+          },
+          {
+            "when": {
+              "winkel_body": "Unklar (kein klares Bild)"
+            },
+            "questions": [
+              "Warum war es unklar: zu kurz, zu chaotisch oder schlechte Sicht?",
+              "Hattest du trotzdem einen ersten Impuls (eher kontrolliert oder eher offen)?",
+              "Was würdest du beim nächsten Mal als Erstes anschauen?"
+            ]
+          },
+          {
+            "when": {
+              "winkel_body": "Offen / instabil (Mitte auf / Kontrolle verloren)"
+            },
+            "questions": [
+              "Woran hast du Instabilität zuerst erkannt (Mitte offen, seitlich/hinterher, Abstand kippt)?",
+              "War die Lenkung von Anfang an instabil oder ist sie gekippt?",
+              "Hast du dich bei der Bewertung sicher gefühlt?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "winkel_body",
+            "type": "radio",
+            "label": "Lenkung (erster Eindruck):",
+            "options": [
+              "Kontrolliert (Mitte zu / nach außen geführt)",
+              "Unklar (kein klares Bild)",
+              "Offen / instabil (Mitte auf / Kontrolle verloren)"
+            ]
+          },
+          {
+            "key": "location",
+            "type": "radio",
+            "label": "Ort:",
+            "options": [
+              "Offensive Zone",
+              "Neutral Zone",
+              "Defensive Zone"
+            ]
+          },
+          {
+            "key": "triangles_seen",
+            "type": "radio",
+            "label": "Dreiecke gesehen:",
+            "options": [
+              "klar vorhanden",
+              "gelegentlich",
+              "kaum wahrnehmbar"
+            ]
+          },
+          {
+            "key": "structure_moment",
+            "type": "text",
+            "label": "Lenkungs-Moment (1 Stichwort)",
+            "max_chars": 50
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-01-30T17:23:57.727043"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)",
+        "location": "Defensive Zone",
+        "triangles_seen": "klar vorhanden"
+      },
+      "timestamp": "2026-01-30T17:57:31.505165"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)",
+        "location": "Neutral Zone",
+        "triangles_seen": "klar vorhanden"
+      },
+      "timestamp": "2026-01-30T18:32:34.190193"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)",
+        "triangles_seen": "gelegentlich",
+        "location": "Offensive Zone"
+      },
+      "timestamp": "2026-01-30T19:04:53.264937"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-01-30T19:05:16.404522"
+    }
+  ],
+  "drafts": {},
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-30T19:05:16.530663"
+  },
+  "game_info": {
+    "league": "NHL",
+    "team_home": "Edmonton Oilers",
+    "team_away": "San Jose Sharks",
+    "observed_team": "Edmonton Oilers",
+    "date": "2026-01-30T16:23:55.309Z"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Winkel",
+      "ts": "2026-01-30T17:57:41.574152"
+    },
+    "P2": {
+      "done": true,
+      "text": "Das timing",
+      "ts": "2026-01-30T18:32:43.588212"
+    },
+    "P3": {
+      "done": true,
+      "text": "Timing beim Forechecking",
+      "ts": "2026-01-30T19:05:13.712984"
+    }
+  }
+}
