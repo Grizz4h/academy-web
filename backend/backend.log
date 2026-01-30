@@ -150,3 +150,10 @@ INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.163.241:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     80.187.81.188:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     80.187.81.188:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
+[checkin:53ec21b2] session=Christoph_1769781242 phase_raw='PRE' phase_norm='PRE' action=append trace_id=863c6ac7-6b70-4fd3-ab58-c3b25cbada7a trace_action=saveCheckin counts_before={}
+[checkin:53ec21b2] session=Christoph_1769781242 counts_after={'PRE': 1}
+[checkin:099df237] session=christoph_1769755684 phase_raw='P3' phase_norm='P3' action=append trace_id=9c6b49be-848a-4629-beee-3071a28af114 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:099df237] session=christoph_1769755684 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=christoph_1769755684 phase=P3 trace_id=21b93f65-c7ee-4e2b-b593-a04a2bbc88c1 trace_action=submitMicrofeedback text_len=52
+[checkin:61f4bdfd] session=christoph_1769755684 phase_raw='POST' phase_norm='POST' action=append trace_id=de4e3e58-97b5-4e02-9b8c-4cac051497a7 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:61f4bdfd] session=christoph_1769755684 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}

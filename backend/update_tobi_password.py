@@ -10,7 +10,7 @@ with open(USERS_FILE, "r") as f:
 
 changed = False
 for user in users["users"]:
-    if user["username"] == "tobi":
+    if user["username"] == "Tobi":
         user["password_hash"] = hash_password("tobi123")
         user["created_at"] = datetime.utcnow().isoformat()
         changed = True
@@ -18,6 +18,6 @@ for user in users["users"]:
 if changed:
     with open(USERS_FILE, "w") as f:
         json.dump(users, f, indent=2)
-    print("Passwort für tobi aktualisiert!")
+    print("Passwort für Tobi aktualisiert!")
 else:
-    print("User tobi nicht gefunden.")
+    print("User Tobi nicht gefunden.")

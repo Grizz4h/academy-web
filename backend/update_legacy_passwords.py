@@ -9,11 +9,11 @@ with open(USERS_FILE, "r") as f:
 
 changed = False
 for user in users["users"]:
-    if user["username"] == "christoph":
+    if user["username"] == "Christoph":
         user["password_hash"] = hash_password("christoph123")
         user["created_at"] = datetime.utcnow().isoformat()
         changed = True
-    if user["username"] == "martin":
+    if user["username"] == "Martin":
         user["password_hash"] = hash_password("martin123")
         user["created_at"] = datetime.utcnow().isoformat()
         changed = True

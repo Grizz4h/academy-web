@@ -5,7 +5,7 @@ from ..renderers import render_header, render_card
 def render():
     render_header("Historie", "Vergangene Sessions")
 
-    users = ["alle", "martin", "christoph"]
+    users = ["alle", "Martin", "Christoph"]
     selected_user = st.selectbox("User", users)
 
     user_filter = None if selected_user == "alle" else selected_user

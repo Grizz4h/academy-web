@@ -35,7 +35,7 @@ def render_session_setup():
                 'team_home': team_home,
                 'team_away': team_away
             }
-            user = st.session_state.get('user', 'martin')  # Default user
+            user = st.session_state.get('user', 'Martin')  # Default user
             # Drill-ID aus erstem Drill des Moduls bestimmen
             drill_id = 'unknown'
             if module and module.get('drills') and len(module['drills']) > 0:

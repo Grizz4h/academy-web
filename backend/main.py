@@ -166,11 +166,15 @@ async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
 
 @app.post("/api/sessions")
 async def create_session(session: SessionCreate, user=Depends(get_current_user)):
+    # Username wie in users.json (korrekt groß) verwenden
+    users = load_users()
+    user_obj = next((u for u in users["users"] if u["username"].strip().lower() == user.strip().lower()), None)
+    user_cased = user_obj["username"] if user_obj else user
     """Neue Session erstellen (auth required)"""
     sessions_dir = os.path.join(DATA_DIR, "sessions")
     os.makedirs(sessions_dir, exist_ok=True)
 
-    session_id = f"{user}_{int(datetime.now().timestamp())}"
+    session_id = f"{user_cased}_{int(datetime.now().timestamp())}"
 
     # Lade Module-Drills aus Curriculum
     curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
@@ -193,8 +197,8 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
 
     session_data = {
         "id": session_id,
-        "user": user,
-        "created_by": user,  # Track who created the session
+        "user": user_cased,
+        "created_by": user_cased,  # Track who created the session
         "module_id": session.module_id,
         "goal": session.goal,
         "confidence": session.confidence,
