@@ -409,8 +409,9 @@ export const api = {
   },
 
   // Teams
-  getTeams: async (): Promise<TeamsResponse> => {
-    const res = await fetch(buildUrl('/teams'), {
+  getTeams: async (league?: string): Promise<TeamsResponse> => {
+    const query = league ? `?league=${encodeURIComponent(league)}` : ''
+    const res = await fetch(buildUrl(`/teams${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch teams')

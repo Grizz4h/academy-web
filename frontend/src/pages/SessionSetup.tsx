@@ -119,9 +119,17 @@ export default function SessionSetup() {
   })
 
   const { data: teamsResp } = useQuery({
-    queryKey: ['teams'],
-    queryFn: () => api.getTeams()
+    queryKey: ['teams', league],
+    queryFn: () => api.getTeams(league),
+    enabled: Boolean(league),
+    staleTime: 0,
+    gcTime: 0
   })
+
+  // Debug: Log teams response
+  useEffect(() => {
+    console.log('DEBUG teamsResp:', { league, teamsResp })
+  }, [league, teamsResp])
 
   const [createError, setCreateError] = useState<string>('')
   const lastPayloadRef = useRef<Parameters<typeof api.createSession>[0] | null>(null)
@@ -232,6 +240,18 @@ export default function SessionSetup() {
       }
       return teams
     }
+    if (league === 'Nationalmannschaften') {
+      const teams = teamsResp?.teams?.map(t => t.name) || []
+      // Fallback falls API nicht lädt
+      if (teams.length === 0) {
+        return [
+          'Deutschland', 'Schweden', 'Finnland', 'Norwegen', 'Russland',
+          'Tschechien', 'Slowakei', 'Ungarn', 'Kanada', 'USA',
+          'Schweiz', 'Frankreich', 'Österreich', 'Italien', 'Japan', 'Südkorea'
+        ]
+      }
+      return teams
+    }
     if (league === 'NHL') return NHL_TEAMS.map(t => t.name)
     return []
   })()
@@ -285,6 +305,7 @@ export default function SessionSetup() {
             <option value="">-- Liga wählen --</option>
             <option value="DEL">DEL</option>
             <option value="NHL">NHL</option>
+            <option value="Nationalmannschaften">Nationalmannschaften</option>
           </select>
         </label>
 
