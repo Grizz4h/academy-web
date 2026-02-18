@@ -451,7 +451,7 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
           )}
 
           {/* Bottom Actions */}
-          {onDelete && (
+          {(onDelete || session.state === 'COMPLETED') && (
             <div
               style={{
                 padding: '1rem 1.5rem',
@@ -461,37 +461,79 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
                 gap: '0.75rem'
               }}
             >
-              <button
-                onClick={() => {
-                  const ok = confirm('Diese Session wirklich löschen? Dieser Schritt kann nicht rückgängig gemacht werden.')
-                  if (!ok) return
-                  onDelete(session.id)
-                }}
-                style={{
-                  padding: '0.625rem 1rem',
-                  backgroundColor: 'transparent',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  fontSize: '0.875rem',
-                  fontWeight: '500',
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)'
-                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
-                  e.currentTarget.style.color = 'rgba(252, 165, 165, 1)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent'
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
-                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'
-                }}
-                disabled={isDeletingId === session.id}
-              >
-                {isDeletingId === session.id ? 'Lösche...' : 'Löschen'}
-              </button>
+              {session.state === 'COMPLETED' && (
+                <button
+                  onClick={async () => {
+                    try {
+                      const blob = await api.downloadSession(session.id)
+                      const url = URL.createObjectURL(blob)
+                      const link = document.createElement('a')
+                      link.href = url
+                      link.download = `session_${session.id}_${new Date().toISOString().split('T')[0]}.json`
+                      document.body.appendChild(link)
+                      link.click()
+                      document.body.removeChild(link)
+                      URL.revokeObjectURL(url)
+                    } catch (err: any) {
+                      alert(`Download fehlgeschlagen: ${err?.message || err}`)
+                    }
+                  }}
+                  style={{
+                    padding: '0.625rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid rgba(96, 165, 250, 0.4)',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    color: 'rgba(147, 197, 253, 1)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)'
+                    e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.6)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.4)'
+                  }}
+                >
+                  JSON herunterladen
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => {
+                    const ok = confirm('Diese Session wirklich löschen? Dieser Schritt kann nicht rückgängig gemacht werden.')
+                    if (!ok) return
+                    onDelete(session.id)
+                  }}
+                  style={{
+                    padding: '0.625rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)'
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+                    e.currentTarget.style.color = 'rgba(252, 165, 165, 1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'
+                  }}
+                  disabled={isDeletingId === session.id}
+                >
+                  {isDeletingId === session.id ? 'Lösche...' : 'Löschen'}
+                </button>
+              )}
             </div>
           )}
         </div>

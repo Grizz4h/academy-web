@@ -16,7 +16,10 @@ function App() {
     <div className="app">
       <nav className="navbar">
         <div className="container">
-          <span className="navbar-brand">Academy</span>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', cursor: 'pointer' }}>
+            <img src="/RINK_TANK_LOGO.jpeg" alt="RINK Tank" style={{ height: '40px', objectFit: 'contain' }} />
+            <span className="navbar-brand" style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.92)' }}>RINK Tank</span>
+          </a>
           <div className="nav-container">
             <div className="nav-tabs">
               <a className={`nav-link${window.location.pathname === '/' ? ' nav-link-active' : ''}`} href="/">Dashboard</a>

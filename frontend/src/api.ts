@@ -408,6 +408,16 @@ export const api = {
     return res.json()
   },
 
+  // Download session as JSON
+  downloadSession: async (sessionId: string): Promise<Blob> => {
+    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/download`), {
+      method: 'GET',
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to download session')
+    return res.blob()
+  },
+
   // Teams
   getTeams: async (league?: string): Promise<TeamsResponse> => {
     const query = league ? `?league=${encodeURIComponent(league)}` : ''

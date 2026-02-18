@@ -442,6 +442,93 @@ async def update_session_phase(session_id: str, phase_data: dict):
     save_json(session_path, session)
     return session
 
+@app.get("/api/sessions/{session_id}/download")
+async def download_session(session_id: str):
+    """Session als komplette JSON herunterladen mit allen Fragen und Antworten"""
+    from fastapi.responses import StreamingResponse
+    from io import BytesIO
+    
+    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
+    try:
+        session = load_json(session_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    # Struktur für Download vorbereiten
+    export = {
+        "session_id": session.get("id"),
+        "user": session.get("user"),
+        "module_id": session.get("module_id"),
+        "drill_id": session.get("drill_id"),
+        "goal": session.get("goal"),
+        "confidence": session.get("confidence"),
+        "session_method": session.get("session_method"),
+        "focus": session.get("focus"),
+        "created_at": session.get("created_at"),
+        "state": session.get("state"),
+        "game_info": session.get("game_info"),
+        "drills": session.get("drills", []),
+        "checkins_with_questions": []
+    }
+    
+    # Alle Drills durchgehen und Config mit Antworten verbinden
+    all_questions = {}
+    for drill in session.get("drills", []):
+        config = drill.get("config", {})
+        questions = config.get("questions", [])
+        for question in questions:
+            all_questions[question.get("key")] = question
+    
+    # Checkins mit Fragen anreichern
+    for checkin in session.get("checkins", []):
+        phase = checkin.get("phase")
+        answers = checkin.get("answers", {})
+        
+        checkin_export = {
+            "phase": phase,
+            "timestamp": checkin.get("timestamp"),
+            "questions_and_answers": []
+        }
+        
+        # Für jede Antwort die entsprechende Frage finden und hinzufügen
+        for answer_key, answer_value in answers.items():
+            if answer_key in all_questions:
+                question = all_questions[answer_key]
+                checkin_export["questions_and_answers"].append({
+                    "question_key": answer_key,
+                    "question_label": question.get("label"),
+                    "question_type": question.get("type"),
+                    "answer": answer_value
+                })
+        
+        # Feedback und next_task hinzufügen wenn vorhanden (für POST)
+        if checkin.get("feedback"):
+            checkin_export["feedback"] = checkin.get("feedback")
+        if checkin.get("next_task"):
+            checkin_export["next_task"] = checkin.get("next_task")
+        
+        export["checkins_with_questions"].append(checkin_export)
+    
+    # Microfeedback hinzufügen
+    if session.get("microfeedback"):
+        export["microfeedback"] = session.get("microfeedback")
+    
+    # Post-Daten hinzufügen wenn vorhanden
+    if session.get("post"):
+        export["post"] = session.get("post")
+    
+    # JSON in BytesIO schreiben
+    json_bytes = json.dumps(export, indent=2, ensure_ascii=False).encode('utf-8')
+    buffer = BytesIO(json_bytes)
+    
+    # Als Download zurückgeben
+    filename = f"session_{session_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    return StreamingResponse(
+        iter([json_bytes]),
+        media_type="application/json",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
 # Microfeedback-Endpoint muss nach app = FastAPI(...) deklariert werden
 
 @app.post("/api/sessions/{session_id}/microfeedback")

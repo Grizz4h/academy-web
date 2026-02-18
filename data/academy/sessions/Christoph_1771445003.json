@@ -1,0 +1,185 @@
+{
+  "id": "Christoph_1771445003",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A2",
+  "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A2_D1",
+  "state": "IN_PROGRESS",
+  "current_phase": "P3",
+  "created_at": "2026-02-18T21:03:23.106103",
+  "drills": [
+    {
+      "id": "A2_D1",
+      "title": "Breakout-Struktur erkennen",
+      "drill_type": "period_checkin",
+      "description": "Beobachte Breakouts nur aus der eigenen Zone. Fokus: Ordnung, erste Option, Abstände.",
+      "didactics": {
+        "explanation": "Erkenne, ob ein Breakout als Struktur sichtbar ist – unabhängig davon, ob der Exit klappt.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Wer bietet sich zuerst an?",
+            "Wo ist der Center?",
+            "Wie breit stehen die Winger?",
+            "Gibt es mindestens 2 Passoptionen?"
+          ],
+          "how_to": [
+            "Nur Breakouts aus der eigenen Zone betrachten",
+            "Im ersten Durchlauf Gegnerdruck ausblenden",
+            "Auf Formation, Abstände und Lesbarkeit achten",
+            "Gesamteindruck vor Einzelszene",
+            "Zwei Optionen = stabiler",
+            "Keine Option = brüchig/chaotisch"
+          ],
+          "ignore": [
+            "Ergebnis des Exits",
+            "Gegnerdruck im ersten Durchlauf"
+          ]
+        },
+        "inline_explanations": {
+          "klar aufgebaut": {
+            "meaning": "Die Rollen sind erkennbar: Center bietet sich an, Winger geben Breite, D hat mindestens zwei klare Optionen."
+          },
+          "teilweise lesbar": {
+            "meaning": "Es gibt Struktur-Ansätze, aber Abstände/Timing sind nicht stabil. Optionen tauchen kurz auf oder wirken unsicher."
+          },
+          "keine erkennbare Struktur": {
+            "meaning": "Du siehst keine klare Ordnung: Spieler sind zu nah/zu weit, Angebote fehlen oder alle bewegen sich ohne erkennbare Rollen."
+          },
+          "Center": {
+            "meaning": "Erste klare Option ist der Center (tiefer Support / middle-lane). Hinweis auf strukturierte Mitte, wenn er anspielbar ist."
+          },
+          "Winger": {
+            "meaning": "Erste klare Option ist ein Winger (Wall/Side). Funktioniert gut, wenn Breite und Abstand stimmen."
+          },
+          "Reverse": {
+            "meaning": "Erste klare Option ist ein Reverse (D-zu-D). Kann geplanter Aufbau sein oder frühes Ausweichen – bewerte nur, ob es als Option sichtbar war."
+          }
+        },
+        "learning_hint": "Ein erfolgreicher Exit ist nicht automatisch ein guter Exit – Struktur vor Ergebnis."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "structure_rating": "klar aufgebaut"
+            },
+            "questions": [
+              "Was hat dir die Struktur sofort lesbar gemacht?",
+              "Welche Rolle war für dich am klarsten erkennbar?",
+              "Wirkten die Abstände stabil oder eher knapp?"
+            ]
+          },
+          {
+            "when": {
+              "structure_rating": "teilweise lesbar"
+            },
+            "questions": [
+              "Was war klar, was hat gefehlt?",
+              "Waren die Abstände oder die Angebote das größere Problem?",
+              "Hattest du kurzzeitig ein klares Bild?"
+            ]
+          },
+          {
+            "when": {
+              "structure_rating": "keine erkennbare Struktur"
+            },
+            "questions": [
+              "Was hat dir als Erstes gefehlt (Angebot, Abstand, Ordnung)?",
+              "Gab es überhaupt eine erkennbare erste Option?",
+              "Wusstest du schnell, dass es chaotisch wirkt?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "structure_rating",
+            "type": "radio",
+            "label": "Breakout wirkt",
+            "options": [
+              "klar aufgebaut",
+              "teilweise lesbar",
+              "keine erkennbare Struktur"
+            ]
+          },
+          {
+            "key": "first_option",
+            "type": "radio",
+            "label": "Erste Passoption",
+            "options": [
+              "Center",
+              "Winger",
+              "Reverse"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Eigene Notiz (optional)",
+            "max_chars": 140
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-02-18T21:03:34.614453"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "structure_rating": "teilweise lesbar",
+        "first_option": "Center"
+      },
+      "timestamp": "2026-02-18T22:01:49.186967"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "structure_rating": "keine erkennbare Struktur",
+        "first_option": "Winger"
+      },
+      "timestamp": "2026-02-18T22:34:30.928977"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "Nationalmannschaften",
+    "team_home": "USA",
+    "team_away": "Schweden",
+    "observed_team": "USA",
+    "date": "2026-02-18T20:03:23.028Z"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Es wurde der Center gesucht aber dann war der Puck oft gleich wieder weg",
+      "ts": "2026-02-18T22:02:20.222347"
+    },
+    "P2": {
+      "done": true,
+      "text": "Die Ordnung und Passmöglichkeiten",
+      "ts": "2026-02-18T22:35:05.064261"
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}
