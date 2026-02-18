@@ -182,3 +182,15 @@ INFO:     80.187.81.188:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 [microfeedback] session=christoph_1769202987 phase=P3 trace_id=f42d5c38-ac96-4e4b-9d58-248f0a0f0e77 trace_action=submitMicrofeedback text_len=11
 [checkin:71f364a3] session=christoph_1769202987 phase_raw='POST' phase_norm='POST' action=append trace_id=0bd1eec0-f30b-493f-a8ee-adcb33505f22 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
 [checkin:71f364a3] session=christoph_1769202987 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:b302da7a] session=Christoph_1769865144 phase_raw='PRE' phase_norm='PRE' action=append trace_id=5a31ea45-36b5-423f-bbc3-123645ce99d8 trace_action=saveCheckin counts_before={}
+[checkin:b302da7a] session=Christoph_1769865144 counts_after={'PRE': 1}
+[checkin:7ad37f1d] session=Christoph_1769865144 phase_raw='P1' phase_norm='P1' action=append trace_id=766aa16d-798c-44e0-a355-5309a8dc8ecd trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:7ad37f1d] session=Christoph_1769865144 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1769865144 phase=P1 trace_id=a4b15656-986e-4719-9f2d-8008866ab24b trace_action=submitMicrofeedback text_len=90
+[checkin:27a870da] session=Christoph_1770701253 phase_raw='PRE' phase_norm='PRE' action=append trace_id=cd59487f-5cae-46a2-8e59-3217b63e699c trace_action=saveCheckin counts_before={}
+[checkin:27a870da] session=Christoph_1770701253 counts_after={'PRE': 1}
+[checkin:1e048331] session=Christoph_1770701253 phase_raw='P1' phase_norm='P1' action=append trace_id=7e82ec07-4a22-4aae-99bc-bff65fecd73c trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:1e048331] session=Christoph_1770701253 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1770701253 phase=P1 trace_id=fc6fd40a-03e1-4810-9b0e-dfd8edfd3303 trace_action=submitMicrofeedback text_len=6
+[checkin:18d79f1b] session=Christoph_1771429400 phase_raw='PRE' phase_norm='PRE' action=append trace_id=3448cb04-3c62-41c6-b2ca-7db048d242f5 trace_action=saveCheckin counts_before={}
+[checkin:18d79f1b] session=Christoph_1771429400 counts_after={'PRE': 1}

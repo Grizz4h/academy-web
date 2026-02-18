@@ -1,0 +1,22 @@
+{
+  "league": "Nationalmannschaften",
+  "season": "2025/2026",
+  "teams": [
+    { "id": "germany", "name": "Deutschland", "country": "Germany", "short": "GER" },
+    { "id": "sweden", "name": "Schweden", "country": "Sweden", "short": "SWE" },
+    { "id": "finland", "name": "Finnland", "country": "Finland", "short": "FIN" },
+    { "id": "norway", "name": "Norwegen", "country": "Norway", "short": "NOR" },
+    { "id": "russia", "name": "Russland", "country": "Russia", "short": "RUS" },
+    { "id": "czech", "name": "Tschechien", "country": "Czech Republic", "short": "CZE" },
+    { "id": "slovakia", "name": "Slowakei", "country": "Slovakia", "short": "SVK" },
+    { "id": "hungary", "name": "Ungarn", "country": "Hungary", "short": "HUN" },
+    { "id": "canada", "name": "Kanada", "country": "Canada", "short": "CAN" },
+    { "id": "usa", "name": "USA", "country": "United States", "short": "USA" },
+    { "id": "switzerland", "name": "Schweiz", "country": "Switzerland", "short": "SUI" },
+    { "id": "france", "name": "Frankreich", "country": "France", "short": "FRA" },
+    { "id": "austria", "name": "Österreich", "country": "Austria", "short": "AUT" },
+    { "id": "italy", "name": "Italien", "country": "Italy", "short": "ITA" },
+    { "id": "japan", "name": "Japan", "country": "Japan", "short": "JPN" },
+    { "id": "south_korea", "name": "Südkorea", "country": "South Korea", "short": "KOR" }
+  ]
+}

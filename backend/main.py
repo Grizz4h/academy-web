@@ -136,10 +136,16 @@ async def get_curriculum():
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
 @app.get("/api/teams")
-async def get_teams():
-    """DEL Teams laden"""
+async def get_teams(league: Optional[str] = None):
+    """Teams laden basierend auf Liga"""
     try:
-        return load_json(os.path.join(DATA_DIR, "teams.json"))
+        # Standardmäßig DEL Teams
+        if not league or league == "DEL":
+            return load_json(os.path.join(DATA_DIR, "teams.json"))
+        elif league == "Nationalmannschaften":
+            return load_json(os.path.join(DATA_DIR, "teams_national.json"))
+        else:
+            raise HTTPException(status_code=400, detail=f"Unknown league: {league}")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Teams not found")
 
