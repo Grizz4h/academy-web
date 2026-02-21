@@ -1,16 +1,16 @@
 {
-  "id": "Christoph_1771445003",
+  "id": "Christoph_1771689314",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
   "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
-  "confidence": 1,
+  "confidence": 2,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A2_D1",
-  "state": "COMPLETED",
-  "current_phase": "POST",
-  "created_at": "2026-02-18T21:03:23.106103",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-02-21T16:55:14.667982",
   "drills": [
     {
       "id": "A2_D1",
@@ -136,70 +136,34 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {},
-      "timestamp": "2026-02-18T21:03:34.614453"
-    },
-    {
-      "phase": "P1",
       "answers": {
-        "structure_rating": "teilweise lesbar",
-        "first_option": "Center"
+        "expectations": "Duell auf Augenhöhe. Denk Mannheim hat die saubereren exits"
       },
-      "timestamp": "2026-02-18T22:01:49.186967"
-    },
-    {
-      "phase": "P2",
-      "answers": {
-        "structure_rating": "keine erkennbare Struktur",
-        "first_option": "Winger"
-      },
-      "timestamp": "2026-02-18T22:34:30.928977"
-    },
-    {
-      "phase": "P3",
-      "answers": {
-        "first_option": "Center",
-        "structure_rating": "keine erkennbare Struktur"
-      },
-      "timestamp": "2026-02-20T21:03:49.919126"
-    },
-    {
-      "phase": "POST",
-      "answers": {},
-      "timestamp": "2026-02-20T21:03:58.659842"
+      "timestamp": "2026-02-21T16:55:49.333813"
     }
   ],
   "drafts": {},
-  "post": {
-    "summary": "",
-    "unclear": "",
-    "next_module": "",
-    "helpfulness": 0,
-    "completed_at": "2026-02-20T21:03:58.761030"
-  },
+  "post": null,
   "game_info": {
-    "league": "Nationalmannschaften",
-    "team_home": "USA",
-    "team_away": "Schweden",
-    "observed_team": "USA",
-    "date": "2026-02-18T20:03:23.028Z"
+    "league": "DEL",
+    "team_home": "Adler Mannheim",
+    "team_away": "EHC Red Bull München",
+    "observed_team": "Adler Mannheim",
+    "date": "2026-02-21T15:55:14.623Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
-      "done": true,
-      "text": "Es wurde der Center gesucht aber dann war der Puck oft gleich wieder weg",
-      "ts": "2026-02-18T22:02:20.222347"
+      "done": false,
+      "text": ""
     },
     "P2": {
-      "done": true,
-      "text": "Die Ordnung und Passmöglichkeiten",
-      "ts": "2026-02-18T22:35:05.064261"
+      "done": false,
+      "text": ""
     },
     "P3": {
-      "done": true,
-      "text": "Es war chase and dump",
-      "ts": "2026-02-20T21:03:56.834503"
+      "done": false,
+      "text": ""
     }
   }
 }

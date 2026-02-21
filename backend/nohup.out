@@ -8888,3 +8888,524 @@ INFO:     85.217.140.26:46040 - "GET / HTTP/1.1" 404 Not Found
 INFO:     141.78.170.8:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
 INFO:     141.78.170.8:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.170.8:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.170.8:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+INFO:     141.78.170.8:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+INFO:     147.185.132.129:59998 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.235.24.159:60354 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51016 - "GET /.e5688 HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51022 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51032 - "GET /.env.local HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51036 - "GET /.env.production HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51048 - "GET /.env.development HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51062 - "GET /.env.dev HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51072 - "GET /.env.prod HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51084 - "GET /.env.test HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51090 - "GET /.env.staging HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51094 - "GET /.env.backup HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51096 - "GET /.env.save HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51100 - "GET /.env.old HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51106 - "GET /.env.bak HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51108 - "GET /.env.tmp HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51110 - "GET /.env.swp HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51116 - "GET /.env~ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51120 - "GET /env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51126 - "GET /env.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51132 - "GET /env.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51142 - "GET /app/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51154 - "GET /src/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51166 - "GET /config/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51170 - "GET /backend/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51184 - "GET /frontend/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51192 - "GET /api/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51200 - "GET /server/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51208 - "GET /client/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51216 - "GET /web/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51230 - "GET /public/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51242 - "GET /private/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51244 - "GET /var/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51256 - "GET /docker-compose.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51258 - "GET /docker-compose.yaml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51274 - "GET /docker-compose.override.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51278 - "GET /docker-compose.dev.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51292 - "GET /docker-compose.prod.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51300 - "GET /config.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51316 - "GET /config.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51322 - "GET /settings.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51336 - "GET /settings.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51344 - "GET /secrets.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51358 - "GET /credentials.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51368 - "GET /app.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51380 - "GET /main.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51388 - "GET /index.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51400 - "GET /server.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51408 - "GET /bundle.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51416 - "GET /app.bundle.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51418 - "GET /main.bundle.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51428 - "GET /vendor.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51438 - "GET /chunk.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51454 - "GET /static/js/main.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51470 - "GET /static/js/app.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51474 - "GET /static/js/bundle.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51476 - "GET /dist/main.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51488 - "GET /dist/app.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51492 - "GET /dist/bundle.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51496 - "GET /build/static/js/main.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51508 - "GET /assets/index.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51518 - "GET /assets/app.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51528 - "GET /_next/static/chunks/main.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51542 - "GET /_next/static/chunks/app.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51548 - "GET /js/app.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51560 - "GET /js/main.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51568 - "GET /settings.py HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51574 - "GET /config.py HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51578 - "GET /secrets.py HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51582 - "GET /config/secrets.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51586 - "GET /config/master.key HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51602 - "GET /wp-config.php.bak HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51614 - "GET /wp-config.php.old HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51618 - "GET /wp-config.php.save HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51620 - "GET /wp-config.php.txt HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51632 - "GET /wp-config.php~ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51640 - "GET /config/app.php HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51656 - "GET /application.properties HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51662 - "GET /application.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51670 - "GET /application.yaml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51682 - "GET /application-dev.properties HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51690 - "GET /application-prod.properties HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51704 - "GET /appsettings.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51712 - "GET /appsettings.Development.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51714 - "GET /appsettings.Production.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51720 - "GET /config.yaml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51722 - "GET /config.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51724 - "GET /config.toml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51740 - "GET /serverless.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51756 - "GET /serverless.yaml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51766 - "GET /config/production.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51768 - "GET /config/development.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51780 - "GET /config/default.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51786 - "GET /config/local.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51790 - "GET /conf/settings.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51802 - "GET /data/config.json HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51810 - "GET /actuator/env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51814 - "GET /actuator/configprops HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51830 - "GET /api/config HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51834 - "GET /api/settings HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51848 - "GET /api/env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51854 - "GET /backup/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51870 - "GET /backups/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51884 - "GET /old/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51896 - "GET /temp/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51910 - "GET /tmp/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51918 - "GET /.streamlit/secrets.toml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51926 - "GET /root/.streamlit/secrets.toml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51934 - "GET /root/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51944 - "GET /home/ubuntu/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51954 - "GET /home/ec2-user/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51966 - "GET /home/node/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51968 - "GET /terraform.tfvars HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51984 - "GET /terraform.tfstate HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:51988 - "GET /ecosystem.config.js HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52000 - "GET /secrets.yaml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52004 - "GET /secrets.yml HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52020 - "GET /.secrets HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52032 - "GET /.env.vault HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52034 - "GET /storage/framework/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52042 - "GET /laravel/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52056 - "GET /.git/logs/HEAD HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52058 - "GET /.git/config HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52062 - "GET /%40fs/app/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52078 - "GET /%40fs/root/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52094 - "GET /%40fs/proc/self/environ?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52104 - "GET /%40fs/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52116 - "GET /%40fs/../../../../../root/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52130 - "GET /%40fs/../../../../../proc/self/environ?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52134 - "GET /%40fs/../../../../../app/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52148 - "GET /%40fs/..%252f..%252f..%252f..%252f..%252froot/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52160 - "GET /%40fs/..%252f..%252f..%252f..%252f..%252fproc/self/environ?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52168 - "GET /%40fs/root/.aws/credentials?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52182 - "GET /%40fs/home/ubuntu/.aws/credentials?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52184 - "GET /%40fs/home/node/.aws/credentials?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52190 - "GET /%40fs/app/.env.local?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52200 - "GET /%40fs/app/.env.production?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52216 - "GET /%40fs/src/.env?raw?? HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52218 - "GET /../../../../../../proc/self/environ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52222 - "GET /../../../../../../../proc/self/environ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52230 - "GET /../../../../../../../app/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52240 - "GET /../../../../../../../root/.env HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52244 - "GET /../../../../../../../root/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52256 - "GET /../../../../../../../home/ubuntu/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52260 - "GET /../../../../../../../home/node/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52264 - "GET /../../../../../../root/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     204.76.203.210:52270 - "GET /../../../../../../home/ubuntu/.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     206.189.56.129:43206 - "GET / HTTP/1.1" 404 Not Found
+INFO:     206.189.56.129:43208 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     205.210.31.89:62562 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     94.231.206.8:49387 - "GET / HTTP/1.1" 404 Not Found
+INFO:     94.231.206.10:47287 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     205.210.31.139:65362 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     144.126.203.222:59094 - "GET / HTTP/1.1" 404 Not Found
+INFO:     144.126.203.222:59108 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     3.129.187.38:33386 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.129.187.38:56458 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     85.11.183.25:48846 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.235.24.154:58728 - "GET /metrics HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.138.127:62734 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.138.127:28614 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.138.127:51406 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     184.105.247.254:8890 - "GET / HTTP/1.1" 404 Not Found
+INFO:     184.105.247.235:9333 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     184.105.247.235:31379 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
+INFO:     184.105.247.251:48941 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     207.90.244.14:53734 - "GET / HTTP/1.1" 404 Not Found
+INFO:     207.90.244.14:33046 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     91.230.168.9:42863 - "GET / HTTP/1.1" 404 Not Found
+INFO:     195.184.76.244:55711 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     195.178.110.160:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     101.36.116.45:49680 - "GET / HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:49684 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:49696 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:49712 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:37722 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:37736 - "GET /mcp HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:37744 - "GET /mcp-sse HTTP/1.1" 404 Not Found
+INFO:     101.36.116.45:37754 - "GET /get_server_info HTTP/1.1" 404 Not Found
+INFO:     81.168.83.103:50019 - "GET /secrets.py HTTP/1.0" 404 Not Found
+INFO:     185.247.137.128:42377 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.235.24.183:62258 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.199:64542 - "GET / HTTP/1.1" 404 Not Found
+INFO:     103.203.57.20:59224 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.62.197.182:32404 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.62.197.193:20359 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     64.62.197.193:42223 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
+INFO:     64.62.197.191:25419 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     205.210.31.163:60506 - "GET / HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35116 - "GET / HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35118 - "POST / HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35130 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35142 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35150 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35160 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:35168 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.235.24.198:58370 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     40.80.204.149:35140 - "GET / HTTP/1.1" 404 Not Found
+INFO:     195.178.110.187:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     195.178.110.187:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     138.197.16.14:39668 - "POST /api/client/update?arch=amd64&commit=08059e95dacafe0bf6e5782f8e2c8ec9cd8c5a17&os=windows HTTP/1.1" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.23.221.57:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.235.24.244:59668 - "GET /metrics HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     204.76.203.73:32010 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     162.142.125.195:7100 - "GET / HTTP/1.1" 404 Not Found
+INFO:     162.142.125.195:7116 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     162.142.125.195:20458 - "GET /wiki HTTP/1.1" 404 Not Found
+INFO:     34.38.106.200:43740 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     18.116.101.220:44178 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     85.11.183.23:48960 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.116.101.220:44324 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.79.207.181:38220 - "GET / HTTP/1.1" 404 Not Found
+INFO:     172.236.228.222:56158 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.218.118.203:54436 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     18.218.118.203:39656 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     185.247.137.148:50189 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     85.11.182.27:36136 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.131:57584 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.146.52:42276 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.52:26988 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.146.52:27004 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.52:27026 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     198.235.24.37:62016 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.195:64896 - "GET / HTTP/1.1" 404 Not Found
+INFO:     81.168.83.103:50033 - "GET /.env.bak HTTP/1.0" 404 Not Found
+INFO:     130.12.180.52:57296 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:52676 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:52678 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:52682 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:52694 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:53504 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:34258 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     130.12.180.52:34262 - "CONNECT api.ipify.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     198.235.24.217:62386 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     147.185.132.123:60154 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     81.168.83.103:50023 - "GET /.bash_history HTTP/1.0" 404 Not Found
+INFO:     143.208.169.242:23981 - "GET /version HTTP/1.1" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     181.57.208.122:43680 - "GET / HTTP/1.0" 404 Not Found
+INFO:     147.185.132.108:62950 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+[checkin:f644ffba] session=Christoph_1771445003 phase_raw='P3' phase_norm='P3' action=append trace_id=21b9fb88-ab86-4d9d-8e24-c219123fe065 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:f644ffba] session=Christoph_1771445003 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771445003/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771445003 phase=P3 trace_id=a8617543-49c7-4e86-b1ba-7d17b4111330 trace_action=submitMicrofeedback text_len=21
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771445003/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "PUT /api/sessions/Christoph_1771445003/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+[checkin:72d1fcd9] session=Christoph_1771445003 phase_raw='POST' phase_norm='POST' action=append trace_id=45689194-9c33-4bfe-bdb9-dc78736bca16 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:72d1fcd9] session=Christoph_1771445003 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771445003/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771445003/post HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     176.65.139.8:38074 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.186.33:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[checkin:e1e8a8f5] session=Christoph_1771618366 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0f25aeb7-f2fe-49a4-a9ef-e4abcc62bf52 trace_action=saveCheckin counts_before={}
+[checkin:e1e8a8f5] session=Christoph_1771618366 counts_after={'PRE': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "PUT /api/sessions/Christoph_1771618366/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[checkin:3c691af9] session=Christoph_1771618366 phase_raw='P1' phase_norm='P1' action=append trace_id=352015a2-b0d9-4336-b933-4ecc3045cb6e trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:3c691af9] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771618366 phase=P1 trace_id=a037a993-606f-4826-80d3-f3b134c3889b trace_action=submitMicrofeedback text_len=103
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "PUT /api/sessions/Christoph_1771618366/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771445003/download HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     205.210.31.236:58940 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[checkin:49dcd379] session=Christoph_1771618366 phase_raw='P2' phase_norm='P2' action=append trace_id=7b1a83da-3aab-4bcb-a1bb-fe3a92a00a32 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:49dcd379] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771618366 phase=P2 trace_id=f88fcd50-badb-4360-aaa4-180fd746ae6b trace_action=submitMicrofeedback text_len=190
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "PUT /api/sessions/Christoph_1771618366/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     71.6.135.131:51956 - "GET / HTTP/1.1" 404 Not Found
+INFO:     71.6.135.131:52794 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:51252 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:37864 - "GET /bins/ HTTP/1.1" 404 Not Found
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     204.76.203.18:35564 - "GET /bin/ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:34926 - "GET /backup/ HTTP/1.1" 404 Not Found
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[checkin:7664d523] session=Christoph_1771618366 phase_raw='P3' phase_norm='P3' action=append trace_id=50c4e815-f29b-4fa6-8b6e-09d3d604241b trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:7664d523] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771618366 phase=P3 trace_id=117cb8b8-87c9-4af3-ae08-b52d595ef477 trace_action=submitMicrofeedback text_len=88
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "PUT /api/sessions/Christoph_1771618366/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+[checkin:e22ac7e3] session=Christoph_1771618366 phase_raw='POST' phase_norm='POST' action=append trace_id=d49af493-0904-4933-bc49-b8cf480f3d2c trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:e22ac7e3] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "POST /api/sessions/Christoph_1771618366/post HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions/Christoph_1771618366/download HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.33:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     147.185.132.210:62058 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.235.24.114:61264 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     205.210.31.208:59400 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     198.235.24.226:61776 - "GET / HTTP/1.1" 404 Not Found
+INFO:     85.217.149.43:40868 - "GET / HTTP/1.1" 404 Not Found
+INFO:     147.185.132.21:64148 - "GET / HTTP/1.1" 404 Not Found
+INFO:     52.221.240.184:0 - "GET /api/actuator HTTP/1.0" 404 Not Found
+INFO:     198.235.24.122:58816 - "GET / HTTP/1.1" 404 Not Found
+INFO:     65.49.1.108:35572 - "GET / HTTP/1.1" 404 Not Found
+INFO:     65.49.1.121:16907 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     65.49.1.119:18559 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
+INFO:     65.49.1.120:29551 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     193.34.212.9:44142 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.235.24.203:61420 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     81.168.83.103:50015 - "GET /.vscode/launch.json HTTP/1.0" 404 Not Found
+INFO:     176.65.149.17:59192 - "GET /.env.local HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     204.76.203.215:58944 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     176.65.139.8:59412 - "GET / HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:56136 - "GET / HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:56140 - "POST / HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:56150 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:56166 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:54618 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:54634 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     31.59.129.233:54636 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     49.248.192.204:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     167.94.138.40:61120 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.138.40:49920 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.138.40:49926 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.138.40:50922 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     20.163.78.59:0 - "POST /api/v2/login HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     34.158.168.101:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     81.168.83.103:50002 - "GET /.env.dev HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     142.93.164.45:41534 - "GET /solr/admin/info/system HTTP/1.1" 404 Not Found
+INFO:     142.93.161.140:56146 - "GET /v2/_catalog HTTP/1.1" 404 Not Found
+INFO:     142.93.108.95:58450 - "GET /query?q=SHOW+DIAGNOSTICS HTTP/1.1" 404 Not Found
+INFO:     104.248.241.34:54446 - "GET /cgi-bin/authLogin.cgi HTTP/1.1" 404 Not Found
+INFO:     157.230.113.76:58942 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     142.93.164.45:41542 - "GET /solr/admin/cores?action=STATUS&wt=json HTTP/1.1" 404 Not Found
+INFO:     164.92.240.117:49822 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     152.42.231.245:40970 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [733755]
+INFO:     Started server process [790532]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771618366/download?phase=P2 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771618366/download?phase=P1 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+[checkin:d4dca968] session=Christoph_1771688251 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0d52ea0f-b3f0-438a-8952-702a40cbe87c trace_action=saveCheckin counts_before={}
+[checkin:d4dca968] session=Christoph_1771688251 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771688251/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771688251/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+[checkin:ef210371] session=Christoph_1771688251 phase_raw='P1' phase_norm='P1' action=append trace_id=748482fb-dd3b-42c6-8e34-018f1273b124 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:ef210371] session=Christoph_1771688251 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771688251/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771688251 phase=P1 trace_id=54988ada-ad94-4d80-8c10-e4921eb6897e trace_action=submitMicrofeedback text_len=17
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771688251/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771688251/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251/download?phase=P1 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771688251/checkins/1 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771688251/checkins/0 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771688251 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[checkin:ffbffb66] session=Christoph_1771689314 phase_raw='PRE' phase_norm='PRE' action=append trace_id=5e2e304c-aa6c-4404-95e1-03a358c25c52 trace_action=saveCheckin counts_before={}
+[checkin:ffbffb66] session=Christoph_1771689314 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771689314/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK

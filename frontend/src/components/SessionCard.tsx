@@ -110,6 +110,29 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
     ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
     : session.module_id
 
+  const availablePhaseDownloads = ['P1', 'P2', 'P3'].filter(phase =>
+    session.checkins?.some(checkin => (checkin.phase || '').toUpperCase() === phase)
+  )
+
+  const handleDownload = async (phase?: string) => {
+    try {
+      const blob = await api.downloadSession(session.id, phase)
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      const datePart = new Date().toISOString().split('T')[0]
+      link.download = phase
+        ? `session_${session.id}_${phase}_${datePart}.json`
+        : `session_${session.id}_${datePart}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (err: any) {
+      alert(`Download fehlgeschlagen: ${err?.message || err}`)
+    }
+  }
+
   return (
     <div
       style={{
@@ -451,33 +474,48 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
           )}
 
           {/* Bottom Actions */}
-          {(onDelete || session.state === 'COMPLETED') && (
+          {(onDelete || session.state === 'COMPLETED' || availablePhaseDownloads.length > 0) && (
             <div
               style={{
                 padding: '1rem 1.5rem',
                 borderTop: '1px solid rgba(255, 255, 255, 0.08)',
                 display: 'flex',
+                flexWrap: 'wrap',
                 justifyContent: 'flex-end',
-                gap: '0.75rem'
+                gap: '0.75rem',
+                rowGap: '0.5rem'
               }}
             >
+              {availablePhaseDownloads.map(phase => (
+                <button
+                  key={phase}
+                  onClick={() => handleDownload(phase)}
+                  style={{
+                    padding: '0.5rem 0.8rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid rgba(148, 163, 184, 0.35)',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: '500',
+                    color: 'rgba(226, 232, 240, 0.9)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(148, 163, 184, 0.12)'
+                    e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.6)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.35)'
+                  }}
+                >
+                  {phase} herunterladen
+                </button>
+              ))}
               {session.state === 'COMPLETED' && (
                 <button
-                  onClick={async () => {
-                    try {
-                      const blob = await api.downloadSession(session.id)
-                      const url = URL.createObjectURL(blob)
-                      const link = document.createElement('a')
-                      link.href = url
-                      link.download = `session_${session.id}_${new Date().toISOString().split('T')[0]}.json`
-                      document.body.appendChild(link)
-                      link.click()
-                      document.body.removeChild(link)
-                      URL.revokeObjectURL(url)
-                    } catch (err: any) {
-                      alert(`Download fehlgeschlagen: ${err?.message || err}`)
-                    }
-                  }}
+                  onClick={() => handleDownload()}
                   style={{
                     padding: '0.625rem 1rem',
                     backgroundColor: 'transparent',

@@ -48,7 +48,7 @@ from fastapi import Request
 # ...alle anderen Endpunkte...
 
 # ...existing code...
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from uuid import uuid4
 from collections import Counter
 from fastapi.middleware.cors import CORSMiddleware
@@ -443,7 +443,7 @@ async def update_session_phase(session_id: str, phase_data: dict):
     return session
 
 @app.get("/api/sessions/{session_id}/download")
-async def download_session(session_id: str):
+async def download_session(session_id: str, phase: Optional[str] = Query(None)):
     """Session als komplette JSON herunterladen mit allen Fragen und Antworten"""
     from fastapi.responses import StreamingResponse
     from io import BytesIO
@@ -454,6 +454,12 @@ async def download_session(session_id: str):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
     
+    phase_norm = phase.strip().upper() if phase else None
+    if phase_norm:
+        valid_phases = {"P1", "P2", "P3"}
+        if phase_norm not in valid_phases:
+            raise HTTPException(status_code=400, detail="Invalid phase for download")
+
     # Struktur für Download vorbereiten
     export = {
         "session_id": session.get("id"),
@@ -470,6 +476,8 @@ async def download_session(session_id: str):
         "drills": session.get("drills", []),
         "checkins_with_questions": []
     }
+    if phase_norm:
+        export["export_phase"] = phase_norm
     
     # Alle Drills durchgehen und Config mit Antworten verbinden
     all_questions = {}
@@ -480,7 +488,14 @@ async def download_session(session_id: str):
             all_questions[question.get("key")] = question
     
     # Checkins mit Fragen anreichern
-    for checkin in session.get("checkins", []):
+    checkins_source = session.get("checkins", [])
+    if phase_norm:
+        checkins_source = [
+            c for c in checkins_source
+            if (c.get("phase") or "").strip().upper() == phase_norm
+        ]
+
+    for checkin in checkins_source:
         phase = checkin.get("phase")
         answers = checkin.get("answers", {})
         
@@ -511,10 +526,15 @@ async def download_session(session_id: str):
     
     # Microfeedback hinzufügen
     if session.get("microfeedback"):
-        export["microfeedback"] = session.get("microfeedback")
+        if phase_norm:
+            phase_feedback = session["microfeedback"].get(phase_norm)
+            if phase_feedback:
+                export["microfeedback"] = {phase_norm: phase_feedback}
+        else:
+            export["microfeedback"] = session.get("microfeedback")
     
     # Post-Daten hinzufügen wenn vorhanden
-    if session.get("post"):
+    if session.get("post") and not phase_norm:
         export["post"] = session.get("post")
     
     # JSON in BytesIO schreiben

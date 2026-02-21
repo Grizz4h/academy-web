@@ -409,8 +409,9 @@ export const api = {
   },
 
   // Download session as JSON
-  downloadSession: async (sessionId: string): Promise<Blob> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/download`), {
+  downloadSession: async (sessionId: string, phase?: string): Promise<Blob> => {
+    const query = phase ? `?phase=${encodeURIComponent(phase)}` : ''
+    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/download${query}`), {
       method: 'GET',
       headers: { ...authHeaders() }
     })

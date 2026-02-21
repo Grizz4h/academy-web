@@ -215,3 +215,28 @@ INFO:     80.187.81.188:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 [microfeedback] session=Christoph_1771451826 phase=P3 trace_id=197ecac5-abd9-4912-a46d-86751a18fbe7 trace_action=submitMicrofeedback text_len=9
 [checkin:0ef1abb8] session=Christoph_1771451826 phase_raw='POST' phase_norm='POST' action=append trace_id=1a15bfd0-bc95-42b1-b5cd-8698ebbb78a6 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
 [checkin:0ef1abb8] session=Christoph_1771451826 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:f644ffba] session=Christoph_1771445003 phase_raw='P3' phase_norm='P3' action=append trace_id=21b9fb88-ab86-4d9d-8e24-c219123fe065 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:f644ffba] session=Christoph_1771445003 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Christoph_1771445003 phase=P3 trace_id=a8617543-49c7-4e86-b1ba-7d17b4111330 trace_action=submitMicrofeedback text_len=21
+[checkin:72d1fcd9] session=Christoph_1771445003 phase_raw='POST' phase_norm='POST' action=append trace_id=45689194-9c33-4bfe-bdb9-dc78736bca16 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:72d1fcd9] session=Christoph_1771445003 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:e1e8a8f5] session=Christoph_1771618366 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0f25aeb7-f2fe-49a4-a9ef-e4abcc62bf52 trace_action=saveCheckin counts_before={}
+[checkin:e1e8a8f5] session=Christoph_1771618366 counts_after={'PRE': 1}
+[checkin:3c691af9] session=Christoph_1771618366 phase_raw='P1' phase_norm='P1' action=append trace_id=352015a2-b0d9-4336-b933-4ecc3045cb6e trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:3c691af9] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1771618366 phase=P1 trace_id=a037a993-606f-4826-80d3-f3b134c3889b trace_action=submitMicrofeedback text_len=103
+[checkin:49dcd379] session=Christoph_1771618366 phase_raw='P2' phase_norm='P2' action=append trace_id=7b1a83da-3aab-4bcb-a1bb-fe3a92a00a32 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:49dcd379] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[microfeedback] session=Christoph_1771618366 phase=P2 trace_id=f88fcd50-badb-4360-aaa4-180fd746ae6b trace_action=submitMicrofeedback text_len=190
+[checkin:7664d523] session=Christoph_1771618366 phase_raw='P3' phase_norm='P3' action=append trace_id=50c4e815-f29b-4fa6-8b6e-09d3d604241b trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:7664d523] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Christoph_1771618366 phase=P3 trace_id=117cb8b8-87c9-4af3-ae08-b52d595ef477 trace_action=submitMicrofeedback text_len=88
+[checkin:e22ac7e3] session=Christoph_1771618366 phase_raw='POST' phase_norm='POST' action=append trace_id=d49af493-0904-4933-bc49-b8cf480f3d2c trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:e22ac7e3] session=Christoph_1771618366 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:d4dca968] session=Christoph_1771688251 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0d52ea0f-b3f0-438a-8952-702a40cbe87c trace_action=saveCheckin counts_before={}
+[checkin:d4dca968] session=Christoph_1771688251 counts_after={'PRE': 1}
+[checkin:ef210371] session=Christoph_1771688251 phase_raw='P1' phase_norm='P1' action=append trace_id=748482fb-dd3b-42c6-8e34-018f1273b124 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:ef210371] session=Christoph_1771688251 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1771688251 phase=P1 trace_id=54988ada-ad94-4d80-8c10-e4921eb6897e trace_action=submitMicrofeedback text_len=17
+[checkin:ffbffb66] session=Christoph_1771689314 phase_raw='PRE' phase_norm='PRE' action=append trace_id=5e2e304c-aa6c-4404-95e1-03a358c25c52 trace_action=saveCheckin counts_before={}
+[checkin:ffbffb66] session=Christoph_1771689314 counts_after={'PRE': 1}
