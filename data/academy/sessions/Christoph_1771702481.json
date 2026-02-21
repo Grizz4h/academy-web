@@ -1,5 +1,5 @@
 {
-  "id": "Christoph_1771689314",
+  "id": "Christoph_1771702481",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
@@ -9,8 +9,8 @@
   "session_method": "live_watch",
   "drill_id": "A2_D1",
   "state": "IN_PROGRESS",
-  "current_phase": "P3",
-  "created_at": "2026-02-21T16:55:14.667982",
+  "current_phase": "P1",
+  "created_at": "2026-02-21T20:34:41.911770",
   "drills": [
     {
       "id": "A2_D1",
@@ -123,7 +123,7 @@
             "key": "note",
             "type": "text",
             "label": "Eigene Notiz (optional)",
-            "max_chars": 140
+            "max_chars": 500
           }
         ]
       }
@@ -137,49 +137,29 @@
     {
       "phase": "PRE",
       "answers": {
-        "expectations": "Duell auf Augenhöhe. Denk Mannheim hat die saubereren exits"
+        "expectations": "System starkes Spiel "
       },
-      "timestamp": "2026-02-21T16:55:49.333813"
-    },
-    {
-      "phase": "P1",
-      "answers": {
-        "note": "Winger. winger mit gliück über die bande einfach nach vorne. mannheim drückt sehr. chip nach vorn. pass winger, der trägt ihn rein. ",
-        "first_option": "Winger",
-        "structure_rating": "klar aufgebaut"
-      },
-      "timestamp": "2026-02-21T17:27:26.199560"
-    },
-    {
-      "phase": "P2",
-      "answers": {
-        "note": "versuch üerb winger. sehr viel unstrukturierter. viele icijngs von mannheim. kreigen gar nicht kontrolle für einnen sauberen breakout.  Glüc",
-        "structure_rating": "teilweise lesbar",
-        "first_option": "Reverse"
-      },
-      "timestamp": "2026-02-21T19:07:46.610095"
+      "timestamp": "2026-02-21T20:35:10.220857"
     }
   ],
   "drafts": {},
   "post": null,
   "game_info": {
-    "league": "DEL",
-    "team_home": "Adler Mannheim",
-    "team_away": "EHC Red Bull München",
-    "observed_team": "Adler Mannheim",
-    "date": "2026-02-21T15:55:14.623Z"
+    "league": "Nationalmannschaften",
+    "team_home": "Finnland",
+    "team_away": "Slowakei",
+    "observed_team": "Finnland",
+    "date": "2026-02-21T19:34:41.869Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
-      "done": true,
-      "text": "es war immer kontrolliert fast breit über die winger der puck ins angriffsdrittel getragen. und dann verteilt. mannheim hat mücnhen absolut im griff",
-      "ts": "2026-02-21T17:27:59.292193"
+      "done": false,
+      "text": ""
     },
     "P2": {
-      "done": true,
-      "text": "die anspielstationen nach puckgewinn",
-      "ts": "2026-02-21T19:07:59.489790"
+      "done": false,
+      "text": ""
     },
     "P3": {
       "done": false,

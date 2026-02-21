@@ -9409,3 +9409,180 @@ INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/checkins H
 INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
 INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771689314/phase HTTP/1.0" 200 OK
 INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[checkin:73edf78b] session=Christoph_1771689314 phase_raw='P1' phase_norm='P1' action=append trace_id=f499a67a-6652-45c5-a0ec-e5e2dbcf1c83 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:73edf78b] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771689314 phase=P1 trace_id=e0c93df7-c33b-4d13-a956-df45d80483a7 trace_action=submitMicrofeedback text_len=148
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771689314/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314/download?phase=P1 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771692899 HTTP/1.0" 200 OK
+[checkin:3d096099] session=Christoph_1771692899 phase_raw='PRE' phase_norm='PRE' action=append trace_id=789717c9-d8dc-49c4-923d-79e3f6e435bd trace_action=saveCheckin counts_before={}
+[checkin:3d096099] session=Christoph_1771692899 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771692899/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771692899 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771692899/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771692899 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771692899 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771692899 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771692899 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693447 HTTP/1.0" 200 OK
+[checkin:6ca61691] session=Christoph_1771693447 phase_raw='PRE' phase_norm='PRE' action=append trace_id=07801fd3-cdd6-4c97-803e-2382764d25e0 trace_action=saveCheckin counts_before={}
+[checkin:6ca61691] session=Christoph_1771693447 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771693447/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693447 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771693447/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693447 HTTP/1.0" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693447 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693447 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693671 HTTP/1.0" 200 OK
+[checkin:0cffd67c] session=Christoph_1771693671 phase_raw='PRE' phase_norm='PRE' action=append trace_id=23c2a85a-9efc-456d-a148-9f384f321485 trace_action=saveCheckin counts_before={}
+[checkin:0cffd67c] session=Christoph_1771693671 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771693671/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693671 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771693671/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693671 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771693671/abort HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693671 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693711 HTTP/1.0" 200 OK
+[checkin:21a932e5] session=Christoph_1771693711 phase_raw='PRE' phase_norm='PRE' action=append trace_id=af2b34de-d1fe-43d5-a9d7-a9b78f5d0f9c trace_action=saveCheckin counts_before={}
+[checkin:21a932e5] session=Christoph_1771693711 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771693711/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693711 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771693711/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771693711 HTTP/1.0" 200 OK
+INFO:     198.235.24.39:59184 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771693711 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771693671 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771693447 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771695038 HTTP/1.0" 200 OK
+[checkin:f5981fee] session=Christoph_1771695038 phase_raw='PRE' phase_norm='PRE' action=append trace_id=c8c405f5-b2c7-4e8c-a71f-7a602dadf583 trace_action=saveCheckin counts_before={}
+[checkin:f5981fee] session=Christoph_1771695038 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771695038/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771695038 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771695038/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771695038 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771695038/abort HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771695038 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771695038 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[checkin:ce4de2d4] session=Christoph_1771689314 phase_raw='P2' phase_norm='P2' action=append trace_id=250ad86b-d24e-43ce-b9b0-69ea5bf4fbae trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:ce4de2d4] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[checkin:8d5a3fa7] session=Christoph_1771689314 phase_raw='P2' phase_norm='P2' action=update trace_id=645d1505-6563-4727-96ea-f345d1456bd8 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:8d5a3fa7] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771689314 phase=P2 trace_id=eff6946f-0d38-4d8b-bb98-401179c22331 trace_action=submitMicrofeedback text_len=36
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771689314/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771689314/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314/download?phase=P2 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702481 HTTP/1.0" 200 OK
+[checkin:9eab856a] session=Christoph_1771702481 phase_raw='PRE' phase_norm='PRE' action=append trace_id=3a610977-ae0a-4c82-a820-561a845ac69c trace_action=saveCheckin counts_before={}
+[checkin:9eab856a] session=Christoph_1771702481 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702481/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702481 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702481/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702481 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702481 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.176.252:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[checkin:9034b3d7] session=Christoph_1771702907 phase_raw='PRE' phase_norm='PRE' action=append trace_id=6e615def-03b4-46b1-8135-070442d5a48e trace_action=saveCheckin counts_before={}
+[checkin:9034b3d7] session=Christoph_1771702907 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[checkin:472fec30] session=Christoph_1771702907 phase_raw='PRE' phase_norm='PRE' action=update trace_id=d577fb45-9ce6-4094-8310-61d7e22c2874 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:472fec30] session=Christoph_1771702907 counts_after={'PRE': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
