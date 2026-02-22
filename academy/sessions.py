@@ -1,19 +1,55 @@
+import json
+import os
 import re
 import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
+
 def _safe_slug(s: str) -> str:
     s = (s or "").strip()
     s = re.sub(r"[^a-zA-Z0-9_-]+", "_", s)
     s = re.sub(r"_+", "_", s)
     return s.strip("_") or "NA"
-import json
-import os
-from datetime import datetime
+
 
 SESSIONS_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'academy', 'sessions')
-
 os.makedirs(SESSIONS_DIR, exist_ok=True)
+
+
+def _parse_created_at(created_at: str | None) -> datetime:
+    if created_at:
+        try:
+            return datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+    return datetime.now(ZoneInfo("Europe/Berlin"))
+
+
+def _build_session_path(session_id: str, created_at: str | None) -> str:
+    dt = _parse_created_at(created_at)
+    year = f"{dt.year:04d}"
+    month = f"{dt.month:02d}"
+    return os.path.join(SESSIONS_DIR, year, month, f"{session_id}.json")
+
+
+def _find_session_path(session_id: str) -> str | None:
+    target = f"{session_id}.json"
+    legacy_path = os.path.join(SESSIONS_DIR, target)
+    if os.path.exists(legacy_path):
+        return legacy_path
+
+    matches = []
+    for root, _, files in os.walk(SESSIONS_DIR):
+        if target in files:
+            matches.append(os.path.join(root, target))
+
+    if not matches:
+        return None
+    if len(matches) == 1:
+        return matches[0]
+    return max(matches, key=os.path.getmtime)
+
 
 def create_session(payload: dict):
     user = _safe_slug(payload.get("user", "NA"))
@@ -38,28 +74,34 @@ def create_session(payload: dict):
     save_session(session)
     return session
 
+
 def save_session(session):
-    # Speichere immer unter session['id']
-    path = os.path.join(SESSIONS_DIR, f"{session['id']}.json")
+    path = _build_session_path(session['id'], session.get('created_at'))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(session, f, indent=2, ensure_ascii=False)
 
+
 def load_session(session_id):
-    path = os.path.join(SESSIONS_DIR, f"{session_id}.json")
-    if os.path.exists(path):
+    path = _find_session_path(session_id)
+    if path and os.path.exists(path):
         with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     return None
 
+
 def list_sessions(user=None):
     sessions = []
-    for filename in os.listdir(SESSIONS_DIR):
-        if filename.endswith('.json'):
-            with open(os.path.join(SESSIONS_DIR, filename), 'r', encoding='utf-8') as f:
+    for root, _, files in os.walk(SESSIONS_DIR):
+        for filename in files:
+            if not filename.endswith('.json'):
+                continue
+            with open(os.path.join(root, filename), 'r', encoding='utf-8') as f:
                 session = json.load(f)
-                if user is None or session['user'] == user:
+                if user is None or session.get('user') == user:
                     sessions.append(session)
-    return sorted(sessions, key=lambda s: s['created_at'], reverse=True)
+    return sorted(sessions, key=lambda s: s.get('created_at', ''), reverse=True)
+
 
 def add_checkin(session_id, phase, responses, feedback=None, next_task=None):
     session = load_session(session_id)
@@ -75,6 +117,7 @@ def add_checkin(session_id, phase, responses, feedback=None, next_task=None):
         save_session(session)
         return True
     return False
+
 
 def complete_session(session_id, summary=None, unclear=None, next_module=None, helpfulness=None):
     session = load_session(session_id)

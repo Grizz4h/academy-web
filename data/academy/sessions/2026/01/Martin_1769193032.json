@@ -1,16 +1,16 @@
 {
-  "id": "Martin_1768501247",
+  "id": "Martin_1769193032",
   "user": "Martin",
   "created_by": "Martin",
   "module_id": "A1",
-  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 2,
+  "goal": "Die Aufstellung unterm Spiel erkennen und wo der Center immer so ist",
+  "confidence": 3,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P2",
-  "created_at": "2026-01-15T19:20:47.359061",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-23T19:30:32.161722",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }
@@ -116,41 +116,69 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-01-15T19:29:46.229211"
+      "timestamp": "2026-01-23T20:06:28.668144"
     },
     {
       "phase": "P1",
       "answers": {
-        "center_mostly": "low",
-        "structure_feeling": "mixed",
-        "note": "Center 93 hat ein Tor geschossen "
+        "center_mostly": "middle",
+        "structure_feeling": "chaotisch"
       },
-      "timestamp": "2026-01-15T20:11:37.689818"
+      "timestamp": "2026-01-23T20:06:32.789197"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "center_mostly": "middle",
+        "structure_feeling": "chaotisch"
+      },
+      "timestamp": "2026-01-23T21:26:09.738293"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "center_mostly": "middle",
+        "structure_feeling": "chaotisch"
+      },
+      "timestamp": "2026-01-23T22:45:53.358413"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-01-23T22:46:08.323072"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-23T22:46:08.385399"
+  },
   "game_info": {
     "league": "DEL",
-    "team_home": "Schwenninger Wild Wings",
-    "team_away": "Eisbären Berlin",
-    "observed_team": "Eisbären Berlin",
-    "date": "2026-01-15T18:20:47.318Z"
+    "team_home": "Eisbären Berlin",
+    "team_away": "ERC Ingolstadt",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-01-23T18:30:32.141Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Unterschiedlich, viel beim Absicherung",
-      "ts": "2026-01-15T20:12:54.627652"
+      "text": "Hat den Überblick kann bei der Aufstellung mitwirken",
+      "ts": "2026-01-23T20:05:02.782375"
     },
     "P2": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Kann beim Aufbau helfen",
+      "ts": "2026-01-23T21:26:32.506363"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "...",
+      "ts": "2026-01-23T22:46:05.740770"
     }
   }
 }

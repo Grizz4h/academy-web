@@ -104,7 +104,7 @@
                     "key": "note",
                     "type": "text",
                     "label": "Auffälligkeit (optional, 1 Satz)",
-                    "max_chars": 500
+                    "max_chars": 1500
                   }
                 ]
               }
@@ -282,7 +282,7 @@
         "key": "structure_moment",
         "type": "text",
         "label": "Lenkungs-Moment (1 Stichwort)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -375,7 +375,7 @@
                     "key": "guessed_center",
                     "type": "text",
                     "label": "Vermuteter Center:",
-                    "max_chars": 500,
+                    "max_chars": 1500,
                     "placeholder": "Trage ein, welche Rolle der Center in dieser Situation vermutlich einnimmt – nicht einen Namen."
                   },
                   {
@@ -511,7 +511,7 @@
         "key": "note",
         "type": "text",
         "label": "Eigene Notiz (optional)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -615,7 +615,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -726,7 +726,7 @@
       "key": "note",
       "type": "text",
       "label": "Notiz (optional)",
-      "max_chars": 500
+      "max_chars": 1500
     }
   ]
 }
@@ -844,7 +844,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -935,7 +935,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -1038,7 +1038,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Notiz: Was fiel dir im Umschaltmoment auf?",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -1112,7 +1112,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -1221,7 +1221,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -1310,7 +1310,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -1408,7 +1408,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -1519,7 +1519,7 @@
                     "key": "note",
                     "type": "text",
                     "label": "Kurze Beobachtung",
-                    "max_chars": 500
+                    "max_chars": 1500
                   }
                 ]
               }
@@ -1607,7 +1607,7 @@
                     "key": "note",
                     "type": "text",
                     "label": "Kurze Beobachtung",
-                    "max_chars": 500
+                    "max_chars": 1500
                   }
                 ]
               }
@@ -1695,7 +1695,7 @@
                 "key": "note",
                 "type": "text",
                 "label": "Kurze Begründung",
-                "max_chars": 500
+                "max_chars": 1500
               }
             ]
           }
@@ -1773,7 +1773,7 @@
               "key": "note",
               "type": "text",
               "label": "Kurze Begründung",
-              "max_chars": 500
+              "max_chars": 1500
             }
           ]
         }
@@ -1850,7 +1850,7 @@
             "key": "note",
             "type": "text",
             "label": "Kurze Begründung",
-            "max_chars": 500
+            "max_chars": 1500
           }
         ]
       }
@@ -1944,7 +1944,7 @@
             "key": "note",
             "type": "text",
             "label": "Kurze Begründung",
-            "max_chars": 500
+            "max_chars": 1500
           }
         ]
       }
@@ -2021,7 +2021,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2098,7 +2098,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2175,7 +2175,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2253,7 +2253,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2347,7 +2347,7 @@
                     "key": "note",
                     "type": "text",
                     "label": "Kurze Begründung",
-                    "max_chars": 500
+                    "max_chars": 1500
                   }
                 ]
               }
@@ -2423,7 +2423,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2499,7 +2499,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2575,7 +2575,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2651,7 +2651,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2751,7 +2751,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2827,7 +2827,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2904,7 +2904,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -2972,7 +2972,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3039,7 +3039,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3094,7 +3094,7 @@
         "key": "note",
         "type": "text",
         "label": "Woran hast du die Struktur erkannt?",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3140,7 +3140,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3187,7 +3187,7 @@
         "key": "note",
         "type": "text",
         "label": "Warum?",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3234,7 +3234,7 @@
         "key": "note",
         "type": "text",
         "label": "Einschätzung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3281,7 +3281,7 @@
         "key": "note",
         "type": "text",
         "label": "Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3344,7 +3344,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3401,7 +3401,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3458,7 +3458,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3515,7 +3515,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3574,7 +3574,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Einordnung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3655,7 +3655,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3712,7 +3712,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3769,7 +3769,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3826,7 +3826,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurznotiz",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3883,7 +3883,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurznotiz",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -3954,7 +3954,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4031,7 +4031,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4108,7 +4108,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4185,7 +4185,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4277,7 +4277,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4365,7 +4365,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4453,7 +4453,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4540,7 +4540,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4602,7 +4602,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Begründung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4649,7 +4649,7 @@
         "key": "note",
         "type": "text",
         "label": "Eigene Einschätzung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4696,7 +4696,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beobachtung",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4743,7 +4743,7 @@
         "key": "note",
         "type": "text",
         "label": "Woran erkennbar?",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4834,7 +4834,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurzbeschreibung des Musters (oder warum kein Muster)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -4912,7 +4912,7 @@
         "key": "note",
         "type": "text",
         "label": "Begründung (ein Satz)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5001,7 +5001,7 @@
         "key": "note",
         "type": "text",
         "label": "Trigger kurz formulieren",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5105,7 +5105,7 @@
         "key": "note",
         "type": "text",
         "label": "Formuliere dein Adjustment (ein Satz, coachbar)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5195,7 +5195,7 @@
         "key": "note",
         "type": "text",
         "label": "Beschreibe dein Messsignal (konkret, beobachtbar)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5285,7 +5285,7 @@
         "key": "note",
         "type": "text",
         "label": "Begründung (kurz & konkret)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5390,7 +5390,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurze Beschreibung des Musters",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5491,7 +5491,7 @@
         "key": "note",
         "type": "text",
         "label": "Kurzbegründung (Vergleich)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5591,7 +5591,7 @@
         "key": "note",
         "type": "text",
         "label": "Formuliere deine Aussage (klar, prüfbar)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5703,7 +5703,7 @@
         "key": "note",
         "type": "text",
         "label": "Begründung (strukturbezogen)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5802,7 +5802,7 @@
         "key": "note",
         "type": "text",
         "label": "Beschreibe das Warnsignal konkret",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }
@@ -5891,7 +5891,7 @@
         "key": "note",
         "type": "text",
         "label": "Begründung (kurz, strukturell)",
-        "max_chars": 500
+        "max_chars": 1500
       }
     ]
   }

@@ -122,7 +122,7 @@
             "key": "note",
             "type": "text",
             "label": "Freie Notiz (optional)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ],
         "coaching_rules": [

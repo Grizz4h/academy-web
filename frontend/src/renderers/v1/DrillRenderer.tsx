@@ -198,7 +198,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 						<textarea
 							value={answers[q.key] || ""}
 							onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-							maxLength={q.max_chars || 500}
+							maxLength={q.max_chars || 1500}
 							placeholder={q.placeholder || "Optional: kurze Notiz"}
 							style={{
 								width: "100%",
@@ -359,7 +359,7 @@ function ShiftTracker({ drill, answers, setAnswers }: any) {
 											<textarea
 												value={answers[key] || ""}
 												onChange={(e) => setAnswers({ ...answers, [key]: e.target.value })}
-											maxLength={q.max_chars || 500}
+											maxLength={q.max_chars || 1500}
 												placeholder={q.placeholder || "Kurz notieren…"}
 												style={{
 													width: "100%",
@@ -445,7 +445,7 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 							<textarea
 								value={answers[q.key] || ""}
 								onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-							maxLength={q.max_chars || 500}
+							maxLength={q.max_chars || 1500}
 								style={{ width: "100%", minHeight: "3rem", padding: "0.5rem" }}
 								placeholder="Deine Beobachtung…"
 							/>
@@ -528,7 +528,7 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 								type="text"
 								value={answers[q.key] || ""}
 								onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-							maxLength={q.max_chars || 500}
+							maxLength={q.max_chars || 1500}
 								style={{ width: "100%", padding: "0.5rem" }}
 								placeholder={q.placeholder || "Beschreibe die Rolle (z. B. absichernd, verbindend, antreibend). Kein Name."}
 							/>

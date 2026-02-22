@@ -55,7 +55,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import json
 import os
 import logging
-from typing import List, Optional
+from typing import Any, List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 logging.basicConfig(
@@ -68,6 +68,30 @@ logging.basicConfig(
 )
 
 app = FastAPI(title="Academy API", version="1.0.0")
+
+MAX_TEXT_LEN = 1500
+
+
+def enforce_max_text_length(value: Any, path: str = "payload") -> None:
+    if isinstance(value, str):
+        if len(value) > MAX_TEXT_LEN:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Text too long at {path}: max {MAX_TEXT_LEN} characters",
+            )
+        return
+
+    if isinstance(value, dict):
+        for key, nested_value in value.items():
+            nested_path = f"{path}.{key}"
+            enforce_max_text_length(nested_value, nested_path)
+        return
+
+    if isinstance(value, list):
+        for index, nested_value in enumerate(value):
+            nested_path = f"{path}[{index}]"
+            enforce_max_text_length(nested_value, nested_path)
+        return
 
 # CORS für Frontend
 app.add_middleware(
@@ -84,6 +108,7 @@ async def health():
 
 # Daten-Verzeichnis
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
+SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 
 # Pydantic Models
 class SessionCreate(BaseModel):
@@ -122,8 +147,59 @@ def load_json(file_path: str):
         return json.load(f)
 
 def save_json(file_path: str, data):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
+
+
+def _parse_created_at(created_at: Optional[str]) -> datetime:
+    if created_at:
+        try:
+            return datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+    return datetime.now()
+
+
+def build_session_storage_path(session_id: str, created_at: Optional[str]) -> str:
+    dt = _parse_created_at(created_at)
+    year = f"{dt.year:04d}"
+    month = f"{dt.month:02d}"
+    return os.path.join(SESSIONS_DIR, year, month, f"{session_id}.json")
+
+
+def iter_session_files():
+    if not os.path.exists(SESSIONS_DIR):
+        return
+    for root, _, files in os.walk(SESSIONS_DIR):
+        for file in files:
+            if file.endswith('.json'):
+                yield os.path.join(root, file)
+
+
+def find_session_file(session_id: str) -> Optional[str]:
+    target = f"{session_id}.json"
+    legacy_path = os.path.join(SESSIONS_DIR, target)
+    if os.path.exists(legacy_path):
+        return legacy_path
+
+    matches = []
+    for root, _, files in os.walk(SESSIONS_DIR):
+        if target in files:
+            matches.append(os.path.join(root, target))
+
+    if not matches:
+        return None
+    if len(matches) == 1:
+        return matches[0]
+    return max(matches, key=os.path.getmtime)
+
+
+def get_session_path_or_404(session_id: str) -> str:
+    session_path = find_session_file(session_id)
+    if not session_path:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return session_path
 
 # API Endpunkte
 @app.get("/api/curriculum")
@@ -152,22 +228,19 @@ async def get_teams(league: Optional[str] = None):
 @app.get("/api/sessions")
 async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
     """Sessions filtern"""
-    sessions_dir = os.path.join(DATA_DIR, "sessions")
-    if not os.path.exists(sessions_dir):
+    if not os.path.exists(SESSIONS_DIR):
         return []
 
     sessions = []
-    for file in os.listdir(sessions_dir):
-        if file.endswith('.json'):
-            session = load_json(os.path.join(sessions_dir, file))
-            if user and session.get('user') != user:
-                continue
-            if state and session.get('state') != state:
-                continue
-            # Ensure created_by is set (fallback to user for old sessions)
-            if not session.get('created_by'):
-                session['created_by'] = session.get('user', 'Unbekannt')
-            sessions.append(session)
+    for session_path in iter_session_files():
+        session = load_json(session_path)
+        if user and session.get('user') != user:
+            continue
+        if state and session.get('state') != state:
+            continue
+        if not session.get('created_by'):
+            session['created_by'] = session.get('user', 'Unbekannt')
+        sessions.append(session)
     return sessions
 
 @app.post("/api/sessions")
@@ -177,10 +250,10 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
     user_obj = next((u for u in users["users"] if u["username"].strip().lower() == user.strip().lower()), None)
     user_cased = user_obj["username"] if user_obj else user
     """Neue Session erstellen (auth required)"""
-    sessions_dir = os.path.join(DATA_DIR, "sessions")
-    os.makedirs(sessions_dir, exist_ok=True)
+    os.makedirs(SESSIONS_DIR, exist_ok=True)
 
-    session_id = f"{user_cased}_{int(datetime.now().timestamp())}"
+    now = datetime.now()
+    session_id = f"{user_cased}_{int(now.timestamp())}"
 
     # Lade Module-Drills aus Curriculum
     curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
@@ -201,6 +274,11 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         if module_drills:
             break
 
+    enforce_max_text_length(session.goal, "session.goal")
+    enforce_max_text_length(session.focus, "session.focus")
+    enforce_max_text_length(session.observed_team, "session.observed_team")
+    enforce_max_text_length(session.game_info, "session.game_info")
+
     session_data = {
         "id": session_id,
         "user": user_cased,
@@ -213,7 +291,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "drill_id": session.drill_id,  # Store selected drill
         "state": "IN_PROGRESS",  # Start as in progress instead of PRE
         "current_phase": "PRE",  # Track current phase for continuation
-        "created_at": datetime.now().isoformat(),
+        "created_at": now.isoformat(),
         "drills": module_drills,
         "progress": {
             "current_drill_index": 0,
@@ -232,26 +310,24 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
     }
 
     print(f"[AUTH] request by user={user} path=/api/sessions")
-    save_json(os.path.join(sessions_dir, f"{session_id}.json"), session_data)
+    session_path = build_session_storage_path(session_id, session_data.get("created_at"))
+    save_json(session_path, session_data)
     return session_data
 
 @app.get("/api/sessions/{session_id}")
 async def get_session(session_id: str):
     """Session Details"""
-    try:
-        return load_json(os.path.join(DATA_DIR, "sessions", f"{session_id}.json"))
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    return load_json(session_path)
 
 @app.patch("/api/sessions/{session_id}")
 async def update_session(session_id: str, updates: dict):
     """Session aktualisieren"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
 
+
+    enforce_max_text_length(updates, "updates")
 
     # Merge-Logik für microfeedback
     for key, value in updates.items():
@@ -277,12 +353,13 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
     phase_norm = checkin.phase.strip().upper()
     trace_id = request.headers.get("X-Trace-Id")
     trace_action = request.headers.get("X-Trace-Action")
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
     counts_before = Counter((c.get("phase") or "") for c in session.get("checkins", []))
+
+    enforce_max_text_length(checkin.answers, "checkin.answers")
+    enforce_max_text_length(checkin.feedback, "checkin.feedback")
+    enforce_max_text_length(checkin.next_task, "checkin.next_task")
 
 
     # --- DEDUP checkins: keep newest per phase ---
@@ -346,11 +423,12 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
 @app.post("/api/sessions/{session_id}/post")
 async def complete_session(session_id: str, post: PostData):
     """Session abschließen"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
+
+    enforce_max_text_length(post.summary, "post.summary")
+    enforce_max_text_length(post.unclear, "post.unclear")
+    enforce_max_text_length(post.next_module, "post.next_module")
 
     session["post"] = {
         "summary": post.summary,
@@ -367,11 +445,10 @@ async def complete_session(session_id: str, post: PostData):
 @app.post("/api/sessions/{session_id}/abort")
 async def abort_session(session_id: str, abort: AbortData):
     """Session abbrechen"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
+
+    enforce_max_text_length(abort.note, "abort.note")
 
     session["abort"] = {
         "reason": abort.reason,
@@ -386,11 +463,8 @@ async def abort_session(session_id: str, abort: AbortData):
 @app.delete("/api/sessions/{session_id}/checkins/{checkin_index}")
 async def delete_checkin(session_id: str, checkin_index: int):
     """Checkin (Phase) löschen"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
 
     if checkin_index < 0 or checkin_index >= len(session.get("checkins", [])):
         raise HTTPException(status_code=400, detail="Invalid checkin index")
@@ -402,10 +476,7 @@ async def delete_checkin(session_id: str, checkin_index: int):
 @app.delete("/api/sessions/{session_id}")
 async def delete_session(session_id: str):
     """Session löschen"""
-    sessions_dir = os.path.join(DATA_DIR, "sessions")
-    session_path = os.path.join(sessions_dir, f"{session_id}.json")
-    if not os.path.exists(session_path):
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
     try:
         os.remove(session_path)
         return {"status": "deleted", "id": session_id}
@@ -415,11 +486,10 @@ async def delete_session(session_id: str):
 @app.put("/api/sessions/{session_id}/drafts")
 async def save_drafts(session_id: str, drafts: dict):
     """Draft-Eingaben speichern für Session Continuation"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
+
+    enforce_max_text_length(drafts, "drafts")
 
     session["drafts"] = drafts
     save_json(session_path, session)
@@ -428,11 +498,10 @@ async def save_drafts(session_id: str, drafts: dict):
 @app.put("/api/sessions/{session_id}/phase")
 async def update_session_phase(session_id: str, phase_data: dict):
     """Aktuelle Phase der Session aktualisieren"""
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
+
+    enforce_max_text_length(phase_data, "phase_data")
 
     if "phase" in phase_data:
         session["current_phase"] = phase_data["phase"]
@@ -448,11 +517,8 @@ async def download_session(session_id: str, phase: Optional[str] = Query(None)):
     from fastapi.responses import StreamingResponse
     from io import BytesIO
     
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
     
     phase_norm = phase.strip().upper() if phase else None
     if phase_norm:
@@ -558,11 +624,9 @@ async def add_microfeedback(session_id: str, data: MicroFeedbackData, request: R
     phase = data.phase.strip().upper()
     if phase not in valid_phases:
         raise HTTPException(status_code=400, detail="Invalid phase for microfeedback")
-    session_path = os.path.join(DATA_DIR, "sessions", f"{session_id}.json")
-    try:
-        session = load_json(session_path)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
+    enforce_max_text_length(data.text, "microfeedback.text")
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
     if "microfeedback" not in session:
         session["microfeedback"] = {p: {"done": False, "text": ""} for p in valid_phases}
     session["microfeedback"][phase]["done"] = True

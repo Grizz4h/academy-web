@@ -159,7 +159,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 						<textarea
 							value={answers[tendenzQ?.key] || ""}
 							onChange={e => setAnswers({ ...answers, [tendenzQ?.key]: e.target.value })}
-							maxLength={tendenzQ?.max_chars || 500}
+							maxLength={tendenzQ?.max_chars || 1500}
             style={{ width: '100%', minHeight: 48, marginTop: 6, borderRadius: 4, padding: 6, fontSize: '1rem', background: '#050712', color: '#fff', border: '1px solid #5191a2' }}
             placeholder={tendenzQ?.placeholder || 'z.B. „Team verliert nach Turnover in der NZ oft die Mitte“'}
           />
@@ -309,7 +309,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 						<textarea
 							value={answers[q.key] || ""}
 							onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-							maxLength={q.max_chars || 500}
+							maxLength={q.max_chars || 1500}
 							placeholder={q.placeholder || "Optional: kurze Notiz"}
 							style={{
 								width: "100%",
@@ -433,7 +433,7 @@ function ShiftTracker({ drill, answers, setAnswers }: any) {
 											<textarea
 												value={answers[key] || ""}
 												onChange={(e) => setAnswers({ ...answers, [key]: e.target.value })}
-												maxLength={q.max_chars || 500}
+												maxLength={q.max_chars || 1500}
 												placeholder={q.placeholder || "Kurz notieren…"}
 												style={{
 													width: "100%",
@@ -509,7 +509,7 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 							<textarea
 								value={answers[q.key] || ""}
 								onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-								maxLength={q.max_chars || 500}
+								maxLength={q.max_chars || 1500}
 								style={{ width: "100%", minHeight: "3rem", padding: "0.5rem" }}
 								placeholder="Deine Beobachtung…"
 							/>
@@ -581,7 +581,7 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 								type="text"
 								value={answers[q.key] || ""}
 								onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-								maxLength={q.max_chars || 500}
+								maxLength={q.max_chars || 1500}
 								style={{ width: "100%", padding: "0.5rem" }}
 								placeholder={q.placeholder || "Beschreibe die Rolle (z. B. absichernd, verbindend, antreibend). Kein Name."}
 							/>

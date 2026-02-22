@@ -1,16 +1,16 @@
 {
-  "id": "tobi_1768422285",
-  "user": "Tobi",
-  "created_by": "Tobi",
+  "id": "christoph_1768742300",
+  "user": "Christoph",
+  "created_by": "Christoph",
   "module_id": "A1",
   "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 3,
+  "confidence": 4,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "PRE",
-  "created_at": "2026-01-14T21:24:45.720125",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-18T14:18:20.670931",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }
@@ -112,29 +112,73 @@
     "current_drill_index": 0,
     "completed_drills": []
   },
-  "checkins": [],
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-01-18T14:18:23.633939"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "center_mostly": "low",
+        "structure_feeling": "chaotisch"
+      },
+      "timestamp": "2026-01-18T14:56:20.591159"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "center_mostly": "high",
+        "structure_feeling": "mixed"
+      },
+      "timestamp": "2026-01-18T15:37:27.386136"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "structure_feeling": "chaotisch",
+        "center_mostly": "middle"
+      },
+      "timestamp": "2026-01-18T22:31:55.636165"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-01-18T22:32:10.243152"
+    }
+  ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-18T22:32:10.286396"
+  },
   "game_info": {
     "league": "DEL",
     "team_home": "ERC Ingolstadt",
-    "team_away": "Augsburger Panther",
+    "team_away": "Löwen Frankfurt",
     "observed_team": "ERC Ingolstadt",
-    "date": "2026-01-14T20:24:45.605Z"
+    "date": "2026-01-18T13:18:20.626Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Absicherung",
+      "ts": "2026-01-18T14:56:27.942028"
     },
     "P2": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "eher durch die defensive Art der Frankfurter situativ",
+      "ts": "2026-01-18T15:37:47.488192"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "schneller turnover",
+      "ts": "2026-01-18T22:32:08.061629"
     }
   }
 }

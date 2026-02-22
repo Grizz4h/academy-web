@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }

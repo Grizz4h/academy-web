@@ -1,16 +1,16 @@
 {
-  "id": "Christoph_1771618366",
+  "id": "Christoph_1771702907",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
   "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
-  "confidence": 3,
+  "confidence": 2,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A2_D1",
   "state": "COMPLETED",
   "current_phase": "POST",
-  "created_at": "2026-02-20T21:12:46.567159",
+  "created_at": "2026-02-21T20:41:47.351240",
   "drills": [
     {
       "id": "A2_D1",
@@ -123,7 +123,7 @@
             "key": "note",
             "type": "text",
             "label": "Eigene Notiz (optional)",
-            "max_chars": 140
+            "max_chars": 1500
           }
         ]
       }
@@ -136,39 +136,41 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {},
-      "timestamp": "2026-02-20T21:12:49.507084"
+      "answers": {
+        "expectations": "systemstreues Spiel von Finnland"
+      },
+      "timestamp": "2026-02-21T20:42:12.054143"
     },
     {
       "phase": "P1",
       "answers": {
-        "structure_rating": "klar aufgebaut",
+        "note": "reverse. wing seitenwechsel. reverse. finnland spielt sehr bedacht und nach hinten sicher. D zu center, center über die blaue. über den flügell. wing seitenwechsel über die rundung. Finnland versucht immer wenn möglich die sichere Variante. ",
+        "structure_rating": "teilweise lesbar",
         "first_option": "Winger"
       },
-      "timestamp": "2026-02-20T21:46:27.522667"
+      "timestamp": "2026-02-21T21:11:26.574660"
     },
     {
       "phase": "P2",
       "answers": {
-        "note": "USA versucht es oft schnell zu machen über den Center, aber die Abstands waren zu groß und so waren die Pässe so scharf, dass es nicht ankam",
-        "first_option": "Center",
-        "structure_rating": "teilweise lesbar"
+        "structure_rating": "klar aufgebaut",
+        "first_option": "Winger",
+        "note": "Struktur bleibt sehr oft auch wenn nicht immer erfolgraich, aber sie fallen sehr selten aus den rollen."
       },
-      "timestamp": "2026-02-20T22:32:22.059611"
+      "timestamp": "2026-02-21T22:25:25.102956"
     },
     {
       "phase": "P3",
       "answers": {
-        "note": "USA führt 5:1. Nimmt sich aber auch etwas zurück. Glaub die top Reihe wechselt auch nicht mehr so oft. Ö",
-        "structure_rating": "teilweise lesbar",
-        "first_option": "Center"
+        "first_option": "Winger",
+        "structure_rating": "klar aufgebaut"
       },
-      "timestamp": "2026-02-20T23:29:45.409971"
+      "timestamp": "2026-02-21T23:04:37.264981"
     },
     {
       "phase": "POST",
       "answers": {},
-      "timestamp": "2026-02-20T23:31:41.828312"
+      "timestamp": "2026-02-21T23:04:49.642650"
     }
   ],
   "drafts": {},
@@ -177,31 +179,31 @@
     "unclear": "",
     "next_module": "",
     "helpfulness": 0,
-    "completed_at": "2026-02-20T23:31:41.965075"
+    "completed_at": "2026-02-21T23:04:49.687773"
   },
   "game_info": {
     "league": "Nationalmannschaften",
-    "team_home": "USA",
+    "team_home": "Finnland",
     "team_away": "Slowakei",
-    "observed_team": "USA",
-    "date": "2026-02-20T20:12:46.526Z"
+    "observed_team": "Finnland",
+    "date": "2026-02-21T19:41:47.308Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Nach Puck Gewinn war eigentlich sofort ein Option offen. Sehr dynamische Aufbauten. Kontrollierte exits",
-      "ts": "2026-02-20T21:47:22.432942"
+      "text": "sie mussten den puck oft raus chippen die bande lang. versuchen aber so oft es geht gezielt rauszuspielen. es war eher 50/50 center und winger",
+      "ts": "2026-02-21T21:12:14.206243"
     },
     "P2": {
       "done": true,
-      "text": "Sie wollten immer strukturiert raus spielen. Aber der pass war oft zu weit. Sie haben dann die Tore eher durch starkes Forechecking gemacht. Wie weggechipt an der Bande. Wieder eher ein dump",
-      "ts": "2026-02-20T22:35:19.588030"
+      "text": "klare abstände",
+      "ts": "2026-02-21T22:25:35.198153"
     },
     "P3": {
       "done": true,
-      "text": "Sie haben hoch geführt und daher sich etwas zurück genommen. Also war es duechwachsener.",
-      "ts": "2026-02-20T23:31:40.371578"
+      "text": "abstände",
+      "ts": "2026-02-21T23:04:48.278668"
     }
   }
 }

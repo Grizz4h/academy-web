@@ -9586,3 +9586,226 @@ INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins H
 INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
 INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
 INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[checkin:b5c4a6fa] session=Christoph_1771702907 phase_raw='P1' phase_norm='P1' action=append trace_id=aa1cac9d-fe2c-4f67-b137-28ec74120de1 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:b5c4a6fa] session=Christoph_1771702907 counts_after={'PRE': 1, 'P1': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771702907 phase=P1 trace_id=c491e630-330f-4678-9563-9c4c6fa2be95 trace_action=submitMicrofeedback text_len=142
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "DELETE /api/sessions/Christoph_1771702481 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907/download?phase=P1 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     204.76.203.18:54370 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:47424 - "GET /bins/ HTTP/1.1" 404 Not Found
+INFO:     147.185.132.132:59940 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:44990 - "GET /bin/ HTTP/1.1" 404 Not Found
+[checkin:ec08d208] session=Christoph_1771702907 phase_raw='P2' phase_norm='P2' action=append trace_id=4f3c4ed8-e4ef-4dbe-93b5-d9cf7e256477 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:ec08d208] session=Christoph_1771702907 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771702907 phase=P2 trace_id=59ce2afe-9514-4e6c-9a8f-52a65d3b0848 trace_action=submitMicrofeedback text_len=14
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     204.76.203.18:46160 - "GET /backup/ HTTP/1.1" 404 Not Found
+[checkin:86249ff3] session=Christoph_1771702907 phase_raw='P3' phase_norm='P3' action=append trace_id=6b40d2cd-2b09-4b4b-a100-e81be46840e0 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:86249ff3] session=Christoph_1771702907 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[checkin:c05bf619] session=Christoph_1771702907 phase_raw='P3' phase_norm='P3' action=update trace_id=a6a4a137-a9ea-4022-911d-6c40fd36b803 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:c05bf619] session=Christoph_1771702907 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771702907 phase=P3 trace_id=741a8dd3-b3a0-4a0e-b1bc-d82ec4a66995 trace_action=submitMicrofeedback text_len=8
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "PUT /api/sessions/Christoph_1771702907/phase HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+[checkin:9f470baf] session=Christoph_1771702907 phase_raw='POST' phase_norm='POST' action=append trace_id=03b811ba-83b7-49e6-b3ff-198c3c735862 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:9f470baf] session=Christoph_1771702907 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/checkins HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "POST /api/sessions/Christoph_1771702907/post HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/sessions/Christoph_1771702907 HTTP/1.0" 200 OK
+INFO:     141.78.176.252:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     3.132.26.232:57416 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     52.221.240.184:0 - "GET /api/actuator HTTP/1.0" 404 Not Found
+INFO:     52.221.240.184:0 - "GET /api/actuator HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     152.42.136.22:60826 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     143.110.180.185:42802 - "GET / HTTP/1.1" 404 Not Found
+INFO:     143.110.180.185:42818 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     64.62.197.167:48954 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.62.197.177:59723 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     64.62.197.176:59361 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
+INFO:     64.62.197.178:44651 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     192.109.200.220:45056 - "CONNECT 1.1.1.1%3A443 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45072 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45086 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45088 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45094 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45098 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45104 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45108 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45114 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45116 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45122 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45138 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:45142 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16754 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16764 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16772 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16778 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16792 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16806 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16814 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     192.109.200.220:16830 - "CONNECT 192.109.200.220%3A80 HTTP/1.0" 404 Not Found
+INFO:     206.168.34.216:42548 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     206.168.34.216:59462 - "GET / HTTP/1.1" 404 Not Found
+INFO:     206.168.34.216:59474 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     206.168.34.216:59488 - "GET /robots.txt HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.82.78.104:60214 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     198.235.24.72:62164 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771618366 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771702907/download HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     198.235.24.51:65382 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     118.193.46.245:52498 - "GET /api/v2/heartbeat HTTP/1.1" 404 Not Found
+INFO:     118.193.46.245:52528 - "GET / HTTP/1.1" 404 Not Found
+INFO:     118.193.46.245:52556 - "GET / HTTP/1.1" 404 Not Found
+INFO:     118.193.46.245:52580 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     3.132.26.232:35566 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     3.132.26.232:34798 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     94.231.206.249:53201 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.186.11:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771753713 HTTP/1.0" 200 OK
+[checkin:1af3a7ce] session=Christoph_1771753713 phase_raw='PRE' phase_norm='PRE' action=append trace_id=c866195f-6dc0-4715-bb9a-cc88df00dc10 trace_action=saveCheckin counts_before={}
+[checkin:1af3a7ce] session=Christoph_1771753713 counts_after={'PRE': 1}
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771753713/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771753713 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "PUT /api/sessions/Christoph_1771753713/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771753713 HTTP/1.0" 200 OK
+INFO:     94.231.206.201:49285 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771753713/abort HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771753713 HTTP/1.0" 200 OK
+INFO:     Started server process [807622]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:34186 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "DELETE /api/sessions/Christoph_1771753713 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.186.11:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771754210 HTTP/1.0" 200 OK
+[checkin:989ce4ea] session=Christoph_1771754210 phase_raw='PRE' phase_norm='PRE' action=append trace_id=dce15e2e-0047-4e27-b89b-d2ce272e7e87 trace_action=saveCheckin counts_before={}
+[checkin:989ce4ea] session=Christoph_1771754210 counts_after={'PRE': 1}
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771754210/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771754210 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "PUT /api/sessions/Christoph_1771754210/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771754210 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     Started server process [808444]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:49246 - "GET /api/health HTTP/1.1" 200 OK
+[checkin:26e2817a] session=Christoph_1771689314 phase_raw='P3' phase_norm='P3' action=append trace_id=a4ac88fd-fe7d-4f0f-8eac-1e54ffc658b3 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:26e2817a] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[checkin:f14cb393] session=Christoph_1771689314 phase_raw='P3' phase_norm='P3' action=update trace_id=189e95ce-766a-4122-abf3-233609f19d7c trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:f14cb393] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[microfeedback] session=Christoph_1771689314 phase=P3 trace_id=7566eec1-7469-4770-9550-40b208301466 trace_action=submitMicrofeedback text_len=68
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771689314/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "PUT /api/sessions/Christoph_1771689314/phase HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+[checkin:ef52026f] session=Christoph_1771689314 phase_raw='POST' phase_norm='POST' action=append trace_id=3b5990e7-e999-45c2-8eb6-0cd6e87f977e trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:ef52026f] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771689314/checkins HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "POST /api/sessions/Christoph_1771689314/post HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions/Christoph_1771689314 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "DELETE /api/sessions/Christoph_1771754210 HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     Started server process [809115]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:39126 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39130 - "GET /api/sessions?user=Christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49110 - "GET /api/sessions?user=christoph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49120 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     Started server process [809508]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:46986 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50990 - "GET /api/sessions HTTP/1.1" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.186.11:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK

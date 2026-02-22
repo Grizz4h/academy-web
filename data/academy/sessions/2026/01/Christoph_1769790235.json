@@ -1,16 +1,16 @@
 {
-  "id": "christoph_1769638791",
+  "id": "Christoph_1769790235",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A1",
   "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 1,
+  "confidence": 3,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D3",
   "state": "COMPLETED",
   "current_phase": "POST",
-  "created_at": "2026-01-28T23:19:51.842443",
+  "created_at": "2026-01-30T17:23:55.330262",
   "drills": [
     {
       "id": "A1_D3",
@@ -124,7 +124,7 @@
             "key": "structure_moment",
             "type": "text",
             "label": "Lenkungs-Moment (1 Stichwort)",
-            "max_chars": 50
+            "max_chars": 1500
           }
         ]
       }
@@ -138,39 +138,39 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-01-28T23:19:53.689102"
+      "timestamp": "2026-01-30T17:23:57.727043"
     },
     {
       "phase": "P1",
       "answers": {
         "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)",
-        "location": "Neutral Zone",
-        "triangles_seen": "gelegentlich"
+        "location": "Defensive Zone",
+        "triangles_seen": "klar vorhanden"
       },
-      "timestamp": "2026-01-29T00:28:15.787026"
+      "timestamp": "2026-01-30T17:57:31.505165"
     },
     {
       "phase": "P2",
       "answers": {
         "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)",
         "location": "Neutral Zone",
-        "triangles_seen": "gelegentlich"
+        "triangles_seen": "klar vorhanden"
       },
-      "timestamp": "2026-01-29T08:36:29.907851"
+      "timestamp": "2026-01-30T18:32:34.190193"
     },
     {
       "phase": "P3",
       "answers": {
         "winkel_body": "Kontrolliert (Mitte zu / nach außen geführt)",
-        "location": "Neutral Zone",
-        "triangles_seen": "gelegentlich"
+        "triangles_seen": "gelegentlich",
+        "location": "Offensive Zone"
       },
-      "timestamp": "2026-01-29T22:32:49.960289"
+      "timestamp": "2026-01-30T19:04:53.264937"
     },
     {
       "phase": "POST",
       "answers": {},
-      "timestamp": "2026-01-29T22:33:18.248742"
+      "timestamp": "2026-01-30T19:05:16.404522"
     }
   ],
   "drafts": {},
@@ -179,31 +179,31 @@
     "unclear": "",
     "next_module": "",
     "helpfulness": 0,
-    "completed_at": "2026-01-29T22:33:18.328471"
+    "completed_at": "2026-01-30T19:05:16.530663"
   },
   "game_info": {
     "league": "NHL",
-    "team_home": "Seattle Kraken",
-    "team_away": "Washington Capitals",
-    "observed_team": "Seattle Kraken",
-    "date": "2026-01-28T22:19:51.749Z"
+    "team_home": "Edmonton Oilers",
+    "team_away": "San Jose Sharks",
+    "observed_team": "Edmonton Oilers",
+    "date": "2026-01-30T16:23:55.309Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Abstand und timing",
-      "ts": "2026-01-29T00:28:38.565855"
+      "text": "Winkel",
+      "ts": "2026-01-30T17:57:41.574152"
     },
     "P2": {
       "done": true,
-      "text": "Ich habe eher auf den Winkel geachtet und die damit verbundene Richtung in die gelenkt wird",
-      "ts": "2026-01-29T08:36:57.993443"
+      "text": "Das timing",
+      "ts": "2026-01-30T18:32:43.588212"
     },
     "P3": {
       "done": true,
-      "text": "Winkel",
-      "ts": "2026-01-29T22:32:57.166876"
+      "text": "Timing beim Forechecking",
+      "ts": "2026-01-30T19:05:13.712984"
     }
   }
 }

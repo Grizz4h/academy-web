@@ -1,16 +1,16 @@
 {
-  "id": "Martin_1769193032",
+  "id": "Martin_1769107094",
   "user": "Martin",
   "created_by": "Martin",
   "module_id": "A1",
-  "goal": "Die Aufstellung unterm Spiel erkennen und wo der Center immer so ist",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
   "confidence": 3,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "COMPLETED",
-  "current_phase": "POST",
-  "created_at": "2026-01-23T19:30:32.161722",
+  "state": "IN_PROGRESS",
+  "current_phase": "P3",
+  "created_at": "2026-01-22T19:38:14.424616",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }
@@ -115,70 +115,52 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {},
-      "timestamp": "2026-01-23T20:06:28.668144"
+      "answers": {
+        "expectations": "Schneller die Dreiecke erkennen "
+      },
+      "timestamp": "2026-01-22T19:38:54.629308"
     },
     {
       "phase": "P1",
       "answers": {
-        "center_mostly": "middle",
-        "structure_feeling": "chaotisch"
+        "center_mostly": "low",
+        "structure_feeling": "geordnet"
       },
-      "timestamp": "2026-01-23T20:06:32.789197"
+      "timestamp": "2026-01-22T20:58:20.335105"
     },
     {
       "phase": "P2",
       "answers": {
-        "center_mostly": "middle",
-        "structure_feeling": "chaotisch"
+        "structure_feeling": "geordnet",
+        "center_mostly": "middle"
       },
-      "timestamp": "2026-01-23T21:26:09.738293"
-    },
-    {
-      "phase": "P3",
-      "answers": {
-        "center_mostly": "middle",
-        "structure_feeling": "chaotisch"
-      },
-      "timestamp": "2026-01-23T22:45:53.358413"
-    },
-    {
-      "phase": "POST",
-      "answers": {},
-      "timestamp": "2026-01-23T22:46:08.323072"
+      "timestamp": "2026-01-22T20:59:36.703454"
     }
   ],
   "drafts": {},
-  "post": {
-    "summary": "",
-    "unclear": "",
-    "next_module": "",
-    "helpfulness": 0,
-    "completed_at": "2026-01-23T22:46:08.385399"
-  },
+  "post": null,
   "game_info": {
     "league": "DEL",
-    "team_home": "Eisbären Berlin",
-    "team_away": "ERC Ingolstadt",
-    "observed_team": "ERC Ingolstadt",
-    "date": "2026-01-23T18:30:32.141Z"
+    "team_home": "Adler Mannheim",
+    "team_away": "Grizzlys Wolfsburg",
+    "observed_team": "Adler Mannheim",
+    "date": "2026-01-22T18:38:14.404Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Hat den Überblick kann bei der Aufstellung mitwirken",
-      "ts": "2026-01-23T20:05:02.782375"
+      "text": "Nahe am Tor",
+      "ts": "2026-01-22T20:59:10.477336"
     },
     "P2": {
       "done": true,
-      "text": "Kann beim Aufbau helfen",
-      "ts": "2026-01-23T21:26:32.506363"
+      "text": "Bei der Vorbereitung helfen",
+      "ts": "2026-01-22T20:59:58.864035"
     },
     "P3": {
-      "done": true,
-      "text": "...",
-      "ts": "2026-01-23T22:46:05.740770"
+      "done": false,
+      "text": ""
     }
   }
 }

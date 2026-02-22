@@ -386,7 +386,7 @@ export default function SessionPage() {
                   drill_type: 'period_checkin',
                   config: {
                     questions: [
-                      { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 200 }
+                      { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 1500 }
                     ]
                   }
                 }}

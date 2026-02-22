@@ -1,16 +1,16 @@
 {
-  "id": "Martin_1769107094",
-  "user": "Martin",
-  "created_by": "Martin",
+  "id": "christoph_1769537070",
+  "user": "Christoph",
+  "created_by": "Christoph",
   "module_id": "A1",
   "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 3,
+  "confidence": 5,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P3",
-  "created_at": "2026-01-22T19:38:14.424616",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-01-27T19:04:30.128538",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }
@@ -115,52 +115,70 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {
-        "expectations": "Schneller die Dreiecke erkennen "
-      },
-      "timestamp": "2026-01-22T19:38:54.629308"
+      "answers": {},
+      "timestamp": "2026-01-27T19:04:32.265131"
     },
     {
       "phase": "P1",
       "answers": {
-        "center_mostly": "low",
-        "structure_feeling": "geordnet"
+        "center_mostly": "high",
+        "structure_feeling": "mixed"
       },
-      "timestamp": "2026-01-22T20:58:20.335105"
+      "timestamp": "2026-01-27T20:11:37.959774"
     },
     {
       "phase": "P2",
       "answers": {
-        "structure_feeling": "geordnet",
-        "center_mostly": "middle"
+        "center_mostly": "high",
+        "structure_feeling": "geordnet"
       },
-      "timestamp": "2026-01-22T20:59:36.703454"
+      "timestamp": "2026-01-28T01:04:40.465871"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "center_mostly": "high",
+        "structure_feeling": "mixed"
+      },
+      "timestamp": "2026-01-28T01:04:59.552538"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-01-28T01:05:09.896539"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-01-28T01:05:10.018057"
+  },
   "game_info": {
     "league": "DEL",
-    "team_home": "Adler Mannheim",
-    "team_away": "Grizzlys Wolfsburg",
-    "observed_team": "Adler Mannheim",
-    "date": "2026-01-22T18:38:14.404Z"
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Dresdner Eislöwen",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-01-27T18:04:29.990Z"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Nahe am Tor",
-      "ts": "2026-01-22T20:59:10.477336"
+      "text": "Eher Situativ durch spiel Situation und nicht viel gegen pressing",
+      "ts": "2026-01-27T20:12:08.802098"
     },
     "P2": {
       "done": true,
-      "text": "Bei der Vorbereitung helfen",
-      "ts": "2026-01-22T20:59:58.864035"
+      "text": "Spielsituation",
+      "ts": "2026-01-28T01:04:53.054731"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Situativ",
+      "ts": "2026-01-28T01:05:08.465701"
     }
   }
 }

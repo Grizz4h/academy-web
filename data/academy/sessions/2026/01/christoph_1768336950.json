@@ -1,16 +1,16 @@
 {
-  "id": "christoph_1768742300",
+  "id": "christoph_1768336950",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A1",
   "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 4,
+  "confidence": 3,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
   "state": "COMPLETED",
   "current_phase": "POST",
-  "created_at": "2026-01-18T14:18:20.670931",
+  "created_at": "2026-01-13T21:42:30.548441",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }
@@ -115,16 +115,22 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {},
-      "timestamp": "2026-01-18T14:18:23.633939"
+      "answers": {
+        "expectations": "schnelle Skater"
+      },
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T21:43:04.247146"
     },
     {
       "phase": "P1",
       "answers": {
-        "center_mostly": "low",
-        "structure_feeling": "chaotisch"
+        "center_mostly": "high",
+        "structure_feeling": "geordnet"
       },
-      "timestamp": "2026-01-18T14:56:20.591159"
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T22:15:38.362375"
     },
     {
       "phase": "P2",
@@ -132,20 +138,26 @@
         "center_mostly": "high",
         "structure_feeling": "mixed"
       },
-      "timestamp": "2026-01-18T15:37:27.386136"
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T23:11:11.935162"
     },
     {
       "phase": "P3",
       "answers": {
-        "structure_feeling": "chaotisch",
-        "center_mostly": "middle"
+        "structure_feeling": "mixed",
+        "center_mostly": "high"
       },
-      "timestamp": "2026-01-18T22:31:55.636165"
+      "feedback": "Weiter zur nächsten Phase",
+      "next_task": "Nächste Phase vorbereiten",
+      "timestamp": "2026-01-13T23:27:11.141893"
     },
     {
       "phase": "POST",
       "answers": {},
-      "timestamp": "2026-01-18T22:32:10.243152"
+      "feedback": "Gut gemacht!",
+      "next_task": "Bereite nächste Phase vor",
+      "timestamp": "2026-01-13T23:27:18.307023"
     }
   ],
   "drafts": {},
@@ -154,31 +166,26 @@
     "unclear": "",
     "next_module": "",
     "helpfulness": 0,
-    "completed_at": "2026-01-18T22:32:10.286396"
+    "completed_at": "2026-01-13T23:27:18.384325"
   },
   "game_info": {
-    "league": "DEL",
-    "team_home": "ERC Ingolstadt",
-    "team_away": "Löwen Frankfurt",
-    "observed_team": "ERC Ingolstadt",
-    "date": "2026-01-18T13:18:20.626Z"
+    "league": "NHL",
+    "team_home": "Chicago Blackhawks",
+    "team_away": "Edmonton Oilers",
+    "date": "2026-01-13T20:42:30.514Z"
   },
-  "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Absicherung",
-      "ts": "2026-01-18T14:56:27.942028"
+      "text": "Struktur"
     },
     "P2": {
       "done": true,
-      "text": "eher durch die defensive Art der Frankfurter situativ",
-      "ts": "2026-01-18T15:37:47.488192"
+      "text": "Struktur"
     },
     "P3": {
       "done": true,
-      "text": "schneller turnover",
-      "ts": "2026-01-18T22:32:08.061629"
+      "text": "Struktur"
     }
   }
 }

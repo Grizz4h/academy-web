@@ -106,7 +106,7 @@
             "key": "guessed_center",
             "type": "text",
             "label": "Vermuteter Center:",
-            "max_chars": 20,
+            "max_chars": 1500,
             "placeholder": "Trage ein, welche Rolle der Center in dieser Situation vermutlich einnimmt – nicht einen Namen."
           },
           {

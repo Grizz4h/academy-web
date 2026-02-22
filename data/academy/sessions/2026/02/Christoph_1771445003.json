@@ -123,7 +123,7 @@
             "key": "note",
             "type": "text",
             "label": "Eigene Notiz (optional)",
-            "max_chars": 140
+            "max_chars": 1500
           }
         ]
       }

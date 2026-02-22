@@ -1,16 +1,16 @@
 {
-  "id": "christoph_1768336950",
-  "user": "Christoph",
-  "created_by": "Christoph",
+  "id": "Martin_1768501247",
+  "user": "Martin",
+  "created_by": "Martin",
   "module_id": "A1",
   "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
-  "confidence": 3,
+  "confidence": 2,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "COMPLETED",
-  "current_phase": "POST",
-  "created_at": "2026-01-13T21:42:30.548441",
+  "state": "IN_PROGRESS",
+  "current_phase": "P2",
+  "created_at": "2026-01-15T19:20:47.359061",
   "drills": [
     {
       "id": "A1_D1",
@@ -102,7 +102,7 @@
             "key": "note",
             "type": "text",
             "label": "Auffälligkeit (optional, 1 Satz)",
-            "max_chars": 120
+            "max_chars": 1500
           }
         ]
       }
@@ -115,77 +115,42 @@
   "checkins": [
     {
       "phase": "PRE",
-      "answers": {
-        "expectations": "schnelle Skater"
-      },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-13T21:43:04.247146"
+      "answers": {},
+      "timestamp": "2026-01-15T19:29:46.229211"
     },
     {
       "phase": "P1",
       "answers": {
-        "center_mostly": "high",
-        "structure_feeling": "geordnet"
-      },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-13T22:15:38.362375"
-    },
-    {
-      "phase": "P2",
-      "answers": {
-        "center_mostly": "high",
-        "structure_feeling": "mixed"
-      },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-13T23:11:11.935162"
-    },
-    {
-      "phase": "P3",
-      "answers": {
+        "center_mostly": "low",
         "structure_feeling": "mixed",
-        "center_mostly": "high"
+        "note": "Center 93 hat ein Tor geschossen "
       },
-      "feedback": "Weiter zur nächsten Phase",
-      "next_task": "Nächste Phase vorbereiten",
-      "timestamp": "2026-01-13T23:27:11.141893"
-    },
-    {
-      "phase": "POST",
-      "answers": {},
-      "feedback": "Gut gemacht!",
-      "next_task": "Bereite nächste Phase vor",
-      "timestamp": "2026-01-13T23:27:18.307023"
+      "timestamp": "2026-01-15T20:11:37.689818"
     }
   ],
   "drafts": {},
-  "post": {
-    "summary": "",
-    "unclear": "",
-    "next_module": "",
-    "helpfulness": 0,
-    "completed_at": "2026-01-13T23:27:18.384325"
-  },
+  "post": null,
   "game_info": {
-    "league": "NHL",
-    "team_home": "Chicago Blackhawks",
-    "team_away": "Edmonton Oilers",
-    "date": "2026-01-13T20:42:30.514Z"
+    "league": "DEL",
+    "team_home": "Schwenninger Wild Wings",
+    "team_away": "Eisbären Berlin",
+    "observed_team": "Eisbären Berlin",
+    "date": "2026-01-15T18:20:47.318Z"
   },
+  "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Struktur"
+      "text": "Unterschiedlich, viel beim Absicherung",
+      "ts": "2026-01-15T20:12:54.627652"
     },
     "P2": {
-      "done": true,
-      "text": "Struktur"
+      "done": false,
+      "text": ""
     },
     "P3": {
-      "done": true,
-      "text": "Struktur"
+      "done": false,
+      "text": ""
     }
   }
 }
