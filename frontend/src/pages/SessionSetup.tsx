@@ -64,6 +64,8 @@ export default function SessionSetup() {
   const [league, setLeague] = useState<string>('DEL')
   const [teamHome, setTeamHome] = useState<string>('')
   const [teamAway, setTeamAway] = useState<string>('')
+  const [season, setSeason] = useState<string>('')
+  const [matchday, setMatchday] = useState<string>('')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
 
   // Scroll to top when component mounts
@@ -91,6 +93,8 @@ export default function SessionSetup() {
       if (parsed.league) setLeague(parsed.league)
       if (parsed.teamHome) setTeamHome(parsed.teamHome)
       if (parsed.teamAway) setTeamAway(parsed.teamAway)
+      if (parsed.season) setSeason(parsed.season)
+      if (parsed.matchday) setMatchday(parsed.matchday)
       if (parsed.selectedDrill) setSelectedDrill(parsed.selectedDrill)
     } catch (e) {
       console.warn('Draft konnte nicht geladen werden', e)
@@ -107,11 +111,13 @@ export default function SessionSetup() {
       league,
       teamHome,
       teamAway,
+      season,
+      matchday,
       selectedDrill,
       observedTeam
     }
     localStorage.setItem(draftKey, JSON.stringify(draft))
-  }, [draftKey, goal, confidence, league, teamHome, teamAway, selectedDrill, observedTeam])
+  }, [draftKey, goal, confidence, league, teamHome, teamAway, season, matchday, selectedDrill, observedTeam])
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
@@ -205,6 +211,8 @@ export default function SessionSetup() {
       observed_team: observedTeam,
       date: new Date().toISOString()
     }
+    if (season.trim()) gameInfo.season = season.trim()
+    if (matchday.trim()) gameInfo.matchday = matchday.trim()
     // Hinweis: Divisionen NICHT an Backend senden, nur intern nutzen
 
     const effectiveGoal = goal.trim() || `Auto: ${currentModule.title}`
@@ -380,6 +388,48 @@ export default function SessionSetup() {
               />
               <label htmlFor="observe-away" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
             </div>
+          </label>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
+          <label style={{ display: 'block' }}>
+            Saison <span style={{ color: 'rgba(255,255,255,0.6)' }}>(optional)</span>
+            <input
+              type="text"
+              value={season}
+              onChange={(e) => setSeason(e.target.value)}
+              placeholder="z.B. 2025/26"
+              maxLength={1500}
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.35rem',
+                backgroundColor: '#050712',
+                color: '#f7f7ff',
+                border: '1px solid #5191a2',
+                borderRadius: '4px'
+              }}
+            />
+          </label>
+
+          <label style={{ display: 'block' }}>
+            Spieltag <span style={{ color: 'rgba(255,255,255,0.6)' }}>(optional)</span>
+            <input
+              type="text"
+              value={matchday}
+              onChange={(e) => setMatchday(e.target.value)}
+              placeholder="z.B. 47"
+              maxLength={1500}
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.35rem',
+                backgroundColor: '#050712',
+                color: '#f7f7ff',
+                border: '1px solid #5191a2',
+                borderRadius: '4px'
+              }}
+            />
           </label>
         </div>
 

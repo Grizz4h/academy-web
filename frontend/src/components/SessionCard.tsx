@@ -217,6 +217,20 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
               </>
             )}
 
+            {session.game_info?.season && (
+              <>
+                <span>•</span>
+                <span>Saison: {session.game_info.season}</span>
+              </>
+            )}
+
+            {session.game_info?.matchday && (
+              <>
+                <span>•</span>
+                <span>Spieltag: {session.game_info.matchday}</span>
+              </>
+            )}
+
             {session.checkins && session.checkins.length > 0 && (
               <>
                 <span>•</span>

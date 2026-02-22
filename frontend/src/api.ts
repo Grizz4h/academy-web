@@ -150,6 +150,8 @@ export interface GameInfo {
   date: string
   observed_team?: string
   league: string
+  season?: string
+  matchday?: string
 }
 
 export interface Checkin {

@@ -347,6 +347,8 @@ export default function SessionPage() {
             <p><strong>Teams:</strong> {session.game_info.team_home} vs {session.game_info.team_away}</p>
             <p><strong>Datum:</strong> {session.game_info.date}</p>
             <p><strong>Liga:</strong> {session.game_info.league}</p>
+            {session.game_info.season && <p><strong>Saison:</strong> {session.game_info.season}</p>}
+            {session.game_info.matchday && <p><strong>Spieltag:</strong> {session.game_info.matchday}</p>}
           </>
         ) : (
           <>
