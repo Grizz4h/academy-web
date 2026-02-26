@@ -22,7 +22,9 @@ const TopNav: React.FC = () => (
             <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
             <span className={styles.navbarBrand}></span>
           </NavLink>
-          <LogoutButton />
+          <div className={styles.userSection}>
+            <LogoutButton />
+          </div>
         </div>
         {/* Row 2: Tabs */}
         <div className={styles.navTabsWrapper}>

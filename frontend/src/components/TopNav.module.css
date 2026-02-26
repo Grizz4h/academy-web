@@ -1,3 +1,45 @@
+/* Brand-Zeile: Logo + Text sauber nebeneinander */
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0; /* wichtig für Text-Overflow */
+  width: 100%;
+  /* justify-content entfernt, damit margin-left: auto in .userSection wirkt */
+}
+
+/* Klickfläche: nix wrappt komisch */
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+/* Logo: fix, nicht riesig */
+.logo {
+  height: 60px;     /* Desktop */
+  width: auto;
+  display: block;
+  flex: 0 0 auto;
+}
+
+/* Brand-Text: nicht umbrechen, notfalls ellipsis */
+.navbarBrand {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+}
+
+/* Mobile: Logo kleiner */
+@media (max-width: 520px) {
+  .logo { height: 44px; }
+  .navbarBrand { font-size: 18px; }
+}
 .navbar {
   position: sticky;
   top: 0;
@@ -27,43 +69,12 @@
     width: 100%;
     max-width: 100%;
   }
-  .brandRow {
-    width: 100%;
-    margin-bottom: 0.1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-.logoLink {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.logo {
-  height: 200px;
-  width: auto;
-  object-fit: contain;
-  border-radius: 8px;
-  background: transparent;
-  margin-top: -40px;
-  margin-bottom: -60px;
-  margin-left: -40px;
-}
-
-.navbarBrand {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.92);
-}
 
 .userSection {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
 }
 
 /* >>> wichtig: horizontal scroll container */

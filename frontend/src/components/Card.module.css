@@ -1,17 +1,34 @@
+/* Card bleibt ruhig – keine Auswahl-Optik */
+.card:hover,
+.card:active,
+.card:focus,
+.card:focus-within {
+  transform: none;
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.10); /* normaler Rahmen */
+  outline: none;
+}
+
+/* Falls ihr eine Active-Klasse habt: neutralisieren */
+.active,
+.cardActive,
+[data-active="true"] {
+  box-shadow: none !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+/* Glassy card effect */
 .card {
-  background: rgba(10, 12, 26, 0.85);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  background: var(--glass-bg, rgba(24, 28, 44, 0.55));
+  border-radius: 16px;
+  border: 1.5px solid var(--glass-border, rgba(255,255,255,0.18));
+  box-shadow: var(--glass-shadow, 0 4px 32px 0 rgba(0,0,0,0.18));
   padding: 1.5rem;
   margin-bottom: 1rem;
   word-break: break-word;
   overflow-wrap: anywhere;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: box-shadow 0.2s;
+  backdrop-filter: blur(var(--glass-blur, 18px)) saturate(1.2);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 18px)) saturate(1.2);
+  transition: box-shadow 0.18s, border-color 0.18s, background 0.18s;
+  position: relative;
 }
 
-.card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-}
