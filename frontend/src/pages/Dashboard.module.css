@@ -1,0 +1,218 @@
+.dashboardPage {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.kpiTitle {
+  font-size: 1.1rem;
+  color: #5191a2;
+  margin-bottom: 4px;
+}
+
+.kpiValue {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.flexWrapRow {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.flexCard {
+  flex: 1;
+  min-width: 260px;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  color: #5191a2;
+  margin-bottom: 8px;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progressCol {
+  flex: 1;
+}
+
+.progressItem {
+  margin-bottom: 6px;
+}
+
+.progressBarWrap {
+  margin-top: 12px;
+}
+
+.progressBarBg {
+  background: #222;
+  border-radius: 6px;
+  height: 18px;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressBarFill {
+  background: #5191a2;
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.progressBarLabel {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.trackProgressWrap {
+  margin-top: 10px;
+}
+
+.trackProgressTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.trackProgressItem {
+  margin-bottom: 6px;
+}
+
+.trackTitle {
+  color: #5191a2;
+  font-weight: 500;
+}
+
+.trackBarBg {
+  background: #333;
+  border-radius: 4px;
+  height: 12px;
+  width: 100%;
+  margin: 2px 0;
+  overflow: hidden;
+}
+
+.trackBarFill {
+  background: #6ec1e4;
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.trackBarLabel {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.hygieneSuccess {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.hygieneList {
+  color: #ffc107;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.recentCard {
+  margin-top: 2rem;
+}
+
+.recentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 0.5rem 0;
+}
+
+.recentDate, .recentModule {
+  min-width: 90px;
+}
+
+.openBtn {
+  font-size: 0.9rem;
+  padding: 0.2rem 0.7rem;
+  background: #5191a2;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.openBtn:hover {
+  background: #357a8a;
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 300px;
+}
+.input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08);
+  color: #f7f7ff;
+}
+.inputWrapper {
+  position: relative;
+}
+.showPasswordBtn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.primaryBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #5191a2;
+  background: #5191a2;
+  color: #050712;
+  cursor: pointer;
+}
+.secondaryBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #888;
+  background: #222;
+  color: #f7f7ff;
+  cursor: pointer;
+}
+.errorMsg {
+  font-size: 0.9rem;
+  color: #ff6b6b;
+}
+.successMsg {
+  font-size: 0.9rem;
+  color: #4caf50;
+}

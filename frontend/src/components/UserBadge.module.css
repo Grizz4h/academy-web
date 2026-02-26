@@ -1,0 +1,27 @@
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.userText {
+  font-size: 0.95rem;
+  color: var(--textMuted);
+  font-weight: 500;
+}
+.logoutBtn {
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px var(--shadow-soft);
+}
+.logoutBtn:hover {
+  background: var(--surface);
+  color: var(--accent2);
+  box-shadow: 0 0 8px var(--glow-accent);
+}

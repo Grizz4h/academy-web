@@ -8,32 +8,12 @@ import SessionSetup from './pages/SessionSetup'
 import SessionPage from './pages/Session'
 import History from './pages/History'
 import Progress from './pages/Progress'
-import UserBadge from './components/UserBadge'
+import TopNav from './components/TopNav'
 
 function App() {
-  console.log('App component rendering')
   return (
     <div className="app">
-      <nav className="navbar">
-        <div className="container">
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', cursor: 'pointer' }}>
-            <img src="/RINK_TANK_LOGO.jpeg" alt="RINK Tank" style={{ height: '40px', objectFit: 'contain' }} />
-            <span className="navbar-brand" style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.92)' }}>RINK Tank</span>
-          </a>
-          <div className="nav-container">
-            <div className="nav-tabs">
-              <a className={`nav-link${window.location.pathname === '/' ? ' nav-link-active' : ''}`} href="/">Dashboard</a>
-              <a className={`nav-link${window.location.pathname.startsWith('/curriculum') ? ' nav-link-active' : ''}`} href="/curriculum">Curriculum</a>
-              <a className={`nav-link${window.location.pathname.startsWith('/history') ? ' nav-link-active' : ''}`} href="/history">History</a>
-              <a className={`nav-link${window.location.pathname.startsWith('/progress') ? ' nav-link-active' : ''}`} href="/progress">Progress</a>
-            </div>
-          </div>
-          <div className="nav-user">
-            <UserBadge />
-          </div>
-        </div>
-      </nav>
-
+      <TopNav />
       <main className="container">
         <Routes>
           <Route path="/" element={<Dashboard />} />

@@ -9,7 +9,6 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   width: 100%;
 }
 
@@ -17,88 +16,9 @@ html, body {
   min-height: 100vh;
   background: #050712;
   color: #f7f7ff;
-  overflow-x: hidden;
   width: 100%;
 }
 
-.navbar {
-  background-color: #5191a2;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.navbar-brand {
-  color: #f7f7ff;
-  font-weight: bold;
-  font-size: 2rem;
-}
-
-/* Navigation Items – Base Style */
-.nav-link, .navLink {
-  position: relative;
-  padding: 8px 14px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.15s ease;
-}
-
-/* Hover – subtil */
-.nav-link:hover,
-.nav-link:focus-visible,
-.navLink:hover,
-.navLink:focus-visible {
-  color: white;
-  background: rgba(255,255,255,0.06);
-}
-
-/* Active Tab – Fläche + Tiefe */
-.nav-link-active, .navLinkActive,
-.nav-link.active {
-  color: white;
-  background: rgba(0,0,0,0.35);
-  box-shadow:
-    inset 0 -2px 0 #bd5ca9,
-    0 2px 8px rgba(0,0,0,0.25);
-}
-
-/* Optional: Magenta-Marker-Line unten */
-.nav-link-active::after, .navLinkActive::after,
-.nav-link.active::after {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: -6px;
-  height: 2px;
-  background: #bd5ca9;
-  border-radius: 2px;
-}
-
-/* Mobile/Touch – spürbar, nicht sichtbar */
-.nav-link:active,
-.navLink:active {
-  transform: translateY(1px);
-}
-
-.nav-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.nav-tabs {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.nav-user {
-  margin-top: 1.1rem;
-  display: flex;
-  align-items: center;
-}
 
 .container {
   max-width: 1200px;
@@ -106,7 +26,6 @@ html, body {
   padding: 2rem 1rem;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 .card {

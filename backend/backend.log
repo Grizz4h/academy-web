@@ -288,3 +288,35 @@ INFO:     80.187.81.188:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 [microfeedback] session=Christoph_1771689314 phase=P3 trace_id=7566eec1-7469-4770-9550-40b208301466 trace_action=submitMicrofeedback text_len=68
 [checkin:ef52026f] session=Christoph_1771689314 phase_raw='POST' phase_norm='POST' action=append trace_id=3b5990e7-e999-45c2-8eb6-0cd6e87f977e trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
 [checkin:ef52026f] session=Christoph_1771689314 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:e5216e8b] session=Christoph_1771765449 phase_raw='PRE' phase_norm='PRE' action=append trace_id=89d4f573-427b-4eee-934e-6d7ad3de90ac trace_action=saveCheckin counts_before={}
+[checkin:e5216e8b] session=Christoph_1771765449 counts_after={'PRE': 1}
+[checkin:bc59020e] session=Christoph_1771765449 phase_raw='P1' phase_norm='P1' action=append trace_id=9631e286-dcdd-4457-b394-489977878ce0 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:bc59020e] session=Christoph_1771765449 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1771765449 phase=P1 trace_id=413cd64c-8c1c-46fa-a027-4692443f0ed5 trace_action=submitMicrofeedback text_len=75
+[checkin:9469ce52] session=Christoph_1771765449 phase_raw='P2' phase_norm='P2' action=append trace_id=b7ee52ed-70dd-49c5-b699-8565d6d55a73 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:9469ce52] session=Christoph_1771765449 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:bfebf3cc] session=Christoph_1771765449 phase_raw='P2' phase_norm='P2' action=update trace_id=dcc90528-786b-46f9-a83a-df66de12ce3e trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:bfebf3cc] session=Christoph_1771765449 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[microfeedback] session=Christoph_1771765449 phase=P2 trace_id=5b38dfe9-40be-4265-a007-05e91c702139 trace_action=submitMicrofeedback text_len=70
+[checkin:abc2ebb1] session=Christoph_1771765449 phase_raw='P3' phase_norm='P3' action=append trace_id=e5894ff0-8aa6-4394-ac86-529fae03629d trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:abc2ebb1] session=Christoph_1771765449 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Christoph_1771765449 phase=P3 trace_id=cc127d56-9eb2-4c72-9f80-3625aa059d96 trace_action=submitMicrofeedback text_len=79
+[checkin:2dd38037] session=Christoph_1771765449 phase_raw='POST' phase_norm='POST' action=append trace_id=81696362-8883-4345-9767-dee3a0dd50f5 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:2dd38037] session=Christoph_1771765449 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:f2ebe5c4] session=Christoph_1771822892 phase_raw='PRE' phase_norm='PRE' action=append trace_id=78f91145-be95-45e6-97ea-12b8ffe049a0 trace_action=saveCheckin counts_before={}
+[checkin:f2ebe5c4] session=Christoph_1771822892 counts_after={'PRE': 1}
+[checkin:812351c7] session=Christoph_1771822892 phase_raw='P1' phase_norm='P1' action=append trace_id=35dfc78e-994f-411c-b93e-31ce6de0fae7 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:812351c7] session=Christoph_1771822892 counts_after={'PRE': 1, 'P1': 1}
+[checkin:3b161373] session=Christoph_1771822892 phase_raw='P1' phase_norm='P1' action=update trace_id=74d580d6-9377-41e9-8eae-7c91d7d1e636 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:3b161373] session=Christoph_1771822892 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1771822892 phase=P1 trace_id=a20d0c2f-d607-4d0c-8df7-fdbcac2ff7fd trace_action=submitMicrofeedback text_len=53
+[checkin:2e9b8e76] session=Christoph_1771822892 phase_raw='P2' phase_norm='P2' action=append trace_id=1f2608bd-c981-439d-840d-2cdff5427fb6 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:2e9b8e76] session=Christoph_1771822892 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[microfeedback] session=Christoph_1771822892 phase=P2 trace_id=9f564059-8a6f-4e6e-afe7-e0400472b9ec trace_action=submitMicrofeedback text_len=69
+[checkin:c637ca77] session=Christoph_1771822892 phase_raw='P3' phase_norm='P3' action=append trace_id=59d096c4-2df5-4b8c-be80-1759b38dc105 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:c637ca77] session=Christoph_1771822892 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Christoph_1771822892 phase=P3 trace_id=d6fa2425-c038-444b-87d0-8935141f54e2 trace_action=submitMicrofeedback text_len=62
+[checkin:7296f857] session=Christoph_1771822892 phase_raw='POST' phase_norm='POST' action=append trace_id=c66a11b8-ccdf-4160-b455-b8c89672ded4 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:7296f857] session=Christoph_1771822892 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:0e34550d] session=Christoph_1772052114 phase_raw='PRE' phase_norm='PRE' action=append trace_id=95df9ca1-3faa-40ec-9ee6-c48a946be519 trace_action=saveCheckin counts_before={}
+[checkin:0e34550d] session=Christoph_1772052114 counts_after={'PRE': 1}

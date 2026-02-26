@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
+import Card from '../components/Card';
+import Pill from '../components/Pill';
+import styles from './Dashboard.module.css';
 
 export default function Dashboard() {
   const { user, setUser } = useUser();
@@ -192,12 +195,12 @@ export default function Dashboard() {
   // ---- Render Branches (ab hier dürfen returns kommen) ----
   if (!user)
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div className={styles.dashboardPage}>
         <h1>Dashboard</h1>
-        <div className="card">
+        <Card>
           <h2>{signupMode ? "Account erstellen" : "Login"}</h2>
           {!signupMode ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "300px" }}>
+            <div className={styles.formColumn}>
               <input
                 autoComplete="username"
                 placeholder="Name"
@@ -206,15 +209,9 @@ export default function Dashboard() {
                   setNameInput(e.target.value);
                   setLoginError("");
                 }}
-                style={{
-                  padding: "0.5rem",
-                  borderRadius: "4px",
-                  border: loginError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "#f7f7ff",
-                }}
+                className={styles.input}
               />
-              <div style={{ position: "relative" }}>
+              <div className={styles.inputWrapper}>
                 <input
                   autoComplete="current-password"
                   type={showPassword ? "text" : "password"}
@@ -227,69 +224,22 @@ export default function Dashboard() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleLogin();
                   }}
-                  style={{
-                    padding: "0.5rem 2.5rem 0.5rem 0.5rem",
-                    borderRadius: "4px",
-                    border: loginError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
-                    background: "rgba(255,255,255,0.08)",
-                    color: "#f7f7ff",
-                    width: "100%",
-                  }}
+                  className={styles.input}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: "absolute",
-                    right: "0.5rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    color: "rgba(255,255,255,0.6)",
-                    cursor: "pointer",
-                    padding: "0.25rem",
-                  }}
+                  className={styles.showPasswordBtn}
                 >
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={handleLogin}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "4px",
-                  border: "1px solid #5191a2",
-                  background: "#5191a2",
-                  color: "#050712",
-                  cursor: "pointer",
-                }}
-              >
-                Login
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSignupMode(true);
-                  setSignupError("");
-                  setSignupSuccess("");
-                }}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "4px",
-                  border: "1px solid #888",
-                  background: "#222",
-                  color: "#f7f7ff",
-                  cursor: "pointer",
-                }}
-              >
-                Account erstellen
-              </button>
-              {loginError && <span style={{ fontSize: "0.9rem", color: "#ff6b6b" }}>{loginError}</span>}
+              <button type="button" onClick={handleLogin} className={styles.primaryBtn}>Login</button>
+              <button type="button" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Account erstellen</button>
+              {loginError && <span className={styles.errorMsg}>{loginError}</span>}
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "300px" }}>
+            <div className={styles.formColumn}>
               <input
                 autoComplete="username"
                 placeholder="Name"
@@ -299,13 +249,7 @@ export default function Dashboard() {
                   setSignupError("");
                   setSignupSuccess("");
                 }}
-                style={{
-                  padding: "0.5rem",
-                  borderRadius: "4px",
-                  border: signupError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "#f7f7ff",
-                }}
+                className={styles.input}
               />
               <input
                 autoComplete="new-password"
@@ -317,13 +261,7 @@ export default function Dashboard() {
                   setSignupError("");
                   setSignupSuccess("");
                 }}
-                style={{
-                  padding: "0.5rem",
-                  borderRadius: "4px",
-                  border: signupError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "#f7f7ff",
-                }}
+                className={styles.input}
               />
               <input
                 autoComplete="new-password"
@@ -335,215 +273,115 @@ export default function Dashboard() {
                   setSignupError("");
                   setSignupSuccess("");
                 }}
-                style={{
-                  padding: "0.5rem",
-                  borderRadius: "4px",
-                  border: signupError ? "1px solid #ff6b6b" : "1px solid rgba(255,255,255,0.3)",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "#f7f7ff",
-                }}
+                className={styles.input}
               />
-              <button
-                type="button"
-                onClick={async () => {
-                  setSignupError("");
-                  setSignupSuccess("");
-                  const name = signupName.trim();
-                  if (!name || !signupPassword || !signupPassword2) {
-                    setSignupError("Alle Felder erforderlich");
-                    return;
-                  }
-                  if (signupPassword !== signupPassword2) {
-                    setSignupError("Passwörter stimmen nicht überein");
-                    return;
-                  }
-                  try {
-                    await api.signup(name, signupPassword);
-                    setSignupSuccess("Account erstellt! Du wirst eingeloggt...");
-                    setTimeout(async () => {
-                      await setUser(name, signupPassword);
-                    }, 800);
-                  } catch (e: any) {
-                    setSignupError(e.message || "Signup fehlgeschlagen");
-                  }
-                }}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "4px",
-                  border: "1px solid #5191a2",
-                  background: "#5191a2",
-                  color: "#050712",
-                  cursor: "pointer",
-                }}
-              >
-                Account erstellen
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSignupMode(false);
-                  setSignupError("");
-                  setSignupSuccess("");
-                }}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "4px",
-                  border: "1px solid #888",
-                  background: "#222",
-                  color: "#f7f7ff",
-                  cursor: "pointer",
-                }}
-              >
-                Zurück zum Login
-              </button>
-              {signupError && <span style={{ fontSize: "0.9rem", color: "#ff6b6b" }}>{signupError}</span>}
-              {signupSuccess && <span style={{ fontSize: "0.9rem", color: "#4caf50" }}>{signupSuccess}</span>}
+              <button type="button" onClick={async () => { setSignupError(""); setSignupSuccess(""); const name = signupName.trim(); if (!name || !signupPassword || !signupPassword2) { setSignupError("Alle Felder erforderlich"); return; } if (signupPassword !== signupPassword2) { setSignupError("Passwörter stimmen nicht überein"); return; } try { await api.signup(name, signupPassword); setSignupSuccess("Account erstellt! Du wirst eingeloggt..."); setTimeout(async () => { await setUser(name, signupPassword); }, 800); } catch (e: any) { setSignupError(e.message || "Signup fehlgeschlagen"); } }} className={styles.primaryBtn}>Account erstellen</button>
+              <button type="button" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Zurück zum Login</button>
+              {signupError && <span className={styles.errorMsg}>{signupError}</span>}
+              {signupSuccess && <span className={styles.successMsg}>{signupSuccess}</span>}
             </div>
           )}
-        </div>
+        </Card>
       </div>
     );
 
-  if (isLoading) return <div className="card">Lade Sessions...</div>;
-  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>;
+  if (isLoading) return <Card>Lade Sessions...</Card>;
+  if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>;
 
   return (
-    <div className="dashboard-page" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+    <div className={styles.dashboardPage}>
       <h1>Dashboard</h1>
 
       {/* KPI Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1.5rem" }}>
-        <div className="card" style={{ padding: "1.2rem" }}>
-          <div style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 4 }}>Letzte Session</div>
+      <div className={styles.kpiGrid}>
+        <Card>
+          <div className={styles.kpiTitle}>Letzte Session</div>
           {derived.lastSession ? (
             <>
-              <div>
-                <strong>Datum:</strong> {new Date(derived.lastSession.created_at).toLocaleDateString()}
-              </div>
-              <div>
-                <strong>Modul:</strong> {derived.lastSession.module_id}
-              </div>
-              <div>
-                <strong>Status:</strong> {derived.lastSession.state}
-              </div>
+              <div><strong>Datum:</strong> {new Date(derived.lastSession.created_at).toLocaleDateString()}</div>
+              <div><strong>Modul:</strong> {derived.lastSession.module_id}</div>
+              <div><strong>Status:</strong> <Pill>{derived.lastSession.state}</Pill></div>
             </>
-          ) : (
-            <div>Keine Daten</div>
-          )}
-        </div>
-
-        <div className="card" style={{ padding: "1.2rem" }}>
-          <div style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 4 }}>Sessions gesamt</div>
-          <div style={{ fontSize: "2rem", fontWeight: 700 }}>{derived.total}</div>
-        </div>
-
-        <div className="card" style={{ padding: "1.2rem" }}>
-          <div style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 4 }}>Diese Woche</div>
-          <div style={{ fontSize: "2rem", fontWeight: 700 }}>{derived.sessionsThisWeek.length}</div>
-        </div>
-
-        <div className="card" style={{ padding: "1.2rem" }}>
-          <div style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 4 }}>Streak</div>
-          <div style={{ fontSize: "2rem", fontWeight: 700 }}>{derived.streak} Tage</div>
-        </div>
+          ) : <div>Keine Daten</div>}
+        </Card>
+        <Card>
+          <div className={styles.kpiTitle}>Sessions gesamt</div>
+          <div className={styles.kpiValue}>{derived.total}</div>
+        </Card>
+        <Card>
+          <div className={styles.kpiTitle}>Diese Woche</div>
+          <div className={styles.kpiValue}>{derived.sessionsThisWeek.length}</div>
+        </Card>
+        <Card>
+          <div className={styles.kpiTitle}>Streak</div>
+          <div className={styles.kpiValue}>{derived.streak} Tage</div>
+        </Card>
       </div>
 
       {/* Progress & Hygiene */}
-      <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-        <div className="card" style={{ flex: 1, minWidth: 260, padding: "1.2rem" }}>
-          <h2 style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 8 }}>Fortschritt</h2>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ marginBottom: 6 }}>
-                Abgeschlossen: <strong>{derived.completed}</strong>
-              </div>
-              <div style={{ marginBottom: 6 }}>
-                Abgebrochen: <strong>{derived.aborted}</strong>
-              </div>
-              <div style={{ marginBottom: 6 }}>
-                In Bearbeitung: <strong>{derived.inProgress}</strong>
-              </div>
+      <div className={styles.flexWrapRow}>
+        <Card className={styles.flexCard}>
+          <h2 className={styles.sectionTitle}>Fortschritt</h2>
+          <div className={styles.progressRow}>
+            <div className={styles.progressCol}>
+              <div className={styles.progressItem}>Abgeschlossen: <strong>{derived.completed}</strong></div>
+              <div className={styles.progressItem}>Abgebrochen: <strong>{derived.aborted}</strong></div>
+              <div className={styles.progressItem}>In Bearbeitung: <strong>{derived.inProgress}</strong></div>
 
-              <div style={{ marginTop: 12 }}>
-                <div style={{ background: "#222", borderRadius: 6, height: 18, width: "100%", overflow: "hidden", marginBottom: 8 }}>
-                  <div
-                    style={{
-                      background: "#5191a2",
-                      height: "100%",
-                      width: `${derived.totalDrills ? (derived.completedDrills / derived.totalDrills) * 100 : 0}%`,
-                      transition: "width 0.3s",
-                    }}
-                  />
+              <div className={styles.progressBarWrap}>
+                <div className={styles.progressBarBg}>
+                  <div className={styles.progressBarFill} style={{ width: `${derived.totalDrills ? (derived.completedDrills / derived.totalDrills) * 100 : 0}%` }} />
                 </div>
-                <div style={{ fontSize: "0.9rem", color: "#888", marginBottom: 8 }}>
-                  Drill-Fortschritt: {derived.totalDrills ? Math.round((derived.completedDrills / derived.totalDrills) * 100) : 0}%
-                </div>
+                <div className={styles.progressBarLabel}>Drill-Fortschritt: {derived.totalDrills ? Math.round((derived.completedDrills / derived.totalDrills) * 100) : 0}%</div>
                 {/* Fortschritt pro Track */}
-                <div style={{ marginTop: 10 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 4 }}>Prozentualer Drill-Fortschritt pro Track:</div>
+                <div className={styles.trackProgressWrap}>
+                  <div className={styles.trackProgressTitle}>Prozentualer Drill-Fortschritt pro Track:</div>
                   {Object.values(derived.trackProgress).map((track: any) => (
-                    <div key={track.title} style={{ marginBottom: 6 }}>
-                      <span style={{ color: '#5191a2', fontWeight: 500 }}>{track.title}:</span>
-                      <div style={{ background: '#333', borderRadius: 4, height: 12, width: '100%', margin: '2px 0', overflow: 'hidden' }}>
-                        <div style={{
-                          background: '#6ec1e4',
-                          height: '100%',
-                          width: `${track.total ? (track.completed / track.total) * 100 : 0}%`,
-                          transition: 'width 0.3s',
-                        }} />
+                    <div key={track.title} className={styles.trackProgressItem}>
+                      <span className={styles.trackTitle}>{track.title}:</span>
+                      <div className={styles.trackBarBg}>
+                        <div className={styles.trackBarFill} style={{ width: `${track.total ? (track.completed / track.total) * 100 : 0}%` }} />
                       </div>
-                      <span style={{ fontSize: '0.9em', color: '#aaa' }}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
+                      <span className={styles.trackBarLabel}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="card" style={{ flex: 1, minWidth: 260, padding: "1.2rem" }}>
-          <h2 style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 8 }}>Hygiene</h2>
+        </Card>
+        <Card className={styles.flexCard}>
+          <h2 className={styles.sectionTitle}>Hygiene</h2>
           {derived.hygieneIssues.length === 0 ? (
-            <div style={{ color: "#28a745", fontWeight: 600 }}>✅ Alle Sessions sauber!</div>
+            <div className={styles.hygieneSuccess}>✅ Alle Sessions sauber!</div>
           ) : (
-            <ul style={{ color: "#ffc107", fontWeight: 600, fontSize: "0.95rem", margin: 0, paddingLeft: 18 }}>
+            <ul className={styles.hygieneList}>
               {derived.hygieneIssues.map((issue, i) => (
                 <li key={i}>{issue}</li>
               ))}
             </ul>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Recent Sessions */}
-      <div className="card" style={{ marginTop: "2rem", padding: "1.2rem" }}>
-        <h2 style={{ fontSize: "1.1rem", color: "#5191a2", marginBottom: 8 }}>Zuletzt</h2>
+      <Card className={styles.recentCard}>
+        <h2 className={styles.sectionTitle}>Zuletzt</h2>
         {derived.recentSessions.length === 0 ? (
           <div>Keine Sessions vorhanden.</div>
         ) : (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <ul className={styles.recentList}>
             {derived.recentSessions.map((s: Session) => (
-              <li
-                key={s.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  borderBottom: "1px solid rgba(255,255,255,0.08)",
-                  padding: "0.5rem 0",
-                }}
-              >
-                <span style={{ minWidth: 90 }}>{new Date(s.created_at).toLocaleDateString()}</span>
-                <span style={{ minWidth: 90 }}>{s.module_id}</span>
-                <span style={{ minWidth: 90 }}>{s.state}</span>
-                <a href={`/session/${s.id}`} className="btn" style={{ fontSize: "0.9rem", padding: "0.2rem 0.7rem" }}>
-                  Öffnen
-                </a>
+              <li key={s.id} className={styles.recentItem}>
+                <span className={styles.recentDate}>{new Date(s.created_at).toLocaleDateString()}</span>
+                <span className={styles.recentModule}>{s.module_id}</span>
+                <Pill>{s.state}</Pill>
+                <a href={`/session/${s.id}`} className={styles.openBtn}>Öffnen</a>
               </li>
             ))}
           </ul>
         )}
-      </div>
+      </Card>
     </div>
   );
 }
