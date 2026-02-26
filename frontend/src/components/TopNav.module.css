@@ -23,6 +23,7 @@
   width: auto;
   display: block;
   flex: 0 0 auto;
+  margin-left: -4px;
 }
 
 /* Brand-Text: nicht umbrechen, notfalls ellipsis */
@@ -37,17 +38,44 @@
 
 /* Mobile: Logo kleiner */
 @media (max-width: 520px) {
-  .logo { height: 44px; }
+  .logo {
+    height: 44px;
+    margin-left: -2px;
+  }
   .navbarBrand { font-size: 18px; }
 }
 .navbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(15, 18, 28, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+
+  isolation: isolate;
+}
+
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* dunkle Basis */
+  background: rgba(10, 14, 28, 0.78);
+
+  /* DER eigentliche Blur */
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+
+  /* Safari zum Erzwingen eines eigenen Layers */
+  transform: translateZ(0);
+}
+
+.navbar > * {
+  position: relative;
+  z-index: 1;
 }
 
 .container {

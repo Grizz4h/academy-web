@@ -14,6 +14,7 @@ function App() {
   return (
     <div className="app">
       <TopNav />
+      <div className="noiseLayer" />
       <main className="container">
         <Routes>
           <Route path="/" element={<Dashboard />} />

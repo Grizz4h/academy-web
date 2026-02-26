@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import React, { useState, useEffect } from 'react'
 import theoryData from '../data/theoryData.json'  // Neuer Import
+import styles from './TheoryDetail.module.css';
 
 export default function TheoryDetail() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -118,7 +119,7 @@ export default function TheoryDetail() {
         {data.sections.map((section: any) => (
           <section className="theory-section" key={section.id}>
             <button
-              className="section-toggle"
+              className={`section-toggle ${styles.accordionHeader}`}
               onClick={() => toggleSection(section.id as keyof typeof expandedSections)}
               aria-expanded={expandedSections[section.id as keyof typeof expandedSections]}
             >
