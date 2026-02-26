@@ -320,3 +320,13 @@ INFO:     80.187.81.188:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 [checkin:7296f857] session=Christoph_1771822892 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
 [checkin:0e34550d] session=Christoph_1772052114 phase_raw='PRE' phase_norm='PRE' action=append trace_id=95df9ca1-3faa-40ec-9ee6-c48a946be519 trace_action=saveCheckin counts_before={}
 [checkin:0e34550d] session=Christoph_1772052114 counts_after={'PRE': 1}
+[checkin:571c41cd] session=Christoph_1772129257 phase_raw='PRE' phase_norm='PRE' action=append trace_id=a42cf455-49c3-438b-824b-efcfb88f9524 trace_action=saveCheckin counts_before={}
+[checkin:571c41cd] session=Christoph_1772129257 counts_after={'PRE': 1}
+[checkin:8a808cfe] session=Christoph_1772129257 phase_raw='P1' phase_norm='P1' action=append trace_id=6ac9b167-7639-43b3-a860-cc6f3072e20b trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:8a808cfe] session=Christoph_1772129257 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1772129257 phase=P1 trace_id=24f0874c-d877-4c51-a98b-ae8d758e351c trace_action=submitMicrofeedback text_len=200
+[checkin:b0885656] session=Christoph_1772129257 phase_raw='P2' phase_norm='P2' action=append trace_id=08ca1d46-bb78-4aaa-9d89-af1852c5f25f trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:b0885656] session=Christoph_1772129257 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:9effc6ac] session=Christoph_1772129257 phase_raw='P2' phase_norm='P2' action=update trace_id=04a2ab63-1792-4bb6-8cb5-47d0ef980c92 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:9effc6ac] session=Christoph_1772129257 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[microfeedback] session=Christoph_1772129257 phase=P2 trace_id=6edab109-3cf4-4c68-9ef8-561fefb0d0bf trace_action=submitMicrofeedback text_len=70

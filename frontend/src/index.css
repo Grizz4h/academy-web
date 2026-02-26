@@ -33,6 +33,7 @@ body {
 }
 
 /* Scratches layer */
+
 html::before {
   content: "";
   position: fixed;
@@ -40,18 +41,34 @@ html::before {
   pointer-events: none;
   z-index: 0;
 
-  /* stack two PNGs so it looks less repetitive */
-  background-image: url("/bg-scratches.png"), url("/scratch_2.png");
-  background-repeat: repeat, repeat;
-  background-size: 900px auto, 1100px auto;
-  background-position: 0 0, 240px 180px;
+  background-image:
+    radial-gradient(1200px 900px at 50% 20%, rgba(255,255,255,0.06), transparent 55%),
+    url("/bg-scratches.png"),
+    url("/scratch_2.png");
+  background-repeat: no-repeat, repeat, repeat;
+  background-size: cover, 520px auto, 780px auto;
+  background-position: center, 0 0, 240px 180px;
 
-  /* make it visible but not harsh */
-  opacity: 0.32;
-  mix-blend-mode: overlay;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  filter: blur(0.35px) contrast(1.35) brightness(1.12);
+}
 
-  /* soften pattern (user asked for gaussian blur) */
-  filter: blur(0.6px) contrast(1.15) brightness(1.05);
+@media (max-width: 768px) {
+  html::before {
+    opacity: 0.65;
+    background-size: cover, 420px auto, 640px auto;
+    filter: blur(0.25px) contrast(1.45) brightness(1.15);
+  }
+}
+@media (max-width: 768px) {
+  html::before {
+    opacity: 0.92;
+    mix-blend-mode: soft-light;
+    background-size: cover, 120px auto, 180px auto;
+    background-position: center, 0 0, 30px 20px;
+    filter: blur(0.08px) contrast(2.0) brightness(1.28);
+  }
 }
 
 /* Highlights + noise layer */
