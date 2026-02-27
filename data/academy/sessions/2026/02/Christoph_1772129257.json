@@ -8,8 +8,8 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A2_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
   "created_at": "2026-02-26T19:07:37.882076",
   "drills": [
     {
@@ -156,10 +156,30 @@
         "structure_rating": "klar aufgebaut"
       },
       "timestamp": "2026-02-26T20:16:15.587228"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "note": "Center beide winger anspielbar. Zwei Optionen mach 50/50 in eigener Rundung. Passoption aber skate die Bande entlang und entry. D Nicht ganz klar erkennbarer Optionen, aber nciht unter Druck. D Gewinn, viele Optionen. D kann sauber annehmen und Optionen suchen. Oilers haben sehr oft zwei Möglichkeiten, das muss ich mal be anderen Teams besser beobachten. Sehr dynamisch, es ergeben sich meistens sehr gute erste passoptionen. ",
+        "first_option": "Winger",
+        "structure_rating": "klar aufgebaut"
+      },
+      "timestamp": "2026-02-27T06:34:35.435150"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-02-27T06:35:00.230226"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-02-27T06:35:00.382216"
+  },
   "game_info": {
     "league": "NHL",
     "team_home": "Anaheim Ducks",
@@ -182,8 +202,9 @@
       "ts": "2026-02-26T20:16:33.056414"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Es war oft der gleiche einstudierte Ablauf, wenig dem Zufall überlassen.",
+      "ts": "2026-02-27T06:34:58.582021"
     }
   }
 }
