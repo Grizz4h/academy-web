@@ -3,7 +3,7 @@
 
   /* Brand */
   --accent: #5191a2;
-  --accent2: #bd5ca9;
+ 
 
   /* Glass tokens */
   --surface-border: rgba(255, 255, 255, 0.10);
@@ -12,8 +12,6 @@
 }
 
 * { box-sizing: border-box; }
-
-
 
 
 html {
@@ -26,14 +24,7 @@ html {
   background-size: cover;
 }
 
-body {
-  margin: 0;
-  background: transparent;
-  color: var(--text);
-}
-
 /* Scratches layer */
-
 html::before {
   content: "";
   position: fixed;
@@ -49,25 +40,17 @@ html::before {
   background-size: cover, 520px auto, 780px auto;
   background-position: center, 0 0, 240px 180px;
 
-  opacity: 0.55;
+  opacity: 0.20;
   mix-blend-mode: soft-light;
-  filter: blur(0.35px) contrast(1.35) brightness(1.12);
+  filter: blur(0.6px) contrast(1.18) brightness(1.06);
 }
 
 @media (max-width: 768px) {
   html::before {
-    opacity: 0.65;
-    background-size: cover, 420px auto, 640px auto;
-    filter: blur(0.25px) contrast(1.45) brightness(1.15);
-  }
-}
-@media (max-width: 768px) {
-  html::before {
-    opacity: 0.92;
-    mix-blend-mode: soft-light;
-    background-size: cover, 120px auto, 180px auto;
-    background-position: center, 0 0, 30px 20px;
-    filter: blur(0.08px) contrast(2.0) brightness(1.28);
+    opacity: 0.28;
+    background-size: cover, 420px auto, 700px auto;
+    background-position: center, 0 0, 240px 180px;
+    filter: blur(0.7px) contrast(1.20) brightness(1.06);
   }
 }
 
@@ -79,14 +62,24 @@ html::after {
   pointer-events: none;
   z-index: 0;
 
+  /* HAZE (Fog) + very subtle lift */
   background-image:
-    radial-gradient(900px 520px at 20% 25%, rgba(255,255,255,0.055), transparent 60%),
-    radial-gradient(700px 480px at 75% 45%, rgba(255,255,255,0.040), transparent 62%),
-    radial-gradient(800px 520px at 55% 95%, rgba(255,255,255,0.030), transparent 65%),
-    linear-gradient(0deg, rgba(255,255,255,0.030), rgba(255,255,255,0.030));
+    radial-gradient(1600px 900px at 55% 8%, rgba(255,255,255,0.075), transparent 62%),
+    radial-gradient(1400px 900px at 18% 35%, rgba(255,255,255,0.045), transparent 66%),
+    radial-gradient(1600px 1100px at 78% 55%, rgba(255,255,255,0.035), transparent 70%),
+    radial-gradient(1400px 900px at 50% 110%, rgba(255,255,255,0.030), transparent 72%),
+    linear-gradient(180deg, rgba(255,255,255,0.020), rgba(255,255,255,0.020));
 
-  opacity: 0.12;
+  opacity: 0.10;
   mix-blend-mode: soft-light;
+  filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  html::after {
+    opacity: 0.12;
+    filter: blur(12px);
+  }
 }
 
 /* Content above overlays */
@@ -96,7 +89,7 @@ html::after {
   background: transparent;
 }
 
-/* Mobile: fixed backgrounds can cause seams on iOS -> switch to scroll */
+/* Mobile: fixed backgrounds can cause cause seams on iOS -> switch to scroll */
 @media (max-width: 768px) {
   html { background-attachment: scroll; }
   html::before, html::after { position: fixed; }
@@ -110,51 +103,11 @@ body {
   background: transparent;
 }
 
-
-
-
-
-
-
-
-/* --- HIGHLIGHTS + GRAIN (ohne Grid) --- */
-html::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-
-  /* Highlights / Bloom */
-  background-image:
-    radial-gradient(900px 520px at 20% 25%, rgba(255,255,255,0.055), transparent 60%),
-    radial-gradient(700px 480px at 75% 45%, rgba(255,255,255,0.040), transparent 62%),
-    radial-gradient(800px 520px at 55% 95%, rgba(255,255,255,0.030), transparent 65%),
-
-    /* sehr feines “Filmgrain” als Micro-Noise (zwei Größen mischen -> kein sichtbares Raster) */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.20'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23n)' opacity='.14'/%3E%3C/svg%3E");
-
-  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
-  background-position: 0 0, 0 0, 0 0, 30px 50px, 180px 120px;
-  background-size: auto, auto, auto, 180px 180px, 640px 640px;
-
-  opacity: 0.22;
-  mix-blend-mode: soft-light;
-}
-
-
-/* Content muss über den Overlays liegen */
-#root, .app {
-  position: relative;
-  z-index: 1;
-  background: transparent;
-}
-
 .app {
   min-height: 100vh;
   background: transparent;
 }
+
 #root {
   background: transparent;
 }
@@ -166,15 +119,3 @@ main {
 .container {
   background: transparent;
 }
-@media (max-width: 768px) {
-  html::before {
-    opacity: 0.55;
-    background-size: 420px auto;
-    filter: contrast(1.35) brightness(1.12);
-  }
-}
-
-/* MOBILE: Scratch dichter/kleiner -> nicht “gestreckt”, stärker sichtbar */
-
-
-/* iOS/Safari: fixed backgrounds + backdrop-filter = seams */
