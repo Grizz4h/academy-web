@@ -582,6 +582,11 @@ async def download_session(session_id: str, phase: Optional[str] = Query(None)):
                     "answer": answer_value
                 })
         
+        # V4 Meta-Scan: Export complete answers structure (includes meta object)
+        # For renderers without traditional questions, include raw answers
+        if not checkin_export["questions_and_answers"] and answers:
+            checkin_export["raw_answers"] = answers
+        
         # Feedback und next_task hinzufügen wenn vorhanden (für POST)
         if checkin.get("feedback"):
             checkin_export["feedback"] = checkin.get("feedback")

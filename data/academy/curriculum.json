@@ -5900,6 +5900,61 @@
 ]
 }
       ]
+    },
+    {
+      "id": "M",
+      "title": "M – Meta-Scan & Systemanalysis",
+      "goal": "Gesamtspiel analysieren: Achsen, Timeline, Ursache-Wirkung-Ketten",
+      "description": "Track M schult die Meta-Perspektive: Über drei Drittel hinweg Muster, Achsen und Root Causes identifizieren.",
+      "modules": [
+        {
+          "id": "M1",
+          "title": "M1 – Meta-Scan Novice",
+          "summary": "Erste Meta-Analyse: Gesamtspielüberblick über drei Drittel",
+          "description": "Lerne das gesamte Spiel zu scannen: Pro Drittel 5 Meta-Achsen bewerten, Timeline-Marker setzen und Ursache-Wirkung-Ketten identifizieren.",
+          "learningGoals": [
+            "Bewerte 5 Meta-Achsen (Struktur, Kompaktheit, Entscheidungszeit, Chancen, Turnover)",
+            "Erstelle Timeline mit wichtigen Ereignissen",
+            "Identifiziere Causal Chains (Ursache → Trigger → Konsequenz)",
+            "Erkenne Root Causes und formuliere Adjustments"
+          ],
+          "difficulty": 3,
+          "duration": 60,
+          "drills": [
+            {
+              "id": "M1_D1",
+              "title": "Meta-Scan: Gesamtspiel-Analyse",
+              "drill_type": "meta_scan",
+              "description": "Analyse des gesamten Spiels über drei Drittel hinweg mit Fokus auf Meta-Achsen, Timeline-Events und Kausalketten.",
+              "didactics": {
+                "explanation": "Dies ist ein Meta-Scan Drill. Du beobachtest nicht einzelne Shifts oder Szenen, sondern das Gesamtspiel.\n\nPro Drittel (P1/P2/P3):\n- Bewerte 5 Meta-Achsen von 1–5\n- Setze Timeline-Marker für wichtige Ereignisse\n- Identifiziere Ursache-Wirkung-Ketten\n\nNach dem Spiel (POST):\n- Fasse alles in 3 Sätzen zusammen\n- Benenne das Top 1 Problem (Root Cause)\n- Definiere das Top 1 Fix/Adjustment",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Struktur-Stabilität: Bleibt die Formation über Zeit stabil?",
+                    "Kompaktheit: Abstände, Layers, Closing-Speed",
+                    "Entscheidungszeit: Schnelle oder zögernde Entscheidungen?",
+                    "Chancenqualität: Slot vs. Perimeter, für vs. gegen",
+                    "Turnover-Druck: Wie oft kippt es durch Puckverluste?"
+                  ],
+                  "how_to_decide": [
+                    "Gesamteindruck über das Drittel",
+                    "Vergleiche mit vorherigen Dritteln",
+                    "Achte auf Muster, nicht auf Einzelereignisse"
+                  ],
+                  "ignore": [
+                    "Einzelne Fehlpässe ohne Muster",
+                    "Referee-Entscheidungen",
+                    "Score-basierte Narrative"
+                  ]
+                }
+              },
+              "config": {
+                "questions": []
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,362 @@
+/* V4 Renderer: Meta-Scan Styles */
+
+.v4Container {
+  width: 100%;
+}
+
+.versionBadge {
+  background: #1e293b;
+  color: #fff;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Meta Axes */
+.axisRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(81, 145, 162, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(81, 145, 162, 0.2);
+}
+
+.axisInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.axisDescription {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.axisScale {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.scaleButton {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(81, 145, 162, 0.4);
+  background: rgba(81, 145, 162, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scaleButton:hover {
+  background: rgba(81, 145, 162, 0.2);
+  border-color: rgba(81, 145, 162, 0.6);
+}
+
+.scaleButton.selected {
+  background: rgba(81, 145, 162, 0.4);
+  border-color: #5191a2;
+  color: #fff;
+}
+
+.clearButton {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clearButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.clearButton.selected {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+/* Timeline Markers */
+.markerForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(81, 145, 162, 0.05);
+  border-radius: 8px;
+}
+
+.markerInput {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem;
+  background: #050712;
+  color: #fff;
+  border: 1px solid rgba(81, 145, 162, 0.4);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.markerSelect {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem;
+  background: #050712;
+  color: #fff;
+  border: 1px solid rgba(81, 145, 162, 0.4);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.addButton {
+  padding: 0.5rem 1rem;
+  background: rgba(81, 145, 162, 0.3);
+  color: #fff;
+  border: 1px solid #5191a2;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addButton:hover {
+  background: rgba(81, 145, 162, 0.5);
+}
+
+.markerList {
+  margin-top: 1rem;
+}
+
+.markerList h4 {
+  margin-bottom: 0.75rem;
+  color: #5191a2;
+}
+
+.markerItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.markerContent {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+}
+
+.markerTime {
+  font-weight: 600;
+  color: #5191a2;
+  min-width: 60px;
+}
+
+.markerCategory {
+  padding: 0.25rem 0.5rem;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.markerTeam {
+  font-size: 0.9rem;
+}
+
+.markerNote {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.removeButton {
+  width: 32px;
+  height: 32px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 4px;
+  color: #ef4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton:hover {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+/* Causal Chain Builder */
+.chainForm {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(81, 145, 162, 0.05);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.chainStep {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.chainStep label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.chainSelect {
+  padding: 0.5rem;
+  background: #050712;
+  color: #fff;
+  border: 1px solid rgba(81, 145, 162, 0.4);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.chainArrow {
+  font-size: 1.5rem;
+  color: #5191a2;
+  margin: 0 0.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.chainList {
+  margin-top: 1rem;
+}
+
+.chainList h4 {
+  margin-bottom: 0.75rem;
+  color: #5191a2;
+}
+
+.chainItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.chainContent {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+  font-weight: 500;
+}
+
+.chainContent span:not(.chainArrow) {
+  padding: 0.25rem 0.5rem;
+  background: rgba(81, 145, 162, 0.15);
+  border-radius: 4px;
+}
+
+/* POST Phase */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #5191a2;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background: #050712;
+  color: #fff;
+  border: 1px solid rgba(81, 145, 162, 0.4);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  background: #050712;
+  color: #fff;
+  border: 1px solid rgba(81, 145, 162, 0.4);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.confidenceScale {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.scaleLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .axisRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .axisScale {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .markerForm,
+  .chainForm {
+    flex-direction: column;
+  }
+
+  .markerInput,
+  .markerSelect,
+  .chainStep {
+    width: 100%;
+  }
+}

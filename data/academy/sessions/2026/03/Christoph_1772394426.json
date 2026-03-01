@@ -1,0 +1,89 @@
+{
+  "id": "Christoph_1772394426",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "M1",
+  "goal": "Auto: M1 – Meta-Scan Novice",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "M1_D1",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-03-01T20:47:06.034744",
+  "drills": [
+    {
+      "id": "M1_D1",
+      "title": "Meta-Scan: Gesamtspiel-Analyse",
+      "drill_type": "meta_scan",
+      "description": "Analyse des gesamten Spiels über drei Drittel hinweg mit Fokus auf Meta-Achsen, Timeline-Events und Kausalketten.",
+      "didactics": {
+        "explanation": "Dies ist ein Meta-Scan Drill. Du beobachtest nicht einzelne Shifts oder Szenen, sondern das Gesamtspiel.\n\nPro Drittel (P1/P2/P3):\n- Bewerte 5 Meta-Achsen von 1–5\n- Setze Timeline-Marker für wichtige Ereignisse\n- Identifiziere Ursache-Wirkung-Ketten\n\nNach dem Spiel (POST):\n- Fasse alles in 3 Sätzen zusammen\n- Benenne das Top 1 Problem (Root Cause)\n- Definiere das Top 1 Fix/Adjustment",
+        "observation_guide": {
+          "what_to_watch": [
+            "Struktur-Stabilität: Bleibt die Formation über Zeit stabil?",
+            "Kompaktheit: Abstände, Layers, Closing-Speed",
+            "Entscheidungszeit: Schnelle oder zögernde Entscheidungen?",
+            "Chancenqualität: Slot vs. Perimeter, für vs. gegen",
+            "Turnover-Druck: Wie oft kippt es durch Puckverluste?"
+          ],
+          "how_to_decide": [
+            "Gesamteindruck über das Drittel",
+            "Vergleiche mit vorherigen Dritteln",
+            "Achte auf Muster, nicht auf Einzelereignisse"
+          ],
+          "ignore": [
+            "Einzelne Fehlpässe ohne Muster",
+            "Referee-Entscheidungen",
+            "Score-basierte Narrative"
+          ]
+        }
+      },
+      "config": {
+        "questions": []
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {
+        "meta": {
+          "axes": {},
+          "timeline": [],
+          "chains": [],
+          "postSummary": {}
+        }
+      },
+      "timestamp": "2026-03-01T20:47:09.184891"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-03-01T19:47:05.995Z"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": false,
+      "text": ""
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}
