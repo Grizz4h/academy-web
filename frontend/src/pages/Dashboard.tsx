@@ -5,6 +5,7 @@ import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
 import Card from '../components/Card';
 import Pill from '../components/Pill';
+import { DrillActivityHeatmap } from '../components/dashboard/DrillActivityHeatmap';
 import styles from './Dashboard.module.css';
 
 export default function Dashboard() {
@@ -151,6 +152,49 @@ export default function Dashboard() {
     const aborted = list.filter((s) => s.state === "ABORTED").length;
     const inProgress = list.filter((s) => s.state === "IN_PROGRESS").length;
 
+    // --- Drill-Aktivität für Heatmap aggregieren ---
+    const drillAttempts: Array<{ 
+      drillId: string; 
+      drillName: string; 
+      timestamp: string;
+      moduleId?: string;
+      trackTitle?: string;
+      drillNumber?: number;
+    }> = [];
+    
+    // Erstelle Map für schnelles Drill-Lookup mit Kontext
+    const drillContextMap = new Map<string, { moduleId: string; trackTitle: string; drillNumber: number }>();
+    if (curriculum) {
+      for (const track of curriculum.tracks) {
+        for (const module of track.modules) {
+          module.drills.forEach((drill, index) => {
+            drillContextMap.set(drill.id, {
+              moduleId: module.id,
+              trackTitle: track.title,
+              drillNumber: index + 1
+            });
+          });
+        }
+      }
+    }
+    
+    for (const s of list) {
+      // Nur abgeschlossene Sessions zählen für die Heatmap
+      if (s.state === "COMPLETED") {
+        for (const d of s.drills || []) {
+          const context = drillContextMap.get(d.id);
+          drillAttempts.push({
+            drillId: d.id,
+            drillName: d.title,
+            timestamp: s.created_at,
+            moduleId: context?.moduleId,
+            trackTitle: context?.trackTitle,
+            drillNumber: context?.drillNumber
+          });
+        }
+      }
+    }
+
     // Hygiene: Doppelte Phasen, fehlendes Microfeedback (korrektes Feld prüfen)
     const hygieneIssues: string[] = [];
     for (const s of list) {
@@ -189,6 +233,7 @@ export default function Dashboard() {
       totalDrills,
       completedDrills,
       trackProgress,
+      drillAttempts,
     };
   }, [sessions, curriculum]);
 
@@ -363,6 +408,9 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+
+      {/* Drill Activity Heatmap */}
+      <DrillActivityHeatmap attempts={derived.drillAttempts} days={90} />
 
       {/* Recent Sessions */}
       <Card className={styles.recentCard}>

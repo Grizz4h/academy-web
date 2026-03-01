@@ -1,0 +1,204 @@
+{
+  "id": "Christoph_1772378824",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A2",
+  "goal": "Ich mache den Drill zum ersten Mal mal schauen, wie’s läuft Mit",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A2_D2",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-03-01T16:27:04.205353",
+  "drills": [
+    {
+      "id": "A2_D2",
+      "title": "Exit-Qualität erkennen (Kontrolle vs. Befreiung)",
+      "drill_type": "period_checkin",
+      "description": "Unterscheide kontrollierte Exits von reinen Befreiungen. Fokus liegt auf dem Moment direkt nach der Blue Line.",
+      "didactics": {
+        "explanation": "Ein Exit ist erst dann kontrolliert, wenn nach dem Überqueren der Blue Line eine Anschlussaktion möglich ist. Nicht jeder Zonenverlass mit Tempo bedeutet Kontrolle.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Bleibt der Puck nach der Blue Line im eigenen Teambesitz?",
+            "Kann der puckführende Spieler eine Anschlussaktion wählen?",
+            "Sind Abstände und Geschwindigkeit für einen Aufbau geeignet?"
+          ],
+          "how_to": [
+            "Beobachte bewusst die ersten 1–2 Sekunden nach der Blue Line",
+            "Achte auf Optionen, nicht auf den späteren Angriff",
+            "Halte den ersten Eindruck fest",
+            "Nicht erklären, nur einordnen"
+          ],
+          "ignore": [
+            "Wie der Angriff später endet",
+            "Einzelaktionen oder Zufallsgewinne",
+            "Ob der Exit technisch spektakulär wirkt"
+          ]
+        },
+        "inline_explanations": {
+          "kontrolliert": {
+            "meaning": "Der Puck bleibt im Teambesitz und es gibt mindestens eine klare Anschlussoption für Aufbau oder Weiterführung."
+          },
+          "halbkontrolliert": {
+            "meaning": "Der Puck kommt kontrolliert über die Blue Line, steht aber sofort unter Druck oder ohne klare Anschlussoption."
+          },
+          "befreiung": {
+            "meaning": "Der Puck wird aus der Zone gespielt, ohne realistische Chance auf unmittelbaren Teambesitz oder Anschluss."
+          },
+          "ja": {
+            "meaning": "Ein Mitspieler ist anspielbar oder Raum kann direkt genutzt werden."
+          },
+          "nein": {
+            "meaning": "Der Puck wird sofort verloren oder nur hinterhergespielt."
+          }
+        },
+        "learning_hint": "Kontrolle zeigt sich nicht im Exit selbst, sondern in dem, was danach möglich ist."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "exit_type": "kontrolliert"
+            },
+            "questions": [
+              "Wodurch war der Anschluss nach der Blue Line klar erkennbar?",
+              "Hatte der puckführende Spieler echte Wahlmöglichkeiten?",
+              "Wie wirkten Abstände und Tempo im Moment des Exits?"
+            ]
+          },
+          {
+            "when": {
+              "exit_type": "halbkontrolliert"
+            },
+            "questions": [
+              "Was hat zur vollen Kontrolle gefehlt?",
+              "War der Druck zu hoch oder der Abstand zu groß?",
+              "Kippte die Situation direkt nach der Blue Line?"
+            ]
+          },
+          {
+            "when": {
+              "exit_type": "befreiung"
+            },
+            "questions": [
+              "Woran hast du sofort erkannt, dass keine Kontrolle entsteht?",
+              "Gab es realistisch eine Anschlussoption?",
+              "War der Exit eher Notlösung oder bewusst gewählt?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "exit_type",
+            "type": "radio",
+            "label": "Exit-Typ",
+            "options": [
+              "kontrolliert",
+              "halbkontrolliert",
+              "befreiung"
+            ]
+          },
+          {
+            "key": "connection",
+            "type": "radio",
+            "label": "Anschluss vorhanden?",
+            "options": [
+              "ja",
+              "nein"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung",
+            "max_chars": 1500
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-03-01T16:27:25.289246"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "note": "P1 – München vs. Köln\n\nMehrere unsaubere Breakout-Versuche. Häufig Bande in die neutrale Zone gespielt, oft unter Druck und eher als Notlösung. Mehrfach scharfe Pässe entlang der Wand, teilweise berührt (kein Icing), aber ohne klare Anschlussstruktur. Wiederholt Puckgewinne im eigenen Drittel mit anschließendem Chip in die neutrale Zone, jedoch ohne Kontrolle oder sofortiger erneuter Scheibenverlust.\n\nEinzelne Sequenzen mit Middle-Carry durch die neutrale Zone mit Tempo, teils abgefälschte Abschlüsse oder Entry mit Speed, jedoch selten stabile Fortsetzung im Angriffsdrittel. Mehrere riskante D-zu-D-Wechsel unter Druck führten zu Befreiungsschlägen oder erzwungenen Clears.\n\nTeilweise gute Speed-Transitions durch die Mitte, danach jedoch wieder Chip in die Rundung oder 50/50-Situationen. Insgesamt viele Phasen mit Unterzahl/Überzahl, wodurch Struktur schwer konstant bewertbar war.\n",
+        "exit_type": "halbkontrolliert",
+        "connection": "nein"
+      },
+      "timestamp": "2026-03-01T17:13:38.292889"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "note": "P2 – München vs. Köln\n\nViele Exit-Versuche unter Druck enden in Chips in die neutrale Zone ohne nachhaltige Kontrolle. Wiederholt halbkotrollierte Übergänge über die Blue Line mit anschließendem Puckverlust in der neutralen Zone. Mehrere Icings als Zeichen fehlender sauberer Lösung unter Forecheck.\n\nAuffällig: Schwierigkeiten, die neutrale Zone strukturiert zu überbrücken. Häufig zu scharfe oder unpräzise Pässe, die nicht verarbeitet werden können. Unter Druck wird oft in die Rundung oder tief gechippt, eher Befreiung als Aufbau.\n\nIn wenigen Sequenzen gelingt das saubere Durchtragen mit Speed durch die neutrale Zone, Querpass im Entry und sofortige Gefährlichkeit. Diese Szenen zeigen klar, dass bei kontrollierter Überbrückung sofort Dynamik entsteht.\n\nKöln setzt München in der neutralen Zone früh unter Druck und verhindert kontrollierte Übergänge. Wenn München Raum bekommt und mit Tempo durchträgt, entstehen sofort Chancen – dies gelingt jedoch zu selten.",
+        "exit_type": "halbkontrolliert",
+        "connection": "ja"
+      },
+      "timestamp": "2026-03-01T17:57:31.469467"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "note": "halbkontriiliert. halbkontrilliert gechippt. verlust in neutraler. befreit dirketre verlust in der neutralen wieder. halbkontrolliert entry kein exit. kontrollierter entry skate durch neutral exit. konrolliert skate durch n zone. crunch time münchen presst und schickt die besten leute aufs eis. ",
+        "exit_type": "halbkontrolliert",
+        "connection": "nein"
+      },
+      "timestamp": "2026-03-01T18:50:16.768088"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-03-01T18:50:47.755365"
+    }
+  ],
+  "drafts": {},
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-03-01T18:50:47.803439"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "EHC Red Bull München",
+    "team_away": "Kölner Haie",
+    "observed_team": "EHC Red Bull München",
+    "date": "2026-03-01T15:27:04.104Z",
+    "season": "2025/26",
+    "matchday": "47"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Bin unsicher, so eher so fifty-fifty also sie haben schon oft zinsätzt durch die neutrale Zone geskatet und haben aber oft ganz schlapp in die neutrale Zone getippt",
+      "ts": "2026-03-01T17:14:01.734313"
+    },
+    "P2": {
+      "done": true,
+      "text": "Es waren dann doch zu viele unkontrollierte exits",
+      "ts": "2026-03-01T17:57:52.256215"
+    },
+    "P3": {
+      "done": true,
+      "text": "es waren einfach zu wening erfolgreiche exits aus der neutralen Zone",
+      "ts": "2026-03-01T18:50:46.150876"
+    }
+  }
+}
