@@ -1,0 +1,181 @@
+{
+  "id": "Christoph_1772428145",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A2",
+  "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A2_D3",
+  "state": "IN_PROGRESS",
+  "current_phase": "P2",
+  "created_at": "2026-03-02T06:09:05.646922",
+  "drills": [
+    {
+      "id": "A2_D3",
+      "title": "Blue-Line-Entscheidungen",
+      "drill_type": "period_checkin",
+      "description": "Beobachte Entscheidungen an der offensiven Blue Line. Fokus auf Tempo, Abstände und Unterstützung beim Entry.",
+      "didactics": {
+        "explanation": "An der offensiven Blue Line entscheidet sich, ob ein Angriff aufgebaut, verzögert oder verloren wird. Nicht jede aggressive Entscheidung ist falsch – aber viele sind schlecht vorbereitet.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Tempo des Puckführers beim Erreichen der offensiven Blue Line",
+            "Abstand zu Mitspielern vor und hinter dem Puck",
+            "Gibt es eine reale Unterstützungsoption für Entry oder Rückzug?"
+          ],
+          "how_to_decide": [
+            "Beobachte den Moment direkt vor der Blue Line",
+            "Bewerte Tempo, Abstand und Unterstützung gemeinsam",
+            "Frage dich: Gibt es eine echte Wahlmöglichkeit?",
+            "Beurteile die Entscheidung, nicht das Ergebnis"
+          ],
+          "ignore": [
+            "Wie der Angriff danach endet",
+            "Zufällige Einzelaktionen ohne Unterstützung"
+          ]
+        },
+        "inline_explanations": {
+          "Sauber": {
+            "meaning": "Der Entry ist vorbereitet: Tempo, Abstände und Unterstützung passen, Optionen sind klar erkennbar."
+          },
+          "Riskant": {
+            "meaning": "Die Idee ist erkennbar, aber mindestens ein Faktor (Tempo, Abstand oder Support) ist grenzwertig."
+          },
+          "Unnötig": {
+            "meaning": "Es gab eine klar bessere, sichere Option – trotzdem wird der Entry forciert."
+          },
+          "Tempo-Abbruch": {
+            "meaning": "Tempo wird an der falschen Stelle reduziert oder unklar variiert. Der Gegner schließt auf, Optionen sterben."
+          },
+          "Keine Unterstützung": {
+            "meaning": "Der Puckführer hat keinen erreichbaren Support. Kein Drop, kein Delay, keine Rückoption."
+          },
+          "Spacing-Problem": {
+            "meaning": "Abstände zwischen den Spielern sind zu groß oder ungleichmäßig. Unterstützung kommt zu spät oder gar nicht."
+          },
+          "Blind Entry": {
+            "meaning": "Die Blue Line wird ohne Wahrnehmung von Gegnern, Raum oder Unterstützung überquert – Hoffnung statt Information."
+          }
+        },
+        "learning_hint": "An der offensiven Blue Line entscheidet nicht Mut, sondern Vorbereitung. Tempo, Abstand und Support bestimmen die richtige Wahl."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "bl_decision": "sauber"
+            },
+            "questions": [
+              "Wodurch war die Entscheidung an der Blue Line klar vorbereitet?",
+              "Gab es sichtbare Unterstützung oder Raum für eine Alternative?",
+              "Wirkte das Tempo bewusst gewählt oder automatisch?"
+            ]
+          },
+          {
+            "when": {
+              "bl_decision": "riskant"
+            },
+            "questions": [
+              "Was hat die Entscheidung riskant gemacht?",
+              "Lag das Risiko eher an Tempo, Abstand oder fehlender Unterstützung?",
+              "Gab es eine sicherere Option, die nicht genutzt wurde?"
+            ]
+          },
+          {
+            "when": {
+              "bl_decision": "unnötig"
+            },
+            "questions": [
+              "Warum war die Entscheidung unnötig?",
+              "Wäre ein Verzögern oder Abbruch realistischer gewesen?",
+              "Welche Information wurde offenbar ignoriert?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "bl_decision",
+            "type": "radio",
+            "label": "Blue-Line-Entscheidung",
+            "options": [
+              "Sauber",
+              "Riskant",
+              "Unnötig"
+            ]
+          },
+          {
+            "key": "bl_cause",
+            "type": "radio",
+            "label": "Ursache",
+            "options": [
+              "Tempo-Abbruch",
+              "Keine Unterstützung",
+              "Spacing-Problem",
+              "Blind Entry"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Notiz (optional)",
+            "max_chars": 1500
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {
+        "expectations": "Drill zum ersten Mal, mal schauen "
+      },
+      "timestamp": "2026-03-02T06:09:24.798387"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "bl_decision": "Sauber",
+        "note": "Sie versuchen oft mit sehr viel Geschwindigkeit durch die neutrale zu kommen. Klappt oft dass sie mit Speed Exiten. Oft der scharfe pass zur Mitte neutrale Zone. Es wird immer jemand mit Speed in der neutralen gesucht, wenn sie den pass dort versuchen. Notlösung ist meistens scharf in die Rundung lang. Mit viel Geschwindigkeit durch die neutrale getragen und Zug zum Tor in der o Zone. "
+      },
+      "timestamp": "2026-03-03T11:13:22.162653"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "NHL",
+    "team_home": "Toronto Maple Leafs",
+    "team_away": "Ottawa Senators",
+    "observed_team": "Ottawa Senators",
+    "date": "2026-03-02T05:09:05.518Z",
+    "season": "2025/26",
+    "matchday": "60"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Es stand einer in Position.",
+      "ts": "2026-03-03T11:13:34.235179"
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}
