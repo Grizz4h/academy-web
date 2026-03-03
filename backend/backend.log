@@ -337,3 +337,18 @@ INFO:     80.187.81.188:0 - "GET /api/sessions?user=christoph HTTP/1.0" 200 OK
 [microfeedback] session=Christoph_1772129257 phase=P3 trace_id=6aae4b09-5c76-4d30-954a-ac56e8cd5936 trace_action=submitMicrofeedback text_len=72
 [checkin:cb9f016b] session=Christoph_1772129257 phase_raw='POST' phase_norm='POST' action=append trace_id=1d012a7c-ffc0-445d-85c1-38bd802c2048 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
 [checkin:cb9f016b] session=Christoph_1772129257 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:b7f03ef6] session=Christoph_1772534090 phase_raw='PRE' phase_norm='PRE' action=append trace_id=99bb018d-a9a2-49a7-8bae-4c906023b9d0 trace_action=saveCheckin counts_before={}
+[checkin:b7f03ef6] session=Christoph_1772534090 counts_after={'PRE': 1}
+[checkin:efac3dbd] session=Christoph_1772534162 phase_raw='PRE' phase_norm='PRE' action=append trace_id=428ea45d-7f26-4c85-bbb0-ab2e23186fc0 trace_action=saveCheckin counts_before={}
+[checkin:efac3dbd] session=Christoph_1772534162 counts_after={'PRE': 1}
+[checkin:87a8fa1b] session=Christoph_1772534983 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0d6138b6-68d6-4897-83b4-ac35b1b15114 trace_action=saveCheckin counts_before={}
+[checkin:87a8fa1b] session=Christoph_1772534983 counts_after={'PRE': 1}
+[checkin:71093a2f] session=Christoph_1772535330 phase_raw='PRE' phase_norm='PRE' action=append trace_id=548c97d4-c5aa-4546-bd6b-c4069610474c trace_action=saveCheckin counts_before={}
+[checkin:71093a2f] session=Christoph_1772535330 counts_after={'PRE': 1}
+[checkin:8b49431c] session=Christoph_1772535681 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0aff2f54-906a-4223-a06b-c92117c0a3de trace_action=saveCheckin counts_before={}
+[checkin:8b49431c] session=Christoph_1772535681 counts_after={'PRE': 1}
+[checkin:13395dd1] session=Christoph_1772535850 phase_raw='PRE' phase_norm='PRE' action=append trace_id=c9e8ed1e-817c-4623-8165-c27564e0ff7f trace_action=saveCheckin counts_before={}
+[checkin:13395dd1] session=Christoph_1772535850 counts_after={'PRE': 1}
+[checkin:889fe10d] session=Christoph_1772535850 phase_raw='P1' phase_norm='P1' action=append trace_id=69167742-7757-44fe-b392-f6c6e1a36f21 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:889fe10d] session=Christoph_1772535850 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1772535850 phase=P1 trace_id=cda859a7-39a6-468e-913a-01faecd0a7ff trace_action=submitMicrofeedback text_len=19

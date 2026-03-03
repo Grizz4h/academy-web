@@ -654,6 +654,21 @@
   "Unnötig": {
     "meaning": "Es gab eine klar bessere, sichere Option – trotzdem wird der Entry forciert."
   },
+  "Gutes Gap/Timing": {
+    "meaning": "Du gehst über die Line, wenn der Gap passt: genug Raum, Defender nicht close, kein Stand-Up."
+  },
+  "Unterstützung vorhanden": {
+    "meaning": "Es gibt eine echte Option: inside support, trailer, drop oder wall-option. Du bist nicht allein."
+  },
+  "Lane klar erkannt": {
+    "meaning": "Du erkennst die freie Lane (Stick, Body, Angle des Defenders) und nutzt sie ohne in Traffic zu fahren."
+  },
+  "Puck sauber geschützt": {
+    "meaning": "Du hältst den Puck auf der sicheren Seite, nutzt Körper- und Stickposition und verlierst ihn nicht am ersten Kontakt."
+  },
+  "Richtige einfache Option gewählt": {
+    "meaning": "Du nimmst die sichere, saubere Lösung (z. B. chip & retrieve, delay, bump) statt Hero-Play."
+  },
   "Tempo-Abbruch": {
     "meaning": "Tempo wird an der falschen Stelle reduziert oder unklar variiert. Der Gegner schließt auf, Optionen sterben."
   },
@@ -661,10 +676,28 @@
     "meaning": "Der Puckführer hat keinen erreichbaren Support. Kein Drop, kein Delay, keine Rückoption."
   },
   "Spacing-Problem": {
-    "meaning": "Abstände zwischen den Spielern sind zu groß oder ungleichmäßig. Unterstützung kommt zu spät oder gar nicht."
+    "meaning": "Abstände sind zu groß oder ungleichmäßig. Unterstützung kommt zu spät oder gar nicht, der Gegner kann pressen."
+  },
+  "Lane falsch gelesen": {
+    "meaning": "Du liest Defender, Stick oder Angle falsch und fährst in eine Lane, die real nicht offen ist."
+  },
+  "Zu spät entschieden": {
+    "meaning": "Hesitation an der Line. Der Gap wird klein, Druck kommt ran, und es bleibt nur noch eine Notlösung."
   },
   "Blind Entry": {
-    "meaning": "Die Blue Line wird ohne Wahrnehmung von Gegnern, Raum oder Unterstützung überquert – Hoffnung statt Information."
+    "meaning": "Du gehst über die Line ohne echte Info (kein Scan, kein Read). Hoffnung statt Entscheidung."
+  },
+  "Option ignoriert": {
+    "meaning": "Es gibt eine klare bessere Lösung (Drop, Delay, Wide, Chip), aber du gehst stur durch."
+  },
+  "Kein Pre-Scan": {
+    "meaning": "Du schaust vor der Line nicht hoch. Defender, Support und Lane werden zu spät erkannt."
+  },
+  "Überambitioniert": {
+    "meaning": "Zu kompliziert oder zu riskant für die Situation (Score, Shift, Support)."
+  },
+  "Struktur nicht beachtet": {
+    "meaning": "Teamstruktur und Anschlussoptionen werden ignoriert, der Entry passt nicht zur Situation."
   }
 },
     "learning_hint": "An der offensiven Blue Line entscheidet nicht Mut, sondern Vorbereitung. Tempo, Abstand und Support bestimmen die richtige Wahl."
@@ -674,7 +707,7 @@
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "bl_decision": "sauber" },
+        "when": { "bl_decision": "Sauber" },
         "questions": [
           "Wodurch war die Entscheidung an der Blue Line klar vorbereitet?",
           "Gab es sichtbare Unterstützung oder Raum für eine Alternative?",
@@ -682,7 +715,7 @@
         ]
       },
       {
-        "when": { "bl_decision": "riskant" },
+        "when": { "bl_decision": "Riskant" },
         "questions": [
           "Was hat die Entscheidung riskant gemacht?",
           "Lag das Risiko eher an Tempo, Abstand oder fehlender Unterstützung?",
@@ -690,7 +723,7 @@
         ]
       },
       {
-        "when": { "bl_decision": "unnötig" },
+        "when": { "bl_decision": "Unnötig" },
         "questions": [
           "Warum war die Entscheidung unnötig?",
           "Wäre ein Verzögern oder Abbruch realistischer gewesen?",
@@ -705,6 +738,7 @@
       "key": "bl_decision",
       "type": "radio",
       "label": "Blue-Line-Entscheidung",
+      "desc": "Bewerte die Entry-Qualität als Gesamteindruck: War die Entscheidung vorbereitet und logisch (Sauber), gerade noch vertretbar (Riskant) oder unnötig forciert (Unnötig)?",
       "options": [
         "Sauber",
         "Riskant",
@@ -714,18 +748,40 @@
     {
       "key": "bl_cause",
       "type": "radio",
-      "label": "Ursache",
-      "options": [
-        "Tempo-Abbruch",
-        "Keine Unterstützung",
-        "Spacing-Problem",
-        "Blind Entry"
-      ]
+      "label": "Was war der entscheidende Faktor?",
+      "desc": "Wähle den Hauptfaktor: Bei Sauber den entscheidenden positiven Faktor, bei Riskant/Unnötig den stärksten kippenden Grund.",
+      "conditional_options": {
+        "bl_decision": {
+          "Sauber": [
+            "Gutes Gap/Timing",
+            "Unterstützung vorhanden",
+            "Lane klar erkannt",
+            "Puck sauber geschützt",
+            "Richtige einfache Option gewählt"
+          ],
+          "Riskant": [
+            "Tempo-Abbruch",
+            "Keine Unterstützung",
+            "Spacing-Problem",
+            "Lane falsch gelesen",
+            "Zu spät entschieden"
+          ],
+          "Unnötig": [
+            "Blind Entry",
+            "Option ignoriert",
+            "Kein Pre-Scan",
+            "Überambitioniert",
+            "Struktur nicht beachtet"
+          ]
+        }
+      }
     },
     {
       "key": "note",
       "type": "text",
       "label": "Notiz (optional)",
+      "desc": "Kurz festhalten, was du gesehen hast. Ideal: Zeit/Shift + Entry-Typ + Ergebnis.",
+      "placeholder": "z.B. 12:40 / 2. Drittel – Carry Entry rechts – Riskant wegen Support fehlt – Turnover an der Line.",
       "max_chars": 1500
     }
   ]

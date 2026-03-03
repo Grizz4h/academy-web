@@ -1,5 +1,6 @@
 // ✅ ACTIVE: Renderer v3 for E (Kopie von v2, Stand 2026-01-21)
 
+import { useEffect } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 
@@ -246,6 +247,32 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
     );
   }
 
+	// Cleanup: remove stale answers when conditional options change
+	const controllers = questions
+		.map((q: any) => q.conditional_options ? Object.keys(q.conditional_options)[0] : null)
+		.filter(Boolean);
+	const signature = controllers.map((k: string) => `${k}:${answers?.[k] ?? ''}`).join('|');
+
+	useEffect(() => {
+		const next = { ...answers };
+		let changed = false;
+
+		for (const q of questions) {
+			if (!q.conditional_options) continue;
+			const controllerKey = Object.keys(q.conditional_options)[0];
+			if (!controllerKey) continue;
+			const controllerValue = answers?.[controllerKey];
+			const effectiveOptions = q.conditional_options?.[controllerKey]?.[controllerValue] || q.options || [];
+			const currentValue = next[q.key];
+			if (currentValue && Array.isArray(effectiveOptions) && !effectiveOptions.includes(currentValue)) {
+				delete next[q.key];
+				changed = true;
+			}
+		}
+
+		if (changed) setAnswers(next);
+	}, [signature, drill?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
 	return (
 		<div className="card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
@@ -274,12 +301,19 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				</section>
 			)}
 			<ObservationGuide drill={drill} />
-			{questions.map((q: any) => (
+			{questions.map((q: any) => {
+				const controllerKey = q.conditional_options ? Object.keys(q.conditional_options)[0] : null;
+				const controllerValue = controllerKey ? answers?.[controllerKey] : undefined;
+				const effectiveOptions = q.conditional_options && controllerKey
+					? q.conditional_options?.[controllerKey]?.[controllerValue] || []
+					: q.options || [];
+
+				return (
 				<div key={q.key} style={{ marginBottom: "1rem" }}>
 					<label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>{q.label}</label>
-					{q.type === "radio" && Array.isArray(q.options) && (
+					{q.type === "radio" && Array.isArray(effectiveOptions) && (
 						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-							{q.options.map((opt: string) => {
+							{effectiveOptions.map((opt: string) => {
 								const inlineExplanations = drill.didactics?.inline_explanations || {};
 								const optKey = Object.keys(inlineExplanations).find(
 									k => k === opt || k.toLowerCase() === opt.toLowerCase()
@@ -324,7 +358,8 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 						/>
 					)}
 				</div>
-			))}
+				);
+			})}
 			{drill.didactics?.learning_hint && (
 				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>

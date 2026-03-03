@@ -134,6 +134,32 @@ export default function DrillRendererV1({ drill, initialAnswers, onChangeAnswers
 
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
+
+	// Cleanup: remove stale answers when conditional options change
+	const controllers = questions
+		.map((q: any) => q.conditional_options ? Object.keys(q.conditional_options)[0] : null)
+		.filter(Boolean);
+	const signature = controllers.map((k: string) => `${k}:${answers?.[k] ?? ''}`).join('|');
+
+	useEffect(() => {
+		const next = { ...answers };
+		let changed = false;
+
+		for (const q of questions) {
+			if (!q.conditional_options) continue;
+			const controllerKey = Object.keys(q.conditional_options)[0];
+			if (!controllerKey) continue;
+			const controllerValue = answers?.[controllerKey];
+			const effectiveOptions = q.conditional_options?.[controllerKey]?.[controllerValue] || q.options || [];
+			const currentValue = next[q.key];
+			if (currentValue && Array.isArray(effectiveOptions) && !effectiveOptions.includes(currentValue)) {
+				delete next[q.key];
+				changed = true;
+			}
+		}
+
+		if (changed) setAnswers(next);
+	}, [signature, drill?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 	
 	const glossary = drill?.didactics?.glossary;
 
@@ -173,47 +199,55 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 			<ObservationGuide drill={drill} />
 
 			{/* Fragen */}
-			{questions.map((q: any) => (
-				<div key={q.key} style={{ marginBottom: "1rem" }}>
-					<label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>{q.label}</label>
+			{questions.map((q: any) => {
+				const controllerKey = q.conditional_options ? Object.keys(q.conditional_options)[0] : null;
+				const controllerValue = controllerKey ? answers?.[controllerKey] : undefined;
+				const effectiveOptions = q.conditional_options && controllerKey
+					? q.conditional_options?.[controllerKey]?.[controllerValue] || []
+					: q.options || [];
 
-					{q.type === "radio" && Array.isArray(q.options) && (
-						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-							{q.options.map((opt: string) => (
-								<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-									<input
-										type="radio"
-										name={q.key}
-										value={opt}
-										checked={answers[q.key] === opt}
-										onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-									/>
-									{highlightGlossaryTerms(opt, glossary)}
-								</label>
-							))}
-						</div>
-					)}
+				return (
+					<div key={q.key} style={{ marginBottom: "1rem" }}>
+						<label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>{q.label}</label>
 
-					{q.type === "text" && (
-						<textarea
-							value={answers[q.key] || ""}
-							onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
-							maxLength={q.max_chars || 1500}
-							placeholder={q.placeholder || "Optional: kurze Notiz"}
-							style={{
-								width: "100%",
-								minHeight: "60px",
-								padding: "0.5rem",
-								backgroundColor: "#050712",
-								color: "#f7f7ff",
-								border: "1px solid rgba(81,145,162,0.5)",
-								borderRadius: "4px",
-								fontFamily: "inherit",
-							}}
-						/>
-					)}
-				</div>
-			))}
+						{q.type === "radio" && Array.isArray(effectiveOptions) && (
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+								{effectiveOptions.map((opt: string) => (
+									<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+										<input
+											type="radio"
+											name={q.key}
+											value={opt}
+											checked={answers[q.key] === opt}
+											onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+										/>
+										{highlightGlossaryTerms(opt, glossary)}
+									</label>
+								))}
+							</div>
+						)}
+
+						{q.type === "text" && (
+							<textarea
+								value={answers[q.key] || ""}
+								onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+								maxLength={q.max_chars || 1500}
+								placeholder={q.placeholder || "Optional: kurze Notiz"}
+								style={{
+									width: "100%",
+									minHeight: "60px",
+									padding: "0.5rem",
+									backgroundColor: "#050712",
+									color: "#f7f7ff",
+									border: "1px solid rgba(81,145,162,0.5)",
+									borderRadius: "4px",
+									fontFamily: "inherit",
+								}}
+							/>
+						)}
+					</div>
+				);
+			})}
 
 			{/* Weiter-Button entfernt, Steuerung erfolgt extern */}
 
