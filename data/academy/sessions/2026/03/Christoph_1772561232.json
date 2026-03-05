@@ -1,5 +1,5 @@
 {
-  "id": "Christoph_1772535850",
+  "id": "Christoph_1772561232",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
@@ -10,7 +10,7 @@
   "drill_id": "A2_D3",
   "state": "COMPLETED",
   "current_phase": "POST",
-  "created_at": "2026-03-03T12:04:10.535511",
+  "created_at": "2026-03-03T19:07:12.889820",
   "drills": [
     {
       "id": "A2_D3",
@@ -194,39 +194,39 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-03-03T12:04:12.773253"
+      "timestamp": "2026-03-03T19:07:15.700798"
     },
     {
       "phase": "P1",
       "answers": {
-        "bl_decision": "Sauber",
-        "note": "Sie versuchen oft mit sehr viel Geschwindigkeit durch die neutrale zu kommen. Klappt oft dass sie mit Speed Exiten. Oft der scharfe pass zur Mitte neutrale Zone. Es wird immer jemand mit Speed in der neutralen gesucht, wenn sie den pass dort versuchen. Notlösung ist meistens scharf in die Rundung lang. Mit viel Geschwindigkeit durch die neutrale getragen und Zug zum Tor in der o Zone.",
-        "bl_cause": "Puck sauber geschützt"
+        "note": "sie versuchen auf jeden Fall die neutrale Zone über Geschwindigkeit zu kontrollieren. Anspielstationen muss ich beachte. pass in neutrale zone skate entry über blaue. unter druck in die neutrale pressing des gegners erfolgriech. kontrolle in der neutralen durch skaten und entry. center bietet sich neutrale an vertielt. center führt zru baluen dann auf winger spiel breit. durch die hohe geschwindigkeitn beim entry o zone kommt es oft dazu dass die winger nicht dabei sind und die anspielstationen fehlen liegt das etwas daran dass die winger nicht mit dem gleichen speed entern?",
+        "bl_decision": "Riskant",
+        "bl_cause": "Keine Unterstützung"
       },
-      "timestamp": "2026-03-03T12:04:37.834358"
+      "timestamp": "2026-03-03T19:29:15.417958"
     },
     {
       "phase": "P2",
       "answers": {
+        "note": "kopf oben aber keine option nach entry chip in rundunf. neurtrale mit pass überbrückt. kollektiv aufgerückt. mit speed in di n zone und winger skatet mit ablage. teilweise sehr harte pässe in die neutrale und dann speed entry in o zone. kontrollieren auch diese harten pässe. ",
         "bl_decision": "Sauber",
-        "note": "3 Welle Speed entry Center mt Speed zu Mitte über Blue line strong side winger auf etwas gleicher Höhe pass in den Lauf Wrack side etwas versetzt nach hinten mustergültig würd ich sagen. 3er Welle ähnlich wie  gerade aber mehr unter Druck. Zu zweit auf der strong side an der Linie aber mir etwas weniger Tempo weak Side winger entered etwas versetzt dahinter. Wechsel Chip aus neutraler Zone, keine anspieststion und Wechsel. Center Puck Gewinn in neutraler Zone Mitte kurz verzögert damit Stromgside aufschließt, weakside wieder leicht versetzt dahinter daher kein HIGHspeed entry. Ich weiß nicht ob es an Ottawa liegt oder NHL, aber man sieht diese wellenangriffe sehr gut. Etwas langsamerer 3er Wellen entry Center entscheidet spät was die strong Side werden soll und daher beide winger an der Linie auf gleicher Höhe. Soll ich überhaupt beobachten wenn es einen Turnover In der n Zone gibt oder das ignorieren bei diesem Drill?  ",
-        "bl_cause": "Unterstützung vorhanden"
+        "bl_cause": "Lane klar erkannt"
       },
-      "timestamp": "2026-03-04T06:37:34.323576"
+      "timestamp": "2026-03-03T20:34:17.160315"
     },
     {
       "phase": "P3",
       "answers": {
-        "note": "N Zone schnell durchskatet, weakside kommt mit für Querpass. Viele icing as von Ottawa. Chip von neutral in die Rundung 50/50. mit Speed durch n Zone Seitenwechsel über Bande. Toronto kontrolliert gut die neutrale Zone würd ich sagen. 2er Welle entry, kein weakside Support. Enter als 4er Welle, sieht man auch selten, hat etwas chaotisch gewirkt und die Abstände haben nicht gepasst so wirklich. ",
         "bl_decision": "Riskant",
+        "note": "sie kommen eigentilch meistens als 2 bis 3 er Welle in die o zone. also jetzt lag luela hinten und hat dadurch viel geforchecked, dadurch kam Götheborg nicht zu wirklich viel. es wurde in der neutrale zone meist unterbunden",
         "bl_cause": "Keine Unterstützung"
       },
-      "timestamp": "2026-03-04T16:05:47.843445"
+      "timestamp": "2026-03-03T21:24:11.387951"
     },
     {
       "phase": "POST",
       "answers": {},
-      "timestamp": "2026-03-04T16:06:15.005076"
+      "timestamp": "2026-03-03T21:24:47.208068"
     }
   ],
   "drafts": {},
@@ -235,33 +235,33 @@
     "unclear": "",
     "next_module": "",
     "helpfulness": 0,
-    "completed_at": "2026-03-04T16:06:15.105244"
+    "completed_at": "2026-03-03T21:24:47.256608"
   },
   "game_info": {
-    "league": "NHL",
-    "team_home": "Toronto Maple Leafs",
-    "team_away": "Ottawa Senators",
-    "observed_team": "Ottawa Senators",
-    "date": "2026-03-03T11:04:10.502Z",
+    "league": "CHL",
+    "team_home": "Frölunda Gothenburg",
+    "team_away": "Luleå Hockey",
+    "observed_team": "Frölunda Gothenburg",
+    "date": "2026-03-03T18:07:12.836Z",
     "season": "2025/26",
-    "matchday": "60"
+    "matchday": "Finale"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "mit Geschwindigkeit",
-      "ts": "2026-03-03T12:04:46.068110"
+      "text": "weil es dann oft ein kopf durch die Wand enty war.",
+      "ts": "2026-03-03T19:29:38.779447"
     },
     "P2": {
       "done": true,
-      "text": "Sie kamen oft mit einer 3er Welle und weakside ist versetzt nach hinten",
-      "ts": "2026-03-04T06:38:07.299736"
+      "text": "es wurde speed aufgenommen und puckannahme mitte n zone und entry über blue line",
+      "ts": "2026-03-03T20:34:55.267960"
     },
     "P3": {
       "done": true,
-      "text": "Sie hatten keine Kontrolle über die neutrale Zone und konnten daher nicht die besten Optionen ziehen",
-      "ts": "2026-03-04T16:06:13.814057"
+      "text": "es wurde in gefährliche bereiche aus der not heruas gespielt mit meistens puckverlust",
+      "ts": "2026-03-03T21:24:42.995060"
     }
   }
 }

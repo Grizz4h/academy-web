@@ -220,6 +220,9 @@ async def get_teams(league: Optional[str] = None):
             return load_json(os.path.join(DATA_DIR, "teams.json"))
         elif league == "Nationalmannschaften":
             return load_json(os.path.join(DATA_DIR, "teams_national.json"))
+        elif league in ["NHL", "CHL", "U20_DNL"]:
+            # Diese Leagues haben keine Backend-Teams, Frontend nutzt teamsByLeague
+            return {"teams": []}
         else:
             raise HTTPException(status_code=400, detail=f"Unknown league: {league}")
     except FileNotFoundError:

@@ -6,8 +6,9 @@ import { useUser } from '../context/UserContext'
 import { renderWithGlossary } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
+import { teamsByLeague, LEAGUES } from '../data/teamsByLeague'
 
-// NHL Teams mit Division als Metadaten
+// NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
   // Atlantic Division
   { name: 'Boston Bruins', division: 'Atlantic', short: 'BOS' },
@@ -75,9 +76,9 @@ export default function SessionSetup() {
 
     // Setze DEL-Defaults für Teams, wenn DEL gewählt wird und noch keine Teams gesetzt sind
     useEffect(() => {
-      if (league === 'DEL') {
-        if (!teamHome) setTeamHome('ERC Ingolstadt');
-        if (!teamAway) setTeamAway('Augsburger Panther');
+      if (league === 'DEL' && !teamHome && !teamAway) {
+        setTeamHome('ERC Ingolstadt');
+        setTeamAway('Augsburger Panther');
       }
     }, [league]);
 
@@ -234,35 +235,31 @@ export default function SessionSetup() {
 
   const availableTeams = (() => {
     if (!league) return []
+    
+    // Für DEL: API-Teams als Fallback, sonst teamsByLeague
     if (league === 'DEL') {
-      const teams = teamsResp?.teams?.map(t => t.name) || []
-      // Fallback falls API nicht lädt
-      if (teams.length === 0) {
-        return [
-          'Eisbären Berlin', 'Adler Mannheim', 'EHC Red Bull München', 
-          'ERC Ingolstadt', 'Kölner Haie', 'Dresdner Eislöwen',
-          'Grizzlys Wolfsburg', 'Schwenninger Wild Wings', 'Straubing Tigers',
-          'Augsburger Panther', 'Iserlohn Roosters', 'Nürnberg Ice Tigers',
-          'Fischtown Pinguins Bremerhaven', 'Löwen Frankfurt'
-        ]
-      }
-      return teams
+      const apiTeams = teamsResp?.teams?.map(t => t.name) || []
+      if (apiTeams.length > 0) return apiTeams
     }
-    if (league === 'Nationalmannschaften') {
-      const teams = teamsResp?.teams?.map(t => t.name) || []
-      // Fallback falls API nicht lädt
-      if (teams.length === 0) {
-        return [
-          'Deutschland', 'Schweden', 'Finnland', 'Norwegen', 'Russland',
-          'Tschechien', 'Slowakei', 'Ungarn', 'Kanada', 'USA',
-          'Schweiz', 'Frankreich', 'Österreich', 'Italien', 'Japan', 'Südkorea'
-        ]
-      }
-      return teams
-    }
-    if (league === 'NHL') return NHL_TEAMS.map(t => t.name)
-    return []
+    
+    // Alle anderen Leagues (CHL, NHL, Nationalmannschaften, etc.) aus teamsByLeague
+    return teamsByLeague[league] ?? []
   })()
+
+  // Reset Teams wenn sie bei League-Wechsel nicht mehr in der Liste sind
+  useEffect(() => {
+    if (!availableTeams.length) return
+    
+    if (teamHome && !availableTeams.includes(teamHome)) {
+      setTeamHome('')
+    }
+    if (teamAway && !availableTeams.includes(teamAway)) {
+      setTeamAway('')
+    }
+    if (observedTeam && !availableTeams.includes(observedTeam)) {
+      setObservedTeam('')
+    }
+  }, [league, availableTeams])
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -311,9 +308,9 @@ export default function SessionSetup() {
             }}
           >
             <option value="">-- Liga wählen --</option>
-            <option value="DEL">DEL</option>
-            <option value="NHL">NHL</option>
-            <option value="Nationalmannschaften">Nationalmannschaften</option>
+            {LEAGUES.map((lg) => (
+              <option key={lg} value={lg}>{lg}</option>
+            ))}
           </select>
         </label>
 
