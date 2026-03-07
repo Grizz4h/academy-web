@@ -291,6 +291,7 @@ export default function SessionSetup() {
         <label style={{ display: 'block', marginTop: '0.75rem' }}>
           Liga auswählen
           <select
+            className="appSelect"
             value={league}
             onChange={(e) => {
               setLeague(e.target.value)
@@ -299,17 +300,12 @@ export default function SessionSetup() {
               setObservedTeam('')
             }}
             style={{
-              width: '100%',
-              padding: '0.5rem',
-              marginTop: '0.35rem',
-              backgroundColor: '#050712',
-              color: '#f7f7ff',
-              border: '1px solid #5191a2'
+              marginTop: '0.35rem'
             }}
           >
             <option value="">-- Liga wählen --</option>
             {LEAGUES.map((lg) => (
-              <option key={lg} value={lg}>{lg}</option>
+              <option key={lg} value={lg}>{lg.replace(/_/g, ' ')}</option>
             ))}
           </select>
         </label>
@@ -318,6 +314,7 @@ export default function SessionSetup() {
           <label style={{ display: 'block' }}>
             Heimteam
             <select
+              className="appSelect"
               value={teamHome}
               onChange={(e) => {
                 setTeamHome(e.target.value)
@@ -325,12 +322,7 @@ export default function SessionSetup() {
               }}
               disabled={!league}
               style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.35rem',
-                backgroundColor: '#050712',
-                color: '#f7f7ff',
-                border: '1px solid #5191a2'
+                marginTop: '0.35rem'
               }}
             >
               <option value="">-- Heimteam --</option>
@@ -354,6 +346,7 @@ export default function SessionSetup() {
           <label style={{ display: 'block' }}>
             Auswärtsteam
             <select
+              className="appSelect"
               value={teamAway}
               onChange={(e) => {
                 setTeamAway(e.target.value)
@@ -361,12 +354,7 @@ export default function SessionSetup() {
               }}
               disabled={!league}
               style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.35rem',
-                backgroundColor: '#050712',
-                color: '#f7f7ff',
-                border: '1px solid #5191a2'
+                marginTop: '0.35rem'
               }}
             >
               <option value="">-- Auswärtsteam --</option>

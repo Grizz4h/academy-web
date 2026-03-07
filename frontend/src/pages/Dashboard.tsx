@@ -4,9 +4,18 @@ import { api } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
 import Card from '../components/Card';
-import Pill from '../components/Pill';
-import { DrillActivityHeatmap } from '../components/dashboard/DrillActivityHeatmap';
+import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
+import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
+import { CoverageMap } from '../components/dashboard/CoverageMap';
+import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
 import styles from './Dashboard.module.css';
+
+const formatSessionState = (state: string): string =>
+  state
+    .toLowerCase()
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 
 export default function Dashboard() {
   const { user, setUser } = useUser();
@@ -22,6 +31,10 @@ export default function Dashboard() {
   const [signupPassword2, setSignupPassword2] = useState("");
   const [signupError, setSignupError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
+  
+  // Scope State für modulbasierte Filterung
+  const [currentScope, setCurrentScope] = useState<string>("Global");
+  const [scopeInitialized, setScopeInitialized] = useState(false);
 
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ["sessions", user],
@@ -43,6 +56,29 @@ export default function Dashboard() {
       setLoginError("");
     }
   }, [user]);
+
+  // Bei User-Wechsel Scope-Initialisierung zurücksetzen.
+  useEffect(() => {
+    setCurrentScope("Global");
+    setScopeInitialized(false);
+  }, [user]);
+
+  // Scope einmalig auf zuletzt verwendetes Modul setzen, sobald Daten geladen sind.
+  useEffect(() => {
+    if (!user || scopeInitialized || !curriculum || !sessions) return;
+
+    const validModuleIds = new Set(
+      curriculum.tracks.flatMap((track) => track.modules.map((module) => module.id))
+    );
+
+    const lastUsedModule = [...sessions]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .map((s) => s.module_id)
+      .find((moduleId) => validModuleIds.has(moduleId));
+
+    setCurrentScope(lastUsedModule ?? "Global");
+    setScopeInitialized(true);
+  }, [user, scopeInitialized, curriculum, sessions]);
 
   const handleLogin = async () => {
     const name = nameInput.trim();
@@ -152,6 +188,92 @@ export default function Dashboard() {
     const aborted = list.filter((s) => s.state === "ABORTED").length;
     const inProgress = list.filter((s) => s.state === "IN_PROGRESS").length;
 
+    // --- Drill-Counts für Priorisierung (mit Scope-Support) ---
+    // Lookup Maps
+    const drillById = new Map(allDrills.map((d) => [d.id, d]));
+    const drillToModuleMap = new Map<string, string>();
+    
+    // Drill-zu-Modul-Zuordnung erstellen
+    if (curriculum) {
+      for (const track of curriculum.tracks) {
+        for (const module of track.modules) {
+          for (const drill of module.drills) {
+            drillToModuleMap.set(drill.id, module.id);
+          }
+        }
+      }
+    }
+    
+    // Counts initialisieren (alle mit 0, damit nie trainierte Drills sichtbar sind)
+    const drillCounts = new Map<string, number>();
+    for (const d of allDrills) {
+      drillCounts.set(d.id, 0);
+    }
+    
+    // Nur COMPLETED Sessions zählen
+    for (const s of list) {
+      if (s.state !== "COMPLETED") continue;
+      
+      for (const d of s.drills || []) {
+        drillCounts.set(d.id, (drillCounts.get(d.id) ?? 0) + 1);
+      }
+    }
+    
+    // In Array umwandeln (mit moduleId)
+    const countsArray: DrillWithCount[] = Array.from(drillCounts.entries()).map(([id, count]) => ({
+      id,
+      title: drillById.get(id)?.title ?? id,
+      drill_type: drillById.get(id)?.drill_type,
+      count,
+      moduleId: drillToModuleMap.get(id),
+    }));
+    
+    // Available Scopes generieren
+    const availableScopes = ["Global"];
+    if (curriculum) {
+      for (const track of curriculum.tracks) {
+        for (const module of track.modules) {
+          availableScopes.push(module.id);
+        }
+      }
+    }
+    
+    // Scope-basierte Filterung
+    const scopedCountsArray = currentScope === "Global" 
+      ? countsArray 
+      : countsArray.filter(d => d.moduleId === currentScope);
+    
+    // Recommended Next (niedrigste Counts zuerst, bei Gleichstand alphabetisch)
+    const recommendedNext = [...scopedCountsArray]
+      .sort((a, b) => a.count - b.count || a.title.localeCompare(b.title))
+      .slice(0, 5);
+    
+    // Most Trained (höchste Counts zuerst, nur count > 0)
+    const mostTrained = [...scopedCountsArray]
+      .filter((d) => d.count > 0)
+      .sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
+      .slice(0, 3);
+    
+    // --- Coverage Map (global) ---
+    const moduleCoverages: ModuleCoverage[] = [];
+    if (curriculum) {
+      for (const track of curriculum.tracks) {
+        for (const module of track.modules) {
+          const totalDrills = module.drills.length;
+          const completedDrills = module.drills.filter(
+            d => (drillCounts.get(d.id) ?? 0) > 0
+          ).length;
+          
+          moduleCoverages.push({
+            moduleId: module.id,
+            moduleTitle: module.title,
+            totalDrills,
+            completedDrills,
+          });
+        }
+      }
+    }
+
     // --- Drill-Aktivität für Heatmap aggregieren ---
     const drillAttempts: Array<{ 
       drillId: string; 
@@ -234,8 +356,12 @@ export default function Dashboard() {
       completedDrills,
       trackProgress,
       drillAttempts,
+      recommendedNext,
+      mostTrained,
+      availableScopes,
+      moduleCoverages,
     };
-  }, [sessions, curriculum]);
+  }, [sessions, curriculum, currentScope]);
 
   // ---- Render Branches (ab hier dürfen returns kommen) ----
   if (!user)
@@ -345,7 +471,10 @@ export default function Dashboard() {
             <>
               <div><strong>Datum:</strong> {new Date(derived.lastSession.created_at).toLocaleDateString()}</div>
               <div><strong>Modul:</strong> {derived.lastSession.module_id}</div>
-              <div><strong>Status:</strong> <Pill>{derived.lastSession.state}</Pill></div>
+              <div>
+                <strong>Status:</strong>{' '}
+                <span className={styles.statusBadge}>{formatSessionState(derived.lastSession.state)}</span>
+              </div>
             </>
           ) : <div>Keine Daten</div>}
         </Card>
@@ -396,9 +525,12 @@ export default function Dashboard() {
           </div>
         </Card>
         <Card className={styles.flexCard}>
-          <h2 className={styles.sectionTitle}>Hygiene</h2>
+          <h2 className={styles.sectionTitle}>Session Integrity</h2>
           {derived.hygieneIssues.length === 0 ? (
-            <div className={styles.hygieneSuccess}>✅ Alle Sessions sauber!</div>
+            <div className={styles.integrityStatus}>
+              <div className={styles.statusIndicator} data-status="clean" />
+              <span className={styles.statusText}>Alle Sessions sauber</span>
+            </div>
           ) : (
             <ul className={styles.hygieneList}>
               {derived.hygieneIssues.map((issue, i) => (
@@ -409,8 +541,17 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Drill Activity Heatmap */}
-      <DrillActivityHeatmap attempts={derived.drillAttempts} days={90} />
+      {/* Drill Priority Cards mit Scope */}
+      <DrillPriorityCards
+        recommendedNext={derived.recommendedNext}
+        mostTrained={derived.mostTrained}
+        availableScopes={derived.availableScopes}
+        currentScope={currentScope}
+        onScopeChange={setCurrentScope}
+      />
+
+      {/* Coverage Map */}
+      <CoverageMap moduleCoverages={derived.moduleCoverages} />
 
       {/* Recent Sessions */}
       <Card className={styles.recentCard}>
@@ -423,7 +564,7 @@ export default function Dashboard() {
               <li key={s.id} className={styles.recentItem}>
                 <span className={styles.recentDate}>{new Date(s.created_at).toLocaleDateString()}</span>
                 <span className={styles.recentModule}>{s.module_id}</span>
-                <Pill>{s.state}</Pill>
+                <span className={styles.statusBadge}>{formatSessionState(s.state)}</span>
                 <a href={`/session/${s.id}`} className={styles.openBtn}>Öffnen</a>
               </li>
             ))}

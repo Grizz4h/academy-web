@@ -117,12 +117,6 @@
 .markerSelect {
   flex: 1;
   min-width: 120px;
-  padding: 0.5rem;
-  background: #050712;
-  color: #fff;
-  border: 1px solid rgba(81, 145, 162, 0.4);
-  border-radius: 4px;
-  font-size: 0.9rem;
 }
 
 .addButton {
@@ -238,12 +232,8 @@
 }
 
 .chainSelect {
-  padding: 0.5rem;
-  background: #050712;
-  color: #fff;
-  border: 1px solid rgba(81, 145, 162, 0.4);
-  border-radius: 4px;
-  font-size: 0.9rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .chainArrow {

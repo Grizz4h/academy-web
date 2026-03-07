@@ -1,0 +1,154 @@
+.sectionTitle {
+  font-size: 1.1rem;
+  color: #5191a2;
+  margin-bottom: 1rem;
+}
+
+.coverageGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.moduleRow {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Accent Bar - RINK TANK HUD Style */
+.moduleAccent {
+  width: 4px;
+  min-height: 48px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  transition: all 0.2s ease;
+}
+
+.moduleAccent[data-status="empty"] {
+  background: linear-gradient(180deg, rgba(60, 95, 120, 0.25), rgba(40, 65, 85, 0.15));
+  box-shadow: 0 0 8px rgba(70, 110, 140, 0.06);
+}
+
+.moduleAccent[data-status="partial"] {
+  background: linear-gradient(180deg, rgba(81, 145, 162, 0.65), rgba(60, 110, 130, 0.40));
+  box-shadow: 0 0 12px rgba(81, 145, 162, 0.14);
+}
+
+.moduleAccent[data-status="complete"] {
+  background: linear-gradient(180deg, rgba(95, 235, 225, 0.85), rgba(70, 180, 175, 0.55));
+  box-shadow: 0 0 16px rgba(95, 235, 225, 0.22);
+}
+
+.moduleContent {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Coverage Row Layout: [Module] [Segments] [Count] */
+.coverageRow {
+  display: grid;
+  grid-template-columns: 40px 1fr 50px;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.coverageModule {
+  font-weight: 600;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.completeIcon {
+  color: rgba(95, 235, 225, 0.95);
+  font-size: 0.85rem;
+  margin-left: 0.15rem;
+  text-shadow: 0 0 8px rgba(95, 235, 225, 0.40);
+}
+
+/* Segment Grid */
+.coverageSegments {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.segment {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+  transition: all 0.2s ease;
+}
+
+/* Inactive Segment: Dunkles Eis-Panel */
+.segmentInactive {
+  background: rgba(120, 180, 210, 0.08);
+  border: 1px solid rgba(120, 180, 210, 0.12);
+}
+
+/* Active Segment: Neon-Cyan Glow */
+.segmentActive {
+  background: #4fd9ff;
+  box-shadow: 
+    0 0 6px rgba(79, 217, 255, 0.60),
+    inset 0 0 2px rgba(255, 255, 255, 0.25);
+}
+
+/* Complete Module: Stärkerer Glow */
+.segmentActive[data-complete="true"] {
+  background: #52e5ff;
+  box-shadow: 
+    0 0 8px rgba(82, 229, 255, 0.70),
+    inset 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+.coverageCount {
+  font-size: 0.85rem;
+  color: rgba(108, 196, 220, 0.88);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .coverageGrid {
+    gap: 0.6rem;
+  }
+  
+  .moduleRow {
+    gap: 10px;
+  }
+  
+  .moduleAccent {
+    min-height: 44px;
+  }
+  
+  .coverageRow {
+    grid-template-columns: 35px 1fr 45px;
+    gap: 10px;
+  }
+  
+  .coverageModule {
+    font-size: 0.9rem;
+  }
+  
+  .segment {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .coverageCount {
+    font-size: 0.8rem;
+  }
+}

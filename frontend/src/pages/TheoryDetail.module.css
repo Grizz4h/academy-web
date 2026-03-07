@@ -28,11 +28,31 @@
   margin-top: 2.2rem;
 }
 
-.accordionHeader:hover,
-.accordionHeader:focus {
-  background: linear-gradient(120deg, rgba(81,145,162,0.18) 40%, rgba(10,14,28,0.65) 100%) !important;
-  border-color: rgba(81,145,162,0.18) !important;
-  box-shadow: 0 4px 24px 0 rgba(81,145,162,0.16), 0 2px 8px 0 rgba(0,0,0,0.18);
+.accordionHeader:hover {
+  border-color: rgba(100,190,220,0.22) !important;
+  box-shadow: 0 3px 18px 0 rgba(81,145,162,0.12), 0 2px 8px 0 rgba(0,0,0,0.16);
+}
+
+.accordionHeader:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(81,145,162,0.18), 0 3px 18px 0 rgba(81,145,162,0.10);
+}
+
+.accordionHeaderActive {
+  border-color: rgba(81,145,162,0.34) !important;
+  background: linear-gradient(135deg, rgba(90,160,190,0.14), rgba(20,30,55,0.72)) !important;
+  box-shadow:
+    0 0 0 1px rgba(81,145,162,0.12),
+    0 0 22px rgba(55,150,210,0.14),
+    inset 0 0 14px rgba(80,180,220,0.05);
+}
+
+.accordionHeaderActive:hover {
+  border-color: rgba(81,145,162,0.38) !important;
+  box-shadow:
+    0 0 0 1px rgba(81,145,162,0.14),
+    0 0 24px rgba(55,150,210,0.16),
+    inset 0 0 16px rgba(80,180,220,0.06);
 }
 
 .accordionHeader * {

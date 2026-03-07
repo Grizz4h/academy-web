@@ -2,6 +2,7 @@ import type { Session, Checkin } from '../api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
 import { useState } from 'react'
+import styles from './SessionCard.module.css'
 
 interface SessionCardProps {
   session: Session
@@ -180,64 +181,41 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
         </h3>
 
         {session.observed_team && (
-          <div
-            style={{
-              margin: '0 0 0.5rem 0',
-              fontSize: '0.95rem',
-              color: '#5191a2',
-              background: 'rgba(81,145,162,0.08)',
-              borderRadius: '6px',
-              padding: '0.15em 0.5em',
-              display: 'inline-block'
-            }}
-          >
+          <div className={styles.observedBadge}>
             Beobachtet: {session.observed_team}
           </div>
         )}
          
 
-          {/* Meta */}
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '1rem',
-              fontSize: '0.75rem',
-              color: 'rgba(255, 255, 255, 0.6)'
-            }}
-          >
-            <span>{session.created_by || 'Unbekannt'}</span>
-            <span>•</span>
-            <span>{new Date(session.created_at).toLocaleDateString('de-DE')}</span>
-
-            {gameDate && (
-              <>
-                <span>•</span>
-                <span>Spiel: {gameDate}</span>
-              </>
+          {/* Meta Grid */}
+          <div className={styles.metaGrid}>
+            {session.game_info?.league && (
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Liga</span>
+                <span className={styles.metaValue}>{session.game_info.league.replace(/_/g, ' ')}</span>
+              </div>
             )}
-
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>User</span>
+              <span className={styles.metaValue}>{session.created_by || 'Unbekannt'}</span>
+            </div>
             {session.game_info?.season && (
-              <>
-                <span>•</span>
-                <span>Saison: {session.game_info.season}</span>
-              </>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Saison</span>
+                <span className={styles.metaValue}>{session.game_info.season}</span>
+              </div>
             )}
-
+            {gameDate && (
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Spiel</span>
+                <span className={styles.metaValue}>{gameDate}</span>
+              </div>
+            )}
             {session.game_info?.matchday && (
-              <>
-                <span>•</span>
-                <span>Spieltag: {session.game_info.matchday}</span>
-              </>
-            )}
-
-            {session.checkins && session.checkins.length > 0 && (
-              <>
-                <span>•</span>
-                <span>
-                  {session.checkins.length} Phase{session.checkins.length !== 1 ? 'n' : ''}
-                </span>
-              </>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Spieltag</span>
+                <span className={styles.metaValue}>{session.game_info.matchday}</span>
+              </div>
             )}
           </div>
         </div>

@@ -319,7 +319,7 @@ export default function DrillRendererV4({ drill, answers, setAnswers, session }:
           <select
             value={markerForm.category || ''}
             onChange={(e) => setMarkerForm({ ...markerForm, category: e.target.value })}
-            className={styles.markerSelect}
+            className={`${styles.markerSelect} appSelect`}
           >
             <option value="">Kategorie wählen*</option>
             {markerCategories.map(cat => (
@@ -329,7 +329,7 @@ export default function DrillRendererV4({ drill, answers, setAnswers, session }:
           <select
             value={markerForm.team || ''}
             onChange={(e) => setMarkerForm({ ...markerForm, team: e.target.value })}
-            className={styles.markerSelect}
+            className={`${styles.markerSelect} appSelect`}
           >
             <option value="">Team*</option>
             <option value="for">For/Us</option>
@@ -384,7 +384,7 @@ export default function DrillRendererV4({ drill, answers, setAnswers, session }:
             <select
               value={chainForm.cause || ''}
               onChange={(e) => setChainForm({ ...chainForm, cause: e.target.value })}
-              className={styles.chainSelect}
+              className={`${styles.chainSelect} appSelect`}
             >
               <option value="">Wählen...</option>
               {causeOptions.map(opt => (
@@ -398,7 +398,7 @@ export default function DrillRendererV4({ drill, answers, setAnswers, session }:
             <select
               value={chainForm.trigger || ''}
               onChange={(e) => setChainForm({ ...chainForm, trigger: e.target.value })}
-              className={styles.chainSelect}
+              className={`${styles.chainSelect} appSelect`}
             >
               <option value="">Wählen...</option>
               {triggerOptions.map(opt => (
@@ -412,7 +412,7 @@ export default function DrillRendererV4({ drill, answers, setAnswers, session }:
             <select
               value={chainForm.consequence || ''}
               onChange={(e) => setChainForm({ ...chainForm, consequence: e.target.value })}
-              className={styles.chainSelect}
+              className={`${styles.chainSelect} appSelect`}
             >
               <option value="">Wählen...</option>
               {consequenceOptions.map(opt => (

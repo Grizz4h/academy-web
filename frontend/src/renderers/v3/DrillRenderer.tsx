@@ -173,10 +173,11 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
           <div style={{ marginBottom: 12 }}>
             <label style={{ fontWeight: 500, display: 'block' }}>Trigger 1 (Pflicht)</label>
             <select
+							className="appSelect"
               value={answers[trigger1Q?.key + '_type'] || ''}
               onChange={e => setAnswers({ ...answers, [trigger1Q?.key + '_type']: e.target.value })}
               required
-              style={{ marginRight: 8, minWidth: 120, padding: 4, borderRadius: 4, border: '1px solid #5191a2', background: '#050712', color: '#fff' }}
+							style={{ marginRight: 8, minWidth: 120, maxWidth: 180, height: 36 }}
             >
               <option value="">Typ wählen…</option>
               <option value="strukturell">strukturell</option>
@@ -195,9 +196,10 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
           <div>
             <label style={{ fontWeight: 500, display: 'block' }}>Trigger 2 (optional)</label>
             <select
+							className="appSelect"
               value={answers[trigger2Q?.key + '_type'] || ''}
               onChange={e => setAnswers({ ...answers, [trigger2Q?.key + '_type']: e.target.value })}
-              style={{ marginRight: 8, minWidth: 120, padding: 4, borderRadius: 4, border: '1px solid #5191a2', background: '#050712', color: '#fff' }}
+							style={{ marginRight: 8, minWidth: 120, maxWidth: 180, height: 36 }}
             >
               <option value="">Typ wählen…</option>
               <option value="strukturell">strukturell</option>

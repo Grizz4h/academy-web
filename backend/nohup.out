@@ -12388,3 +12388,756 @@ INFO:     141.78.147.206:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.147.206:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
 INFO:     141.78.147.206:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
 INFO:     141.78.147.206:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     204.76.203.18:54730 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:43854 - "GET /bins/ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:55122 - "GET /bin/ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:57594 - "GET /backup/ HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     91.230.168.150:60011 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.194.92.11:47008 - "POST / HTTP/1.1" 404 Not Found
+INFO:     45.194.92.11:47038 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     45.194.92.11:47046 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     45.194.92.11:47048 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     45.194.92.11:47050 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     45.194.92.11:47064 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     91.230.168.170:46485 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     198.235.24.83:58794 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     139.162.173.209:50738 - "GET / HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:57050 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     139.162.173.209:57070 - "OPTIONS / HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     139.162.173.209:35624 - "GET / HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35632 - "GET /nmaplowercheck1772759531 HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35656 - "GET /evox/about HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35674 - "GET /api/v2/about HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35688 - "GET /%2BCSCOE%2B/logon.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35750 - "GET /human.aspx?arg12=infotech HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v2/about HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:35760 - "GET /dana-cached/hc/HostCheckerInstaller.osx HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35768 - "GET /login.php HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35780 - "GET /cgi-mod/header_logo.cgi?size=big HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35830 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35832 - "GET /rest/applinks/1.0/manifest HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35620 - "GET / HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:35860 - "GET /confluence/rest/applinks/1.0/manifest HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v1/check-version HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     139.162.173.209:59420 - "POST /sdk HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59432 - "GET /webui HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59442 - "GET /nmaplowercheck1772759533 HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59444 - "GET /dana-na/nc/nc_gina_ver.txt HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59462 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59472 - "GET /webui HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59492 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59496 - "GET /user HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/version HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:59510 - "GET /inicio.jsp HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59518 - "GET / HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59542 - "GET /geoserver/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59558 - "GET /menu.cgi HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59596 - "GET /geoserver/web/wicket/bookmarkable/org.geoserver.web.AboutGeoServerPage HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59612 - "GET /Account/Login HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59626 - "GET /cgi-bin/info.cgi HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59634 - "GET / HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59640 - "GET /geoserver/index.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59628 - "GET /home.shtml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     139.162.173.209:59682 - "GET /indice.cfm HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59696 - "GET /xml/info.xml HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59730 - "GET /magento_version HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59756 - "GET /api/v1/check-version HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59760 - "GET /ise/img/rm-logo_small.png HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59770 - "GET /base.shtml HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/vip/i18n/api/v2/translation/products/vRNIUI/versions/1 HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:59790 - "GET /dashboard/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59796 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:54886 - "GET /fog/management/index.php?node=client&sub=logininfo HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/server/version HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:54944 - "GET /cluster/list.query HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:54958 - "GET /apps/zxtm/login.cgi HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:54966 - "GET /start.pl HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:54970 - "GET /owa/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v1.0/environment HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:54992 - "GET /base.cfm HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55002 - "GET /language/en-GB/en-GB.xml HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55012 - "GET /administrator/manifests/files/joomla.xml HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55036 - "GET /api/server/version HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55038 - "GET /admin.aspx HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55042 - "GET /webui/index.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55060 - "GET /images/logo.png HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55070 - "GET /versa/login HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55080 - "GET /helpdesk/WebObjects/Helpdesk.woa HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55084 - "GET /index.cfm HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55096 - "GET /login.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55104 - "GET /owa/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55102 - "GET /p/login/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55110 - "GET /api/version HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55118 - "GET /menu.php HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v1/version HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v3/meta HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:55156 - "GET /portal/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55170 - "GET /status HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55172 - "GET /readme.txt HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55174 - "GET /phoenix/favicon.ico HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55180 - "GET /info.asp HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55184 - "GET /cgi-bin/param.cgi?get_device_conf HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55186 - "GET /admin.shtml HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55218 - "GET /lms/db HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55222 - "GET /main.cfm HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55224 - "GET /login/login.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55226 - "GET /ext-js/app/common/zld_product_spec.js HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55238 - "GET /allversions HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55250 - "GET /start.cfm HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55262 - "GET /versions HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v2/hoverfly/version HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:55264 - "GET /r-seenet/index.php HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:55272 - "GET /assets/png/favicon-abe32304.png HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59924 - "GET /admin.pl HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59934 - "GET /api/vip/i18n/api/v2/translation/products/vRNIUI/versions/1 HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59962 - "GET /tos/index.php?user/login HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/status HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:59994 - "GET /c/login HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:59972 - "GET /localstart.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60000 - "GET /login.aspx HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60006 - "GET /WebApp/js/UI_String.js HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:0 - "GET /api/v1/info HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:60014 - "GET /App_Themes/Default/Images/favicon.ico HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60028 - "GET /admin.php HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60030 - "GET /IPCamDesc.xml HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60032 - "GET /officescan/console/cgi/cgiChkMasterPwd.exe HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60060 - "GET /home.html HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60066 - "GET /kylin/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60076 - "GET /CFIDE/componentutils/ HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60098 - "GET /dniapi/userInfos HTTP/1.1" 404 Not Found
+INFO:     139.162.173.209:60088 - "GET http%3A//www.google.com HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:60106 - "HEAD http%3A//www.google.com HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:60122 - "CONNECT www.google.com%3A80 HTTP/1.0" 404 Not Found
+INFO:     139.162.173.209:50208 - "GET / HTTP/1.1" 404 Not Found
+INFO:     85.217.140.4:59378 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.230:59872 - "GET / HTTP/1.1" 404 Not Found
+INFO:     89.248.168.239:0 - "POST /api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.0" 404 Not Found
+INFO:     65.49.1.232:42564 - "GET / HTTP/1.1" 404 Not Found
+INFO:     65.49.1.240:16933 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     65.49.1.234:45769 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
+INFO:     65.49.1.233:55187 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     193.34.212.9:59338 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44034 - "GET / HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44050 - "POST / HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44066 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44082 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44088 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44098 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:44108 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     148.153.56.174:43368 - "GET / HTTP/1.0" 404 Not Found
+INFO:     148.153.56.174:46820 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     148.153.56.174:48004 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     148.153.56.174:48924 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     148.153.56.174:49856 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     148.153.56.174:50978 - "GET /llms.txt HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:37536 - "GET /../../../../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:37544 - "GET /../../../../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     205.210.31.232:60792 - "GET / HTTP/1.1" 404 Not Found
+INFO:     154.197.56.163:34922 - "GET /metrics HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     183.81.169.235:34096 - "GET /../../../../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34100 - "GET /../../../../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34102 - "GET //emby/swagger-ui/../../../../../../../../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34108 - "GET /mailinspector/public/loader.php?path=../../../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34110 - "GET /index/ajax/lang?lang=..//..//..//..//..//..//etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34126 - "GET /?c=../../../../../../etc/machine-id%00 HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34132 - "GET /download.php?dir=/%2f../%2f../etc/&file=machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34144 - "GET /rewrite-target/../../etc/machine-id HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34154 - "GET /%40fs/x/ HTTP/1.1" 404 Not Found
+INFO:     183.81.169.235:34168 - "GET /public/../../../../../etc/machine-id HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     198.235.24.140:60640 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     47.83.238.83:34342 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.83.238.83:34366 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     47.83.238.83:34388 - "GET /dashboard HTTP/1.1" 404 Not Found
+INFO:     47.83.238.83:34414 - "GET /panel HTTP/1.1" 404 Not Found
+INFO:     47.83.238.83:34434 - "GET /xui HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.148.10.119:0 - "GET /api/user HTTP/1.0" 404 Not Found
+INFO:     45.148.10.119:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     45.148.10.119:0 - "GET /api/v1/workflows HTTP/1.0" 404 Not Found
+INFO:     45.148.10.119:0 - "GET /api/v1/credentials HTTP/1.0" 404 Not Found
+INFO:     45.148.10.119:0 - "GET /api/v1/executions HTTP/1.0" 404 Not Found
+INFO:     45.148.10.119:0 - "GET /api/login HTTP/1.0" 404 Not Found
+INFO:     45.148.10.119:0 - "GET /api/credentials HTTP/1.0" 404 Not Found
+INFO:     3.129.187.38:34380 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.129.187.38:46924 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     205.210.31.155:63210 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     36.66.215.165:45029 - "GET / HTTP/1.0" 404 Not Found
+INFO:     81.168.83.103:50027 - "GET /.terraform.tfstate.lock.info HTTP/1.0" 404 Not Found
+INFO:     205.210.31.224:64230 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     89.42.231.182:49662 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     89.42.231.182:49674 - "GET /../../../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     81.168.83.103:50020 - "GET /settings.py HTTP/1.0" 404 Not Found
+INFO:     24.144.94.222:37200 - "POST / HTTP/1.1" 404 Not Found
+INFO:     24.144.94.222:36354 - "POST / HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:56594 - "GET / HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:56600 - "POST / HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:56614 - "POST /_next HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:56618 - "POST /api HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:40172 - "POST /_next/server HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:40188 - "POST /app HTTP/1.1" 404 Not Found
+INFO:     195.3.221.86:40190 - "POST /api/route HTTP/1.1" 404 Not Found
+INFO:     198.235.24.252:64366 - "GET /metrics HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     162.142.125.207:21486 - "GET / HTTP/1.1" 404 Not Found
+INFO:     162.142.125.207:21494 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     162.142.125.207:53802 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     139.59.181.152:48970 - "GET / HTTP/1.1" 404 Not Found
+INFO:     139.59.181.152:48970 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     139.59.181.152:48976 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+INFO:     139.59.181.152:48984 - "POST /onvif/device_service HTTP/1.1" 404 Not Found
+INFO:     139.59.181.152:48992 - "GET /PSIA/index HTTP/1.1" 404 Not Found
+INFO:     147.185.132.58:63532 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.9:61334 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     161.35.213.124:36458 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+INFO:     161.35.213.124:36460 - "POST /onvif/device_service HTTP/1.1" 404 Not Found
+INFO:     161.35.213.124:36468 - "GET /PSIA/index HTTP/1.1" 404 Not Found
+INFO:     54.234.108.202:41086 - "GET /api/tags HTTP/1.1" 404 Not Found
+INFO:     54.234.108.202:41098 - "GET /version HTTP/1.1" 404 Not Found
+INFO:     54.234.108.202:41110 - "GET /health HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     192.155.92.41:51120 - "GET / HTTP/1.1" 404 Not Found
+INFO:     192.155.92.41:51124 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     192.155.92.41:51138 - "GET /AGENTS.md HTTP/1.1" 404 Not Found
+INFO:     67.213.118.179:0 - "GET /api/backup HTTP/1.0" 404 Not Found
+INFO:     206.189.107.18:49186 - "POST / HTTP/1.1" 404 Not Found
+INFO:     154.197.56.163:43106 - "GET /metrics HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     204.76.203.18:34128 - "GET / HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:57252 - "GET /bins/ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:49818 - "GET /bin/ HTTP/1.1" 404 Not Found
+INFO:     204.76.203.18:46150 - "GET /backup/ HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.158.79.105:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     40.74.212.73:58622 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.162:58790 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     198.235.24.213:65202 - "GET / HTTP/1.1" 404 Not Found
+INFO:     89.253.237.136:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     89.253.237.136:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.235.24.103:61200 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:64934 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:64942 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:57890 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:57892 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:59514 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:59510 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:64282 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:64292 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:65094 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:65104 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:61672 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:61686 - "GET /v1/metadata HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:61700 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     198.235.24.58:61716 - "GET /v1/health/ready HTTP/1.1" 404 Not Found
+INFO:     167.94.146.53:29608 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.53:18678 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.94.146.53:18688 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     167.94.146.53:33504 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     205.210.31.88:63736 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     147.185.132.22:61334 - "GET / HTTP/1.1" 404 Not Found
+INFO:     205.210.31.184:60986 - "GET /metrics HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     204.76.203.73:35366 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     204.76.203.73:35376 - "GET /../../../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     205.210.31.77:64824 - "GET / HTTP/1.1" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects?visibility=public&per_page=20&order_by=last_activity_at HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/version HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/users?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/groups?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/snippets?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects?per_page=5&simple=true&search=secret HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects?per_page=5&simple=true&search=password HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects?per_page=5&simple=true&search=env HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/1/variables HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/2/variables HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/groups/1/variables HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/runners/all?per_page=5 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/1/registry/repositories HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/graphql HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/1/repository/files/.env/raw?ref=main HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/1/repository/files/.env/raw?ref=master HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/2/repository/files/.env/raw?ref=main HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v4/projects/1/repository/files/docker-compose.yml/raw?ref=main HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/meta HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/users?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/repositories?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/gists/public?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/search/code?q=password+in:file HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/search/code?q=AKIA+in:file HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/search/code?q=sk_live+in:file HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/search/code?q=SG.+in:file HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v3/organizations?per_page=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/repos/search?limit=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/users/search?limit=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/orgs?limit=10 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/settings/api HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/repos/search?q=secret&limit=5 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/repos/search?q=env&limit=5 HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/v1/repos/search?q=config&limit=5 HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     89.42.231.182:26070 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     89.42.231.182:26080 - "GET /../../../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     89.42.231.182:26086 - "GET /static/link/../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/xml HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/xml HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/xml HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/xml HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/upload HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/upload HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/upload HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/upload HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/parse HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/parse HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/parse HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/v1/xml HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/odata HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "POST /api/odata HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/datasources HTTP/1.0" 404 Not Found
+INFO:     194.26.192.36:0 - "GET /api/admin/settings HTTP/1.0" 404 Not Found
+INFO:     198.235.24.252:60768 - "GET / HTTP/1.1" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=Nationalmannschaften HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 401 Unauthorized
+/opt/academy-web/backend/main.py:680: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
+[AUTH] login attempt user=christoph pw_len=12
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=christoph
+INFO:     141.78.155.208:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     86.48.30.248:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     150.246.20.7:44323 - "GET / HTTP/1.0" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     65.49.1.142:3200 - "GET / HTTP/1.1" 404 Not Found
+INFO:     65.49.1.142:62311 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     65.49.1.148:14635 - "GET http%3A//api.ipify.org/?format=json HTTP/1.1" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     65.49.1.151:52589 - "CONNECT www.shadowserver.org%3A443 HTTP/1.1" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870543 HTTP/1.0" 200 OK
+[checkin:44f9f9cd] session=Christoph_1772870543 phase_raw='PRE' phase_norm='PRE' action=append trace_id=fbb76e7e-0793-42fd-b7c4-e1ca20f8b1e7 trace_action=saveCheckin counts_before={}
+[checkin:44f9f9cd] session=Christoph_1772870543 counts_after={'PRE': 1}
+INFO:     141.78.155.208:0 - "POST /api/sessions/Christoph_1772870543/checkins HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870543 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "PUT /api/sessions/Christoph_1772870543/phase HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870543 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "DELETE /api/sessions/Christoph_1772870543 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870676 HTTP/1.0" 200 OK
+[checkin:9bb5a4a4] session=Christoph_1772870676 phase_raw='PRE' phase_norm='PRE' action=append trace_id=29b8cabb-1514-44a5-b1cf-e26cc107f0d4 trace_action=saveCheckin counts_before={}
+[checkin:9bb5a4a4] session=Christoph_1772870676 counts_after={'PRE': 1}
+INFO:     141.78.155.208:0 - "POST /api/sessions/Christoph_1772870676/checkins HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870676 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "PUT /api/sessions/Christoph_1772870676/phase HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870676 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772870676 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     79.60.43.154:43222 - "GET / HTTP/1.0" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772871644 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.155.208:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions/Christoph_1772871669 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "DELETE /api/sessions/Christoph_1772871669 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "DELETE /api/sessions/Christoph_1772871644 HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     86.48.30.248:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.155.208:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK

@@ -116,23 +116,27 @@ export default function TheoryDetail() {
           <p dangerouslySetInnerHTML={{ __html: data.overview }} />
         </div>
 
-        {data.sections.map((section: any) => (
-          <section className="theory-section" key={section.id}>
-            <button
-              className={`section-toggle ${styles.accordionHeader}`}
-              onClick={() => toggleSection(section.id as keyof typeof expandedSections)}
-              aria-expanded={expandedSections[section.id as keyof typeof expandedSections]}
-            >
-              <h2>{section.title}</h2>
-              <span className="toggle-icon">{expandedSections[section.id as keyof typeof expandedSections] ? '−' : '+'}</span>
-            </button>
-            {expandedSections[section.id as keyof typeof expandedSections] && (
-              <div className="section-content">
-                {section.content.map((item: any, index: number) => renderContent(item, index))}
-              </div>
-            )}
-          </section>
-        ))}
+        {data.sections.map((section: any) => {
+          const isOpen = expandedSections[section.id as keyof typeof expandedSections]
+          return (
+            <section className="theory-section" key={section.id}>
+              <button
+                className={`section-toggle ${styles.accordionHeader} ${isOpen ? styles.accordionHeaderActive : ''}`}
+                onClick={() => toggleSection(section.id as keyof typeof expandedSections)}
+                aria-expanded={isOpen}
+                data-open={isOpen ? 'true' : 'false'}
+              >
+                <h2>{section.title}</h2>
+                <span className="toggle-icon">{isOpen ? '−' : '+'}</span>
+              </button>
+              {isOpen && (
+                <div className="section-content">
+                  {section.content.map((item: any, index: number) => renderContent(item, index))}
+                </div>
+              )}
+            </section>
+          )
+        })}
       </div>
     )
   }
