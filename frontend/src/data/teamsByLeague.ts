@@ -22,6 +22,23 @@ export const teamsByLeague: Record<string, string[]> = {
     'Löwen Frankfurt',
   ],
 
+  DEL2: [
+    'Krefeld Pinguine',
+    'EC Kassel Huskies',
+    'Starbulls Rosenheim',
+    'Ravensburg Towerstars',
+    'Bietigheim Steelers',
+    'Eisbären Regensburg',
+    'Lausitzer Füchse',
+    'EV Landshut',
+    'Düsseldorfer EG',
+    'Eispiraten Crimmitschau',
+    'EHC Freiburg',
+    'Blue Devils Weiden',
+    'EC Bad Nauheim',
+    'ESV Kaufbeuren',
+  ],
+
   Nationalmannschaften: [
     'Deutschland',
     'Schweden',

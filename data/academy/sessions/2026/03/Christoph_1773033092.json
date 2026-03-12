@@ -1,0 +1,159 @@
+{
+  "id": "Christoph_1773033092",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A2",
+  "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A2_D5",
+  "state": "IN_PROGRESS",
+  "current_phase": "P2",
+  "created_at": "2026-03-09T06:11:32.970917",
+  "drills": [
+    {
+      "id": "A2_D5",
+      "title": "Linien & Raumgefühl",
+      "drill_type": "period_checkin",
+      "description": "Raumtiefe rund um die Blue Line einschätzen: offen, neutral oder eng – unabhängig vom späteren Outcome.",
+      "didactics": {
+        "explanation": "Raumgefühl beschreibt, wie viel Zeit und Platz einem Team im Moment des Exits oder Entries tatsächlich zur Verfügung steht. Es geht nicht um Systeme, sondern um wahrnehmbaren Raum vor und über der Blue Line.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Abstand des Puckführers zur Blue Line",
+            "Positionierung und Tiefe der Mitspieler",
+            "Gegnerdruck: frontal, seitlich oder aus der Tiefe",
+            "Öffnet sich Raum aktiv oder wird er zugestellt?"
+          ],
+          "how_to_decide": [
+            "Den Moment direkt vor der Blue Line bewerten",
+            "Raum nicht nur in Metern, sondern in Zeit denken",
+            "Offen = Zeit für Entscheidung",
+            "Neutral = saubere, einfache Lösung nötig",
+            "Eng = schneller Ausweg oder Reset"
+          ],
+          "ignore": [
+            "Wie der Angriff danach endet",
+            "Ob ein Turnover später erzwungen wird",
+            "Taktische Bezeichnungen gegnerischer Systeme"
+          ]
+        },
+        "inline_explanations": {
+          "offen": {
+            "meaning": "Der Puckführer hat sichtbar Zeit und Platz. Mitspieler sind gestaffelt anspielbar, Gegner sind nicht sofort im Zugriff."
+          },
+          "neutral": {
+            "meaning": "Begrenzter Raum: Optionen sind vorhanden, aber Zeitfenster sind kurz. Saubere Technik und klare Entscheidung nötig."
+          },
+          "eng": {
+            "meaning": "Kaum Raum oder Zeit. Gegnerdruck ist unmittelbar, Abstände sind schlecht oder Optionen nicht erreichbar."
+          }
+        },
+        "learning_hint": "Raumgefühl ist ein Frühindikator: Wer Enge früh erkennt, vermeidet Panik. Wer Offenheit erkennt, kann Geduld spielen."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "space_feel": "offen"
+            },
+            "questions": [
+              "Woran hast du erkannt, dass Zeit und Raum vorhanden waren?",
+              "Welche Option hätte Geduld erlaubt?",
+              "Wirkte das Team vorbereitet oder zufällig frei?"
+            ]
+          },
+          {
+            "when": {
+              "space_feel": "neutral"
+            },
+            "questions": [
+              "Was hat den Raum begrenzt, aber nicht komplett geschlossen?",
+              "Welche Entscheidung war hier am stabilsten?",
+              "Wie knapp war das Zeitfenster gefühlt?"
+            ]
+          },
+          {
+            "when": {
+              "space_feel": "eng"
+            },
+            "questions": [
+              "Wodurch entstand die Enge (Abstand, Druck, fehlende Tiefe)?",
+              "Wäre ein früherer Reset sinnvoll gewesen?",
+              "Kam die Enge überraschend oder war sie absehbar?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "space_feel",
+            "type": "radio",
+            "label": "Raumgefühl",
+            "options": [
+              "offen",
+              "neutral",
+              "eng"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung",
+            "max_chars": 1500
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-03-09T06:11:36.406102"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "space_feel": "offen",
+        "note": "Oilers kommen oft mit sehr viel Speed in die neutrale Zone, dadurch öffnen sich vor und hinter der Blue line Räume. Es waren dann im Offensiv drittel oft anspielstationen mit richtig viel Platz. Es ist ein krasser unterschied zwischen nhl und del was das angeht, es zu erkennen. Die del hat deutlich unsauberer ausgeführte entries und exits."
+      },
+      "timestamp": "2026-03-09T06:38:22.761226"
+    }
+  ],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "NHL",
+    "team_home": "Los Angeles Kings",
+    "team_away": "Edmonton Oilers",
+    "observed_team": "Edmonton Oilers",
+    "date": "2026-03-09T05:11:32.834Z",
+    "season": "2025/26",
+    "matchday": "61"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Es konnte in der o Zone oft kurz überlegt werden und der pass sauber gespielt. Durch die Geschwindigkeit der Oilers reißen sie förmlich Löcher",
+      "ts": "2026-03-09T06:39:23.017803"
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}

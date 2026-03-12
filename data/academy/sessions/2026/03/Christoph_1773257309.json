@@ -1,0 +1,187 @@
+{
+  "id": "Christoph_1773257309",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A2",
+  "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
+  "confidence": 2,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A2_D5",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-03-11T20:28:29.992429",
+  "drills": [
+    {
+      "id": "A2_D5",
+      "title": "Linien & Raumgefühl",
+      "drill_type": "period_checkin",
+      "description": "Raumtiefe rund um die Blue Line einschätzen: offen, neutral oder eng – unabhängig vom späteren Outcome.",
+      "didactics": {
+        "explanation": "Raumgefühl beschreibt, wie viel Zeit und Platz einem Team im Moment des Exits oder Entries tatsächlich zur Verfügung steht. Es geht nicht um Systeme, sondern um wahrnehmbaren Raum vor und über der Blue Line.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Abstand des Puckführers zur Blue Line",
+            "Positionierung und Tiefe der Mitspieler",
+            "Gegnerdruck: frontal, seitlich oder aus der Tiefe",
+            "Öffnet sich Raum aktiv oder wird er zugestellt?"
+          ],
+          "how_to_decide": [
+            "Den Moment direkt vor der Blue Line bewerten",
+            "Raum nicht nur in Metern, sondern in Zeit denken",
+            "Offen = Zeit für Entscheidung",
+            "Neutral = saubere, einfache Lösung nötig",
+            "Eng = schneller Ausweg oder Reset"
+          ],
+          "ignore": [
+            "Wie der Angriff danach endet",
+            "Ob ein Turnover später erzwungen wird",
+            "Taktische Bezeichnungen gegnerischer Systeme"
+          ]
+        },
+        "inline_explanations": {
+          "offen": {
+            "meaning": "Der Puckführer hat sichtbar Zeit und Platz. Mitspieler sind gestaffelt anspielbar, Gegner sind nicht sofort im Zugriff."
+          },
+          "neutral": {
+            "meaning": "Begrenzter Raum: Optionen sind vorhanden, aber Zeitfenster sind kurz. Saubere Technik und klare Entscheidung nötig."
+          },
+          "eng": {
+            "meaning": "Kaum Raum oder Zeit. Gegnerdruck ist unmittelbar, Abstände sind schlecht oder Optionen nicht erreichbar."
+          }
+        },
+        "learning_hint": "Raumgefühl ist ein Frühindikator: Wer Enge früh erkennt, vermeidet Panik. Wer Offenheit erkennt, kann Geduld spielen."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "space_feel": "offen"
+            },
+            "questions": [
+              "Woran hast du erkannt, dass Zeit und Raum vorhanden waren?",
+              "Welche Option hätte Geduld erlaubt?",
+              "Wirkte das Team vorbereitet oder zufällig frei?"
+            ]
+          },
+          {
+            "when": {
+              "space_feel": "neutral"
+            },
+            "questions": [
+              "Was hat den Raum begrenzt, aber nicht komplett geschlossen?",
+              "Welche Entscheidung war hier am stabilsten?",
+              "Wie knapp war das Zeitfenster gefühlt?"
+            ]
+          },
+          {
+            "when": {
+              "space_feel": "eng"
+            },
+            "questions": [
+              "Wodurch entstand die Enge (Abstand, Druck, fehlende Tiefe)?",
+              "Wäre ein früherer Reset sinnvoll gewesen?",
+              "Kam die Enge überraschend oder war sie absehbar?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "space_feel",
+            "type": "radio",
+            "label": "Raumgefühl",
+            "options": [
+              "offen",
+              "neutral",
+              "eng"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung",
+            "max_chars": 1500
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-03-11T20:28:32.379689"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "space_feel": "neutral"
+      },
+      "timestamp": "2026-03-11T20:28:38.214048"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "space_feel": "offen",
+        "note": "erster Eindruck von DEL2 (hab ich noch nicht so viel geschaut) man kann recht gut die Taktik anschauen, weil es etwas langsamer ist hab ich das Gefühl. Mir kommt vor sie haben tendenziell viel zeit zum entscheiden. scharf auf center  durch ganze n zone, sehr harter pass. Ich soll hier shcon den Raum um dne puckführenden beobachten oder? düsseldorf überlasst die neutrale zone serh landshut, daher haben sie immer erwig zeit zum überlegen. "
+      },
+      "timestamp": "2026-03-11T21:00:36.620582"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "space_feel": "offen",
+        "note": "dadurch dass Düsseldorf so hinten liegt müssen sie raus und haben so nicht viel kontrolle über die n zone. die gehört deutlcih landshut wieder. Sie konnten fas immer schauen nach überqueren der blauen, was sie machen sollen. "
+      },
+      "timestamp": "2026-03-11T21:48:00.608722"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-03-11T21:48:30.156316"
+    }
+  ],
+  "drafts": {},
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-03-11T21:48:30.207497"
+  },
+  "game_info": {
+    "league": "DEL2",
+    "team_home": "EV Landshut",
+    "team_away": "Düsseldorfer EG",
+    "observed_team": "EV Landshut",
+    "date": "2026-03-11T19:28:29.965Z",
+    "season": "2025/26",
+    "matchday": "Pre-Playoff Spiel 1"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "neutrale Zone",
+      "ts": "2026-03-11T20:28:45.257566"
+    },
+    "P2": {
+      "done": true,
+      "text": "sie hatten meinstens sehr viel Zeit zu überlegen und den pass zu spielen. kaum unter Druck",
+      "ts": "2026-03-11T21:01:01.976356"
+    },
+    "P3": {
+      "done": true,
+      "text": "sie konnten kurz nach der blauen oft den Kopf heben und schauen was die anschlussoption ist",
+      "ts": "2026-03-11T21:48:26.348071"
+    }
+  }
+}

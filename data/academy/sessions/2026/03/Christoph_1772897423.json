@@ -1,16 +1,16 @@
 {
-  "id": "Christoph_1772870676",
+  "id": "Christoph_1772897423",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
-  "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
+  "goal": "Nur die erste passoption nach Puck Gewinn bewegen. Ist heute ein U20 Spiel.",
   "confidence": 1,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A2_D4",
-  "state": "IN_PROGRESS",
-  "current_phase": "P1",
-  "created_at": "2026-03-07T09:04:36.068749",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-03-07T16:30:23.279041",
   "drills": [
     {
       "id": "A2_D4",
@@ -145,33 +145,74 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-03-07T09:04:38.093155"
+      "timestamp": "2026-03-07T16:30:50.167792"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "pass_quality": "Klar",
+        "first_option": "Winger",
+        "note": "Erste Option oft winger. Weak side Support meistens etwas hinten. Oft auch scharf auf Center und leitet weiter. Zeit für Reverse, langsam aufgebaut. Spielerische Lösungen werden gesucht."
+      },
+      "timestamp": "2026-03-07T17:02:35.335873"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "first_option": "Winger",
+        "pass_quality": "Unter Druck",
+        "note": "Erster pass in n Zone aber dann keine Anschluss Option. Winger 3er Welle entry, weakside versetzt. Winger n Zone, Rundung 50/50. Chip Bande winger."
+      },
+      "timestamp": "2026-03-07T17:50:49.106579"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "pass_quality": "Unter Druck",
+        "first_option": "Winger",
+        "note": "Es war geprägt von lauter über und unterzahl Situationen . Nicht mehr viel spielfluss. Aber bei Aufbau Szenen wurde fast immer der winger gewählt."
+      },
+      "timestamp": "2026-03-07T18:59:07.066761"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-03-07T18:59:27.219659"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-03-07T18:59:27.316612"
+  },
   "game_info": {
-    "league": "DEL",
-    "team_home": "Adler Mannheim",
-    "team_away": "Kölner Haie",
-    "observed_team": "Adler Mannheim",
-    "date": "2026-03-07T08:04:35.957Z",
+    "league": "U20_DNL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "ESC Dresden",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-03-07T15:30:23.164Z",
     "season": "2025/26",
-    "matchday": "49"
+    "matchday": "Viertelfinale"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Es wurde von der Zeit Betrachtung her fast immer die erste Option gewählt",
+      "ts": "2026-03-07T17:03:17.249819"
     },
     "P2": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Dresden steht in der nzone kompakt",
+      "ts": "2026-03-07T17:51:08.946523"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Dresden hat wieder gut Kontrolle über die n Zone",
+      "ts": "2026-03-07T18:59:26.367818"
     }
   }
 }
