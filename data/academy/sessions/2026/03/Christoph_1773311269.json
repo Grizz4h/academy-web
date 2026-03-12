@@ -1,16 +1,16 @@
 {
-  "id": "Christoph_1773033092",
+  "id": "Christoph_1773311269",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
   "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
-  "confidence": 1,
+  "confidence": 2,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A2_D5",
   "state": "IN_PROGRESS",
   "current_phase": "P2",
-  "created_at": "2026-03-09T06:11:32.970917",
+  "created_at": "2026-03-12T11:27:49.280035",
   "drills": [
     {
       "id": "A2_D5",
@@ -118,34 +118,34 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-03-09T06:11:36.406102"
+      "timestamp": "2026-03-12T11:27:51.829431"
     },
     {
       "phase": "P1",
       "answers": {
-        "space_feel": "offen",
-        "note": "Oilers kommen oft mit sehr viel Speed in die neutrale Zone, dadurch öffnen sich vor und hinter der Blue line Räume. Es waren dann im Offensiv drittel oft anspielstationen mit richtig viel Platz. Es ist ein krasser unterschied zwischen nhl und del was das angeht, es zu erkennen. Die del hat deutlich unsauberer ausgeführte entries und exits."
+        "note": "offen, skate durch neutrale und crossin blue. Haben die letzten 2-3 szenen sehr viel platun und zeit in der neutralen und beim entry. man sieht sofort dass sich hier die Überlegenheit von Ottawa gerade in der neutralen zone entscheidet, sie können immer fahrt aufnehmen und hane in der n zone viel zeit zu schauen und zu überlegen. ",
+        "space_feel": "offen"
       },
-      "timestamp": "2026-03-09T06:38:22.761226"
+      "timestamp": "2026-03-12T12:03:28.422043"
     }
   ],
   "drafts": {},
   "post": null,
   "game_info": {
     "league": "NHL",
-    "team_home": "Los Angeles Kings",
-    "team_away": "Edmonton Oilers",
-    "observed_team": "Edmonton Oilers",
-    "date": "2026-03-09T05:11:32.834Z",
+    "team_home": "Ottawa Senators",
+    "team_away": "Montreal Canadiens",
+    "observed_team": "Ottawa Senators",
+    "date": "2026-03-12T10:27:49.254Z",
     "season": "2025/26",
-    "matchday": "61"
+    "matchday": "54"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "Es konnte in der o Zone oft kurz überlegt werden und der pass sauber gespielt. Durch die Geschwindigkeit der Oilers reißen sie förmlich Löcher",
-      "ts": "2026-03-09T06:39:23.017803"
+      "text": "es wurde oft sogar gewartet um die Entscheidung zu treffen, selten aus der Hektik",
+      "ts": "2026-03-12T12:03:51.236563"
     },
     "P2": {
       "done": false,
