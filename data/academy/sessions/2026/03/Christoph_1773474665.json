@@ -1,16 +1,16 @@
 {
-  "id": "Christoph_1773311269",
+  "id": "Christoph_1773474665",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A2",
   "goal": "Auto: A2 – Raum, Linien & Breakout-Logik",
-  "confidence": 2,
+  "confidence": 3,
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A2_D5",
   "state": "COMPLETED",
   "current_phase": "POST",
-  "created_at": "2026-03-12T11:27:49.280035",
+  "created_at": "2026-03-14T08:51:05.592724",
   "drills": [
     {
       "id": "A2_D5",
@@ -118,36 +118,36 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-03-12T11:27:51.829431"
+      "timestamp": "2026-03-14T08:51:11.938575"
     },
     {
       "phase": "P1",
       "answers": {
-        "note": "offen, skate durch neutrale und crossin blue. Haben die letzten 2-3 szenen sehr viel platun und zeit in der neutralen und beim entry. man sieht sofort dass sich hier die Überlegenheit von Ottawa gerade in der neutralen zone entscheidet, sie können immer fahrt aufnehmen und hane in der n zone viel zeit zu schauen und zu überlegen. ",
-        "space_feel": "offen"
+        "note": "Nur kurze Zeit zum überlegen in der n Zone. Berlin attackiert früh in der n Zone, daher hochstens neutral. Wenn nicht sofort eine anspielststionda ist, reicht die Zeit und Raum nicht. Meine Erkenntnis generell aus diesem Drill: die neutrale Zone ist die einfachste Methode zu identifizieren wer das Spiel kontrolliert. ",
+        "space_feel": "neutral"
       },
-      "timestamp": "2026-03-12T12:03:28.422043"
+      "timestamp": "2026-03-14T09:28:32.382103"
     },
     {
       "phase": "P2",
       "answers": {
-        "note": "nicht mehr so deutlch wie im ersten drittel aber sie haben beim crossing blue line meinstens noch zeit reinzuskaten und carrien. skate entrie und kopf oben.  es war geprägt von powerplay, aber dann hierzu eine meta beobachtung: ottawa lässt den puck richtig schön laufen beim pp und skatet sehr dynamisch und versucht löcher zu reißen, worauf kann ihc beim powerplay im dritten drittel achten?",
-        "space_feel": "neutral"
+        "space_feel": "eng",
+        "note": "Sie könnnen die n Zone nciht kontrollieren, wird oft nur durch einen schlechten pass überbrückt. Kaum entry Situationen. Jetzt war mal eine sauberer Angriff aufgebaut under neutralen und entry skate. Schneller harter pass in der neutralen auf center, center dreht auf und skatet entry. "
       },
-      "timestamp": "2026-03-12T22:52:15.109123"
+      "timestamp": "2026-03-14T10:20:21.126127"
     },
     {
       "phase": "P3",
       "answers": {
-        "space_feel": "neutral",
-        "note": "Dein Hinweis mit dem Verteidiger Abstand ist ein richtig guter Indikator. Sie hatten ganz deuthclib neutralen Raum. Bei fast allen Angriffen"
+        "note": "Fällt mir schwer zu bewerten, da es kaum zu Szenen in der n Zone kommt, Mannheim Chipt und klärt viel aus Mangel an Stationen. Jetzt mal ein schneller skate durch n Zone und entry. Aber großteils nur klären, kein Zugriff in der neutralen, daher auch kaum Situation an der blauenz zur Bewertung ",
+        "space_feel": "eng"
       },
-      "timestamp": "2026-03-12T23:17:28.060288"
+      "timestamp": "2026-03-14T10:45:17.187259"
     },
     {
       "phase": "POST",
       "answers": {},
-      "timestamp": "2026-03-12T23:17:43.855474"
+      "timestamp": "2026-03-14T10:45:56.389876"
     }
   ],
   "drafts": {},
@@ -156,33 +156,33 @@
     "unclear": "",
     "next_module": "",
     "helpfulness": 0,
-    "completed_at": "2026-03-12T23:17:44.057895"
+    "completed_at": "2026-03-14T10:45:56.527512"
   },
   "game_info": {
-    "league": "NHL",
-    "team_home": "Ottawa Senators",
-    "team_away": "Montreal Canadiens",
-    "observed_team": "Ottawa Senators",
-    "date": "2026-03-12T10:27:49.254Z",
+    "league": "DEL",
+    "team_home": "Eisbären Berlin",
+    "team_away": "Adler Mannheim",
+    "observed_team": "Adler Mannheim",
+    "date": "2026-03-14T07:51:05.429Z",
     "season": "2025/26",
-    "matchday": "54"
+    "matchday": "51"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "es wurde oft sogar gewartet um die Entscheidung zu treffen, selten aus der Hektik",
-      "ts": "2026-03-12T12:03:51.236563"
+      "text": "In der n Zone war immer nur eine kurzer Moment zu entscheiden. Wenn die Entscheidung etwas zu lange gedauert hat war das Zeit und Raum Fenster relativ schnell zu",
+      "ts": "2026-03-14T09:29:23.035011"
     },
     "P2": {
       "done": true,
-      "text": "sie hatten nicht mehr ganz so viel Freiraum, Montreal hatte mehr zugriff im N zone und ist höher gestanden. dadurch deutlich weniger entscheidungszeit für ottawa an der blauen linie",
-      "ts": "2026-03-12T22:53:09.337291"
+      "text": "Abstand der Berliner war in der neutralen immer sehr eng. Kaum Zeit und Raum für kontrollierter geordnete entries",
+      "ts": "2026-03-14T10:20:56.363454"
     },
     "P3": {
       "done": true,
-      "text": "Der gal zum Verteidiger war immer so ca 2-4 Meter",
-      "ts": "2026-03-12T23:17:42.685611"
+      "text": "Es war nicht wirklich eine enge an der blauen sondern durch den frühen forechec von Berlin kam Mannheim fast gar nciht sauber an die blaue",
+      "ts": "2026-03-14T10:45:54.453869"
     }
   }
 }
