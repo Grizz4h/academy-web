@@ -184,6 +184,32 @@ export interface TeamsResponse {
   teams: Team[]
 }
 
+export interface RewardServerState {
+  currency: {
+    PUX: number
+  }
+  unlockedAchievements: Record<string, { id: string; unlockedAt: string }>
+  unlockedMasteries: Record<string, any>
+  processedSessions: Record<string, { sessionId: string; grantedAt: string; pux: number }>
+  lastUpdatedAt?: string | null
+}
+
+export interface RewardApplyRequest {
+  session_id: string
+  evaluated_at: string
+  granted_pux: number
+  reward_events: Array<Record<string, any>>
+  unlocked_achievements: Array<{ id: string; unlockedAt: string }>
+  unlocked_masteries: Array<Record<string, any>>
+}
+
+export interface RewardApplyResponse {
+  state: RewardServerState
+  applied: boolean
+  granted_pux: number
+  reward_events: Array<Record<string, any>>
+}
+
 // ==== API Helpers ====
 const resolveApiBase = () => {
   const envBase = import.meta.env.VITE_API_BASE
@@ -428,6 +454,31 @@ export const api = {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch teams')
+    return res.json()
+  },
+
+  getRewardState: async (): Promise<RewardServerState> => {
+    const res = await fetch(buildUrl('/rewards/state'), {
+      headers: {
+        ...authHeaders(),
+      },
+    })
+
+    if (!res.ok) throw new Error('Failed to fetch reward state')
+    return res.json()
+  },
+
+  applyRewardResult: async (data: RewardApplyRequest): Promise<RewardApplyResponse> => {
+    const res = await fetch(buildUrl('/rewards/apply'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) throw new Error('Failed to apply rewards')
     return res.json()
   }
 }

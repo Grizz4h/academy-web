@@ -1,0 +1,666 @@
+/* ================================================================
+   RewardPopup — tier-driven animation system
+   Three distinct motion profiles: bronze (pop), silver (premium),
+   gold (hero unlock), mastery (majestic).
+   All motion is CSS-only. No external libraries.
+   ================================================================ */
+
+/* ── Keyframes ───────────────────────────────────────────────── */
+
+/* Bronze: clean, fast pop-in */
+@keyframes popInBronze {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.93); }
+  70%  { opacity: 1; transform: translateY(-2px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Silver: stronger overshoot */
+@keyframes popInSilver {
+  0%   { opacity: 0; transform: translateY(18px) scale(0.88); }
+  55%  { opacity: 1; transform: translateY(-4px) scale(1.03); }
+  78%  { transform: translateY(1px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Gold: hero reveal — big scale bloom first */
+@keyframes popInGold {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.82); }
+  40%  { opacity: 1; transform: translateY(-6px) scale(1.06); }
+  65%  { transform: translateY(2px) scale(0.98); }
+  82%  { transform: translateY(-1px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Mastery: slower, majestic drift */
+@keyframes popInMastery {
+  0%   { opacity: 0; transform: translateY(28px) scale(0.80); }
+  45%  { opacity: 1; transform: translateY(-8px) scale(1.04); }
+  70%  { transform: translateY(2px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Exit for all tiers */
+@keyframes popOut {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.93) translateY(8px); }
+}
+
+/* Tier shine sweeps */
+@keyframes shineSweepBronze {
+  0%   { transform: translateX(-100%) skewX(-16deg); opacity: 0; }
+  30%  { opacity: 0.6; }
+  100% { transform: translateX(220%) skewX(-16deg); opacity: 0; }
+}
+@keyframes shineSweepSilver {
+  0%   { transform: translateX(-100%) skewX(-14deg); opacity: 0; }
+  25%  { opacity: 0.65; }
+  100% { transform: translateX(220%) skewX(-14deg); opacity: 0; }
+}
+@keyframes shineSweepGold {
+  0%   { transform: translateX(-100%) skewX(-18deg); opacity: 0; }
+  20%  { opacity: 0.7; }
+  100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
+}
+/* Mastery: triple rainbow sweep (3 rapid passes) */
+@keyframes shineSweepMasteryTriple {
+  0%    { transform: translateX(-120%) skewX(-22deg); opacity: 0; }
+  5%    { opacity: 1; }
+  22%   { transform: translateX(240%) skewX(-22deg); opacity: 0; }
+  22.1% { transform: translateX(-120%) skewX(-22deg); opacity: 0; }
+  28%   { opacity: 0.88; }
+  47%   { transform: translateX(240%) skewX(-22deg); opacity: 0; }
+  47.1% { transform: translateX(-120%) skewX(-22deg); opacity: 0; }
+  52%   { opacity: 0.58; }
+  69%   { transform: translateX(240%) skewX(-22deg); opacity: 0; }
+  100%  { transform: translateX(240%) skewX(-22deg); opacity: 0; }
+}
+/* Mastery: reverse echo — glides right → left */
+@keyframes shineSweepMasteryReverseEcho {
+  0%   { transform: translateX(120%) skewX(12deg); opacity: 0; }
+  18%  { opacity: 0.45; }
+  100% { transform: translateX(-240%) skewX(12deg); opacity: 0; }
+}
+/* Mastery card charge pulse: purple flash → cyan settle */
+@keyframes masteryCardGlow {
+  0%   {
+    box-shadow:
+      0 24px 100px rgba(60, 200, 220, 0.40),
+      0 8px 32px rgba(30, 140, 170, 0.28),
+      0 0 0 1px rgba(80, 220, 240, 0.16),
+      inset 0 1px 0 rgba(140,240,255,0.12);
+  }
+  14%  {
+    box-shadow:
+      0 32px 140px rgba(160, 70, 255, 0.80),
+      0 12px 55px rgba(100, 35, 210, 0.58),
+      0 0 0 2.5px rgba(215, 150, 255, 0.85),
+      inset 0 1px 0 rgba(230,185,255,0.35);
+  }
+  40%  {
+    box-shadow:
+      0 30px 125px rgba(40, 225, 255, 0.65),
+      0 9px 42px rgba(20, 165, 215, 0.44),
+      0 0 0 1.5px rgba(80, 238, 255, 0.60),
+      inset 0 1px 0 rgba(165,248,255,0.25);
+  }
+  100% {
+    box-shadow:
+      0 24px 100px rgba(60, 200, 220, 0.40),
+      0 8px 32px rgba(30, 140, 170, 0.28),
+      0 0 0 1px rgba(80, 220, 240, 0.16),
+      inset 0 1px 0 rgba(140,240,255,0.12);
+  }
+}
+
+/* Animated angle for subtle mastery border drift */
+@property --mastery-border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes masteryBorderDrift {
+  from { --mastery-border-angle: 0deg; }
+  to   { --mastery-border-angle: 360deg; }
+}
+
+/* Silver/Gold ring pulse */
+@keyframes ringPulse {
+  0%   { transform: scale(1);    opacity: 0.55; }
+  60%  { transform: scale(1.55); opacity: 0.15; }
+  100% { transform: scale(1.9);  opacity: 0; }
+}
+
+/* Gold burst radial expand */
+@keyframes burstExpand {
+  0%   { transform: scale(0.6); opacity: 0.5; }
+  55%  { transform: scale(1.4); opacity: 0.22; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Mastery slow drift glow */
+@keyframes masteryDrift {
+  0%   { transform: scale(0.8);  opacity: 0.45; }
+  50%  { transform: scale(1.35); opacity: 0.18; }
+  100% { transform: scale(2.4);  opacity: 0; }
+}
+
+/* Stagger content fade-in */
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Gold PUX amount pop */
+@keyframes amountPop {
+  0%   { opacity: 0; transform: scale(0.7); }
+  65%  { transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ── Root & Layout ───────────────────────────────────────────── */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  pointer-events: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 6, 14, 0.72);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity 210ms ease;
+  pointer-events: auto;
+  border: 0;
+}
+
+.rootVisible .overlay {
+  opacity: 1;
+}
+
+/* Gold/Mastery get stronger dim */
+.tier_gold .overlay,
+.tier_mastery .overlay {
+  background: rgba(2, 4, 12, 0.84);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.stack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.toastStack {
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 1rem;
+}
+
+/* ── Panels — base (hidden) ──────────────────────────────────── */
+
+.panel,
+.toastPanel,
+.heroPanel {
+  opacity: 0;
+  pointer-events: auto;
+  will-change: transform, opacity;
+}
+
+.panel,
+.heroPanel {
+  width: min(560px, 100%);
+}
+
+.toastPanel {
+  width: min(380px, calc(100vw - 2rem));
+}
+
+.heroPanel {
+  width: min(640px, 100%);
+}
+
+/* ── Animation trigger: rootVisible + tier ───────────────────── */
+
+/* Bronze */
+.rootVisible .tier_bronze.panel,
+.rootVisible .tier_bronze.toastPanel,
+.rootVisible .tier_bronze.heroPanel {
+  animation: popInBronze 260ms cubic-bezier(0.22, 0.8, 0.44, 1) forwards;
+}
+
+/* Silver */
+.rootVisible .tier_silver.panel,
+.rootVisible .tier_silver.toastPanel,
+.rootVisible .tier_silver.heroPanel {
+  animation: popInSilver 360ms cubic-bezier(0.18, 0.9, 0.38, 1.1) forwards;
+}
+
+/* Gold */
+.rootVisible .tier_gold.panel,
+.rootVisible .tier_gold.toastPanel,
+.rootVisible .tier_gold.heroPanel {
+  animation: popInGold 520ms cubic-bezier(0.15, 0.85, 0.35, 1.15) forwards;
+}
+
+/* Mastery */
+.rootVisible .tier_mastery.panel,
+.rootVisible .tier_mastery.toastPanel,
+.rootVisible .tier_mastery.heroPanel {
+  animation: popInMastery 680ms cubic-bezier(0.12, 0.9, 0.28, 1.08) forwards;
+}
+
+/* ── Burst/ambient layer (Gold & Mastery only) ───────────────── */
+
+.burstLayer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.burst_gold {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.28) 0%, rgba(180, 130, 20, 0.10) 40%, transparent 70%);
+  animation: burstExpand 700ms cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+}
+
+.burst_mastery {
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, rgba(95, 235, 225, 0.24) 0%, rgba(60, 160, 190, 0.10) 42%, transparent 68%);
+  animation: masteryDrift 1000ms cubic-bezier(0.15, 0.85, 0.3, 1) forwards;
+}
+
+/* Second violet burst fires slightly after the first */
+.burst_mastery::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(190, 80, 255, 0.35) 0%, rgba(130, 40, 215, 0.15) 36%, transparent 62%);
+  animation: masteryDrift 760ms 260ms cubic-bezier(0.18, 0.88, 0.38, 1) forwards;
+}
+
+/* ── Card ────────────────────────────────────────────────────── */
+
+.card {
+  margin-bottom: 0;
+  overflow: hidden;
+  background: rgba(8, 12, 24, 0.92);
+  border-color: rgba(255, 255, 255, 0.14);
+  position: relative;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Shine sweeps per tier ───────────────────────────────────── */
+.tier_bronze .card::after,
+.tier_silver .card::after,
+.tier_gold .card::after,
+.tier_mastery .card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Bronze: warm copper-orange gleam */
+.tier_bronze .card::after {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(210, 130, 50, 0.28) 47%,
+    rgba(255, 190, 90, 0.18) 52%,
+    transparent 70%
+  );
+  animation: shineSweepBronze 500ms 140ms ease forwards;
+}
+
+/* Silver: cool blue-white polish */
+.tier_silver .card::after {
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    rgba(160, 215, 240, 0.22) 46%,
+    rgba(230, 248, 255, 0.32) 52%,
+    rgba(160, 215, 240, 0.14) 58%,
+    transparent 72%
+  );
+  animation: shineSweepSilver 520ms 180ms ease forwards;
+}
+
+/* Gold: rich amber-yellow streak */
+.tier_gold .card::after {
+  background: linear-gradient(
+    105deg,
+    transparent 26%,
+    rgba(220, 170, 30, 0.22) 43%,
+    rgba(255, 225, 80, 0.38) 51%,
+    rgba(220, 170, 30, 0.18) 59%,
+    transparent 74%
+  );
+  animation: shineSweepGold 540ms 160ms ease forwards;
+}
+
+/* Mastery: triple rainbow arc */
+.tier_mastery .card::after {
+  background: linear-gradient(
+    105deg,
+    transparent 16%,
+    rgba(130, 50, 255, 0.12) 30%,
+    rgba(185, 100, 255, 0.55) 42%,
+    rgba(228, 188, 255, 0.82) 50%,
+    rgba(145, 235, 255, 0.56) 58%,
+    rgba(55, 205, 255, 0.22) 68%,
+    transparent 82%
+  );
+  animation: shineSweepMasteryTriple 1400ms 100ms linear forwards;
+}
+/* Mastery: reverse echo (right → left), pink-violet */
+.tier_mastery .card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    -105deg,
+    transparent 24%,
+    rgba(255, 120, 230, 0.12) 40%,
+    rgba(205, 105, 255, 0.34) 50%,
+    rgba(140, 75, 255, 0.20) 60%,
+    transparent 76%
+  );
+  animation: shineSweepMasteryReverseEcho 1100ms 900ms ease forwards;
+}
+
+/* ── Card shadows per tier ───────────────────────────────────── */
+
+.tier_bronze .card {
+  box-shadow:
+    0 12px 40px rgba(140, 80, 30, 0.30),
+    0 2px 8px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color: rgba(180, 120, 60, 0.26);
+}
+
+.tier_silver .card {
+  box-shadow:
+    0 16px 56px rgba(63, 140, 160, 0.34),
+    0 4px 16px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(200,230,240,0.10);
+  border-color: rgba(80, 160, 185, 0.30);
+}
+
+.tier_gold .card {
+  box-shadow:
+    0 20px 80px rgba(200, 165, 50, 0.42),
+    0 6px 24px rgba(160, 110, 10, 0.28),
+    0 0 0 1px rgba(210, 175, 55, 0.18),
+    inset 0 1px 0 rgba(255,240,160,0.12);
+  border-color: rgba(210, 175, 55, 0.36);
+}
+
+/* Mastery card base */
+.tier_mastery .card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(8, 12, 24, 0.96), rgba(8, 12, 24, 0.96)) padding-box,
+    conic-gradient(
+      from var(--mastery-border-angle),
+      rgba(255, 68, 210, 0.00) 0deg,
+      rgba(255, 68, 210, 0.00) 68deg,
+      rgba(255, 68, 210, 0.42) 82deg,
+      rgba(255, 165, 236, 0.62) 92deg,
+      rgba(255, 68, 210, 0.26) 104deg,
+      rgba(255, 68, 210, 0.00) 118deg,
+      rgba(255, 68, 210, 0.00) 248deg,
+      rgba(255, 68, 210, 0.42) 262deg,
+      rgba(255, 165, 236, 0.62) 272deg,
+      rgba(255, 68, 210, 0.26) 284deg,
+      rgba(255, 68, 210, 0.00) 298deg,
+      rgba(255, 68, 210, 0.00) 360deg
+    ) border-box;
+  box-shadow:
+    0 24px 100px rgba(60, 200, 220, 0.40),
+    0 8px 32px rgba(30, 140, 170, 0.28),
+    0 0 0 1px rgba(255, 68, 210, 0.20),
+    0 0 0 1px rgba(80, 220, 240, 0.16),
+    0 0 22px rgba(255, 80, 220, 0.16),
+    inset 0 1px 0 rgba(140,240,255,0.12);
+  border-color: transparent;
+  animation:
+    masteryCardGlow 1200ms 80ms ease forwards,
+    masteryBorderDrift 7.2s 1300ms linear infinite;
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+/* ── Icon Wrap ───────────────────────────────────────────────── */
+
+.iconWrap {
+  position: relative;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.07));
+  color: rgba(247, 247, 255, 0.96);
+  flex: none;
+  overflow: visible;
+}
+
+.tier_bronze .iconWrap {
+  background: linear-gradient(160deg, rgba(200, 128, 60, 0.32), rgba(100, 55, 20, 0.22));
+  border-color: rgba(200, 140, 60, 0.30);
+}
+
+.tier_silver .iconWrap {
+  background: linear-gradient(160deg, rgba(90, 165, 185, 0.38), rgba(40, 90, 110, 0.22));
+  border-color: rgba(90, 165, 185, 0.30);
+}
+
+.tier_gold .iconWrap {
+  background: linear-gradient(160deg, rgba(220, 185, 80, 0.40), rgba(120, 88, 18, 0.24));
+  border-color: rgba(220, 185, 80, 0.36);
+  box-shadow: 0 0 18px rgba(220, 185, 60, 0.30);
+}
+
+.tier_mastery .iconWrap {
+  background: linear-gradient(160deg, rgba(100, 240, 230, 0.32), rgba(38, 100, 110, 0.20));
+  border-color: rgba(100, 240, 230, 0.28);
+  box-shadow: 0 0 22px rgba(80, 220, 240, 0.28);
+}
+
+/* ── Pulse ring (Silver / Gold / Mastery) ────────────────────── */
+
+.iconRing {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  pointer-events: none;
+}
+
+.ring_silver {
+  border-color: rgba(90, 165, 185, 0.60);
+  animation: ringPulse 900ms 120ms ease-out forwards;
+}
+
+.ring_gold {
+  border-color: rgba(220, 185, 60, 0.70);
+  animation: ringPulse 1000ms 180ms ease-out forwards;
+}
+
+.ring_mastery {
+  border-color: rgba(80, 220, 240, 0.65);
+  animation: ringPulse 1200ms 240ms ease-out forwards;
+}
+
+/* ── Staggered content reveal ────────────────────────────────── */
+
+.stageOut {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.stageIn {
+  animation: fadeUp 220ms ease forwards;
+}
+
+/* ── Text ────────────────────────────────────────────────────── */
+
+.textBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrowRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.description {
+  margin: 0.45rem 0 0;
+  color: rgba(216, 225, 255, 0.86);
+  line-height: 1.45;
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+
+.footer {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+/* ── Amount badge — tier variants ────────────────────────────── */
+
+.amount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.amount_bronze {
+  border: 1px solid rgba(180, 120, 55, 0.28);
+  background: rgba(140, 90, 32, 0.14);
+  color: rgba(240, 200, 140, 0.96);
+}
+
+.amount_silver {
+  border: 1px solid rgba(80, 160, 185, 0.30);
+  background: rgba(60, 130, 155, 0.14);
+  color: rgba(180, 230, 245, 0.96);
+}
+
+.amount_gold {
+  border: 1px solid rgba(210, 178, 55, 0.40);
+  background: rgba(165, 130, 28, 0.18);
+  color: rgba(255, 230, 120, 0.98);
+  box-shadow: 0 0 12px rgba(200, 170, 40, 0.22);
+  animation: amountPop 340ms 500ms cubic-bezier(0.22, 0.9, 0.36, 1.2) both;
+}
+
+.amount_mastery {
+  border: 1px solid rgba(80, 220, 240, 0.36);
+  background: rgba(40, 160, 190, 0.16);
+  color: rgba(160, 245, 255, 0.98);
+  box-shadow: 0 0 14px rgba(60, 200, 230, 0.20);
+  animation: amountPop 400ms 620ms cubic-bezier(0.2, 0.9, 0.32, 1.1) both;
+}
+
+/* ── Close button ────────────────────────────────────────────── */
+
+.closeButton {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(247, 247, 255, 0.92);
+  border-radius: 12px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .stack {
+    padding: 1rem;
+  }
+
+  .header {
+    gap: 0.75rem;
+  }
+
+  .iconWrap {
+    width: 2.85rem;
+    height: 2.85rem;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .closeButton {
+    width: 100%;
+  }
+
+  .burst_gold {
+    width: 320px;
+    height: 320px;
+  }
+
+  .burst_mastery {
+    width: 380px;
+    height: 380px;
+  }
+}

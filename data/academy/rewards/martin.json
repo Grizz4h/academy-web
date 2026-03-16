@@ -1,0 +1,18 @@
+{
+  "currency": {
+    "PUX": 25
+  },
+  "unlockedAchievements": {
+    "first-drill-complete": {
+      "id": "first-drill-complete",
+      "unlockedAt": "2026-01-18T16:23:01.984963"
+    },
+    "prime-time-scout": {
+      "id": "prime-time-scout",
+      "unlockedAt": "2026-01-23T22:46:08.385399"
+    }
+  },
+  "unlockedMasteries": {},
+  "processedSessions": {},
+  "lastUpdatedAt": "2026-03-16T20:48:39.333576+00:00"
+}

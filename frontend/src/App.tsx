@@ -9,24 +9,29 @@ import SessionPage from './pages/Session'
 import History from './pages/History'
 import Progress from './pages/Progress'
 import TopNav from './components/TopNav'
+import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 
 function App() {
   return (
-    <div className="app">
-      <TopNav />
-      <main className="container">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/curriculum" element={<Curriculum />} />
-          <Route path="/theory/:moduleId" element={<TheoryDetail />} />
-          <Route path="/drills/:moduleId" element={<Drills />} />
-          <Route path="/setup/:moduleId" element={<SessionSetup />} />
-          <Route path="/session/:id" element={<SessionPage />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/progress" element={<Progress />} />
-        </Routes>
-      </main>
-    </div>
+    <RewardProvider>
+      <div className="app">
+        <TopNav />
+        <main className="container">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/curriculum" element={<Curriculum />} />
+            <Route path="/theory/:moduleId" element={<TheoryDetail />} />
+            <Route path="/drills/:moduleId" element={<Drills />} />
+            <Route path="/setup/:moduleId" element={<SessionSetup />} />
+            <Route path="/session/:id" element={<SessionPage />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/progress" element={<Progress />} />
+          </Routes>
+        </main>
+      </div>
+      <RewardHost />
+      <RewardDevTools />
+    </RewardProvider>
   )
 }
 

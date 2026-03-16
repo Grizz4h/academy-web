@@ -1,0 +1,46 @@
+{
+  "currency": {
+    "PUX": 185
+  },
+  "unlockedAchievements": {
+    "first-drill-complete": {
+      "id": "first-drill-complete",
+      "unlockedAt": "2026-01-13T23:27:18.384325"
+    },
+    "ten-drills-complete": {
+      "id": "ten-drills-complete",
+      "unlockedAt": "2026-02-20T23:31:41.965075"
+    },
+    "three-completed-in-a-row": {
+      "id": "three-completed-in-a-row",
+      "unlockedAt": "2026-03-14T10:45:56.527512"
+    },
+    "seven-active-days": {
+      "id": "seven-active-days",
+      "unlockedAt": "2026-02-20T21:03:58.761030"
+    },
+    "five-distinct-drills": {
+      "id": "five-distinct-drills",
+      "unlockedAt": "2026-02-20T21:03:58.761030"
+    },
+    "ten-distinct-drills": {
+      "id": "ten-distinct-drills",
+      "unlockedAt": "2026-03-11T21:48:30.207497"
+    },
+    "early-bird": {
+      "id": "early-bird",
+      "unlockedAt": "2026-02-27T06:35:00.382216"
+    },
+    "night-owl": {
+      "id": "night-owl",
+      "unlockedAt": "2026-01-28T01:05:10.018057"
+    },
+    "prime-time-scout": {
+      "id": "prime-time-scout",
+      "unlockedAt": "2026-01-18T22:32:10.286396"
+    }
+  },
+  "unlockedMasteries": {},
+  "processedSessions": {},
+  "lastUpdatedAt": "2026-03-16T20:48:39.332776+00:00"
+}

@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { api } from '../api'
+import { useUser } from '../context/UserContext'
+import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { useState, useEffect, useRef } from 'react'
@@ -18,8 +20,9 @@ export default function SessionPage() {
   // Notizfeld für Session-Info
   const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
-  const navigate = (window as any).appNavigate || useNavigate();
   const queryClient = useQueryClient()
+  const { user } = useUser()
+  const { grantRewardResult, rewardState } = useRewards()
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
 
@@ -176,14 +179,40 @@ export default function SessionPage() {
         setDrillCompleted(true)
         if (currentPhase === 'POST') {
           try {
-            await api.completeSession(id!, {
+            const completedSession = await api.completeSession(id!, {
               summary: '',
               unclear: '',
               next_module: '',
               helpfulness: 0
             })
+            try {
+              await queryClient.invalidateQueries({ queryKey: ['session', id] })
+              await queryClient.invalidateQueries({ queryKey: ['sessions'] })
+
+              const freshSessions = await queryClient.fetchQuery({
+                queryKey: ['sessions', user],
+                queryFn: () => api.getSessions(user || undefined)
+              })
+
+              const rewardResult = evaluateSessionRewards({
+                currentSession: completedSession,
+                sessions: freshSessions,
+                rewardState,
+                context: {
+                  completedAt: completedSession.post?.completed_at || new Date().toISOString(),
+                  deviceType: detectDeviceType(),
+                  noteText: sessionNote,
+                  performance: null,
+                }
+              })
+
+              await grantRewardResult(rewardResult)
+            } catch (rewardError) {
+              console.error('Reward evaluation failed', rewardError)
+            }
           } catch (e) {}
-          navigate('/curriculum')
+          // Keep user on the completed session page so reward popups are visible
+          // even when a host environment injects a full-page navigate handler.
         }
       }
     })

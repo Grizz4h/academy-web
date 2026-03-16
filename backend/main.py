@@ -56,7 +56,7 @@ import json
 import os
 import logging
 from typing import Any, List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 logging.basicConfig(
     level=logging.INFO,
@@ -109,6 +109,7 @@ async def health():
 # Daten-Verzeichnis
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
+REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
 
 # Pydantic Models
 class SessionCreate(BaseModel):
@@ -140,6 +141,15 @@ class PostData(BaseModel):
 class AbortData(BaseModel):
     reason: str  # "time", "wrong_game", "no_motivation", "bad_session", "other"
     note: Optional[str] = None
+
+
+class RewardApplyData(BaseModel):
+    session_id: str
+    evaluated_at: str
+    granted_pux: int = 0
+    reward_events: List[dict] = Field(default_factory=list)
+    unlocked_achievements: List[dict] = Field(default_factory=list)
+    unlocked_masteries: List[dict] = Field(default_factory=list)
 
 # Hilfsfunktionen
 def load_json(file_path: str):
@@ -200,6 +210,47 @@ def get_session_path_or_404(session_id: str) -> str:
     if not session_path:
         raise HTTPException(status_code=404, detail="Session not found")
     return session_path
+
+
+def _normalize_user_key(user: str) -> str:
+    return (user or "guest").strip().lower()
+
+
+def _reward_state_path(user: str) -> str:
+    user_key = _normalize_user_key(user)
+    return os.path.join(REWARDS_DIR, f"{user_key}.json")
+
+
+def _create_default_reward_state() -> dict:
+    return {
+        "currency": {"PUX": 0},
+        "unlockedAchievements": {},
+        "unlockedMasteries": {},
+        "processedSessions": {},
+        "lastUpdatedAt": None,
+    }
+
+
+def _load_reward_state(user: str) -> dict:
+    path = _reward_state_path(user)
+    if not os.path.exists(path):
+        return _create_default_reward_state()
+
+    state = load_json(path)
+    base = _create_default_reward_state()
+    merged = {
+        **base,
+        **state,
+        "currency": {**base["currency"], **(state.get("currency") or {})},
+        "unlockedAchievements": state.get("unlockedAchievements") or {},
+        "unlockedMasteries": state.get("unlockedMasteries") or {},
+        "processedSessions": state.get("processedSessions") or {},
+    }
+    return merged
+
+
+def _save_reward_state(user: str, state: dict) -> None:
+    save_json(_reward_state_path(user), state)
 
 # API Endpunkte
 @app.get("/api/curriculum")
@@ -646,6 +697,69 @@ async def add_microfeedback(session_id: str, data: MicroFeedbackData, request: R
     logging.info(f"[microfeedback] session={session_id} phase={phase} trace_id={trace_id} trace_action={trace_action} text_len={len(data.text)}")
     save_json(session_path, session)
     return {"status": "ok", "microfeedback": session["microfeedback"][phase]}
+
+
+@app.get("/api/rewards/state")
+async def get_rewards_state(current_user: str = Depends(get_current_user)):
+    state = _load_reward_state(current_user)
+    return state
+
+
+@app.post("/api/rewards/apply")
+async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_current_user)):
+    state = _load_reward_state(current_user)
+
+    enforce_max_text_length(data.reward_events, "reward_events")
+    enforce_max_text_length(data.unlocked_achievements, "unlocked_achievements")
+    enforce_max_text_length(data.unlocked_masteries, "unlocked_masteries")
+
+    processed_sessions = state.get("processedSessions") or {}
+    if data.session_id in processed_sessions:
+        return {
+            "state": state,
+            "applied": False,
+            "granted_pux": 0,
+            "reward_events": [],
+        }
+
+    state["currency"]["PUX"] = int(state["currency"].get("PUX", 0)) + int(data.granted_pux or 0)
+    state["processedSessions"][data.session_id] = {
+        "sessionId": data.session_id,
+        "grantedAt": data.evaluated_at,
+        "pux": int(data.granted_pux or 0),
+    }
+
+    for achievement in data.unlocked_achievements:
+        achievement_id = (achievement.get("id") or "").strip()
+        if not achievement_id:
+            continue
+        if achievement_id in state["unlockedAchievements"]:
+            continue
+
+        unlocked_at = achievement.get("unlockedAt") or data.evaluated_at
+        state["unlockedAchievements"][achievement_id] = {
+            "id": achievement_id,
+            "unlockedAt": unlocked_at,
+        }
+
+    for mastery in data.unlocked_masteries:
+        mastery_key = (mastery.get("key") or "").strip()
+        if not mastery_key:
+            continue
+        if mastery_key in state["unlockedMasteries"]:
+            continue
+
+        state["unlockedMasteries"][mastery_key] = mastery
+
+    state["lastUpdatedAt"] = data.evaluated_at
+    _save_reward_state(current_user, state)
+
+    return {
+        "state": state,
+        "applied": True,
+        "granted_pux": int(data.granted_pux or 0),
+        "reward_events": data.reward_events,
+    }
 
 
 # Auth Endpoints nach finaler app-Definition (jetzt immer registriert)

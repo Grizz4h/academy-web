@@ -204,6 +204,83 @@
   background: #357a8a;
 }
 
+.rewardHeaderRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.rewardHeaderItem {
+  color: rgba(247, 247, 255, 0.9);
+}
+
+.rewardColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.rewardColumnTitle {
+  margin: 0 0 0.55rem;
+  color: #5191a2;
+  font-size: 1rem;
+}
+
+.rewardList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.rewardListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(120, 180, 210, 0.18);
+  background: rgba(120, 180, 210, 0.05);
+}
+
+.rewardName {
+  color: rgba(247, 247, 255, 0.95);
+  font-weight: 600;
+}
+
+.rewardMeta {
+  color: rgba(216, 225, 255, 0.72);
+  font-size: 0.8rem;
+}
+
+.rewardProgress {
+  color: rgba(108, 196, 220, 0.95);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.rewardTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 180, 210, 0.25);
+  background: rgba(18, 30, 44, 0.7);
+  color: rgba(210, 239, 248, 0.95);
+  font-size: 0.75rem;
+  text-transform: lowercase;
+}
+
+.rewardHint {
+  margin: 0.35rem 0 0;
+  color: rgba(216, 225, 255, 0.72);
+  font-size: 0.9rem;
+}
+
 .formColumn {
   display: flex;
   flex-direction: column;

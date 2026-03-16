@@ -8,6 +8,7 @@ import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
 import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
 import { CoverageMap } from '../components/dashboard/CoverageMap';
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
+import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string =>
@@ -19,6 +20,7 @@ const formatSessionState = (state: string): string =>
 
 export default function Dashboard() {
   const { user, setUser } = useUser();
+  const { rewardState } = useRewards();
 
   const [nameInput, setNameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -459,6 +461,9 @@ export default function Dashboard() {
   if (isLoading) return <Card>Lade Sessions...</Card>;
   if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>;
 
+  const nearAchievements = getTopNearAchievements(sessions || [], rewardState, 5);
+  const recentUnlocked = getRecentUnlockedAchievements(rewardState, 5);
+
   return (
     <div className={styles.dashboardPage}>
       <h1>Dashboard</h1>
@@ -540,6 +545,54 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+
+      <Card>
+        <h2 className={styles.sectionTitle}>Belohnungen</h2>
+        <div className={styles.rewardHeaderRow}>
+          <div className={styles.rewardHeaderItem}><strong>PUX!:</strong> {formatPux(rewardState.currency.PUX || 0)}</div>
+          <div className={styles.rewardHeaderItem}><strong>Freigeschaltet:</strong> {Object.keys(rewardState.unlockedAchievements || {}).length}</div>
+        </div>
+
+        <div className={styles.rewardColumns}>
+          <div>
+            <h3 className={styles.rewardColumnTitle}>Top 5 nah dran</h3>
+            {nearAchievements.length === 0 ? (
+              <div className={styles.rewardHint}>Noch keine klaren Kandidaten.</div>
+            ) : (
+              <ul className={styles.rewardList}>
+                {nearAchievements.map((item) => (
+                  <li key={item.achievement.id} className={styles.rewardListItem}>
+                    <div>
+                      <div className={styles.rewardName}>{item.achievement.title}</div>
+                      <div className={styles.rewardMeta}>{item.label}</div>
+                    </div>
+                    <span className={styles.rewardProgress}>{Math.round(item.progress * 100)}%</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div>
+            <h3 className={styles.rewardColumnTitle}>Letzte 5 erreicht</h3>
+            {recentUnlocked.length === 0 ? (
+              <div className={styles.rewardHint}>Noch keine Achievements erreicht.</div>
+            ) : (
+              <ul className={styles.rewardList}>
+                {recentUnlocked.map((item) => (
+                  <li key={item.achievement.id} className={styles.rewardListItem}>
+                    <div>
+                      <div className={styles.rewardName}>{item.achievement.title}</div>
+                      <div className={styles.rewardMeta}>{new Date(item.unlockedAt).toLocaleString('de-DE')}</div>
+                    </div>
+                    <span className={styles.rewardTag}>{item.achievement.category}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </Card>
 
       {/* Drill Priority Cards mit Scope */}
       <DrillPriorityCards
