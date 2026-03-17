@@ -285,6 +285,36 @@
   font-weight: 500;
 }
 
+.achievementMetaRow {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.achievementReplayButton {
+  border: 1px solid rgba(120, 180, 210, 0.28);
+  background: rgba(16, 26, 42, 0.78);
+  color: rgba(180, 230, 245, 0.94);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.achievementReplayButton:hover {
+  background: rgba(33, 52, 78, 0.9);
+  border-color: rgba(108, 196, 220, 0.52);
+}
+
+.achievementReplayButton:active {
+  transform: translateY(1px);
+}
+
 .achievementProgressWrap {
   display: flex;
   align-items: center;

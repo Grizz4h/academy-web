@@ -605,10 +605,10 @@
 }
 
 .amount_mastery {
-  border: 1px solid rgba(80, 220, 240, 0.36);
-  background: rgba(40, 160, 190, 0.16);
-  color: rgba(160, 245, 255, 0.98);
-  box-shadow: 0 0 14px rgba(60, 200, 230, 0.20);
+  border: 1px solid rgba(200, 120, 255, 0.36);
+  background: rgba(140, 80, 200, 0.16);
+  color: rgba(220, 140, 255, 0.98);
+  box-shadow: 0 0 14px rgba(185, 100, 255, 0.22);
   animation: amountPop 400ms 620ms cubic-bezier(0.2, 0.9, 0.32, 1.1) both;
 }
 

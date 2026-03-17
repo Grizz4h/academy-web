@@ -23,9 +23,15 @@ const TIER_COLORS: Record<string, string> = {
   mastery: '#b46aff',
 }
 
+function popupVariantFromTier(tier: string): 'small' | 'popup' | 'hero' {
+  if (tier === 'mastery') return 'hero'
+  if (tier === 'gold') return 'popup'
+  return 'small'
+}
+
 export default function Progress() {
   const { user } = useUser()
-  const { rewardState } = useRewards()
+  const { rewardState, enqueueReward } = useRewards()
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ['sessions', user],
     queryFn: () => api.getSessions(user || undefined),
@@ -106,6 +112,22 @@ export default function Progress() {
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }))
   const unlockedMasteriesCount = Object.keys(rewardState.unlockedMasteries || {}).length
 
+  const replayAchievementAnimation = (item: (typeof allProgress)[number]) => {
+    const tier = item.achievement.reward.visualTier || item.achievement.tier
+    enqueueReward({
+      kind: 'achievement',
+      title: item.achievement.hidden ? 'Geheimes Achievement' : item.achievement.title,
+      description: item.achievement.hidden ? 'Neuer versteckter Unlock.' : item.achievement.description,
+      amountPux: item.achievement.reward.PUX,
+      visualTier: tier,
+      icon: item.achievement.reward.icon,
+      achievementId: item.achievement.id,
+      variant: popupVariantFromTier(tier),
+      autoCloseMs: item.achievement.tier === 'mastery' ? 4200 : 3400,
+      meta: { replay: true, category: item.achievement.category, hidden: item.achievement.hidden },
+    })
+  }
+
   return (
     <div className={styles.page}>
       <h1>Lernfortschritt</h1>
@@ -167,8 +189,19 @@ export default function Progress() {
                             </div>
                             <div className={styles.achievementItemDesc}>{item.achievement.description}</div>
                             {item.isUnlocked && unlocked && (
-                              <div className={styles.achievementUnlockedAt}>
-                                ✓ {new Date(unlocked.unlockedAt).toLocaleDateString('de-DE')}
+                              <div className={styles.achievementMetaRow}>
+                                <div className={styles.achievementUnlockedAt}>
+                                  ✓ {new Date(unlocked.unlockedAt).toLocaleDateString('de-DE')}
+                                </div>
+                                <button
+                                  type="button"
+                                  className={styles.achievementReplayButton}
+                                  onClick={() => replayAchievementAnimation(item)}
+                                  aria-label={`Achievement ${item.achievement.title} erneut abspielen`}
+                                  title="Animation erneut abspielen"
+                                >
+                                  Replay
+                                </button>
                               </div>
                             )}
                             {!item.isUnlocked && item.progress > 0 && (

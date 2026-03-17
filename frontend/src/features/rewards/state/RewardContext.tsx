@@ -209,6 +209,30 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       setRewardState(normalizeRewardState(response.state))
       if (response.reward_events.length > 0) {
         enqueueRewards(response.reward_events as RewardEvent[])
+      } else if (result.rewardEvents.length > 0) {
+        const unlockedAchievements = response.state?.unlockedAchievements || {}
+        const unlockedMasteries = response.state?.unlockedMasteries || {}
+
+        const fallbackEvents = result.rewardEvents.filter((event) => {
+          if (event.kind === 'achievement' && event.achievementId) {
+            const wasUnlockedBefore = Boolean(rewardState.unlockedAchievements[event.achievementId])
+            const isUnlockedNow = Boolean(unlockedAchievements[event.achievementId])
+            return !wasUnlockedBefore && isUnlockedNow
+          }
+
+          if (event.kind === 'mastery' && event.id.startsWith('mastery:')) {
+            const masteryKey = event.id.slice('mastery:'.length)
+            const wasUnlockedBefore = Boolean(rewardState.unlockedMasteries[masteryKey])
+            const isUnlockedNow = Boolean(unlockedMasteries[masteryKey])
+            return !wasUnlockedBefore && isUnlockedNow
+          }
+
+          return false
+        })
+
+        if (fallbackEvents.length > 0) {
+          enqueueRewards(fallbackEvents)
+        }
       }
     } catch (err) {
       console.error('Failed to apply rewards on server, using local fallback', err)
@@ -217,7 +241,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         enqueueRewards(result.rewardEvents)
       }
     }
-  }, [enqueueRewards])
+  }, [enqueueRewards, rewardState.unlockedAchievements, rewardState.unlockedMasteries])
 
   const value = useMemo(
     () => ({
