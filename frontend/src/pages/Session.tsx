@@ -48,6 +48,8 @@ export default function SessionPage() {
 
   // Double-submit hard guard
   const advanceLockRef = useRef(false)
+  const draftSaveTimeoutRef = useRef<number | null>(null)
+  const remoteDraftsRef = useRef<Record<string, any>>({})
 
   // Draft key pro Session+Phase (localStorage fallback)
   const draftKey = id ? `academy.session.${id}.phase.${currentPhase}` : null
@@ -56,6 +58,10 @@ export default function SessionPage() {
     queryKey: ['session', id],
     queryFn: () => api.getSession(id!)
   })
+
+  useEffect(() => {
+    remoteDraftsRef.current = session?.drafts || {}
+  }, [session?.drafts])
 
   // Renderer switch based on moduleId (A1 = v1, else v2)
   // const moduleId = session?.module_id
@@ -122,17 +128,71 @@ export default function SessionPage() {
     }
   }, [answersByPhase, currentPhase, draftKey])
 
-  const clearDraft = () => {
+  // Drafts auch serverseitig sichern, damit Gerätewechsel innerhalb des Drittels funktioniert.
+  useEffect(() => {
+    if (!id || !session) return
+
+    const phaseAnswers = answersByPhase[currentPhase]
+    const remotePhaseAnswers = remoteDraftsRef.current?.[currentPhase]
+    const nextPhaseJson = JSON.stringify(phaseAnswers || {})
+    const remotePhaseJson = JSON.stringify(remotePhaseAnswers || {})
+
+    if (nextPhaseJson === remotePhaseJson) return
+
+    if (draftSaveTimeoutRef.current) {
+      window.clearTimeout(draftSaveTimeoutRef.current)
+    }
+
+    draftSaveTimeoutRef.current = window.setTimeout(async () => {
+      const hasAnswers = phaseAnswers && Object.keys(phaseAnswers).length > 0
+      const nextDrafts = { ...remoteDraftsRef.current }
+
+      if (hasAnswers) {
+        nextDrafts[currentPhase] = phaseAnswers
+      } else {
+        delete nextDrafts[currentPhase]
+      }
+
+      try {
+        await api.saveDrafts(id, nextDrafts)
+        remoteDraftsRef.current = nextDrafts
+        queryClient.setQueryData(['session', id], (prev: any) => prev ? { ...prev, drafts: nextDrafts } : prev)
+      } catch (err) {
+        console.error('Failed to save remote drafts', err)
+      }
+    }, 500)
+
+    return () => {
+      if (draftSaveTimeoutRef.current) {
+        window.clearTimeout(draftSaveTimeoutRef.current)
+      }
+    }
+  }, [answersByPhase, currentPhase, id, queryClient, session])
+
+  const clearDraft = async () => {
     setAnswersByPhase(prev => ({ ...prev, [currentPhase]: {} }))
     if (draftKey) localStorage.removeItem(draftKey)
+
+    if (!id) return
+
+    const nextDrafts = { ...remoteDraftsRef.current }
+    delete nextDrafts[currentPhase]
+
+    try {
+      await api.saveDrafts(id, nextDrafts)
+      remoteDraftsRef.current = nextDrafts
+      queryClient.setQueryData(['session', id], (prev: any) => prev ? { ...prev, drafts: nextDrafts } : prev)
+    } catch (err) {
+      console.error('Failed to clear remote draft', err)
+    }
   }
 
   const checkinMutation = useMutation({
     mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string }) => api.saveCheckin(id!, data),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['session', id] })
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
-      clearDraft()
+      await clearDraft()
       setDrillCompleted(true)
     },
     onError: () => {}
@@ -175,7 +235,7 @@ export default function SessionPage() {
       onSuccess: async () => {
         queryClient.invalidateQueries({ queryKey: ['session', id] })
         queryClient.invalidateQueries({ queryKey: ['sessions'] })
-        clearDraft()
+        await clearDraft()
         setDrillCompleted(true)
         if (currentPhase === 'POST') {
           try {

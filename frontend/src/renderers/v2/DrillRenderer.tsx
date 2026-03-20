@@ -1,6 +1,6 @@
 // ✅ ACTIVE: Renderer v2 for A2+ (UI-only, no Buttons, no API, no onComplete)
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 
@@ -48,6 +48,16 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 
 			{observationGuide ? (
 				<>
+					{Array.isArray(observationGuide) && observationGuide.length > 0 && (
+						<div style={{ marginBottom: "1rem" }}>
+							<ul style={{ marginTop: "0.25rem", fontSize: "0.9rem" }}>
+								{observationGuide.map((item: string, i: number) => (
+									<li key={i}>{renderWithGlossary(item)}</li>
+								))}
+							</ul>
+						</div>
+					)}
+
 					{Array.isArray(observationGuide.what_to_watch) && observationGuide.what_to_watch.length > 0 && (
 						<div style={{ marginBottom: "1rem" }}>
 							<strong>Worauf achten?</strong>
@@ -100,6 +110,8 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 			return <TriangleSpotting drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "role_identification":
 			return <RoleIdentification drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "event_log":
+			return <EventLog drill={drill} answers={answers} setAnswers={setAnswers} />;
 		default:
 			return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
 	}
@@ -492,6 +504,269 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
 					<p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
+				</div>
+			)}
+		</div>
+	);
+}
+
+// -------------------------------- EVENT LOG --------------------------------
+function EventLog({ drill, answers, setAnswers }: any) {
+	const eventKey: string = drill?.config?.event_key || "events";
+	const eventLabel: string = drill?.config?.event_label || "Event";
+	const fields: any[] = drill?.config?.fields || [];
+
+	const emptyForm = () => fields.reduce((acc: any, f: any) => ({ ...acc, [f.key]: "" }), {});
+
+	const [form, setForm] = useState<Record<string, string>>(emptyForm);
+	const [editIndex, setEditIndex] = useState<number | null>(null);
+
+	const legacyFallbackEvents: Record<string, string>[] =
+		eventKey === "puck_win_events" && Array.isArray(answers?.turnover_events)
+			? answers.turnover_events
+			: [];
+	const events: Record<string, string>[] = answers[eventKey] || legacyFallbackEvents;
+
+	const getOptionsForField = (field: any, currentForm: Record<string, string>) => {
+		if (Array.isArray(field.options)) return field.options;
+		if (field.options_by_value_of && typeof field.options_by_value_of === "object") {
+			const controllerKey = Object.keys(field.options_by_value_of)[0];
+			if (!controllerKey) return [];
+			const optionsMap = field.options_by_value_of[controllerKey] || {};
+			const controllerValue = currentForm[controllerKey];
+			return optionsMap[controllerValue] || [];
+		}
+		return [];
+	};
+
+	const sanitizeDependentSelects = (nextForm: Record<string, string>) => {
+		const sanitized = { ...nextForm };
+		for (const f of fields) {
+			if (f.type !== "select") continue;
+			const validOptions = getOptionsForField(f, sanitized);
+			if (sanitized[f.key] && !validOptions.includes(sanitized[f.key])) {
+				sanitized[f.key] = "";
+			}
+		}
+		return sanitized;
+	};
+
+	const handleFieldChange = (key: string, value: string) => {
+		setForm(prev => {
+			const next = { ...prev, [key]: value };
+			return sanitizeDependentSelects(next);
+		});
+	};
+
+	const handleSave = () => {
+		// alle non-optional select-Felder müssen ausgefüllt sein
+		const missing = fields.filter((f: any) => f.type === "select" && !f.optional && !form[f.key]);
+		if (missing.length > 0) return;
+
+		const newEvents = [...events];
+		if (editIndex !== null) {
+			newEvents[editIndex] = { ...form };
+			setEditIndex(null);
+		} else {
+			newEvents.push({ ...form });
+		}
+		setAnswers({ ...answers, [eventKey]: newEvents });
+		setForm(emptyForm());
+	};
+
+	const handleEdit = (idx: number) => {
+		setForm(sanitizeDependentSelects({ ...events[idx] }));
+		setEditIndex(idx);
+	};
+
+	const handleDelete = (idx: number) => {
+		const newEvents = events.filter((_: any, i: number) => i !== idx);
+		setAnswers({ ...answers, [eventKey]: newEvents });
+		if (editIndex === idx) {
+			setEditIndex(null);
+			setForm(emptyForm());
+		}
+	};
+
+	const handleCancelEdit = () => {
+		setEditIndex(null);
+		setForm(emptyForm());
+	};
+
+	// Kurzdarstellung: select-Felder mit · getrennt, Notiz dahinter
+	const shortLabel = (ev: Record<string, string>) => {
+		const selectParts = fields
+			.filter((f: any) => f.type === "select")
+			.map((f: any) => ev[f.key] || "—")
+			.join(" · ");
+		const noteField = fields.find((f: any) => f.type === "text");
+		const note = noteField && ev[noteField.key] ? ` – ${ev[noteField.key]}` : "";
+		return selectParts + note;
+	};
+
+	const selectStyle: React.CSSProperties = {
+		padding: "0.4rem 0.5rem",
+		backgroundColor: "#050712",
+		color: "#f7f7ff",
+		border: "1px solid rgba(81,145,162,0.5)",
+		borderRadius: "4px",
+		fontSize: "1rem",
+		minWidth: 0,
+		flex: "1 1 80px",
+	};
+
+	const textStyle: React.CSSProperties = {
+		padding: "0.4rem 0.5rem",
+		backgroundColor: "#050712",
+		color: "#f7f7ff",
+		border: "1px solid rgba(81,145,162,0.5)",
+		borderRadius: "4px",
+		fontSize: "1rem",
+		flex: "2 1 120px",
+		minWidth: 0,
+	};
+
+	const btnPrimary: React.CSSProperties = {
+		padding: "0.45rem 0.9rem",
+		background: "rgba(81,145,162,0.25)",
+		border: "1px solid rgba(81,145,162,0.6)",
+		borderRadius: "4px",
+		color: "#f7f7ff",
+		fontWeight: 600,
+		cursor: "pointer",
+		fontSize: "0.95rem",
+		whiteSpace: "nowrap",
+	};
+
+	const btnSmall: React.CSSProperties = {
+		padding: "0.2rem 0.5rem",
+		background: "transparent",
+		border: "1px solid rgba(255,255,255,0.15)",
+		borderRadius: "4px",
+		color: "rgba(255,255,255,0.6)",
+		cursor: "pointer",
+		fontSize: "0.85rem",
+		lineHeight: "1.4",
+	};
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", marginBottom: "0.75rem" }}>
+					{drill.description}
+				</p>
+			)}
+			{drill.didactics?.goal && (
+				<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)", marginBottom: "0.4rem" }}>
+					<strong>Ziel:</strong> {drill.didactics.goal}
+				</p>
+			)}
+			{drill.didactics?.why_it_matters && (
+				<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.75)", marginBottom: "0.75rem" }}>
+					<strong>Warum das wichtig ist:</strong> {drill.didactics.why_it_matters}
+				</p>
+			)}
+			{drill.didactics?.explanation && (
+				<div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+					<h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
+					<div style={{ whiteSpace: "pre-line", fontSize: "0.9rem" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
+				</div>
+			)}
+			<ObservationGuide drill={drill} />
+
+			{/* Inline-Form */}
+			<div style={{ marginBottom: "0.75rem" }}>
+				<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", alignItems: "center" }}>
+					{fields.map((f: any) => (
+						f.type === "select" ? (
+							(() => {
+								const options = getOptionsForField(f, form);
+								const disabled = options.length === 0;
+								return (
+							<select
+								key={f.key}
+								value={form[f.key]}
+								onChange={e => handleFieldChange(f.key, e.target.value)}
+								className="appSelect"
+								style={selectStyle}
+								aria-label={f.label}
+								disabled={disabled}
+							>
+								<option value="">{f.label}…</option>
+								{options.map((opt: string) => (
+									<option key={opt} value={opt}>{opt}</option>
+								))}
+							</select>
+								);
+							})()
+						) : (
+							<input
+								key={f.key}
+								type="text"
+								value={form[f.key]}
+								onChange={e => handleFieldChange(f.key, e.target.value)}
+								placeholder={f.label + (f.optional ? " (optional)" : "")}
+								maxLength={f.max_chars || 150}
+								style={textStyle}
+								aria-label={f.label}
+							/>
+						)
+					))}
+					<button type="button" onClick={handleSave} style={btnPrimary}>
+						{editIndex !== null ? "✓ Speichern" : `+ ${eventLabel}`}
+					</button>
+					{editIndex !== null && (
+						<button type="button" onClick={handleCancelEdit} style={btnSmall}>
+							Abbrechen
+						</button>
+					)}
+				</div>
+			</div>
+
+			{/* Event-Liste */}
+			{events.length > 0 && (
+				<div>
+					<div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+						{events.length} {events.length === 1 ? eventLabel : `${eventLabel}s`}
+					</div>
+					<div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+						{events.map((ev: Record<string, string>, idx: number) => (
+							<div
+								key={idx}
+								style={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "space-between",
+									padding: "0.4rem 0.6rem",
+									background: editIndex === idx
+										? "rgba(81,145,162,0.18)"
+										: "rgba(255,255,255,0.04)",
+									border: editIndex === idx
+										? "1px solid rgba(81,145,162,0.5)"
+										: "1px solid rgba(255,255,255,0.07)",
+									borderRadius: "4px",
+									fontSize: "0.9rem",
+									gap: "0.5rem",
+								}}
+							>
+								<span style={{ flex: 1, color: "rgba(255,255,255,0.85)" }}>
+									{shortLabel(ev)}
+								</span>
+								<div style={{ display: "flex", gap: "0.3rem", flexShrink: 0 }}>
+									<button type="button" onClick={() => handleEdit(idx)} style={btnSmall} title="Bearbeiten">✏</button>
+									<button type="button" onClick={() => handleDelete(idx)} style={{ ...btnSmall, color: "rgba(255,100,100,0.7)" }} title="Löschen">×</button>
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
+
+			{drill.didactics?.learning_hint && (
+				<div style={{ marginTop: "1rem", padding: "0.75rem 1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
+					<p style={{ fontStyle: "italic", whiteSpace: "pre-line", margin: 0 }}>{drill.didactics.learning_hint}</p>
 				</div>
 			)}
 		</div>

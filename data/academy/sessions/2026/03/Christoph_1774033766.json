@@ -1,0 +1,208 @@
+{
+  "id": "Christoph_1774033766",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A3",
+  "goal": "Auto: A3 – Transition & Tempo",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A3_D1",
+  "state": "IN_PROGRESS",
+  "current_phase": "P3",
+  "created_at": "2026-03-20T20:09:26.710219",
+  "drills": [
+    {
+      "id": "A3_D1",
+      "title": "Puckgewinn-Moment erkennen",
+      "drill_type": "event_log",
+      "description": "Beobachte gezielt die Momente, in denen dein Team den Puck gewinnt – und was direkt daraus entsteht.",
+      "didactics": {
+        "goal": "Erkennen, wo und wie Puckgewinne entstehen und welche unmittelbaren Folgen sie haben.",
+        "why_it_matters": "Puckgewinne sind der Startpunkt fuer Umschaltmomente und Spielkontrolle.",
+        "observation_guide": [
+          "Beobachte nur Situationen, in denen dein Team den Puck gewinnt.",
+          "Achte darauf, in welcher Zone der Puckgewinn passiert.",
+          "Versuche einzuordnen, wie der Puckgewinn zustande kommt.",
+          "Beobachte die erste Aktion nach dem Puckgewinn."
+        ]
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {},
+            "questions": [
+              "Was ist dir bei den Puckgewinnen deines Teams aufgefallen? (z. B. Zone, Art des Gewinns oder erste Folge)"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "event_label": "Puckgewinn",
+        "event_key": "puck_win_events",
+        "fields": [
+          {
+            "key": "zone",
+            "type": "select",
+            "label": "Zone",
+            "options": [
+              "D-Zone",
+              "Neutral Zone",
+              "O-Zone"
+            ]
+          },
+          {
+            "key": "win_type",
+            "type": "select",
+            "label": "Art des Puckgewinns",
+            "options_by_value_of": {
+              "zone": {
+                "D-Zone": [
+                  "abgefangen",
+                  "erzwungen",
+                  "aufgesammelt",
+                  "Gegnerfehler",
+                  "Rebound / loser Puck"
+                ],
+                "Neutral Zone": [
+                  "abgefangen",
+                  "erzwungen",
+                  "aufgesammelt",
+                  "Gegnerfehler",
+                  "unter Druck verloren"
+                ],
+                "O-Zone": [
+                  "Vorcheck erzwungen",
+                  "abgefangen",
+                  "aufgesammelt",
+                  "Gegnerfehler",
+                  "Board-Battle gewonnen"
+                ]
+              }
+            }
+          },
+          {
+            "key": "outcome",
+            "type": "select",
+            "label": "Erste Folge",
+            "options": [
+              "keine Anschlussaktion",
+              "kurze Kontrolle",
+              "sauberer Exit",
+              "Transition / Rush",
+              "sofortige Gefahr"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Notiz",
+            "optional": true,
+            "max_chars": 150
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-03-20T20:09:29.211034"
+    },
+    {
+      "phase": "P1",
+      "answers": {},
+      "timestamp": "2026-03-20T20:10:30.462184"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "puck_win_events": [
+          {
+            "zone": "D-Zone",
+            "win_type": "aufgesammelt",
+            "outcome": "sauberer Exit",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-03-20T21:01:14.723801"
+    }
+  ],
+  "drafts": {
+    "P3": {
+      "puck_win_events": [
+        {
+          "zone": "Neutral Zone",
+          "win_type": "Gegnerfehler",
+          "outcome": "keine Anschlussaktion",
+          "note": ""
+        },
+        {
+          "zone": "D-Zone",
+          "win_type": "aufgesammelt",
+          "outcome": "kurze Kontrolle",
+          "note": ""
+        },
+        {
+          "zone": "D-Zone",
+          "win_type": "Gegnerfehler",
+          "outcome": "sauberer Exit",
+          "note": ""
+        },
+        {
+          "zone": "D-Zone",
+          "win_type": "abgefangen",
+          "outcome": "kurze Kontrolle",
+          "note": ""
+        },
+        {
+          "zone": "D-Zone",
+          "win_type": "erzwungen",
+          "outcome": "Transition / Rush",
+          "note": ""
+        },
+        {
+          "zone": "D-Zone",
+          "win_type": "erzwungen",
+          "outcome": "keine Anschlussaktion",
+          "note": ""
+        }
+      ]
+    }
+  },
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Nürnberg Ice Tigers",
+    "team_away": "Fischtown Pinguins Bremerhaven",
+    "observed_team": "Fischtown Pinguins Bremerhaven",
+    "date": "2026-03-20T19:09:26.684Z",
+    "season": "2025/26",
+    "matchday": "Playoffs 1. Runde Spiel 2"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "haben den drill angepasst und daher muss 1. übersprungen werden",
+      "ts": "2026-03-20T20:10:53.269301"
+    },
+    "P2": {
+      "done": true,
+      "text": "vie pressing",
+      "ts": "2026-03-20T21:01:23.082227"
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}

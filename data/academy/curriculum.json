@@ -1013,88 +1013,89 @@
           "drills": [
  {
   "id": "A3_D1",
-  "title": "Turnover-Moment erkennen",
-  "drill_type": "period_checkin",
-  "description": "Den exakten Moment erkennen, in dem Puckbesitz kippt – und wie schnell Teams darauf reagieren.",
+    "title": "Puckgewinn-Moment erkennen",
+  "drill_type": "event_log",
+    "description": "Beobachte gezielt die Momente, in denen dein Team den Puck gewinnt – und was direkt daraus entsteht.",
   "didactics": {
-    "explanation": "In Transition entscheidet nicht der Turnover selbst, sondern die erste Reaktion danach. Dieser Drill trainiert, den Kipppunkt klar zu erkennen und den unmittelbaren Umschaltmoment wahrzunehmen.",
-    "observation_guide": {
-      "what_to_watch": [
-        "Exakter Moment des Puckverlusts oder -gewinns",
-        "Position des Turnovers (Zone)",
-        "Wie viele Spieler reagieren innerhalb von 1–2 Sekunden?"
-      ],
-      "how_to_decide": [
-        "Stoppe mental exakt beim Turnover",
-        "Beobachte nur die erste Reaktion danach",
-        "Zähle gedanklich: Wer reagiert sofort?",
-        "Bewerte Geschwindigkeit, nicht Erfolg"
-      ],
-      "ignore": [
-        "Torchancen nach dem Turnover",
-        "Wie der Angriff oder Konter endet",
-        "Einzelaktionen später im Spielzug"
+      "goal": "Erkennen, wo und wie Puckgewinne entstehen und welche unmittelbaren Folgen sie haben.",
+      "why_it_matters": "Puckgewinne sind der Startpunkt fuer Umschaltmomente und Spielkontrolle.",
+      "observation_guide": [
+        "Beobachte nur Situationen, in denen dein Team den Puck gewinnt.",
+        "Achte darauf, in welcher Zone der Puckgewinn passiert.",
+        "Versuche einzuordnen, wie der Puckgewinn zustande kommt.",
+        "Beobachte die erste Aktion nach dem Puckgewinn."
       ]
-    },
-    "learning_hint": "Transition beginnt nicht beim Rush – sondern im Moment des Besitzwechsels."
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "reaction": "sofort" },
+        "when": {},
         "questions": [
-          "Woran hast du die sofortige Reaktion erkannt?",
-          "Welche Spieler waren mental bereits umgeschaltet?",
-          "Wirkte die Reaktion koordiniert oder instinktiv?"
-        ]
-      },
-      {
-        "when": { "reaction": "verzögert" },
-        "questions": [
-          "Wodurch entstand die Verzögerung?",
-          "Welche Information fehlte offensichtlich?",
-          "Wie groß war das Zeitfenster bis zur Reaktion?"
-        ]
-      },
-      {
-        "when": { "reaction": "keine" },
-        "questions": [
-          "Woran hast du das Ausbleiben der Reaktion erkannt?",
-          "Wirkte das Team überrascht oder unvorbereitet?",
-          "Welche Konsequenz hatte das sofort?"
+          "Was ist dir bei den Puckgewinnen deines Teams aufgefallen? (z. B. Zone, Art des Gewinns oder erste Folge)"
         ]
       }
     ]
   },
   "config": {
-    "questions": [
+      "event_label": "Puckgewinn",
+      "event_key": "puck_win_events",
+    "fields": [
       {
-        "key": "turnover_zone",
-        "type": "radio",
-        "label": "Turnover-Zone",
-        "options": [
-          "D-Zone",
-          "Neutral Zone",
-          "O-Zone"
-        ]
+        "key": "zone",
+        "type": "select",
+        "label": "Zone",
+        "options": ["D-Zone", "Neutral Zone", "O-Zone"]
       },
       {
-        "key": "reaction",
-        "type": "radio",
-        "label": "Reaktion",
-        "options": [
-          "sofort",
-          "verzögert",
-          "keine"
-        ]
+          "key": "win_type",
+        "type": "select",
+          "label": "Art des Puckgewinns",
+          "options_by_value_of": {
+            "zone": {
+              "D-Zone": [
+                "abgefangen",
+                "erzwungen",
+                "aufgesammelt",
+                "Gegnerfehler",
+                "Rebound / loser Puck"
+              ],
+              "Neutral Zone": [
+                "abgefangen",
+                "erzwungen",
+                "aufgesammelt",
+                "Gegnerfehler",
+                "unter Druck verloren"
+              ],
+              "O-Zone": [
+                "Vorcheck erzwungen",
+                "abgefangen",
+                "aufgesammelt",
+                "Gegnerfehler",
+                "Board-Battle gewonnen"
+              ]
+            }
+          }
+      },
+      {
+          "key": "outcome",
+        "type": "select",
+          "label": "Erste Folge",
+          "options": [
+            "keine Anschlussaktion",
+            "kurze Kontrolle",
+            "sauberer Exit",
+            "Transition / Rush",
+            "sofortige Gefahr"
+          ]
       },
       {
         "key": "note",
         "type": "text",
-        "label": "Kurze Notiz: Was fiel dir im Umschaltmoment auf?",
-        "max_chars": 1500
+        "label": "Notiz",
+        "optional": true,
+        "max_chars": 150
       }
     ]
   }
