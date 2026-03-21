@@ -99,3 +99,8 @@ ModuleNotFoundError: No module named 'auth_utils'
 [checkin:25c14d8d] session=Christoph_1774033766 phase_raw='P2' phase_norm='P2' action=update trace_id=b1b228a8-a605-4527-b304-3bfea3552e33 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
 [checkin:25c14d8d] session=Christoph_1774033766 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
 [microfeedback] session=Christoph_1774033766 phase=P2 trace_id=3801bd10-0cc2-4e95-ac9d-d659656e899a trace_action=submitMicrofeedback text_len=12
+[checkin:f3f6bb1a] session=Christoph_1774033766 phase_raw='P3' phase_norm='P3' action=append trace_id=2f2805f1-354a-40a6-ba5d-8a2a243900d9 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:f3f6bb1a] session=Christoph_1774033766 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Christoph_1774033766 phase=P3 trace_id=e9b2a873-a786-476e-889d-f9ca3445fd26 trace_action=submitMicrofeedback text_len=6
+[checkin:3a54d4ef] session=Christoph_1774033766 phase_raw='POST' phase_norm='POST' action=append trace_id=76b52882-fe90-4ce0-950c-2d0847101062 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:3a54d4ef] session=Christoph_1774033766 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}

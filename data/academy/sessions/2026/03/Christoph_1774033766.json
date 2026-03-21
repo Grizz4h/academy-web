@@ -8,8 +8,8 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A3_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
   "created_at": "2026-03-20T20:09:26.710219",
   "drills": [
     {
@@ -134,6 +134,55 @@
         ]
       },
       "timestamp": "2026-03-20T21:01:14.723801"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "puck_win_events": [
+          {
+            "zone": "Neutral Zone",
+            "win_type": "Gegnerfehler",
+            "outcome": "keine Anschlussaktion",
+            "note": ""
+          },
+          {
+            "zone": "D-Zone",
+            "win_type": "aufgesammelt",
+            "outcome": "kurze Kontrolle",
+            "note": ""
+          },
+          {
+            "zone": "D-Zone",
+            "win_type": "Gegnerfehler",
+            "outcome": "sauberer Exit",
+            "note": ""
+          },
+          {
+            "zone": "D-Zone",
+            "win_type": "abgefangen",
+            "outcome": "kurze Kontrolle",
+            "note": ""
+          },
+          {
+            "zone": "D-Zone",
+            "win_type": "erzwungen",
+            "outcome": "Transition / Rush",
+            "note": ""
+          },
+          {
+            "zone": "D-Zone",
+            "win_type": "erzwungen",
+            "outcome": "keine Anschlussaktion",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-03-20T21:36:58.976425"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-03-20T21:37:09.595091"
     }
   ],
   "drafts": {
@@ -178,7 +227,13 @@
       ]
     }
   },
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-03-20T21:37:09.695617"
+  },
   "game_info": {
     "league": "DEL",
     "team_home": "Nürnberg Ice Tigers",
@@ -201,8 +256,9 @@
       "ts": "2026-03-20T21:01:23.082227"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "nichts",
+      "ts": "2026-03-20T21:37:07.510443"
     }
   }
 }

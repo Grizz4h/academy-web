@@ -1,0 +1,75 @@
+.cluster2-rink {
+  width: 100%;
+  display: block;
+}
+
+.cluster2-rink__surface {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.cluster2-rink__zone {
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: fill 140ms ease, stroke 140ms ease, transform 140ms ease;
+}
+
+.cluster2-rink__zone:hover {
+  fill: rgba(81, 145, 162, 0.20);
+  stroke: rgba(129, 221, 245, 0.8);
+}
+
+.cluster2-rink__zone--selected {
+  fill: rgba(81, 145, 162, 0.45);
+  stroke: rgba(168, 237, 255, 0.95);
+}
+
+.cluster2-rink__label {
+  fill: rgba(247, 247, 255, 0.88);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.cluster2-rink__frame {
+  fill: rgba(10, 14, 28, 0.82);
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 3;
+}
+
+.cluster2-rink__line--blue,
+.cluster2-rink__line--red {
+  stroke-width: 4;
+}
+
+.cluster2-rink__line--blue {
+  stroke: rgba(93, 176, 255, 0.9);
+}
+
+.cluster2-rink__line--red {
+  stroke: rgba(255, 98, 98, 0.9);
+}
+
+.cluster2-rink__legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  color: rgba(247, 247, 255, 0.72);
+}
+
+@media (max-width: 768px) {
+  .cluster2-rink__label {
+    font-size: 12px;
+  }
+
+  .cluster2-rink__legend {
+    flex-direction: column;
+  }
+}
