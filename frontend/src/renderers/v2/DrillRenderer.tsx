@@ -121,22 +121,23 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 // ----------------------------- PERIOD CHECKIN -----------------------------
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
+	const safeAnswers = answers || {};
 
 	// Cleanup: remove stale answers when conditional options change
 	const controllers = questions
 		.map((q: any) => q.conditional_options ? Object.keys(q.conditional_options)[0] : null)
 		.filter(Boolean);
-	const signature = controllers.map((k: string) => `${k}:${answers?.[k] ?? ''}`).join('|');
+	const signature = controllers.map((k: string) => `${k}:${safeAnswers?.[k] ?? ''}`).join('|');
 
 	useEffect(() => {
-		const next = { ...answers };
+		const next = { ...safeAnswers };
 		let changed = false;
 
 		for (const q of questions) {
 			if (!q.conditional_options) continue;
 			const controllerKey = Object.keys(q.conditional_options)[0];
 			if (!controllerKey) continue;
-			const controllerValue = answers?.[controllerKey];
+			const controllerValue = safeAnswers?.[controllerKey];
 			const effectiveOptions = q.conditional_options?.[controllerKey]?.[controllerValue] || q.options || [];
 			const currentValue = next[q.key];
 			if (currentValue && Array.isArray(effectiveOptions) && !effectiveOptions.includes(currentValue)) {
@@ -149,17 +150,27 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	}, [signature, drill?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 	
 	const glossary = drill?.didactics?.glossary;
+	const focusText = drill?.didactics?.focus_text || drill?.description;
+	const guidingQuestions = Array.isArray(drill?.didactics?.guiding_questions)
+		? drill.didactics.guiding_questions
+		: [];
 	return (
 		<div className="card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
-			{drill.description && (
-				<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.description}</p>
+			{focusText && (
+				<p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "1rem", wordWrap: "break-word", overflowWrap: "break-word" }}>
+					{focusText}
+				</p>
 			)}
-			{drill.didactics?.explanation && (
-				<div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
-					<h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
-					<div style={{ whiteSpace: "pre-line" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
-				</div>
+			{guidingQuestions.length > 0 && (
+				<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.14)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "4px" }}>
+					<h4 style={{ marginTop: 0, marginBottom: "0.5rem", color: "#89c8da" }}>Leitfragen</h4>
+					<ul style={{ marginTop: "0.5rem", marginBottom: 0, paddingLeft: 18 }}>
+						{guidingQuestions.map((item: string, idx: number) => (
+							<li key={idx}>{renderWithGlossary(item)}</li>
+						))}
+					</ul>
+				</section>
 			)}
 			{drill.didactics?.role_context && (
 				<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.04)", borderRadius: "4px" }}>
@@ -176,10 +187,10 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 					)}
 				</section>
 			)}
-			<ObservationGuide drill={drill} />
+			{guidingQuestions.length === 0 && <ObservationGuide drill={drill} />}
 			{questions.map((q: any) => {
 				const controllerKey = q.conditional_options ? Object.keys(q.conditional_options)[0] : null;
-				const controllerValue = controllerKey ? answers?.[controllerKey] : undefined;
+				const controllerValue = controllerKey ? safeAnswers?.[controllerKey] : undefined;
 				const effectiveOptions = q.conditional_options && controllerKey
 					? q.conditional_options?.[controllerKey]?.[controllerValue] || []
 					: q.options || [];
@@ -202,8 +213,8 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 												type="radio"
 												name={q.key}
 												value={opt}
-												checked={answers[q.key] === opt}
-												onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+												checked={safeAnswers[q.key] === opt}
+												onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 											/>
 											{highlightGlossaryTerms(opt, glossary)}
 										</span>
@@ -215,10 +226,25 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 							})}
 						</div>
 					)}
+					{q.type === "select" && Array.isArray(effectiveOptions) && (
+						<select
+							className="appSelect"
+							value={safeAnswers[q.key] || ""}
+							onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
+							style={{ width: "100%" }}
+						>
+							<option value="">Bitte auswählen</option>
+							{effectiveOptions.map((opt: string) => (
+								<option key={opt} value={opt}>
+									{opt}
+								</option>
+							))}
+						</select>
+					)}
 					{q.type === "text" && (
 						<textarea
-							value={answers[q.key] || ""}
-							onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+							value={safeAnswers[q.key] || ""}
+							onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 							maxLength={q.max_chars || 1500}
 							placeholder={q.placeholder || "Optional: kurze Notiz"}
 							style={{
@@ -237,10 +263,9 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				);
 			})}
 			{drill.didactics?.learning_hint && (
-				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
-					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
-					<p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
-				</div>
+				<p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
+					{drill.didactics.learning_hint}
+				</p>
 			)}
 		</div>
 	);

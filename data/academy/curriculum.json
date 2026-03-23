@@ -781,7 +781,7 @@
       "type": "text",
       "label": "Notiz (optional)",
       "desc": "Kurz festhalten, was du gesehen hast. Ideal: Zeit/Shift + Entry-Typ + Ergebnis.",
-      "placeholder": "z.B. 12:40 / 2. Drittel – Carry Entry rechts – Riskant wegen Support fehlt – Turnover an der Line.",
+      "placeholder": "z.B. 12:40 / 2. Drittel – Carry Entry rechts – Riskant wegen Support fehlt – Puckverlust an der Line.",
       "max_chars": 1500
     }
   ]
@@ -840,7 +840,7 @@
         "meaning": "Pass wird gespielt, weil keine echte Option offen ist (hope-pass, Panikpass, 50/50 ohne Support)."
       }
     },
-    "learning_hint": "Der erste Pass ist ein Struktur-Test: offen + spielbar = Aufbau. Unter Druck ohne Anschluss = Turnover-Risiko. Rim/Bande ist nur dann 'gut', wenn Support und Timing stimmen."
+    "learning_hint": "Der erste Pass ist ein Struktur-Test: offen + spielbar = Aufbau. Unter Druck ohne Anschluss = Puckverlust-Risiko. Rim/Bande ist nur dann 'gut', wenn Support und Timing stimmen."
   },
   "miniFeedback": {
     "trigger": "onNext",
@@ -928,7 +928,7 @@
       ],
       "ignore": [
         "Wie der Angriff danach endet",
-        "Ob ein Turnover später erzwungen wird",
+        "Ob später ein Puckverlust erzwungen wird",
         "Taktische Bezeichnungen gegnerischer Systeme"
       ]
     },
@@ -1001,10 +1001,10 @@
         {
           "id": "A3",
           "title": "A3 – Transition & Tempo",
-          "summary": "Turnovers, Rush, Backchecking, Gap Control, Tempoveränderungen",
+          "summary": "Puckgewinne/-verluste, Rush, Backchecking, Gap Control, Tempoveränderungen",
           "description": "Umschaltmomente erkennen und lesen: Winkel, Tempo, Abstände und Entscheidungen in Transition.",
           "learningGoals": [
-            "Umschaltmomente (Turnovers) erkennen",
+            "Umschaltmomente (Transition) erkennen",
             "Tempoveränderungen lesen",
             "Gap Control und Backchecking verstehen"
           ],
@@ -1102,53 +1102,73 @@
 },
 {
   "id": "A3_D2",
-  "title": "First 3 Seconds (Reaktionstraining)",
+  "title": "Reaktion nach Puckgewinn erkennen",
   "drill_type": "period_checkin",
-  "description": "Die ersten 3 Sekunden nach einem Turnover lesen lernen.",
+  "description": "Fokussiere dich auf die ersten 2–3 Sekunden nach Puckgewinn. Beobachte, wer sofort reagiert, wer beschleunigt und ob sich klare Rollen zeigen.",
   "didactics": {
-    "explanation": "Die ersten Sekunden nach einem Turnover zeigen Teamqualität. Nicht der Puck entscheidet, sondern Bewegung, Orientierung und Rollenverteilung.",
+    "explanation": "Die ersten Sekunden nach einem Puckgewinn zeigen Teamqualität. Entscheidend ist nicht eine einzelne Szene, sondern welches Reaktionsmuster am häufigsten sichtbar wird.",
+    "focus_text": "Fokussiere dich auf die ersten 2–3 Sekunden nach Puckgewinn.\nBeobachte, wer sofort reagiert, wer beschleunigt und ob sich klare Rollen zeigen.",
+    "concept": {
+      "title": "Puckgewinn (Transition)",
+      "description": "Ein Puckgewinn beschreibt den Moment, in dem ein Team die Scheibe vom Gegner übernimmt.\n\nDieser Moment ist entscheidend für die Spielentwicklung:\nGute Teams zeigen sofort erkennbare Muster in den ersten Sekunden nach dem Gewinn."
+    },
+    "guiding_questions": [
+      "Welche Reaktion siehst du am häufigsten direkt nach Puckgewinn?",
+      "Wer übernimmt sofort Initiative?",
+      "Wer sichert eher ab oder verzögert?",
+      "Erkennst du eine klare Rollenverteilung?"
+    ],
     "observation_guide": {
       "what_to_watch": [
-        "Wer beschleunigt sofort?",
-        "Wer stoppt oder zögert?",
-        "Entsteht eine erkennbare Rollenverteilung?"
+        "Achte nicht auf einzelne Szenen, sondern auf wiederkehrende Muster",
+        "Versuche, ein dominantes Verhalten zu erkennen",
+        "Achte zusätzlich darauf, ob es ein zweites, wiederkehrendes Muster gibt",
+        "Ist eine klare Rollenverteilung erkennbar?"
       ],
       "how_to_decide": [
-        "Zähle im Kopf: 1 – 2 – 3",
-        "Beobachte primär Bewegung, nicht den Puck",
-        "Achte auf erste Schritte und Blickrichtung",
-        "Bewerte Instinkt vs. Verzögerung"
+        "Frage dich: „Was passiert am häufigsten?“",
+        "Denke in Dominanz statt im Durchschnitt",
+        "Nutze Wiederholungen als Musterhinweis, ohne Ereignisse einzeln zu loggen",
+        "Bewerte, wie einheitlich oder variabel das Verhalten ist"
       ],
       "ignore": [
+        "Einzelne Ausreißer",
         "Puckverlauf nach 3 Sekunden",
         "Abschluss oder Tor"
       ]
     },
-    "learning_hint": "Gute Teams reagieren instinktiv – schlechte Teams denken zu lange."
+    "learning_hint": "Muster erkennen, nicht Einzelszenen bewerten.\nAchte auf wiederkehrende Reaktionen über mehrere Situationen hinweg."
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "team_reaction": "aggressiv" },
+        "when": { "primary_pattern": "sofortige Beschleunigung nach vorne" },
         "questions": [
-          "War die Aggressivität koordiniert oder unkontrolliert?",
-          "Gab es sofort eine Absicherung hinter dem ersten Druck?"
+          "Ist die Beschleunigung strukturiert oder nur hektisch?",
+          "Gab es hinter dem ersten Impuls sofort Absicherung?"
         ]
       },
       {
-        "when": { "team_reaction": "geordnet" },
+        "when": { "primary_pattern": "erst Kontrolle, dann Bewegung" },
         "questions": [
-          "Woran hast du Ordnung erkannt (Abstände, Winkel, Rollen)?",
-          "Hat das Team eher Druck oder Rückzug priorisiert?"
+          "Ist Kontrolle ein geplanter Schritt oder ein Zeichen von Unsicherheit?",
+          "Ab wann wird aus Kontrolle wieder Vorwärtsbewegung?"
         ]
       },
       {
-        "when": { "team_reaction": "passiv" },
+        "when": { "primary_pattern": "zögerlich / unklar" },
         "questions": [
-          "Woran hast du Passivität erkannt?",
-          "Welche minimale Aktion hätte Stabilität erzeugt?"
+          "Woran erkennst du das Zögern konkret?",
+          "Welche minimale, klare Erstaktion hätte Stabilität erzeugt?"
+        ]
+      },
+      {
+        "when": { "primary_pattern": "gemischt / kein klares Muster" },
+        "questions": [
+          "Welche zwei Muster wechseln sich am häufigsten ab?",
+          "Fehlt eher Rollenlogik oder ein gemeinsamer erster Trigger?"
         ]
       }
     ]
@@ -1156,20 +1176,43 @@
   "config": {
     "questions": [
       {
-        "key": "team_reaction",
-        "type": "radio",
-        "label": "Teamreaktion",
+        "key": "primary_pattern",
+        "type": "select",
+        "label": "Welche Reaktion siehst du am häufigsten direkt nach Puckgewinn?",
         "options": [
-          "aggressiv",
-          "geordnet",
-          "passiv"
+          "sofortige Beschleunigung nach vorne",
+          "erst Kontrolle, dann Bewegung",
+          "zögerlich / unklar",
+          "gemischt / kein klares Muster"
+        ]
+      },
+      {
+        "key": "secondary_pattern",
+        "type": "select",
+        "label": "Gibt es ein zweites, wiederkehrendes Muster?",
+        "options": [
+          "nein, sehr einheitlich",
+          "ja, gelegentlich Beschleunigung",
+          "ja, gelegentlich Kontrolle",
+          "ja, gelegentlich chaotisch"
+        ]
+      },
+      {
+        "key": "role_structure",
+        "type": "select",
+        "label": "Ist eine klare Rollenverteilung erkennbar?",
+        "options": [
+          "ja, klar strukturiert",
+          "teilweise erkennbar",
+          "nein, chaotisch / unklar"
         ]
       },
       {
         "key": "note",
         "type": "text",
-        "label": "Kurze Begründung",
-        "max_chars": 1500
+        "label": "Was fällt dir besonders auf?",
+        "optional": true,
+        "max_chars": 150
       }
     ]
   }
@@ -1214,7 +1257,7 @@
         "meaning": "Der Puckführer ist allein: keine nahe Option, keine zweite Welle – Entscheidungen werden erzwungen."
       },
       "Zu früher Pass": {
-        "meaning": "Pass kommt bevor der Gegner gebunden ist oder bevor eine klare Linie offen ist – führt oft zu Touch/Turnover."
+        "meaning": "Pass kommt bevor der Gegner gebunden ist oder bevor eine klare Linie offen ist – führt oft zu Touch/Puckverlust."
       },
       "Zu spätes Abbremsen": {
         "meaning": "Tempo wird zu spät kontrolliert: der Puckführer läuft in enge Räume/gegen stehende Verteidiger."
@@ -1299,7 +1342,7 @@
       ],
       "how_to_decide": [
         "Beobachte Spieler ohne Puck",
-        "Fokus auf die ersten Schritte nach dem Turnover",
+        "Fokus auf die ersten Schritte nach der Transition",
         "Achte auf Winkel statt Geschwindigkeit",
         "Inside-Position ist wichtiger als Körperkontakt"
       ],
@@ -2026,7 +2069,7 @@
         "Druck und Entscheidung immer zusammen denken"
       ],
       "ignore": [
-        "Tor oder Turnover",
+        "Tor oder Puckverlust",
         "Einzelaktionen ohne Kontext"
       ]
     },
@@ -2181,7 +2224,7 @@
       ],
       "ignore": [
         "Spätere Torchancen",
-        "Abschluss oder Turnover danach"
+        "Abschluss oder Puckverlust danach"
       ]
     },
     "learning_hint": "Nicht jeder Fehler verlangt Tempo – manchmal ist Kontrolle die stärkere Fortsetzung."
@@ -2257,7 +2300,7 @@
         "Frage dich: Hört der Druck nach dem ersten Kontakt auf?"
       ],
       "ignore": [
-        "Ob direkt ein Turnover entsteht",
+        "Ob direkt ein Puckverlust entsteht",
         "Einzelne starke Zweikämpfe ohne Anschluss"
       ]
     },
@@ -3544,7 +3587,7 @@
         "Ob der Angriff danach weiterläuft"
       ]
     },
-    "learning_hint": "Die richtige Entscheidung erhält Struktur – die falsche zerstört sie, auch ohne Turnover."
+    "learning_hint": "Die richtige Entscheidung erhält Struktur – die falsche zerstört sie, auch ohne Puckverlust."
   },
   "config": {
     "questions": [
@@ -4911,7 +4954,7 @@
       ],
       "how_to_decide": [
         "Suche mindestens zwei ähnliche Situationen",
-        "Achte auf gleiche Auslöser (z. B. Turnover, Entry, langer Shift)",
+        "Achte auf gleiche Auslöser (z. B. Transition, Entry, langer Shift)",
         "Bewerte nur Häufigkeit und Kontext – nicht die Wirkung"
       ],
       "ignore": [
@@ -5049,7 +5092,7 @@
         "options": [
           "Exit",
           "Entry",
-          "Turnover",
+          "Transition",
           "langer Shift",
           "Special Teams"
         ]
@@ -5970,7 +6013,7 @@
           "summary": "Erste Meta-Analyse: Gesamtspielüberblick über drei Drittel",
           "description": "Lerne das gesamte Spiel zu scannen: Pro Drittel 5 Meta-Achsen bewerten, Timeline-Marker setzen und Ursache-Wirkung-Ketten identifizieren.",
           "learningGoals": [
-            "Bewerte 5 Meta-Achsen (Struktur, Kompaktheit, Entscheidungszeit, Chancen, Turnover)",
+            "Bewerte 5 Meta-Achsen (Struktur, Kompaktheit, Entscheidungszeit, Chancen, Puckverluste)",
             "Erstelle Timeline mit wichtigen Ereignissen",
             "Identifiziere Causal Chains (Ursache → Trigger → Konsequenz)",
             "Erkenne Root Causes und formuliere Adjustments"
@@ -5991,7 +6034,7 @@
                     "Kompaktheit: Abstände, Layers, Closing-Speed",
                     "Entscheidungszeit: Schnelle oder zögernde Entscheidungen?",
                     "Chancenqualität: Slot vs. Perimeter, für vs. gegen",
-                    "Turnover-Druck: Wie oft kippt es durch Puckverluste?"
+                    "Puckverlust-Druck: Wie oft kippt es durch Puckverluste?"
                   ],
                   "how_to_decide": [
                     "Gesamteindruck über das Drittel",

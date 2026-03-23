@@ -104,3 +104,20 @@ ModuleNotFoundError: No module named 'auth_utils'
 [microfeedback] session=Christoph_1774033766 phase=P3 trace_id=e9b2a873-a786-476e-889d-f9ca3445fd26 trace_action=submitMicrofeedback text_len=6
 [checkin:3a54d4ef] session=Christoph_1774033766 phase_raw='POST' phase_norm='POST' action=append trace_id=76b52882-fe90-4ce0-950c-2d0847101062 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
 [checkin:3a54d4ef] session=Christoph_1774033766 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:92b32dad] session=Christoph_1774296244 phase_raw='PRE' phase_norm='PRE' action=append trace_id=8036e180-e4ac-4db2-a909-252eba122787 trace_action=saveCheckin counts_before={}
+[checkin:92b32dad] session=Christoph_1774296244 counts_after={'PRE': 1}
+[checkin:cc4b571c] session=Christoph_1774296302 phase_raw='PRE' phase_norm='PRE' action=append trace_id=c27967fc-dedd-49d9-b53d-2d8515864bf9 trace_action=saveCheckin counts_before={}
+[checkin:cc4b571c] session=Christoph_1774296302 counts_after={'PRE': 1}
+[checkin:9e1c8de5] session=Christoph_1774296302 phase_raw='P1' phase_norm='P1' action=append trace_id=539935ae-fabd-4d7c-b974-57b0744e13f7 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:9e1c8de5] session=Christoph_1774296302 counts_after={'PRE': 1, 'P1': 1}
+[checkin:b49859f8] session=Christoph_1774297226 phase_raw='PRE' phase_norm='PRE' action=append trace_id=8eeada36-e72c-46ad-b9b4-29a24586d28a trace_action=saveCheckin counts_before={}
+[checkin:b49859f8] session=Christoph_1774297226 counts_after={'PRE': 1}
+[checkin:8c92125f] session=Christoph_1774296302 phase_raw='PRE' phase_norm='PRE' action=update trace_id=3e15caac-c0f2-47f7-b9c1-8aca5e95f240 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:8c92125f] session=Christoph_1774296302 counts_after={'PRE': 1, 'P1': 1}
+[checkin:eb51433f] session=Christoph_1774296302 phase_raw='P1' phase_norm='P1' action=update trace_id=f6ac81c3-856d-4d3d-90b9-3776d8a0dfef trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:eb51433f] session=Christoph_1774296302 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1774296302 phase=P1 trace_id=2c21ca65-a0c6-4692-ae37-d233df4e0c65 trace_action=submitMicrofeedback text_len=19
+[checkin:5b9bc240] session=Christoph_1774298962 phase_raw='PRE' phase_norm='PRE' action=append trace_id=1c7bee68-7078-43c0-8c54-b38d351c9536 trace_action=saveCheckin counts_before={}
+[checkin:5b9bc240] session=Christoph_1774298962 counts_after={'PRE': 1}
+[checkin:ec430c6b] session=Christoph_1774299333 phase_raw='PRE' phase_norm='PRE' action=append trace_id=0e13972f-3732-4fd4-901b-e930d6f05079 trace_action=saveCheckin counts_before={}
+[checkin:ec430c6b] session=Christoph_1774299333 counts_after={'PRE': 1}
