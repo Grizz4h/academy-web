@@ -6075,6 +6075,209 @@
           ]
         }
       ]
+    },
+    {
+      "id": "G",
+      "title": "G – Player Observation",
+      "goal": "Strukturierte Spielerbeobachtung: Verhalten, Entscheidungen, Reaktionen tracken",
+      "description": "Track G schult die präzise Beobachtung einzelner Spieler nach standardisierten Dimensionen. Pro Observation: ein Spieler, eine Position, fünf strukturierte Beobachtungsdimensionen.",
+      "modules": [
+        {
+          "id": "G1",
+          "title": "G1 – Center",
+          "summary": "Beobachtung von Center-Verhalten: Support, Positionalität, Entscheidungen",
+          "description": "Fokus auf Center-Spieler: Unterstützungsverhalten, Positionierung, Reaktionsgeschwindigkeit, Druckresistenz, Off-Puck-Bewegung.",
+          "learningGoals": [
+            "Strukturierte Beobachtung von 5 Center-Dimensionen",
+            "Enum-basierte Inputs für Vergleichbarkeit",
+            "Wiederholte Beobachtungen über mehrere Sessions loggen",
+            "Spielerprofile durch Aggregation erkennen"
+          ],
+          "difficulty": 2,
+          "duration": 15,
+          "drills": [
+            {
+              "id": "G1_D1",
+              "title": "Support-Verhalten",
+              "drill_type": "period_checkin",
+              "description": "Beobachte: Wie verhält sich der Center im Support? Aktiv involved, passiv positioniert, oder absent?",
+              "didactics": {
+                "goal": "Eine Dimension tracken: Support-Verhalten (active/passive/none)",
+                "explanation": "Support-Verhalten misst Initiative und Präsenz des Centers in der Unterstützung. Nicht die Qualität der Pässe, sondern ob er verfügbar und involviert ist.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Ist der Center eine ständig verfügbare Anspieloption?",
+                    "Bewegt er sich pro-aktiv zum Puck oder wartet?",
+                    "Wie oft wird er anspielt vs. wie oft könnte er gespielt werden?"
+                  ],
+                  "how_to_decide": [
+                    "active: Häufige Initiative, immer verfügbar, oft anspielt",
+                    "passive: Manchmal verfügbar, eher Positionen halten",
+                    "none: Selten verfügbar, nicht im Spiel"
+                  ]
+                }
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "support_behavior",
+                    "type": "radio",
+                    "label": "Support-Verhalten des Centers",
+                    "options": [
+                      "active",
+                      "passive",
+                      "none"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "G1_D2",
+              "title": "Support-Position",
+              "drill_type": "period_checkin",
+              "description": "Beobachte: Wo positioniert sich der Center meist im Support?",
+              "didactics": {
+                "goal": "Eine Dimension tracken: Support-Position (low/mid/high)",
+                "explanation": "Die räumliche Position des Centers in der Unterstützung. Low = nah am Puck, High = distanziert in der Tiefe.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Distanz zum Puckführer",
+                    "Zone-Tiefe: direkt beim Puck, Mitteldistanz, oder tiefe Outlet?"
+                  ],
+                  "how_to_decide": [
+                    "low: < 1 Sekunde Pass-Distanz",
+                    "mid: 1–2 Sekunden Pass-Distanz",
+                    "high: > 2 Sekunden oder Outlet-Tiefe"
+                  ]
+                }
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "support_position",
+                    "type": "radio",
+                    "label": "Support-Position des Centers",
+                    "options": [
+                      "low",
+                      "mid",
+                      "high"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "G1_D3",
+              "title": "Entscheidungsgeschwindigkeit",
+              "drill_type": "period_checkin",
+              "description": "Beobachte: Wie schnell trifft der Center Entscheidungen (Pass/Carry/Shoot)?",
+              "didactics": {
+                "goal": "Eine Dimension tracken: Entscheidungsgeschwindigkeit (fast/delayed/risky)",
+                "explanation": "Misst, wie schnell der Center handelt, wenn er den Puck hat. Nicht Qualität, sondern Tempo.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Berührungsanzahl vor Entscheidung",
+                    "Zögern oder sofortige Aktion?",
+                    "Rush oder Kontrolle?"
+                  ],
+                  "how_to_decide": [
+                    "fast: 0–1 Berührung, sofortige Aktion",
+                    "delayed: 2–3 Berührungen, Verzögerung spürbar",
+                    "risky: Hastige Entscheidungen unter Druck"
+                  ]
+                }
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "decision_speed",
+                    "type": "radio",
+                    "label": "Entscheidungsgeschwindigkeit des Centers",
+                    "options": [
+                      "fast",
+                      "delayed",
+                      "risky"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "G1_D4",
+              "title": "Druckresistenz",
+              "drill_type": "period_checkin",
+              "description": "Beobachte: Wie reagiert der Center auf gegnerischen Druck?",
+              "didactics": {
+                "goal": "Eine Dimension tracken: Druckresistenz (stable/turnover/panic)",
+                "explanation": "Misst, wie stabil der Center unter Druck bleibt.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Bleibt der Center stabil, wenn Gegner attackiert?",
+                    "Erzwingt Gegner Turnover?",
+                    "Wirkt der Center gehetzt oder panisch?"
+                  ],
+                  "how_to_decide": [
+                    "stable: Hält Kontrolle, befreit sich oder spielt Puck sicher",
+                    "turnover: Der Gegner gewinnt Puck, aber nicht panik",
+                    "panic: Erzwungene Fehler, Unsicherheit sichtbar"
+                  ]
+                }
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "pressure_response",
+                    "type": "radio",
+                    "label": "Druckresistenz des Centers",
+                    "options": [
+                      "stable",
+                      "turnover",
+                      "panic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "G1_D5",
+              "title": "Off-Puck-Bewegung",
+              "drill_type": "period_checkin",
+              "description": "Beobachte: Wie bewegt sich der Center ohne Puck?",
+              "didactics": {
+                "goal": "Eine Dimension tracken: Off-Puck-Bewegung (active/static/drifting)",
+                "explanation": "Misst die Qualität und Zielgerichtetheit der Bewegung des Centers ohne Puck.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Bewegt sich der Center mit Zweck (Lauf, Schnitt)?",
+                    "Bleibt er in Position oder treibt reaktiv?",
+                    "Schafft er Raum für Mitspieler?"
+                  ],
+                  "how_to_decide": [
+                    "active: Zielgerichtete Cuts, Laufen mit Absicht",
+                    "static: Hält Position, wenig Bewegung",
+                    "drifting: Reaktive, ziellose Bewegung"
+                  ]
+                }
+              },
+              "config": {
+                "questions": [
+                  {
+                    "key": "off_puck_movement",
+                    "type": "radio",
+                    "label": "Off-Puck-Bewegung des Centers",
+                    "options": [
+                      "active",
+                      "static",
+                      "drifting"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

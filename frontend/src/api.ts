@@ -211,6 +211,25 @@ export interface RewardApplyResponse {
   reward_events: Array<Record<string, any>>
 }
 
+// ==== Player Observation Type ====
+export interface PlayerObservationData {
+  support_behavior: "active" | "passive" | "none"
+  support_position: "low" | "mid" | "high"
+  decision_speed: "fast" | "delayed" | "risky"
+  pressure_response: "stable" | "turnover" | "panic"
+  off_puck_movement: "active" | "static" | "drifting"
+}
+
+export interface PlayerObservation {
+  player: string
+  position: "center" | "winger" | "defender" | "goalie"
+  session_id: string
+  game_context?: string
+  observations: PlayerObservationData
+  notes?: string
+  timestamp: number
+}
+
 // ==== API Helpers ====
 const resolveApiBase = () => {
   const envBase = import.meta.env.VITE_API_BASE
@@ -481,5 +500,46 @@ export const api = {
 
     if (!res.ok) throw new Error('Failed to apply rewards')
     return res.json()
-  }
+  },
+
+  // Player Observations
+  createObservation: async (obs: Omit<PlayerObservation, 'timestamp'>): Promise<{ ok: boolean; observation: PlayerObservation }> => {
+    const res = await fetch(buildUrl('/observations'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(obs),
+    })
+
+    if (!res.ok) throw new Error('Failed to create observation')
+    return res.json()
+  },
+
+  getObservations: async (player?: string): Promise<{ observations: PlayerObservation[] }> => {
+    let url = '/observations'
+    if (player) {
+      url += `?player=${encodeURIComponent(player)}`
+    }
+    const res = await fetch(buildUrl(url), {
+      headers: authHeaders(),
+    })
+
+    if (!res.ok) throw new Error('Failed to load observations')
+    return res.json()
+  },
+
+  getAggregatedObservations: async (player?: string): Promise<any> => {
+    let url = '/observations/aggregated'
+    if (player) {
+      url += `?player=${encodeURIComponent(player)}`
+    }
+    const res = await fetch(buildUrl(url), {
+      headers: authHeaders(),
+    })
+
+    if (!res.ok) throw new Error('Failed to load aggregated observations')
+    return res.json()
+  },
 }

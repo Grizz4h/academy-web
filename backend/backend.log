@@ -159,3 +159,16 @@ ModuleNotFoundError: No module named 'auth_utils'
 [checkin:4450001b] session=Christoph_1774790303 counts_after={'PRE': 1}
 [checkin:adf16f47] session=Christoph_1774792556 phase_raw='PRE' phase_norm='PRE' action=append trace_id=7630e7e8-c199-446e-9f78-34deb5106362 trace_action=saveCheckin counts_before={}
 [checkin:adf16f47] session=Christoph_1774792556 counts_after={'PRE': 1}
+[checkin:e29b79f7] session=Christoph_1774793611 phase_raw='PRE' phase_norm='PRE' action=append trace_id=bff0e17e-9506-4a41-8911-22c80df68071 trace_action=saveCheckin counts_before={}
+[checkin:e29b79f7] session=Christoph_1774793611 counts_after={'PRE': 1}
+[checkin:5c038ff5] session=Christoph_1774793611 phase_raw='P1' phase_norm='P1' action=append trace_id=fef47249-c056-43b6-9881-aa2f817252a2 trace_action=saveCheckin counts_before={'PRE': 1}
+[checkin:5c038ff5] session=Christoph_1774793611 counts_after={'PRE': 1, 'P1': 1}
+[microfeedback] session=Christoph_1774793611 phase=P1 trace_id=bd09de5e-90f9-44ff-b197-3f3dcfa9bcfa trace_action=submitMicrofeedback text_len=4
+[checkin:3c402cd2] session=Christoph_1774793611 phase_raw='P2' phase_norm='P2' action=append trace_id=9e255f19-6358-4146-8ade-07cd982e6af0 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:3c402cd2] session=Christoph_1774793611 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[microfeedback] session=Christoph_1774793611 phase=P2 trace_id=d7cee38f-9b3e-4f90-87cf-3abd5e7cc881 trace_action=submitMicrofeedback text_len=14
+[checkin:d22acae9] session=Christoph_1774793611 phase_raw='P3' phase_norm='P3' action=append trace_id=8103c2da-581b-41f4-9e6c-83e90d7a1b75 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:d22acae9] session=Christoph_1774793611 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Christoph_1774793611 phase=P3 trace_id=461ad92b-f162-458e-a6f4-915c72d17b71 trace_action=submitMicrofeedback text_len=4
+[checkin:c83acb25] session=Christoph_1774793611 phase_raw='POST' phase_norm='POST' action=append trace_id=0d6c645a-de15-4eec-8800-32b334b4afde trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:c83acb25] session=Christoph_1774793611 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}

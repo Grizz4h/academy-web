@@ -1,5 +1,5 @@
 {
-  "id": "Christoph_1774792556",
+  "id": "Christoph_1774793611",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A3",
@@ -8,9 +8,9 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A3_D3",
-  "state": "IN_PROGRESS",
-  "current_phase": "P1",
-  "created_at": "2026-03-29T15:55:56.379931",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-03-29T16:13:31.507514",
   "drills": [
     {
       "id": "A3_D3",
@@ -150,31 +150,161 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-03-29T15:55:58.195216"
+      "timestamp": "2026-03-29T16:13:35.798224"
+    },
+    {
+      "phase": "P1",
+      "answers": {},
+      "timestamp": "2026-03-29T16:13:41.058692"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "rush_stop_events": [
+          {
+            "decision": "rush",
+            "zone": "neutral",
+            "reason": "gegner_unsortiert",
+            "outcome": "",
+            "note": ""
+          },
+          {
+            "decision": "rush",
+            "zone": "neutral",
+            "reason": "tempo_vorteil",
+            "outcome": "",
+            "note": ""
+          },
+          {
+            "decision": "rush",
+            "zone": "neutral",
+            "reason": "raum_offen",
+            "outcome": "",
+            "note": ""
+          },
+          {
+            "decision": "stop",
+            "zone": "neutral",
+            "reason": "puck_sichern",
+            "outcome": "spiel_beruhigt",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-03-29T16:47:59.842651"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "rush_stop_events": [
+          {
+            "decision": "rush",
+            "zone": "defensive",
+            "reason": "raum_offen",
+            "outcome": "puckverlust",
+            "note": ""
+          },
+          {
+            "decision": "rush",
+            "zone": "neutral",
+            "reason": "raum_offen",
+            "outcome": "puckverlust",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-03-29T17:28:24.477352"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-03-29T17:28:35.861994"
     }
   ],
-  "drafts": {},
-  "post": null,
+  "drafts": {
+    "P2": {
+      "rush_stop_events": [
+        {
+          "decision": "rush",
+          "zone": "neutral",
+          "reason": "gegner_unsortiert",
+          "outcome": "",
+          "note": ""
+        },
+        {
+          "decision": "rush",
+          "zone": "neutral",
+          "reason": "tempo_vorteil",
+          "outcome": "",
+          "note": ""
+        },
+        {
+          "decision": "rush",
+          "zone": "neutral",
+          "reason": "raum_offen",
+          "outcome": "",
+          "note": ""
+        },
+        {
+          "decision": "stop",
+          "zone": "neutral",
+          "reason": "puck_sichern",
+          "outcome": "spiel_beruhigt",
+          "note": ""
+        }
+      ]
+    },
+    "P3": {
+      "rush_stop_events": [
+        {
+          "decision": "rush",
+          "zone": "defensive",
+          "reason": "raum_offen",
+          "outcome": "puckverlust",
+          "note": ""
+        },
+        {
+          "decision": "rush",
+          "zone": "neutral",
+          "reason": "raum_offen",
+          "outcome": "puckverlust",
+          "note": ""
+        }
+      ]
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-03-29T17:28:35.979443"
+  },
   "game_info": {
     "league": "DEL",
-    "team_home": "ERC Ingolstadt",
-    "team_away": "Augsburger Panther",
-    "observed_team": "ERC Ingolstadt",
-    "date": "2026-03-29T13:55:56.306Z"
+    "team_home": "Schwenninger Wild Wings",
+    "team_away": "Kölner Haie",
+    "observed_team": "Schwenninger Wild Wings",
+    "date": "2026-03-29T14:13:31.404Z",
+    "season": "2025/26",
+    "matchday": "Playoff Viertelfinale Spiel 3"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "rush",
+      "ts": "2026-03-29T16:13:46.693273"
     },
     "P2": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "rush eindeutig",
+      "ts": "2026-03-29T16:48:08.303546"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "rush",
+      "ts": "2026-03-29T17:28:28.966082"
     }
   }
 }

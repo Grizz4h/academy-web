@@ -796,6 +796,143 @@ async def login(payload: dict):
     print(f"[AUTH] login ok user={username}")
     return {"token": token, "username": username}
 
+# ============ PLAYER OBSERVATIONS ============
+
+OBSERVATIONS_DIR = os.path.join(DATA_DIR, "observations")
+
+def _ensure_observations_dir():
+    os.makedirs(OBSERVATIONS_DIR, exist_ok=True)
+
+def _build_observation_storage_path(user: str, player: str, created_at: Optional[str] = None) -> str:
+    """Speicherbasis: data/observations/{user}/{player}/observations.json"""
+    if created_at is None:
+        created_at = datetime.utcnow().isoformat()
+    dt = _parse_created_at(created_at)
+    user_key = _normalize_user_key(user)
+    player_key = (player or "unknown").strip().lower().replace(" ", "_")
+    folder = os.path.join(OBSERVATIONS_DIR, user_key, player_key)
+    os.makedirs(folder, exist_ok=True)
+    return os.path.join(folder, "observations.json")
+
+@app.post("/api/observations")
+async def create_observation(payload: dict, request: Request):
+    """Neue Player Observation speichern"""
+    user = get_current_user(request.headers.get("authorization"))
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    required = ["player", "position", "observations"]
+    for key in required:
+        if key not in payload:
+            raise HTTPException(status_code=400, detail=f"Missing required field: {key}")
+    
+    player = payload.get("player", "").strip()
+    if not player:
+        raise HTTPException(status_code=400, detail="Player name cannot be empty")
+    
+    observation_record = {
+        "player": player,
+        "position": payload["position"],
+        "session_id": payload.get("session_id", ""),
+        "game_context": payload.get("game_context", ""),
+        "observations": payload["observations"],
+        "notes": payload.get("notes", ""),
+        "timestamp": datetime.utcnow().timestamp(),
+        "created_at": datetime.utcnow().isoformat()
+    }
+    
+    path = _build_observation_storage_path(user, player)
+    observations = []
+    if os.path.exists(path):
+        observations = load_json(path)
+    if not isinstance(observations, list):
+        observations = []
+    
+    observations.append(observation_record)
+    save_json(path, observations)
+    
+    print(f"[OBSERVATION] saved player={player} user={user} ts={observation_record['timestamp']}")
+    return {"ok": True, "observation": observation_record}
+
+@app.get("/api/observations")
+async def get_observations(player: Optional[str] = None, request: Request = None):
+    """Alle Observations eines Users abrufen (optional gefiltert nach Player)"""
+    user = get_current_user(request.headers.get("authorization")) if request else None
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    all_obs = []
+    user_key = _normalize_user_key(user)
+    user_obs_dir = os.path.join(OBSERVATIONS_DIR, user_key)
+    
+    if not os.path.exists(user_obs_dir):
+        return {"observations": []}
+    
+    player_key = (player or "").strip().lower().replace(" ", "_") if player else None
+    
+    for player_folder in os.listdir(user_obs_dir):
+        if player_key and player_folder != player_key:
+            continue
+        
+        player_obs_file = os.path.join(user_obs_dir, player_folder, "observations.json")
+        if os.path.exists(player_obs_file):
+            obs_list = load_json(player_obs_file)
+            if isinstance(obs_list, list):
+                all_obs.extend(obs_list)
+    
+    return {"observations": all_obs}
+
+@app.get("/api/observations/aggregated")
+async def get_aggregated_observations(player: Optional[str] = None, request: Request = None):
+    """Aggregierte Statistiken pro Spieler"""
+    user = get_current_user(request.headers.get("authorization")) if request else None
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    user_key = _normalize_user_key(user)
+    user_obs_dir = os.path.join(OBSERVATIONS_DIR, user_key)
+    
+    if not os.path.exists(user_obs_dir):
+        return {"players": {}}
+    
+    aggregated = {}
+    
+    for player_folder in os.listdir(user_obs_dir):
+        player_obs_file = os.path.join(user_obs_dir, player_folder, "observations.json")
+        if not os.path.exists(player_obs_file):
+            continue
+        
+        obs_list = load_json(player_obs_file)
+        if not isinstance(obs_list, list) or not obs_list:
+            continue
+        
+        # Aggregation pro Spieler
+        player_data = {
+            "total_observations": len(obs_list),
+            "support_behavior": {"active": 0, "passive": 0, "none": 0},
+            "support_position": {"low": 0, "mid": 0, "high": 0},
+            "decision_speed": {"fast": 0, "delayed": 0, "risky": 0},
+            "pressure_response": {"stable": 0, "turnover": 0, "panic": 0},
+            "off_puck_movement": {"active": 0, "static": 0, "drifting": 0}
+        }
+        
+        for obs in obs_list:
+            obs_data = obs.get("observations", {})
+            for key, value in obs_data.items():
+                if key in player_data and value in player_data[key]:
+                    player_data[key][value] += 1
+        
+        player_name = obs_list[0].get("player", player_folder)
+        aggregated[player_name] = player_data
+    
+    if player:
+        player_data = aggregated.get(player)
+        if not player_data:
+            raise HTTPException(status_code=404, detail=f"No observations for player: {player}")
+        return {"player": player, "data": player_data}
+    
+    return {"players": aggregated}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
