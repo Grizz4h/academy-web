@@ -1,5 +1,5 @@
 {
-  "id": "Christoph_1774296302",
+  "id": "Christoph_1774713737",
   "user": "Christoph",
   "created_by": "Christoph",
   "module_id": "A3",
@@ -8,9 +8,9 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A3_D2",
-  "state": "IN_PROGRESS",
-  "current_phase": "P2",
-  "created_at": "2026-03-23T21:05:02.659967",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-03-28T17:02:17.974807",
   "drills": [
     {
       "id": "A3_D2",
@@ -146,49 +146,90 @@
     {
       "phase": "PRE",
       "answers": {},
-      "timestamp": "2026-03-23T21:25:44.406963"
+      "timestamp": "2026-03-28T17:02:20.210537"
     },
     {
       "phase": "P1",
       "answers": {
-        "primary_pattern": "zögerlich / unklar",
-        "secondary_pattern": "ja, gelegentlich Beschleunigung",
+        "primary_pattern": "sofortige Beschleunigung nach vorne",
+        "secondary_pattern": "ja, gelegentlich Kontrolle",
         "role_structure": "ja, klar strukturiert"
       },
-      "timestamp": "2026-03-23T21:40:34.645791"
+      "timestamp": "2026-03-28T17:19:49.050397"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "primary_pattern": "zögerlich / unklar",
+        "secondary_pattern": "ja, gelegentlich Kontrolle",
+        "role_structure": "nein, chaotisch / unklar"
+      },
+      "timestamp": "2026-03-28T17:54:03.617011"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "primary_pattern": "zögerlich / unklar",
+        "secondary_pattern": "ja, gelegentlich chaotisch",
+        "role_structure": "nein, chaotisch / unklar"
+      },
+      "timestamp": "2026-03-28T18:03:03.005401"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-03-28T18:03:41.826217"
     }
   ],
   "drafts": {
     "P1": {
-      "primary_pattern": "zögerlich / unklar",
-      "secondary_pattern": "ja, gelegentlich Beschleunigung",
+      "primary_pattern": "sofortige Beschleunigung nach vorne",
+      "secondary_pattern": "ja, gelegentlich Kontrolle",
       "role_structure": "ja, klar strukturiert"
+    },
+    "P2": {
+      "primary_pattern": "zögerlich / unklar",
+      "secondary_pattern": "ja, gelegentlich Kontrolle",
+      "role_structure": "nein, chaotisch / unklar"
+    },
+    "P3": {
+      "primary_pattern": "zögerlich / unklar",
+      "secondary_pattern": "ja, gelegentlich chaotisch",
+      "role_structure": "nein, chaotisch / unklar"
     }
   },
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-03-28T18:03:41.939301"
+  },
   "game_info": {
-    "league": "DEL",
-    "team_home": "Straubing Tigers",
-    "team_away": "Kölner Haie",
-    "observed_team": "Kölner Haie",
-    "date": "2026-03-23T20:05:02.632Z",
+    "league": "U20_DNL",
+    "team_home": "Jungadler Mannheim",
+    "team_away": "ERC Ingolstadt",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-03-28T16:02:17.947Z",
     "season": "2025/26",
-    "matchday": "52"
+    "matchday": "Playoff finale Spiel 1"
   },
   "observed_team": null,
   "microfeedback": {
     "P1": {
       "done": true,
-      "text": "abstand wird größer",
-      "ts": "2026-03-23T21:40:46.446491"
+      "text": "es war eher eplosiv daher denke ich schon gewollte als angriff und nicht reaktiv",
+      "ts": "2026-03-28T17:20:12.202052"
     },
     "P2": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "es wurde nie sofort reagiert. oft gewartet und teilweise dann auch zu lange.",
+      "ts": "2026-03-28T17:54:35.911422"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "sie schalten zu langsam und geben dadurch das überraschungsmomentum ab und es kommt zu keiner Geschwindigkeit beim Spielaufbau",
+      "ts": "2026-03-28T18:03:40.292220"
     }
   }
 }

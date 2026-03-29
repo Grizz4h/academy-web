@@ -1,0 +1,172 @@
+{
+  "id": "Christoph_1774789764",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A3",
+  "goal": "Auto: A3 – Transition & Tempo",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A3_D3",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-03-29T15:09:24.792797",
+  "drills": [
+    {
+      "id": "A3_D3",
+      "title": "Rush vs. Stopp",
+      "drill_type": "period_checkin",
+      "description": "Unterscheide, wann ein Rush entsteht – und warum er abbricht.",
+      "didactics": {
+        "explanation": "Ein Rush ist nicht nur „schnell nach vorne“, sondern ein kurzer Vorteil in Tempo und Zahlen. Entscheidend ist, ob Support und Abstände stimmen – sonst stirbt der Rush sofort.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Zahlenlage beim Umschalten (z. B. 2-gegen-1, 3-gegen-2)",
+            "Support hinter dem Puck (kommt Hilfe nach?)",
+            "Tempo der ersten 2–3 Schritte (Explosivität vs. Verzögerung)",
+            "Abstände im Rush (zu eng/zu weit)"
+          ],
+          "how_to_decide": [
+            "Beobachte nur Rush-Momente (Transition mit Tempo)",
+            "Bewerte den Moment der Entscheidung: Pass, Carry, Delay",
+            "Frage dich: War Support real da – oder nur Hoffnung?",
+            "Bewerte Struktur und Vorbereitung, nicht Tor/Schuss"
+          ],
+          "ignore": [
+            "Abschluss & Tor",
+            "Schussqualität",
+            "Goalie-Performance"
+          ]
+        },
+        "inline_explanations": {
+          "gefährlich": {
+            "meaning": "Der Rush bleibt strukturiert: klare Zahlen-/Tempovorteile, Support erreichbar, echte Option(en) entstehen."
+          },
+          "neutralisiert": {
+            "meaning": "Der Gegner nimmt Vorteil raus (Gap/Backpressure). Tempo oder Zahlen kippen, der Rush wird zu normalem Angriff."
+          },
+          "verschenkt": {
+            "meaning": "Der Vorteil wird ohne Not weggegeben (überhastet, ohne Support, schlechter Abstand/Timing)."
+          },
+          "Kein Support": {
+            "meaning": "Der Puckführer ist allein: keine nahe Option, keine zweite Welle – Entscheidungen werden erzwungen."
+          },
+          "Zu früher Pass": {
+            "meaning": "Pass kommt bevor der Gegner gebunden ist oder bevor eine klare Linie offen ist – führt oft zu Touch/Puckverlust."
+          },
+          "Zu spätes Abbremsen": {
+            "meaning": "Tempo wird zu spät kontrolliert: der Puckführer läuft in enge Räume/gegen stehende Verteidiger."
+          }
+        },
+        "learning_hint": "Rush stirbt selten am Schuss – meist an Support, Abstand und Timing."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "rush_outcome": "gefährlich"
+            },
+            "questions": [
+              "Wodurch war der Vorteil klar (Zahlen, Tempo oder beides)?",
+              "War Support rechtzeitig erreichbar oder nur „theoretisch“?",
+              "Welche Entscheidung war der Schlüssel (Carry, Pass, Delay)?"
+            ]
+          },
+          {
+            "when": {
+              "rush_outcome": "neutralisiert"
+            },
+            "questions": [
+              "Was hat den Rush gekillt: Gap, Backpressure oder fehlender Support?",
+              "Wann kippte der Vorteil (früh / am letzten Moment)?",
+              "Hätte ein Delay/Reset den Angriff gerettet?"
+            ]
+          },
+          {
+            "when": {
+              "rush_outcome": "verschenkt"
+            },
+            "questions": [
+              "Woran hast du erkannt, dass der Vorteil unnötig weg ist?",
+              "War es eher Timing (zu früh/zu spät) oder fehlender Support?",
+              "Welche Alternative wäre die stabile Wahl gewesen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "rush_outcome",
+            "type": "radio",
+            "label": "Rush",
+            "options": [
+              "gefährlich",
+              "neutralisiert",
+              "verschenkt"
+            ]
+          },
+          {
+            "key": "rush_reason",
+            "type": "radio",
+            "label": "Hauptgrund",
+            "options": [
+              "Kein Support",
+              "Zu früher Pass",
+              "Zu spätes Abbremsen"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurze Begründung",
+            "max_chars": 1500
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-03-29T15:09:26.979564"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "rush_outcome": "gefährlich"
+    }
+  },
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Straubing Tigers",
+    "team_away": "Eisbären Berlin",
+    "observed_team": "Eisbären Berlin",
+    "date": "2026-03-29T13:09:24.753Z",
+    "season": "2025/26",
+    "matchday": "Playoff Viertelfinale Spiel 3"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": false,
+      "text": ""
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}

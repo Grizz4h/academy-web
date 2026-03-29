@@ -1220,108 +1220,128 @@
  {
   "id": "A3_D3",
   "title": "Rush vs. Stopp",
-  "drill_type": "period_checkin",
-  "description": "Unterscheide, wann ein Rush entsteht – und warum er abbricht.",
+  "drill_type": "event_log",
+  "description": "Logge Transition-Entscheidungen: wann wird gepusht, wann wird gestoppt – und warum.",
   "didactics": {
-    "explanation": "Ein Rush ist nicht nur „schnell nach vorne“, sondern ein kurzer Vorteil in Tempo und Zahlen. Entscheidend ist, ob Support und Abstände stimmen – sonst stirbt der Rush sofort.",
+    "goal": "Entscheidungsmuster in Transition erkennen: Pushen vs. Abbrechen.",
+    "why_it_matters": "Rush vs. Stop ist ein Timing- und Entscheidungs-Drill, kein reiner Outcome-Drill.",
+    "explanation": "Nicht das Endresultat ist der Kern, sondern der Entscheidungszeitpunkt: Wird mit Tempo gepusht oder bewusst gestoppt? Entscheidend sind Kontext, Support und Spielstruktur.",
     "observation_guide": {
       "what_to_watch": [
-        "Zahlenlage beim Umschalten (z. B. 2-gegen-1, 3-gegen-2)",
-        "Support hinter dem Puck (kommt Hilfe nach?)",
-        "Tempo der ersten 2–3 Schritte (Explosivität vs. Verzögerung)",
-        "Abstände im Rush (zu eng/zu weit)"
+        "Entscheidung im Moment der Transition: Push oder Stop",
+        "Zone beim Entscheidungszeitpunkt (defensive, neutral, offensive)",
+        "Support, Raum und Gegnerordnung vor der Entscheidung",
+        "Wiederkehrende Teammuster statt Einzelszenen"
       ],
       "how_to_decide": [
-        "Beobachte nur Rush-Momente (Transition mit Tempo)",
-        "Bewerte den Moment der Entscheidung: Pass, Carry, Delay",
-        "Frage dich: War Support real da – oder nur Hoffnung?",
-        "Bewerte Struktur und Vorbereitung, nicht Tor/Schuss"
+        "Logge mehrere Events pro Abschnitt",
+        "Werte pro Event den Entscheidungstyp und den Hauptgrund",
+        "Nutze Outcome nur optional als Kontext, nicht als Hauptkriterium",
+        "Suche am Ende nach Musterhaeufigkeit: Wann wird gepusht, wann gestoppt?"
       ],
       "ignore": [
-        "Abschluss & Tor",
-        "Schussqualität",
-        "Goalie-Performance"
+        "Einzelne Highlights ohne Musterbezug",
+        "Reine Ergebnisbewertung (gut/schlecht)",
+        "Abschlussqualitaet ohne Entscheidungsanalyse"
       ]
     },
     "inline_explanations": {
-      "gefährlich": {
-        "meaning": "Der Rush bleibt strukturiert: klare Zahlen-/Tempovorteile, Support erreichbar, echte Option(en) entstehen."
+      "rush": {
+        "meaning": "Aktive Beschleunigung nach vorne, weil Vorteile in Raum, Tempo oder Zahlen gesehen werden."
       },
-      "neutralisiert": {
-        "meaning": "Der Gegner nimmt Vorteil raus (Gap/Backpressure). Tempo oder Zahlen kippen, der Rush wird zu normalem Angriff."
+      "stop": {
+        "meaning": "Bewusstes Abbrechen/Verlangsamen, um Kontrolle, Struktur oder Sicherheit herzustellen."
       },
-      "verschenkt": {
-        "meaning": "Der Vorteil wird ohne Not weggegeben (überhastet, ohne Support, schlechter Abstand/Timing)."
+      "raum_offen": {
+        "meaning": "Es besteht frei nutzbarer Vorwaertsraum fuers Tempo-Spiel."
       },
-      "Kein Support": {
-        "meaning": "Der Puckführer ist allein: keine nahe Option, keine zweite Welle – Entscheidungen werden erzwungen."
+      "kein_support": {
+        "meaning": "Keine stabile Anspieloption oder zweite Welle in Reichweite."
       },
-      "Zu früher Pass": {
-        "meaning": "Pass kommt bevor der Gegner gebunden ist oder bevor eine klare Linie offen ist – führt oft zu Touch/Puckverlust."
-      },
-      "Zu spätes Abbremsen": {
-        "meaning": "Tempo wird zu spät kontrolliert: der Puckführer läuft in enge Räume/gegen stehende Verteidiger."
+      "linie_dicht": {
+        "meaning": "Die gegnerische Linie ist geschlossen, Push haette hohes Risiko."
       }
     },
-    "learning_hint": "Rush stirbt selten am Schuss – meist an Support, Abstand und Timing."
+    "learning_hint": "Erst Muster sehen, dann bewerten: Unter welchen Bedingungen entscheidet sich dein Team fuer Rush oder Stop?"
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "rush_outcome": "gefährlich" },
+        "when": {},
         "questions": [
-          "Wodurch war der Vorteil klar (Zahlen, Tempo oder beides)?",
-          "War Support rechtzeitig erreichbar oder nur „theoretisch“?",
-          "Welche Entscheidung war der Schlüssel (Carry, Pass, Delay)?"
-        ]
-      },
-      {
-        "when": { "rush_outcome": "neutralisiert" },
-        "questions": [
-          "Was hat den Rush gekillt: Gap, Backpressure oder fehlender Support?",
-          "Wann kippte der Vorteil (früh / am letzten Moment)?",
-          "Hätte ein Delay/Reset den Angriff gerettet?"
-        ]
-      },
-      {
-        "when": { "rush_outcome": "verschenkt" },
-        "questions": [
-          "Woran hast du erkannt, dass der Vorteil unnötig weg ist?",
-          "War es eher Timing (zu früh/zu spät) oder fehlender Support?",
-          "Welche Alternative wäre die stabile Wahl gewesen?"
+          "Was passiert in deinen Logs haeufiger: rush oder stop?",
+          "Unter welchen Bedingungen wird gepusht?",
+          "Erkennst du ein klares Muster im Team?"
         ]
       }
     ]
   },
   "config": {
-    "questions": [
+    "event_label": "Event speichern",
+    "event_key": "rush_stop_events",
+    "fields": [
       {
-        "key": "rush_outcome",
-        "type": "radio",
-        "label": "Rush",
+        "key": "decision",
+        "type": "select",
+        "label": "Entscheidung",
         "options": [
-          "gefährlich",
-          "neutralisiert",
-          "verschenkt"
+          "rush",
+          "stop"
         ]
       },
       {
-        "key": "rush_reason",
-        "type": "radio",
-        "label": "Hauptgrund",
+        "key": "zone",
+        "type": "select",
+        "label": "Zone",
         "options": [
-          "Kein Support",
-          "Zu früher Pass",
-          "Zu spätes Abbremsen"
+          "defensive",
+          "neutral",
+          "offensive"
+        ]
+      },
+      {
+        "key": "reason",
+        "type": "select",
+        "label": "Hauptgrund",
+        "options_by_value_of": {
+          "decision": {
+            "rush": [
+              "raum_offen",
+              "gegner_unsortiert",
+              "überzahl_situation",
+              "tempo_vorteil",
+              "individuelle_entscheidung"
+            ],
+            "stop": [
+              "kein_support",
+              "linie_dicht",
+              "tempo_rausnehmen",
+              "puck_sichern",
+              "line_change"
+            ]
+          }
+        }
+      },
+      {
+        "key": "outcome",
+        "type": "select",
+        "label": "Outcome (optional)",
+        "optional": true,
+        "options": [
+          "druck_entsteht",
+          "spiel_beruhigt",
+          "puckverlust",
+          "keine_veraenderung"
         ]
       },
       {
         "key": "note",
         "type": "text",
-        "label": "Kurze Begründung",
-        "max_chars": 1500
+        "label": "Notiz",
+        "optional": true,
+        "max_chars": 150
       }
     ]
   }

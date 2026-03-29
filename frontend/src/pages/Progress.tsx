@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import type { Session } from '../api'
+import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { useUser } from '../context/UserContext'
 import { formatPux, getAchievementProgressItems, useRewards } from '../features/rewards'
 import styles from './Progress.module.css'
@@ -29,9 +30,22 @@ function popupVariantFromTier(tier: string): 'small' | 'popup' | 'hero' {
   return 'small'
 }
 
+function getCategory(count: number): 'high' | 'medium' | 'low' | 'none' {
+  if (count >= 8) return 'high'
+  if (count >= 3) return 'medium'
+  if (count >= 1) return 'low'
+  return 'none'
+}
+
+function getObservedTeam(session: Session): string | undefined {
+  const gameInfo = session.game_info
+  return gameInfo?.team || gameInfo?.observed_team || session.observed_team
+}
+
 export default function Progress() {
   const { user } = useUser()
   const { rewardState, enqueueReward } = useRewards()
+  const [selectedLeague, setSelectedLeague] = useState<string>('DEL')
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ['sessions', user],
     queryFn: () => api.getSessions(user || undefined),
@@ -78,6 +92,26 @@ export default function Progress() {
       progress.lastSession = session
     }
   })
+
+  const sessionsForLeague = (sessions || []).filter((session) => session.game_info?.league === selectedLeague)
+
+  const teamStats = sessionsForLeague.reduce<Record<string, number>>((acc, session) => {
+    const team = getObservedTeam(session)
+    if (!team) return acc
+
+    acc[team] = (acc[team] || 0) + 1
+    return acc
+  }, {})
+
+  const allTeamsForLeague = teamsByLeague[selectedLeague] || []
+  const extraTeams = Object.keys(teamStats).filter((team) => !allTeamsForLeague.includes(team))
+
+  const teamData = [...allTeamsForLeague, ...extraTeams]
+    .map(team => ({
+      name: team,
+      count: teamStats[team] || 0,
+    }))
+    .sort((a, b) => b.count - a.count)
 
   const getModuleTitle = (moduleId: string) => {
     for (const track of curriculum?.tracks || []) {
@@ -138,6 +172,41 @@ export default function Progress() {
         <p><strong>Abgeschlossen:</strong> {sessions?.filter(s => s.state === 'COMPLETED').length || 0}</p>
         <p><strong>Abgebrochen:</strong> {sessions?.filter(s => s.state === 'ABORTED').length || 0}</p>
         <p><strong>Aktiv:</strong> {sessions?.filter(s => s.state !== 'COMPLETED' && s.state !== 'ABORTED').length || 0}</p>
+      </div>
+
+      <div className="card">
+        <h2>Team Progress Grid</h2>
+        <div className={styles.teamGridControls}>
+          <p className={styles.teamGridIntro}>Wie oft wurde jedes Team analysiert?</p>
+          <div className={styles.teamLeagueSelectWrap}>
+            <label htmlFor="league-select" className={styles.teamLeagueLabel}>Liga</label>
+            <select
+              id="league-select"
+              className="appSelect"
+              value={selectedLeague}
+              onChange={(e) => setSelectedLeague(e.target.value)}
+            >
+              {LEAGUES.map((league) => (
+                <option key={league} value={league}>{league.replace(/_/g, ' ')}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className={styles.teamGrid}>
+          {teamData.map(team => {
+            const category = getCategory(team.count)
+            return (
+              <div key={team.name} className={styles.teamTile} data-category={category}>
+                <div className={styles.teamName}>{team.name}</div>
+                <div className={styles.teamCount}>{team.count} Analysen</div>
+                {team.count === 0 && (
+                  <div className={styles.teamNeverSeen}>Noch nie analysiert</div>
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <div className="card">

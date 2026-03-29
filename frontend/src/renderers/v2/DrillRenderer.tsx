@@ -10,6 +10,16 @@ interface DrillRendererV2Props {
   setAnswers: (next: any) => void;
 }
 
+// Helper: Format snake_case to readable text (e.g., "raum_offen" → "Raum Offen")
+function formatOptionText(text: string): string {
+	if (!text) return text;
+	return text
+		.replace(/_/g, " ")
+		.split(" ")
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
+}
+
 function ObservationGuide({ drill }: { drill: Drill }) {
 	const didactics: any = drill.didactics;
 	if (!didactics) return null;
@@ -216,7 +226,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 												checked={safeAnswers[q.key] === opt}
 												onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 											/>
-											{highlightGlossaryTerms(opt, glossary)}
+											{highlightGlossaryTerms(formatOptionText(opt), glossary)}
 										</span>
 										{explanation && (
 											<span style={{ fontSize: "0.85em", color: "#aaa", marginLeft: 24 }}>{explanation}</span>
@@ -236,7 +246,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 							<option value="">Bitte auswählen</option>
 							{effectiveOptions.map((opt: string) => (
 								<option key={opt} value={opt}>
-									{opt}
+									{formatOptionText(opt)}
 								</option>
 							))}
 						</select>
@@ -291,7 +301,7 @@ function MicroQuiz({ drill, answers, setAnswers }: any) {
 								checked={answers[`q${i}`] === opt}
 								onChange={(e) => setAnswers({ ...answers, [`q${i}`]: e.target.value })}
 							/>
-							{opt}
+							{formatOptionText(opt)}
 						</label>
 					))}
 					{answers[`q${i}`] === q.correct && <div style={{ color: "green" }}>Richtig! {q.explanation}</div>}
@@ -360,7 +370,7 @@ function ShiftTracker({ drill, answers, setAnswers }: any) {
 															onChange={(e) => setAnswers({ ...answers, [key]: e.target.value })}
 															style={{ marginRight: "0.5rem" }}
 														/>
-														{highlightGlossaryTerms(opt, glossary)}
+														{highlightGlossaryTerms(formatOptionText(opt), glossary)}
 													</label>
 												))}
 											</div>
@@ -430,7 +440,7 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 												checked={answers[q.key] === opt}
 												onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
 											/>
-											{opt}
+											{formatOptionText(opt)}
 										</div>
 										{drill.didactics?.inline_explanations?.[opt]?.meaning && (
 											<div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
@@ -507,7 +517,7 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 											checked={answers[q.key] === opt}
 											onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
 										/>
-										{opt}
+										{formatOptionText(opt)}
 									</label>
 								))}
 							</div>
@@ -618,11 +628,11 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		setForm(emptyForm());
 	};
 
-	// Kurzdarstellung: select-Felder mit · getrennt, Notiz dahinter
+	// Format option: convert snake_case to readable text
 	const shortLabel = (ev: Record<string, string>) => {
 		const selectParts = fields
 			.filter((f: any) => f.type === "select")
-			.map((f: any) => ev[f.key] || "—")
+			.map((f: any) => (ev[f.key] ? formatOptionText(ev[f.key]) : "—"))
 			.join(" · ");
 		const noteField = fields.find((f: any) => f.type === "text");
 		const note = noteField && ev[noteField.key] ? ` – ${ev[noteField.key]}` : "";
@@ -720,7 +730,7 @@ function EventLog({ drill, answers, setAnswers }: any) {
 							>
 								<option value="">{f.label}…</option>
 								{options.map((opt: string) => (
-									<option key={opt} value={opt}>{opt}</option>
+									<option key={opt} value={opt}>{formatOptionText(opt)}</option>
 								))}
 							</select>
 								);

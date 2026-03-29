@@ -145,6 +145,7 @@ export interface Session {
 }
 
 export interface GameInfo {
+  team?: string
   team_home: string
   team_away: string
   date: string
