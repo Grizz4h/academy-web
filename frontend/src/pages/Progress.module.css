@@ -24,6 +24,13 @@
   margin-bottom: 0.9rem;
 }
 
+.teamFilterSelects {
+  display: flex;
+  align-items: end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
 .teamLeagueSelectWrap {
   display: flex;
   flex-direction: column;
@@ -91,6 +98,119 @@
   margin-top: 0.2rem;
   font-size: 0.75rem;
   color: #fca5a5;
+}
+
+.matchupIntro {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  color: rgba(216, 225, 255, 0.72);
+}
+
+.matchupGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.6rem;
+}
+
+.matchupCard {
+  text-align: left;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  background: rgba(15, 23, 42, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  padding: 0.62rem 0.72rem;
+  transition: border-color 120ms ease, background-color 120ms ease, transform 120ms ease;
+}
+
+.matchupCard:hover {
+  border-color: rgba(94, 234, 212, 0.45);
+  background: rgba(19, 34, 56, 0.62);
+}
+
+.matchupCard:active {
+  transform: translateY(1px);
+}
+
+.matchupCardActive {
+  border-color: rgba(94, 234, 212, 0.75);
+  background: rgba(20, 83, 45, 0.28);
+}
+
+.matchupHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.matchupOpponent {
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgba(240, 250, 255, 0.98);
+}
+
+.matchupCount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(156, 233, 220, 0.94);
+  white-space: nowrap;
+}
+
+.matchupMetaRow {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.7rem;
+  font-size: 0.73rem;
+  color: rgba(216, 225, 255, 0.76);
+}
+
+.matchupModulesLabel {
+  margin-top: 0.45rem;
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(185, 206, 238, 0.62);
+}
+
+.matchupModuleChips {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+}
+
+.matchupModuleChip,
+.matchupExtraChip,
+.matchupEmptyChip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.08rem 0.48rem;
+  border: 1px solid rgba(120, 180, 210, 0.28);
+  background: rgba(18, 30, 44, 0.68);
+  font-size: 0.7rem;
+  color: rgba(206, 234, 245, 0.94);
+}
+
+.matchupExtraChip {
+  border-color: rgba(156, 163, 175, 0.45);
+  color: rgba(217, 226, 241, 0.84);
+}
+
+.matchupEmptyChip {
+  border-style: dashed;
+  color: rgba(194, 209, 228, 0.72);
+}
+
+.matchupExpandedMeta {
+  margin-top: 0.45rem;
+  padding-top: 0.38rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.72rem;
+  color: rgba(225, 239, 255, 0.82);
 }
 
 .progressSection {
@@ -225,13 +345,24 @@
     grid-template-columns: 1fr;
   }
 
+  .matchupGrid {
+    grid-template-columns: 1fr;
+  }
+
   .teamGridControls {
     align-items: stretch;
     flex-direction: column;
   }
 
+  .teamFilterSelects {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   .teamLeagueSelectWrap {
     min-width: 0;
+    width: 100%;
   }
 }
 

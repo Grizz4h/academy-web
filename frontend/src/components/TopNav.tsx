@@ -12,6 +12,8 @@ const navTabs = [
   { to: '/curriculum', label: 'Tracks' },
   { to: '/history', label: 'Verlauf' },
   { to: '/progress', label: 'Stats' },
+  { to: '/observation/setup', label: 'Obs Setup' },
+  { to: '/observation/stats', label: 'Obs Stats' },
 ];
 
 
@@ -20,7 +22,7 @@ const TopNav: React.FC = () => {
   const { rewardState } = useRewards();
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={styles.navbar} data-top-nav="true">
       <div className={styles.container}>
         <div className={styles.navInner}>
           {/* Row 1: Logo left, Logout right */}

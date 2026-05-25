@@ -1112,42 +1112,89 @@
       "title": "Puckgewinn (Transition)",
       "description": "Ein Puckgewinn beschreibt den Moment, in dem ein Team die Scheibe vom Gegner übernimmt.\n\nDieser Moment ist entscheidend für die Spielentwicklung:\nGute Teams zeigen sofort erkennbare Muster in den ersten Sekunden nach dem Gewinn."
     },
+    "role_context": {
+      "title": "Rollenverteilung nach Puckgewinn",
+      "content": [
+        {
+          "label": "Beschleuniger",
+          "text": "startet sofort nach vorne und erzeugt Tempo"
+        },
+        {
+          "label": "Absicherung",
+          "text": "bleibt leicht versetzt oder tiefer und sichert den Spielaufbau ab"
+        },
+        {
+          "label": "Erste Passoption",
+          "text": "bietet sich sofort sichtbar anspielbar an"
+        },
+        {
+          "label": "Tiefengeber",
+          "text": "läuft in freie Räume oder zieht Gegner auseinander"
+        },
+        {
+          "label": "Unterstützer",
+          "text": "bewegt sich gestaffelt hinter oder neben dem Angriff und hält Anschlussoptionen offen"
+        }
+      ],
+      "hint": "Eine klare Rollenverteilung bedeutet nicht, dass immer dieselben Positionen dieselben Aufgaben übernehmen. Entscheidend ist: Reagieren mehrere Spieler sinnvoll aufeinander, ergänzen sich ihre Bewegungen und entstehen erkennbare Aufgaben im Kollektiv?"
+    },
     "guiding_questions": [
       "Welche Reaktion siehst du am häufigsten direkt nach Puckgewinn?",
-      "Wer übernimmt sofort Initiative?",
-      "Wer sichert eher ab oder verzögert?",
-      "Erkennst du eine klare Rollenverteilung?"
+      "Wirkt die Reaktion eher kollektiv koordiniert oder individuell?",
+      "Welches Merkmal hat die Struktur am deutlichsten gezeigt?",
+      "Wie dominant ist dieses Primärmuster über mehrere Szenen hinweg?"
     ],
     "observation_guide": {
       "what_to_watch": [
-        "Achte nicht auf einzelne Szenen, sondern auf wiederkehrende Muster",
-        "Versuche, ein dominantes Verhalten zu erkennen",
-        "Achte zusätzlich darauf, ob es ein zweites, wiederkehrendes Muster gibt",
-        "Ist eine klare Rollenverteilung erkennbar?"
+        "Nicht nur beobachten, ob beschleunigt wird, sondern wie einheitlich und koordiniert die Reaktion wirkt",
+        "Wer startet sofort nach vorne?",
+        "Wer sichert ab?",
+        "Wer bietet sich als erste Option an?",
+        "Gibt es gestaffelte Unterstützung?",
+        "Ergänzen sich die Bewegungen der Spieler?",
+        "Achte auf gemeinsames Timing direkt nach Puckgewinn",
+        "Achte auf Staffelung und erkennbare Unterstützungsstruktur",
+        "Achte darauf, ob Rollen sofort sichtbar werden",
+        "Unterscheide kollektive Teamreaktion von individueller Einzelreaktion"
       ],
       "how_to_decide": [
         "Frage dich: „Was passiert am häufigsten?“",
         "Denke in Dominanz statt im Durchschnitt",
-        "Nutze Wiederholungen als Musterhinweis, ohne Ereignisse einzeln zu loggen",
-        "Bewerte, wie einheitlich oder variabel das Verhalten ist"
+        "Bewerte Struktur vor Tempo: Einheitlichkeit und Rollenlogik sind wichtiger als einzelne schnelle Aktionen",
+        "Nutze Wiederholungen als Musterhinweis, ohne Ereignisse einzeln zu loggen"
+      ],
+      "common_mistakes": [
+        "Alle fahren gleichzeitig einfach nach vorne bedeutet nicht automatisch klare Rollenverteilung",
+        "Gute Rollenverteilung erkennst du daran, dass Spieler unterschiedliche, erkennbare Aufgaben übernehmen",
+        "Viel Tempo bedeutet nicht automatisch gute Transition",
+        "Einzelne schnelle Spieler bedeuten nicht automatisch Struktur",
+        "Entscheidend: Reagiert das Team gemeinsam und mit klaren Rollen?"
       ],
       "ignore": [
         "Einzelne Ausreißer",
         "Puckverlauf nach 3 Sekunden",
-        "Abschluss oder Tor"
+        "Abschluss oder Tor",
+        "Nur das Tempo einzelner Spieler"
       ]
     },
-    "learning_hint": "Muster erkennen, nicht Einzelszenen bewerten.\nAchte auf wiederkehrende Reaktionen über mehrere Situationen hinweg."
+    "learning_hint": "Muster erkennen, nicht Einzelszenen bewerten.\nAchte auf wiederkehrende Reaktionen über mehrere Situationen hinweg.\nGute Transition erkennst du daran, dass mehrere Spieler gleichzeitig nachvollziehbare Rollen übernehmen."
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "primary_pattern": "sofortige Beschleunigung nach vorne" },
+        "when": { "primary_pattern": "strukturierte Beschleunigung nach vorne" },
         "questions": [
-          "Ist die Beschleunigung strukturiert oder nur hektisch?",
-          "Gab es hinter dem ersten Impuls sofort Absicherung?"
+          "Was macht die Beschleunigung für dich strukturiert?",
+          "Gab es hinter dem ersten Impuls sofort erkennbare Absicherung und Rollen?"
+        ]
+      },
+      {
+        "when": { "primary_pattern": "individuelle / ungeordnete Beschleunigung" },
+        "questions": [
+          "Woran erkennst du, dass eher individuell statt kollektiv reagiert wird?",
+          "Welche Rollen oder Staffelung haben dir gefehlt?"
         ]
       },
       {
@@ -1180,10 +1227,22 @@
         "type": "select",
         "label": "Welche Reaktion siehst du am häufigsten direkt nach Puckgewinn?",
         "options": [
-          "sofortige Beschleunigung nach vorne",
+          "strukturierte Beschleunigung nach vorne",
+          "individuelle / ungeordnete Beschleunigung",
           "erst Kontrolle, dann Bewegung",
           "zögerlich / unklar",
           "gemischt / kein klares Muster"
+        ]
+      },
+      {
+        "key": "primary_pattern_dominance",
+        "type": "select",
+        "label": "Wie dominant ist das Primärmuster?",
+        "options": [
+          "fast immer sichtbar",
+          "häufig sichtbar",
+          "gemischt",
+          "nur leicht erkennbar"
         ]
       },
       {
@@ -1208,6 +1267,31 @@
         ]
       },
       {
+        "key": "role_structure_indicators",
+        "type": "multi_select",
+        "label": "Welches Merkmal hat die Struktur am deutlichsten gezeigt?",
+        "conditional_options": {
+          "role_structure": {
+            "ja, klar strukturiert": [
+              "klare Absicherung",
+              "sofortige Tiefenläufe",
+              "klare erste Passoption",
+              "gestaffelte Unterstützung",
+              "gemeinsames Timing",
+              "klare Rollen nach Puckgewinn"
+            ],
+            "teilweise erkennbar": [
+              "klare Absicherung",
+              "sofortige Tiefenläufe",
+              "klare erste Passoption",
+              "gestaffelte Unterstützung",
+              "gemeinsames Timing",
+              "klare Rollen nach Puckgewinn"
+            ]
+          }
+        }
+      },
+      {
         "key": "note",
         "type": "text",
         "label": "Was fällt dir besonders auf?",
@@ -1219,50 +1303,57 @@
 },
  {
   "id": "A3_D3",
-  "title": "Rush vs. Stopp",
+  "title": "Rush vs. Stop",
   "drill_type": "event_log",
   "description": "Logge Transition-Entscheidungen: wann wird gepusht, wann wird gestoppt – und warum.",
   "didactics": {
-    "goal": "Entscheidungsmuster in Transition erkennen: Pushen vs. Abbrechen.",
-    "why_it_matters": "Rush vs. Stop ist ein Timing- und Entscheidungs-Drill, kein reiner Outcome-Drill.",
-    "explanation": "Nicht das Endresultat ist der Kern, sondern der Entscheidungszeitpunkt: Wird mit Tempo gepusht oder bewusst gestoppt? Entscheidend sind Kontext, Support und Spielstruktur.",
+    "goal": "Schnell entscheiden, ob eine Szene noch Rush ist oder bereits Stop: Fokus auf Defense unter Druck vs. Defense in Kontrolle.",
+    "why_it_matters": "Rush erkennst du nicht am Tempo des Angriffs, sondern an der Reaktion der gegnerischen Defensive.",
+    "explanation": "In diesem Drill geht es darum zu erkennen, ob eine Szene noch im Tempo-Vorteil (Rush) ist oder bereits in kontrollierten Aufbau (Stop) uebergeht. Ein Rush wird nicht daran erkannt, wie schnell Angreifer laufen, sondern daran, ob die gegnerische Defense unter Druck ist. Dein Fokus liegt deshalb auf der Defensive: Ist sie in Reaktion oder in Kontrolle?",
     "observation_guide": {
       "what_to_watch": [
-        "Entscheidung im Moment der Transition: Push oder Stop",
-        "Zone beim Entscheidungszeitpunkt (defensive, neutral, offensive)",
-        "Support, Raum und Gegnerordnung vor der Entscheidung",
-        "Wiederkehrende Teammuster statt Einzelszenen"
+        "Blick zuerst auf die gegnerische Defense, nicht auf den Angriff",
+        "Muss die Defense rueckwaerts laufen, drehen oder nur noch reagieren?",
+        "Sind Zuordnungen/Laufwege offen oder ist die Defense stabil sortiert?",
+        "Bleibt unmittelbarer Druck Richtung Tor moeglich oder ist die Szene kontrolliert?"
       ],
       "how_to_decide": [
-        "Logge mehrere Events pro Abschnitt",
-        "Werte pro Event den Entscheidungstyp und den Hauptgrund",
-        "Nutze Outcome nur optional als Kontext, nicht als Hauptkriterium",
-        "Suche am Ende nach Musterhaeufigkeit: Wann wird gepusht, wann gestoppt?"
+        "Stelle pro Szene nur eine Kernfrage: Ist die Defense unter Druck oder in Kontrolle?",
+        "Rush = Defense in Reaktion (Luecken, Unordnung, offene Mitte, Drehbewegungen)",
+        "Stop = Defense in Kontrolle (stabil, sortiert, Wege geschlossen, nach aussen gelenkt)",
+        "Ein Puckgewinn allein ist kein Rush: erst ein echter Vorteil gegen die Defense macht ihn zum Rush"
       ],
       "ignore": [
-        "Einzelne Highlights ohne Musterbezug",
-        "Reine Ergebnisbewertung (gut/schlecht)",
-        "Abschlussqualitaet ohne Entscheidungsanalyse"
+        "Wie schnell die Angreifer subjektiv wirken",
+        "Nur das Endergebnis der Szene (Abschluss/Tor)",
+        "Perfekte Gesamtanalyse statt schneller Ersteinschaetzung"
       ]
     },
+    "how_to": [
+      "Beobachte die Szene ab Puckgewinn oder Entry ins Angriffsdrittel.",
+      "Triff schnell die Entscheidung: rush oder stop.",
+      "Waehle danach den Hauptgrund, der deine Entscheidung am besten traegt.",
+      "Bleib bei der ersten Wahrnehmung und logge mehrere Szenen fuer Muster."
+    ],
+    "reason_selection_guide": "Waehle den Grund, den du am deutlichsten beobachten kannst.\n\nEs geht nicht darum, alle passenden Gruende auszuwaehlen, sondern den dominanten Ausloeser der Situation zu erkennen.\n\nFrage dich:\n-> Was sehe ich konkret?\n\nBei Rush:\n-> Wo entsteht der Vorteil gegenueber der Defense?\n\nBei Stop:\n-> Wodurch hat die Defense die Kontrolle?\n\nWenn mehrere Gruende zutreffen:\n-> Waehle den ersten, den du visuell erkannt hast",
     "inline_explanations": {
       "rush": {
-        "meaning": "Aktive Beschleunigung nach vorne, weil Vorteile in Raum, Tempo oder Zahlen gesehen werden."
+        "meaning": "Rush liegt vor, wenn die Defense unter Druck ist: sie reagiert, muss drehen/rueckwaerts arbeiten, Zuordnungen brechen auf."
       },
       "stop": {
-        "meaning": "Bewusstes Abbrechen/Verlangsamen, um Kontrolle, Struktur oder Sicherheit herzustellen."
+        "meaning": "Stop liegt vor, wenn die Defense in Kontrolle ist: stabil, sortiert, Lauf- und Passwege weitgehend geschlossen."
       },
       "raum_offen": {
-        "meaning": "Es besteht frei nutzbarer Vorwaertsraum fuers Tempo-Spiel."
+        "meaning": "Vorwaertsraum ist offen und erzeugt realen Druck auf die Defensive."
       },
       "kein_support": {
-        "meaning": "Keine stabile Anspieloption oder zweite Welle in Reichweite."
+        "meaning": "Keine tragfaehige Anschlussoption: dadurch kippt Druck schnell in Kontrollverlust."
       },
       "linie_dicht": {
-        "meaning": "Die gegnerische Linie ist geschlossen, Push haette hohes Risiko."
+        "meaning": "Die Defense ist gesetzt und schliesst Linien; ein Push erzeugt kaum Vorteil und hohes Risiko."
       }
     },
-    "learning_hint": "Erst Muster sehen, dann bewerten: Unter welchen Bedingungen entscheidet sich dein Team fuer Rush oder Stop?"
+    "learning_hint": "Rush erkennst du nicht am Angriff, sondern an der Defensive. Viele Szenen wirken schnell, sind aber kontrolliert; andere wirken chaotisch und sind trotzdem klarer Rush."
   },
   "miniFeedback": {
     "trigger": "onNext",
@@ -1308,18 +1399,16 @@
         "options_by_value_of": {
           "decision": {
             "rush": [
-              "raum_offen",
-              "gegner_unsortiert",
-              "überzahl_situation",
-              "tempo_vorteil",
-              "individuelle_entscheidung"
+              "Separation: Angreifer hat klaren Abstand zum direkten Gegenspieler",
+              "Defense dreht: Verteidiger muessen sich erst ausrichten oder wenden",
+              "Unterzahl: Weniger Verteidiger als Angreifer im direkten Zugriff",
+              "Offene Linie: Freier Weg Richtung Tor oder gefaehrliche Zone ohne direkten Druck"
             ],
             "stop": [
-              "kein_support",
-              "linie_dicht",
-              "tempo_rausnehmen",
-              "puck_sichern",
-              "line_change"
+              "Defense steht: Verteidiger sind positioniert und kontrollieren den Raum",
+              "Zugriff: Puckfuehrer wird direkt unter Druck gesetzt",
+              "Linien zu: Pass- und Laufwege sind geschlossen",
+              "Tempo gebrochen: Angriff muss abbremsen oder neu aufbauen"
             ]
           }
         }
@@ -1349,88 +1438,116 @@
  {
   "id": "A3_D4",
   "title": "Backchecking & Rückwärtsarbeit",
-  "drill_type": "period_checkin",
-  "description": "Beobachte Rückwärtsarbeit nach Ballverlust: Winkel, Tempo und Inside-Position.",
+  "drill_type": "event_log",
+  "description": "Beobachte Backchecking-Situationen im Umschaltmoment. Zentrale Frage: Verändert der Backchecker, was der Gegner tun kann?",
   "didactics": {
-    "explanation": "Backchecking ist nicht Sprinten, sondern Entscheiden: Wer schließt die Mitte, wer lenkt nach außen, wer kauft Zeit für die Defense?",
+    "explanation": "Backchecking ist keine Frage von Einsatz oder Tempo – es ist eine Frage von Wirkung.\n\nNicht bewerten: wie schnell er ist, wie viel er läuft, ob er sich bemüht.\n\nSondern: ob sich die Optionen des Gegners verändern.\n\nLeitfrage: Verändert sich die Entscheidung des Gegners?",
     "observation_guide": {
+      "when_to_observe": [
+        "Gegner gewinnt den Puck",
+        "Gegner startet in die Transition",
+        "Backchecker kommt von hinten ins Spiel"
+      ],
       "what_to_watch": [
-        "Wie schnell reagieren die Forwards nach Ballverlust?",
-        "Wird die Mitte konsequent geschlossen?",
-        "Welche Laufwinkel werden gewählt?",
-        "Wird der Gegner nach außen gelenkt oder gerade verfolgt?"
+        "Abstand zum Puckträger",
+        "Laufweg und Winkel des Backcheckers",
+        "Nimmt er Wege oder Optionen weg?",
+        "Muss der Gegner etwas anpassen?"
       ],
       "how_to_decide": [
-        "Beobachte Spieler ohne Puck",
-        "Fokus auf die ersten Schritte nach der Transition",
-        "Achte auf Winkel statt Geschwindigkeit",
-        "Inside-Position ist wichtiger als Körperkontakt"
+        "Verändert sich die Entscheidung des Gegners? → ja = Impact",
+        "Macht der Gegner trotzdem das, was er geplant hatte? → nein = kein Impact",
+        "Auch nah dran sein reicht nicht – entscheidend ist nur: Hat sich etwas für den Gegner verändert?"
       ],
-      "ignore": [
-        "Puckführung des Gegners",
-        "Abschluss oder Tor"
+      "common_mistakes": [
+        "Viel Tempo bedeutet nicht automatisch gutes Backchecking",
+        "Nähe zum Gegner bedeutet nicht automatisch Einfluss",
+        "Einsatz ist nicht gleich Wirkung"
       ]
     },
     "inline_explanations": {
-      "Inside-Position": {
-        "meaning": "Der Rückwärtsarbeitende hält sich zwischen Gegner und Slot und schützt die Mitte."
+      "Raum reduziert": {
+        "meaning": "Der Backchecker verengt den verfügbaren Raum für den Puckträger – der Gegner hat weniger Platz zum Arbeiten."
       },
-      "Gerade hinterherlaufen": {
-        "meaning": "Der Spieler folgt dem Gegner ohne Winkel – Mitte bleibt offen, Defense wird überlastet."
+      "Passoption genommen": {
+        "meaning": "Durch die Position oder den Winkel des Backcheckers wird eine Passroute des Gegners blockiert oder unattraktiv."
       },
-      "Nach außen lenken": {
-        "meaning": "Der Gegner wird bewusst Richtung Bande geführt, um Zeit und Hilfe zu gewinnen."
+      "nach außen gedrängt": {
+        "meaning": "Der Gegner wird durch die Backchecking-Bewegung in einen weniger gefährlichen Bereich gelenkt (Außen, Bande)."
+      },
+      "Druck ermöglicht": {
+        "meaning": "Durch die saubere Rückwärtsarbeit kann die Defense schneller helfen oder der Gegner wird unter sofortigen Druck gesetzt."
+      },
+      "zu weit weg": {
+        "meaning": "Der Backchecker ist zu weit vom Puck oder den relevanten Passwegen entfernt, um Einfluss auszuüben."
+      },
+      "zu spät": {
+        "meaning": "Die Rückwärtsarbeit kommt zu spät – der Gegner hat seine Entscheidung bereits getroffen, bevor der Backchecker Einfluss nehmen konnte."
+      },
+      "falsche Linie": {
+        "meaning": "Der Backchecker läuft auf der falschen Route zurück – er deckt nicht den relevanten Passweg oder Raum."
+      },
+      "nur hinterhergelaufen": {
+        "meaning": "Der Spieler läuft hinterher, aber es ändert sich nichts an den Optionen des Gegners. Der Gegner macht trotzdem das, was er geplant hatte."
       }
     },
-    "learning_hint": "Gute Rückwärtsarbeit gewinnt Zeit und Raum – schlechte öffnet die Mitte."
+    "learning_hint": "Gutes Backchecking erkennst du daran, dass der Gegner weniger Optionen hat. Schlechtes Backchecking ist unsichtbar – der Gegner merkt es gar nicht."
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "backcheck_quality": "diszipliniert" },
+        "when": { "backchecking_impact": "ja" },
         "questions": [
-          "Wodurch wurde die Mitte effektiv geschützt?",
-          "Welche Laufwinkel waren entscheidend?",
-          "Wirkte das Zurückarbeiten abgestimmt oder individuell?"
+          "Was genau hat sich für den Gegner verändert – Raum, Passwege, oder Richtung?",
+          "War die Wirkung sofort sichtbar oder erst verzögert erkennbar?",
+          "Hätte der Gegner ohne diesen Backchecker dieselbe Option gehabt?"
         ]
       },
       {
-        "when": { "backcheck_quality": "halbherzig" },
+        "when": { "backchecking_impact": "nein" },
         "questions": [
-          "Was fehlte zur sauberen Rückwärtsarbeit?",
-          "Lag es eher an Tempo, Winkel oder Entscheidung?",
-          "Wurde Zeit verschenkt?"
-        ]
-      },
-      {
-        "when": { "backcheck_quality": "fehlt" },
-        "questions": [
-          "Woran hast du das Fehlen sofort erkannt?",
-          "Welche Zone blieb komplett offen?",
-          "Welche Folge hatte das für die Defense?"
+          "Woran lag es – Timing, Distanz, oder falsche Linie?",
+          "Was hätte der Backchecker anders machen müssen, um Einfluss zu haben?",
+          "Hat der Gegner seine ursprüngliche Option trotzdem durchgezogen?"
         ]
       }
     ]
   },
   "config": {
-    "questions": [
+    "event_key": "backchecking_events",
+    "event_label": "Aktion",
+    "fields": [
       {
-        "key": "backcheck_quality",
-        "type": "radio",
-        "label": "Rückwärtsarbeit",
+        "key": "backchecking_impact",
+        "type": "select",
+        "label": "Einfluss?",
         "options": [
-          "diszipliniert",
-          "halbherzig",
-          "fehlt"
+          "ja",
+          "nein"
         ]
       },
       {
-        "key": "note",
-        "type": "text",
-        "label": "Kurze Beobachtung",
-        "max_chars": 1500
+        "key": "impact_type",
+        "type": "select",
+        "label": "Grund",
+        "options_by_value_of": {
+          "backchecking_impact": {
+            "ja": [
+              "Raum reduziert",
+              "Passoption genommen",
+              "nach außen gedrängt",
+              "Druck ermöglicht"
+            ],
+            "nein": [
+              "zu weit weg",
+              "zu spät",
+              "falsche Linie",
+              "nur hinterhergelaufen"
+            ]
+          }
+        }
       }
     ]
   }
@@ -1438,97 +1555,112 @@
 {
   "id": "A3_D5",
   "title": "Gap Control (Defensive Reads)",
-  "drill_type": "period_checkin",
-  "description": "Beobachte, wie Verteidiger Abstand und Tempo gegen den Angreifer kontrollieren.",
+  "drill_type": "event_log",
+  "description": "Logge Umschaltmomente mit 2-Schritt-Read: Bleibt das Gap stabil oder kippt es - und welche direkte Folge entsteht daraus?",
   "didactics": {
-    "explanation": "Gap Control bedeutet nicht Nähe, sondern Kontrolle. Der Verteidiger entscheidet mit Abstand und Tempo, ob er Zeit gewinnt oder überspielt wird.",
+    "goal": "Saubere Gap-Reads im Umschaltmoment treffen und direkte Folgen kontextbasiert zuordnen.",
+    "why_it_matters": "Gap Control entscheidet früh, ob der Gegner kontrolliert bleibt oder in gefährliche Optionen kommt. Du trainierst Wahrnehmung vor der Chance, nicht Bewertung nach der Chance.",
+    "explanation": "Beobachte IMMER direkt nach Puckverlust, abgefangenem Pass oder Turnover. Entscheide früh - bevor ein Rush oder eine Chance sichtbar wird.\n\nHauptfrage: Bleibt das Gap stabil - oder kippt es?\n\nWichtiger Denk-Shift: Nicht fragen 'Ist das ein Rush?', sondern 'Wer kontrolliert den Raum?'\n\nDistanz-Interpretation: Kleinerer Abstand ist nicht automatisch schlecht. Wenn der Verteidiger die Annaeherung kontrolliert, ist das gutes Gap. Wenn der Angreifer die Distanz erzwingt, kippt das Gap.",
     "observation_guide": {
       "what_to_watch": [
+        "Trigger-Momente: Puckverlust, abgefangener Pass, Turnover",
+        "Sofort danach: Umschaltmoment von Vorwaerts auf Rueckwaerts",
         "Abstand zwischen Verteidiger und puckführendem Angreifer",
-        "Rückwärtsbewegung und Geschwindigkeit des Verteidigers",
-        "Zeitpunkt des Stellens oder Verzögerns"
+        "Speed-Match: Kann der Verteidiger das Tempo matchen?",
+        "Körperwinkel: lenkend/kontrollierend oder passiv/gerade rückwärts",
+        "Raumkontrolle: bleibt Mitte zu oder öffnet sie sich?"
       ],
       "how_to_decide": [
-        "Beobachte ausschließlich den Verteidiger",
-        "Achte darauf, ob der Gap bewusst gehalten wird",
-        "Beurteile, ob der Verteidiger Zeit kauft oder Druck erzwingt",
-        "Bewerte die Entscheidung, nicht das Ergebnis"
+        "Schritt 1: Gap-Zustand wählen -> stabil oder kippt",
+        "Schritt 2: Folge nur aus dem passenden Gap-Kontext wählen",
+        "Mikro-Merksatz: Abstand bleibt gleich -> stabil | Abstand wächst -> kippt",
+        "Hinweis: Abstand wird kleiner ist nicht automatisch schlecht. Entscheidend ist, wer die Annäherung kontrolliert: Wenn der Verteidiger die Distanz bewusst schließt und den Gegner lenkt, bleibt das Gap stabil. Wenn der Angreifer die Situation erzwingt und der Verteidiger nur reagiert, kippt das Gap.",
+        "Stabil-Kriterien: Abstand ca. 1-2 Stocklängen, Speed-Match, lenkender Winkel, Gegner nach außen, Mitte bleibt zu",
+        "Kippt-Kriterien: Abstand wird größer, Speed-Match geht verloren, passiver Rückwärtsgang, Mitte öffnet, Gegner hat Entscheidungsfreiheit",
+        "Entscheidende Zusatzfrage: Wer diktiert die Distanz?"
       ],
       "ignore": [
-        "Abschluss oder Tor",
-        "Was nach dem ersten Stellmoment passiert"
+        "Nicht auf Rush oder Torchance warten",
+        "Nicht rueckwirkend vom Outcome her entscheiden",
+        "Nicht pauschal denken: Rush = schlecht verteidigt",
+        "Nicht pauschal denken: Keine Chance = gut verteidigt",
+        "Nicht pauschal denken: Viel Abstand = sicher"
       ]
     },
-    "inline_explanations": {
-      "optimal": {
-        "meaning": "Der Abstand erlaubt dem Verteidiger, Tempo zu lesen, Winkel zu halten und den Angreifer kontrolliert zu stellen."
-      },
-      "zu eng": {
-        "meaning": "Der Verteidiger steht zu nah, wird leicht überspielt oder öffnet Raum hinter sich."
-      },
-      "zu weit": {
-        "meaning": "Der Verteidiger gibt zu viel Raum, erlaubt Geschwindigkeit oder einen freien Entry."
-      }
-    },
-    "learning_hint": "Guter Gap kauft Zeit – schlechter Gap schenkt Raum."
+    "learning_hint": "Du trainierst Pattern Recognition im frühen Read. Entscheide zuerst über Raumkontrolle, dann über die direkte Folge. Keine freien Kombinationen: Die Folge muss zum Gap-Zustand passen."
   },
   "miniFeedback": {
     "trigger": "onNext",
     "oncePerSection": true,
     "groups": [
       {
-        "when": { "gap_quality": "optimal" },
+        "when": { "gap_state": "stabil" },
         "questions": [
-          "Wodurch konnte der Verteidiger Tempo kontrollieren?",
-          "War der Abstand konstant oder angepasst?",
-          "Wirkte das Stellen geplant oder instinktiv?"
+          "Wodurch blieb der Verteidiger in Kontrolle?",
+          "War es eher Tempo, Winkel oder frühes Lesen?",
+          "Fühlte sich der Abstand konstant oder aktiv angepasst an?"
         ]
       },
       {
-        "when": { "gap_quality": "zu eng" },
+        "when": { "gap_state": "kippt" },
         "questions": [
-          "Warum wurde der Verteidiger überspielt oder gebunden?",
-          "Kam der Schritt zu früh?",
-          "Welche Option hätte mehr Kontrolle erlaubt?"
-        ]
-      },
-      {
-        "when": { "gap_quality": "zu weit" },
-        "questions": [
-          "Warum wurde zu viel Raum gegeben?",
-          "War der Verteidiger unsicher oder isoliert?",
-          "Welche Gefahr entstand durch den großen Abstand?"
+          "Woran kippte der Gap zuerst?",
+          "War der Fehler eher Timing, Winkel oder Ausgangsabstand?",
+          "Hätte der Verteidiger früher reagieren müssen?"
         ]
       }
     ]
   },
   "config": {
-    "questions": [
+    "event_label": "Gap-Moment",
+    "event_key": "gap_events",
+    "fields": [
       {
-        "key": "gap_quality",
-        "type": "radio",
+        "key": "gap_state",
+        "type": "select",
         "label": "Gap",
         "options": [
-          "optimal",
-          "zu eng",
-          "zu weit"
+          "stabil",
+          "kippt"
         ]
       },
       {
-        "key": "consequence",
-        "type": "radio",
-        "label": "Folge",
+        "key": "outcome",
+        "type": "select",
+        "label": "Direkte Folge",
+        "options_by_value_of": {
+          "gap_state": {
+            "stabil": [
+              "angriff_nach_aussen_gelenkt",
+              "tempo_wird_verlangsamt",
+              "dump_oder_reset",
+              "keine_gefaehrliche_chance"
+            ],
+            "kippt": [
+              "kontrollierter_zone_entry",
+              "rush_entsteht",
+              "slot_zugriff",
+              "hochkaraetige_chance"
+            ]
+          }
+        }
+      },
+      {
+        "key": "control_check",
+        "type": "select",
+        "label": "Kontroll-Check (optional)",
+        "optional": true,
         "options": [
-          "keine",
-          "druck",
-          "chance"
+          "verteidiger_kontrolliert_situation",
+          "angreifer_kontrolliert_situation"
         ]
       },
       {
         "key": "note",
         "type": "text",
-        "label": "Kurze Beobachtung",
-        "max_chars": 1500
+        "label": "Kurznotiz (optional)",
+        "optional": true,
+        "max_chars": 120
       }
     ]
   }
@@ -1559,10 +1691,14 @@
             {
               "id": "B1_D1",
               "title": "Support unter dem Puck (Center-Reads)",
-              "drill_type": "period_checkin",
-              "description": "Beobachte den Center ohne Puck: Ist er echte Unterstützung oder nur in der Nähe?",
+              "drill_type": "sample_log",
+              "description": "Logge 2-3 bewusst gewählte Support-Momente: War der Center wirklich spielbar oder nur in der Nähe?",
               "didactics": {
-                "explanation": "Der Center ist der zentrale Verbindungsspieler. Gute Unterstützung entsteht nicht durch Nähe, sondern durch Winkel, Timing und Spielbarkeit. Dieser Drill schärft den Blick dafür, wann der Center den Puckführer wirklich entlastet.",
+                "explanation": "Der Center ist der zentrale Verbindungsspieler. Gute Unterstützung entsteht nicht durch Nähe, sondern durch Winkel, Timing und Spielbarkeit. Der Drill bewertet nicht primär die Position des Centers, sondern ob durch seine Bewegung eine echte Lösungsoption entsteht: Druck entlasten, Anschluss ermöglichen und eine einfache nächste Aktion öffnen.",
+                "glossary": {
+                  "spielbar": "Ein Spieler ist spielbar, wenn der Puckführer ihn sofort sinnvoll anspielen kann. Dazu gehören erreichbarer Passwinkel, rechtzeitige Unterstützung, Anschlussmöglichkeiten nach dem Pass und Nutzbarkeit unter Druck. Spielbar bedeutet nicht nur 'steht frei', sondern 'hilft konkret bei der Lösung der Situation'. Kurzform: Sofort sinnvoll anspielbar und unter Druck nutzbar.",
+                  "anspielbar": "Anspielbar beschreibt die direkte Passoption: Der Spieler kann sofort sinnvoll angespielt werden und bleibt auch unter Druck nutzbar."
+                },
                 "observation_guide": {
                   "what_to_watch": [
                     "Abstand des Centers zum Puckführer",
@@ -1572,8 +1708,14 @@
                   "how_to_decide": [
                     "Beobachte nur den Center ohne Puck",
                     "Frage dich: Ist der Center sofort anspielbar?",
+                    "Frage dich: Wird der Puckführer durch den Center ruhiger, sicherer oder lösbarer?",
                     "Achte auf Winkel, nicht auf Meter",
                     "Unterstützung muss vor dem Druck da sein, nicht danach"
+                  ],
+                  "common_mistakes": [
+                    "Frei stehen bedeutet nicht automatisch spielbar",
+                    "Nähe allein bedeutet nicht automatisch gute Unterstützung",
+                    "Gute Unterstützung ist früh, erreichbar und hilft dem Puckführer konkret weiter"
                   ],
                   "ignore": [
                     "Wie der Angriff endet",
@@ -1581,398 +1723,537 @@
                     "Abschluss oder Tor"
                   ]
                 },
-                "learning_hint": "Gute Center-Unterstützung ist früh, spielbar und lösungsorientiert – nicht reaktiv."
+                "learning_hint": "Gute Center-Unterstützung ist früh, spielbar und lösungsorientiert – nicht reaktiv. Gute Unterstützung erkennst du daran, dass der Puckführer sofort eine einfache Anschlusslösung hat."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": { "support_quality": "aktiv" },
+                    "when": { "support_state": "klar spielbar" },
                     "questions": [
-                      "Wodurch war der Center klar spielbar?",
-                      "Welche Winkel oder Abstände haben geholfen?",
-                      "Wirkte die Unterstützung antizipiert oder spontan?"
+                      "Wodurch war dieser Support-Moment klar spielbar?",
+                      "Was hat in diesem Moment den größten Entlastungseffekt erzeugt?",
+                      "War die Unterstützung früh vorbereitet oder spontan?"
                     ]
                   },
                   {
-                    "when": { "support_quality": "passiv" },
+                    "when": { "support_state": "eingeschränkt" },
                     "questions": [
-                      "Was hat zur echten Unterstützung gefehlt?",
-                      "War der Abstand, der Winkel oder das Timing das Hauptproblem?",
-                      "Kam der Center zu spät oder stand er ungünstig?"
+                      "Was hat in diesem Moment zur klaren Spielbarkeit gefehlt?",
+                      "War eher Winkel, Abstand oder Timing das Kernproblem?",
+                      "Was hätte den gleichen Moment direkt entlastet?"
                     ]
                   },
                   {
-                    "when": { "support_quality": "fehlt" },
+                    "when": { "support_state": "keine echte Option" },
                     "questions": [
-                      "Warum war keine Unterstützung vorhanden?",
-                      "War der Center gedanklich gebunden oder schlecht positioniert?",
-                      "Wie hätte eine einfache Lösung aussehen können?"
+                      "Warum war dieser Moment keine echte Unterstützung?",
+                      "Woran lag es primär: Distanz, Sichtlinie, Reaktion oder Idee?",
+                      "Wie hätte eine einfache Support-Lösung konkret ausgesehen?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "support_quality",
-                    "type": "radio",
-                    "label": "Unterstützung des Centers",
-                    "options": [
-                      "aktiv",
-                      "passiv",
-                      "fehlt"
-                    ]
-                  },
-                  {
-                    "key": "timing",
-                    "type": "radio",
-                    "label": "Timing der Unterstützung",
-                    "options": [
-                      "früh",
-                      "gleichzeitig",
-                      "zu spät"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Beobachtung",
-                    "max_chars": 1500
-                  }
-                ]
+                "sample_key": "support_samples",
+                "sample_label": "Support-Moment",
+                "max_samples_per_phase": 3,
+                "state_key": "support_state",
+                "factor_key": "main_factor",
+                "note_key": "note",
+                "note_max_chars": 120,
+                "state_options": [
+                  "klar spielbar",
+                  "eingeschränkt",
+                  "keine echte Option"
+                ],
+                "factors_by_state": {
+                  "klar spielbar": [
+                    "früh geöffnet",
+                    "guter Winkel",
+                    "Druck entlastet",
+                    "gute Vororientierung"
+                  ],
+                  "eingeschränkt": [
+                    "Winkel schlecht",
+                    "Abstand problematisch",
+                    "Timing zu spät",
+                    "Druck bereits da"
+                  ],
+                  "keine echte Option": [
+                    "zu weit weg",
+                    "verdeckt",
+                    "zu spät reagiert",
+                    "keine Unterstützungsidee"
+                  ]
+                }
               }
             },
             {
               "id": "B1_D2",
               "title": "Dreiecksstabilität (Center als Verbindung)",
-              "drill_type": "period_checkin",
-              "description": "Beobachte, wie der Center Dreiecke stabil hält oder bricht.",
+              "drill_type": "sample_log",
+              "description": "Beobachte, wie der Center die Verbindungsstruktur zwischen Mitspielern stabilisiert oder verliert.",
               "didactics": {
-                "explanation": "Der Center ist die verbindende Rolle im Dreieck. Seine Position entscheidet, ob ein Dreieck spielbar bleibt oder kollabiert.",
+                "explanation": "Der Center ist nicht nur Teil der Struktur, sondern ihr dynamischer Verbindungspunkt. Entscheidend ist, ob er Winkel offenhält, Verbindungen aktiv korrigiert und als Rückoption erhalten bleibt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Abstand des Centers zu den beiden Mitspielern",
-                    "Winkel der Anspieloptionen",
-                    "Bewegung des Centers ohne Puck"
+                    "Winkel des Centers zu beiden Mitspielern",
+                    "Abstände im Verbindungsdreieck",
+                    "Mikro-Korrekturen des Centers ohne Puck",
+                    "Bleibt eine sichere Rückoption offen?"
                   ],
                   "how_to_decide": [
-                    "Beurteile Abstand und Winkel gemeinsam",
-                    "Frage dich: Sind mindestens zwei Optionen spielbar?",
-                    "Achte auf kleine Positionskorrekturen",
-                    "Stabilität zählt mehr als Aktion"
+                    "Bewerte primär den Center, nicht die Geometrie",
+                    "Frage dich: Stabilisiert der Center aktiv oder verliert er Verbindung?",
+                    "Achte auf kleine Bewegungen vor dem Druck",
+                    "Entscheide über Strukturfluss statt Standbild"
                   ],
                   "ignore": [
-                    "Ob der Pass ankommt",
-                    "Was nach dem Dreieck passiert",
-                    "Individuelle Skills der Mitspieler"
+                    "Ob die Sequenz mit Chance endet",
+                    "Einzelne technische Fehler",
+                    "Allgemeine Teamstruktur ohne Centerbezug"
                   ]
                 },
-                "learning_hint": "Dreiecke brechen selten durch Druck – meist durch schlechte Abstände."
+                "learning_hint": "Struktur kippt oft durch kleine Verbindungsfehler. Gute Center halten Winkel, Optionen und Rückwege lebendig."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": { "triangle_state": "stabil" },
+                    "when": { "center_connection_state": "stabilisiert aktiv" },
                     "questions": [
-                      "Wodurch blieb das Dreieck stabil?",
-                      "Welche kleine Bewegung des Centers war entscheidend?",
-                      "Waren die Abstände aktiv gehalten oder zufällig?"
+                      "Wie hat der Center diesen Strukturmoment aktiv stabilisiert?",
+                        "Welche Mikro-Korrektur hatte den größten Effekt?",
+                        "Wodurch blieb die Verbindung früh offen?"
                     ]
                   },
                   {
-                    "when": { "triangle_state": "instabil" },
+                      "when": { "center_connection_state": "hält Verbindung" },
                     "questions": [
-                      "Wodurch verlor das Dreieck seine Stabilität?",
-                      "War der Center zu nah oder zu weit?",
-                      "Welche Option brach zuerst weg?"
+                        "Wodurch blieb der Center als Verbindungspunkt stabil?",
+                        "Welche einfache Unterstützung hielt die Struktur zusammen?",
+                        "War die Rückoption klar verfügbar?"
                     ]
                   },
                   {
-                    "when": { "triangle_state": "nicht_vorhanden" },
+                      "when": { "center_connection_state": "reagiert zu spät" },
                     "questions": [
-                      "Warum entstand kein echtes Dreieck?",
-                      "Fehlte Position, Timing oder Bewusstsein?",
-                      "Hätte der Center es aktiv herstellen können?"
+                        "Woran hast du die verzögerte Reaktion zuerst erkannt?",
+                      "Was kippte zuerst: Winkel, Abstand oder Option?",
+                        "Welche frühere Korrektur hätte gereicht?"
+                    ]
+                  },
+                  {
+                    "when": { "center_connection_state": "verliert Verbindung" },
+                    "questions": [
+                      "Warum ging die Verbindungsstruktur in diesem Moment verloren?",
+                        "War es eher Drift, Höhenfehler oder fehlende Rückoption?",
+                        "Welche einfache Bewegung hätte Mitspieler verbunden gehalten?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "triangle_state",
-                    "type": "radio",
-                    "label": "Dreieck",
-                    "options": [
-                      "stabil",
-                      "instabil",
-                      "nicht vorhanden"
-                    ]
-                  },
-                  {
-                    "key": "center_position",
-                    "type": "radio",
-                    "label": "Position des Centers",
-                    "options": [
-                      "passend",
-                      "zu nah",
-                      "zu weit"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Beobachtung",
-                    "max_chars": 1500
-                  }
-                ]
+                "sample_key": "triangle_samples",
+                "sample_label": "Strukturmoment",
+                "max_samples_per_phase": 3,
+                "state_key": "center_connection_state",
+                "factor_key": "main_factor",
+                "note_key": "note",
+                "note_max_chars": 120,
+                "state_options": [
+                  "stabilisiert aktiv",
+                    "hält Verbindung",
+                    "reagiert zu spät",
+                  "verliert Verbindung"
+                ],
+                "factors_by_state": {
+                  "stabilisiert aktiv": [
+                    "gute Winkel",
+                      "gute Abstände",
+                      "frühe Korrektur",
+                    "schafft neue Option"
+                  ],
+                    "hält Verbindung": [
+                    "stabile Position",
+                      "einfache Unterstützung",
+                      "sichere Rückoption",
+                    "gute Staffelung"
+                  ],
+                    "reagiert zu spät": [
+                      "Korrektur zu spät",
+                    "Winkel kippt",
+                    "Abstand driftet",
+                    "Option wird geschlossen"
+                  ],
+                  "verliert Verbindung": [
+                    "aus Struktur gedriftet",
+                    "zu hoch / zu tief",
+                      "keine Rückoption",
+                    "Mitspieler isoliert"
+                  ]
+                }
               }
             },
                     {
           "id": "B1_D3",
           "title": "Low / Middle / High Reads (Center-Perspektive)",
-          "drill_type": "period_checkin",
-          "description": "Beobachte, wie der Center Räume Low, Middle und High liest und priorisiert.",
+          "drill_type": "sample_log",
+          "description": "Beobachte, welchen Raum der Center priorisiert, wie er Ebenen verbindet und wie timingstark der Read wirkt.",
           "didactics": {
-            "explanation": "Der Center verbindet die Zonen. Seine Aufgabe ist es, Raum nicht nur zu besetzen, sondern zu priorisieren.",
+            "explanation": "Der Center ist kein statischer Raumspieler. Er priorisiert dynamisch Low, Middle oder High - oder verbindet bewusst zwischen Ebenen. Gute Reads entstehen aus Timing, Drucklesen und Verbindungslogik.",
             "observation_guide": {
               "what_to_watch": [
-                "Welche Zone ist für den Center zuerst spielbar?",
-                "Bleibt der Center anspielbar zwischen den Linien?",
-                "Wechselt der Fokus zwischen Low, Middle und High?"
+                "Welche Raumebene priorisiert der Center im Moment?",
+                "Wie verbindet er Low, Middle und High?",
+                "Kommt der Read früh oder verspätet?",
+                "Wirkt der Read entlastend, verbindend oder problematisch?"
               ],
               "how_to_decide": [
-                "Bewerte nur die Raumwahl, nicht den Spielausgang",
-                "Achte auf Timing statt Geschwindigkeit",
-                "Bevorzuge Verfügbarkeit vor Aktion",
-                "Ein guter Read wirkt ruhig, nicht hektisch"
+                "Frage zuerst: Welcher Read ist dominant?",
+                "Entscheide dann: Warum war dieser Read sinnvoll oder nötig?",
+                "Bewerte danach die Read-Qualität (antizipiert bis unklar)",
+                "Lies Priorisierung statt Position"
               ],
               "ignore": [
-                "Ob ein Pass gespielt wird",
-                "Ergebnis der Sequenz",
-                "Individuelle Fehler anderer Spieler"
+                "Reines Labeln von Low/Middle/High ohne Begründung",
+                "Ergebnis der Sequenz (Chance/Tor)",
+                "Einzelne technische Fehler"
               ]
             },
-            "learning_hint": "Gute Reads entstehen durch Positionierung – nicht durch Reaktion."
+            "learning_hint": "Starke Center-Reads priorisieren Räume bewusst und rechtzeitig. Wirkung entsteht durch Timing und Verbindung zwischen Ebenen."
           },
           "miniFeedback": {
             "trigger": "onNext",
             "oncePerSection": true,
             "groups": [
               {
-                "when": { "zone_read": "Low" },
+                "when": { "center_read": "low support" },
                 "questions": [
-                  "Warum war Low die stabilste Option?",
-                  "Hat der Center den Raum früh erkannt?",
-                  "War Unterstützung sichtbar oder antizipiert?"
+                  "Warum war low support in diesem Moment die beste Priorisierung?",
+                  "Wurde Druck entlastet oder die Rückoption stabil gehalten?",
+                  "War der Read früh genug, um Wirkung zu erzeugen?"
                 ]
               },
               {
-                "when": { "zone_read": "Middle" },
+                "when": { "center_read": "middle support" },
                 "questions": [
-                  "Was machte Middle spielbar?",
-                  "War der Center zwischen den Linien präsent?",
-                  "Wie wirkten Abstand und Timing?"
+                  "Warum war middle support hier prioritär?",
+                  "Hat der Center Verbindung und Mitte gleichzeitig gehalten?",
+                  "Wirkte der Read antizipiert oder nur reagierend?"
                 ]
               },
               {
-                "when": { "zone_read": "High" },
+                "when": { "center_read": "high support" },
                 "questions": [
-                  "Warum war High sinnvoll?",
-                  "War der Center entlastend oder aufbauend?",
-                  "Wurde Raum gesichert oder nur gefüllt?"
+                  "Warum war high support für diesen Moment sinnvoll?",
+                  "Hat der Center Angriffsdruck erzeugt oder nur nachgeschoben?",
+                  "War der Read klar oder verspätet?"
+                ]
+              },
+              {
+                "when": { "center_read": "zwischen Ebenen" },
+                "questions": [
+                  "Wie hat der Center zwischen Ebenen verbunden statt zu pendeln?",
+                  "Waren mehrere Optionen gleichzeitig offen?",
+                  "Hat das Timing die Struktur flexibel gehalten?"
                 ]
               }
             ]
           },
           "config": {
-            "questions": [
-              {
-                "key": "zone_read",
-                "type": "radio",
-                "label": "Primärer Raum",
-                "options": [
-                  "Low",
-                  "Middle",
-                  "High"
-                ]
-              },
-              {
-                "key": "availability",
-                "type": "radio",
-                "label": "Anspielbarkeit",
-                "options": [
-                  "klar",
-                  "eingeschränkt",
-                  "nicht vorhanden"
-                ]
-              },
-              {
-                "key": "note",
-                "type": "text",
-                "label": "Kurze Begründung",
-                "max_chars": 1500
-              }
-            ]
+            "sample_key": "read_samples",
+            "sample_label": "Read",
+            "max_samples_per_phase": 3,
+            "state_key": "center_read",
+            "state_label": "Center priorisiert",
+            "factor_key": "main_reason",
+            "factor_label": "Warum?",
+            "quality_key": "read_quality",
+            "quality_label": "Read wirkte",
+            "quality_options": [
+              "antizipiert",
+              "passend reagiert",
+              "verspätet",
+              "unklar"
+            ],
+            "note_key": "note",
+            "note_label": "Notiz (optional)",
+            "note_max_chars": 120,
+            "state_options": [
+              "low support",
+              "middle support",
+              "high support",
+              "zwischen Ebenen"
+            ],
+            "factors_by_state": {
+              "low support": [
+                "Druck entlasten",
+                "Rückoption sichern",
+                "Breakout stabilisieren",
+                "Aufbau unterstützen"
+              ],
+              "middle support": [
+                "Mitte absichern",
+                "Verbindung halten",
+                "Umschalten vorbereiten",
+                "Passwege offen halten"
+              ],
+              "high support": [
+                "Angriff unterstützen",
+                "Überzahl schaffen",
+                "Rush begleiten",
+                "Druck erzeugen"
+              ],
+              "zwischen Ebenen": [
+                "Verbindung gehalten",
+                "mehrere Optionen offen",
+                "Struktur flexibel gehalten",
+                "Druck gelesen"
+              ]
+            }
           }
         },
 
             {
         "id": "B1_D4",
-        "title": "Support vs. Isolation",
-        "drill_type": "period_checkin",
-        "description": "Erkennen, ob der puckführende Spieler echte Unterstützung hat oder isoliert agiert.",
+        "title": "Isolation & Off-Puck-Verantwortung",
+        "drill_type": "sample_log",
+        "description": "Beobachte, wie strukturelle Isolation entsteht: Welche Optionen brechen weg und wann wird fehlender Support lesbar?",
         "didactics": {
-          "explanation": "Off-Puck-Spiel entscheidet, ob Aktionen tragfähig sind. Nicht der Puckführer ist das Problem, sondern fehlender Support.",
+          "explanation": "Isolation ist selten ein plötzlicher Endzustand. Sie entsteht schrittweise durch wegbrechende Optionen, fehlende Rückwege und verspätete Unterstützung. Entscheidend sind die 1-2 Sekunden vor der problematischen Aktion.",
           "observation_guide": {
             "what_to_watch": [
-              "Abstände zum puckführenden Spieler",
-              "Anspielbare Optionen links / rechts / hinten",
-              "Bewegung der Spieler ohne Puck"
+              "Wie viele spielbare Optionen bleiben dem Puckführer?",
+              "Wann schließen Winkel und Rückoptionen?",
+              "Wie nah und reaktiv ist der Off-Puck-Support?",
+              "Wird Isolation früh vorhersehbar oder erst spät sichtbar?"
             ],
             "how_to_decide": [
-              "Beobachte die 1–2 Sekunden vor der Aktion",
-              "Zähle reale Optionen, nicht theoretische",
-              "Support muss erreichbar sein, nicht nur vorhanden aussehen",
-              "Beurteile Struktur, nicht Mut"
+              "Beobachte die Eskalation statt nur den Endzustand",
+              "Entscheide zuerst den Eskalationszustand",
+              "Ordne dann die Hauptursache der Eskalation zu",
+              "Bewerte, wie gut Isolation im Vorfeld lesbar war"
             ],
             "ignore": [
-              "Ob der Spielzug gelingt",
-              "Individuelle Technik des Puckführers"
+              "Nur offensichtliche Isolation im Endbild",
+              "Individuelle Technikfehler des Puckführers",
+              "Ergebnis der Aktion (Pass gelingt / misslingt)"
             ]
           },
-          "learning_hint": "Isolation entsteht selten zufällig – sie ist fast immer ein Off-Puck-Fehler."
+          "learning_hint": "Gute Reads erkennen Isolation früh. Off-Puck-Verantwortung bedeutet, Eskalation zu verhindern bevor der Puckführer festläuft."
         },
         "miniFeedback": {
           "trigger": "onNext",
           "oncePerSection": true,
           "groups": [
             {
-              "when": { "support_state": "klar" },
+              "when": { "support_escalation_state": "stabil verbunden" },
               "questions": [
-                "Wodurch war der Support klar erkennbar?",
-                "Welche Option war am stabilsten?",
-                "Wirkte das Off-Puck-Verhalten vorbereitet?"
+                "Wodurch blieb der Puckführer strukturell verbunden?",
+                "Welche präventive Unterstützung hielt Optionen offen?",
+                "War diese Stabilität früh erkennbar oder erst reaktiv?"
               ]
             },
             {
-              "when": { "support_state": "eingeschraenkt" },
+              "when": { "support_escalation_state": "erste Optionen brechen weg" },
               "questions": [
-                "Was hat den Support begrenzt?",
-                "Lag es eher an Abstand oder Timing?",
-                "Gab es eine bessere Position ohne Puck?"
+                "Welches Vorwarnsignal war zuerst sichtbar?",
+                "Was brach zuerst weg: Winkel, Abstand oder Rückoption?",
+                "Welche kleine Korrektur hätte die Eskalation gestoppt?"
               ]
             },
             {
-              "when": { "support_state": "isoliert" },
+              "when": { "support_escalation_state": "stark unter Druck" },
               "questions": [
-                "Woran hast du die Isolation sofort erkannt?",
-                "Welche Rolle hätte Support geben müssen?",
-                "War die Isolation absehbar?"
+                "Warum wurde aus Engstelle struktureller Druck?",
+                "Welche Unterstützung fehlte genau in diesem Moment?",
+                "War der Druck früh lesbar oder kam er überraschend?"
+              ]
+            },
+            {
+              "when": { "support_escalation_state": "isoliert" },
+              "questions": [
+                "Wodurch war der Spieler komplett allein gelassen?",
+                "Welche Staffelung oder Verbindung fehlte zuvor schon?",
+                "Ab wann war dieser Endzustand eigentlich vorhersehbar?"
               ]
             }
           ]
         },
         "config": {
-          "questions": [
-            {
-              "key": "support_state",
-              "type": "radio",
-              "label": "Support-Situation",
-              "options": [
-                "klar",
-                "eingeschraenkt",
-                "isoliert"
-              ]
-            },
-            {
-              "key": "note",
-              "type": "text",
-              "label": "Kurze Begründung",
-              "max_chars": 1500
-            }
-          ]
+          "sample_key": "isolation_samples",
+          "sample_label": "Support-Situation",
+          "max_samples_per_phase": 3,
+          "state_key": "support_escalation_state",
+          "state_label": "Situation",
+          "factor_key": "main_factor",
+          "factor_label": "Hauptursache",
+          "quality_key": "isolation_readability",
+          "quality_label": "Isolation war",
+          "quality_options": [
+            "früh erkennbar",
+            "schleichend entstanden",
+            "plötzlich entstanden",
+            "schwer lesbar"
+          ],
+          "note_key": "note",
+          "note_label": "Notiz (optional)",
+          "note_max_chars": 120,
+          "state_options": [
+            "stabil verbunden",
+            "erste Optionen brechen weg",
+            "stark unter Druck",
+            "isoliert"
+          ],
+          "factors_by_state": {
+            "stabil verbunden": [
+              "Rückoption aktiv",
+              "gute Staffelung",
+              "Center nah genug",
+              "mehrere Optionen offen"
+            ],
+            "erste Optionen brechen weg": [
+              "Abstand zu groß",
+              "Winkel schließen",
+              "Unterstützung zu spät",
+              "nur eine echte Option"
+            ],
+            "stark unter Druck": [
+              "keine Rückoption",
+              "Support statisch",
+              "Center zu weit weg",
+              "Struktur instabil"
+            ],
+            "isoliert": [
+              "komplett allein gelassen",
+              "keine Staffelung",
+              "alle Optionen geschlossen",
+              "keine Verbindung mehr"
+            ]
+          }
         }
       },
           {
       "id": "B1_D5",
-      "title": "Timing ohne Puck",
-      "drill_type": "period_checkin",
-      "description": "Erkennen, ob Bewegungen ohne Puck zum richtigen Zeitpunkt erfolgen.",
+            "title": "Timing & Antizipation des Supports",
+            "drill_type": "sample_log",
+            "description": "Beobachte, ob der Center früh genug unterstützt, um wirksam zu sein, und wie proaktiv seine Bewegung entsteht.",
       "didactics": {
-        "explanation": "Gutes Off-Puck-Spiel scheitert selten an der Idee, sondern am Timing. Zu früh öffnet Räume für den Gegner, zu spät nimmt Optionen.",
+              "explanation": "Timing ist kein Ja/Nein-Kriterium, sondern ein Fenster. Gute Center-Reads kommen früh genug, um Optionen zu öffnen und Druck zu vermeiden. Späte Unterstützung wirkt oft nur noch reaktiv.",
         "observation_guide": {
           "what_to_watch": [
-            "Startpunkt der Bewegung ohne Puck",
-            "Bezug zur Situation des Puckführers",
-            "Synchronität zwischen mehreren Spielern"
+                  "Wann startet der Center seine Unterstützung?",
+                  "Werden Optionen rechtzeitig geöffnet oder fast verpasst?",
+                  "Wirkt die Bewegung proaktiv oder erst unter Druck?",
+                  "Wie verändert das Timing die Wirksamkeit des Supports?"
           ],
           "how_to_decide": [
-            "Beobachte nur den Moment des Bewegungsstarts",
-            "Frage dich: War die Bewegung hilfreich oder störend?",
-            "Timing ist relativ zum Puck, nicht absolut",
-            "Beurteile Absicht vs. Wirkung"
+                  "Bestimme zuerst das Timingfenster des Supports",
+                  "Ordne dann die Hauptwirkung des Timings zu",
+                  "Bewerte zuletzt den Charakter der Bewegung",
+                  "Lies Wirksamkeit statt nur früh/spät"
           ],
           "ignore": [
-            "Ob der Pass ankommt",
-            "Wie der Spielzug endet"
+                  "Reines Labeln ohne Wirkungskontext",
+                  "Ergebnis der Aktion (Pass/Tor)",
+                  "Einzelne technische Fehler"
           ]
         },
-        "learning_hint": "Richtiges Timing macht einfache Positionen wertvoll – falsches Timing zerstört gute Ideen."
+              "learning_hint": "Wirksamer Support entsteht im richtigen Timingfenster. Antizipation stabilisiert Struktur, verspätete Hilfe verliert Wirkung."
       },
       "miniFeedback": {
         "trigger": "onNext",
         "oncePerSection": true,
         "groups": [
           {
-            "when": { "timing": "passend" },
+                  "when": { "support_timing": "antizipiert früh" },
             "questions": [
-              "Woran hast du das passende Timing erkannt?",
-              "Welche Information wurde richtig gelesen?",
-              "Wirkte die Bewegung abgestimmt?"
+                    "Wodurch wurde der Support in diesem Moment früh wirksam?",
+                    "Welche Option wurde antizipiert geöffnet?",
+                    "Wie hat frühes Timing den Druck reduziert?"
             ]
           },
           {
-            "when": { "timing": "zu_frueh" },
+                  "when": { "support_timing": "rechtzeitig" },
             "questions": [
-              "Was ging durch das frühe Timing verloren?",
-              "Wurde Raum verschenkt?",
-              "Hätte Geduld geholfen?"
+                    "Was machte den Support rechtzeitig und nutzbar?",
+                    "Welche Struktur blieb dadurch stabil?",
+                    "War die Bewegung eher vorbereitet oder angepasst?"
             ]
           },
           {
-            "when": { "timing": "zu_spaet" },
+                  "when": { "support_timing": "leicht verspätet" },
             "questions": [
-              "Welche Option war dadurch weg?",
-              "Kam die Bewegung reaktiv statt antizipativ?",
-              "War der Impuls erkennbar, aber verzögert?"
+                    "Welche Wirkung ging durch die leichte Verspätung verloren?",
+                    "War das Passfenster schon zu klein oder nur knapp offen?",
+                    "Welche frühere Bewegung hätte den Moment stabilisiert?"
+                  ]
+                },
+                {
+                  "when": { "support_timing": "deutlich zu spät" },
+                  "questions": [
+                    "Warum war der Support in diesem Moment praktisch wertlos?",
+                    "Welche Option war bereits geschlossen, bevor Hilfe kam?",
+                    "War die Bewegung klar reaktiv auf Druck statt antizipativ?"
             ]
           }
         ]
       },
       "config": {
-        "questions": [
-          {
-            "key": "timing",
-            "type": "radio",
-            "label": "Timing",
-            "options": [
-              "passend",
-              "zu frueh",
-              "zu spaet"
-            ]
-          },
-          {
-            "key": "note",
-            "type": "text",
-            "label": "Kurze Begründung",
-            "max_chars": 1500
-          }
-        ]
+              "sample_key": "timing_samples",
+              "sample_label": "Timing-Moment",
+              "max_samples_per_phase": 3,
+              "state_key": "support_timing",
+              "state_label": "Timing",
+              "factor_key": "main_effect",
+              "factor_label": "Wirkung",
+              "quality_key": "movement_character",
+              "quality_label": "Bewegung wirkte",
+              "quality_options": [
+                "proaktiv gelesen",
+                "auf Mitspieler reagiert",
+                "nur auf Druck reagiert",
+                "unklar"
+              ],
+              "note_key": "note",
+              "note_label": "Notiz (optional)",
+              "note_max_chars": 120,
+              "state_options": [
+                "antizipiert früh",
+                "rechtzeitig",
+                "leicht verspätet",
+                "deutlich zu spät"
+              ],
+              "factors_by_state": {
+                "antizipiert früh": [
+                  "Option früh geöffnet",
+                  "Druck vermieden",
+                  "Spiel beschleunigt",
+                  "mehrere Optionen geschaffen"
+                ],
+                "rechtzeitig": [
+                  "sichere Anspielstation",
+                  "Struktur gehalten",
+                  "Puckführer unterstützt",
+                  "Rush ermöglicht"
+                ],
+                "leicht verspätet": [
+                  "Option fast geschlossen",
+                  "Puckführer unter Druck",
+                  "Passfenster klein",
+                  "Angriff verlangsamt"
+                ],
+                "deutlich zu spät": [
+                  "keine echte Hilfe mehr",
+                  "Isolation entstanden",
+                  "Turnover begünstigt",
+                  "Struktur kollabiert"
+                ]
+              }
       }
     }
 
@@ -2510,7 +2791,7 @@
         ]
       },
       {
-        "when": { "second_access": "zu_spaet" },
+        "when": { "second_access": "zu spät" },
         "questions": [
           "Was hat das Timing verzögert?",
           "War der Abstand zu groß oder der Laufweg falsch?",
@@ -2586,7 +2867,7 @@
         ]
       },
       {
-        "when": { "pressure_timing": "verzoegert" },
+        "when": { "pressure_timing": "verzögert" },
         "questions": [
           "Was hat die Abstimmung verzögert?",
           "Kam der zweite Spieler zu spät oder zögerlich?",
@@ -4118,7 +4399,7 @@
         ]
       },
       {
-        "when": { "pressure_timing": "zu_frueh" },
+        "when": { "pressure_timing": "zu früh" },
         "questions": [
           "Welche Information wurde ignoriert?",
           "Welcher Raum wurde dadurch geöffnet?",
@@ -4126,7 +4407,7 @@
         ]
       },
       {
-        "when": { "pressure_timing": "zu_spaet" },
+        "when": { "pressure_timing": "zu spät" },
         "questions": [
           "Woran hast du die verpasste Gelegenheit erkannt?",
           "Welche klare Einladung zum Druck wurde nicht genutzt?",
@@ -6070,209 +6351,6 @@
               },
               "config": {
                 "questions": []
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "G",
-      "title": "G – Player Observation",
-      "goal": "Strukturierte Spielerbeobachtung: Verhalten, Entscheidungen, Reaktionen tracken",
-      "description": "Track G schult die präzise Beobachtung einzelner Spieler nach standardisierten Dimensionen. Pro Observation: ein Spieler, eine Position, fünf strukturierte Beobachtungsdimensionen.",
-      "modules": [
-        {
-          "id": "G1",
-          "title": "G1 – Center",
-          "summary": "Beobachtung von Center-Verhalten: Support, Positionalität, Entscheidungen",
-          "description": "Fokus auf Center-Spieler: Unterstützungsverhalten, Positionierung, Reaktionsgeschwindigkeit, Druckresistenz, Off-Puck-Bewegung.",
-          "learningGoals": [
-            "Strukturierte Beobachtung von 5 Center-Dimensionen",
-            "Enum-basierte Inputs für Vergleichbarkeit",
-            "Wiederholte Beobachtungen über mehrere Sessions loggen",
-            "Spielerprofile durch Aggregation erkennen"
-          ],
-          "difficulty": 2,
-          "duration": 15,
-          "drills": [
-            {
-              "id": "G1_D1",
-              "title": "Support-Verhalten",
-              "drill_type": "period_checkin",
-              "description": "Beobachte: Wie verhält sich der Center im Support? Aktiv involved, passiv positioniert, oder absent?",
-              "didactics": {
-                "goal": "Eine Dimension tracken: Support-Verhalten (active/passive/none)",
-                "explanation": "Support-Verhalten misst Initiative und Präsenz des Centers in der Unterstützung. Nicht die Qualität der Pässe, sondern ob er verfügbar und involviert ist.",
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Ist der Center eine ständig verfügbare Anspieloption?",
-                    "Bewegt er sich pro-aktiv zum Puck oder wartet?",
-                    "Wie oft wird er anspielt vs. wie oft könnte er gespielt werden?"
-                  ],
-                  "how_to_decide": [
-                    "active: Häufige Initiative, immer verfügbar, oft anspielt",
-                    "passive: Manchmal verfügbar, eher Positionen halten",
-                    "none: Selten verfügbar, nicht im Spiel"
-                  ]
-                }
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "support_behavior",
-                    "type": "radio",
-                    "label": "Support-Verhalten des Centers",
-                    "options": [
-                      "active",
-                      "passive",
-                      "none"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "G1_D2",
-              "title": "Support-Position",
-              "drill_type": "period_checkin",
-              "description": "Beobachte: Wo positioniert sich der Center meist im Support?",
-              "didactics": {
-                "goal": "Eine Dimension tracken: Support-Position (low/mid/high)",
-                "explanation": "Die räumliche Position des Centers in der Unterstützung. Low = nah am Puck, High = distanziert in der Tiefe.",
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Distanz zum Puckführer",
-                    "Zone-Tiefe: direkt beim Puck, Mitteldistanz, oder tiefe Outlet?"
-                  ],
-                  "how_to_decide": [
-                    "low: < 1 Sekunde Pass-Distanz",
-                    "mid: 1–2 Sekunden Pass-Distanz",
-                    "high: > 2 Sekunden oder Outlet-Tiefe"
-                  ]
-                }
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "support_position",
-                    "type": "radio",
-                    "label": "Support-Position des Centers",
-                    "options": [
-                      "low",
-                      "mid",
-                      "high"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "G1_D3",
-              "title": "Entscheidungsgeschwindigkeit",
-              "drill_type": "period_checkin",
-              "description": "Beobachte: Wie schnell trifft der Center Entscheidungen (Pass/Carry/Shoot)?",
-              "didactics": {
-                "goal": "Eine Dimension tracken: Entscheidungsgeschwindigkeit (fast/delayed/risky)",
-                "explanation": "Misst, wie schnell der Center handelt, wenn er den Puck hat. Nicht Qualität, sondern Tempo.",
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Berührungsanzahl vor Entscheidung",
-                    "Zögern oder sofortige Aktion?",
-                    "Rush oder Kontrolle?"
-                  ],
-                  "how_to_decide": [
-                    "fast: 0–1 Berührung, sofortige Aktion",
-                    "delayed: 2–3 Berührungen, Verzögerung spürbar",
-                    "risky: Hastige Entscheidungen unter Druck"
-                  ]
-                }
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "decision_speed",
-                    "type": "radio",
-                    "label": "Entscheidungsgeschwindigkeit des Centers",
-                    "options": [
-                      "fast",
-                      "delayed",
-                      "risky"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "G1_D4",
-              "title": "Druckresistenz",
-              "drill_type": "period_checkin",
-              "description": "Beobachte: Wie reagiert der Center auf gegnerischen Druck?",
-              "didactics": {
-                "goal": "Eine Dimension tracken: Druckresistenz (stable/turnover/panic)",
-                "explanation": "Misst, wie stabil der Center unter Druck bleibt.",
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Bleibt der Center stabil, wenn Gegner attackiert?",
-                    "Erzwingt Gegner Turnover?",
-                    "Wirkt der Center gehetzt oder panisch?"
-                  ],
-                  "how_to_decide": [
-                    "stable: Hält Kontrolle, befreit sich oder spielt Puck sicher",
-                    "turnover: Der Gegner gewinnt Puck, aber nicht panik",
-                    "panic: Erzwungene Fehler, Unsicherheit sichtbar"
-                  ]
-                }
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "pressure_response",
-                    "type": "radio",
-                    "label": "Druckresistenz des Centers",
-                    "options": [
-                      "stable",
-                      "turnover",
-                      "panic"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "G1_D5",
-              "title": "Off-Puck-Bewegung",
-              "drill_type": "period_checkin",
-              "description": "Beobachte: Wie bewegt sich der Center ohne Puck?",
-              "didactics": {
-                "goal": "Eine Dimension tracken: Off-Puck-Bewegung (active/static/drifting)",
-                "explanation": "Misst die Qualität und Zielgerichtetheit der Bewegung des Centers ohne Puck.",
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Bewegt sich der Center mit Zweck (Lauf, Schnitt)?",
-                    "Bleibt er in Position oder treibt reaktiv?",
-                    "Schafft er Raum für Mitspieler?"
-                  ],
-                  "how_to_decide": [
-                    "active: Zielgerichtete Cuts, Laufen mit Absicht",
-                    "static: Hält Position, wenig Bewegung",
-                    "drifting: Reaktive, ziellose Bewegung"
-                  ]
-                }
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "off_puck_movement",
-                    "type": "radio",
-                    "label": "Off-Puck-Bewegung des Centers",
-                    "options": [
-                      "active",
-                      "static",
-                      "drifting"
-                    ]
-                  }
-                ]
               }
             }
           ]

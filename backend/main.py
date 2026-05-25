@@ -96,7 +96,16 @@ def enforce_max_text_length(value: Any, path: str = "payload") -> None:
 # CORS für Frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174", "http://localhost:5173", "http://localhost:5175", "http://localhost:3000", "http://localhost:3001"],  # Frontend URLs
+    allow_origins=[
+        "http://localhost:5174",
+        "http://localhost:5173",
+        "http://localhost:5175",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://188.34.196.189:5173",
+        "http://188.34.196.189:5174",
+        "http://188.34.196.189:5175",
+    ],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -110,6 +119,11 @@ async def health():
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
+ROOT_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+ROSTERS_DIR = os.path.join(ROOT_DATA_DIR, "rosters")
+OBSERVATIONS_DIR = os.path.join(ROOT_DATA_DIR, "observations")
+OBS_RUNS_DIR = os.path.join(OBSERVATIONS_DIR, "runs")
+OBS_ENTRIES_DIR = os.path.join(OBSERVATIONS_DIR, "entries")
 
 # Pydantic Models
 class SessionCreate(BaseModel):
@@ -150,6 +164,32 @@ class RewardApplyData(BaseModel):
     reward_events: List[dict] = Field(default_factory=list)
     unlocked_achievements: List[dict] = Field(default_factory=list)
     unlocked_masteries: List[dict] = Field(default_factory=list)
+
+
+class ObservationRunCreate(BaseModel):
+    league: str
+    season: str
+    team_id: str
+    team_name: str
+    player_id: str
+    player_name: str
+    player_number: Optional[int] = None
+    player_position: str
+    notes: Optional[str] = ""
+
+
+class ObservationDimensions(BaseModel):
+    support_behavior: str
+    support_position: str
+    decision_speed: str
+    pressure_response: str
+    off_puck_movement: str
+
+
+class ObservationEntryCreate(BaseModel):
+    run_id: str
+    dimensions: ObservationDimensions
+    note: Optional[str] = ""
 
 # Hilfsfunktionen
 def load_json(file_path: str):
@@ -252,6 +292,105 @@ def _load_reward_state(user: str) -> dict:
 def _save_reward_state(user: str, state: dict) -> None:
     save_json(_reward_state_path(user), state)
 
+
+def _resolve_user_cased(user: str) -> str:
+    users = load_users()
+    user_obj = next((u for u in users["users"] if u["username"].strip().lower() == user.strip().lower()), None)
+    return user_obj["username"] if user_obj else user
+
+
+def _build_observation_storage_path(base_dir: str, item_id: str, created_at: Optional[str]) -> str:
+    dt = _parse_created_at(created_at)
+    year = f"{dt.year:04d}"
+    month = f"{dt.month:02d}"
+    return os.path.join(base_dir, year, month, f"{item_id}.json")
+
+
+def _iter_json_files(base_dir: str):
+    if not os.path.exists(base_dir):
+        return
+    for root, _, files in os.walk(base_dir):
+        for file in files:
+            if file.endswith(".json"):
+                yield os.path.join(root, file)
+
+
+def _find_json_file_by_id(base_dir: str, item_id: str) -> Optional[str]:
+    target = f"{item_id}.json"
+    for root, _, files in os.walk(base_dir):
+        if target in files:
+            return os.path.join(root, target)
+    return None
+
+
+def _load_roster_file(league: str, season: str) -> dict:
+    league_key = (league or "").strip().lower()
+    season_key = (season or "").strip().lower()
+    file_name = f"{league_key}_{season_key}.json"
+    file_path = os.path.join(ROSTERS_DIR, file_name)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Roster not found")
+    return load_json(file_path)
+
+
+def _iter_user_observation_entries(user: str):
+    user_norm = _normalize_user_key(user)
+    for path in _iter_json_files(OBS_ENTRIES_DIR) or []:
+        entry = load_json(path)
+        if _normalize_user_key(entry.get("user", "")) != user_norm:
+            continue
+        yield entry
+
+
+def _dimension_counts(entries: List[dict]) -> dict:
+    dimensions = [
+        "support_behavior",
+        "support_position",
+        "decision_speed",
+        "pressure_response",
+        "off_puck_movement",
+    ]
+    stats = {}
+
+    for key in dimensions:
+        counts = Counter((entry.get("dimensions") or {}).get(key) for entry in entries if (entry.get("dimensions") or {}).get(key))
+        if counts:
+            mode = counts.most_common(1)[0][0]
+            stats[key] = {**dict(counts), "mode": mode}
+        else:
+            stats[key] = {"mode": None}
+    return stats
+
+
+def _aggregate_players(entries: List[dict]) -> List[dict]:
+    grouped = {}
+    for entry in entries:
+        player_id = entry.get("player_id")
+        if not player_id:
+            continue
+        grouped.setdefault(player_id, []).append(entry)
+
+    players = []
+    for player_id, player_entries in grouped.items():
+        latest = max(player_entries, key=lambda item: item.get("created_at", ""))
+        players.append(
+            {
+                "player_id": player_id,
+                "player_name": latest.get("player_name"),
+                "team_id": latest.get("team_id"),
+                "team_name": latest.get("team_name"),
+                "league": latest.get("league"),
+                "season": latest.get("season"),
+                "player_position": latest.get("player_position"),
+                "observation_count": len(player_entries),
+                "last_observation": latest.get("created_at"),
+                "dimension_stats": _dimension_counts(player_entries),
+            }
+        )
+
+    players.sort(key=lambda item: item.get("observation_count", 0), reverse=True)
+    return players
+
 # API Endpunkte
 @app.get("/api/curriculum")
 async def get_curriculum():
@@ -278,6 +417,193 @@ async def get_teams(league: Optional[str] = None):
             raise HTTPException(status_code=400, detail=f"Unknown league: {league}")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Teams not found")
+
+
+@app.get("/api/rosters")
+async def get_rosters():
+    rosters = []
+    if not os.path.exists(ROSTERS_DIR):
+        return {"rosters": rosters}
+
+    for name in sorted(os.listdir(ROSTERS_DIR)):
+        if not name.endswith(".json"):
+            continue
+        file_path = os.path.join(ROSTERS_DIR, name)
+        try:
+            data = load_json(file_path)
+            rosters.append(
+                {
+                    "league": data.get("league"),
+                    "season": data.get("season"),
+                    "teams": len(data.get("teams", [])),
+                    "file": name,
+                }
+            )
+        except Exception:
+            continue
+    return {"rosters": rosters}
+
+
+@app.get("/api/rosters/{league}/{season}")
+async def get_roster_for_league(league: str, season: str):
+    return _load_roster_file(league, season)
+
+
+@app.post("/api/observation-runs")
+async def create_observation_run(payload: ObservationRunCreate, current_user: str = Depends(get_current_user)):
+    user_cased = _resolve_user_cased(current_user)
+    now_iso = datetime.now().isoformat()
+    run_id = f"obs_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
+
+    enforce_max_text_length(payload.notes, "observation_run.notes")
+
+    run = {
+        "run_id": run_id,
+        "user": user_cased,
+        "league": payload.league,
+        "season": payload.season,
+        "team_id": payload.team_id,
+        "team_name": payload.team_name,
+        "player_id": payload.player_id,
+        "player_name": payload.player_name,
+        "player_number": payload.player_number,
+        "player_position": payload.player_position,
+        "created_at": now_iso,
+        "notes": payload.notes or "",
+        "status": "active",
+    }
+
+    run_path = _build_observation_storage_path(OBS_RUNS_DIR, run_id, now_iso)
+    save_json(run_path, run)
+    return run
+
+
+@app.get("/api/observation-runs/{run_id}")
+async def get_observation_run(run_id: str, current_user: str = Depends(get_current_user)):
+    run_path = _find_json_file_by_id(OBS_RUNS_DIR, run_id)
+    if not run_path:
+        raise HTTPException(status_code=404, detail="Observation run not found")
+
+    run = load_json(run_path)
+    if _normalize_user_key(run.get("user", "")) != _normalize_user_key(current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return run
+
+
+@app.post("/api/observations")
+async def create_observation_entry(payload: ObservationEntryCreate, current_user: str = Depends(get_current_user)):
+    run_path = _find_json_file_by_id(OBS_RUNS_DIR, payload.run_id)
+    if not run_path:
+        raise HTTPException(status_code=404, detail="Observation run not found")
+
+    run = load_json(run_path)
+    if _normalize_user_key(run.get("user", "")) != _normalize_user_key(current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    now_iso = datetime.now().isoformat()
+    entry_id = f"entry_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
+
+    enforce_max_text_length(payload.note, "observation_entry.note")
+
+    entry = {
+        "entry_id": entry_id,
+        "run_id": run.get("run_id"),
+        "user": run.get("user"),
+        "league": run.get("league"),
+        "season": run.get("season"),
+        "team_id": run.get("team_id"),
+        "team_name": run.get("team_name"),
+        "player_id": run.get("player_id"),
+        "player_name": run.get("player_name"),
+        "player_position": run.get("player_position"),
+        "created_at": now_iso,
+        "dimensions": payload.dimensions.model_dump(),
+        "note": payload.note or "",
+    }
+
+    entry_path = _build_observation_storage_path(OBS_ENTRIES_DIR, entry_id, now_iso)
+    save_json(entry_path, entry)
+    return entry
+
+
+@app.get("/api/observations")
+async def get_observation_entries(
+    run_id: Optional[str] = None,
+    league: Optional[str] = None,
+    season: Optional[str] = None,
+    team_id: Optional[str] = None,
+    player_id: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    entries = []
+    for entry in _iter_user_observation_entries(current_user):
+        if run_id and entry.get("run_id") != run_id:
+            continue
+        if league and entry.get("league") != league:
+            continue
+        if season and entry.get("season") != season:
+            continue
+        if team_id and entry.get("team_id") != team_id:
+            continue
+        if player_id and entry.get("player_id") != player_id:
+            continue
+        entries.append(entry)
+
+    entries.sort(key=lambda item: item.get("created_at", ""), reverse=True)
+    return {"observations": entries}
+
+
+@app.get("/api/observation-stats")
+async def get_observation_stats(
+    league: Optional[str] = None,
+    season: Optional[str] = None,
+    team_id: Optional[str] = None,
+    player_id: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    entries = []
+    for entry in _iter_user_observation_entries(current_user):
+        if league and entry.get("league") != league:
+            continue
+        if season and entry.get("season") != season:
+            continue
+        if team_id and entry.get("team_id") != team_id:
+            continue
+        if player_id and entry.get("player_id") != player_id:
+            continue
+        entries.append(entry)
+
+    players = _aggregate_players(entries)
+    return {"players": players}
+
+
+@app.get("/api/observation-stats/player/{player_id}")
+async def get_observation_stats_player(
+    player_id: str,
+    league: Optional[str] = None,
+    season: Optional[str] = None,
+    team_id: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    entries = []
+    for entry in _iter_user_observation_entries(current_user):
+        if entry.get("player_id") != player_id:
+            continue
+        if league and entry.get("league") != league:
+            continue
+        if season and entry.get("season") != season:
+            continue
+        if team_id and entry.get("team_id") != team_id:
+            continue
+        entries.append(entry)
+
+    if not entries:
+        raise HTTPException(status_code=404, detail="No observations for player")
+
+    aggregated = _aggregate_players(entries)
+    player = aggregated[0] if aggregated else None
+    entries.sort(key=lambda item: item.get("created_at", ""), reverse=True)
+    return {"player": player, "observations": entries}
 
 @app.get("/api/sessions")
 async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
@@ -795,143 +1121,6 @@ async def login(payload: dict):
     }, JWT_SECRET, algorithm=JWT_ALGO)
     print(f"[AUTH] login ok user={username}")
     return {"token": token, "username": username}
-
-# ============ PLAYER OBSERVATIONS ============
-
-OBSERVATIONS_DIR = os.path.join(DATA_DIR, "observations")
-
-def _ensure_observations_dir():
-    os.makedirs(OBSERVATIONS_DIR, exist_ok=True)
-
-def _build_observation_storage_path(user: str, player: str, created_at: Optional[str] = None) -> str:
-    """Speicherbasis: data/observations/{user}/{player}/observations.json"""
-    if created_at is None:
-        created_at = datetime.utcnow().isoformat()
-    dt = _parse_created_at(created_at)
-    user_key = _normalize_user_key(user)
-    player_key = (player or "unknown").strip().lower().replace(" ", "_")
-    folder = os.path.join(OBSERVATIONS_DIR, user_key, player_key)
-    os.makedirs(folder, exist_ok=True)
-    return os.path.join(folder, "observations.json")
-
-@app.post("/api/observations")
-async def create_observation(payload: dict, request: Request):
-    """Neue Player Observation speichern"""
-    user = get_current_user(request.headers.get("authorization"))
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    required = ["player", "position", "observations"]
-    for key in required:
-        if key not in payload:
-            raise HTTPException(status_code=400, detail=f"Missing required field: {key}")
-    
-    player = payload.get("player", "").strip()
-    if not player:
-        raise HTTPException(status_code=400, detail="Player name cannot be empty")
-    
-    observation_record = {
-        "player": player,
-        "position": payload["position"],
-        "session_id": payload.get("session_id", ""),
-        "game_context": payload.get("game_context", ""),
-        "observations": payload["observations"],
-        "notes": payload.get("notes", ""),
-        "timestamp": datetime.utcnow().timestamp(),
-        "created_at": datetime.utcnow().isoformat()
-    }
-    
-    path = _build_observation_storage_path(user, player)
-    observations = []
-    if os.path.exists(path):
-        observations = load_json(path)
-    if not isinstance(observations, list):
-        observations = []
-    
-    observations.append(observation_record)
-    save_json(path, observations)
-    
-    print(f"[OBSERVATION] saved player={player} user={user} ts={observation_record['timestamp']}")
-    return {"ok": True, "observation": observation_record}
-
-@app.get("/api/observations")
-async def get_observations(player: Optional[str] = None, request: Request = None):
-    """Alle Observations eines Users abrufen (optional gefiltert nach Player)"""
-    user = get_current_user(request.headers.get("authorization")) if request else None
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    all_obs = []
-    user_key = _normalize_user_key(user)
-    user_obs_dir = os.path.join(OBSERVATIONS_DIR, user_key)
-    
-    if not os.path.exists(user_obs_dir):
-        return {"observations": []}
-    
-    player_key = (player or "").strip().lower().replace(" ", "_") if player else None
-    
-    for player_folder in os.listdir(user_obs_dir):
-        if player_key and player_folder != player_key:
-            continue
-        
-        player_obs_file = os.path.join(user_obs_dir, player_folder, "observations.json")
-        if os.path.exists(player_obs_file):
-            obs_list = load_json(player_obs_file)
-            if isinstance(obs_list, list):
-                all_obs.extend(obs_list)
-    
-    return {"observations": all_obs}
-
-@app.get("/api/observations/aggregated")
-async def get_aggregated_observations(player: Optional[str] = None, request: Request = None):
-    """Aggregierte Statistiken pro Spieler"""
-    user = get_current_user(request.headers.get("authorization")) if request else None
-    if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    user_key = _normalize_user_key(user)
-    user_obs_dir = os.path.join(OBSERVATIONS_DIR, user_key)
-    
-    if not os.path.exists(user_obs_dir):
-        return {"players": {}}
-    
-    aggregated = {}
-    
-    for player_folder in os.listdir(user_obs_dir):
-        player_obs_file = os.path.join(user_obs_dir, player_folder, "observations.json")
-        if not os.path.exists(player_obs_file):
-            continue
-        
-        obs_list = load_json(player_obs_file)
-        if not isinstance(obs_list, list) or not obs_list:
-            continue
-        
-        # Aggregation pro Spieler
-        player_data = {
-            "total_observations": len(obs_list),
-            "support_behavior": {"active": 0, "passive": 0, "none": 0},
-            "support_position": {"low": 0, "mid": 0, "high": 0},
-            "decision_speed": {"fast": 0, "delayed": 0, "risky": 0},
-            "pressure_response": {"stable": 0, "turnover": 0, "panic": 0},
-            "off_puck_movement": {"active": 0, "static": 0, "drifting": 0}
-        }
-        
-        for obs in obs_list:
-            obs_data = obs.get("observations", {})
-            for key, value in obs_data.items():
-                if key in player_data and value in player_data[key]:
-                    player_data[key][value] += 1
-        
-        player_name = obs_list[0].get("player", player_folder)
-        aggregated[player_name] = player_data
-    
-    if player:
-        player_data = aggregated.get(player)
-        if not player_data:
-            raise HTTPException(status_code=404, detail=f"No observations for player: {player}")
-        return {"player": player, "data": player_data}
-    
-    return {"players": aggregated}
 
 if __name__ == "__main__":
     import uvicorn

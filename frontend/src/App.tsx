@@ -9,8 +9,11 @@ import SessionPage from './pages/Session'
 import History from './pages/History'
 import Progress from './pages/Progress'
 import Cluster2TrackFPage from './pages/Cluster2TrackF'
+import ObservationSetup from './pages/ObservationSetup'
+import ObservationRun from './pages/ObservationRun'
+import ObservationStats from './pages/ObservationStats'
 import TopNav from './components/TopNav'
-import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
+import { RewardHost, RewardProvider } from './features/rewards'
 
 function App() {
   return (
@@ -28,11 +31,13 @@ function App() {
             <Route path="/history" element={<History />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/cluster2/f" element={<Cluster2TrackFPage />} />
+            <Route path="/observation/setup" element={<ObservationSetup />} />
+            <Route path="/observation/run/:runId" element={<ObservationRun />} />
+            <Route path="/observation/stats" element={<ObservationStats />} />
           </Routes>
         </main>
       </div>
       <RewardHost />
-      <RewardDevTools />
     </RewardProvider>
   )
 }

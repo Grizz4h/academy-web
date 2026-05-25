@@ -16,6 +16,10 @@
     { "id": "france", "name": "Frankreich", "country": "France", "short": "FRA" },
     { "id": "austria", "name": "Österreich", "country": "Austria", "short": "AUT" },
     { "id": "italy", "name": "Italien", "country": "Italy", "short": "ITA" },
+    { "id": "latvia", "name": "Lettland", "country": "Latvia", "short": "LAT" },
+    { "id": "slovenia", "name": "Slowenien", "country": "Slovenia", "short": "SLO" },
+    { "id": "denmark", "name": "Dänemark", "country": "Denmark", "short": "DEN" },
+    { "id": "great_britain", "name": "Großbritannien", "country": "Great Britain", "short": "GBR" },
     { "id": "japan", "name": "Japan", "country": "Japan", "short": "JPN" },
     { "id": "south_korea", "name": "Südkorea", "country": "South Korea", "short": "KOR" }
   ]

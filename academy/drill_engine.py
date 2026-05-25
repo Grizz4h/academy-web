@@ -1,7 +1,8 @@
-from .drills import period_checkin, shift_tracker, triangle_spotting, role_identification
+from .drills import period_checkin, shift_tracker, triangle_spotting, role_identification, sample_log
 
 DRILL_REGISTRY = {
     "period_checkin": period_checkin.render,
+    "sample_log": sample_log.render,
     "shift_tracker": shift_tracker.render,
     "triangle_spotting": triangle_spotting.render,
     "role_identification": role_identification.render

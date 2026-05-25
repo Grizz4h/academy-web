@@ -185,6 +185,89 @@ export interface TeamsResponse {
   teams: Team[]
 }
 
+export interface RosterPlayer {
+  player_id: string
+  name: string
+  number?: number
+  position: string
+}
+
+export interface RosterTeam {
+  team_id: string
+  name: string
+  players: RosterPlayer[]
+}
+
+export interface RosterCatalog {
+  league: string
+  season: string
+  teams: RosterTeam[]
+}
+
+export interface ObservationRun {
+  run_id: string
+  user: string
+  league: string
+  season: string
+  team_id: string
+  team_name: string
+  player_id: string
+  player_name: string
+  player_number?: number
+  player_position: string
+  created_at: string
+  notes?: string
+  status: string
+}
+
+export interface ObservationDimensions {
+  support_behavior: 'active' | 'passive' | 'none'
+  support_position: 'low' | 'mid' | 'high'
+  decision_speed: 'fast' | 'delayed' | 'risky'
+  pressure_response: 'stable' | 'turnover' | 'panic'
+  off_puck_movement: 'active' | 'static' | 'drifting'
+}
+
+export interface ObservationEntry {
+  entry_id: string
+  run_id: string
+  user: string
+  league: string
+  season: string
+  team_id: string
+  team_name: string
+  player_id: string
+  player_name: string
+  player_position: string
+  created_at: string
+  dimensions: ObservationDimensions
+  note?: string
+}
+
+export interface ObservationPlayerStats {
+  player_id: string
+  player_name: string
+  team_id: string
+  team_name: string
+  league: string
+  season: string
+  player_position: string
+  observation_count: number
+  last_observation?: string
+  dimension_stats: Record<string, Record<string, number | string | null>>
+}
+
+export interface ObservationStatsResponse {
+  players: ObservationPlayerStats[]
+}
+
+export interface RosterIndexItem {
+  league: string
+  season: string
+  teams: number
+  file: string
+}
+
 export interface RewardServerState {
   currency: {
     PUX: number
@@ -209,25 +292,6 @@ export interface RewardApplyResponse {
   applied: boolean
   granted_pux: number
   reward_events: Array<Record<string, any>>
-}
-
-// ==== Player Observation Type ====
-export interface PlayerObservationData {
-  support_behavior: "active" | "passive" | "none"
-  support_position: "low" | "mid" | "high"
-  decision_speed: "fast" | "delayed" | "risky"
-  pressure_response: "stable" | "turnover" | "panic"
-  off_puck_movement: "active" | "static" | "drifting"
-}
-
-export interface PlayerObservation {
-  player: string
-  position: "center" | "winger" | "defender" | "goalie"
-  session_id: string
-  game_context?: string
-  observations: PlayerObservationData
-  notes?: string
-  timestamp: number
 }
 
 // ==== API Helpers ====
@@ -477,6 +541,124 @@ export const api = {
     return res.json()
   },
 
+  getRosters: async (): Promise<{ rosters: RosterIndexItem[] }> => {
+    const res = await fetch(buildUrl('/rosters'), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch roster index')
+    return res.json()
+  },
+
+  getRoster: async (league: string, season: string): Promise<RosterCatalog> => {
+    const res = await fetch(buildUrl(`/rosters/${encodeURIComponent(league)}/${encodeURIComponent(season)}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch roster')
+    return res.json()
+  },
+
+  createObservationRun: async (payload: {
+    league: string
+    season: string
+    team_id: string
+    team_name: string
+    player_id: string
+    player_name: string
+    player_number?: number
+    player_position: string
+    notes?: string
+  }): Promise<ObservationRun> => {
+    const res = await fetch(buildUrl('/observation-runs'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload)
+    })
+    if (!res.ok) throw new Error('Failed to create observation run')
+    return res.json()
+  },
+
+  getObservationRun: async (runId: string): Promise<ObservationRun> => {
+    const res = await fetch(buildUrl(`/observation-runs/${encodeURIComponent(runId)}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch observation run')
+    return res.json()
+  },
+
+  createObservation: async (payload: {
+    run_id: string
+    dimensions: ObservationDimensions
+    note?: string
+  }): Promise<ObservationEntry> => {
+    const res = await fetch(buildUrl('/observations'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload)
+    })
+    if (!res.ok) throw new Error('Failed to create observation entry')
+    return res.json()
+  },
+
+  getObservations: async (params?: {
+    run_id?: string
+    league?: string
+    season?: string
+    team_id?: string
+    player_id?: string
+  }): Promise<{ observations: ObservationEntry[] }> => {
+    const qs = new URLSearchParams()
+    if (params?.run_id) qs.append('run_id', params.run_id)
+    if (params?.league) qs.append('league', params.league)
+    if (params?.season) qs.append('season', params.season)
+    if (params?.team_id) qs.append('team_id', params.team_id)
+    if (params?.player_id) qs.append('player_id', params.player_id)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+
+    const res = await fetch(buildUrl(`/observations${query}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch observation entries')
+    return res.json()
+  },
+
+  getObservationStats: async (params?: {
+    league?: string
+    season?: string
+    team_id?: string
+    player_id?: string
+  }): Promise<ObservationStatsResponse> => {
+    const qs = new URLSearchParams()
+    if (params?.league) qs.append('league', params.league)
+    if (params?.season) qs.append('season', params.season)
+    if (params?.team_id) qs.append('team_id', params.team_id)
+    if (params?.player_id) qs.append('player_id', params.player_id)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+
+    const res = await fetch(buildUrl(`/observation-stats${query}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch observation stats')
+    return res.json()
+  },
+
+  getObservationStatsForPlayer: async (playerId: string, params?: {
+    league?: string
+    season?: string
+    team_id?: string
+  }): Promise<{ player: ObservationPlayerStats; observations: ObservationEntry[] }> => {
+    const qs = new URLSearchParams()
+    if (params?.league) qs.append('league', params.league)
+    if (params?.season) qs.append('season', params.season)
+    if (params?.team_id) qs.append('team_id', params.team_id)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+
+    const res = await fetch(buildUrl(`/observation-stats/player/${encodeURIComponent(playerId)}${query}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch player observation stats')
+    return res.json()
+  },
+
   getRewardState: async (): Promise<RewardServerState> => {
     const res = await fetch(buildUrl('/rewards/state'), {
       headers: {
@@ -500,46 +682,5 @@ export const api = {
 
     if (!res.ok) throw new Error('Failed to apply rewards')
     return res.json()
-  },
-
-  // Player Observations
-  createObservation: async (obs: Omit<PlayerObservation, 'timestamp'>): Promise<{ ok: boolean; observation: PlayerObservation }> => {
-    const res = await fetch(buildUrl('/observations'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-      },
-      body: JSON.stringify(obs),
-    })
-
-    if (!res.ok) throw new Error('Failed to create observation')
-    return res.json()
-  },
-
-  getObservations: async (player?: string): Promise<{ observations: PlayerObservation[] }> => {
-    let url = '/observations'
-    if (player) {
-      url += `?player=${encodeURIComponent(player)}`
-    }
-    const res = await fetch(buildUrl(url), {
-      headers: authHeaders(),
-    })
-
-    if (!res.ok) throw new Error('Failed to load observations')
-    return res.json()
-  },
-
-  getAggregatedObservations: async (player?: string): Promise<any> => {
-    let url = '/observations/aggregated'
-    if (player) {
-      url += `?player=${encodeURIComponent(player)}`
-    }
-    const res = await fetch(buildUrl(url), {
-      headers: authHeaders(),
-    })
-
-    if (!res.ok) throw new Error('Failed to load aggregated observations')
-    return res.json()
-  },
+  }
 }

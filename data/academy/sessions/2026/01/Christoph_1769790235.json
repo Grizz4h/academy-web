@@ -186,7 +186,8 @@
     "team_home": "Edmonton Oilers",
     "team_away": "San Jose Sharks",
     "observed_team": "Edmonton Oilers",
-    "date": "2026-01-30T16:23:55.309Z"
+    "date": "2026-01-30T16:23:55.309Z",
+    "season": "2025/26"
   },
   "observed_team": null,
   "microfeedback": {

@@ -1,0 +1,341 @@
+{
+  "id": "Christoph_1776274636",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A3",
+  "goal": "Auto: A3 – Transition & Tempo",
+  "confidence": 2,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A3_D5",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-04-15T19:37:16.910055",
+  "drills": [
+    {
+      "id": "A3_D5",
+      "title": "Gap Control (Defensive Reads)",
+      "drill_type": "event_log",
+      "description": "Logge Umschaltmomente mit 2-Schritt-Read: Bleibt das Gap stabil oder kippt es - und welche direkte Folge entsteht daraus?",
+      "didactics": {
+        "goal": "Saubere Gap-Reads im Umschaltmoment treffen und direkte Folgen kontextbasiert zuordnen.",
+        "why_it_matters": "Gap Control entscheidet früh, ob der Gegner kontrolliert bleibt oder in gefährliche Optionen kommt. Du trainierst Wahrnehmung vor der Chance, nicht Bewertung nach der Chance.",
+        "explanation": "Beobachte IMMER direkt nach Puckverlust, abgefangenem Pass oder Turnover. Entscheide früh - bevor ein Rush oder eine Chance sichtbar wird.\n\nHauptfrage: Bleibt das Gap stabil - oder kippt es?\n\nWichtiger Denk-Shift: Nicht fragen 'Ist das ein Rush?', sondern 'Wer kontrolliert den Raum?'\n\nDistanz-Interpretation: Kleinerer Abstand ist nicht automatisch schlecht. Wenn der Verteidiger die Annaeherung kontrolliert, ist das gutes Gap. Wenn der Angreifer die Distanz erzwingt, kippt das Gap.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Trigger-Momente: Puckverlust, abgefangener Pass, Turnover",
+            "Sofort danach: Umschaltmoment von Vorwaerts auf Rueckwaerts",
+            "Abstand zwischen Verteidiger und puckführendem Angreifer",
+            "Speed-Match: Kann der Verteidiger das Tempo matchen?",
+            "Körperwinkel: lenkend/kontrollierend oder passiv/gerade rückwärts",
+            "Raumkontrolle: bleibt Mitte zu oder öffnet sie sich?"
+          ],
+          "how_to_decide": [
+            "Schritt 1: Gap-Zustand wählen -> stabil oder kippt",
+            "Schritt 2: Folge nur aus dem passenden Gap-Kontext wählen",
+            "Mikro-Merksatz: Abstand bleibt gleich -> stabil | Abstand wächst -> kippt",
+            "Hinweis: Abstand wird kleiner ist nicht automatisch schlecht. Entscheidend ist, wer die Annäherung kontrolliert: Wenn der Verteidiger die Distanz bewusst schließt und den Gegner lenkt, bleibt das Gap stabil. Wenn der Angreifer die Situation erzwingt und der Verteidiger nur reagiert, kippt das Gap.",
+            "Stabil-Kriterien: Abstand ca. 1-2 Stocklängen, Speed-Match, lenkender Winkel, Gegner nach außen, Mitte bleibt zu",
+            "Kippt-Kriterien: Abstand wird größer, Speed-Match geht verloren, passiver Rückwärtsgang, Mitte öffnet, Gegner hat Entscheidungsfreiheit",
+            "Entscheidende Zusatzfrage: Wer diktiert die Distanz?"
+          ],
+          "ignore": [
+            "Nicht auf Rush oder Torchance warten",
+            "Nicht rueckwirkend vom Outcome her entscheiden",
+            "Nicht pauschal denken: Rush = schlecht verteidigt",
+            "Nicht pauschal denken: Keine Chance = gut verteidigt",
+            "Nicht pauschal denken: Viel Abstand = sicher"
+          ]
+        },
+        "learning_hint": "Du trainierst Pattern Recognition im frühen Read. Entscheide zuerst über Raumkontrolle, dann über die direkte Folge. Keine freien Kombinationen: Die Folge muss zum Gap-Zustand passen."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "gap_state": "stabil"
+            },
+            "questions": [
+              "Wodurch blieb der Verteidiger in Kontrolle?",
+              "War es eher Tempo, Winkel oder frühes Lesen?",
+              "Fühlte sich der Abstand konstant oder aktiv angepasst an?"
+            ]
+          },
+          {
+            "when": {
+              "gap_state": "kippt"
+            },
+            "questions": [
+              "Woran kippte der Gap zuerst?",
+              "War der Fehler eher Timing, Winkel oder Ausgangsabstand?",
+              "Hätte der Verteidiger früher reagieren müssen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "event_label": "Gap-Moment",
+        "event_key": "gap_events",
+        "fields": [
+          {
+            "key": "gap_state",
+            "type": "select",
+            "label": "Gap",
+            "options": [
+              "stabil",
+              "kippt"
+            ]
+          },
+          {
+            "key": "outcome",
+            "type": "select",
+            "label": "Direkte Folge",
+            "options_by_value_of": {
+              "gap_state": {
+                "stabil": [
+                  "angriff_nach_aussen_gelenkt",
+                  "tempo_wird_verlangsamt",
+                  "dump_oder_reset",
+                  "keine_gefaehrliche_chance"
+                ],
+                "kippt": [
+                  "kontrollierter_zone_entry",
+                  "rush_entsteht",
+                  "slot_zugriff",
+                  "hochkaraetige_chance"
+                ]
+              }
+            }
+          },
+          {
+            "key": "control_check",
+            "type": "select",
+            "label": "Kontroll-Check (optional)",
+            "optional": true,
+            "options": [
+              "verteidiger_kontrolliert_situation",
+              "angreifer_kontrolliert_situation"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Kurznotiz (optional)",
+            "optional": true,
+            "max_chars": 120
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-04-15T19:37:21.685885"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "gap_events": [
+          {
+            "gap_state": "kippt",
+            "gap_reason": "gegner beschleunigt",
+            "outcome": "schuss möglich",
+            "note": ""
+          },
+          {
+            "gap_state": "stabil",
+            "gap_reason": "aktiv mitgegangen",
+            "outcome": "noch gehalten / nichts passiert",
+            "note": ""
+          },
+          {
+            "gap_state": "stabil",
+            "gap_reason": "abstand konstant gehalten",
+            "outcome": "zone entry zugelassen",
+            "note": ""
+          },
+          {
+            "gap_state": "stabil",
+            "gap_reason": "abstand konstant gehalten",
+            "outcome": "gegner behält kontrolle",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-04-15T20:32:08.801479"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "gap_events": [
+          {
+            "gap_state": "stabil",
+            "outcome": "tempo_wird_verlangsamt",
+            "control_check": "verteidiger_kontrolliert_situation",
+            "note": ""
+          },
+          {
+            "gap_state": "kippt",
+            "outcome": "rush_entsteht",
+            "control_check": "angreifer_kontrolliert_situation",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-04-15T21:04:59.022925"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "gap_events": [
+          {
+            "gap_state": "kippt",
+            "outcome": "slot_zugriff",
+            "control_check": "angreifer_kontrolliert_situation",
+            "note": ""
+          },
+          {
+            "gap_state": "stabil",
+            "outcome": "tempo_wird_verlangsamt",
+            "control_check": "verteidiger_kontrolliert_situation",
+            "note": ""
+          },
+          {
+            "gap_state": "stabil",
+            "outcome": "angriff_nach_aussen_gelenkt",
+            "control_check": "verteidiger_kontrolliert_situation",
+            "note": ""
+          },
+          {
+            "gap_state": "stabil",
+            "outcome": "angriff_nach_aussen_gelenkt",
+            "control_check": "verteidiger_kontrolliert_situation",
+            "note": ""
+          }
+        ]
+      },
+      "timestamp": "2026-04-17T19:34:13.257406"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-04-17T19:34:18.489212"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "gap_events": [
+        {
+          "gap_state": "kippt",
+          "gap_reason": "gegner beschleunigt",
+          "outcome": "schuss möglich",
+          "note": ""
+        },
+        {
+          "gap_state": "stabil",
+          "gap_reason": "aktiv mitgegangen",
+          "outcome": "noch gehalten / nichts passiert",
+          "note": ""
+        },
+        {
+          "gap_state": "stabil",
+          "gap_reason": "abstand konstant gehalten",
+          "outcome": "zone entry zugelassen",
+          "note": ""
+        },
+        {
+          "gap_state": "stabil",
+          "gap_reason": "abstand konstant gehalten",
+          "outcome": "gegner behält kontrolle",
+          "note": ""
+        }
+      ]
+    },
+    "P2": {
+      "gap_events": [
+        {
+          "gap_state": "stabil",
+          "outcome": "tempo_wird_verlangsamt",
+          "control_check": "verteidiger_kontrolliert_situation",
+          "note": ""
+        },
+        {
+          "gap_state": "kippt",
+          "outcome": "rush_entsteht",
+          "control_check": "angreifer_kontrolliert_situation",
+          "note": ""
+        }
+      ]
+    },
+    "P3": {
+      "gap_events": [
+        {
+          "gap_state": "kippt",
+          "outcome": "slot_zugriff",
+          "control_check": "angreifer_kontrolliert_situation",
+          "note": ""
+        },
+        {
+          "gap_state": "stabil",
+          "outcome": "tempo_wird_verlangsamt",
+          "control_check": "verteidiger_kontrolliert_situation",
+          "note": ""
+        },
+        {
+          "gap_state": "stabil",
+          "outcome": "angriff_nach_aussen_gelenkt",
+          "control_check": "verteidiger_kontrolliert_situation",
+          "note": ""
+        },
+        {
+          "gap_state": "stabil",
+          "outcome": "angriff_nach_aussen_gelenkt",
+          "control_check": "verteidiger_kontrolliert_situation",
+          "note": ""
+        }
+      ]
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-04-17T19:34:18.613505"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Kölner Haie",
+    "team_away": "Eisbären Berlin",
+    "observed_team": "Kölner Haie",
+    "date": "2026-04-15T17:37:16.853Z",
+    "season": "2025/26",
+    "matchday": "Playoffs Halbfinale spiel 4"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "sind mitgegangen",
+      "ts": "2026-04-15T20:32:18.051529"
+    },
+    "P2": {
+      "done": true,
+      "text": "gut antizipiert und mitgegangen",
+      "ts": "2026-04-15T21:05:11.807357"
+    },
+    "P3": {
+      "done": true,
+      "text": "Abstand",
+      "ts": "2026-04-17T19:34:17.557621"
+    }
+  }
+}

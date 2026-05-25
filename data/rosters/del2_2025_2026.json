@@ -1,0 +1,42 @@
+{
+  "league": "DEL2",
+  "season": "2025_2026",
+  "teams": [
+    {
+      "team_id": "kassel_huskies",
+      "name": "Kassel Huskies",
+      "players": [
+        {
+          "player_id": "kassel_huskies_noah_sample",
+          "name": "Noah Sample",
+          "number": 10,
+          "position": "center"
+        },
+        {
+          "player_id": "kassel_huskies_tim_mock",
+          "name": "Tim Mock",
+          "number": 4,
+          "position": "defender"
+        }
+      ]
+    },
+    {
+      "team_id": "ev_landshut",
+      "name": "EV Landshut",
+      "players": [
+        {
+          "player_id": "ev_landshut_paul_beispiel",
+          "name": "Paul Beispiel",
+          "number": 21,
+          "position": "winger"
+        },
+        {
+          "player_id": "ev_landshut_david_test",
+          "name": "David Test",
+          "number": 30,
+          "position": "goalie"
+        }
+      ]
+    }
+  ]
+}

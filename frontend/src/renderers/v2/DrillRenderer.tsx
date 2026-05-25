@@ -62,7 +62,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 						<div style={{ marginBottom: "1rem" }}>
 							<ul style={{ marginTop: "0.25rem", fontSize: "0.9rem" }}>
 								{observationGuide.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item)}</li>
+									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
 								))}
 							</ul>
 						</div>
@@ -73,7 +73,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Worauf achten?</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.what_to_watch.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item)}</li>
+									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
 								))}
 							</ul>
 						</div>
@@ -84,7 +84,18 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Wie entscheiden?</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.how_to_decide.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item)}</li>
+									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
+								))}
+							</ul>
+						</div>
+					)}
+
+					{Array.isArray(observationGuide.common_mistakes) && observationGuide.common_mistakes.length > 0 && (
+						<div style={{ marginBottom: "1rem" }}>
+							<strong>Typische Denkfehler</strong>
+							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
+								{observationGuide.common_mistakes.map((item: string, i: number) => (
+									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
 								))}
 							</ul>
 						</div>
@@ -95,7 +106,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Was ignorieren?</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.ignore.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item)}</li>
+									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
 								))}
 							</ul>
 						</div>
@@ -112,6 +123,8 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 	switch (drill.drill_type) {
 		case "period_checkin":
 			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "sample_log":
+			return <SampleLog drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "micro_quiz":
 			return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "shift_tracker":
@@ -150,6 +163,30 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 			const controllerValue = safeAnswers?.[controllerKey];
 			const effectiveOptions = q.conditional_options?.[controllerKey]?.[controllerValue] || q.options || [];
 			const currentValue = next[q.key];
+
+			if (Array.isArray(effectiveOptions) && effectiveOptions.length === 0) {
+				if (currentValue !== undefined) {
+					delete next[q.key];
+					changed = true;
+				}
+				continue;
+			}
+
+			if (q.type === "multi_select") {
+				if (Array.isArray(currentValue)) {
+					const filtered = currentValue.filter((v: string) => effectiveOptions.includes(v));
+					if (filtered.length !== currentValue.length) {
+						if (filtered.length > 0) next[q.key] = filtered;
+						else delete next[q.key];
+						changed = true;
+					}
+				} else if (currentValue !== undefined) {
+					delete next[q.key];
+					changed = true;
+				}
+				continue;
+			}
+
 			if (currentValue && Array.isArray(effectiveOptions) && !effectiveOptions.includes(currentValue)) {
 				delete next[q.key];
 				changed = true;
@@ -204,6 +241,12 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				const effectiveOptions = q.conditional_options && controllerKey
 					? q.conditional_options?.[controllerKey]?.[controllerValue] || []
 					: q.options || [];
+				const hasConditionalOptions = !!q.conditional_options;
+				const shouldRenderQuestion = !hasConditionalOptions || !Array.isArray(effectiveOptions) || effectiveOptions.length > 0;
+
+				if (!shouldRenderQuestion) {
+					return null;
+				}
 
 				return (
 				<div key={q.key} style={{ marginBottom: "1rem" }}>
@@ -251,6 +294,32 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 							))}
 						</select>
 					)}
+					{q.type === "multi_select" && Array.isArray(effectiveOptions) && (
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+							{effectiveOptions.map((opt: string) => {
+								const currentValues = Array.isArray(safeAnswers[q.key]) ? safeAnswers[q.key] : [];
+								const checked = currentValues.includes(opt);
+								return (
+									<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+										<input
+											type="checkbox"
+											checked={checked}
+											onChange={(e) => {
+												const nextValues = e.target.checked
+													? [...currentValues, opt]
+													: currentValues.filter((v: string) => v !== opt);
+												const nextAnswers = { ...safeAnswers };
+												if (nextValues.length > 0) nextAnswers[q.key] = nextValues;
+												else delete nextAnswers[q.key];
+												setAnswers(nextAnswers);
+											}}
+										/>
+										{highlightGlossaryTerms(formatOptionText(opt), glossary)}
+									</label>
+								);
+							})}
+						</div>
+					)}
 					{q.type === "text" && (
 						<textarea
 							value={safeAnswers[q.key] || ""}
@@ -275,6 +344,304 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 			{drill.didactics?.learning_hint && (
 				<p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
 					{drill.didactics.learning_hint}
+				</p>
+			)}
+		</div>
+	);
+}
+
+
+// -------------------------------- SAMPLE LOG --------------------------------
+function SampleLog({ drill, answers, setAnswers }: any) {
+	const safeAnswers = answers || {};
+	const sampleKey: string = drill?.config?.sample_key || "samples";
+	const sampleLabel: string = drill?.config?.sample_label || "Sample";
+	const maxSamples: number = drill?.config?.max_samples_per_phase || 3;
+	const stateKey: string = drill?.config?.state_key || "state";
+	const stateLabel: string = drill?.config?.state_label || "Support";
+	const factorKey: string = drill?.config?.factor_key || "factor";
+	const factorLabel: string = drill?.config?.factor_label || "Hauptfaktor";
+	const qualityKey: string | undefined = drill?.config?.quality_key;
+	const qualityLabel: string = drill?.config?.quality_label || "Qualität";
+	const qualityOptions: string[] = Array.isArray(drill?.config?.quality_options) ? drill.config.quality_options : [];
+	const noteKey: string = drill?.config?.note_key || "note";
+	const noteLabel: string = drill?.config?.note_label || "Notiz (optional)";
+	const noteMaxChars: number = drill?.config?.note_max_chars || 120;
+	const stateOptions: string[] = Array.isArray(drill?.config?.state_options) ? drill.config.state_options : [];
+	const factorsByState: Record<string, string[]> = drill?.config?.factors_by_state || {};
+
+	const samples: Record<string, string>[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
+	const selectedSampleIndex = Number.isInteger(safeAnswers.selected_sample_index)
+		? safeAnswers.selected_sample_index
+		: Math.max(0, samples.length - 1);
+
+	const [showForm, setShowForm] = useState(false);
+	const [form, setForm] = useState<Record<string, string>>({
+		[stateKey]: "",
+		[factorKey]: "",
+		...(qualityKey ? { [qualityKey]: "" } : {}),
+		[noteKey]: "",
+	});
+
+	const currentState = form[stateKey] || "";
+	const factorOptions = factorsByState[currentState] || [];
+	const canAddMore = samples.length < maxSamples;
+
+	const resetForm = () => {
+		setForm({
+			[stateKey]: "",
+			[factorKey]: "",
+			...(qualityKey ? { [qualityKey]: "" } : {}),
+			[noteKey]: "",
+		});
+	};
+
+	const addSample = () => {
+		if (!canAddMore) return;
+		if (!form[stateKey] || !form[factorKey]) return;
+		if (qualityKey && qualityOptions.length > 0 && !form[qualityKey]) return;
+
+		const nextSamples = [
+			...samples,
+			{
+				[stateKey]: form[stateKey],
+				[factorKey]: form[factorKey],
+				...(qualityKey ? { [qualityKey]: form[qualityKey] || "" } : {}),
+				[noteKey]: (form[noteKey] || "").trim(),
+			},
+		];
+
+		setAnswers({
+			...safeAnswers,
+			[sampleKey]: nextSamples,
+			selected_sample_index: nextSamples.length - 1,
+		});
+		resetForm();
+		setShowForm(false);
+	};
+
+	const deleteSample = (idx: number) => {
+		const nextSamples = samples.filter((_: Record<string, string>, i: number) => i !== idx);
+		const nextSelected = nextSamples.length === 0 ? undefined : Math.min(selectedSampleIndex, nextSamples.length - 1);
+		const nextAnswers: any = { ...safeAnswers, [sampleKey]: nextSamples };
+		if (nextSelected === undefined) {
+			delete nextAnswers.selected_sample_index;
+		} else {
+			nextAnswers.selected_sample_index = nextSelected;
+		}
+		setAnswers(nextAnswers);
+	};
+
+	const updateFormField = (key: string, value: string) => {
+		if (key === stateKey) {
+			setForm(prev => ({ ...prev, [stateKey]: value, [factorKey]: "" }));
+			return;
+		}
+		setForm(prev => ({ ...prev, [key]: value }));
+	};
+
+	const selectedSummary = samples[selectedSampleIndex];
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.78)", marginBottom: "0.75rem" }}>{drill.description}</p>
+			)}
+			<ObservationGuide drill={drill} />
+
+			<div style={{ marginBottom: "0.85rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
+				<button
+					type="button"
+					onClick={() => setShowForm(prev => !prev)}
+					disabled={!canAddMore}
+					style={{
+						padding: "0.55rem 0.95rem",
+						background: "rgba(81,145,162,0.25)",
+						border: "1px solid rgba(81,145,162,0.6)",
+						borderRadius: "4px",
+						color: "#f7f7ff",
+						fontWeight: 600,
+						cursor: canAddMore ? "pointer" : "not-allowed",
+					}}
+				>
+					+ {sampleLabel}
+				</button>
+				<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>
+					{samples.length}/{maxSamples} erfasst
+				</span>
+			</div>
+
+			{!canAddMore && (
+				<p style={{ marginTop: 0, marginBottom: "0.85rem", fontSize: "0.82rem", color: "rgba(255,215,140,0.9)" }}>
+					Maximum erreicht: Bitte bei maximal {maxSamples} Beobachtungen pro Drittel bleiben.
+				</p>
+			)}
+
+			{showForm && canAddMore && (
+				<div style={{ marginBottom: "1rem", padding: "0.85rem", border: "1px solid rgba(81,145,162,0.45)", borderRadius: "6px", background: "rgba(81,145,162,0.08)" }}>
+					<div style={{ marginBottom: "0.75rem" }}>
+						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{stateLabel}</label>
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+							{stateOptions.map((opt: string) => (
+								<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+									<input
+										type="radio"
+										name={`${drill.id}_${stateKey}`}
+										value={opt}
+										checked={form[stateKey] === opt}
+										onChange={e => updateFormField(stateKey, e.target.value)}
+									/>
+									<span>{opt}</span>
+								</label>
+							))}
+						</div>
+					</div>
+
+					<div style={{ marginBottom: "0.75rem" }}>
+						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{factorLabel}</label>
+						<select
+							className="appSelect"
+							value={form[factorKey]}
+							onChange={e => updateFormField(factorKey, e.target.value)}
+							disabled={!currentState}
+							style={{ width: "100%" }}
+						>
+							<option value="">{currentState ? `${factorLabel} wählen` : `Zuerst ${stateLabel} wählen`}</option>
+							{factorOptions.map((opt: string) => (
+								<option key={opt} value={opt}>{opt}</option>
+							))}
+						</select>
+					</div>
+
+					{qualityKey && qualityOptions.length > 0 && (
+						<div style={{ marginBottom: "0.75rem" }}>
+							<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{qualityLabel}</label>
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+								{qualityOptions.map((opt: string) => (
+									<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+										<input
+											type="radio"
+											name={`${drill.id}_${qualityKey}`}
+											value={opt}
+											checked={form[qualityKey] === opt}
+											onChange={e => updateFormField(qualityKey, e.target.value)}
+										/>
+										<span>{opt}</span>
+									</label>
+								))}
+							</div>
+						</div>
+					)}
+
+					<div style={{ marginBottom: "0.75rem" }}>
+						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{noteLabel}</label>
+						<input
+							type="text"
+							value={form[noteKey]}
+							onChange={e => updateFormField(noteKey, e.target.value)}
+							maxLength={noteMaxChars}
+							placeholder="Sehr kurz"
+							style={{
+								width: "100%",
+								padding: "0.45rem 0.55rem",
+								backgroundColor: "#050712",
+								color: "#f7f7ff",
+								border: "1px solid rgba(81,145,162,0.5)",
+								borderRadius: "4px",
+							}}
+						/>
+					</div>
+
+					<div style={{ display: "flex", gap: "0.45rem", justifyContent: "flex-end" }}>
+						<button type="button" onClick={() => { setShowForm(false); resetForm(); }} style={{ padding: "0.35rem 0.65rem" }}>
+							Abbrechen
+						</button>
+						<button
+							type="button"
+							onClick={addSample}
+							disabled={!form[stateKey] || !form[factorKey] || !!(qualityKey && qualityOptions.length > 0 && !form[qualityKey])}
+							style={{ padding: "0.35rem 0.7rem", fontWeight: 600 }}
+						>
+							Speichern
+						</button>
+					</div>
+				</div>
+			)}
+
+			{samples.length > 0 && (
+				<div>
+					<div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.42)", marginBottom: "0.45rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+						Gespeicherte {sampleLabel}-Momente
+					</div>
+					<div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+						{samples.map((sample: Record<string, string>, idx: number) => {
+							const isSelected = idx === selectedSampleIndex;
+							return (
+								<div
+									key={idx}
+									style={{
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "space-between",
+										gap: "0.6rem",
+										padding: "0.45rem 0.6rem",
+										borderRadius: "4px",
+										border: isSelected ? "1px solid rgba(81,145,162,0.55)" : "1px solid rgba(255,255,255,0.08)",
+										background: isSelected ? "rgba(81,145,162,0.14)" : "rgba(255,255,255,0.04)",
+									}}
+								>
+									<div style={{ flex: 1, minWidth: 0 }}>
+										<div style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.9rem" }}>
+											<strong>{sample[stateKey]}</strong> · {sample[factorKey]}
+											{qualityKey && sample[qualityKey] ? ` · ${sample[qualityKey]}` : ""}
+										</div>
+										{sample[noteKey] && (
+											<div style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.84rem", marginTop: "0.1rem" }}>
+												{sample[noteKey]}
+											</div>
+										)}
+									</div>
+									<div style={{ display: "flex", gap: "0.35rem", flexShrink: 0 }}>
+										<button
+											type="button"
+											onClick={() => setAnswers({ ...safeAnswers, selected_sample_index: idx })}
+											style={{
+												padding: "0.2rem 0.5rem",
+												fontSize: "0.8rem",
+												borderRadius: "4px",
+												border: "1px solid rgba(255,255,255,0.18)",
+												background: "transparent",
+												color: "rgba(255,255,255,0.76)",
+											}}
+										>
+											{isSelected ? "Aktiv" : "Als Moment"}
+										</button>
+										<button
+											type="button"
+											onClick={() => deleteSample(idx)}
+											style={{
+												padding: "0.2rem 0.5rem",
+												fontSize: "0.8rem",
+												borderRadius: "4px",
+												border: "1px solid rgba(255,120,120,0.35)",
+												background: "transparent",
+												color: "rgba(255,150,150,0.88)",
+											}}
+										>
+											Löschen
+										</button>
+									</div>
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			)}
+
+			{selectedSummary && (
+				<p style={{ marginTop: "0.9rem", marginBottom: 0, fontSize: "0.82rem", color: "rgba(255,255,255,0.56)" }}>
+					Microfeedback bezieht sich auf den aktiven Moment: {selectedSummary[stateKey]} · {selectedSummary[factorKey]}{qualityKey && selectedSummary[qualityKey] ? ` · ${selectedSummary[qualityKey]}` : ""}.
 				</p>
 			)}
 		</div>

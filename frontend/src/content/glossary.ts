@@ -281,6 +281,14 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "Backcheck bedeutet: Forwards arbeiten zurück, schließen die Mitte, nehmen Trailer weg und helfen, den Rush zu entschärfen, bevor er gefährlich wird.",
     tags: ["später"],
   },
+  backchecking: {
+    label: "Backchecking",
+    short: "Rückwärtsarbeit nach Puckverlust mit dem Ziel, die Optionen des Gegners zu reduzieren.",
+    long:
+      "Backchecking beschreibt die Rückwärtsarbeit nach einem Puckverlust. Ein Spieler verfolgt den gegnerischen Angriff von hinten und versucht, Einfluss auf die Situation zu nehmen.\n\nZiel ist nicht nur, zurückzulaufen, sondern:\n• Raum zu reduzieren\n• Passwege zu schließen\n• den Gegner nach außen zu lenken\n• defensive Unterstützung zu ermöglichen\n\nWichtig: Backchecking wird nicht nach Einsatz oder Geschwindigkeit bewertet, sondern danach, ob sich die Optionen des Gegners verändern.",
+    synonyms: ["Backchecker", "Backchecking-Aktion", "Rückwärtsarbeit"],
+    tags: ["A3", "Transition", "Defensive"],
+  },
   shift: {
     label: "Shift",
     short: "Einsatzzeit eines Spielers ohne Wechsel (meist 30–60 Sekunden).",

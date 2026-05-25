@@ -182,7 +182,8 @@
     "team_home": "USA",
     "team_away": "Schweden",
     "observed_team": "USA",
-    "date": "2026-02-18T20:03:23.028Z"
+    "date": "2026-02-18T20:03:23.028Z",
+    "season": "2026"
   },
   "observed_team": null,
   "microfeedback": {

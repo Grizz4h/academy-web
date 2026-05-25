@@ -1,12 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useUser } from '../context/UserContext'
 import { renderWithGlossary } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
 import { teamsByLeague, LEAGUES } from '../data/teamsByLeague'
+import { resolveDrillId } from '../stats/exposureStats'
+import {
+  isSplitSeasonLeague,
+  normalizeSeasonValue,
+  SEASON_OPTIONS,
+  TOURNAMENT_YEAR_OPTIONS,
+} from '../stats/seasonNormalization'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
@@ -68,6 +75,8 @@ export default function SessionSetup() {
   const [season, setSeason] = useState<string>('')
   const [matchday, setMatchday] = useState<string>('')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
+  const useSplitSeason = isSplitSeasonLeague(league)
+  const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -133,6 +142,12 @@ export default function SessionSetup() {
     gcTime: 0
   })
 
+  const { data: sessions } = useQuery({
+    queryKey: ['sessions', user],
+    queryFn: () => api.getSessions(user || undefined),
+    enabled: Boolean(user)
+  })
+
   // Debug: Log teams response
   useEffect(() => {
     console.log('DEBUG teamsResp:', { league, teamsResp })
@@ -161,6 +176,71 @@ export default function SessionSetup() {
   // Finde aktuelles Modul
   const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
 
+  const matchupPanelData = useMemo(() => {
+    if (!currentModule) return null
+    if (!league || !teamHome || !teamAway) return null
+
+    const seasonFilter = normalizeSeasonValue(season, league) || ''
+    const allSessions = sessions || []
+    const matchupSessions = allSessions.filter((session) => {
+      const gameInfo = session.game_info
+      if (!gameInfo) return false
+      if (gameInfo.league !== league) return false
+      if (gameInfo.team_home !== teamHome || gameInfo.team_away !== teamAway) return false
+      const normalizedSessionSeason = normalizeSeasonValue(gameInfo.season, gameInfo.league)
+      if (seasonFilter && normalizedSessionSeason !== seasonFilter) return false
+      return true
+    })
+
+    const currentDrillId = selectedDrill || currentModule.drills?.[0]?.id
+    const currentDrillUses = currentDrillId
+      ? matchupSessions.filter((session) => resolveDrillId(session) === currentDrillId).length
+      : 0
+
+    const moduleDrillIds = currentModule.drills.map((drill) => drill.id)
+    const moduleMatchupSessions = matchupSessions.filter((session) => session.module_id === currentModule.id)
+    const moduleDrillUsageCounts = moduleMatchupSessions.reduce<Record<string, number>>((acc, session) => {
+      const drillId = resolveDrillId(session)
+      if (!drillId || !moduleDrillIds.includes(drillId)) return acc
+      acc[drillId] = (acc[drillId] || 0) + 1
+      return acc
+    }, {})
+
+    const usedModuleDrills = new Set(Object.keys(moduleDrillUsageCounts))
+
+    const moduleDrillProgress = currentModule.drills.map((drill) => ({
+      id: drill.id,
+      title: drill.title,
+      used: usedModuleDrills.has(drill.id),
+      usageCount: moduleDrillUsageCounts[drill.id] || 0
+    }))
+
+    const lastSeen = [...matchupSessions]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]?.created_at
+    const knownMatchup = matchupSessions.length > 0
+    const drillAlreadyUsed = currentDrillUses > 0
+    const level: 'neutral' | 'amber' | 'danger' = !knownMatchup
+      ? 'neutral'
+      : drillAlreadyUsed
+        ? 'danger'
+        : 'amber'
+
+    const moduleSessionsCount = moduleMatchupSessions.length
+
+    return {
+      level,
+      knownMatchup,
+      sessionCount: matchupSessions.length,
+      currentDrillUses,
+      lastSeen,
+      usedModuleDrills,
+      moduleDrillProgress,
+      moduleSessionsCount,
+      currentDrillId,
+      seasonFilter
+    }
+  }, [currentModule, league, season, teamHome, teamAway, sessions, selectedDrill])
+
   // Debug-Ausgaben: immer ganz oben, niemals nach einem return!
   useEffect(() => {
     console.log('SessionSetup Debug:', {
@@ -171,16 +251,57 @@ export default function SessionSetup() {
     })
   }, [moduleId, currentModule, selectedDrill])
 
-  if (!currentModule) {
-    return <div className="card">Modul nicht gefunden</div>
-  }
-
   // Ersten Drill standardmäßig vorauswählen (A1 UX: sofort startbar)
   useEffect(() => {
-    if (!selectedDrill && currentModule?.drills?.length) {
+    if (!currentModule?.drills?.length) return
+    if (!selectedDrill) {
       setSelectedDrill(currentModule.drills[0].id)
     }
   }, [currentModule, selectedDrill])
+
+  const availableTeams = (() => {
+    if (!league) return []
+
+    // Für DEL: API-Teams als Fallback, sonst teamsByLeague
+    if (league === 'DEL') {
+      const apiTeams = teamsResp?.teams?.map(t => t.name) || []
+      if (apiTeams.length > 0) return apiTeams
+    }
+
+    // Alle anderen Leagues (CHL, NHL, Nationalmannschaften, etc.) aus teamsByLeague
+    return teamsByLeague[league] ?? []
+  })()
+
+  // Reset Teams wenn sie bei League-Wechsel nicht mehr in der Liste sind
+  useEffect(() => {
+    if (!availableTeams.length) return
+
+    if (teamHome && !availableTeams.includes(teamHome)) {
+      setTeamHome('')
+    }
+    if (teamAway && !availableTeams.includes(teamAway)) {
+      setTeamAway('')
+    }
+    if (observedTeam && !availableTeams.includes(observedTeam)) {
+      setObservedTeam('')
+    }
+  }, [league, availableTeams, teamHome, teamAway, observedTeam])
+
+  useEffect(() => {
+    if (!season) return
+    const normalized = normalizeSeasonValue(season, league)
+    if (!normalized || !seasonOptions.includes(normalized)) {
+      setSeason('')
+      return
+    }
+    if (normalized !== season) {
+      setSeason(normalized)
+    }
+  }, [league, season, seasonOptions])
+
+  if (!currentModule) {
+    return <div className="card">Modul nicht gefunden</div>
+  }
 
   const handleCreateSession = () => {
     if (!user?.trim()) {
@@ -212,7 +333,8 @@ export default function SessionSetup() {
       observed_team: observedTeam,
       date: new Date().toISOString()
     }
-    if (season.trim()) gameInfo.season = season.trim()
+    const normalizedSeason = normalizeSeasonValue(season, league)
+    if (normalizedSeason) gameInfo.season = normalizedSeason
     if (matchday.trim()) gameInfo.matchday = matchday.trim()
     // Hinweis: Divisionen NICHT an Backend senden, nur intern nutzen
 
@@ -232,34 +354,6 @@ export default function SessionSetup() {
     lastPayloadRef.current = payload
     createSessionMutation.mutate(payload)
   }
-
-  const availableTeams = (() => {
-    if (!league) return []
-    
-    // Für DEL: API-Teams als Fallback, sonst teamsByLeague
-    if (league === 'DEL') {
-      const apiTeams = teamsResp?.teams?.map(t => t.name) || []
-      if (apiTeams.length > 0) return apiTeams
-    }
-    
-    // Alle anderen Leagues (CHL, NHL, Nationalmannschaften, etc.) aus teamsByLeague
-    return teamsByLeague[league] ?? []
-  })()
-
-  // Reset Teams wenn sie bei League-Wechsel nicht mehr in der Liste sind
-  useEffect(() => {
-    if (!availableTeams.length) return
-    
-    if (teamHome && !availableTeams.includes(teamHome)) {
-      setTeamHome('')
-    }
-    if (teamAway && !availableTeams.includes(teamAway)) {
-      setTeamAway('')
-    }
-    if (observedTeam && !availableTeams.includes(observedTeam)) {
-      setObservedTeam('')
-    }
-  }, [league, availableTeams])
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -379,22 +473,23 @@ export default function SessionSetup() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
           <label style={{ display: 'block' }}>
             Saison <span style={{ color: 'rgba(255,255,255,0.6)' }}>(optional)</span>
-            <input
-              type="text"
+            <select
+              className="appSelect"
               value={season}
               onChange={(e) => setSeason(e.target.value)}
-              placeholder="z.B. 2025/26"
-              maxLength={1500}
+              disabled={!league}
               style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.35rem',
-                backgroundColor: '#050712',
-                color: '#f7f7ff',
-                border: '1px solid #5191a2',
-                borderRadius: '4px'
+                marginTop: '0.35rem'
               }}
-            />
+            >
+              <option value="">-- Saison wählen --</option>
+              {seasonOptions.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+            <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+              {useSplitSeason ? 'Liga-Modus: Split-Season (z. B. 2025/26)' : 'Turnier-Modus: Jahreszahl (z. B. 2026)'}
+            </div>
           </label>
 
           <label style={{ display: 'block' }}>
@@ -434,6 +529,94 @@ export default function SessionSetup() {
         )}
       </div>
 
+      {matchupPanelData && (
+        <div
+          className="card"
+          style={{
+            border:
+              matchupPanelData.level === 'danger'
+                ? '1px solid rgba(255, 99, 132, 0.65)'
+                : matchupPanelData.level === 'amber'
+                  ? '1px solid rgba(255, 191, 64, 0.65)'
+                  : '1px solid rgba(90, 210, 255, 0.65)',
+            background:
+              matchupPanelData.level === 'danger'
+                ? 'linear-gradient(140deg, rgba(255, 62, 124, 0.12), rgba(8, 16, 35, 0.8))'
+                : matchupPanelData.level === 'amber'
+                  ? 'linear-gradient(140deg, rgba(255, 192, 64, 0.12), rgba(8, 16, 35, 0.8))'
+                  : 'linear-gradient(140deg, rgba(90, 210, 255, 0.12), rgba(8, 16, 35, 0.8))'
+          }}
+        >
+          <h2 style={{ marginBottom: '0.35rem' }}>Matchup Check</h2>
+          <div style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.85)' }}>
+            {teamHome} vs {teamAway}
+          </div>
+          {!matchupPanelData.seasonFilter && (
+            <div style={{ marginTop: '0.35rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)' }}>
+              Saison nicht gesetzt - Auswertung über alle Saisons.
+            </div>
+          )}
+
+          {!matchupPanelData.knownMatchup && (
+            <p style={{ marginTop: '0.75rem', color: '#9fe9ff' }}>
+              Noch keine Analyse für diese Paarung.
+            </p>
+          )}
+
+          {matchupPanelData.knownMatchup && matchupPanelData.currentDrillUses === 0 && (
+            <>
+              <p style={{ marginTop: '0.75rem', color: '#ffd17c' }}>
+                Diese Paarung wurde bereits {matchupPanelData.sessionCount}-mal analysiert.
+              </p>
+              <p style={{ marginTop: '0.35rem', color: '#ffd17c' }}>
+                Dieser Drill wurde für diese Paarung noch nicht genutzt.
+              </p>
+            </>
+          )}
+
+          {matchupPanelData.knownMatchup && matchupPanelData.currentDrillUses > 0 && (
+            <>
+              <p style={{ marginTop: '0.75rem', color: '#ff9fbe' }}>
+                Diese Paarung wurde bereits {matchupPanelData.sessionCount}-mal analysiert.
+              </p>
+              <p style={{ marginTop: '0.35rem', color: '#ff9fbe' }}>
+                Achtung: Diesen Drill hast du auf diese Paarung bereits {matchupPanelData.currentDrillUses}-mal gemacht.
+              </p>
+              {matchupPanelData.lastSeen && (
+                <p style={{ marginTop: '0.35rem', color: 'rgba(255,255,255,0.75)' }}>
+                  Zuletzt: {new Date(matchupPanelData.lastSeen).toLocaleDateString('de-DE')}
+                </p>
+              )}
+            </>
+          )}
+
+          <div style={{ marginTop: '0.95rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+            <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{currentModule.id}-Fortschritt für diese Paarung</div>
+            <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+              {matchupPanelData.moduleDrillProgress.map((drill) => (
+                <span
+                  key={drill.id}
+                  title={drill.title}
+                  style={{
+                    borderRadius: '999px',
+                    border: drill.used ? '1px solid rgba(94, 234, 212, 0.7)' : '1px solid rgba(255,255,255,0.25)',
+                    color: drill.used ? '#8ef4d7' : 'rgba(255,255,255,0.82)',
+                    background: drill.used ? 'rgba(22, 163, 74, 0.18)' : 'rgba(15, 23, 42, 0.5)',
+                    padding: '0.25rem 0.6rem',
+                    fontSize: '0.82rem'
+                  }}
+                >
+                  {drill.used ? '✓' : '○'} {drill.id}
+                </span>
+              ))}
+            </div>
+            <p style={{ marginTop: '0.6rem', color: 'rgba(255,255,255,0.8)' }}>
+              Bereits {matchupPanelData.moduleSessionsCount} Sessions in diesem Modul.
+            </p>
+          </div>
+        </div>
+      )}
+
       {currentModule.drills && currentModule.drills.length > 0 && (
         <div className="card">
           <h2>Wähle deine Übung</h2>
@@ -441,7 +624,29 @@ export default function SessionSetup() {
             Alle Übungen trainieren das gleiche Modul – wähle je nach Situation und Fokus.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
-            {currentModule.drills.map((drill) => (
+            {currentModule.drills.map((drill) => {
+              const usageCount = matchupPanelData?.knownMatchup
+                ? (matchupPanelData.moduleDrillProgress.find((item) => item.id === drill.id)?.usageCount || 0)
+                : 0
+              const isDoneForMatchup = usageCount > 0
+              const badgeStyles = usageCount >= 2
+                ? {
+                    border: '1px solid rgba(94, 234, 212, 0.65)',
+                    color: '#8ef4d7',
+                    background: 'rgba(22, 163, 74, 0.18)'
+                  }
+                : usageCount === 1
+                  ? {
+                      border: '1px solid rgba(255, 191, 64, 0.65)',
+                      color: '#ffd17c',
+                      background: 'rgba(255, 191, 64, 0.12)'
+                    }
+                  : {
+                      border: '1px solid rgba(90, 210, 255, 0.65)',
+                      color: '#9fe9ff',
+                      background: 'rgba(90, 210, 255, 0.12)'
+                    }
+              return (
               <label key={drill.id} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem', border: selectedDrill === drill.id ? '2px solid #5191a2' : '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', cursor: 'pointer', backgroundColor: selectedDrill === drill.id ? 'rgba(81,145,162,0.1)' : 'transparent', overflow: 'hidden' }}>
                 <input
                   type="radio"
@@ -452,11 +657,26 @@ export default function SessionSetup() {
                   style={{ marginRight: '0.5rem', cursor: 'pointer', flexShrink: 0 }}
                 />
                 <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-                  <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>
+                    {matchupPanelData?.knownMatchup && (
+                      <span
+                        style={{
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '999px',
+                          fontSize: '0.72rem',
+                          fontWeight: 600,
+                          ...badgeStyles
+                        }}
+                      >
+                        {isDoneForMatchup ? `${usageCount}x gemacht` : 'neu für Paarung'}
+                      </span>
+                    )}
+                  </div>
                   <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.description}</div>
                 </div>
               </label>
-            ))}
+            )})}
           </div>
         </div>
       )}

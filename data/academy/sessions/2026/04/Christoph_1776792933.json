@@ -1,0 +1,313 @@
+{
+  "id": "Christoph_1776792933",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "A3",
+  "goal": "Auto: A3 – Transition & Tempo",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A3_D4",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-04-21T19:35:33.174677",
+  "drills": [
+    {
+      "id": "A3_D4",
+      "title": "Backchecking & Rückwärtsarbeit",
+      "drill_type": "event_log",
+      "description": "Beobachte Backchecking-Situationen im Umschaltmoment. Zentrale Frage: Verändert der Backchecker, was der Gegner tun kann?",
+      "didactics": {
+        "explanation": "Backchecking ist keine Frage von Einsatz oder Tempo – es ist eine Frage von Wirkung.\n\nNicht bewerten: wie schnell er ist, wie viel er läuft, ob er sich bemüht.\n\nSondern: ob sich die Optionen des Gegners verändern.\n\nLeitfrage: Verändert sich die Entscheidung des Gegners?",
+        "observation_guide": {
+          "when_to_observe": [
+            "Gegner gewinnt den Puck",
+            "Gegner startet in die Transition",
+            "Backchecker kommt von hinten ins Spiel"
+          ],
+          "what_to_watch": [
+            "Abstand zum Puckträger",
+            "Laufweg und Winkel des Backcheckers",
+            "Nimmt er Wege oder Optionen weg?",
+            "Muss der Gegner etwas anpassen?"
+          ],
+          "how_to_decide": [
+            "Verändert sich die Entscheidung des Gegners? → ja = Impact",
+            "Macht der Gegner trotzdem das, was er geplant hatte? → nein = kein Impact",
+            "Auch nah dran sein reicht nicht – entscheidend ist nur: Hat sich etwas für den Gegner verändert?"
+          ],
+          "common_mistakes": [
+            "Viel Tempo bedeutet nicht automatisch gutes Backchecking",
+            "Nähe zum Gegner bedeutet nicht automatisch Einfluss",
+            "Einsatz ist nicht gleich Wirkung"
+          ]
+        },
+        "inline_explanations": {
+          "Raum reduziert": {
+            "meaning": "Der Backchecker verengt den verfügbaren Raum für den Puckträger – der Gegner hat weniger Platz zum Arbeiten."
+          },
+          "Passoption genommen": {
+            "meaning": "Durch die Position oder den Winkel des Backcheckers wird eine Passroute des Gegners blockiert oder unattraktiv."
+          },
+          "nach außen gedrängt": {
+            "meaning": "Der Gegner wird durch die Backchecking-Bewegung in einen weniger gefährlichen Bereich gelenkt (Außen, Bande)."
+          },
+          "Druck ermöglicht": {
+            "meaning": "Durch die saubere Rückwärtsarbeit kann die Defense schneller helfen oder der Gegner wird unter sofortigen Druck gesetzt."
+          },
+          "zu weit weg": {
+            "meaning": "Der Backchecker ist zu weit vom Puck oder den relevanten Passwegen entfernt, um Einfluss auszuüben."
+          },
+          "zu spät": {
+            "meaning": "Die Rückwärtsarbeit kommt zu spät – der Gegner hat seine Entscheidung bereits getroffen, bevor der Backchecker Einfluss nehmen konnte."
+          },
+          "falsche Linie": {
+            "meaning": "Der Backchecker läuft auf der falschen Route zurück – er deckt nicht den relevanten Passweg oder Raum."
+          },
+          "nur hinterhergelaufen": {
+            "meaning": "Der Spieler läuft hinterher, aber es ändert sich nichts an den Optionen des Gegners. Der Gegner macht trotzdem das, was er geplant hatte."
+          }
+        },
+        "learning_hint": "Gutes Backchecking erkennst du daran, dass der Gegner weniger Optionen hat. Schlechtes Backchecking ist unsichtbar – der Gegner merkt es gar nicht."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "backchecking_impact": "ja"
+            },
+            "questions": [
+              "Was genau hat sich für den Gegner verändert – Raum, Passwege, oder Richtung?",
+              "War die Wirkung sofort sichtbar oder erst verzögert erkennbar?",
+              "Hätte der Gegner ohne diesen Backchecker dieselbe Option gehabt?"
+            ]
+          },
+          {
+            "when": {
+              "backchecking_impact": "nein"
+            },
+            "questions": [
+              "Woran lag es – Timing, Distanz, oder falsche Linie?",
+              "Was hätte der Backchecker anders machen müssen, um Einfluss zu haben?",
+              "Hat der Gegner seine ursprüngliche Option trotzdem durchgezogen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "event_key": "backchecking_events",
+        "event_label": "Aktion",
+        "fields": [
+          {
+            "key": "backchecking_impact",
+            "type": "select",
+            "label": "Einfluss?",
+            "options": [
+              "ja",
+              "nein"
+            ]
+          },
+          {
+            "key": "impact_type",
+            "type": "select",
+            "label": "Grund",
+            "options_by_value_of": {
+              "backchecking_impact": {
+                "ja": [
+                  "Raum reduziert",
+                  "Passoption genommen",
+                  "nach außen gedrängt",
+                  "Druck ermöglicht"
+                ],
+                "nein": [
+                  "zu weit weg",
+                  "zu spät",
+                  "falsche Linie",
+                  "nur hinterhergelaufen"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-04-21T19:35:35.242428"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "backchecking_events": [
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "Passoption genommen"
+          },
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "Druck ermöglicht"
+          },
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "Raum reduziert"
+          },
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "Raum reduziert"
+          },
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "nach außen gedrängt"
+          }
+        ]
+      },
+      "timestamp": "2026-04-21T20:25:07.477538"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "backchecking_events": [
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "nach außen gedrängt"
+          },
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "Druck ermöglicht"
+          },
+          {
+            "backchecking_impact": "ja",
+            "impact_type": "nach außen gedrängt"
+          },
+          {
+            "backchecking_impact": "nein",
+            "impact_type": "nur hinterhergelaufen"
+          },
+          {
+            "backchecking_impact": "nein",
+            "impact_type": "zu spät"
+          }
+        ]
+      },
+      "timestamp": "2026-04-21T21:04:04.555464"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "backchecking_events": [
+          {
+            "backchecking_impact": "nein",
+            "impact_type": "zu weit weg"
+          }
+        ]
+      },
+      "timestamp": "2026-04-21T21:47:36.999184"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-04-21T21:47:42.131028"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "backchecking_events": [
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "Passoption genommen"
+        },
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "Druck ermöglicht"
+        },
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "Raum reduziert"
+        },
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "Raum reduziert"
+        },
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "nach außen gedrängt"
+        }
+      ]
+    },
+    "P2": {
+      "backchecking_events": [
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "nach außen gedrängt"
+        },
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "Druck ermöglicht"
+        },
+        {
+          "backchecking_impact": "ja",
+          "impact_type": "nach außen gedrängt"
+        },
+        {
+          "backchecking_impact": "nein",
+          "impact_type": "nur hinterhergelaufen"
+        },
+        {
+          "backchecking_impact": "nein",
+          "impact_type": "zu spät"
+        }
+      ]
+    },
+    "P3": {
+      "backchecking_events": [
+        {
+          "backchecking_impact": "nein",
+          "impact_type": "zu weit weg"
+        }
+      ]
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-04-21T21:47:42.259792"
+  },
+  "game_info": {
+    "league": "DEL2",
+    "team_home": "Krefeld Pinguine",
+    "team_away": "EC Kassel Huskies",
+    "observed_team": "Krefeld Pinguine",
+    "date": "2026-04-21T17:35:33.145Z",
+    "season": "2025/26",
+    "matchday": "Playoff Final Spiel 3"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Passwege und Raum",
+      "ts": "2026-04-21T20:25:16.691143"
+    },
+    "P2": {
+      "done": true,
+      "text": "Passwege und Raum",
+      "ts": "2026-04-21T21:04:10.677420"
+    },
+    "P3": {
+      "done": true,
+      "text": "Raum",
+      "ts": "2026-04-21T21:47:40.185218"
+    }
+  }
+}

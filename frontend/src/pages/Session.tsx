@@ -5,7 +5,7 @@ import { useUser } from '../context/UserContext'
 import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -58,6 +58,27 @@ export default function SessionPage() {
     queryKey: ['session', id],
     queryFn: () => api.getSession(id!)
   })
+
+  const { data: curriculum } = useQuery({
+    queryKey: ['curriculum'],
+    queryFn: () => api.getCurriculum(),
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const activeDrill = useMemo(() => {
+    const sessionDrill = session?.drills?.[0]
+    if (!sessionDrill) return null
+
+    const tracks = curriculum?.tracks
+    if (!Array.isArray(tracks)) return sessionDrill
+
+    const module = tracks
+      .flatMap((track: any) => track.modules || [])
+      .find((m: any) => m.id === session?.module_id)
+
+    const latest = module?.drills?.find((d: any) => d.id === sessionDrill.id)
+    return latest || sessionDrill
+  }, [session, curriculum])
 
   useEffect(() => {
     remoteDraftsRef.current = session?.drafts || {}
@@ -526,9 +547,9 @@ export default function SessionPage() {
           {(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') && (
             <div>
               <p>Analysiere das letzte Drittel und gib Feedback.</p>
-              {session.drills && session.drills.length > 0 ? (
+              {activeDrill ? (
                 <DrillRendererRouter
-                  drill={session.drills[0]}
+                  drill={activeDrill}
                   answers={answersByPhase[currentPhase]}
                   setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
                   initialAnswers={answersByPhase[currentPhase]}
@@ -605,15 +626,37 @@ export default function SessionPage() {
 
       {/* Microfeedback Modal */}
       {showMicroModal && (() => {
-        const drill = session?.drills?.[0]
+        const drill = activeDrill
         let question = 'Bitte gib ein kurzes Feedback.'
         if (drill && (drill as any).miniFeedback && Array.isArray((drill as any).miniFeedback.groups) && (drill as any).miniFeedback.groups.length > 0) {
           const answers = answersByPhase[currentPhase] || {}
+          const sampleKey = (drill as any)?.config?.sample_key
+          const samples = sampleKey && Array.isArray((answers as any)[sampleKey])
+            ? (answers as any)[sampleKey]
+            : (Array.isArray((answers as any).support_samples) ? (answers as any).support_samples : [])
+          const selectedIdx = Number.isInteger((answers as any).selected_sample_index)
+            ? (answers as any).selected_sample_index
+            : (samples.length > 0 ? samples.length - 1 : -1)
+          const selectedSample = selectedIdx >= 0 && selectedIdx < samples.length ? samples[selectedIdx] : null
+
+          const resolveWhenValue = (key: string): any => {
+            if (key.startsWith('sample.') && selectedSample) {
+              return selectedSample[key.slice('sample.'.length)]
+            }
+            if ((answers as any)[key] !== undefined) {
+              return (answers as any)[key]
+            }
+            if (selectedSample && (selectedSample as any)[key] !== undefined) {
+              return (selectedSample as any)[key]
+            }
+            return undefined
+          }
+
           let found = false
           for (const group of (drill as any).miniFeedback.groups) {
             let match = true
             for (const key in group.when) {
-              if (answers[key] !== group.when[key]) {
+              if (resolveWhenValue(key) !== group.when[key]) {
                 match = false
                 break
               }

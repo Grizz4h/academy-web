@@ -206,33 +206,43 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         unlocked_masteries: result.unlockedMasteries,
       })
 
+      const nextState = normalizeRewardState(response.state)
+      const unlockedAchievementDelta = Object.keys(nextState.unlockedAchievements).filter(
+        (id) => !rewardState.unlockedAchievements[id],
+      )
+      const unlockedMasteryDelta = Object.keys(nextState.unlockedMasteries).filter(
+        (key) => !rewardState.unlockedMasteries[key],
+      )
+
       setRewardState(normalizeRewardState(response.state))
-      if (response.reward_events.length > 0) {
-        enqueueRewards(response.reward_events as RewardEvent[])
-      } else if (result.rewardEvents.length > 0) {
-        const unlockedAchievements = response.state?.unlockedAchievements || {}
-        const unlockedMasteries = response.state?.unlockedMasteries || {}
 
-        const fallbackEvents = result.rewardEvents.filter((event) => {
-          if (event.kind === 'achievement' && event.achievementId) {
-            const wasUnlockedBefore = Boolean(rewardState.unlockedAchievements[event.achievementId])
-            const isUnlockedNow = Boolean(unlockedAchievements[event.achievementId])
-            return !wasUnlockedBefore && isUnlockedNow
-          }
-
-          if (event.kind === 'mastery' && event.id.startsWith('mastery:')) {
-            const masteryKey = event.id.slice('mastery:'.length)
-            const wasUnlockedBefore = Boolean(rewardState.unlockedMasteries[masteryKey])
-            const isUnlockedNow = Boolean(unlockedMasteries[masteryKey])
-            return !wasUnlockedBefore && isUnlockedNow
-          }
-
-          return false
-        })
-
-        if (fallbackEvents.length > 0) {
-          enqueueRewards(fallbackEvents)
+      const serverEvents = (response.reward_events || []) as RewardEvent[]
+      const fallbackEvents = result.rewardEvents.filter((event) => {
+        if (event.kind === 'achievement' && event.achievementId) {
+          return unlockedAchievementDelta.includes(event.achievementId)
         }
+
+        if (event.kind === 'mastery' && event.id.startsWith('mastery:')) {
+          const masteryKey = event.id.slice('mastery:'.length)
+          return unlockedMasteryDelta.includes(masteryKey)
+        }
+
+        return false
+      })
+
+      const mergedEventsById = new Map<string, RewardEvent>()
+      for (const event of serverEvents) {
+        if (event?.id) mergedEventsById.set(event.id, event)
+      }
+      for (const event of fallbackEvents) {
+        if (event?.id && !mergedEventsById.has(event.id)) {
+          mergedEventsById.set(event.id, event)
+        }
+      }
+
+      const mergedEvents = Array.from(mergedEventsById.values())
+      if (mergedEvents.length > 0) {
+        enqueueRewards(mergedEvents)
       }
     } catch (err) {
       console.error('Failed to apply rewards on server, using local fallback', err)
