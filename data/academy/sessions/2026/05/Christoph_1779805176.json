@@ -1,0 +1,308 @@
+{
+  "id": "Christoph_1779805176",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B1",
+  "goal": "Auto: B1 – Center-Detailarbeit",
+  "confidence": 2,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B1_D1",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-05-26T16:19:36.005833",
+  "drills": [
+    {
+      "id": "B1_D1",
+      "title": "Support unter dem Puck (Center-Reads)",
+      "drill_type": "sample_log",
+      "description": "Logge 2-3 bewusst gewählte Support-Momente: War der Center wirklich spielbar oder nur in der Nähe?",
+      "didactics": {
+        "explanation": "Der Center ist der zentrale Verbindungsspieler. Gute Unterstützung entsteht nicht durch Nähe, sondern durch Winkel, Timing und Spielbarkeit. Der Drill bewertet nicht primär die Position des Centers, sondern ob durch seine Bewegung eine echte Lösungsoption entsteht: Druck entlasten, Anschluss ermöglichen und eine einfache nächste Aktion öffnen.",
+        "glossary": {
+          "spielbar": "Ein Spieler ist spielbar, wenn der Puckführer ihn sofort sinnvoll anspielen kann. Dazu gehören erreichbarer Passwinkel, rechtzeitige Unterstützung, Anschlussmöglichkeiten nach dem Pass und Nutzbarkeit unter Druck. Spielbar bedeutet nicht nur 'steht frei', sondern 'hilft konkret bei der Lösung der Situation'. Kurzform: Sofort sinnvoll anspielbar und unter Druck nutzbar.",
+          "anspielbar": "Anspielbar beschreibt die direkte Passoption: Der Spieler kann sofort sinnvoll angespielt werden und bleibt auch unter Druck nutzbar."
+        },
+        "observation_guide": {
+          "what_to_watch": [
+            "Abstand des Centers zum Puckführer",
+            "Winkel und Körperstellung zur Spielfortsetzung",
+            "Timing: bewegt sich der Center vor oder nach dem Druck?"
+          ],
+          "how_to_decide": [
+            "Beobachte nur den Center ohne Puck",
+            "Frage dich: Ist der Center sofort anspielbar?",
+            "Frage dich: Wird der Puckführer durch den Center ruhiger, sicherer oder lösbarer?",
+            "Achte auf Winkel, nicht auf Meter",
+            "Unterstützung muss vor dem Druck da sein, nicht danach"
+          ],
+          "common_mistakes": [
+            "Frei stehen bedeutet nicht automatisch spielbar",
+            "Nähe allein bedeutet nicht automatisch gute Unterstützung",
+            "Gute Unterstützung ist früh, erreichbar und hilft dem Puckführer konkret weiter"
+          ],
+          "ignore": [
+            "Wie der Angriff endet",
+            "Individuelle technische Fehler",
+            "Abschluss oder Tor"
+          ]
+        },
+        "learning_hint": "Gute Center-Unterstützung ist früh, spielbar und lösungsorientiert – nicht reaktiv. Gute Unterstützung erkennst du daran, dass der Puckführer sofort eine einfache Anschlusslösung hat."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "support_state": "klar spielbar"
+            },
+            "questions": [
+              "Wodurch war dieser Support-Moment klar spielbar?",
+              "Was hat in diesem Moment den größten Entlastungseffekt erzeugt?",
+              "War die Unterstützung früh vorbereitet oder spontan?"
+            ]
+          },
+          {
+            "when": {
+              "support_state": "eingeschränkt"
+            },
+            "questions": [
+              "Was hat in diesem Moment zur klaren Spielbarkeit gefehlt?",
+              "War eher Winkel, Abstand oder Timing das Kernproblem?",
+              "Was hätte den gleichen Moment direkt entlastet?"
+            ]
+          },
+          {
+            "when": {
+              "support_state": "keine echte Option"
+            },
+            "questions": [
+              "Warum war dieser Moment keine echte Unterstützung?",
+              "Woran lag es primär: Distanz, Sichtlinie, Reaktion oder Idee?",
+              "Wie hätte eine einfache Support-Lösung konkret ausgesehen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "sample_key": "support_samples",
+        "sample_label": "Support-Moment",
+        "max_samples_per_phase": 3,
+        "state_key": "support_state",
+        "factor_key": "main_factor",
+        "note_key": "note",
+        "note_max_chars": 120,
+        "state_options": [
+          "klar spielbar",
+          "eingeschränkt",
+          "keine echte Option"
+        ],
+        "factors_by_state": {
+          "klar spielbar": [
+            "früh geöffnet",
+            "guter Winkel",
+            "Druck entlastet",
+            "gute Vororientierung"
+          ],
+          "eingeschränkt": [
+            "Winkel schlecht",
+            "Abstand problematisch",
+            "Timing zu spät",
+            "Druck bereits da"
+          ],
+          "keine echte Option": [
+            "zu weit weg",
+            "verdeckt",
+            "zu spät reagiert",
+            "keine Unterstützungsidee"
+          ]
+        }
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-05-26T16:19:38.239381"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "support_samples": [
+          {
+            "support_state": "klar spielbar",
+            "main_factor": "guter Winkel",
+            "note": ""
+          },
+          {
+            "support_state": "klar spielbar",
+            "main_factor": "früh geöffnet",
+            "note": ""
+          },
+          {
+            "support_state": "klar spielbar",
+            "main_factor": "gute Vororientierung",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 0
+      },
+      "timestamp": "2026-05-26T17:15:50.737082"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "support_samples": [
+          {
+            "support_state": "keine echte Option",
+            "main_factor": "keine Unterstützungsidee",
+            "note": ""
+          },
+          {
+            "support_state": "klar spielbar",
+            "main_factor": "früh geöffnet",
+            "note": ""
+          },
+          {
+            "support_state": "keine echte Option",
+            "main_factor": "zu spät reagiert",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 2
+      },
+      "timestamp": "2026-05-26T17:50:50.516303"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "support_samples": [
+          {
+            "support_state": "keine echte Option",
+            "main_factor": "verdeckt",
+            "note": ""
+          },
+          {
+            "support_state": "eingeschränkt",
+            "main_factor": "Timing zu spät",
+            "note": ""
+          },
+          {
+            "support_state": "keine echte Option",
+            "main_factor": "zu spät reagiert",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 1
+      },
+      "timestamp": "2026-05-26T18:36:30.323438"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-05-26T18:36:59.488635"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "support_samples": [
+        {
+          "support_state": "klar spielbar",
+          "main_factor": "guter Winkel",
+          "note": ""
+        },
+        {
+          "support_state": "klar spielbar",
+          "main_factor": "früh geöffnet",
+          "note": ""
+        },
+        {
+          "support_state": "klar spielbar",
+          "main_factor": "gute Vororientierung",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 0
+    },
+    "P2": {
+      "support_samples": [
+        {
+          "support_state": "keine echte Option",
+          "main_factor": "keine Unterstützungsidee",
+          "note": ""
+        },
+        {
+          "support_state": "klar spielbar",
+          "main_factor": "früh geöffnet",
+          "note": ""
+        },
+        {
+          "support_state": "keine echte Option",
+          "main_factor": "zu spät reagiert",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 2
+    },
+    "P3": {
+      "support_samples": [
+        {
+          "support_state": "keine echte Option",
+          "main_factor": "verdeckt",
+          "note": ""
+        },
+        {
+          "support_state": "eingeschränkt",
+          "main_factor": "Timing zu spät",
+          "note": ""
+        },
+        {
+          "support_state": "keine echte Option",
+          "main_factor": "zu spät reagiert",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 1
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-05-26T18:36:59.712918"
+  },
+  "game_info": {
+    "league": "Nationalmannschaften",
+    "team_home": "Österreich",
+    "team_away": "USA",
+    "observed_team": "USA",
+    "date": "2026-05-26T14:19:35.801Z",
+    "season": "2026",
+    "matchday": "WM Spieltag 7"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "der Abstand hat gepasst und der Winkel zum Puckführer. und der Weg war nicht blockiert",
+      "ts": "2026-05-26T17:16:23.891466"
+    },
+    "P2": {
+      "done": true,
+      "text": "zu weit weg und die mitte stark vernachlässigt",
+      "ts": "2026-05-26T17:51:08.979250"
+    },
+    "P3": {
+      "done": true,
+      "text": "der Center hing etwas hinter dem Puck und konnte dadurch nicht unterstützen",
+      "ts": "2026-05-26T18:36:56.636086"
+    }
+  }
+}

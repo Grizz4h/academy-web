@@ -1,0 +1,346 @@
+{
+  "id": "Christoph_1780164386",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B1",
+  "goal": "Auto: B1 – Center-Detailarbeit",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B1_D4",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-05-30T20:06:26.741582",
+  "drills": [
+    {
+      "id": "B1_D4",
+      "title": "Center als Outlet & Anschlussoption",
+      "drill_type": "sample_log",
+      "description": "Achte auf Druck- oder Chaosmomente. Beobachte, ob der Center als Anschlussoption verfügbar wird und Verbindungen aufrechterhält.",
+      "didactics": {
+        "explanation": "Dieser Drill bewertet nicht, wann Isolation exakt beginnt, sondern wie gut der Center in Drucksituationen als Verbindungsspieler funktioniert. Gute Reads zeigen sich daran, dass der Center früh als Outlet erkennbar wird und Anschlussoptionen schafft, bevor Chaos eskaliert.",
+        "observation_guide": {
+          "what_to_watch": [
+            "War der Center als Anschlussoption verfügbar?",
+            "Wurde der Center als Outlet klar anspielbar?",
+            "Kam die Unterstützung früh, rechtzeitig oder verspätet?",
+            "Hielt der Center Verbindungen unter Druck offen?",
+            "Half die Center-Positionierung, das Spiel wieder kontrollierbar zu machen?"
+          ],
+          "how_to_decide": [
+            "Bewerte zuerst die Verfügbarkeit des Centers als Anschlussoption",
+            "Ordne dann das Timing der Unterstützung ein",
+            "Benenne die wichtigste Ursache für gute oder schwache Outlet-Funktion",
+            "Bewerte zuletzt, ob die Situation dadurch stabilisiert wurde"
+          ],
+          "ignore": [
+            "Nur das Endergebnis der Aktion (Pass gelingt / misslingt)",
+            "Technikfehler des Puckführers ohne Bezug zur Center-Unterstützung",
+            "Allgemeine Teamstruktur ohne konkreten Center-Bezug"
+          ]
+        },
+        "learning_hint": "Lernziel: Anschlussoptionen erkennen, Outlet-Verhalten lesen, Support-Timing wahrnehmen und die verbindende Rolle des Centers verstehen.",
+        "state_descriptions": {
+          "früh verfügbar": "Der Center antizipiert die Situation früh und bietet bereits vor vollem Druck eine klare Anschlussoption an.",
+          "verfügbar": "Der Center stellt eine sinnvolle Anschlussoption bereit und hält die Verbindung in der Situation stabil.",
+          "verspätet verfügbar": "Der Center reagiert, aber die Unterstützung kommt spät. Die Anschlussoption entsteht erst unter bereits erhöhtem Druck.",
+          "nicht verfügbar": "Der Puckführer hat keine erkennbare Center-Unterstützung oder Outlet-Option.",
+          "nicht beurteilbar": "Die Szene lässt keine saubere Bewertung der Center-Verfügbarkeit zu."
+        }
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "center_outlet_state": "früh verfügbar"
+            },
+            "context_summary": "Der Center war früh als Outlet verfügbar und bot eine Anschlussoption, bevor voller Druck entstand.",
+            "questions": [
+              "Woran hast du erkannt, dass der Center früh als Outlet bereitstand?",
+              "Was hat diese frühe Verfügbarkeit für die Situation bewirkt?"
+            ]
+          },
+          {
+            "when": {
+              "center_outlet_state": "verfügbar"
+            },
+            "context_summary": "Der Center war als Anschlussoption verfügbar und hielt die Verbindung in der Situation aufrecht.",
+            "questions": [
+              "Woran war die Verfügbarkeit des Centers sichtbar?",
+              "Wie sicher bist du dir bei dieser Einschätzung?"
+            ]
+          },
+          {
+            "when": {
+              "center_outlet_state": "verspätet verfügbar"
+            },
+            "context_summary": "Der Center kam als Anschlussoption, die Unterstützung entstand jedoch erst spät.",
+            "questions": [
+              "Wann genau wurde der Center als Outlet sichtbar?",
+              "Was hätte frühere Verfügbarkeit an der Situation verändert?"
+            ]
+          },
+          {
+            "when": {
+              "center_outlet_state": "nicht verfügbar"
+            },
+            "context_summary": "Der Center war in dieser Situation nicht als Anschlussoption erkennbar.",
+            "questions": [
+              "Wo befand sich der Center und warum war er nicht anspielbar?",
+              "Was fehlte für eine sinnvolle Outlet-Option?"
+            ]
+          },
+          {
+            "when": {
+              "center_outlet_state": "nicht beurteilbar"
+            },
+            "context_summary": "Die Szene ließ keine eindeutige Bewertung der Center-Verfügbarkeit zu.",
+            "questions": [
+              "Was hat die Beurteilung erschwert?",
+              "Woran würdest du in einer ähnlichen Szene die Outlet-Verfügbarkeit festmachen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "sample_key": "outlet_samples",
+        "sample_label": "Druck-/Anschlusssituation",
+        "max_samples_per_phase": 3,
+        "state_key": "center_outlet_state",
+        "state_label": "Center-Verfügbarkeit",
+        "factor_key": "main_factor",
+        "factor_label": "Hauptursache",
+        "quality_key": "outlet_quality",
+        "quality_label": "Outlet-Wirkung war",
+        "quality_options": [
+          "früh stabilisierend",
+          "ausreichend stabilisierend",
+          "spät wirksam",
+          "kaum wirksam"
+        ],
+        "note_key": "note",
+        "note_label": "Notiz (optional)",
+        "note_max_chars": 120,
+        "state_options": [
+          "früh verfügbar",
+          "verfügbar",
+          "verspätet verfügbar",
+          "nicht verfügbar",
+          "nicht beurteilbar"
+        ],
+        "factors_by_state": {
+          "früh verfügbar": [
+            "Center antizipiert früh",
+            "Center bietet früh Outlet-Linie",
+            "Center hält Anschlusswinkel offen",
+            "Center stabilisiert Übergang sofort"
+          ],
+          "verfügbar": [
+            "Center anspielbar positioniert",
+            "Center hält Verbindung aufrecht",
+            "Center als klare Rückoption",
+            "Center unterstützt kontrollierten Anschluss"
+          ],
+          "verspätet verfügbar": [
+            "Center reagiert verzögert",
+            "Center-Unterstützung kommt spät",
+            "Outlet-Linie entsteht zu spät",
+            "Anschluss erst unter hohem Druck"
+          ],
+          "nicht verfügbar": [
+            "keine Center-Anschlussoption erkennbar",
+            "Center nicht im Anschlussraum",
+            "keine nutzbare Outlet-Linie",
+            "Center ohne verbindende Wirkung"
+          ],
+          "nicht beurteilbar": [
+            "Blickfeld unvollständig",
+            "Szene zu kurz oder verdeckt",
+            "Rollenzuordnung unklar",
+            "Outlet-Verfügbarkeit nicht sicher beurteilbar"
+          ]
+        }
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-05-30T20:06:29.430148"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "outlet_samples": [
+          {
+            "center_outlet_state": "nicht verfügbar",
+            "main_factor": "keine nutzbare Outlet-Linie",
+            "outlet_quality": "kaum wirksam",
+            "note": ""
+          },
+          {
+            "center_outlet_state": "früh verfügbar",
+            "main_factor": "Center antizipiert früh",
+            "outlet_quality": "früh stabilisierend",
+            "note": "Gutes forecheck und dann hat sich der Center sofort mittig vorm Tor angeboten"
+          },
+          {
+            "center_outlet_state": "nicht verfügbar",
+            "main_factor": "keine Center-Anschlussoption erkennbar",
+            "outlet_quality": "kaum wirksam",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 1
+      },
+      "timestamp": "2026-05-30T20:32:16.778434"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "outlet_samples": [
+          {
+            "center_outlet_state": "nicht verfügbar",
+            "main_factor": "Center ohne verbindende Wirkung",
+            "outlet_quality": "kaum wirksam",
+            "note": ""
+          },
+          {
+            "center_outlet_state": "früh verfügbar",
+            "main_factor": "Center bietet früh Outlet-Linie",
+            "outlet_quality": "früh stabilisierend",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 0
+      },
+      "timestamp": "2026-05-30T21:49:48.930267"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "outlet_samples": [
+          {
+            "center_outlet_state": "nicht verfügbar",
+            "main_factor": "Center ohne verbindende Wirkung",
+            "outlet_quality": "kaum wirksam",
+            "note": ""
+          },
+          {
+            "center_outlet_state": "verfügbar",
+            "main_factor": "Center anspielbar positioniert",
+            "outlet_quality": "spät wirksam",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 1
+      },
+      "timestamp": "2026-05-30T22:25:29.906089"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-05-30T22:25:48.354151"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "outlet_samples": [
+        {
+          "center_outlet_state": "nicht verfügbar",
+          "main_factor": "keine nutzbare Outlet-Linie",
+          "outlet_quality": "kaum wirksam",
+          "note": ""
+        },
+        {
+          "center_outlet_state": "früh verfügbar",
+          "main_factor": "Center antizipiert früh",
+          "outlet_quality": "früh stabilisierend",
+          "note": "Gutes forecheck und dann hat sich der Center sofort mittig vorm Tor angeboten"
+        },
+        {
+          "center_outlet_state": "nicht verfügbar",
+          "main_factor": "keine Center-Anschlussoption erkennbar",
+          "outlet_quality": "kaum wirksam",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 1
+    },
+    "P2": {
+      "outlet_samples": [
+        {
+          "center_outlet_state": "nicht verfügbar",
+          "main_factor": "Center ohne verbindende Wirkung",
+          "outlet_quality": "kaum wirksam",
+          "note": ""
+        },
+        {
+          "center_outlet_state": "früh verfügbar",
+          "main_factor": "Center bietet früh Outlet-Linie",
+          "outlet_quality": "früh stabilisierend",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 0
+    },
+    "P3": {
+      "outlet_samples": [
+        {
+          "center_outlet_state": "nicht verfügbar",
+          "main_factor": "Center ohne verbindende Wirkung",
+          "outlet_quality": "kaum wirksam",
+          "note": ""
+        },
+        {
+          "center_outlet_state": "verfügbar",
+          "main_factor": "Center anspielbar positioniert",
+          "outlet_quality": "spät wirksam",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 1
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-05-30T22:25:48.456243"
+  },
+  "game_info": {
+    "league": "Nationalmannschaften",
+    "team_home": "Kanada",
+    "team_away": "Finnland",
+    "observed_team": "Kanada",
+    "date": "2026-05-30T18:06:26.668Z",
+    "season": "2026",
+    "matchday": "WM Halbfinale"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Genau",
+      "ts": "2026-05-30T20:32:27.118873"
+    },
+    "P2": {
+      "done": true,
+      "text": "Zu nah am Puck führenden",
+      "ts": "2026-05-30T21:50:08.464801"
+    },
+    "P3": {
+      "done": true,
+      "text": "Er war direkt eine verbinden in der NZ",
+      "ts": "2026-05-30T22:25:46.642916"
+    }
+  }
+}

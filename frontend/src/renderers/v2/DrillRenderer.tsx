@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Drill } from "../../api";
-import { renderWithGlossary, highlightGlossaryTerms } from "../../components/GlossaryTerm";
+import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 
 interface DrillRendererV2Props {
   drill: Drill;
@@ -24,6 +24,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 	const didactics: any = drill.didactics;
 	if (!didactics) return null;
 
+	const rwg = makeGlossaryRenderer(didactics.glossary);
 	// Support both observation_guide and observation_guidance structures
 	const observationGuide = didactics.observation_guide || didactics.observation_guidance;
 
@@ -62,7 +63,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 						<div style={{ marginBottom: "1rem" }}>
 							<ul style={{ marginTop: "0.25rem", fontSize: "0.9rem" }}>
 								{observationGuide.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
+									<li key={i}>{rwg(item)}</li>
 								))}
 							</ul>
 						</div>
@@ -73,7 +74,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Worauf achten?</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.what_to_watch.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
+									<li key={i}>{rwg(item)}</li>
 								))}
 							</ul>
 						</div>
@@ -84,7 +85,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Wie entscheiden?</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.how_to_decide.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
+									<li key={i}>{rwg(item)}</li>
 								))}
 							</ul>
 						</div>
@@ -95,7 +96,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Typische Denkfehler</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.common_mistakes.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
+									<li key={i}>{rwg(item)}</li>
 								))}
 							</ul>
 						</div>
@@ -106,7 +107,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 							<strong>Was ignorieren?</strong>
 							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
 								{observationGuide.ignore.map((item: string, i: number) => (
-									<li key={i}>{renderWithGlossary(item, didactics.glossary)}</li>
+									<li key={i}>{rwg(item)}</li>
 								))}
 							</ul>
 						</div>

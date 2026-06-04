@@ -628,6 +628,7 @@ export default function SessionPage() {
       {showMicroModal && (() => {
         const drill = activeDrill
         let question = 'Bitte gib ein kurzes Feedback.'
+        let contextSummary: string | null = null
         if (drill && (drill as any).miniFeedback && Array.isArray((drill as any).miniFeedback.groups) && (drill as any).miniFeedback.groups.length > 0) {
           const answers = answersByPhase[currentPhase] || {}
           const sampleKey = (drill as any)?.config?.sample_key
@@ -662,6 +663,7 @@ export default function SessionPage() {
               }
             }
             if (match && group.questions && group.questions.length > 0) {
+              contextSummary = group.context_summary || null
               question = group.questions[0]
               found = true
               break
@@ -670,6 +672,7 @@ export default function SessionPage() {
           if (!found) {
             const firstGroup = (drill as any).miniFeedback.groups[0]
             if (firstGroup && firstGroup.questions && firstGroup.questions.length > 0) {
+              contextSummary = firstGroup.context_summary || null
               question = firstGroup.questions[0]
             }
           }
@@ -679,6 +682,12 @@ export default function SessionPage() {
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="card" style={{ maxWidth: 500, width: '95%', margin: '0 auto' }}>
               <h3>💡 Microfeedback</h3>
+              {contextSummary && (
+                <div style={{ marginBottom: '0.75rem', padding: '0.6rem 0.8rem', background: 'rgba(255,255,255,0.06)', borderRadius: '0.4rem', fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5 }}>
+                  <span style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', marginBottom: '0.3rem' }}>Ausgewählter Moment</span>
+                  {contextSummary}
+                </div>
+              )}
               <div style={{ marginBottom: '1.2rem', fontWeight: 500, textAlign: 'center', color: '#b6e2f7' }}>{question}</div>
 
               <textarea

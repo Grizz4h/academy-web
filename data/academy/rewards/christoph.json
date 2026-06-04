@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 595
+    "PUX": 695
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -46,6 +46,10 @@
     "mobile-scout": {
       "id": "mobile-scout",
       "unlockedAt": "2026-04-10T21:32:02.885070"
+    },
+    "fifty-drills-complete": {
+      "id": "fifty-drills-complete",
+      "unlockedAt": "2026-05-30T22:25:48.456243"
     }
   },
   "unlockedMasteries": {
@@ -204,6 +208,30 @@
         "averageAccuracy": null,
         "perfectRuns": 0
       }
+    },
+    "B1_D2:bronze": {
+      "key": "B1_D2:bronze",
+      "drillId": "B1_D2",
+      "tier": "bronze",
+      "unlockedAt": "2026-05-26T22:32:08.839500",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "B1_D4:bronze": {
+      "key": "B1_D4:bronze",
+      "drillId": "B1_D4",
+      "tier": "bronze",
+      "unlockedAt": "2026-05-30T22:25:48.456243",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
     }
   },
   "processedSessions": {
@@ -311,7 +339,22 @@
       "sessionId": "Christoph_1779730654",
       "grantedAt": "2026-05-25T22:01:53.310181",
       "pux": 20
+    },
+    "Christoph_1779805176": {
+      "sessionId": "Christoph_1779805176",
+      "grantedAt": "2026-05-26T18:36:59.712918",
+      "pux": 10
+    },
+    "Christoph_1779819910": {
+      "sessionId": "Christoph_1779819910",
+      "grantedAt": "2026-05-26T22:32:08.839500",
+      "pux": 20
+    },
+    "Christoph_1780164386": {
+      "sessionId": "Christoph_1780164386",
+      "grantedAt": "2026-05-30T22:25:48.456243",
+      "pux": 70
     }
   },
-  "lastUpdatedAt": "2026-05-25T22:01:53.310181"
+  "lastUpdatedAt": "2026-05-30T22:25:48.456243"
 }

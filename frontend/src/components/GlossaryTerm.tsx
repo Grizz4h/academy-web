@@ -184,10 +184,16 @@ export function highlightGlossaryTerms(text: string | undefined | null, glossary
   });
 
   matches.sort((a, b) => a.start - b.start);
+  const seenInFilter = new Set<string>();
   const filtered = matches.filter((match, i) => {
-    if (i === 0) return true;
-    const prev = matches[i - 1];
-    return match.start >= prev.end;
+    if (i > 0) {
+      const prev = matches[i - 1];
+      if (match.start < prev.end) return false;
+    }
+    const key = slugify(match.term);
+    if (seenInFilter.has(key)) return false;
+    seenInFilter.add(key);
+    return true;
   });
 
   filtered.forEach((match, i) => {
@@ -209,7 +215,7 @@ export function highlightGlossaryTerms(text: string | undefined | null, glossary
   return parts.length > 0 ? parts : text;
 }
 
-export function renderWithGlossary(text: string, customGlossary?: { [key: string]: string }): React.ReactNode[] {
+export function renderWithGlossary(text: string, customGlossary?: { [key: string]: string }, seenTerms?: Set<string>): React.ReactNode[] {
   if (!text) return [];
 
   const terms: string[] = [];
@@ -227,6 +233,7 @@ export function renderWithGlossary(text: string, customGlossary?: { [key: string
 
   const uniqueTerms = Array.from(new Set(terms)).sort((a, b) => b.length - a.length);
   const tokenRegex = /([\wäöüÄÖÜß]+)/gi;
+  const seen = seenTerms ?? new Set<string>();
   let lastIdx = 0;
   const parts: React.ReactNode[] = [];
   let match;
@@ -237,7 +244,8 @@ export function renderWithGlossary(text: string, customGlossary?: { [key: string
     if (match.index > lastIdx) {
       parts.push(text.slice(lastIdx, match.index));
     }
-    if (uniqueTerms.includes(slug)) {
+    if (uniqueTerms.includes(slug) && !seen.has(slug)) {
+      seen.add(slug);
       parts.push(
         <GlossaryTerm key={match.index} term={slug} customGlossary={customGlossary}>
           {token}
@@ -253,4 +261,9 @@ export function renderWithGlossary(text: string, customGlossary?: { [key: string
     parts.push(text.slice(lastIdx));
   }
   return parts;
+}
+
+export function makeGlossaryRenderer(customGlossary?: { [key: string]: string }) {
+  const seen = new Set<string>();
+  return (text: string) => renderWithGlossary(text, customGlossary, seen);
 }

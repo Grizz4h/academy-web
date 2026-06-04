@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useUser } from '../context/UserContext'
-import { renderWithGlossary } from '../components/GlossaryTerm'
+import { makeGlossaryRenderer } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
 import { teamsByLeague, LEAGUES } from '../data/teamsByLeague'
@@ -355,6 +355,8 @@ export default function SessionSetup() {
     createSessionMutation.mutate(payload)
   }
 
+  const rwg = makeGlossaryRenderer();
+
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <h1>Session Setup: {currentModule.title}</h1>
@@ -367,12 +369,12 @@ export default function SessionSetup() {
 
       <div className="card">
         <h2>Modul Info</h2>
-        <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{renderWithGlossary(currentModule.description ?? '')}</p>
+        <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{rwg(currentModule.description ?? '')}</p>
         <div style={{ marginTop: '1rem' }}>
           <strong>Lernziele:</strong>
           <ul style={{ marginTop: '0.5rem' }}>
             {currentModule.learningGoals?.map((goal, i) => (
-              <li key={i}>{renderWithGlossary(goal)}</li>
+              <li key={i}>{rwg(goal)}</li>
             ))}
           </ul>
         </div>
@@ -716,7 +718,7 @@ export default function SessionSetup() {
                 {didactics.explanation && (
                   <div style={{ marginTop: '0.5rem' }}>
                     <strong>Erklärung</strong>
-                    <p style={{ marginTop: '0.35rem' }}>{renderWithGlossary(didactics.explanation)}</p>
+                    <p style={{ marginTop: '0.35rem' }}>{rwg(didactics.explanation)}</p>
                   </div>
                 )}
                 {/* observation_guide als Objekt oder Array */}
@@ -729,7 +731,7 @@ export default function SessionSetup() {
                     <strong>Beobachtungsleitfaden</strong>
                     <ul style={{ marginTop: '0.35rem' }}>
                       {didactics.observation_guide.map((t: string, i: number) => (
-                        <li key={i}>{renderWithGlossary(t)}</li>
+                        <li key={i}>{rwg(t)}</li>
                       ))}
                     </ul>
                   </div>
@@ -739,8 +741,8 @@ export default function SessionSetup() {
                     <strong>Coaching-Regeln</strong>
                     <ul style={{ marginTop: '0.35rem' }}>
                       {Array.isArray(didacticsTyped.coaching_rules) ? didacticsTyped.coaching_rules.map((t, i) => (
-                        <li key={i}>{renderWithGlossary(t)}</li>
-                      )) : <li>{renderWithGlossary(didacticsTyped.coaching_rules)}</li>}
+                        <li key={i}>{rwg(t)}</li>
+                      )) : <li>{rwg(didacticsTyped.coaching_rules)}</li>}
                     </ul>
                   </div>
                 )}
@@ -749,8 +751,8 @@ export default function SessionSetup() {
                     <strong>Bewertungskriterien</strong>
                     <ul style={{ marginTop: '0.35rem' }}>
                       {Array.isArray(didacticsTyped.evaluation_metrics) ? didacticsTyped.evaluation_metrics.map((t, i) => (
-                        <li key={i}>{renderWithGlossary(t)}</li>
-                      )) : <li>{renderWithGlossary(didacticsTyped.evaluation_metrics)}</li>}
+                        <li key={i}>{rwg(t)}</li>
+                      )) : <li>{rwg(didacticsTyped.evaluation_metrics)}</li>}
                     </ul>
                   </div>
                 )}
@@ -762,7 +764,7 @@ export default function SessionSetup() {
                 {didactics.goal && (
                   <div style={{ marginTop: '0.5rem' }}>
                     <strong>Worum geht es?</strong>
-                    <p style={{ marginTop: '0.35rem' }}>{renderWithGlossary(didactics.goal)}</p>
+                    <p style={{ marginTop: '0.35rem' }}>{rwg(didactics.goal)}</p>
                   </div>
                 )}
                 {didactics.watch_for && (
@@ -770,8 +772,8 @@ export default function SessionSetup() {
                     <strong>Worauf achten?</strong>
                     <ul style={{ marginTop: '0.35rem' }}>
                       {Array.isArray(didactics.watch_for) ? didactics.watch_for.map((t, i) => (
-                        <li key={i}>{renderWithGlossary(t)}</li>
-                      )) : <li>{renderWithGlossary(didactics.watch_for)}</li>}
+                        <li key={i}>{rwg(t)}</li>
+                      )) : <li>{rwg(didactics.watch_for)}</li>}
                     </ul>
                   </div>
                 )}
@@ -780,8 +782,8 @@ export default function SessionSetup() {
                     <strong>Wie ausfüllen?</strong>
                     <ul style={{ marginTop: '0.35rem' }}>
                       {Array.isArray(didactics.how_to) ? didactics.how_to.map((t, i) => (
-                        <li key={i}>{renderWithGlossary(t)}</li>
-                      )) : <li>{renderWithGlossary(didactics.how_to)}</li>}
+                        <li key={i}>{rwg(t)}</li>
+                      )) : <li>{rwg(didactics.how_to)}</li>}
                     </ul>
                   </div>
                 )}
@@ -792,7 +794,7 @@ export default function SessionSetup() {
               <div style={{ marginTop: '0.75rem' }}>
                 <strong>Lernhinweis</strong>
                 <p style={{ marginTop: '0.35rem', color: 'rgba(255,255,255,0.8)' }}>
-                  {renderWithGlossary(didactics.learning_hint)}
+                  {rwg(didactics.learning_hint)}
                 </p>
               </div>
             )}
