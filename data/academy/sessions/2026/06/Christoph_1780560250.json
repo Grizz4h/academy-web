@@ -1,0 +1,251 @@
+{
+  "id": "Christoph_1780560250",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B1",
+  "goal": "Auto: B1 – Center-Detailarbeit",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B1_D3",
+  "state": "IN_PROGRESS",
+  "current_phase": "P2",
+  "created_at": "2026-06-04T10:04:10.691620",
+  "drills": [
+    {
+      "id": "B1_D3",
+      "title": "Low / Middle / High Reads (Center-Perspektive)",
+      "drill_type": "sample_log",
+      "description": "Beobachte, welchen Raum der Center priorisiert, wie er Ebenen verbindet und wie timingstark der Read wirkt.",
+      "didactics": {
+        "explanation": "Der Center ist kein statischer Raumspieler. Er priorisiert dynamisch Low, Middle oder High - oder verbindet bewusst zwischen Ebenen. Gute Reads entstehen aus Timing, Drucklesen und Verbindungslogik.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Welche Raumebene priorisiert der Center – direkt nach Puckgewinn, beim Angriffsaufbau, beim Verlassen der Defensivzone oder beim Eintritt in die Offensivzone?",
+            "Wie verbindet er Low, Middle und High?",
+            "Kommt der Read früh oder verspätet?",
+            "Wirkt der Read entlastend, verbindend oder problematisch?",
+            "Der Center bewegt sich häufig zwischen verschiedenen Höhen – beobachte die Wechsel",
+            "Achte darauf, welche Räume er priorisiert und welche er bewusst verlässt",
+            "Beobachte, wie sich die Position des Centers mit der Spielsituation verändert"
+          ],
+          "how_to_decide": [
+            "Frage zuerst: Welcher Read ist dominant? – oder einfacher: Was war die wichtigste Aufgabe des Centers in dieser Szene?",
+            "Low-Anker: Musste der Center zuerst absichern oder verteidigen? (Typisch: Gegnerdeckung, Passwege schließen, Verteidiger unterstützen)",
+            "Middle-Anker: Musste der Center zuerst das Spiel unterstützen? (Typisch: Anspielstation werden, Verbindung zwischen Mitspielern herstellen)",
+            "High-Anker: Musste der Center zuerst Angriffsdruck erzeugen? (Typisch: freien Raum attackieren, Torchance vorbereiten, offensive Aktion starten)",
+            "Entscheide dann: Warum war dieser Read sinnvoll oder nötig?",
+            "Bewerte danach die Read-Qualität (antizipiert bis unklar)",
+            "Lies Priorisierung statt Position",
+            "Low bedeutet nicht automatisch hinter dem Tor – beobachte den Kontext",
+            "High bedeutet nicht automatisch an der Blue Line – lies die Situation"
+          ],
+          "ignore": [
+            "Reines Labeln von Low/Middle/High ohne Begründung",
+            "Ergebnis der Sequenz (Chance/Tor)",
+            "Einzelne technische Fehler"
+          ]
+        },
+        "learning_hint": "Starke Center-Reads priorisieren Räume bewusst und rechtzeitig. Wirkung entsteht durch Timing und Verbindung zwischen Ebenen."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "center_read": "low support"
+            },
+            "questions": [
+              "Warum war low support in diesem Moment die beste Priorisierung?",
+              "Wurde Druck entlastet oder die Rückoption stabil gehalten?",
+              "War der Read früh genug, um Wirkung zu erzeugen?"
+            ]
+          },
+          {
+            "when": {
+              "center_read": "middle support"
+            },
+            "questions": [
+              "Warum war middle support hier prioritär?",
+              "Hat der Center Verbindung und Mitte gleichzeitig gehalten?",
+              "Wirkte der Read antizipiert oder nur reagierend?"
+            ]
+          },
+          {
+            "when": {
+              "center_read": "high support"
+            },
+            "questions": [
+              "Warum war high support für diesen Moment sinnvoll?",
+              "Hat der Center Angriffsdruck erzeugt oder nur nachgeschoben?",
+              "War der Read klar oder verspätet?"
+            ]
+          },
+          {
+            "when": {
+              "center_read": "zwischen Ebenen"
+            },
+            "questions": [
+              "Wie hat der Center zwischen Ebenen verbunden statt zu pendeln?",
+              "Waren mehrere Optionen gleichzeitig offen?",
+              "Hat das Timing die Struktur flexibel gehalten?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "sample_key": "read_samples",
+        "sample_label": "Read",
+        "max_samples_per_phase": 3,
+        "state_key": "center_read",
+        "state_label": "Center priorisiert",
+        "factor_key": "main_reason",
+        "factor_label": "Warum?",
+        "quality_key": "read_quality",
+        "quality_label": "Read wirkte",
+        "quality_options": [
+          "antizipiert",
+          "passend reagiert",
+          "verspätet",
+          "unklar"
+        ],
+        "note_key": "note",
+        "note_label": "Notiz (optional)",
+        "note_max_chars": 120,
+        "state_options": [
+          "low support",
+          "middle support",
+          "high support",
+          "zwischen Ebenen"
+        ],
+        "factors_by_state": {
+          "low support": [
+            "Druck entlasten",
+            "Rückoption sichern",
+            "Breakout stabilisieren",
+            "Aufbau unterstützen"
+          ],
+          "middle support": [
+            "Mitte absichern",
+            "Verbindung halten",
+            "Umschalten vorbereiten",
+            "Passwege offen halten"
+          ],
+          "high support": [
+            "Angriff unterstützen",
+            "Überzahl schaffen",
+            "Rush begleiten",
+            "Druck erzeugen"
+          ],
+          "zwischen Ebenen": [
+            "Verbindung gehalten",
+            "mehrere Optionen offen",
+            "Struktur flexibel gehalten",
+            "Druck gelesen"
+          ]
+        }
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "PRE",
+      "answers": {},
+      "timestamp": "2026-06-04T10:04:14.022112"
+    },
+    {
+      "phase": "P1",
+      "answers": {
+        "read_samples": [
+          {
+            "center_read": "Verbinden",
+            "main_reason": "Anspielstation werden",
+            "read_quality": "antizipiert",
+            "note": ""
+          },
+          {
+            "center_read": "Absichern",
+            "main_reason": "Slot absichern",
+            "read_quality": "antizipiert",
+            "note": ""
+          },
+          {
+            "center_read": "Angreifen",
+            "main_reason": "in gefährliche Räume vorstoßen",
+            "read_quality": "antizipiert",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 0
+      },
+      "timestamp": "2026-06-04T11:12:57.078124"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "read_samples": [
+        {
+          "center_read": "Verbinden",
+          "main_reason": "Anspielstation werden",
+          "read_quality": "antizipiert",
+          "note": ""
+        },
+        {
+          "center_read": "Absichern",
+          "main_reason": "Slot absichern",
+          "read_quality": "antizipiert",
+          "note": ""
+        },
+        {
+          "center_read": "Angreifen",
+          "main_reason": "in gefährliche Räume vorstoßen",
+          "read_quality": "antizipiert",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 0
+    },
+    "P2": {
+      "read_samples": [
+        {
+          "center_read": "Verbinden",
+          "main_reason": "Anspielstation werden",
+          "read_quality": "antizipiert",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 0
+    }
+  },
+  "post": null,
+  "game_info": {
+    "league": "NHL",
+    "team_home": "Carolina Hurricanes",
+    "team_away": "Vegas Golden Knights",
+    "observed_team": "Carolina Hurricanes",
+    "date": "2026-06-04T08:04:10.644Z",
+    "season": "2025/26",
+    "matchday": "Stanley Cup Final 1"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Zwischenstation",
+      "ts": "2026-06-04T11:13:09.292185"
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}

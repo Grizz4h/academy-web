@@ -1,0 +1,93 @@
+[
+  {
+    "league": "PENNY DEL",
+    "team": "ERC Ingolstadt",
+    "slug": "erc-ingolstadt",
+    "url": "https://www.penny-del.org/teams/erc-ingolstadt/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Augsburger Panther",
+    "slug": "augsburger-panther",
+    "url": "https://www.penny-del.org/teams/augsburger-panther/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Eisbären Berlin",
+    "slug": "eisbaeren-berlin",
+    "url": "https://www.penny-del.org/teams/eisbaeren-berlin/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Fischtown Pinguins Bremerhaven",
+    "slug": "pinguins-bremerhaven",
+    "url": "https://www.penny-del.org/teams/pinguins-bremerhaven/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Löwen Frankfurt",
+    "slug": "loewen-frankfurt",
+    "url": "https://www.penny-del.org/teams/loewen-frankfurt/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Iserlohn Roosters",
+    "slug": "iserlohn-roosters",
+    "url": "https://www.penny-del.org/teams/iserlohn-roosters/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Kölner Haie",
+    "slug": "koelner-haie",
+    "url": "https://www.penny-del.org/teams/koelner-haie/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Adler Mannheim",
+    "slug": "adler-mannheim",
+    "url": "https://www.penny-del.org/teams/adler-mannheim/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "EHC Red Bull München",
+    "slug": "ehc-red-bull-muenchen",
+    "url": "https://www.penny-del.org/teams/ehc-red-bull-muenchen/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Nürnberg Ice Tigers",
+    "slug": "nuernberg-ice-tigers",
+    "url": "https://www.penny-del.org/teams/nuernberg-ice-tigers/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Schwenninger Wild Wings",
+    "slug": "schwenninger-wild-wings",
+    "url": "https://www.penny-del.org/teams/schwenninger-wild-wings/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Straubing Tigers",
+    "slug": "straubing-tigers",
+    "url": "https://www.penny-del.org/teams/straubing-tigers/kader",
+    "enabled": true
+  },
+  {
+    "league": "PENNY DEL",
+    "team": "Grizzlys Wolfsburg",
+    "slug": "grizzlys-wolfsburg",
+    "url": "https://www.penny-del.org/teams/grizzlys-wolfsburg/kader",
+    "enabled": true
+  }
+]

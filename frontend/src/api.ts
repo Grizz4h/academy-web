@@ -204,6 +204,69 @@ export interface RosterCatalog {
   teams: RosterTeam[]
 }
 
+export interface KaderPlayer {
+  player_id: string
+  player_name: string
+  jersey_number?: number
+  position?: string
+  position_group?: 'forward' | 'defense' | 'goalie'
+  nationality?: string
+  age?: number
+  height_cm?: number
+  weight_kg?: number
+  birthplace?: string
+  shoots_or_catches?: string
+  team: string
+  league: string
+  source: string
+  active: boolean
+  observation_count: number
+  summary: string
+  last_observed?: string
+  created_at?: string
+}
+
+export interface TeamsListResponse {
+  teams: {
+    id: string
+    slug: string
+    name: string
+    league: string
+    url: string
+    enabled: boolean
+    status: "supported" | "planned"
+  }[]
+  note?: string
+}
+
+export interface ImportResult {
+  team_id: string
+  team?: string
+  league?: string
+  slug?: string
+  total_players: number
+  active_players: number
+  created: number
+  updated: number
+  reactivated: number
+  imported_count: number
+  url?: string
+  error?: string
+}
+
+export interface PlayersResponse {
+  team_id: string
+  players: KaderPlayer[]
+  total: number
+  updated_at: string
+}
+
+export interface ImportAllResult {
+  results: ImportResult[]
+  total: number
+}
+
+
 export interface ObservationRun {
   run_id: string
   user: string
@@ -215,9 +278,31 @@ export interface ObservationRun {
   player_name: string
   player_number?: number
   player_position: string
+  player_birth_year?: number
+  player_notes?: string
+  drill_id?: string
+  drill_name?: string
+  source?: ObservationSource
   created_at: string
   notes?: string
   status: string
+}
+
+export interface ObservationSource {
+  source_type: string
+  provider: string
+  label: string
+  url?: string
+  external_id?: string
+  metadata?: Record<string, any>
+  captured_at?: string | null
+}
+
+export interface ObservationSummary {
+  text: string
+  status: string
+  updated_at?: string | null
+  generator?: string
 }
 
 export interface ObservationDimensions {
@@ -239,9 +324,79 @@ export interface ObservationEntry {
   player_id: string
   player_name: string
   player_position: string
+  drill_id?: string
+  drill_name?: string
+  source?: ObservationSource
   created_at: string
   dimensions: ObservationDimensions
   note?: string
+}
+
+export interface ObservationHistoryRun {
+  run_id: string
+  created_at: string
+  league: string
+  season: string
+  team_id: string
+  team_name: string
+  drill_id?: string
+  drill_name?: string
+  run_note?: string
+  source?: ObservationSource
+}
+
+export interface ObservationHistoryItem {
+  entry_id?: string
+  run_id: string
+  created_at: string
+  drill_id?: string
+  drill_name?: string
+  game?: {
+    league?: string
+    season?: string
+    team_name?: string
+  }
+  note?: string
+  source?: ObservationSource
+}
+
+export interface ObservationNoteTimelineItem {
+  created_at: string
+  run_id: string
+  entry_id?: string | null
+  note: string
+  source?: ObservationSource
+}
+
+export interface ObservationProfile {
+  profile_id: string
+  user: string
+  player_id: string
+  player_name: string
+  team_id: string
+  team_name: string
+  league: string
+  season: string
+  player_position: string
+  player_birth_year?: number
+  notes?: string
+  created_at: string
+  updated_at: string
+  summary: ObservationSummary
+  source_catalog: ObservationSource[]
+  history: {
+    first_observation?: string | null
+    last_observation?: string | null
+    observation_session_count: number
+    observation_entry_count: number
+    runs: ObservationHistoryRun[]
+    observations: ObservationHistoryItem[]
+    note_timeline: ObservationNoteTimelineItem[]
+  }
+  integrations?: {
+    providers?: Record<string, { enabled: boolean; status: string }>
+    planned_capabilities?: string[]
+  }
 }
 
 export interface ObservationPlayerStats {
@@ -253,7 +408,11 @@ export interface ObservationPlayerStats {
   season: string
   player_position: string
   observation_count: number
+  first_observation?: string
   last_observation?: string
+  observation_session_count?: number
+  observation_entry_count?: number
+  summary?: ObservationSummary
   dimension_stats: Record<string, Record<string, number | string | null>>
 }
 
@@ -292,6 +451,41 @@ export interface RewardApplyResponse {
   applied: boolean
   granted_pux: number
   reward_events: Array<Record<string, any>>
+}
+
+export interface SceneMarker {
+  id: string
+  user: string
+  session_id: string
+  module_id: string
+  drill_id?: string
+  drill_title?: string
+  track_id?: string
+  league?: string
+  season?: string
+  team_home?: string
+  team_away?: string
+  observed_team?: string
+  period?: string
+  game_time: string
+  note?: string
+  created_at: string
+}
+
+export interface SceneMarkerCreate {
+  session_id: string
+  module_id: string
+  drill_id?: string
+  drill_title?: string
+  track_id?: string
+  league?: string
+  season?: string
+  team_home?: string
+  team_away?: string
+  observed_team?: string
+  period?: string
+  game_time: string
+  note?: string
 }
 
 // ==== API Helpers ====
@@ -566,6 +760,11 @@ export const api = {
     player_name: string
     player_number?: number
     player_position: string
+    player_birth_year?: number
+    player_notes?: string
+    drill_id?: string
+    drill_name?: string
+    source?: ObservationSource
     notes?: string
   }): Promise<ObservationRun> => {
     const res = await fetch(buildUrl('/observation-runs'), {
@@ -588,6 +787,7 @@ export const api = {
   createObservation: async (payload: {
     run_id: string
     dimensions: ObservationDimensions
+    source?: ObservationSource
     note?: string
   }): Promise<ObservationEntry> => {
     const res = await fetch(buildUrl('/observations'), {
@@ -645,7 +845,7 @@ export const api = {
     league?: string
     season?: string
     team_id?: string
-  }): Promise<{ player: ObservationPlayerStats; observations: ObservationEntry[] }> => {
+  }): Promise<{ player: ObservationPlayerStats; observations: ObservationEntry[]; profile?: ObservationProfile }> => {
     const qs = new URLSearchParams()
     if (params?.league) qs.append('league', params.league)
     if (params?.season) qs.append('season', params.season)
@@ -656,6 +856,61 @@ export const api = {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch player observation stats')
+    return res.json()
+  },
+
+  getObservationProfiles: async (params?: {
+    league?: string
+    season?: string
+    team_id?: string
+    player_id?: string
+  }): Promise<{ profiles: ObservationProfile[] }> => {
+    const qs = new URLSearchParams()
+    if (params?.league) qs.append('league', params.league)
+    if (params?.season) qs.append('season', params.season)
+    if (params?.team_id) qs.append('team_id', params.team_id)
+    if (params?.player_id) qs.append('player_id', params.player_id)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+
+    const res = await fetch(buildUrl(`/observation-profiles${query}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch observation profiles')
+    return res.json()
+  },
+
+  getObservationProfile: async (playerId: string, params?: { league?: string }): Promise<ObservationProfile> => {
+    const qs = new URLSearchParams()
+    if (params?.league) qs.append('league', params.league)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+
+    const res = await fetch(buildUrl(`/observation-profiles/${encodeURIComponent(playerId)}${query}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch observation profile')
+    return res.json()
+  },
+
+  updateObservationProfile: async (
+    playerId: string,
+    payload: {
+      player_birth_year?: number
+      notes?: string
+      summary?: Partial<ObservationSummary>
+      source_catalog?: ObservationSource[]
+    },
+    params?: { league?: string }
+  ): Promise<ObservationProfile> => {
+    const qs = new URLSearchParams()
+    if (params?.league) qs.append('league', params.league)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+
+    const res = await fetch(buildUrl(`/observation-profiles/${encodeURIComponent(playerId)}${query}`), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload)
+    })
+    if (!res.ok) throw new Error('Failed to update observation profile')
     return res.json()
   },
 
@@ -682,5 +937,103 @@ export const api = {
 
     if (!res.ok) throw new Error('Failed to apply rewards')
     return res.json()
-  }
+  },
+
+  // RingAbout Scene Markers
+  createScene: async (payload: SceneMarkerCreate): Promise<SceneMarker> => {
+    const res = await fetch(buildUrl('/scenes'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw new Error('Failed to create scene marker')
+    return res.json()
+  },
+
+  getScenes: async (params?: {
+    league?: string
+    season?: string
+    team?: string
+    track_id?: string
+    drill_id?: string
+  }): Promise<{ scenes: SceneMarker[] }> => {
+    const qs = new URLSearchParams()
+    if (params?.league) qs.append('league', params.league)
+    if (params?.season) qs.append('season', params.season)
+    if (params?.team) qs.append('team', params.team)
+    if (params?.track_id) qs.append('track_id', params.track_id)
+    if (params?.drill_id) qs.append('drill_id', params.drill_id)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+    const res = await fetch(buildUrl(`/scenes${query}`), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw new Error('Failed to fetch scenes')
+    return res.json()
+  },
+
+  deleteScene: async (sceneId: string): Promise<{ status: string; id: string }> => {
+    const res = await fetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
+      method: 'DELETE',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw new Error('Failed to delete scene')
+    return res.json()
+  },
+
+  // Kaderimport Players
+  getTeamPlayers: async (teamId: string, activeOnly: boolean = true): Promise<PlayersResponse> => {
+    const qs = new URLSearchParams()
+    if (!activeOnly) qs.append('active_only', 'false')
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+    const res = await fetch(buildUrl(`/players/team/${encodeURIComponent(teamId)}${query}`), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch team players')
+    return res.json()
+  },
+
+  importPlayers: async (teamId?: string): Promise<ImportResult> => {
+    const qs = new URLSearchParams()
+    if (teamId) qs.append('team_id', teamId)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+    const res = await fetch(buildUrl(`/players/import${query}`), {
+      method: 'POST',
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ error: 'Import fehlgeschlagen' }))
+      const detail = error?.detail
+      const message =
+        (typeof detail === 'string' ? detail : detail?.error) ||
+        error?.error ||
+        'Failed to import players'
+      throw new Error(message)
+    }
+    return res.json()
+  },
+
+  importAllPlayers: async (): Promise<ImportAllResult> => {
+    const res = await fetch(buildUrl('/players/import-all'), {
+      method: 'POST',
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ error: 'Gesamtimport fehlgeschlagen' }))
+      const detail = error?.detail
+      const message =
+        (typeof detail === 'string' ? detail : detail?.error) ||
+        error?.error ||
+        'Failed to import all players'
+      throw new Error(message)
+    }
+    return res.json()
+  },
+
+  getImportableTeams: async (): Promise<TeamsListResponse> => {
+    const res = await fetch(buildUrl('/players/importable-teams'), {
+      headers: { ...authHeaders() }
+    })
+    if (!res.ok) throw new Error('Failed to fetch importable teams')
+    return res.json()
+  },
 }

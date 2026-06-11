@@ -120,10 +120,96 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 	);
 }
 
+const PRESSURE_DIMENSIONS = [
+	{
+		key: "zeitdruck",
+		label: "Zeitdruck",
+		question: "Wie viel Zeit hatte der Spieler fuer seine Entscheidung?",
+		options: ["Viel Zeit", "Etwas Zeit", "Wenig Zeit", "Sofort handeln"],
+		scoreMap: {
+			"Viel Zeit": 0,
+			"Etwas Zeit": 1,
+			"Wenig Zeit": 2,
+			"Sofort handeln": 3,
+		},
+	},
+	{
+		key: "raumdruck",
+		label: "Raumdruck",
+		question: "Wie stark war der verfuegbare Raum eingeschraenkt?",
+		options: ["Frei", "Eher frei", "Eingeschraenkt", "Eingekesselt"],
+		scoreMap: {
+			Frei: 0,
+			"Eher frei": 1,
+			Eingeschraenkt: 2,
+			Eingekesselt: 3,
+		},
+	},
+	{
+		key: "gegnerdruck",
+		label: "Gegnerdruck",
+		question: "Wie direkt wurde der Spieler attackiert?",
+		options: ["Kein Druck", "Beobachtet", "Angegriffen", "Sofort attackiert"],
+		scoreMap: {
+			"Kein Druck": 0,
+			Beobachtet: 1,
+			Angegriffen: 2,
+			"Sofort attackiert": 3,
+		},
+	},
+	{
+		key: "optionsdruck",
+		label: "Optionsdruck",
+		question: "Wie viele realistische Loesungen standen zur Verfuegung?",
+		options: ["Viele", "Einige", "Wenige", "Fast keine"],
+		scoreMap: {
+			Viele: 0,
+			Einige: 1,
+			Wenige: 2,
+			"Fast keine": 3,
+		},
+	},
+];
+
+function computePressureAggregation(samples: any[] = []) {
+	const totals: Record<string, number> = {
+		zeitdruck: 0,
+		raumdruck: 0,
+		gegnerdruck: 0,
+		optionsdruck: 0,
+	};
+
+	for (const sample of samples) {
+		for (const dimension of PRESSURE_DIMENSIONS) {
+			const selected = sample?.[dimension.key];
+			if (!selected) continue;
+			const score = dimension.scoreMap[selected as keyof typeof dimension.scoreMap];
+			if (typeof score === "number") {
+				totals[dimension.key] += score;
+			}
+		}
+	}
+
+	let dominantKey = "zeitdruck";
+	for (const dimension of PRESSURE_DIMENSIONS) {
+		if (totals[dimension.key] > totals[dominantKey]) {
+			dominantKey = dimension.key;
+		}
+	}
+
+	const dominantLabel = PRESSURE_DIMENSIONS.find((d) => d.key === dominantKey)?.label || "Zeitdruck";
+	return { totals, dominantKey, dominantLabel };
+}
+
 export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRendererV2Props) {
 	switch (drill.drill_type) {
 		case "period_checkin":
+			if (drill?.config?.mode === "pressure_diagnosis") {
+				return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+			}
 			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "pressure_diagnosis":
+			return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "sample_log":
 			return <SampleLog drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "micro_quiz":
@@ -139,6 +225,303 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 		default:
 			return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
 	}
+}
+
+function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
+	const safeAnswers = answers || {};
+	const sampleKey = drill?.config?.sample_key || "pressure_samples";
+	const checkinConfig = drill?.config?.checkin || {};
+	const checkinKey = checkinConfig?.key || "dominant_source";
+	const reflectionAlignmentKey = drill?.config?.reflection_alignment_key || "reflection_alignment";
+	const totalsKey = drill?.config?.aggregation_totals_key || "pressure_totals";
+	const observedDominantKey = drill?.config?.observed_dominant_key || "dominant_pressure_observed";
+	const reflectionMessageKey = drill?.config?.reflection_message_key || "pressure_reflection";
+	const requiredSamples = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3);
+	const noteKey = drill?.config?.sample_note_key || "note";
+	const noteLabel = drill?.config?.sample_note_label || "Kurze Notiz zur Situation (optional)";
+	const noteMaxChars = drill?.config?.sample_note_max_chars || 240;
+	const reflectionConfig = drill?.config?.reflection || {};
+	const checkinLabel = checkinConfig?.label || "Welche Druckquelle war in diesem Drittel am haeufigsten entscheidend?";
+
+	const samples: any[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
+	const canAddMore = samples.length < requiredSamples;
+
+	const defaultFormState = {
+		zeitdruck: "",
+		raumdruck: "",
+		gegnerdruck: "",
+		optionsdruck: "",
+		[noteKey]: "",
+	};
+
+	const [showForm, setShowForm] = useState(false);
+	const [form, setForm] = useState<any>(defaultFormState);
+
+	const aggregation = computePressureAggregation(samples);
+	const checkinSelection = safeAnswers[checkinKey] || "";
+	const checkinOptions = Array.isArray(checkinConfig?.options) && checkinConfig.options.length > 0
+		? checkinConfig.options
+		: PRESSURE_DIMENSIONS.map((d) => ({ value: d.key, label: d.label }));
+	const selectedCheckinOption = checkinOptions.find((opt: any) => opt?.value === checkinSelection);
+	const selectedCheckinLabel = selectedCheckinOption?.label || "";
+	const checkinKeyNormalized = checkinSelection || undefined;
+	const reflectionAlignment =
+		checkinKeyNormalized && checkinKeyNormalized === aggregation.dominantKey ? "match" : "mismatch";
+	const dominantMessageTemplate = reflectionConfig?.dominant_template || "Deine drei Situationen wurden hauptsaechlich durch {aggregated} gepraegt.";
+	const reflectionMatchText = reflectionConfig?.match_text || "Dein Gesamteindruck stimmt mit den beobachteten Situationen ueberein.";
+	const reflectionMismatchTemplate = reflectionConfig?.mismatch_template || "Deine Situationen deuteten eher auf {aggregated} als auf {checkin} hin.";
+
+	const dominantMessage = dominantMessageTemplate.replace("{aggregated}", aggregation.dominantLabel);
+
+	const reflectionMessage =
+		!checkinSelection
+			? ""
+			: reflectionAlignment === "match"
+				? reflectionMatchText
+				: reflectionMismatchTemplate
+					.replace("{aggregated}", aggregation.dominantLabel)
+					.replace("{checkin}", selectedCheckinLabel || checkinSelection);
+
+	useEffect(() => {
+		const shouldUpdateDerived =
+			JSON.stringify(safeAnswers[totalsKey] || {}) !== JSON.stringify(aggregation.totals) ||
+			safeAnswers[observedDominantKey] !== aggregation.dominantLabel ||
+			safeAnswers[reflectionAlignmentKey] !== (checkinSelection ? reflectionAlignment : undefined) ||
+			safeAnswers[reflectionMessageKey] !== (checkinSelection ? reflectionMessage : undefined);
+
+		if (!shouldUpdateDerived) return;
+
+		const next = {
+			...safeAnswers,
+			[totalsKey]: aggregation.totals,
+			[observedDominantKey]: aggregation.dominantLabel,
+		};
+
+		if (checkinSelection) {
+			next[reflectionAlignmentKey] = reflectionAlignment;
+			next[reflectionMessageKey] = reflectionMessage;
+		} else {
+			delete next[reflectionAlignmentKey];
+			delete next[reflectionMessageKey];
+		}
+
+		setAnswers(next);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [samples, checkinSelection]);
+
+	const updateForm = (key: string, value: string) => {
+		setForm((prev: any) => ({ ...prev, [key]: value }));
+	};
+
+	const isSampleComplete = PRESSURE_DIMENSIONS.every((d) => !!form[d.key]);
+
+	const addSample = () => {
+		if (!isSampleComplete || !canAddMore) return;
+		const nextSample = {
+			zeitdruck: form.zeitdruck,
+			raumdruck: form.raumdruck,
+			gegnerdruck: form.gegnerdruck,
+			optionsdruck: form.optionsdruck,
+			[noteKey]: (form[noteKey] || "").trim(),
+		};
+		setAnswers({
+			...safeAnswers,
+			[sampleKey]: [...samples, nextSample],
+		});
+		setForm(defaultFormState);
+		setShowForm(false);
+	};
+
+	const removeSample = (index: number) => {
+		const nextSamples = samples.filter((_, idx) => idx !== index);
+		const nextAnswers: any = {
+			...safeAnswers,
+			[sampleKey]: nextSamples,
+		};
+		if (nextSamples.length < requiredSamples) {
+			delete nextAnswers[checkinKey];
+		}
+		setAnswers(nextAnswers);
+	};
+
+	const canRenderCheckin = samples.length === requiredSamples;
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "1rem" }}>
+					{drill.description}
+				</p>
+			)}
+			<ObservationGuide drill={drill} />
+
+			<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+				<h4 style={{ marginTop: 0, marginBottom: "0.5rem", color: "#89c8da" }}>Phase 1 - Drucksituationen sammeln</h4>
+				<p style={{ marginTop: 0, marginBottom: "0.75rem", fontSize: "0.9rem", color: "rgba(255,255,255,0.76)" }}>
+					Erfasse genau {requiredSamples} Situationen aus dem Drittel. Erst danach folgt die Verdichtung.
+				</p>
+
+				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem", gap: "0.75rem", flexWrap: "wrap" }}>
+					<button
+						type="button"
+						onClick={() => setShowForm((prev) => !prev)}
+						disabled={!canAddMore}
+						style={{
+							padding: "0.55rem 0.95rem",
+							background: "rgba(81,145,162,0.25)",
+							border: "1px solid rgba(81,145,162,0.6)",
+							borderRadius: "4px",
+							color: "#f7f7ff",
+							fontWeight: 600,
+							cursor: canAddMore ? "pointer" : "not-allowed",
+						}}
+					>
+						+ Situation
+					</button>
+					<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>
+						{samples.length}/{requiredSamples} erfasst
+					</span>
+				</div>
+
+				{showForm && canAddMore && (
+					<div style={{ marginBottom: "0.75rem", padding: "0.85rem", border: "1px solid rgba(81,145,162,0.45)", borderRadius: "6px", background: "rgba(81,145,162,0.08)" }}>
+						{PRESSURE_DIMENSIONS.map((dimension) => (
+							<div key={dimension.key} style={{ marginBottom: "0.85rem" }}>
+								<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{dimension.label}</label>
+								<p style={{ marginTop: 0, marginBottom: "0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.65)" }}>{dimension.question}</p>
+								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+									{dimension.options.map((opt) => (
+										<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+											<input
+												type="radio"
+												name={`${dimension.key}_sample`}
+												value={opt}
+												checked={form[dimension.key] === opt}
+												onChange={(e) => updateForm(dimension.key, e.target.value)}
+											/>
+											<span>{opt}</span>
+										</label>
+									))}
+								</div>
+							</div>
+						))}
+
+						<div style={{ marginBottom: "0.85rem" }}>
+							<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{noteLabel}</label>
+							<textarea
+								value={form[noteKey] || ""}
+								onChange={(e) => updateForm(noteKey, e.target.value)}
+								maxLength={noteMaxChars}
+								placeholder="Optional"
+								style={{
+									width: "100%",
+									minHeight: "58px",
+									padding: "0.5rem",
+									backgroundColor: "#050712",
+									color: "#f7f7ff",
+									border: "1px solid rgba(81,145,162,0.5)",
+									borderRadius: "4px",
+									fontFamily: "inherit",
+								}}
+							/>
+						</div>
+
+						<button
+							type="button"
+							onClick={addSample}
+							disabled={!isSampleComplete}
+							style={{
+								padding: "0.55rem 0.95rem",
+								background: isSampleComplete ? "rgba(81,145,162,0.35)" : "rgba(81,145,162,0.15)",
+								border: "1px solid rgba(81,145,162,0.6)",
+								borderRadius: "4px",
+								color: "#f7f7ff",
+								fontWeight: 600,
+								cursor: isSampleComplete ? "pointer" : "not-allowed",
+							}}
+						>
+							Situation speichern
+						</button>
+					</div>
+				)}
+
+				<div style={{ display: "grid", gap: "0.5rem" }}>
+					{samples.map((sample, idx) => (
+						<div key={idx} style={{ padding: "0.65rem 0.75rem", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", background: "rgba(255,255,255,0.03)" }}>
+							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem" }}>
+								<strong>Situation {idx + 1}</strong>
+								<button
+									type="button"
+									onClick={() => removeSample(idx)}
+									style={{
+										padding: "0.2rem 0.5rem",
+										borderRadius: "4px",
+										border: "1px solid rgba(255,255,255,0.2)",
+										background: "transparent",
+										color: "#f7f7ff",
+										cursor: "pointer",
+									}}
+								>
+									Entfernen
+								</button>
+							</div>
+							<div style={{ marginTop: "0.35rem", fontSize: "0.83rem", color: "rgba(255,255,255,0.73)", lineHeight: 1.5 }}>
+								Zeitdruck: {sample.zeitdruck || "-"} | Raumdruck: {sample.raumdruck || "-"} | Gegnerdruck: {sample.gegnerdruck || "-"} | Optionsdruck: {sample.optionsdruck || "-"}
+							</div>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section style={{ marginBottom: "0.5rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+				<h4 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Phase 2 - Period Check-in</h4>
+				<p style={{ marginTop: 0, marginBottom: "0.75rem", fontSize: "0.9rem", color: "rgba(255,255,255,0.76)" }}>
+					{checkinLabel}
+				</p>
+
+				{canRenderCheckin ? (
+					<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+						{checkinOptions.map((option: any) => (
+							<label key={option.value} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+								<input
+									type="radio"
+									name="dominant_pressure_source"
+									value={option.value}
+									checked={checkinSelection === option.value}
+									onChange={(e) => setAnswers({ ...safeAnswers, [checkinKey]: e.target.value })}
+								/>
+								<span>{option.label}</span>
+							</label>
+						))}
+					</div>
+				) : (
+					<p style={{ margin: 0, fontSize: "0.82rem", color: "rgba(255,215,140,0.92)" }}>
+						Der Check-in wird freigeschaltet, sobald genau {requiredSamples} Situationen erfasst sind.
+					</p>
+				)}
+			</section>
+
+			{checkinSelection && (
+				<section style={{ marginTop: "0.85rem", padding: "0.9rem 1rem", borderRadius: "6px", background: "rgba(81,145,162,0.12)", border: "1px solid rgba(81,145,162,0.4)" }}>
+					<h4 style={{ marginTop: 0, marginBottom: "0.45rem", color: "#89c8da" }}>Reflexionsmoment</h4>
+					<p style={{ marginTop: 0, marginBottom: "0.55rem" }}>
+						{dominantMessage}
+					</p>
+					<p style={{ marginTop: 0, marginBottom: "0.4rem" }}>{reflectionMessage}</p>
+					<p style={{ margin: 0, fontSize: "0.76rem", color: "rgba(255,255,255,0.55)" }}>
+						Interne Aggregation: Zeitdruck {aggregation.totals.zeitdruck}, Raumdruck {aggregation.totals.raumdruck}, Gegnerdruck {aggregation.totals.gegnerdruck}, Optionsdruck {aggregation.totals.optionsdruck}
+					</p>
+				</section>
+			)}
+
+			{drill.didactics?.learning_hint && (
+				<p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
+					{drill.didactics.learning_hint}
+				</p>
+			)}
+		</div>
+	);
 }
 
 

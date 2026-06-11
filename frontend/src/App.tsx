@@ -12,6 +12,7 @@ import Cluster2TrackFPage from './pages/Cluster2TrackF'
 import ObservationSetup from './pages/ObservationSetup'
 import ObservationRun from './pages/ObservationRun'
 import ObservationStats from './pages/ObservationStats'
+import RingAbout from './pages/RingAbout'
 import TopNav from './components/TopNav'
 import { RewardHost, RewardProvider } from './features/rewards'
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/observation/setup" element={<ObservationSetup />} />
             <Route path="/observation/run/:runId" element={<ObservationRun />} />
             <Route path="/observation/stats" element={<ObservationStats />} />
+            <Route path="/ringabout" element={<RingAbout />} />
           </Routes>
         </main>
       </div>

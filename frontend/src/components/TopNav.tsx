@@ -14,6 +14,7 @@ const navTabs = [
   { to: '/progress', label: 'Stats' },
   { to: '/observation/setup', label: 'Obs Setup' },
   { to: '/observation/stats', label: 'Obs Stats' },
+  { to: '/ringabout', label: '🎬 Rink About It' },
 ];
 
 

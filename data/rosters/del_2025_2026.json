@@ -2,47 +2,6 @@
   "league": "DEL",
   "season": "2025_2026",
   "teams": [
-    {
-      "team_id": "erc_ingolstadt",
-      "name": "ERC Ingolstadt",
-      "players": [
-        {
-          "player_id": "erc_ingolstadt_max_mustermann",
-          "name": "Max Mustermann",
-          "number": 19,
-          "position": "center"
-        },
-        {
-          "player_id": "erc_ingolstadt_tom_beispiel",
-          "name": "Tom Beispiel",
-          "number": 8,
-          "position": "defender"
-        },
-        {
-          "player_id": "erc_ingolstadt_lukas_demo",
-          "name": "Lukas Demo",
-          "number": 71,
-          "position": "winger"
-        }
-      ]
-    },
-    {
-      "team_id": "adler_mannheim",
-      "name": "Adler Mannheim",
-      "players": [
-        {
-          "player_id": "adler_mannheim_jan_test",
-          "name": "Jan Test",
-          "number": 11,
-          "position": "winger"
-        },
-        {
-          "player_id": "adler_mannheim_felix_probe",
-          "name": "Felix Probe",
-          "number": 55,
-          "position": "center"
-        }
-      ]
-    }
+  
   ]
 }

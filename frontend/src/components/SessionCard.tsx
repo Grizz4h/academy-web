@@ -6,11 +6,12 @@ import styles from './SessionCard.module.css'
 
 interface SessionCardProps {
   session: Session
+  sceneEntries?: Array<{ id: string; game_time: string; period?: string; created_at: string }>
   onDelete?: (id: string) => void
   isDeletingId?: string
 }
 
-export default function SessionCard({ session, onDelete, isDeletingId }: SessionCardProps) {
+export default function SessionCard({ session, sceneEntries = [], onDelete, isDeletingId }: SessionCardProps) {
   const queryClient = useQueryClient()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [expandedPhases, setExpandedPhases] = useState<Set<number>>(new Set())
@@ -288,6 +289,63 @@ export default function SessionCard({ session, onDelete, isDeletingId }: Session
               </a>
             </div>
           )}
+
+          <div
+            style={{
+              padding: '1rem 1.5rem',
+              backgroundColor: 'rgba(15, 23, 42, 0.25)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+            }}
+          >
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '600',
+                color: 'rgba(255, 255, 255, 0.5)',
+                marginBottom: '0.5rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em'
+              }}
+            >
+              Szenenpool ({sceneEntries.length})
+            </div>
+
+            <a
+              href={`/ringabout?session_id=${encodeURIComponent(session.id)}`}
+              style={{
+                display: 'inline-block',
+                marginBottom: sceneEntries.length > 0 ? '0.6rem' : 0,
+                color: 'rgba(125, 211, 252, 1)',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                fontWeight: '600'
+              }}
+            >
+              🎬 Alle Szenen dieser Session öffnen
+            </a>
+
+            {sceneEntries.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                {sceneEntries.map((entry) => (
+                  <a
+                    key={entry.id}
+                    href={`/ringabout?session_id=${encodeURIComponent(session.id)}#scene-${entry.id}`}
+                    style={{
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '9999px',
+                      border: '1px solid rgba(148, 163, 184, 0.35)',
+                      color: 'rgba(226, 232, 240, 0.9)',
+                      textDecoration: 'none',
+                      fontSize: '0.75rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    {entry.period ? `${getPhaseLabel(entry.period)} · ` : ''}{entry.game_time}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
 
           {session.goal && (
             <div

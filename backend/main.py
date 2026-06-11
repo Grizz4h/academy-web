@@ -4,6 +4,7 @@ import jwt
 from datetime import datetime, timedelta
 from fastapi import Header, HTTPException, Depends
 from auth_utils import hash_password, verify_password
+from player_importer import PennyDelImporter
 # JWT config
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 USERS_FILE = os.path.join(DATA_DIR, "users.json")
@@ -55,6 +56,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import json
 import os
 import logging
+import re
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
@@ -121,9 +123,13 @@ SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
 ROOT_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 ROSTERS_DIR = os.path.join(ROOT_DATA_DIR, "rosters")
+PLAYERS_DIR = os.path.join(DATA_DIR, "players")
 OBSERVATIONS_DIR = os.path.join(ROOT_DATA_DIR, "observations")
 OBS_RUNS_DIR = os.path.join(OBSERVATIONS_DIR, "runs")
 OBS_ENTRIES_DIR = os.path.join(OBSERVATIONS_DIR, "entries")
+OBS_PLAYERS_DIR = os.path.join(OBSERVATIONS_DIR, "players")
+SCENES_DIR = os.path.join(ROOT_DATA_DIR, "scenes")
+PENNY_DEL_IMPORT_CONFIG_FILE = os.path.join(DATA_DIR, "penny_del_import_teams.json")
 
 # Pydantic Models
 class SessionCreate(BaseModel):
@@ -166,6 +172,22 @@ class RewardApplyData(BaseModel):
     unlocked_masteries: List[dict] = Field(default_factory=list)
 
 
+class SceneMarkerCreate(BaseModel):
+    session_id: str
+    module_id: str
+    drill_id: Optional[str] = None
+    drill_title: Optional[str] = None
+    track_id: Optional[str] = None
+    league: Optional[str] = None
+    season: Optional[str] = None
+    team_home: Optional[str] = None
+    team_away: Optional[str] = None
+    observed_team: Optional[str] = None
+    period: Optional[str] = None
+    game_time: str
+    note: Optional[str] = None
+
+
 class ObservationRunCreate(BaseModel):
     league: str
     season: str
@@ -175,6 +197,11 @@ class ObservationRunCreate(BaseModel):
     player_name: str
     player_number: Optional[int] = None
     player_position: str
+    player_birth_year: Optional[int] = None
+    player_notes: Optional[str] = ""
+    drill_id: Optional[str] = None
+    drill_name: Optional[str] = None
+    source: Optional[dict] = None
     notes: Optional[str] = ""
 
 
@@ -189,7 +216,54 @@ class ObservationDimensions(BaseModel):
 class ObservationEntryCreate(BaseModel):
     run_id: str
     dimensions: ObservationDimensions
+    source: Optional[dict] = None
     note: Optional[str] = ""
+
+
+class ObservationProfileUpdate(BaseModel):
+    player_birth_year: Optional[int] = None
+    notes: Optional[str] = None
+    summary: Optional[dict] = None
+    source_catalog: Optional[List[dict]] = None
+
+
+class KaderPlayer(BaseModel):
+    """Player aus Kaderimport"""
+    player_name: str
+    jersey_number: Optional[int] = None
+    position: Optional[str] = None
+    nationality: Optional[str] = None
+    age: Optional[int] = None
+    height_cm: Optional[int] = None
+    weight_kg: Optional[float] = None
+    birthplace: Optional[str] = None
+    shoots_or_catches: Optional[str] = None
+    team: str  # z.B. "ERC Ingolstadt"
+    league: str  # z.B. "PENNY DEL"
+    source: str  # z.B. "PENNY DEL"
+    active: bool = True
+
+
+class PlayerProfile(BaseModel):
+    """Player-Profil aus Kaderimport"""
+    player_id: str
+    player_name: str
+    jersey_number: Optional[int] = None
+    position: Optional[str] = None
+    nationality: Optional[str] = None
+    age: Optional[int] = None
+    height_cm: Optional[int] = None
+    weight_kg: Optional[float] = None
+    birthplace: Optional[str] = None
+    shoots_or_catches: Optional[str] = None
+    team: str
+    league: str
+    source: str
+    active: bool
+    observation_count: int = 0
+    summary: str = ""
+    last_observed: Optional[str] = None
+    created_at: Optional[str] = None
 
 # Hilfsfunktionen
 def load_json(file_path: str):
@@ -306,6 +380,262 @@ def _build_observation_storage_path(base_dir: str, item_id: str, created_at: Opt
     return os.path.join(base_dir, year, month, f"{item_id}.json")
 
 
+def _safe_key(value: str) -> str:
+    return re.sub(r"[^a-z0-9_-]", "_", (value or "").strip().lower())
+
+
+def _build_profile_id(user: str, league: str, player_id: str) -> str:
+    return f"profile_{_safe_key(user)}_{_safe_key(league)}_{_safe_key(player_id)}"
+
+
+def _default_source() -> dict:
+    return {
+        "source_type": "self_observation",
+        "provider": "manual",
+        "label": "Eigene Beobachtung",
+        "url": "",
+        "external_id": "",
+        "metadata": {},
+        "captured_at": None,
+    }
+
+
+def _normalize_source(raw_source: Optional[dict]) -> dict:
+    source = raw_source or {}
+    default = _default_source()
+    source_type = (source.get("source_type") or "self_observation").strip().lower()
+    provider = (source.get("provider") or ("manual" if source_type == "self_observation" else "external")).strip().lower()
+
+    return {
+        "source_type": source_type,
+        "provider": provider,
+        "label": (source.get("label") or default["label"]).strip(),
+        "url": (source.get("url") or "").strip(),
+        "external_id": (source.get("external_id") or "").strip(),
+        "metadata": source.get("metadata") or {},
+        "captured_at": source.get("captured_at") or datetime.now().isoformat(),
+    }
+
+
+def _default_summary() -> dict:
+    return {
+        "text": "",
+        "status": "placeholder",
+        "updated_at": None,
+        "generator": "manual_placeholder",
+    }
+
+
+def _default_integrations() -> dict:
+    return {
+        "providers": {
+            "elite_prospects": {"enabled": False, "status": "not_configured"},
+            "instat": {"enabled": False, "status": "not_configured"},
+            "wyscout": {"enabled": False, "status": "not_configured"},
+            "nhl_video": {"enabled": False, "status": "not_configured"},
+            "del_video": {"enabled": False, "status": "not_configured"},
+        },
+        "planned_capabilities": [
+            "load_external_player_data",
+            "refresh_statistics",
+            "sync_player_information",
+            "generate_automatic_summary",
+        ],
+    }
+
+
+def _iter_user_observation_profiles(user: str):
+    user_norm = _normalize_user_key(user)
+    for path in _iter_json_files(OBS_PLAYERS_DIR) or []:
+        profile = load_json(path)
+        if _normalize_user_key(profile.get("user", "")) != user_norm:
+            continue
+        yield profile
+
+
+def _find_observation_profile(user: str, player_id: str, league: Optional[str] = None) -> Optional[dict]:
+    matches = []
+    for profile in _iter_user_observation_profiles(user):
+        if profile.get("player_id") != player_id:
+            continue
+        if league and profile.get("league") != league:
+            continue
+        matches.append(profile)
+
+    if not matches:
+        return None
+    return max(matches, key=lambda item: item.get("updated_at", item.get("created_at", "")))
+
+
+def _ensure_profile_storage(user: str, run: dict) -> dict:
+    profile = _find_observation_profile(user, run.get("player_id"), run.get("league"))
+    now_iso = datetime.now().isoformat()
+
+    if profile:
+        profile_path = _find_json_file_by_id(OBS_PLAYERS_DIR, profile.get("profile_id"))
+    else:
+        profile_id = _build_profile_id(user, run.get("league", ""), run.get("player_id", ""))
+        profile_path = None
+        profile = {
+            "profile_id": profile_id,
+            "user": run.get("user"),
+            "player_id": run.get("player_id"),
+            "player_name": run.get("player_name"),
+            "team_id": run.get("team_id"),
+            "team_name": run.get("team_name"),
+            "league": run.get("league"),
+            "season": run.get("season"),
+            "player_position": run.get("player_position"),
+            "player_birth_year": run.get("player_birth_year"),
+            "notes": run.get("player_notes") or "",
+            "created_at": now_iso,
+            "updated_at": now_iso,
+            "summary": _default_summary(),
+            "source_catalog": [],
+            "history": {
+                "first_observation": None,
+                "last_observation": None,
+                "observation_session_count": 0,
+                "observation_entry_count": 0,
+                "runs": [],
+                "observations": [],
+                "note_timeline": [],
+            },
+            "integrations": _default_integrations(),
+        }
+
+    profile["player_name"] = run.get("player_name") or profile.get("player_name")
+    profile["team_id"] = run.get("team_id") or profile.get("team_id")
+    profile["team_name"] = run.get("team_name") or profile.get("team_name")
+    profile["season"] = run.get("season") or profile.get("season")
+    profile["player_position"] = run.get("player_position") or profile.get("player_position")
+    profile["updated_at"] = now_iso
+    if run.get("player_birth_year"):
+        profile["player_birth_year"] = run.get("player_birth_year")
+    if run.get("player_notes"):
+        profile["notes"] = run.get("player_notes")
+
+    profile.setdefault("summary", _default_summary())
+    profile.setdefault("source_catalog", [])
+    profile.setdefault("history", {
+        "first_observation": None,
+        "last_observation": None,
+        "observation_session_count": 0,
+        "observation_entry_count": 0,
+        "runs": [],
+        "observations": [],
+        "note_timeline": [],
+    })
+    profile.setdefault("integrations", _default_integrations())
+
+    source = _normalize_source(run.get("source"))
+    if not any(
+        (s.get("source_type") == source.get("source_type") and s.get("label") == source.get("label") and s.get("external_id") == source.get("external_id"))
+        for s in profile.get("source_catalog", [])
+    ):
+        profile["source_catalog"].append(source)
+
+    history = profile["history"]
+    history.setdefault("runs", [])
+    history.setdefault("observations", [])
+    history.setdefault("note_timeline", [])
+
+    if not any(r.get("run_id") == run.get("run_id") for r in history["runs"]):
+        history["runs"].append(
+            {
+                "run_id": run.get("run_id"),
+                "created_at": run.get("created_at"),
+                "league": run.get("league"),
+                "season": run.get("season"),
+                "team_id": run.get("team_id"),
+                "team_name": run.get("team_name"),
+                "drill_id": run.get("drill_id"),
+                "drill_name": run.get("drill_name"),
+                "run_note": run.get("notes") or "",
+                "source": source,
+            }
+        )
+
+    history["observation_session_count"] = len(history["runs"])
+    observed_timestamps = [r.get("created_at") for r in history["runs"] if r.get("created_at")]
+    if observed_timestamps:
+        history["first_observation"] = min(observed_timestamps)
+        history["last_observation"] = max(observed_timestamps)
+
+    if run.get("notes"):
+        history["note_timeline"].append(
+            {
+                "created_at": run.get("created_at"),
+                "run_id": run.get("run_id"),
+                "entry_id": None,
+                "note": run.get("notes"),
+                "source": source,
+            }
+        )
+
+    if not profile_path:
+        profile_path = _build_observation_storage_path(OBS_PLAYERS_DIR, profile["profile_id"], profile.get("created_at"))
+    save_json(profile_path, profile)
+    return profile
+
+
+def _append_observation_to_profile(user: str, run: dict, entry: dict) -> None:
+    profile = _ensure_profile_storage(user, run)
+    profile_path = _find_json_file_by_id(OBS_PLAYERS_DIR, profile.get("profile_id"))
+    if not profile_path:
+        return
+
+    source = _normalize_source(entry.get("source"))
+    history = profile.setdefault("history", {})
+    history.setdefault("observations", [])
+    history.setdefault("note_timeline", [])
+
+    history["observations"].append(
+        {
+            "entry_id": entry.get("entry_id"),
+            "run_id": entry.get("run_id"),
+            "created_at": entry.get("created_at"),
+            "drill_id": run.get("drill_id"),
+            "drill_name": run.get("drill_name"),
+            "game": {
+                "league": run.get("league"),
+                "season": run.get("season"),
+                "team_name": run.get("team_name"),
+            },
+            "note": entry.get("note") or "",
+            "source": source,
+        }
+    )
+    history["observation_entry_count"] = len(history["observations"])
+
+    timestamps = [item.get("created_at") for item in history["observations"] if item.get("created_at")]
+    run_times = [item.get("created_at") for item in history.get("runs", []) if item.get("created_at")]
+    combined = [*timestamps, *run_times]
+    if combined:
+        history["first_observation"] = min(combined)
+        history["last_observation"] = max(combined)
+
+    if entry.get("note"):
+        history["note_timeline"].append(
+            {
+                "created_at": entry.get("created_at"),
+                "run_id": entry.get("run_id"),
+                "entry_id": entry.get("entry_id"),
+                "note": entry.get("note"),
+                "source": source,
+            }
+        )
+
+    if not any(
+        (s.get("source_type") == source.get("source_type") and s.get("label") == source.get("label") and s.get("external_id") == source.get("external_id"))
+        for s in profile.get("source_catalog", [])
+    ):
+        profile.setdefault("source_catalog", []).append(source)
+
+    profile["updated_at"] = datetime.now().isoformat()
+    save_json(profile_path, profile)
+
+
 def _iter_json_files(base_dir: str):
     if not os.path.exists(base_dir):
         return
@@ -321,6 +651,53 @@ def _find_json_file_by_id(base_dir: str, item_id: str) -> Optional[str]:
         if target in files:
             return os.path.join(root, target)
     return None
+
+
+def _load_team_players(team_id: str) -> dict:
+    """Lädt alle Spieler eines Teams aus players_dir."""
+    players_file = os.path.join(PLAYERS_DIR, f"{team_id}_players.json")
+    if os.path.exists(players_file):
+        try:
+            with open(players_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return {p.get('player_id'): p for p in data.get('players', [])}
+        except Exception as e:
+            print(f"[Players] Fehler beim Laden von {players_file}: {e}")
+    return {}
+
+
+def _get_active_team_players(team_id: str) -> List[dict]:
+    """Gibt aktive Spieler eines Teams zurück."""
+    players = _load_team_players(team_id)
+    return [p for p in players.values() if p.get('active', True)]
+
+
+def _touch_player_observation(team_id: str, player_id: str, observed_at: Optional[str]) -> None:
+    """Aktualisiert observation_count/last_observed für importierte Spieler."""
+    players_file = os.path.join(PLAYERS_DIR, f"{team_id}_players.json")
+    if not os.path.exists(players_file):
+        return
+
+    try:
+        data = load_json(players_file)
+    except Exception:
+        return
+
+    players = data.get("players") or []
+    changed = False
+    for player in players:
+        if player.get("player_id") != player_id:
+            continue
+        player["observation_count"] = int(player.get("observation_count") or 0) + 1
+        player["last_observed"] = observed_at or datetime.now().isoformat()
+        changed = True
+        break
+
+    if not changed:
+        return
+
+    data["updated_at"] = datetime.utcnow().isoformat() + "Z"
+    save_json(players_file, data)
 
 
 def _load_roster_file(league: str, season: str) -> dict:
@@ -456,6 +833,8 @@ async def create_observation_run(payload: ObservationRunCreate, current_user: st
     run_id = f"obs_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
 
     enforce_max_text_length(payload.notes, "observation_run.notes")
+    enforce_max_text_length(payload.player_notes, "observation_run.player_notes")
+    enforce_max_text_length(payload.source, "observation_run.source")
 
     run = {
         "run_id": run_id,
@@ -468,6 +847,11 @@ async def create_observation_run(payload: ObservationRunCreate, current_user: st
         "player_name": payload.player_name,
         "player_number": payload.player_number,
         "player_position": payload.player_position,
+        "player_birth_year": payload.player_birth_year,
+        "player_notes": payload.player_notes or "",
+        "drill_id": payload.drill_id,
+        "drill_name": payload.drill_name,
+        "source": _normalize_source(payload.source),
         "created_at": now_iso,
         "notes": payload.notes or "",
         "status": "active",
@@ -475,6 +859,7 @@ async def create_observation_run(payload: ObservationRunCreate, current_user: st
 
     run_path = _build_observation_storage_path(OBS_RUNS_DIR, run_id, now_iso)
     save_json(run_path, run)
+    _ensure_profile_storage(current_user, run)
     return run
 
 
@@ -504,6 +889,7 @@ async def create_observation_entry(payload: ObservationEntryCreate, current_user
     entry_id = f"entry_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
 
     enforce_max_text_length(payload.note, "observation_entry.note")
+    enforce_max_text_length(payload.source, "observation_entry.source")
 
     entry = {
         "entry_id": entry_id,
@@ -517,12 +903,17 @@ async def create_observation_entry(payload: ObservationEntryCreate, current_user
         "player_name": run.get("player_name"),
         "player_position": run.get("player_position"),
         "created_at": now_iso,
+        "drill_id": run.get("drill_id"),
+        "drill_name": run.get("drill_name"),
+        "source": _normalize_source(payload.source or run.get("source")),
         "dimensions": payload.dimensions.model_dump(),
         "note": payload.note or "",
     }
 
     entry_path = _build_observation_storage_path(OBS_ENTRIES_DIR, entry_id, now_iso)
     save_json(entry_path, entry)
+    _append_observation_to_profile(current_user, run, entry)
+    _touch_player_observation(run.get("team_id", ""), run.get("player_id", ""), now_iso)
     return entry
 
 
@@ -574,6 +965,22 @@ async def get_observation_stats(
         entries.append(entry)
 
     players = _aggregate_players(entries)
+    profiles = list(_iter_user_observation_profiles(current_user))
+    profile_by_key = {
+        (p.get("league"), p.get("player_id")): p for p in profiles
+    }
+
+    for player in players:
+        profile = profile_by_key.get((player.get("league"), player.get("player_id")))
+        if not profile:
+            continue
+        history = profile.get("history") or {}
+        player["first_observation"] = history.get("first_observation")
+        player["last_observation"] = history.get("last_observation") or player.get("last_observation")
+        player["observation_session_count"] = history.get("observation_session_count", 0)
+        player["observation_entry_count"] = history.get("observation_entry_count", player.get("observation_count", 0))
+        player["summary"] = profile.get("summary") or _default_summary()
+
     return {"players": players}
 
 
@@ -602,8 +1009,209 @@ async def get_observation_stats_player(
 
     aggregated = _aggregate_players(entries)
     player = aggregated[0] if aggregated else None
+    profile = _find_observation_profile(current_user, player_id, league)
+    if profile and player:
+        history = profile.get("history") or {}
+        player["first_observation"] = history.get("first_observation")
+        player["last_observation"] = history.get("last_observation") or player.get("last_observation")
+        player["observation_session_count"] = history.get("observation_session_count", 0)
+        player["observation_entry_count"] = history.get("observation_entry_count", player.get("observation_count", 0))
+        player["summary"] = profile.get("summary") or _default_summary()
+
     entries.sort(key=lambda item: item.get("created_at", ""), reverse=True)
-    return {"player": player, "observations": entries}
+    return {"player": player, "observations": entries, "profile": profile}
+
+
+@app.get("/api/observation-profiles")
+async def get_observation_profiles(
+    league: Optional[str] = None,
+    season: Optional[str] = None,
+    team_id: Optional[str] = None,
+    player_id: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    profiles = []
+    for profile in _iter_user_observation_profiles(current_user):
+        if league and profile.get("league") != league:
+            continue
+        if season and profile.get("season") != season:
+            continue
+        if team_id and profile.get("team_id") != team_id:
+            continue
+        if player_id and profile.get("player_id") != player_id:
+            continue
+        profiles.append(profile)
+
+    profiles.sort(key=lambda item: item.get("updated_at", item.get("created_at", "")), reverse=True)
+    return {"profiles": profiles}
+
+
+@app.get("/api/observation-profiles/{player_id}")
+async def get_observation_profile(
+    player_id: str,
+    league: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    profile = _find_observation_profile(current_user, player_id, league)
+    if not profile:
+        raise HTTPException(status_code=404, detail="Observation profile not found")
+    return profile
+
+
+@app.patch("/api/observation-profiles/{player_id}")
+async def patch_observation_profile(
+    player_id: str,
+    payload: ObservationProfileUpdate,
+    league: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    profile = _find_observation_profile(current_user, player_id, league)
+    if not profile:
+        raise HTTPException(status_code=404, detail="Observation profile not found")
+
+    profile_path = _find_json_file_by_id(OBS_PLAYERS_DIR, profile.get("profile_id"))
+    if not profile_path:
+        raise HTTPException(status_code=404, detail="Observation profile file missing")
+
+    if payload.notes is not None:
+        enforce_max_text_length(payload.notes, "observation_profile.notes")
+        profile["notes"] = payload.notes
+
+    if payload.player_birth_year is not None:
+        profile["player_birth_year"] = payload.player_birth_year
+
+    if payload.summary is not None:
+        enforce_max_text_length(payload.summary, "observation_profile.summary")
+        merged_summary = {**_default_summary(), **(profile.get("summary") or {}), **payload.summary}
+        merged_summary["updated_at"] = datetime.now().isoformat()
+        profile["summary"] = merged_summary
+
+    if payload.source_catalog is not None:
+        enforce_max_text_length(payload.source_catalog, "observation_profile.source_catalog")
+        profile["source_catalog"] = [_normalize_source(item) for item in payload.source_catalog]
+
+    profile["updated_at"] = datetime.now().isoformat()
+    save_json(profile_path, profile)
+    return profile
+
+
+# ---- Kaderimport Endpoints ----
+
+@app.get("/api/players/importable-teams")
+async def list_importable_teams(current_user: str = Depends(get_current_user)):
+    """Gibt Liste der Teams aus Konfigurationsdatei zurück."""
+    importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
+    teams = importer.list_teams(enabled_only=False)
+    return {
+        "teams": [
+            {
+                "id": team.get("id"),
+                "slug": team.get("slug"),
+                "name": team.get("team"),
+                "league": team.get("league"),
+                "url": team.get("url"),
+                "enabled": bool(team.get("enabled")),
+                "status": "supported" if team.get("enabled") else "planned",
+            }
+            for team in teams
+        ],
+        "note": "Teams werden aus data/academy/penny_del_import_teams.json geladen",
+    }
+
+
+@app.post("/api/players/import")
+async def import_players(
+    team_id: Optional[str] = None,
+    current_user: str = Depends(get_current_user)
+):
+    """
+    Importiert Spieler für ein Team.
+    
+    Unterstützte Teams kommen aus der Konfigurationsdatei.
+    
+    Upsert-Logik:
+    - Neue Spieler: erstellen
+    - Existierende Spieler: aktualisieren
+    - Inaktive Spieler: active=false markieren (nicht löschen)
+    """
+    importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
+    configured_teams = importer.list_teams(enabled_only=False)
+    if not configured_teams:
+        raise HTTPException(status_code=500, detail={"error": "Keine Team-Konfiguration gefunden"})
+
+    if not team_id:
+        first_enabled = next((team for team in configured_teams if team.get("enabled")), configured_teams[0])
+        team_id = first_enabled.get("id")
+
+    valid_teams = [team.get("id") for team in configured_teams]
+    if team_id not in valid_teams:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": f"Team '{team_id}' wird noch nicht unterstützt",
+                "supported_teams": valid_teams,
+            },
+        )
+
+    try:
+        result = importer.import_team(team_id)
+
+        if result.get("error"):
+            raise HTTPException(status_code=502, detail=result)
+
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[Import] Fehler beim Import: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": str(e),
+                "team_id": team_id,
+            },
+        )
+
+
+@app.post("/api/players/import-all")
+async def import_all_players(current_user: str = Depends(get_current_user)):
+    importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
+    results = importer.import_all_enabled()
+    if not results:
+        raise HTTPException(status_code=400, detail={"error": "Keine aktivierten Teams in der Konfiguration"})
+    return {"results": results, "total": len(results)}
+
+
+@app.get("/api/players/team/{team_id}")
+async def get_team_players(team_id: str, active_only: bool = True, current_user: str = Depends(get_current_user)):
+    """Gibt alle Spieler eines Teams zurück."""
+    players = _load_team_players(team_id)
+
+    if active_only:
+        players_list = [p for p in players.values() if p.get('active', True)]
+    else:
+        players_list = list(players.values())
+
+    players_list.sort(key=lambda p: (p.get('jersey_number') or 999))
+
+    return {
+        "team_id": team_id,
+        "players": players_list,
+        "total": len(players_list),
+        "updated_at": datetime.utcnow().isoformat() + "Z"
+    }
+
+
+@app.post("/api/players/{player_id}/refresh-profile")
+async def refresh_player_profile_placeholder(player_id: str, current_user: str = Depends(get_current_user)):
+    """Platzhalter für spätere KI-Profilaktualisierung (noch nicht implementiert)."""
+    return {
+        "player_id": player_id,
+        "status": "not_implemented",
+        "message": "Profil aktualisieren via OpenAI wird in einem späteren Schritt aktiviert.",
+    }
+
+
 
 @app.get("/api/sessions")
 async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
@@ -1086,6 +1694,105 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
         "granted_pux": int(data.granted_pux or 0),
         "reward_events": data.reward_events,
     }
+
+
+# ---- RingAbout Scene Marker ----
+
+def _build_scene_path(scene_id: str, created_at: Optional[str]) -> str:
+    dt = _parse_created_at(created_at)
+    year = f"{dt.year:04d}"
+    month = f"{dt.month:02d}"
+    return os.path.join(SCENES_DIR, year, month, f"{scene_id}.json")
+
+
+@app.post("/api/scenes")
+async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(get_current_user)):
+    import re
+    if not re.match(r"^\d{1,2}(:\d{1,2})?$", (payload.game_time or "").strip()):
+        raise HTTPException(status_code=400, detail="game_time must be a valid time, e.g. 13:42 or 13")
+
+    enforce_max_text_length(payload.note, "scene.note")
+    enforce_max_text_length(payload.drill_title, "scene.drill_title")
+
+    user_cased = _resolve_user_cased(current_user)
+    now_iso = datetime.now().isoformat()
+    scene_id = f"scene_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
+
+    scene = {
+        "id": scene_id,
+        "user": user_cased,
+        "session_id": payload.session_id,
+        "module_id": payload.module_id,
+        "drill_id": payload.drill_id,
+        "drill_title": payload.drill_title,
+        "track_id": payload.track_id,
+        "league": payload.league,
+        "season": payload.season,
+        "team_home": payload.team_home,
+        "team_away": payload.team_away,
+        "observed_team": payload.observed_team,
+        "period": payload.period,
+        "game_time": payload.game_time.strip(),
+        "note": (payload.note or "").strip(),
+        "created_at": now_iso,
+    }
+
+    scene_path = _build_scene_path(scene_id, now_iso)
+    save_json(scene_path, scene)
+    logging.info(f"[scene] created scene_id={scene_id} user={user_cased} game_time={scene['game_time']}")
+    return scene
+
+
+@app.get("/api/scenes")
+async def get_scenes(
+    league: Optional[str] = None,
+    season: Optional[str] = None,
+    team: Optional[str] = None,
+    track_id: Optional[str] = None,
+    drill_id: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    user_norm = _normalize_user_key(current_user)
+    scenes = []
+    for path in _iter_json_files(SCENES_DIR):
+        try:
+            scene = load_json(path)
+        except Exception:
+            continue
+        if _normalize_user_key(scene.get("user", "")) != user_norm:
+            continue
+        if league and scene.get("league") != league:
+            continue
+        if season and scene.get("season") != season:
+            continue
+        if team:
+            team_norm = team.strip().lower()
+            home_match = (scene.get("team_home") or "").strip().lower() == team_norm
+            away_match = (scene.get("team_away") or "").strip().lower() == team_norm
+            obs_match = (scene.get("observed_team") or "").strip().lower() == team_norm
+            if not (home_match or away_match or obs_match):
+                continue
+        if track_id and scene.get("track_id") != track_id:
+            continue
+        if drill_id and scene.get("drill_id") != drill_id:
+            continue
+        scenes.append(scene)
+
+    scenes.sort(key=lambda s: s.get("created_at", ""), reverse=True)
+    return {"scenes": scenes}
+
+
+@app.delete("/api/scenes/{scene_id}")
+async def delete_scene(scene_id: str, current_user: str = Depends(get_current_user)):
+    scene_path = _find_json_file_by_id(SCENES_DIR, scene_id)
+    if not scene_path:
+        raise HTTPException(status_code=404, detail="Scene not found")
+    scene = load_json(scene_path)
+    if _normalize_user_key(scene.get("user", "")) != _normalize_user_key(current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+    os.remove(scene_path)
+    logging.info(f"[scene] deleted scene_id={scene_id} user={current_user}")
+    return {"status": "deleted", "id": scene_id}
 
 
 # Auth Endpoints nach finaler app-Definition (jetzt immer registriert)

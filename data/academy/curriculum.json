@@ -36,7 +36,11 @@
                   "how_to_decide": [
                     "Gesamteindruck zählt",
                     "Erste Intuition ist valide",
-                    "Unsicher → Mitte wählen"
+                    "Unsicher → Mitte wählen",
+                    "Ankerfrage: Was war die wichtigste Aufgabe des Centers in dieser Szene?",
+                    "Low – Musste er zuerst absichern oder verteidigen? (Gegnerdeckung, Passwege schließen, Verteidiger unterstützen)",
+                    "Middle – Musste er zuerst das Spiel unterstützen? (Anspielstation werden, Verbindung zwischen Mitspielern herstellen, Passoption schaffen)",
+                    "High – Musste er zuerst Angriffsdruck erzeugen? (Freien Raum attackieren, Torchance vorbereiten, offensive Aktion starten)"
                   ],
                   "ignore": [
                     "Torchancen",
@@ -1988,36 +1992,33 @@
             },
             {
               "id": "B1_D3",
-              "title": "Low / Middle / High Reads (Center-Perspektive)",
+              "title": "Center-Read: Welche Aufgabe priorisiert er?",
               "drill_type": "sample_log",
-              "description": "Beobachte, welchen Raum der Center priorisiert, wie er Ebenen verbindet und wie timingstark der Read wirkt.",
+              "description": "Beobachte, welche Aufgabe der Center in der Situation priorisiert – nicht wo er auf dem Eis steht.",
               "didactics": {
-                "explanation": "Der Center ist kein statischer Raumspieler. Er priorisiert dynamisch Low, Middle oder High - oder verbindet bewusst zwischen Ebenen. Gute Reads entstehen aus Timing, Drucklesen und Verbindungslogik.",
+                "explanation": "Absichern, Verbinden und Angreifen beschreiben in diesem Drill die dominante Aufgabe des Centers – nicht seine Position auf dem Eis.\n\nDieselbe Eisposition kann je nach Situation zu unterschiedlichen Reads führen.\n\nBeispiel: Der Center steht tief im eigenen Drittel. Verteidiger gewinnt den Puck. Der Center bietet sich sofort als sichere Anspielstation an.\nDominante Aufgabe: Verbindung herstellen → Verbinden. Nicht automatisch Absichern.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welche Raumebene priorisiert der Center im Moment?",
-                    "Wie verbindet er Low, Middle und High?",
-                    "Kommt der Read früh oder verspätet?",
-                    "Wirkt der Read entlastend, verbindend oder problematisch?",
-                    "Der Center bewegt sich häufig zwischen verschiedenen Höhen – beobachte die Wechsel",
-                    "Achte darauf, welche Räume er priorisiert und welche er bewusst verlässt",
-                    "Beobachte, wie sich die Position des Centers mit der Spielsituation verändert"
+                    "Welche Aufgabe priorisiert der Center in dieser Szene – direkt nach Puckgewinn, beim Angriffsaufbau, beim Verlassen der Defensivzone oder beim Eintritt in die Offensivzone?",
+                    "Kommt der Read früh (antizipiert) oder verspätet (reaktiv)?",
+                    "Wirkt die Aufgabe entlastend, verbindend oder Druck aufbauend?",
+                    "Beobachte Übergänge: wechselt der Center bewusst die Priorität oder driftet er nur mit?"
                   ],
                   "how_to_decide": [
-                    "Frage zuerst: Welcher Read ist dominant?",
-                    "Entscheide dann: Warum war dieser Read sinnvoll oder nötig?",
-                    "Bewerte danach die Read-Qualität (antizipiert bis unklar)",
-                    "Lies Priorisierung statt Position",
-                    "Low bedeutet nicht automatisch hinter dem Tor – beobachte den Kontext",
-                    "High bedeutet nicht automatisch an der Blue Line – lies die Situation"
+                    "Zentrale Frage: Was musste der Center in dieser Situation zuerst tun?",
+                    "Absichern – Musste er zuerst verteidigen oder Gefahr reduzieren? Typisch: Passwege schließen, Slot sichern, Verteidiger unterstützen, Gegenspieler aufnehmen.",
+                    "Verbinden – Musste er zuerst das Spiel verbinden oder unterstützen? Typisch: Anspielstation werden, Outlet anbieten, Verbindung zwischen Mitspielern herstellen.",
+                    "Angreifen – Musste er zuerst Angriffsdruck erzeugen? Typisch: freien Raum attackieren, Angriff unterstützen, in gefährliche Räume vorstoßen.",
+                    "Wenn unsicher: Welche Aufgabe wäre in dieser Szene am wichtigsten gewesen? Das ist der Read.",
+                    "Bewerte danach die Read-Qualität: Hat der Center diese Aufgabe früh erkannt (antizipiert) oder spät (verspätet)?"
                   ],
                   "ignore": [
-                    "Reines Labeln von Low/Middle/High ohne Begründung",
-                    "Ergebnis der Sequenz (Chance/Tor)",
+                    "Reine Positionseinschätzung: tief auf dem Eis bedeutet nicht automatisch Absichern",
+                    "Ergebnis der Sequenz (Chance / Tor)",
                     "Einzelne technische Fehler"
                   ]
                 },
-                "learning_hint": "Starke Center-Reads priorisieren Räume bewusst und rechtzeitig. Wirkung entsteht durch Timing und Verbindung zwischen Ebenen."
+                "learning_hint": "Nicht: Wo steht der Center? Sondern: Welche Aufgabe priorisiert er? Das ist die eigentliche Beobachtungskompetenz dieses Drills."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2025,37 +2026,37 @@
                 "groups": [
                   {
                     "when": {
-                      "center_read": "low support"
+                      "center_read": "Absichern"
                     },
                     "questions": [
-                      "Warum war low support in diesem Moment die beste Priorisierung?",
-                      "Wurde Druck entlastet oder die Rückoption stabil gehalten?",
+                      "Was war die konkrete Verteidigungsaufgabe des Centers in dieser Szene?",
+                      "Wurde ein Passweg geschlossen, der Slot gesichert oder ein Gegenspieler aufgenommen?",
                       "War der Read früh genug, um Wirkung zu erzeugen?"
                     ]
                   },
                   {
                     "when": {
-                      "center_read": "middle support"
+                      "center_read": "Verbinden"
                     },
                     "questions": [
-                      "Warum war middle support hier prioritär?",
-                      "Hat der Center Verbindung und Mitte gleichzeitig gehalten?",
-                      "Wirkte der Read antizipiert oder nur reagierend?"
+                      "Welche Verbindung hat der Center hergestellt – Outlet, Anspielstation oder Zwischenstation?",
+                      "War die Verbindungsaufgabe die wichtigste in dieser Szene oder gab es defensivere Prioritäten?",
+                      "Wirkte der Read antizipiert oder erst nach dem Puckgewinn sichtbar?"
                     ]
                   },
                   {
                     "when": {
-                      "center_read": "high support"
+                      "center_read": "Angreifen"
                     },
                     "questions": [
-                      "Warum war high support für diesen Moment sinnvoll?",
-                      "Hat der Center Angriffsdruck erzeugt oder nur nachgeschoben?",
-                      "War der Read klar oder verspätet?"
+                      "Welchen Angriffsdruck hat der Center konkret erzeugt – Raum attackiert, Tor vorbereitet oder Überzahl geschaffen?",
+                      "Hat er den Druck initiiert oder nur mitgezogen?",
+                      "War der Read klar erkennbar oder erst im Nachhinein sichtbar?"
                     ]
                   },
                   {
                     "when": {
-                      "center_read": "zwischen Ebenen"
+                      "center_read": "Übergang"
                     },
                     "questions": [
                       "Wie hat der Center zwischen Ebenen verbunden statt zu pendeln?",
@@ -2085,35 +2086,35 @@
                 "note_label": "Notiz (optional)",
                 "note_max_chars": 120,
                 "state_options": [
-                  "low support",
-                  "middle support",
-                  "high support",
-                  "zwischen Ebenen"
+                  "Absichern",
+                  "Verbinden",
+                  "Angreifen",
+                  "Übergang"
                 ],
                 "factors_by_state": {
-                  "low support": [
-                    "Druck entlasten",
-                    "Rückoption sichern",
-                    "Breakout stabilisieren",
-                    "Aufbau unterstützen"
+                  "Absichern": [
+                    "Passwege schließen",
+                    "Slot absichern",
+                    "Verteidiger unterstützen",
+                    "Gegenspieler aufnehmen"
                   ],
-                  "middle support": [
-                    "Mitte absichern",
-                    "Verbindung halten",
-                    "Umschalten vorbereiten",
-                    "Passwege offen halten"
+                  "Verbinden": [
+                    "Anspielstation werden",
+                    "Outlet anbieten",
+                    "Verbindung herstellen",
+                    "Puckgewinn absichern"
                   ],
-                  "high support": [
+                  "Angreifen": [
+                    "freien Raum attackieren",
                     "Angriff unterstützen",
-                    "Überzahl schaffen",
-                    "Rush begleiten",
-                    "Druck erzeugen"
+                    "in gefährliche Räume vorstoßen",
+                    "Überzahl schaffen"
                   ],
-                  "zwischen Ebenen": [
-                    "Verbindung gehalten",
-                    "mehrere Optionen offen",
+                  "Übergang": [
+                    "Priorität gewechselt",
+                    "mehrere Aufgaben gleichzeitig",
                     "Struktur flexibel gehalten",
-                    "Druck gelesen"
+                    "Aufgabe klar erkennbar"
                   ]
                 }
               }
@@ -2421,29 +2422,29 @@
           "drills": [
             {
               "id": "B2_D1",
-              "title": "Druck erkennen",
+              "title": "Druck erkennen: Beobachten und Verdichten",
               "drill_type": "period_checkin",
-              "description": "Erkennen, unter welchem Druck eine Entscheidung getroffen wird.",
+              "description": "Sammle drei konkrete Drucksituationen und verdichte sie anschließend zu einem periodischen Gesamteindruck.",
               "didactics": {
-                "explanation": "Nicht jede schlechte Aktion ist ein Fehler. Entscheidend ist, unter welchem Druck sie entsteht. Druck setzt sich aus Zeit, Gegnernähe und Bewegungsrichtung zusammen.",
+                "explanation": "Nicht jede schlechte Aktion ist ein Fehler. Entscheidend ist, wodurch Druck entsteht. Beobachte zuerst drei konkrete Situationen und verdichte sie danach im Check-in.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Zeit bis zum Gegnerkontakt",
-                    "Anzahl der Gegner in Pucknähe",
-                    "Bewegungsrichtung (vorwärts / rückwärts / stehend)"
+                    "Konkrete Entscheidungssituationen unter Druck",
+                    "Zeitfenster bis zur Handlung",
+                    "Verfügbarer Raum, Gegnereinfluss und verbleibende Optionen"
                   ],
                   "how_to_decide": [
-                    "Beurteile Druck vor der Aktion",
-                    "Nicht erst beim Fehler hinschauen",
-                    "Druck ist wahrnehmbar, bevor er sichtbar wird",
-                    "Zeit ist oft limitierender als Raum"
+                    "Erfasse genau drei Situationen pro Drittel",
+                    "Diagnostiziere je Situation vier Druckquellen",
+                    "Verdichte erst nach den drei Beobachtungen",
+                    "Nutze den Check-in als Reflexion, nicht als Bauchgefühl"
                   ],
                   "ignore": [
-                    "Ob der Pass ankommt",
-                    "Ob der Spielzug erfolgreich ist"
+                    "Ergebnis der Aktion (gelungen/fehlgeschlagen)",
+                    "Einzelne Highlights ohne Druckbezug"
                   ]
                 },
-                "learning_hint": "Druck bewerten heißt verstehen, welche Optionen realistisch waren."
+                "learning_hint": "Druck diagnostizieren heißt erkennen, welche Quelle die Entscheidung am stärksten begrenzt hat."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2451,55 +2452,140 @@
                 "groups": [
                   {
                     "when": {
-                      "pressure": "hoch"
+                      "dominant_source": "zeitdruck"
                     },
                     "questions": [
-                      "Wodurch entstand der hohe Druck?",
-                      "War die Entscheidung unter diesen Umständen logisch?",
-                      "Welche Optionen waren realistisch?"
+                      "Welche Hinweise zeigten, dass Zeitdruck die Entscheidungen am stärksten begrenzt hat?",
+                      "Wo hättest du früher antizipieren können, um Zeit zu gewinnen?"
                     ]
                   },
                   {
                     "when": {
-                      "pressure": "mittel"
+                      "dominant_source": "raumdruck"
                     },
                     "questions": [
-                      "Welche Option hätte Druck reduzieren können?",
-                      "War mehr Geduld möglich?",
-                      "Wurde der Druck richtig eingeschätzt?"
+                      "Wodurch wurde der Raum in deinen Situationen eng?",
+                      "Welche Positionsanpassung hätte den Raumdruck reduziert?"
                     ]
                   },
                   {
                     "when": {
-                      "pressure": "gering"
+                      "dominant_source": "gegnerdruck"
                     },
                     "questions": [
-                      "Warum war trotzdem Stress im Spiel?",
-                      "Wurde Raum oder Zeit verschenkt?",
-                      "War der Fehler selbstgemacht?"
+                      "Wann war Gegnerdruck direkt spielentscheidend?",
+                      "Welche Vororientierung hätte den Angriffsdruck entschärft?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "dominant_source": "optionsdruck"
+                    },
+                    "questions": [
+                      "Warum standen in deinen Situationen nur wenige Lösungen offen?",
+                      "Wie hättest du früher zusätzliche Optionen aufbauen können?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "pressure_diagnosis",
+                "sample_key": "pressure_samples",
+                "sample_label": "Drucksituation",
+                "max_samples_per_phase": 3,
+                "diagnosis_fields": [
                   {
-                    "key": "pressure",
-                    "type": "radio",
-                    "label": "Druckniveau",
+                    "key": "zeitdruck",
+                    "label": "Zeitdruck",
                     "options": [
-                      "hoch",
-                      "mittel",
-                      "gering"
-                    ]
+                      "Viel Zeit",
+                      "Etwas Zeit",
+                      "Wenig Zeit",
+                      "Sofort handeln"
+                    ],
+                    "score_map": {
+                      "Viel Zeit": 0,
+                      "Etwas Zeit": 1,
+                      "Wenig Zeit": 2,
+                      "Sofort handeln": 3
+                    }
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "key": "raumdruck",
+                    "label": "Raumdruck",
+                    "options": [
+                      "Frei",
+                      "Eher frei",
+                      "Eingeschränkt",
+                      "Eingekesselt"
+                    ],
+                    "score_map": {
+                      "Frei": 0,
+                      "Eher frei": 1,
+                      "Eingeschränkt": 2,
+                      "Eingekesselt": 3
+                    }
+                  },
+                  {
+                    "key": "gegnerdruck",
+                    "label": "Gegnerdruck",
+                    "options": [
+                      "Kein Druck",
+                      "Beobachtet",
+                      "Angegriffen",
+                      "Sofort attackiert"
+                    ],
+                    "score_map": {
+                      "Kein Druck": 0,
+                      "Beobachtet": 1,
+                      "Angegriffen": 2,
+                      "Sofort attackiert": 3
+                    }
+                  },
+                  {
+                    "key": "optionsdruck",
+                    "label": "Optionsdruck",
+                    "options": [
+                      "Viele",
+                      "Einige",
+                      "Wenige",
+                      "Fast keine"
+                    ],
+                    "score_map": {
+                      "Viele": 0,
+                      "Einige": 1,
+                      "Wenige": 2,
+                      "Fast keine": 3
+                    }
                   }
-                ]
+                ],
+                "checkin": {
+                  "key": "dominant_source",
+                  "label": "Welche Druckquelle war in diesem Drittel am häufigsten entscheidend?",
+                  "options": [
+                    {
+                      "value": "zeitdruck",
+                      "label": "Zeitdruck"
+                    },
+                    {
+                      "value": "raumdruck",
+                      "label": "Raumdruck"
+                    },
+                    {
+                      "value": "gegnerdruck",
+                      "label": "Gegnerdruck"
+                    },
+                    {
+                      "value": "optionsdruck",
+                      "label": "Optionsdruck"
+                    }
+                  ]
+                },
+                "reflection": {
+                  "dominant_template": "In deinen drei Beobachtungen war {aggregated} am häufigsten ausschlaggebend.",
+                  "match_text": "Dein Check-in passt zu den beobachteten Situationen.",
+                  "mismatch_template": "Deine Beobachtungen sprechen eher für {aggregated} als für {checkin}."
+                }
               }
             },
             {

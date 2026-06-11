@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext'
 import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
+import { SceneMarkerButton } from '../components/SceneMarkerButton';
 import { useState, useEffect, useRef, useMemo } from 'react'
 
 // Patch: Checkin type ohne microfeedback_done
@@ -41,6 +42,7 @@ export default function SessionPage() {
   const [showMicroModal, setShowMicroModal] = useState(false)
   const [microText, setMicroText] = useState('')
   const [microFeedbackError, setMicroFeedbackError] = useState<string>('')
+  const [advanceError, setAdvanceError] = useState<string>('')
 
   // FIX: getrennte States für "Feedback gehört zu welcher Phase" und "wohin danach wechseln"
   const [microPhase, setMicroPhase] = useState<Phase | null>(null)
@@ -307,9 +309,39 @@ export default function SessionPage() {
     POST: null
   }
 
+  function validateDrillBeforeAdvance(phase: Phase, drill: any, answers: any): string | null {
+    if (!['P1', 'P2', 'P3'].includes(phase)) return null
+    if (!drill) return null
+
+    if (drill.id === 'B2_D1' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis') {
+      const sampleKey = drill?.config?.sample_key || 'pressure_samples'
+      const requiredSamples = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3)
+      const checkinKey = drill?.config?.checkin?.key || 'dominant_source'
+      const samples = Array.isArray(answers?.[sampleKey]) ? answers[sampleKey] : []
+
+      if (samples.length !== requiredSamples) {
+        return `Bitte erfasse genau ${requiredSamples} Drucksituationen, bevor du weitergehst.`
+      }
+
+      const hasAllDimensions = samples.every((sample: any) =>
+        sample?.zeitdruck && sample?.raumdruck && sample?.gegnerdruck && sample?.optionsdruck
+      )
+      if (!hasAllDimensions) {
+        return 'Bitte bewerte in jeder Situation alle vier Druckquellen.'
+      }
+
+      if (!answers?.[checkinKey]) {
+        return 'Bitte waehle im Period Check-in die haeufigste Druckquelle aus.'
+      }
+    }
+
+    return null
+  }
+
   // Save + Advance-Flow
   const handleAdvanceToNext = async (e?: React.SyntheticEvent) => {
     e?.preventDefault?.()
+    setAdvanceError('')
 
     const clickId = crypto.randomUUID().slice(0, 8)
     console.group(`[ADVANCE ${clickId}] CLICK`)
@@ -330,6 +362,12 @@ export default function SessionPage() {
     try {
       const phase = currentPhase
       const next = nextPhaseMap[phase]
+
+      const validationError = validateDrillBeforeAdvance(phase, activeDrill, answersByPhase[currentPhase])
+      if (validationError) {
+        setAdvanceError(validationError)
+        return
+      }
 
       // 1) Checkin speichern
       await api.saveCheckin(id as string, {
@@ -547,6 +585,11 @@ export default function SessionPage() {
           {(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') && (
             <div>
               <p>Analysiere das letzte Drittel und gib Feedback.</p>
+              {advanceError && (
+                <div style={{ marginBottom: '0.8rem', padding: '0.6rem 0.8rem', background: 'rgba(220,53,69,0.12)', border: '1px solid rgba(220,53,69,0.4)', borderRadius: '0.45rem', color: '#ffb7bf', fontSize: '0.9rem' }}>
+                  {advanceError}
+                </div>
+              )}
               {activeDrill ? (
                 <DrillRendererRouter
                   drill={activeDrill}
@@ -559,6 +602,15 @@ export default function SessionPage() {
               ) : (
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}
+
+              {/* RingAbout Szenenmarker */}
+              <div style={{ margin: '1.2rem 0 0.6rem', display: 'flex', justifyContent: 'center' }}>
+                <SceneMarkerButton
+                  session={session}
+                  currentPhase={currentPhase}
+                  activeDrill={activeDrill}
+                />
+              </div>
 
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
                 <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center' }}>{getPhaseTitle(currentPhase)}</div>

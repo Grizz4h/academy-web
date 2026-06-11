@@ -368,6 +368,15 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "Es geht nicht um einzelne Aktionen, sondern um Abstände, Verbindungen und Wiedererkennbarkeit von Rollen über mehrere Sequenzen hinweg.\n\n• geordnet = klare Abstände, stabile Dreiecke, Spieler sind anspielbar\n• mixed = phasenweise Struktur, Ordnung bricht situativ\n• chaotisch = Abstände reißen, Mitte fehlt, keine klaren Optionen",
     synonyms: ["Teamstruktur", "Ordnungsgefühl"],
     tags: ["Taktik", "Wahrnehmung"],
-  }, 
+  },
+
+  read: {
+    label: "Read",
+    short: "Erkennen und Interpretieren einer Spielsituation, um die nächste Aufgabe abzuleiten.",
+    long:
+      "Ein Read beantwortet nicht die Frage „Was passiert gerade?\", sondern: „Was wird wahrscheinlich als Nächstes passieren – und welche Aufgabe ergibt sich daraus?\"\n\nEin Read ist kein Wissen, sondern eine Einschätzung unter Zeitdruck. Gute Reads entstehen aus Timing, Druckgefühl und dem Lesen von Bewegungsmustern.\n\nBeispiel: Der Center schaut mehrfach über die Schulter und bewegt sich in freien Raum. Möglicher Read: Der Center sucht eine Anspielstation oder bereitet einen Angriff vor.\n\nCenter-Reads werden nach der dominanten Aufgabe unterschieden:\n• Absichern – Verteidigung und Gefahr reduzieren priorisiert\n• Verbinden – Spielunterstützung und Anschlussoptionen priorisiert\n• Angreifen – Angriffsdruck und Offensive priorisiert",
+    synonyms: ["Reads", "lesen", "Spielsituation lesen", "Read-Qualität"],
+    tags: ["Taktik", "Wahrnehmung", "A1"],
+  },
   
 };

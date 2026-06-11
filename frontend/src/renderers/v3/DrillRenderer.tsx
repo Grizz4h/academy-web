@@ -111,6 +111,8 @@ export default function DrillRendererV3({ drill, answers, setAnswers }: DrillRen
 					switch (drill.drill_type) {
 						case "period_checkin":
 							return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+						case "pressure_diagnosis":
+							return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
 						case "micro_quiz":
 							return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
 						case "shift_tracker":

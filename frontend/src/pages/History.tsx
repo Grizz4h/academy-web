@@ -14,6 +14,12 @@ export default function History() {
     enabled: Boolean(user)
   })
 
+  const { data: scenesData } = useQuery({
+    queryKey: ['scenes', 'history', user],
+    queryFn: () => api.getScenes(),
+    enabled: Boolean(user)
+  })
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.deleteSession(id),
     onSuccess: () => {
@@ -55,6 +61,28 @@ export default function History() {
 
   const uniqueModules = [...new Set(sessions?.map(s => s.module_id) || [])]
   const uniqueCreators = [...new Set(sessions?.map(s => s.created_by).filter(Boolean) || [])]
+
+  const scenesBySession = useMemo(() => {
+    const map = new Map<string, Array<{ id: string; game_time: string; period?: string; created_at: string }>>()
+    for (const scene of scenesData?.scenes || []) {
+      if (!scene.session_id) continue
+      if (!map.has(scene.session_id)) map.set(scene.session_id, [])
+      map.get(scene.session_id)?.push({
+        id: scene.id,
+        game_time: scene.game_time,
+        period: scene.period,
+        created_at: scene.created_at,
+      })
+    }
+    for (const [, entries] of map) {
+      entries.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime()
+        const dateB = new Date(b.created_at).getTime()
+        return dateB - dateA
+      })
+    }
+    return map
+  }, [scenesData])
 
   const { uniqueYears, monthsByYear } = useMemo(() => {
     const yearsSet = new Set<string>()
@@ -189,6 +217,7 @@ export default function History() {
             <SessionCard
               key={session.id}
               session={{ ...session, observed_team: session.game_info?.observed_team }}
+              sceneEntries={scenesBySession.get(session.id) || []}
               onDelete={(id) => deleteMutation.mutate(id)}
               isDeletingId={
                 deleteMutation.isPending

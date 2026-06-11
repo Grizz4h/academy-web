@@ -117,6 +117,8 @@ export default function DrillRendererV1({ drill, initialAnswers, onChangeAnswers
 	switch (drill.drill_type) {
 		case "period_checkin":
 			return <PeriodCheckin drill={drill} answers={answers} setAnswers={updateAnswers} />;
+		case "pressure_diagnosis":
+			return <PeriodCheckin drill={drill} answers={answers} setAnswers={updateAnswers} />;
 		case "micro_quiz":
 			return <MicroQuiz drill={drill} answers={answers} setAnswers={updateAnswers} />;
 		case "shift_tracker":

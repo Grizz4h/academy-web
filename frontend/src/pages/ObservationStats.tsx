@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { api, type ObservationPlayerStats, type RosterCatalog, type RosterTeam } from '../api'
+import { api, type ObservationPlayerStats, type RosterCatalog } from '../api'
 import { useUser } from '../context/UserContext'
+
+type SelectableTeam = { team_id: string; name: string; league: string; source: 'roster' | 'import' }
 
 function formatDimensionLabel(key: string): string {
   return key
@@ -40,20 +42,39 @@ export default function ObservationStats() {
     enabled: Boolean(user && league && season)
   })
 
-  const teams = roster?.teams || []
+  const { data: importableTeamsData } = useQuery({
+    queryKey: ['importable-teams'],
+    queryFn: () => api.getImportableTeams(),
+    enabled: Boolean(user),
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const selectableTeams = useMemo<SelectableTeam[]>(() => {
+    const merged: SelectableTeam[] = []
+    const seen = new Set<string>()
+    for (const team of roster?.teams || []) {
+      const normalizedId = team.team_id.replace(/_/g, '-')
+      if (seen.has(normalizedId)) continue
+      seen.add(normalizedId)
+      merged.push({ team_id: team.team_id, name: team.name, league, source: 'roster' })
+    }
+    for (const team of importableTeamsData?.teams || []) {
+      if (seen.has(team.id)) continue
+      seen.add(team.id)
+      merged.push({ team_id: team.id, name: team.name, league: team.league, source: 'import' })
+    }
+    return merged
+  }, [roster?.teams, importableTeamsData?.teams, league])
 
   useEffect(() => {
-    if (!teams.length) {
-      setTeamId('')
-      return
-    }
-    const match = teams.some((team) => team.team_id === teamId)
-    if (!match) setTeamId(teams[0].team_id)
-  }, [teams, teamId])
+    if (!selectableTeams.length) { setTeamId(''); return }
+    const match = selectableTeams.some((team) => team.team_id === teamId)
+    if (!match) setTeamId(selectableTeams[0].team_id)
+  }, [selectableTeams, teamId])
 
-  const selectedTeam = useMemo<RosterTeam | undefined>(
-    () => teams.find((team) => team.team_id === teamId),
-    [teams, teamId]
+  const selectedTeam = useMemo<SelectableTeam | undefined>(
+    () => selectableTeams.find((team) => team.team_id === teamId),
+    [selectableTeams, teamId]
   )
 
   const statsParams = useMemo(() => ({
@@ -91,6 +112,8 @@ export default function ObservationStats() {
     queryFn: () => api.getObservationStatsForPlayer(selectedPlayerId, statsParams),
     enabled: Boolean(selectedPlayerId)
   })
+
+  const profile = playerDetail?.profile
 
   const handleExportRaw = () => {
     if (!playerDetail) return
@@ -139,7 +162,7 @@ export default function ObservationStats() {
           Team
           <select className="appSelect" value={teamId} onChange={(e) => setTeamId(e.target.value)} style={{ marginTop: '0.35rem' }}>
             <option value="">Alle Teams</option>
-            {teams.map((team) => (
+            {selectableTeams.map((team) => (
               <option key={team.team_id} value={team.team_id}>
                 {team.name}
               </option>
@@ -148,8 +171,8 @@ export default function ObservationStats() {
         </label>
 
         {selectedTeam && (
-          <p style={{ margin: 0 }}>
-            Roster Team: {selectedTeam.name} ({selectedTeam.players.length} Spieler im Beispielkatalog)
+          <p style={{ margin: 0, opacity: 0.7, fontSize: '0.82rem' }}>
+            {selectedTeam.name} · {selectedTeam.league}
           </p>
         )}
       </div>
@@ -183,7 +206,21 @@ export default function ObservationStats() {
           <p style={{ margin: '0.25rem 0' }}><strong>Team:</strong> {selectedPlayer.team_name}</p>
           <p style={{ margin: '0.25rem 0' }}><strong>Position:</strong> {selectedPlayer.player_position}</p>
           <p style={{ margin: '0.25rem 0' }}><strong>Observation Count:</strong> {selectedPlayer.observation_count}</p>
+          <p style={{ margin: '0.25rem 0' }}><strong>Erste Beobachtung:</strong> {selectedPlayer.first_observation || '-'}</p>
           <p style={{ margin: '0.25rem 0' }}><strong>Letzte Beobachtung:</strong> {selectedPlayer.last_observation || '-'}</p>
+          {typeof selectedPlayer.observation_session_count === 'number' && (
+            <p style={{ margin: '0.25rem 0' }}><strong>Observation Sessions:</strong> {selectedPlayer.observation_session_count}</p>
+          )}
+
+          {profile && (
+            <>
+              <h3>Spielerprofil</h3>
+              <p style={{ margin: '0.25rem 0' }}><strong>Geburtsjahr:</strong> {profile.player_birth_year ?? '-'}</p>
+              <p style={{ margin: '0.25rem 0' }}><strong>Profil-Notiz:</strong> {profile.notes || '-'}</p>
+              <p style={{ margin: '0.25rem 0' }}><strong>Summary:</strong> {profile.summary?.text || '(Placeholder)'}</p>
+              <p style={{ margin: '0.25rem 0' }}><strong>Summary Status:</strong> {profile.summary?.status || '-'}</p>
+            </>
+          )}
 
           <h3>Dimensionen</h3>
           <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -211,6 +248,21 @@ export default function ObservationStats() {
               Raw JSON exportieren
             </button>
           </div>
+
+          {profile?.history?.note_timeline?.length ? (
+            <>
+              <h3 style={{ marginTop: '1rem' }}>Verlauf der Notizen</h3>
+              <div style={{ display: 'grid', gap: '0.5rem' }}>
+                {profile.history.note_timeline.slice().reverse().slice(0, 12).map((item, index) => (
+                  <div key={`${item.run_id}-${item.entry_id || 'run'}-${index}`} style={{ border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, padding: '0.6rem' }}>
+                    <strong>{new Date(item.created_at).toLocaleString()}</strong>
+                    <p style={{ margin: '0.35rem 0 0.2rem 0' }}>{item.note}</p>
+                    <small>Quelle: {item.source?.label || item.source?.source_type || '-'}</small>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
       )}
     </div>
