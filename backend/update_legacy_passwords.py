@@ -1,8 +1,9 @@
 import json
 from auth_utils import hash_password
 from datetime import datetime
+import os
 
-USERS_FILE = "backend/data/academy/users.json"
+USERS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "academy", "users.json")
 
 with open(USERS_FILE, "r") as f:
     users = json.load(f)

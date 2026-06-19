@@ -27,7 +27,7 @@ export default function SessionPage() {
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
 
-  const [currentPhase, setCurrentPhase] = useState<Phase>('PRE')
+  const [currentPhase, setCurrentPhase] = useState<Phase>('P1')
   const [drillCompleted, setDrillCompleted] = useState(false)
   const [isAdvancing, setIsAdvancing] = useState(false)
 
@@ -100,9 +100,12 @@ export default function SessionPage() {
   useEffect(() => {
     if (!session) return;
 
-    // initial currentPhase setzen (nur einmal)
-    if (firstLoadRef.current && session.current_phase && session.current_phase !== currentPhase) {
-      setCurrentPhase(session.current_phase as Phase)
+    // initial currentPhase setzen (nur einmal); PRE wird im Standard-Workflow übersprungen.
+    const initialPhase = session.current_phase === 'PRE' ? 'P1' : session.current_phase
+    if (firstLoadRef.current) {
+      if (initialPhase && initialPhase !== currentPhase) {
+        setCurrentPhase(initialPhase as Phase)
+      }
       firstLoadRef.current = false
     }
 
@@ -313,25 +316,32 @@ export default function SessionPage() {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
 
-    if (drill.id === 'B2_D1' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis') {
+    if (drill.id === 'B2_D1' || drill.id === 'B2_D2' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis' || drill?.config?.mode === 'solution_type_diagnosis') {
       const sampleKey = drill?.config?.sample_key || 'pressure_samples'
       const requiredSamples = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3)
       const checkinKey = drill?.config?.checkin?.key || 'dominant_source'
       const samples = Array.isArray(answers?.[sampleKey]) ? answers[sampleKey] : []
+      const sampleFields = Array.isArray(drill?.config?.sample_fields) && drill.config.sample_fields.length > 0
+        ? drill.config.sample_fields
+        : [
+            { key: 'zeitdruck' },
+            { key: 'raumdruck' },
+            { key: 'gegnerdruck' },
+            { key: 'optionsdruck' }
+          ]
+      const sampleLabel = drill?.config?.sample_label || 'Situation'
 
       if (samples.length !== requiredSamples) {
-        return `Bitte erfasse genau ${requiredSamples} Drucksituationen, bevor du weitergehst.`
+        return `Bitte erfasse genau ${requiredSamples} ${sampleLabel}en, bevor du weitergehst.`
       }
 
-      const hasAllDimensions = samples.every((sample: any) =>
-        sample?.zeitdruck && sample?.raumdruck && sample?.gegnerdruck && sample?.optionsdruck
-      )
-      if (!hasAllDimensions) {
-        return 'Bitte bewerte in jeder Situation alle vier Druckquellen.'
+      const hasAllFields = samples.every((sample: any) => sampleFields.every((field: any) => sample?.[field.key]))
+      if (!hasAllFields) {
+        return 'Bitte vervollständige jede gespeicherte Situation.'
       }
 
       if (!answers?.[checkinKey]) {
-        return 'Bitte waehle im Period Check-in die haeufigste Druckquelle aus.'
+        return 'Bitte wähle im Period Check-in die häufigste Option aus.'
       }
     }
 
@@ -436,7 +446,7 @@ export default function SessionPage() {
     }
 
     const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase as Phase] === currentPhase)
-    if (prevPhase) {
+    if (prevPhase && prevPhase !== 'PRE') {
       setCurrentPhase(prevPhase as Phase)
       setDrillCompleted(false)
       updatePhaseMutation.mutate({ phase: prevPhase })
@@ -526,54 +536,6 @@ export default function SessionPage() {
 
       {!isCompleted && (
         <div className="card">
-          {currentPhase === 'PRE' && (
-            <div>
-              <p>Vorbereitung: Denke über die Erwartungen nach.</p>
-              <DrillRendererRouter
-                drill={{
-                  id: 'pre_checkin',
-                  title: 'Pre-Match Check-in',
-                  drill_type: 'period_checkin',
-                  config: {
-                    questions: [
-                      { key: 'expectations', type: 'text', label: 'Erwartungen für das Spiel', max_chars: 1500 }
-                    ]
-                  }
-                }}
-                answers={answersByPhase[currentPhase]}
-                setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
-                initialAnswers={answersByPhase[currentPhase]}
-                onChangeAnswers={handleDraftChange}
-                session={session}
-              />
-
-              <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
-                <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center' }}>{getPhaseTitle(currentPhase)}</div>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
-                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase as Phase] === currentPhase) && (
-                    <button onClick={handleGoBack} className="btn" style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}>
-                      ← Zurück
-                    </button>
-                  )}
-                  {nextPhaseMap[currentPhase] && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        console.log("[BUTTON] Weiter clicked", { disabled: isAdvancing, phase: currentPhase })
-                        handleAdvanceToNext(e)
-                      }}
-                      className="btn"
-                      style={{ minWidth: 120 }}
-                      disabled={isAdvancing}
-                    >
-                      {isAdvancing ? "Speichere…" : "Weiter →"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
           {currentPhase === 'POST' && (
             <div>
               <button onClick={() => handleDrillComplete(answersByPhase[currentPhase])} className="btn btn-success" style={{ minWidth: 120 }}>
@@ -615,7 +577,7 @@ export default function SessionPage() {
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
                 <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center' }}>{getPhaseTitle(currentPhase)}</div>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
-                  {Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase as Phase] === currentPhase) && (
+                  {currentPhase !== 'P1' && Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase as Phase] === currentPhase) && (
                     <button onClick={handleGoBack} className="btn" style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}>
                       ← Zurück
                     </button>

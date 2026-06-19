@@ -171,40 +171,79 @@ const PRESSURE_DIMENSIONS = [
 	},
 ];
 
-function computePressureAggregation(samples: any[] = []) {
-	const totals: Record<string, number> = {
-		zeitdruck: 0,
-		raumdruck: 0,
-		gegnerdruck: 0,
-		optionsdruck: 0,
-	};
+function normalizeSampleFields(drill: any) {
+	const configuredFields = drill?.config?.sample_fields || drill?.config?.diagnosis_fields;
+	if (Array.isArray(configuredFields) && configuredFields.length > 0) {
+		return configuredFields.map((field: any) => ({
+			...field,
+			scoreMap: field.score_map || field.scoreMap || {},
+		}));
+	}
+	return PRESSURE_DIMENSIONS;
+}
+
+function optionValue(option: any): string {
+	return typeof option === "object" ? option.value : option;
+}
+
+function optionLabel(option: any): string {
+	return typeof option === "object" ? option.label : option;
+}
+
+function computeSampleAggregation(samples: any[] = [], fields: any[] = [], checkinOptions: any[] = [], aggregateBy?: string) {
+	if (aggregateBy) {
+		const totals: Record<string, number> = {};
+		for (const option of checkinOptions) {
+			totals[option.value] = 0;
+		}
+		for (const sample of samples) {
+			const selected = sample?.[aggregateBy];
+			if (!selected) continue;
+			totals[selected] = (totals[selected] || 0) + 1;
+		}
+
+		let dominantKey = checkinOptions[0]?.value || aggregateBy;
+		for (const key of Object.keys(totals)) {
+			if ((totals[key] || 0) > (totals[dominantKey] || 0)) {
+				dominantKey = key;
+			}
+		}
+
+		const dominantLabel = checkinOptions.find((option: any) => option.value === dominantKey)?.label || dominantKey;
+		return { totals, dominantKey, dominantLabel };
+	}
+
+	const totals: Record<string, number> = {};
+	for (const field of fields) {
+		totals[field.key] = 0;
+	}
 
 	for (const sample of samples) {
-		for (const dimension of PRESSURE_DIMENSIONS) {
-			const selected = sample?.[dimension.key];
+		for (const field of fields) {
+			const selected = sample?.[field.key];
 			if (!selected) continue;
-			const score = dimension.scoreMap[selected as keyof typeof dimension.scoreMap];
+			const score = field.scoreMap?.[selected];
 			if (typeof score === "number") {
-				totals[dimension.key] += score;
+				totals[field.key] += score;
 			}
 		}
 	}
 
-	let dominantKey = "zeitdruck";
-	for (const dimension of PRESSURE_DIMENSIONS) {
-		if (totals[dimension.key] > totals[dominantKey]) {
-			dominantKey = dimension.key;
+	let dominantKey = fields[0]?.key || "dominant";
+	for (const field of fields) {
+		if ((totals[field.key] || 0) > (totals[dominantKey] || 0)) {
+			dominantKey = field.key;
 		}
 	}
 
-	const dominantLabel = PRESSURE_DIMENSIONS.find((d) => d.key === dominantKey)?.label || "Zeitdruck";
+	const dominantLabel = fields.find((field) => field.key === dominantKey)?.label || dominantKey;
 	return { totals, dominantKey, dominantLabel };
 }
 
 export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRendererV2Props) {
 	switch (drill.drill_type) {
 		case "period_checkin":
-			if (drill?.config?.mode === "pressure_diagnosis") {
+			if (drill?.config?.mode === "pressure_diagnosis" || drill?.config?.mode === "solution_type_diagnosis") {
 				return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
 			}
 			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
@@ -229,9 +268,11 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 
 function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const safeAnswers = answers || {};
+	const sampleFields = normalizeSampleFields(drill);
 	const sampleKey = drill?.config?.sample_key || "pressure_samples";
 	const checkinConfig = drill?.config?.checkin || {};
 	const checkinKey = checkinConfig?.key || "dominant_source";
+	const aggregateBy = drill?.config?.aggregate_by;
 	const reflectionAlignmentKey = drill?.config?.reflection_alignment_key || "reflection_alignment";
 	const totalsKey = drill?.config?.aggregation_totals_key || "pressure_totals";
 	const observedDominantKey = drill?.config?.observed_dominant_key || "dominant_pressure_observed";
@@ -242,26 +283,26 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const noteMaxChars = drill?.config?.sample_note_max_chars || 240;
 	const reflectionConfig = drill?.config?.reflection || {};
 	const checkinLabel = checkinConfig?.label || "Welche Druckquelle war in diesem Drittel am haeufigsten entscheidend?";
+	const phaseOneTitle = drill?.config?.phase1_title || "Phase 1 - Drucksituationen sammeln";
+	const phaseOneDescription = drill?.config?.phase1_description || `Erfasse genau ${requiredSamples} Situationen aus dem Drittel. Erst danach folgt die Verdichtung.`;
+	const aggregationLabel = drill?.config?.aggregation_label || "Interne Aggregation";
 
 	const samples: any[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
 	const canAddMore = samples.length < requiredSamples;
 
-	const defaultFormState = {
-		zeitdruck: "",
-		raumdruck: "",
-		gegnerdruck: "",
-		optionsdruck: "",
-		[noteKey]: "",
-	};
+	const defaultFormState = sampleFields.reduce((next: any, field: any) => {
+		next[field.key] = "";
+		return next;
+	}, { [noteKey]: "" });
 
 	const [showForm, setShowForm] = useState(false);
 	const [form, setForm] = useState<any>(defaultFormState);
 
-	const aggregation = computePressureAggregation(samples);
-	const checkinSelection = safeAnswers[checkinKey] || "";
 	const checkinOptions = Array.isArray(checkinConfig?.options) && checkinConfig.options.length > 0
 		? checkinConfig.options
-		: PRESSURE_DIMENSIONS.map((d) => ({ value: d.key, label: d.label }));
+		: sampleFields.map((field: any) => ({ value: field.key, label: field.label }));
+	const aggregation = computeSampleAggregation(samples, sampleFields, checkinOptions, aggregateBy);
+	const checkinSelection = safeAnswers[checkinKey] || "";
 	const selectedCheckinOption = checkinOptions.find((opt: any) => opt?.value === checkinSelection);
 	const selectedCheckinLabel = selectedCheckinOption?.label || "";
 	const checkinKeyNormalized = checkinSelection || undefined;
@@ -313,17 +354,14 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 		setForm((prev: any) => ({ ...prev, [key]: value }));
 	};
 
-	const isSampleComplete = PRESSURE_DIMENSIONS.every((d) => !!form[d.key]);
+	const isSampleComplete = sampleFields.every((field: any) => !!form[field.key]);
 
 	const addSample = () => {
 		if (!isSampleComplete || !canAddMore) return;
-		const nextSample = {
-			zeitdruck: form.zeitdruck,
-			raumdruck: form.raumdruck,
-			gegnerdruck: form.gegnerdruck,
-			optionsdruck: form.optionsdruck,
-			[noteKey]: (form[noteKey] || "").trim(),
-		};
+		const nextSample = sampleFields.reduce((next: any, field: any) => {
+			next[field.key] = form[field.key];
+			return next;
+		}, { [noteKey]: (form[noteKey] || "").trim() });
 		setAnswers({
 			...safeAnswers,
 			[sampleKey]: [...samples, nextSample],
@@ -357,9 +395,9 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 			<ObservationGuide drill={drill} />
 
 			<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
-				<h4 style={{ marginTop: 0, marginBottom: "0.5rem", color: "#89c8da" }}>Phase 1 - Drucksituationen sammeln</h4>
+				<h4 style={{ marginTop: 0, marginBottom: "0.5rem", color: "#89c8da" }}>{phaseOneTitle}</h4>
 				<p style={{ marginTop: 0, marginBottom: "0.75rem", fontSize: "0.9rem", color: "rgba(255,255,255,0.76)" }}>
-					Erfasse genau {requiredSamples} Situationen aus dem Drittel. Erst danach folgt die Verdichtung.
+					{phaseOneDescription}
 				</p>
 
 				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem", gap: "0.75rem", flexWrap: "wrap" }}>
@@ -386,21 +424,21 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 
 				{showForm && canAddMore && (
 					<div style={{ marginBottom: "0.75rem", padding: "0.85rem", border: "1px solid rgba(81,145,162,0.45)", borderRadius: "6px", background: "rgba(81,145,162,0.08)" }}>
-						{PRESSURE_DIMENSIONS.map((dimension) => (
-							<div key={dimension.key} style={{ marginBottom: "0.85rem" }}>
-								<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{dimension.label}</label>
-								<p style={{ marginTop: 0, marginBottom: "0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.65)" }}>{dimension.question}</p>
+						{sampleFields.map((field: any) => (
+							<div key={field.key} style={{ marginBottom: "0.85rem" }}>
+								<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{field.label}</label>
+								{field.question && <p style={{ marginTop: 0, marginBottom: "0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.65)" }}>{field.question}</p>}
 								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-									{dimension.options.map((opt) => (
-										<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+									{field.options.map((opt: any) => (
+										<label key={optionValue(opt)} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
 											<input
 												type="radio"
-												name={`${dimension.key}_sample`}
-												value={opt}
-												checked={form[dimension.key] === opt}
-												onChange={(e) => updateForm(dimension.key, e.target.value)}
+												name={`${field.key}_sample`}
+												value={optionValue(opt)}
+												checked={form[field.key] === optionValue(opt)}
+												onChange={(e) => updateForm(field.key, e.target.value)}
 											/>
-											<span>{opt}</span>
+											<span>{optionLabel(opt)}</span>
 										</label>
 									))}
 								</div>
@@ -467,7 +505,11 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 								</button>
 							</div>
 							<div style={{ marginTop: "0.35rem", fontSize: "0.83rem", color: "rgba(255,255,255,0.73)", lineHeight: 1.5 }}>
-								Zeitdruck: {sample.zeitdruck || "-"} | Raumdruck: {sample.raumdruck || "-"} | Gegnerdruck: {sample.gegnerdruck || "-"} | Optionsdruck: {sample.optionsdruck || "-"}
+								{sampleFields.map((field: any) => {
+									const selected = sample[field.key];
+									const selectedOption = field.options?.find((opt: any) => optionValue(opt) === selected);
+									return `${field.label}: ${selectedOption ? optionLabel(selectedOption) : selected || "-"}`;
+								}).join(" | ")}
 							</div>
 						</div>
 					))}
@@ -510,7 +552,10 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					</p>
 					<p style={{ marginTop: 0, marginBottom: "0.4rem" }}>{reflectionMessage}</p>
 					<p style={{ margin: 0, fontSize: "0.76rem", color: "rgba(255,255,255,0.55)" }}>
-						Interne Aggregation: Zeitdruck {aggregation.totals.zeitdruck}, Raumdruck {aggregation.totals.raumdruck}, Gegnerdruck {aggregation.totals.gegnerdruck}, Optionsdruck {aggregation.totals.optionsdruck}
+						{aggregationLabel}: {Object.entries(aggregation.totals).map(([key, value]) => {
+							const label = checkinOptions.find((option: any) => option.value === key)?.label || sampleFields.find((field: any) => field.key === key)?.label || key;
+							return `${label} ${value}`;
+						}).join(", ")}
 					</p>
 				</section>
 			)}

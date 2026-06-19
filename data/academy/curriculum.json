@@ -2590,29 +2590,30 @@
             },
             {
               "id": "B2_D2",
-              "title": "Entscheidungstyp einordnen",
+              "title": "Lösungsart erkennen",
               "drill_type": "period_checkin",
-              "description": "Erkennen, welche Art von Entscheidung unter Druck getroffen wird.",
+              "description": "Erkennen, wie ein Spieler versucht, eine Drucksituation zu lösen.",
               "didactics": {
-                "explanation": "Unter Druck wählen Spieler unterschiedliche Entscheidungstypen. Entscheidend ist nicht der Erfolg, sondern ob der gewählte Typ zur Situation passt.",
+                "explanation": "Unter Druck zählt nicht nur, was der Spieler macht, sondern welche Lösungsart er wählt: Komplexität reduzieren, Struktur erhalten oder aktiv Raum gewinnen.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wird Risiko reduziert oder erhöht?",
-                    "Wird Zeit gewonnen oder sofort abgegeben?",
-                    "Bleibt Struktur erhalten?"
+                    "Welches Problem musste der Spieler lösen?",
+                    "Reduziert die Aktion Komplexität, hält sie Struktur stabil oder erzeugt sie Raumgewinn?",
+                    "Welche Absicht ist in der Lösung erkennbar?"
                   ],
                   "how_to_decide": [
-                    "Ordne die Aktion einem Entscheidungstyp zu",
-                    "Beurteile nicht den Ausgang",
-                    "Frage dich: Was war die Absicht?",
-                    "Druck und Entscheidung immer zusammen denken"
+                    "Frage dich: Wie versucht der Spieler, das Problem zu lösen?",
+                    "Ordne die Lösungsart ein, nicht den Erfolg der Aktion",
+                    "Nutze die konkrete Spielsituation als Kontext",
+                    "Vergleiche deinen Drittel-Eindruck mit den drei gesammelten Situationen"
                   ],
                   "ignore": [
-                    "Tor oder Puckverlust",
-                    "Einzelaktionen ohne Kontext"
+                    "Tor oder Puckverlust als reine Ergebnisbewertung",
+                    "Technische Ausführung ohne Problemdruck",
+                    "Was der Spieler gemacht hat, ohne die Lösungsabsicht zu prüfen"
                   ]
                 },
-                "learning_hint": "Gleiche Aktion kann richtig oder falsch sein – abhängig vom Druck davor."
+                "learning_hint": "Gleiche Aktion, andere Lösungsart: Entscheidend ist, welches Problem der Spieler in diesem Moment lösen wollte."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2620,55 +2621,91 @@
                 "groups": [
                   {
                     "when": {
-                      "decision_type": "sichern"
+                      "dominant_solution_observed": "Vereinfachen"
                     },
                     "questions": [
-                      "War Sichern unter dem vorhandenen Druck sinnvoll?",
-                      "Wurde Zeit gewonnen oder nur verzögert?",
-                      "Blieb Struktur erhalten?"
+                      "Welche Hinweise zeigten, dass Komplexität reduziert werden sollte?",
+                      "War Vereinfachen unter diesem Druck eine passende Lösung?"
                     ]
                   },
                   {
                     "when": {
-                      "decision_type": "loesen"
+                      "dominant_solution_observed": "Stabilisieren"
                     },
                     "questions": [
-                      "Welche Option hat den Druck tatsächlich gelöst?",
-                      "War die Lösung aktiv oder reaktiv?",
-                      "Hätte Sichern gereicht?"
+                      "Welche Struktur wurde durch diese Lösung erhalten?",
+                      "Hat Stabilisieren neue Optionen vorbereitet oder nur Zeit gesichert?"
                     ]
                   },
                   {
                     "when": {
-                      "decision_type": "riskieren"
+                      "dominant_solution_observed": "Vorwärts lösen"
                     },
                     "questions": [
-                      "Warum wurde Risiko gewählt?",
-                      "Gab es eine sichere Alternative?",
-                      "Passte das Risiko zum Druckniveau?"
+                      "Wodurch entstand aktiver Raumgewinn?",
+                      "War der Vorwärtsimpuls vorbereitet oder erzwungen?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "solution_type_diagnosis",
+                "sample_key": "solution_samples",
+                "sample_label": "Entscheidungssituation",
+                "max_samples_per_phase": 3,
+                "phase1_title": "Phase 1 - Entscheidungssituationen sammeln",
+                "phase1_description": "Erfasse genau 3 Entscheidungssituationen aus dem Drittel. Ordne jeweils ein, welche Lösungsart der Spieler gewählt hat.",
+                "sample_note_key": "note",
+                "sample_note_label": "Kurze Situation / Beispiel (optional)",
+                "aggregate_by": "solution_type",
+                "aggregation_totals_key": "solution_totals",
+                "observed_dominant_key": "dominant_solution_observed",
+                "reflection_message_key": "solution_reflection",
+                "aggregation_label": "Beobachtete Lösungsarten",
+                "sample_fields": [
                   {
-                    "key": "decision_type",
-                    "type": "radio",
-                    "label": "Entscheidungstyp",
+                    "key": "solution_type",
+                    "label": "Lösungsart",
+                    "question": "Wie hat der Spieler versucht, das Problem zu lösen?",
                     "options": [
-                      "sichern",
-                      "loesen",
-                      "riskieren"
+                      {
+                        "value": "vereinfachen",
+                        "label": "Vereinfachen"
+                      },
+                      {
+                        "value": "stabilisieren",
+                        "label": "Stabilisieren"
+                      },
+                      {
+                        "value": "vorwaerts_loesen",
+                        "label": "Vorwärts lösen"
+                      }
                     ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
                   }
-                ]
+                ],
+                "checkin": {
+                  "key": "dominant_solution",
+                  "label": "Welche Lösungsart wurde in diesem Drittel am häufigsten gewählt?",
+                  "options": [
+                    {
+                      "value": "vereinfachen",
+                      "label": "Vereinfachen"
+                    },
+                    {
+                      "value": "stabilisieren",
+                      "label": "Stabilisieren"
+                    },
+                    {
+                      "value": "vorwaerts_loesen",
+                      "label": "Vorwärts lösen"
+                    }
+                  ]
+                },
+                "reflection": {
+                  "dominant_template": "In deinen drei Beobachtungen wurde {aggregated} am häufigsten gewählt.",
+                  "match_text": "Dein Gesamteindruck passt zu den beobachteten Situationen.",
+                  "mismatch_template": "Deine drei Situationen zeigen eher {aggregated}; dein Drittel-Eindruck war {checkin}. Das ist kein Fehler, sondern ein Reflexionsanker."
+                }
               }
             },
             {

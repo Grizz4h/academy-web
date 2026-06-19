@@ -24,8 +24,8 @@ interface CausalChain {
   consequence: string;
 }
 
-export default function DrillRendererV4({ drill, answers, setAnswers, session }: DrillRendererV4Props) {
-  const currentPhase = session?.current_phase || 'PRE';
+export default function DrillRendererV4({ answers, setAnswers, session }: DrillRendererV4Props) {
+  const currentPhase = session?.current_phase === 'PRE' ? 'P1' : (session?.current_phase || 'P1');
   
   // Initialize meta structure if not exists
   if (!answers.meta) {
@@ -151,39 +151,6 @@ export default function DrillRendererV4({ drill, answers, setAnswers, session }:
       }
     });
   };
-
-  // PRE Phase - just intro
-  if (currentPhase === 'PRE') {
-    return (
-      <div className={styles.v4Container}>
-        <div className={styles.versionBadge}>
-          [Renderer V4: Meta-Scan]
-        </div>
-        <div className="card">
-          <h3>🎯 {drill.title || 'Vorbereitung: Meta-Scan'}</h3>
-          {drill.description && (
-            <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
-              {drill.description}
-            </p>
-          )}
-          <p>
-            Du analysierst das <strong>Gesamtspiel</strong> über drei Drittel hinweg.
-          </p>
-          <p>
-            Pro Drittel (P1/P2/P3) wirst du:
-          </p>
-          <ul>
-            <li>5 Meta-Achsen bewerten (Struktur, Kompaktheit, Entscheidungszeit, Chancen, Turnover)</li>
-            <li>Ereignis-Marker in der Timeline setzen</li>
-            <li>Ursache-Wirkung-Ketten identifizieren</li>
-          </ul>
-          <p>
-            Am Ende (POST) fasst du alles zusammen und identifizierst Root Causes + Adjustments.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // POST Phase - Summary
   if (currentPhase === 'POST') {

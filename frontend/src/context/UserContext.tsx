@@ -1,9 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { login as apiLogin } from '../api'
 
+type LoginResult = {
+  ok: boolean
+  error?: string
+}
+
 type UserContextValue = {
   user: string | null
-  setUser: (username: string | null, password?: string) => Promise<boolean>
+  setUser: (username: string | null, password?: string) => Promise<LoginResult>
   logout: () => void
 }
 
@@ -20,14 +25,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   // setUser wird für API-Login neu implementiert
   // Login via API, speichere Token und Username in localStorage
-  const setUser = async (username: string | null, password?: string): Promise<boolean> => {
+  const setUser = async (username: string | null, password?: string): Promise<LoginResult> => {
     if (!username) {
       setUserState(null)
       localStorage.removeItem('academy.user')
       localStorage.removeItem('academy.token')
-      return true
+      return { ok: true }
     }
-    if (!password) return false;
+    if (!password) return { ok: false, error: 'Passwort erforderlich' }
     try {
       const res = await apiLogin(username, password)
       // Username immer mit erstem Buchstaben groß speichern
@@ -35,12 +40,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUserState(normalized)
       localStorage.setItem('academy.user', normalized)
       localStorage.setItem('academy.token', res.token)
-      return true
-    } catch (e) {
+      return { ok: true }
+    } catch (e: any) {
       setUserState(null)
       localStorage.removeItem('academy.user')
       localStorage.removeItem('academy.token')
-      return false
+      return { ok: false, error: e?.message || 'Login fehlgeschlagen' }
     }
   }
 

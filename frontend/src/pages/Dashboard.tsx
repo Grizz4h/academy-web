@@ -88,9 +88,9 @@ export default function Dashboard() {
       setLoginError("Benutzername und Passwort erforderlich");
       return;
     }
-    const success = await setUser(name, passwordInput);
-    if (!success) {
-      setLoginError("Ungültige Anmeldedaten");
+    const result = await setUser(name, passwordInput);
+    if (!result.ok) {
+      setLoginError(result.error || "Login fehlgeschlagen");
       setPasswordInput("");
       return;
     }

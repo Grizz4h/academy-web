@@ -1,6 +1,6 @@
 {
   "team_id": "loewen_frankfurt",
-  "updated_at": "2026-06-11T17:26:01.376625Z",
+  "updated_at": "2026-06-16T18:48:19.866997Z",
   "players": [
     {
       "player_name": "Ty Glover",
@@ -218,7 +218,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "SWE",
-      "age": 32,
+      "age": 33,
       "height_cm": 183,
       "weight_kg": 87.0,
       "birthplace": "Norrstrand",

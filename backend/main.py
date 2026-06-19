@@ -1278,7 +1278,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "session_method": session.session_method,  # Store session method
         "drill_id": session.drill_id,  # Store selected drill
         "state": "IN_PROGRESS",  # Start as in progress instead of PRE
-        "current_phase": "PRE",  # Track current phase for continuation
+        "current_phase": "P1",  # Start directly in the first drill phase; PRE remains supported for legacy sessions
         "created_at": now.isoformat(),
         "drills": module_drills,
         "progress": {
@@ -1306,7 +1306,11 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
 async def get_session(session_id: str):
     """Session Details"""
     session_path = get_session_path_or_404(session_id)
-    return load_json(session_path)
+    session = load_json(session_path)
+    if session.get("current_phase") == "PRE":
+        session["current_phase"] = "P1"
+        save_json(session_path, session)
+    return session
 
 @app.patch("/api/sessions/{session_id}")
 async def update_session(session_id: str, updates: dict):
@@ -1343,6 +1347,11 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
     trace_action = request.headers.get("X-Trace-Action")
     session_path = get_session_path_or_404(session_id)
     session = load_json(session_path)
+    if phase_norm == "PRE":
+        session["current_phase"] = "P1"
+        save_json(session_path, session)
+        return session
+
     counts_before = Counter((c.get("phase") or "") for c in session.get("checkins", []))
 
     enforce_max_text_length(checkin.answers, "checkin.answers")
@@ -1492,7 +1501,7 @@ async def update_session_phase(session_id: str, phase_data: dict):
     enforce_max_text_length(phase_data, "phase_data")
 
     if "phase" in phase_data:
-        session["current_phase"] = phase_data["phase"]
+        session["current_phase"] = "P1" if phase_data["phase"] == "PRE" else phase_data["phase"]
     if "state" in phase_data:
         session["state"] = phase_data["state"]
 
