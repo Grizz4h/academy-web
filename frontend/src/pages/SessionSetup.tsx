@@ -7,7 +7,9 @@ import { makeGlossaryRenderer } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
 import { teamsByLeague, LEAGUES } from '../data/teamsByLeague'
-import { resolveDrillId } from '../stats/exposureStats'
+import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
+import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
+import { OBSERVATION_SCOPE_OPTIONS, getObservationScopeLabel, type ObservationScope } from '../utils/observationScope'
 import {
   isSplitSeasonLeague,
   normalizeSeasonValue,
@@ -73,10 +75,14 @@ export default function SessionSetup() {
   const [teamHome, setTeamHome] = useState<string>('')
   const [teamAway, setTeamAway] = useState<string>('')
   const [season, setSeason] = useState<string>('')
-  const [matchday, setMatchday] = useState<string>('')
+  const [competitionPhase, setCompetitionPhase] = useState<string>('')
+  const [competitionValue, setCompetitionValue] = useState<string>('')
+  const [observationScope, setObservationScope] = useState<ObservationScope>('FULL_GAME')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
   const useSplitSeason = isSplitSeasonLeague(league)
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
+  const competitionConfig = getCompetitionConfig(league)
+  const selectedCompetitionPhase = competitionConfig?.phases.find((phase) => phase.id === competitionPhase) || competitionConfig?.phases[0]
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -104,8 +110,11 @@ export default function SessionSetup() {
       if (parsed.teamHome) setTeamHome(parsed.teamHome)
       if (parsed.teamAway) setTeamAway(parsed.teamAway)
       if (parsed.season) setSeason(parsed.season)
-      if (parsed.matchday) setMatchday(parsed.matchday)
+      if (parsed.competitionPhase) setCompetitionPhase(parsed.competitionPhase)
+      if (parsed.competitionValue) setCompetitionValue(parsed.competitionValue)
+      if (!parsed.competitionValue && parsed.matchday) setCompetitionValue(parsed.matchday)
       if (parsed.selectedDrill) setSelectedDrill(parsed.selectedDrill)
+      if (parsed.observationScope) setObservationScope(parsed.observationScope)
     } catch (e) {
       console.warn('Draft konnte nicht geladen werden', e)
     }
@@ -122,12 +131,14 @@ export default function SessionSetup() {
       teamHome,
       teamAway,
       season,
-      matchday,
+      competitionPhase,
+      competitionValue,
       selectedDrill,
+      observationScope,
       observedTeam
     }
     localStorage.setItem(draftKey, JSON.stringify(draft))
-  }, [draftKey, goal, confidence, league, teamHome, teamAway, season, matchday, selectedDrill, observedTeam])
+  }, [draftKey, goal, confidence, league, teamHome, teamAway, season, competitionPhase, competitionValue, selectedDrill, observationScope, observedTeam])
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
@@ -176,6 +187,26 @@ export default function SessionSetup() {
   // Finde aktuelles Modul
   const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
 
+  const drillHistoryById = useMemo(() => {
+    const history: Record<string, { count: number; lastSeen?: string }> = {}
+    for (const session of sessions || []) {
+      if (session.state !== 'COMPLETED') continue
+      const drillId = resolveDrillId(session)
+      if (!drillId) continue
+
+      const existing = history[drillId] || { count: 0, lastSeen: undefined }
+      existing.count += 1
+      if (!existing.lastSeen || new Date(session.created_at).getTime() > new Date(existing.lastSeen).getTime()) {
+        existing.lastSeen = session.created_at
+      }
+      history[drillId] = existing
+    }
+    return history
+  }, [sessions])
+
+  const selectedDrillHistory = selectedDrill ? drillHistoryById[selectedDrill] : undefined
+  const selectedDrillConfig = selectedDrill ? currentModule?.drills.find((drill) => drill.id === selectedDrill) : undefined
+
   const matchupPanelData = useMemo(() => {
     if (!currentModule) return null
     if (!league || !teamHome || !teamAway) return null
@@ -191,6 +222,20 @@ export default function SessionSetup() {
       if (seasonFilter && normalizedSessionSeason !== seasonFilter) return false
       return true
     })
+
+    const contextSessions = allSessions.filter((session) => {
+      const gameInfo = session.game_info
+      if (!gameInfo) return false
+      if (gameInfo.league !== league) return false
+      const normalizedSessionSeason = normalizeSeasonValue(gameInfo.season, gameInfo.league)
+      if (seasonFilter && normalizedSessionSeason !== seasonFilter) return false
+      return true
+    })
+    const observedTeamStats = computeObservedTeamStats(contextSessions)
+    const teamHistory = [teamHome, teamAway].filter(Boolean).map((team) => ({
+      team,
+      sessionCount: observedTeamStats.find((row) => row.team === team)?.sessionCount || 0
+    }))
 
     const currentDrillId = selectedDrill || currentModule.drills?.[0]?.id
     const currentDrillUses = currentDrillId
@@ -237,7 +282,8 @@ export default function SessionSetup() {
       moduleDrillProgress,
       moduleSessionsCount,
       currentDrillId,
-      seasonFilter
+      seasonFilter,
+      teamHistory
     }
   }, [currentModule, league, season, teamHome, teamAway, sessions, selectedDrill])
 
@@ -288,6 +334,25 @@ export default function SessionSetup() {
   }, [league, availableTeams, teamHome, teamAway, observedTeam])
 
   useEffect(() => {
+    if (competitionConfig && !competitionPhase) {
+      setCompetitionPhase(competitionConfig.phases[0]?.id || '')
+      setCompetitionValue('')
+    }
+    if (!competitionConfig && competitionPhase) {
+      setCompetitionPhase('')
+      setCompetitionValue('')
+    }
+  }, [competitionConfig, competitionPhase])
+
+  useEffect(() => {
+    if (!selectedCompetitionPhase || !competitionValue) return
+    const numericValue = Number(competitionValue)
+    if (!Number.isFinite(numericValue) || numericValue < selectedCompetitionPhase.unit.min || numericValue > selectedCompetitionPhase.unit.max) {
+      setCompetitionValue('')
+    }
+  }, [selectedCompetitionPhase, competitionValue])
+
+  useEffect(() => {
     if (!season) return
     const normalized = normalizeSeasonValue(season, league)
     if (!normalized || !seasonOptions.includes(normalized)) {
@@ -324,6 +389,17 @@ export default function SessionSetup() {
       alert('Bitte wähle das beobachtete Team aus (Pflichtfeld).')
       return
     }
+    if (competitionConfig && !selectedCompetitionPhase) {
+      alert('Bitte eine Wettbewerbsphase wählen.')
+      return
+    }
+    if (selectedCompetitionPhase) {
+      const numericValue = Number(competitionValue)
+      if (!competitionValue || !Number.isFinite(numericValue) || numericValue < selectedCompetitionPhase.unit.min || numericValue > selectedCompetitionPhase.unit.max) {
+        alert('Bitte ' + selectedCompetitionPhase.unit.label + ' ' + selectedCompetitionPhase.unit.min + '-' + selectedCompetitionPhase.unit.max + ' eingeben.')
+        return
+      }
+    }
     // Drill optional auswählen – Standard: erster Drill des Moduls
 
     const gameInfo: any = {
@@ -335,7 +411,22 @@ export default function SessionSetup() {
     }
     const normalizedSeason = normalizeSeasonValue(season, league)
     if (normalizedSeason) gameInfo.season = normalizedSeason
-    if (matchday.trim()) gameInfo.matchday = matchday.trim()
+    if (selectedCompetitionPhase) {
+      const unitValue = competitionValue.trim()
+      gameInfo.competition_phase = selectedCompetitionPhase.id
+      gameInfo.competition_phase_label = selectedCompetitionPhase.label
+      gameInfo.competition_unit_type = selectedCompetitionPhase.unit.type
+      gameInfo.competition_unit_label = selectedCompetitionPhase.unit.label
+      gameInfo.competition_unit_value = unitValue
+      gameInfo.matchday = formatCompetitionContext({
+        league,
+        season: normalizedSeason || undefined,
+        competition_phase: selectedCompetitionPhase.id,
+        competition_phase_label: selectedCompetitionPhase.label,
+        competition_unit_label: selectedCompetitionPhase.unit.label,
+        competition_unit_value: unitValue,
+      })
+    }
     // Hinweis: Divisionen NICHT an Backend senden, nur intern nutzen
 
     const effectiveGoal = goal.trim() || `Auto: ${currentModule.title}`
@@ -346,6 +437,7 @@ export default function SessionSetup() {
       module_id: moduleId!,
       goal: effectiveGoal,
       confidence,
+      observation_scope: observationScope,
       focus: currentModule.defaultFocus,
       session_method: currentModule.recommendedSessionMethod || 'live_watch',
       drill_id: chosenDrill || undefined,
@@ -394,6 +486,8 @@ export default function SessionSetup() {
               setTeamHome('')
               setTeamAway('')
               setObservedTeam('')
+              setCompetitionPhase('')
+              setCompetitionValue('')
             }}
             style={{
               marginTop: '0.35rem'
@@ -494,26 +588,70 @@ export default function SessionSetup() {
             </div>
           </label>
 
-          <label style={{ display: 'block' }}>
-            Spieltag <span style={{ color: 'rgba(255,255,255,0.6)' }}>(optional)</span>
-            <input
-              type="text"
-              value={matchday}
-              onChange={(e) => setMatchday(e.target.value)}
-              placeholder="z.B. 47"
-              maxLength={1500}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.35rem',
-                backgroundColor: '#050712',
-                color: '#f7f7ff',
-                border: '1px solid #5191a2',
-                borderRadius: '4px'
-              }}
-            />
-          </label>
+          {competitionConfig && selectedCompetitionPhase && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 0.75fr', gap: '0.75rem' }}>
+              <label style={{ display: 'block' }}>
+                Phase
+                <select
+                  className="appSelect"
+                  value={selectedCompetitionPhase.id}
+                  onChange={(e) => {
+                    setCompetitionPhase(e.target.value)
+                    setCompetitionValue('')
+                  }}
+                  style={{ marginTop: '0.35rem' }}
+                >
+                  {competitionConfig.phases.map((phase) => (
+                    <option key={phase.id} value={phase.id}>{phase.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label style={{ display: 'block' }}>
+                {selectedCompetitionPhase.unit.label}
+                <input
+                  type="number"
+                  value={competitionValue}
+                  onChange={(e) => setCompetitionValue(e.target.value)}
+                  min={selectedCompetitionPhase.unit.min}
+                  max={selectedCompetitionPhase.unit.max}
+                  placeholder={selectedCompetitionPhase.unit.min + '-' + selectedCompetitionPhase.unit.max}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    marginTop: '0.35rem',
+                    backgroundColor: '#050712',
+                    color: '#f7f7ff',
+                    border: '1px solid #5191a2',
+                    borderRadius: '4px'
+                  }}
+                />
+              </label>
+            </div>
+          )}
+          {!competitionConfig && (
+            <div style={{ color: 'rgba(255,255,255,0.62)', fontSize: '0.85rem', alignSelf: 'end' }}>
+              Für diese Liga ist noch keine Wettbewerbsstruktur hinterlegt.
+            </div>
+          )}
         </div>
+
+        <label style={{ display: 'block', marginTop: '0.9rem' }}>
+          Beobachtungsumfang
+          <select
+            className="appSelect"
+            value={observationScope}
+            onChange={(e) => setObservationScope(e.target.value as ObservationScope)}
+            style={{ marginTop: '0.35rem' }}
+          >
+            {OBSERVATION_SCOPE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+          <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+            Aktuell ausgewählt: {getObservationScopeLabel(observationScope)}
+          </div>
+        </label>
 
         {league === 'NHL' && teamHome && teamAway && (
           <div style={{ 
@@ -559,6 +697,24 @@ export default function SessionSetup() {
             </div>
           )}
 
+
+          <div style={{ marginTop: '0.85rem', display: 'grid', gap: '0.75rem' }}>
+            <div>
+              <div style={{ fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>Paarung:</div>
+              <div style={{ marginTop: '0.2rem', color: 'rgba(255,255,255,0.82)' }}>{matchupPanelData.sessionCount}x analysiert</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>Team-Historie:</div>
+              <div style={{ display: 'grid', gap: '0.35rem', marginTop: '0.35rem' }}>
+                {matchupPanelData.teamHistory.map((row) => (
+                  <div key={row.team} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', color: 'rgba(255,255,255,0.82)' }}>
+                    <span>{row.team}:</span>
+                    <strong>{row.sessionCount} Sessions</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           {!matchupPanelData.knownMatchup && (
             <p style={{ marginTop: '0.75rem', color: '#9fe9ff' }}>
               Noch keine Analyse für diese Paarung.
@@ -568,9 +724,6 @@ export default function SessionSetup() {
           {matchupPanelData.knownMatchup && matchupPanelData.currentDrillUses === 0 && (
             <>
               <p style={{ marginTop: '0.75rem', color: '#ffd17c' }}>
-                Diese Paarung wurde bereits {matchupPanelData.sessionCount}-mal analysiert.
-              </p>
-              <p style={{ marginTop: '0.35rem', color: '#ffd17c' }}>
                 Dieser Drill wurde für diese Paarung noch nicht genutzt.
               </p>
             </>
@@ -579,9 +732,6 @@ export default function SessionSetup() {
           {matchupPanelData.knownMatchup && matchupPanelData.currentDrillUses > 0 && (
             <>
               <p style={{ marginTop: '0.75rem', color: '#ff9fbe' }}>
-                Diese Paarung wurde bereits {matchupPanelData.sessionCount}-mal analysiert.
-              </p>
-              <p style={{ marginTop: '0.35rem', color: '#ff9fbe' }}>
                 Achtung: Diesen Drill hast du auf diese Paarung bereits {matchupPanelData.currentDrillUses}-mal gemacht.
               </p>
               {matchupPanelData.lastSeen && (
@@ -625,8 +775,21 @@ export default function SessionSetup() {
           <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
             Alle Übungen trainieren das gleiche Modul – wähle je nach Situation und Fokus.
           </p>
+
+          {selectedDrillConfig && (
+            <div style={{ marginTop: '0.75rem', padding: '0.65rem 0.75rem', border: '1px solid rgba(90, 210, 255, 0.3)', borderRadius: '6px', background: 'rgba(90, 210, 255, 0.08)' }}>
+              <div style={{ fontWeight: 700 }}>{selectedDrillConfig.id} - {selectedDrillConfig.title}</div>
+              <div style={{ marginTop: '0.25rem', color: 'rgba(255,255,255,0.78)' }}>
+                {(selectedDrillHistory?.count || 0)}x durchgeführt
+                {selectedDrillHistory?.lastSeen && (
+                  <span style={{ color: 'rgba(255,255,255,0.62)' }}> · zuletzt {new Date(selectedDrillHistory.lastSeen).toLocaleDateString('de-DE')}</span>
+                )}
+              </div>
+            </div>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
             {currentModule.drills.map((drill) => {
+              const drillHistory = drillHistoryById[drill.id] || { count: 0, lastSeen: undefined }
               const usageCount = matchupPanelData?.knownMatchup
                 ? (matchupPanelData.moduleDrillProgress.find((item) => item.id === drill.id)?.usageCount || 0)
                 : 0
@@ -661,6 +824,20 @@ export default function SessionSetup() {
                 <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                     <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>
+                    <span
+                      title={drillHistory.lastSeen ? `Zuletzt ${new Date(drillHistory.lastSeen).toLocaleDateString('de-DE')}` : 'Noch nicht durchgeführt'}
+                      style={{
+                        padding: '0.15rem 0.45rem',
+                        borderRadius: '999px',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        border: '1px solid rgba(255,255,255,0.22)',
+                        color: 'rgba(255,255,255,0.82)',
+                        background: 'rgba(15, 23, 42, 0.55)'
+                      }}
+                    >
+                      {drillHistory.count}x
+                    </span>
                     {matchupPanelData?.knownMatchup && (
                       <span
                         style={{

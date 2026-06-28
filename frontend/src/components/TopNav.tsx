@@ -1,5 +1,7 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
+import { api, type Session } from '../api';
 import LogoutButton from './LogoutButton';
 import Pill from './Pill';
 import UserName from './UserName';
@@ -18,9 +20,31 @@ const navTabs = [
 ];
 
 
+const getSessionSortDate = (session: Session) => new Date(session.created_at).getTime() || 0;
+
+const getSessionContext = (session: Session): string => {
+  if (session.game_info?.team_home && session.game_info?.team_away) {
+    return session.game_info.team_home + ' vs ' + session.game_info.team_away;
+  }
+
+  return session.drill_id || session.drills?.[session.progress?.current_drill_index || 0]?.id || session.module_id;
+};
+
 const TopNav: React.FC = () => {
   const { user } = useUser();
   const { rewardState } = useRewards();
+  const { data: activeSessions } = useQuery({
+    queryKey: ['sessions', user, 'IN_PROGRESS'],
+    queryFn: () => api.getSessions(user || undefined, 'IN_PROGRESS'),
+    enabled: Boolean(user),
+    refetchInterval: 30000,
+  });
+
+  const activeSession = activeSessions
+    ? [...activeSessions]
+      .filter(session => session.state === 'IN_PROGRESS')
+      .sort((a, b) => getSessionSortDate(b) - getSessionSortDate(a))[0]
+    : undefined;
 
   return (
     <nav className={styles.navbar} data-top-nav="true">
@@ -41,16 +65,33 @@ const TopNav: React.FC = () => {
           <div className={styles.navTabsWrapper}>
             <div className={styles.navTabs}>
               {navTabs.map(tab => (
-                <NavLink
-                  key={tab.to}
-                  to={tab.to}
-                  className={({ isActive }) =>
-                    isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
-                  }
-                  end={tab.exact}
-                >
-                  {tab.label}
-                </NavLink>
+                <React.Fragment key={tab.to}>
+                  {tab.to === "/history" && activeSession && (
+                    <NavLink
+                      to={"/session/" + activeSession.id}
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.navLink + " " + styles.navLinkActive + " " + styles.activeSessionLink
+                          : styles.navLink + " " + styles.activeSessionLink
+                      }
+                    >
+                      <span className={styles.activeSessionPulse} aria-hidden="true" />
+                      <span className={styles.activeSessionText}>
+                        <span>Aktive Session</span>
+                        <span>{getSessionContext(activeSession)} läuft</span>
+                      </span>
+                    </NavLink>
+                  )}
+                  <NavLink
+                    to={tab.to}
+                    className={({ isActive }) =>
+                      isActive ? styles.navLink + " " + styles.navLinkActive : styles.navLink
+                    }
+                    end={tab.exact}
+                  >
+                    {tab.label}
+                  </NavLink>
+                </React.Fragment>
               ))}
             </div>
           </div>

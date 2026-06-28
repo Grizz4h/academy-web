@@ -20,6 +20,48 @@ function formatOptionText(text: string): string {
 		.join(" ");
 }
 
+function buildObservationMirror(samples: Array<Record<string, any>>, key: string, labels: Record<string, string> = {}) {
+	const counts = new Map<string, number>();
+	for (const sample of samples) {
+		const value = sample?.[key];
+		if (!value) continue;
+		counts.set(value, (counts.get(value) || 0) + 1);
+	}
+	return Array.from(counts.entries())
+		.sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])))
+		.map(([value, count]) => ({ label: labels[value] || formatOptionText(value), count }));
+}
+
+function ObservationModeCard({ count, target, focus, mirror }: { count: number; target: number; focus: string; mirror: Array<{ label: string; count: number }> }) {
+	return (
+		<section style={{ marginBottom: "0.85rem", padding: "0.9rem 1rem", borderRadius: "6px", background: "rgba(20,184,166,0.10)", border: "1px solid rgba(45,212,191,0.36)" }}>
+			<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ Drillziel erreicht</h4>
+			<p style={{ marginTop: 0, marginBottom: "0.55rem", color: "rgba(240,253,250,0.88)" }}>
+				{count}/{target} Beobachtungen erfasst.
+			</p>
+			<p style={{ marginTop: 0, marginBottom: "0.65rem", color: "rgba(255,255,255,0.78)" }}>
+				<strong>Aktiver Fokus:</strong><br />
+				{focus}
+			</p>
+			<p style={{ marginTop: 0, marginBottom: mirror.length > 0 ? "0.75rem" : 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.5 }}>
+				Nutze die verbleibende Zeit, um weitere Situationen zu beobachten oder interessa zu markieren.
+			</p>
+			{mirror.length > 0 && (
+				<div>
+					<div style={{ marginBottom: "0.35rem", fontSize: "0.78rem", color: "rgba(255,255,255,0.58)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+						Bisher häufig beobachtet
+					</div>
+					<ul style={{ margin: 0, paddingLeft: "1.2rem", color: "rgba(255,255,255,0.86)", lineHeight: 1.55 }}>
+						{mirror.map((item) => (
+							<li key={item.label}>{item.label} ({item.count})</li>
+						))}
+					</ul>
+				</div>
+			)}
+		</section>
+	);
+}
+
 function ObservationGuide({ drill }: { drill: Drill }) {
 	const didactics: any = drill.didactics;
 	if (!didactics) return null;
@@ -288,7 +330,9 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const aggregationLabel = drill?.config?.aggregation_label || "Interne Aggregation";
 
 	const samples: any[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
-	const canAddMore = samples.length < requiredSamples;
+	const pressureLabels = Object.fromEntries(sampleFields.map((field: any) => [field.key, field.label]));
+	const isObservationMode = samples.length >= requiredSamples;
+	const canAddMore = true;
 
 	const defaultFormState = sampleFields.reduce((next: any, field: any) => {
 		next[field.key] = "";
@@ -302,6 +346,10 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 		? checkinConfig.options
 		: sampleFields.map((field: any) => ({ value: field.key, label: field.label }));
 	const aggregation = computeSampleAggregation(samples, sampleFields, checkinOptions, aggregateBy);
+	const observationMirror = Object.entries(aggregation.totals)
+		.filter(([, count]) => Number(count) > 0)
+		.sort((a, b) => Number(b[1]) - Number(a[1]) || String(a[0]).localeCompare(String(b[0])))
+		.map(([key, count]) => ({ label: pressureLabels[key] || key, count: Number(count) }));
 	const checkinSelection = safeAnswers[checkinKey] || "";
 	const selectedCheckinOption = checkinOptions.find((opt: any) => opt?.value === checkinSelection);
 	const selectedCheckinLabel = selectedCheckinOption?.label || "";
@@ -382,7 +430,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 		setAnswers(nextAnswers);
 	};
 
-	const canRenderCheckin = samples.length === requiredSamples;
+	const canRenderCheckin = samples.length >= requiredSamples;
 
 	return (
 		<div className="card">
@@ -421,6 +469,15 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 						{samples.length}/{requiredSamples} erfasst
 					</span>
 				</div>
+
+				{isObservationMode && (
+					<ObservationModeCard
+						count={samples.length}
+						target={requiredSamples}
+						focus={drill?.config?.observation_focus || checkinConfig?.label || "Druck erkennen"}
+						mirror={observationMirror}
+					/>
+				)}
 
 				{showForm && canAddMore && (
 					<div style={{ marginBottom: "0.75rem", padding: "0.85rem", border: "1px solid rgba(81,145,162,0.45)", borderRadius: "6px", background: "rgba(81,145,162,0.08)" }}>
@@ -539,7 +596,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					</div>
 				) : (
 					<p style={{ margin: 0, fontSize: "0.82rem", color: "rgba(255,215,140,0.92)" }}>
-						Der Check-in wird freigeschaltet, sobald genau {requiredSamples} Situationen erfasst sind.
+						Der Check-in wird freigeschaltet, sobald mindestens {requiredSamples} Situationen erfasst sind.
 					</p>
 				)}
 			</section>
@@ -785,7 +842,7 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 	const safeAnswers = answers || {};
 	const sampleKey: string = drill?.config?.sample_key || "samples";
 	const sampleLabel: string = drill?.config?.sample_label || "Sample";
-	const maxSamples: number = drill?.config?.max_samples_per_phase || 3;
+	const targetSamples: number = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3);
 	const stateKey: string = drill?.config?.state_key || "state";
 	const stateLabel: string = drill?.config?.state_label || "Support";
 	const factorKey: string = drill?.config?.factor_key || "factor";
@@ -814,7 +871,9 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 
 	const currentState = form[stateKey] || "";
 	const factorOptions = factorsByState[currentState] || [];
-	const canAddMore = samples.length < maxSamples;
+	const observationMirror = buildObservationMirror(samples, stateKey);
+	const isObservationMode = samples.length >= targetSamples;
+	const canAddMore = true;
 
 	const resetForm = () => {
 		setForm({
@@ -826,7 +885,6 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 	};
 
 	const addSample = () => {
-		if (!canAddMore) return;
 		if (!form[stateKey] || !form[factorKey]) return;
 		if (qualityKey && qualityOptions.length > 0 && !form[qualityKey]) return;
 
@@ -897,14 +955,17 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 					+ {sampleLabel}
 				</button>
 				<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>
-					{samples.length}/{maxSamples} erfasst
+					{samples.length}/{targetSamples} erfasst
 				</span>
 			</div>
 
-			{!canAddMore && (
-				<p style={{ marginTop: 0, marginBottom: "0.85rem", fontSize: "0.82rem", color: "rgba(255,215,140,0.9)" }}>
-					Maximum erreicht: Bitte bei maximal {maxSamples} Beobachtungen pro Drittel bleiben.
-				</p>
+			{isObservationMode && (
+				<ObservationModeCard
+					count={samples.length}
+					target={targetSamples}
+					focus={drill?.config?.observation_focus || stateLabel}
+					mirror={observationMirror}
+				/>
 			)}
 
 			{showForm && canAddMore && (

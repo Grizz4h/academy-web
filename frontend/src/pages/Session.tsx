@@ -6,7 +6,9 @@ import { detectDeviceType, evaluateSessionRewards, useRewards } from '../feature
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
+import { formatCompetitionContext } from '../data/competitionConfig';
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { getObservationScopeLabel } from '../utils/observationScope'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -331,8 +333,8 @@ export default function SessionPage() {
           ]
       const sampleLabel = drill?.config?.sample_label || 'Situation'
 
-      if (samples.length !== requiredSamples) {
-        return `Bitte erfasse genau ${requiredSamples} ${sampleLabel}en, bevor du weitergehst.`
+      if (samples.length < requiredSamples) {
+        return 'Bitte erfasse mindestens ' + requiredSamples + ' ' + sampleLabel + 'en, bevor du weitergehst.'
       }
 
       const hasAllFields = samples.every((sample: any) => sampleFields.every((field: any) => sample?.[field.key]))
@@ -506,13 +508,17 @@ export default function SessionPage() {
             <p><strong>Datum:</strong> {session.game_info.date}</p>
             <p><strong>Liga:</strong> {session.game_info.league.replace(/_/g, ' ')}</p>
             {session.game_info.season && <p><strong>Saison:</strong> {session.game_info.season}</p>}
-            {session.game_info.matchday && <p><strong>Spieltag:</strong> {session.game_info.matchday}</p>}
+            {(session.game_info.competition_phase || session.game_info.matchday) && (
+              <p><strong>Wettbewerb:</strong> {formatCompetitionContext(session.game_info) || session.game_info.matchday}</p>
+            )}
+            <p><strong>Beobachtungsumfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
           </>
         ) : (
           <>
             <p>Keine Spiel-Info verfügbar</p>
             <p><strong>Ziel:</strong> {session.goal}</p>
             <p><strong>Status:</strong> {session.state}</p>
+            <p><strong>Beobachtungsumfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
           </>
         )}
 

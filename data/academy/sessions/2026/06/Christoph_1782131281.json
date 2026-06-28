@@ -1,0 +1,342 @@
+{
+  "id": "Christoph_1782131281",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B1",
+  "goal": "Auto: B1 – Center-Detailarbeit",
+  "confidence": 2,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B1_D3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-06-22T14:28:01.884862",
+  "drills": [
+    {
+      "id": "B1_D3",
+      "title": "Center-Read: Welche Aufgabe priorisiert er?",
+      "drill_type": "sample_log",
+      "description": "Beobachte, welche Aufgabe der Center in der Situation priorisiert – nicht wo er auf dem Eis steht.",
+      "didactics": {
+        "explanation": "Absichern, Verbinden und Angreifen beschreiben in diesem Drill die dominante Aufgabe des Centers – nicht seine Position auf dem Eis.\n\nDieselbe Eisposition kann je nach Situation zu unterschiedlichen Reads führen.\n\nBeispiel: Der Center steht tief im eigenen Drittel. Verteidiger gewinnt den Puck. Der Center bietet sich sofort als sichere Anspielstation an.\nDominante Aufgabe: Verbindung herstellen → Verbinden. Nicht automatisch Absichern.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Welche Aufgabe priorisiert der Center in dieser Szene – direkt nach Puckgewinn, beim Angriffsaufbau, beim Verlassen der Defensivzone oder beim Eintritt in die Offensivzone?",
+            "Kommt der Read früh (antizipiert) oder verspätet (reaktiv)?",
+            "Wirkt die Aufgabe entlastend, verbindend oder Druck aufbauend?",
+            "Beobachte Übergänge: wechselt der Center bewusst die Priorität oder driftet er nur mit?"
+          ],
+          "how_to_decide": [
+            "Zentrale Frage: Was musste der Center in dieser Situation zuerst tun?",
+            "Absichern – Musste er zuerst verteidigen oder Gefahr reduzieren? Typisch: Passwege schließen, Slot sichern, Verteidiger unterstützen, Gegenspieler aufnehmen.",
+            "Verbinden – Musste er zuerst das Spiel verbinden oder unterstützen? Typisch: Anspielstation werden, Outlet anbieten, Verbindung zwischen Mitspielern herstellen.",
+            "Angreifen – Musste er zuerst Angriffsdruck erzeugen? Typisch: freien Raum attackieren, Angriff unterstützen, in gefährliche Räume vorstoßen.",
+            "Wenn unsicher: Welche Aufgabe wäre in dieser Szene am wichtigsten gewesen? Das ist der Read.",
+            "Bewerte danach die Read-Qualität: Hat der Center diese Aufgabe früh erkannt (antizipiert) oder spät (verspätet)?"
+          ],
+          "ignore": [
+            "Reine Positionseinschätzung: tief auf dem Eis bedeutet nicht automatisch Absichern",
+            "Ergebnis der Sequenz (Chance / Tor)",
+            "Einzelne technische Fehler"
+          ]
+        },
+        "learning_hint": "Nicht: Wo steht der Center? Sondern: Welche Aufgabe priorisiert er? Das ist die eigentliche Beobachtungskompetenz dieses Drills."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "center_read": "Absichern"
+            },
+            "questions": [
+              "Was war die konkrete Verteidigungsaufgabe des Centers in dieser Szene?",
+              "Wurde ein Passweg geschlossen, der Slot gesichert oder ein Gegenspieler aufgenommen?",
+              "War der Read früh genug, um Wirkung zu erzeugen?"
+            ]
+          },
+          {
+            "when": {
+              "center_read": "Verbinden"
+            },
+            "questions": [
+              "Welche Verbindung hat der Center hergestellt – Outlet, Anspielstation oder Zwischenstation?",
+              "War die Verbindungsaufgabe die wichtigste in dieser Szene oder gab es defensivere Prioritäten?",
+              "Wirkte der Read antizipiert oder erst nach dem Puckgewinn sichtbar?"
+            ]
+          },
+          {
+            "when": {
+              "center_read": "Angreifen"
+            },
+            "questions": [
+              "Welchen Angriffsdruck hat der Center konkret erzeugt – Raum attackiert, Tor vorbereitet oder Überzahl geschaffen?",
+              "Hat er den Druck initiiert oder nur mitgezogen?",
+              "War der Read klar erkennbar oder erst im Nachhinein sichtbar?"
+            ]
+          },
+          {
+            "when": {
+              "center_read": "Übergang"
+            },
+            "questions": [
+              "Wie hat der Center zwischen Ebenen verbunden statt zu pendeln?",
+              "Waren mehrere Optionen gleichzeitig offen?",
+              "Hat das Timing die Struktur flexibel gehalten?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "sample_key": "read_samples",
+        "sample_label": "Read",
+        "max_samples_per_phase": 3,
+        "state_key": "center_read",
+        "state_label": "Center priorisiert",
+        "factor_key": "main_reason",
+        "factor_label": "Warum?",
+        "quality_key": "read_quality",
+        "quality_label": "Read wirkte",
+        "quality_options": [
+          "antizipiert",
+          "passend reagiert",
+          "verspätet",
+          "unklar"
+        ],
+        "note_key": "note",
+        "note_label": "Notiz (optional)",
+        "note_max_chars": 120,
+        "state_options": [
+          "Absichern",
+          "Verbinden",
+          "Angreifen",
+          "Übergang"
+        ],
+        "factors_by_state": {
+          "Absichern": [
+            "Passwege schließen",
+            "Slot absichern",
+            "Verteidiger unterstützen",
+            "Gegenspieler aufnehmen"
+          ],
+          "Verbinden": [
+            "Anspielstation werden",
+            "Outlet anbieten",
+            "Verbindung herstellen",
+            "Puckgewinn absichern"
+          ],
+          "Angreifen": [
+            "freien Raum attackieren",
+            "Angriff unterstützen",
+            "in gefährliche Räume vorstoßen",
+            "Überzahl schaffen"
+          ],
+          "Übergang": [
+            "Priorität gewechselt",
+            "mehrere Aufgaben gleichzeitig",
+            "Struktur flexibel gehalten",
+            "Aufgabe klar erkennbar"
+          ]
+        }
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P1",
+      "answers": {
+        "read_samples": [
+          {
+            "center_read": "Verbinden",
+            "main_reason": "Outlet anbieten",
+            "read_quality": "antizipiert",
+            "note": ""
+          },
+          {
+            "center_read": "Angreifen",
+            "main_reason": "Angriff unterstützen",
+            "read_quality": "passend reagiert",
+            "note": ""
+          },
+          {
+            "center_read": "Übergang",
+            "main_reason": "mehrere Aufgaben gleichzeitig",
+            "read_quality": "unklar",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 2
+      },
+      "timestamp": "2026-06-22T15:00:52.305641"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "read_samples": [
+          {
+            "center_read": "Angreifen",
+            "main_reason": "Angriff unterstützen",
+            "read_quality": "antizipiert",
+            "note": ""
+          },
+          {
+            "center_read": "Verbinden",
+            "main_reason": "Verbindung herstellen",
+            "read_quality": "antizipiert",
+            "note": ""
+          },
+          {
+            "center_read": "Angreifen",
+            "main_reason": "Überzahl schaffen",
+            "read_quality": "antizipiert",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 2
+      },
+      "timestamp": "2026-06-22T15:37:33.911997"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "read_samples": [
+          {
+            "center_read": "Verbinden",
+            "main_reason": "Verbindung herstellen",
+            "read_quality": "antizipiert",
+            "note": ""
+          },
+          {
+            "center_read": "Angreifen",
+            "main_reason": "freien Raum attackieren",
+            "read_quality": "passend reagiert",
+            "note": ""
+          },
+          {
+            "center_read": "Absichern",
+            "main_reason": "Slot absichern",
+            "read_quality": "passend reagiert",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 2
+      },
+      "timestamp": "2026-06-22T16:25:07.137416"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-06-22T16:25:25.149642"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "read_samples": [
+        {
+          "center_read": "Verbinden",
+          "main_reason": "Outlet anbieten",
+          "read_quality": "antizipiert",
+          "note": ""
+        },
+        {
+          "center_read": "Angreifen",
+          "main_reason": "Angriff unterstützen",
+          "read_quality": "passend reagiert",
+          "note": ""
+        },
+        {
+          "center_read": "Übergang",
+          "main_reason": "mehrere Aufgaben gleichzeitig",
+          "read_quality": "unklar",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 2
+    },
+    "P2": {
+      "read_samples": [
+        {
+          "center_read": "Angreifen",
+          "main_reason": "Angriff unterstützen",
+          "read_quality": "antizipiert",
+          "note": ""
+        },
+        {
+          "center_read": "Verbinden",
+          "main_reason": "Verbindung herstellen",
+          "read_quality": "antizipiert",
+          "note": ""
+        },
+        {
+          "center_read": "Angreifen",
+          "main_reason": "Überzahl schaffen",
+          "read_quality": "antizipiert",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 2
+    },
+    "P3": {
+      "read_samples": [
+        {
+          "center_read": "Verbinden",
+          "main_reason": "Verbindung herstellen",
+          "read_quality": "antizipiert",
+          "note": ""
+        },
+        {
+          "center_read": "Angreifen",
+          "main_reason": "freien Raum attackieren",
+          "read_quality": "passend reagiert",
+          "note": ""
+        },
+        {
+          "center_read": "Absichern",
+          "main_reason": "Slot absichern",
+          "read_quality": "passend reagiert",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 2
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-06-22T16:25:25.307179"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Adler Mannheim",
+    "team_away": "Straubing Tigers",
+    "observed_team": "Adler Mannheim",
+    "date": "2026-06-22T12:28:01.805Z",
+    "season": "2025/26",
+    "matchday": "1"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "war anspielstation",
+      "ts": "2026-06-22T15:01:11.842208"
+    },
+    "P2": {
+      "done": true,
+      "text": "Überzahl geschaffen",
+      "ts": "2026-06-22T15:37:46.262177"
+    },
+    "P3": {
+      "done": true,
+      "text": "er hat den Slot zugemacht",
+      "ts": "2026-06-22T16:25:22.802056"
+    }
+  }
+}

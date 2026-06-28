@@ -1,6 +1,6 @@
 {
   "team_id": "eisbaeren_berlin",
-  "updated_at": "2026-06-16T18:48:19.727887Z",
+  "updated_at": "2026-06-28T21:18:30.158940Z",
   "players": [
     {
       "player_name": "Ty Ronning",
@@ -575,7 +575,7 @@
       "position": "Goalie",
       "position_group": "goalie",
       "nationality": "USA",
-      "age": 32,
+      "age": 33,
       "height_cm": 183,
       "weight_kg": 87.0,
       "birthplace": "Butler, PA",

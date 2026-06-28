@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { api, type Session, type Drill } from '../api'
 
+interface SceneMarkerExtension {
+  type: 'select'
+  key: string
+  label: string
+  options: string[]
+}
+
 interface SceneMarkerButtonProps {
   session: Session
   currentPhase: string
@@ -11,10 +18,20 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
   const [showModal, setShowModal] = useState(false)
   const [gameTime, setGameTime] = useState('')
   const [note, setNote] = useState('')
+  const [extensionValues, setExtensionValues] = useState<Record<string, string>>({})
   const [isSaving, setIsSaving] = useState(false)
   const [savedMsg, setSavedMsg] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const sceneMarkerExtensions: SceneMarkerExtension[] = Array.isArray(activeDrill?.config?.sceneMarkerExtensions)
+    ? activeDrill.config.sceneMarkerExtensions.filter((extension: any) =>
+        extension?.type === 'select' &&
+        typeof extension.key === 'string' &&
+        typeof extension.label === 'string' &&
+        Array.isArray(extension.options) &&
+        extension.options.length > 0
+      )
+    : []
 
   // Focus game_time input when modal opens
   useEffect(() => {
@@ -26,6 +43,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
   const handleOpen = () => {
     setGameTime('')
     setNote('')
+    setExtensionValues({})
     setError(null)
     setShowModal(true)
   }
@@ -53,16 +71,29 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
       await api.createScene({
         session_id: session.id,
         module_id: session.module_id,
+        track_id: session.module_id,
         drill_id: activeDrill?.id,
         drill_title: activeDrill?.title,
         league: session.game_info?.league,
         season: session.game_info?.season,
+        competition_phase: session.game_info?.competition_phase,
+        competition_phase_label: session.game_info?.competition_phase_label,
+        competition_unit_type: session.game_info?.competition_unit_type,
+        competition_unit_label: session.game_info?.competition_unit_label,
+        competition_unit_value: session.game_info?.competition_unit_value,
+        matchday: session.game_info?.matchday,
         team_home: session.game_info?.team_home,
         team_away: session.game_info?.team_away,
         observed_team: session.observed_team,
         period: currentPhase,
         game_time: trimmed,
         note: note.trim() || undefined,
+        extensions: Object.fromEntries(
+          Object.entries(extensionValues).filter(([, value]) => value.trim().length > 0)
+        ),
+        extension_labels: Object.fromEntries(
+          sceneMarkerExtensions.map((extension) => [extension.key, extension.label])
+        ),
       })
       setShowModal(false)
       setSavedMsg(`🎬 ${trimmed} gespeichert`)
@@ -192,6 +223,25 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             {error && (
               <div style={{ color: '#f87171', fontSize: '0.8rem', marginBottom: '0.5rem' }}>{error}</div>
             )}
+
+            {sceneMarkerExtensions.map((extension) => (
+              <div key={extension.key} style={{ marginTop: '0.9rem' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem' }}>
+                  {extension.label} <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
+                </label>
+                <select
+                  className="appSelect"
+                  value={extensionValues[extension.key] || ''}
+                  onChange={e => setExtensionValues(prev => ({ ...prev, [extension.key]: e.target.value }))}
+                  style={{ width: '100%' }}
+                >
+                  <option value="">Auswählen...</option>
+                  {extension.options.map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+            ))}
 
             {/* Note input */}
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', marginTop: '0.9rem', fontSize: '0.95rem' }}>

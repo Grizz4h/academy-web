@@ -3,10 +3,29 @@
 > vite --port 5174
 
 
-  ROLLDOWN-VITE v7.2.5  ready in 375 ms
+  ROLLDOWN-VITE v7.2.5  ready in 451 ms
 
   ➜  Local:   http://localhost:5174/
   ➜  Network: use --host to expose
 Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+9:45:17 PM [vite] (client) hmr update /src/renderers/v2/DrillRenderer.tsx
+10:47:01 PM [vite] (client) hmr update /src/context/UserContext.tsx, /src/pages/Dashboard.tsx, /src/pages/Curriculum.tsx, /src/pages/Drills.tsx, /src/pages/SessionSetup.tsx, /src/pages/Session.tsx, /src/pages/History.tsx, /src/pages/Progress.tsx, /src/pages/ObservationSetup.tsx, /src/pages/ObservationRun.tsx, /src/pages/RingAbout.tsx, /src/pages/ObservationStats.tsx, /src/components/TopNav.tsx, /src/components/SceneMarkerButton.tsx, /src/components/SessionCard.tsx, /src/features/rewards/state/RewardContext.tsx
+10:47:56 PM [vite] (client) hmr update /src/context/UserContext.tsx, /src/pages/Dashboard.tsx, /src/pages/Curriculum.tsx, /src/pages/Drills.tsx, /src/pages/SessionSetup.tsx, /src/pages/Session.tsx, /src/pages/History.tsx, /src/pages/Progress.tsx, /src/pages/ObservationSetup.tsx, /src/pages/ObservationRun.tsx, /src/pages/RingAbout.tsx, /src/pages/ObservationStats.tsx, /src/components/TopNav.tsx, /src/components/SceneMarkerButton.tsx, /src/components/SessionCard.tsx, /src/features/rewards/state/RewardContext.tsx
+10:48:20 PM [vite] (client) hmr update /src/pages/SessionSetup.tsx
+10:49:10 PM [vite] (client) hmr update /src/pages/SessionSetup.tsx
+10:49:56 PM [vite] (client) hmr update /src/pages/SessionSetup.tsx
+10:50:23 PM [vite] (client) hmr update /src/pages/SessionSetup.tsx
+10:50:37 PM [vite] (client) hmr update /src/components/SceneMarkerButton.tsx
+10:50:49 PM [vite] (client) hmr update /src/pages/Session.tsx
+10:51:21 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+10:51:38 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+10:52:00 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+10:52:23 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+10:53:39 PM [vite] (client) hmr update /src/context/UserContext.tsx, /src/pages/Dashboard.tsx, /src/pages/Curriculum.tsx, /src/pages/Drills.tsx, /src/pages/SessionSetup.tsx, /src/pages/Session.tsx, /src/pages/History.tsx, /src/pages/Progress.tsx, /src/pages/ObservationSetup.tsx, /src/pages/ObservationRun.tsx, /src/pages/RingAbout.tsx, /src/pages/ObservationStats.tsx, /src/components/TopNav.tsx, /src/components/SceneMarkerButton.tsx, /src/components/SessionCard.tsx, /src/features/rewards/state/RewardContext.tsx
+10:58:44 PM [vite] (client) hmr update /src/pages/SessionSetup.tsx
+11:11:44 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+11:12:21 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+11:12:35 PM [vite] (client) hmr update /src/pages/RingAbout.tsx
+11:13:06 PM [vite] (client) hmr update /src/pages/RingAbout.tsx

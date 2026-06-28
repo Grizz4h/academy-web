@@ -9,6 +9,7 @@ import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards'
 import { CoverageMap } from '../components/dashboard/CoverageMap';
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
 import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
+import { computeObservedTeamStats } from '../stats/exposureStats';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string =>
@@ -344,6 +345,14 @@ export default function Dashboard() {
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5);
 
+    const observedTeamStats = computeObservedTeamStats(list);
+    const mostObservedTeams = [...observedTeamStats]
+      .sort((a, b) => b.sessionCount - a.sessionCount || a.team.localeCompare(b.team))
+      .slice(0, 5);
+    const leastObservedTeams = [...observedTeamStats]
+      .sort((a, b) => a.sessionCount - b.sessionCount || a.team.localeCompare(b.team))
+      .slice(0, 5);
+
     return {
       total: list.length,
       sessionsThisWeek,
@@ -362,6 +371,8 @@ export default function Dashboard() {
       mostTrained,
       availableScopes,
       moduleCoverages,
+      mostObservedTeams,
+      leastObservedTeams,
     };
   }, [sessions, curriculum, currentScope]);
 
@@ -602,6 +613,38 @@ export default function Dashboard() {
         currentScope={currentScope}
         onScopeChange={setCurrentScope}
       />
+
+
+      <Card>
+        <h2 className={styles.sectionTitle}>Most Observed Teams</h2>
+        {derived.mostObservedTeams.length === 0 ? (
+          <div className={styles.rewardHint}>Noch keine Team-Beobachtungen vorhanden.</div>
+        ) : (
+          <div className={styles.teamExposureGrid}>
+            <div>
+              <ol className={styles.teamExposureList}>
+                {derived.mostObservedTeams.map((team, index) => (
+                  <li key={team.team} className={styles.teamExposureItem}>
+                    <span>{index + 1}. {team.team}</span>
+                    <strong>({team.sessionCount})</strong>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div>
+              <h3 className={styles.rewardColumnTitle}>Least Observed Teams</h3>
+              <ol className={styles.teamExposureList}>
+                {derived.leastObservedTeams.map((team, index) => (
+                  <li key={team.team} className={styles.teamExposureItem}>
+                    <span>{index + 1}. {team.team}</span>
+                    <strong>({team.sessionCount})</strong>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        )}
+      </Card>
 
       {/* Coverage Map */}
       <CoverageMap moduleCoverages={derived.moduleCoverages} />

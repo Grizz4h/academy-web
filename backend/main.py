@@ -137,6 +137,7 @@ class SessionCreate(BaseModel):
     module_id: str
     goal: str
     confidence: int  # 1-5
+    observation_scope: Optional[str] = None
     game_info: Optional[dict] = None
     observed_team: Optional[str] = None
     focus: Optional[str] = None  # Module-specific focus area
@@ -163,6 +164,17 @@ class AbortData(BaseModel):
     note: Optional[str] = None
 
 
+OBSERVATION_SCOPE_LABELS = {
+    "FULL_GAME": "Gesamtes Spiel",
+    "P1": "1. Drittel",
+    "P2": "2. Drittel",
+    "P3": "3. Drittel",
+}
+
+SCENE_STATUS_NEW = "NEW"
+SCENE_STATUS_ASSIGNED = "ASSIGNED"
+
+
 class RewardApplyData(BaseModel):
     session_id: str
     evaluated_at: str
@@ -178,14 +190,36 @@ class SceneMarkerCreate(BaseModel):
     drill_id: Optional[str] = None
     drill_title: Optional[str] = None
     track_id: Optional[str] = None
+    status: Optional[str] = None
     league: Optional[str] = None
     season: Optional[str] = None
+    competition_phase: Optional[str] = None
+    competition_phase_label: Optional[str] = None
+    competition_unit_type: Optional[str] = None
+    competition_unit_label: Optional[str] = None
+    competition_unit_value: Optional[str] = None
+    matchday: Optional[str] = None
     team_home: Optional[str] = None
     team_away: Optional[str] = None
     observed_team: Optional[str] = None
     period: Optional[str] = None
+    episode_season: Optional[str] = None
+    episode_number: Optional[str] = None
     game_time: str
     note: Optional[str] = None
+    extensions: Optional[dict] = None
+    extension_labels: Optional[dict] = None
+
+
+class SceneMarkerUpdate(BaseModel):
+    game_time: Optional[str] = None
+    note: Optional[str] = None
+    status: Optional[str] = None
+    episode_season: Optional[str] = None
+    episode_number: Optional[str] = None
+    overwrite_episode: Optional[bool] = None
+    extensions: Optional[dict] = None
+    extension_labels: Optional[dict] = None
 
 
 class ObservationRunCreate(BaseModel):
@@ -1228,6 +1262,7 @@ async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
             continue
         if not session.get('created_by'):
             session['created_by'] = session.get('user', 'Unbekannt')
+        session['observation_scope'] = _normalize_observation_scope(session.get('observation_scope'))
         sessions.append(session)
     return sessions
 
@@ -1277,6 +1312,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "focus": session.focus,  # Store focus area
         "session_method": session.session_method,  # Store session method
         "drill_id": session.drill_id,  # Store selected drill
+        "observation_scope": _normalize_observation_scope(session.observation_scope),
         "state": "IN_PROGRESS",  # Start as in progress instead of PRE
         "current_phase": "P1",  # Start directly in the first drill phase; PRE remains supported for legacy sessions
         "created_at": now.isoformat(),
@@ -1307,6 +1343,7 @@ async def get_session(session_id: str):
     """Session Details"""
     session_path = get_session_path_or_404(session_id)
     session = load_json(session_path)
+    session["observation_scope"] = _normalize_observation_scope(session.get("observation_scope"))
     if session.get("current_phase") == "PRE":
         session["current_phase"] = "P1"
         save_json(session_path, session)
@@ -1714,6 +1751,62 @@ def _build_scene_path(scene_id: str, created_at: Optional[str]) -> str:
     return os.path.join(SCENES_DIR, year, month, f"{scene_id}.json")
 
 
+def _normalize_observation_scope(scope: Optional[str]) -> str:
+    value = (scope or "").strip().upper()
+    if value in OBSERVATION_SCOPE_LABELS:
+        return value
+    return "FULL_GAME"
+
+
+def _normalize_scene_status(status: Optional[str]) -> str:
+    value = (status or "").strip().upper()
+    if value == SCENE_STATUS_ASSIGNED:
+        return SCENE_STATUS_ASSIGNED
+    return SCENE_STATUS_NEW
+
+
+def _normalize_episode_season(episode_season: Optional[str]) -> Optional[str]:
+    value = (episode_season or "").strip()
+    return value or None
+
+
+def _normalize_episode_number(episode_number: Optional[str]) -> Optional[str]:
+    value = (episode_number or "").strip()
+    if not value:
+        return None
+    digits = re.sub(r"\D", "", value)
+    if not digits:
+        raise HTTPException(status_code=400, detail="episode_number must contain digits")
+    return digits.zfill(3)
+
+
+def _scene_track_key(scene: dict) -> str:
+    track_id = (scene.get("track_id") or "").strip()
+    if track_id:
+        return track_id
+    module_id = (scene.get("module_id") or "").strip()
+    return module_id.split("_")[0] if module_id else ""
+
+
+def _find_episode_conflict(episode_season: str, episode_number: str, current_user: str, exclude_scene_id: Optional[str] = None) -> Optional[dict]:
+    user_key = _normalize_user_key(current_user)
+    for path in _iter_json_files(SCENES_DIR):
+        try:
+            scene = load_json(path)
+        except Exception:
+            continue
+        if exclude_scene_id and scene.get("id") == exclude_scene_id:
+            continue
+        if _normalize_user_key(scene.get("user", "")) != user_key:
+            continue
+        if _normalize_episode_season(scene.get("episode_season")) != episode_season:
+            continue
+        if _normalize_episode_number(scene.get("episode_number")) != episode_number:
+            continue
+        return scene
+    return None
+
+
 @app.post("/api/scenes")
 async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(get_current_user)):
     import re
@@ -1735,14 +1828,25 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "drill_id": payload.drill_id,
         "drill_title": payload.drill_title,
         "track_id": payload.track_id,
+        "status": _normalize_scene_status(payload.status),
         "league": payload.league,
         "season": payload.season,
+        "competition_phase": payload.competition_phase,
+        "competition_phase_label": payload.competition_phase_label,
+        "competition_unit_type": payload.competition_unit_type,
+        "competition_unit_label": payload.competition_unit_label,
+        "competition_unit_value": payload.competition_unit_value,
+        "matchday": payload.matchday,
         "team_home": payload.team_home,
         "team_away": payload.team_away,
         "observed_team": payload.observed_team,
         "period": payload.period,
+        "episode_season": _normalize_episode_season(payload.episode_season),
+        "episode_number": _normalize_episode_number(payload.episode_number),
         "game_time": payload.game_time.strip(),
         "note": (payload.note or "").strip(),
+        "extensions": payload.extensions or {},
+        "extension_labels": payload.extension_labels or {},
         "created_at": now_iso,
     }
 
@@ -1757,8 +1861,13 @@ async def get_scenes(
     league: Optional[str] = None,
     season: Optional[str] = None,
     team: Optional[str] = None,
+    status: Optional[str] = None,
     track_id: Optional[str] = None,
     drill_id: Optional[str] = None,
+    competition_phase: Optional[str] = None,
+    competition_unit_type: Optional[str] = None,
+    competition_unit_value: Optional[str] = None,
+    episode_season: Optional[str] = None,
     current_user: str = Depends(get_current_user),
 ):
     user_norm = _normalize_user_key(current_user)
@@ -1781,10 +1890,24 @@ async def get_scenes(
             obs_match = (scene.get("observed_team") or "").strip().lower() == team_norm
             if not (home_match or away_match or obs_match):
                 continue
-        if track_id and scene.get("track_id") != track_id:
+        scene_status = _normalize_scene_status(scene.get("status"))
+        if status and scene_status != _normalize_scene_status(status):
+            continue
+        if track_id and _scene_track_key(scene) != track_id:
             continue
         if drill_id and scene.get("drill_id") != drill_id:
             continue
+        if competition_phase and scene.get("competition_phase") != competition_phase:
+            continue
+        if competition_unit_type and scene.get("competition_unit_type") != competition_unit_type:
+            continue
+        if competition_unit_value and str(scene.get("competition_unit_value") or "") != str(competition_unit_value):
+            continue
+        if episode_season and _normalize_episode_season(scene.get("episode_season")) != _normalize_episode_season(episode_season):
+            continue
+        scene["status"] = scene_status
+        scene["episode_season"] = _normalize_episode_season(scene.get("episode_season"))
+        scene["episode_number"] = _normalize_episode_number(scene.get("episode_number")) if scene.get("episode_number") else None
         scenes.append(scene)
 
     scenes.sort(key=lambda s: s.get("created_at", ""), reverse=True)
@@ -1802,6 +1925,77 @@ async def delete_scene(scene_id: str, current_user: str = Depends(get_current_us
     os.remove(scene_path)
     logging.info(f"[scene] deleted scene_id={scene_id} user={current_user}")
     return {"status": "deleted", "id": scene_id}
+
+
+@app.put("/api/scenes/{scene_id}")
+async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: str = Depends(get_current_user)):
+    scene_path = _find_json_file_by_id(SCENES_DIR, scene_id)
+    if not scene_path:
+        raise HTTPException(status_code=404, detail="Scene not found")
+    scene = load_json(scene_path)
+    if _normalize_user_key(scene.get("user", "")) != _normalize_user_key(current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+    
+    # Update game_time if provided
+    if payload.game_time is not None:
+        import re
+        trimmed = payload.game_time.strip()
+        if not re.match(r"^\d{1,2}(:\d{1,2})?$", trimmed):
+            raise HTTPException(status_code=400, detail="game_time must be a valid time, e.g. 13:42 or 13")
+        scene["game_time"] = trimmed
+    
+    # Update note if provided
+    if payload.note is not None:
+        enforce_max_text_length(payload.note, "scene.note")
+        scene["note"] = payload.note.strip()
+
+    if payload.status is not None:
+        scene["status"] = _normalize_scene_status(payload.status)
+
+    episode_season = scene.get("episode_season")
+    episode_number = scene.get("episode_number")
+    episode_fields_touched = False
+
+    if payload.episode_season is not None:
+        episode_season = _normalize_episode_season(payload.episode_season)
+        scene["episode_season"] = episode_season
+        episode_fields_touched = True
+
+    if payload.episode_number is not None:
+        episode_number = _normalize_episode_number(payload.episode_number)
+        scene["episode_number"] = episode_number
+        episode_fields_touched = True
+
+    if episode_season and episode_number:
+        scene["status"] = SCENE_STATUS_ASSIGNED
+    elif episode_fields_touched and payload.status is None:
+        scene["status"] = SCENE_STATUS_NEW
+
+    if episode_fields_touched and episode_season and episode_number:
+        conflict = _find_episode_conflict(episode_season, episode_number, current_user, exclude_scene_id=scene_id)
+        if conflict and not payload.overwrite_episode:
+            conflict_label = conflict.get("drill_title") or conflict.get("drill_id") or conflict.get("id")
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "message": f"Episode {episode_season} / {episode_number} ist bereits vergeben.",
+                    "conflict_scene_id": conflict.get("id"),
+                    "conflict_scene_label": conflict_label,
+                },
+            )
+    
+    # Update extensions if provided
+    if payload.extensions is not None:
+        scene["extensions"] = payload.extensions
+    
+    # Update extension_labels if provided
+    if payload.extension_labels is not None:
+        scene["extension_labels"] = payload.extension_labels
+    
+    scene["updated_at"] = datetime.now().isoformat()
+    save_json(scene_path, scene)
+    logging.info(f"[scene] updated scene_id={scene_id} user={current_user}")
+    return scene
 
 
 # Auth Endpoints nach finaler app-Definition (jetzt immer registriert)

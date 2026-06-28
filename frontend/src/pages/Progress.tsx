@@ -6,6 +6,7 @@ import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { useUser } from '../context/UserContext'
 import { formatPux, getAchievementProgressItems, useRewards } from '../features/rewards'
 import { computeTeamExposure, resolveDrillId } from '../stats/exposureStats'
+import { getObservationScopeLabel } from '../utils/observationScope'
 import {
   isSplitSeasonLeague,
   normalizeSeasonValue,
@@ -619,6 +620,7 @@ export default function Progress() {
               <div className={styles.lastSessionCard}>
                 <p><strong>Letzte Session:</strong></p>
                 <p>{new Date(progress.lastSession.created_at).toLocaleDateString()}</p>
+                <p>Beobachtungsumfang: {getObservationScopeLabel(progress.lastSession.observation_scope)}</p>
                 <p>
                   Status:{' '}
                   <span className={styles.statusBadge}>

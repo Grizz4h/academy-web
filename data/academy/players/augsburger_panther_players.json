@@ -1,6 +1,6 @@
 {
   "team_id": "augsburger_panther",
-  "updated_at": "2026-06-16T18:48:19.656104Z",
+  "updated_at": "2026-06-28T21:18:28.606208Z",
   "players": [
     {
       "player_name": "Donald D.J. Busdeker",
@@ -302,7 +302,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "USA",
-      "age": 26,
+      "age": 27,
       "height_cm": 180,
       "weight_kg": 86.0,
       "birthplace": "New York",

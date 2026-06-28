@@ -1,0 +1,250 @@
+{
+  "id": "Christoph_1782649917",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B1",
+  "goal": "Auto: B1 – Center-Detailarbeit",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B1_D5",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-06-28T14:31:57.768816",
+  "drills": [
+    {
+      "id": "B1_D5",
+      "title": "Timing & Antizipation des Supports",
+      "drill_type": "sample_log",
+      "description": "Beobachte, ob der Center früh genug unterstützt, um wirksam zu sein, und wie proaktiv seine Bewegung entsteht.",
+      "didactics": {
+        "explanation": "Timing ist kein Ja/Nein-Kriterium, sondern ein Fenster. Gute Center-Reads kommen früh genug, um Optionen zu öffnen und Druck zu vermeiden. Späte Unterstützung wirkt oft nur noch reaktiv.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Wann startet der Center seine Unterstützung?",
+            "Werden Optionen rechtzeitig geöffnet oder fast verpasst?",
+            "Wirkt die Bewegung proaktiv oder erst unter Druck?",
+            "Wie verändert das Timing die Wirksamkeit des Supports?"
+          ],
+          "how_to_decide": [
+            "Bestimme zuerst das Timingfenster des Supports",
+            "Ordne dann die Hauptwirkung des Timings zu",
+            "Bewerte zuletzt den Charakter der Bewegung",
+            "Lies Wirksamkeit statt nur früh/spät"
+          ],
+          "ignore": [
+            "Reines Labeln ohne Wirkungskontext",
+            "Ergebnis der Aktion (Pass/Tor)",
+            "Einzelne technische Fehler"
+          ]
+        },
+        "learning_hint": "Wirksamer Support entsteht im richtigen Timingfenster. Antizipation stabilisiert Struktur, verspätete Hilfe verliert Wirkung."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "support_timing": "antizipiert früh"
+            },
+            "questions": [
+              "Wodurch wurde der Support in diesem Moment früh wirksam?",
+              "Welche Option wurde antizipiert geöffnet?",
+              "Wie hat frühes Timing den Druck reduziert?"
+            ]
+          },
+          {
+            "when": {
+              "support_timing": "rechtzeitig"
+            },
+            "questions": [
+              "Was machte den Support rechtzeitig und nutzbar?",
+              "Welche Struktur blieb dadurch stabil?",
+              "War die Bewegung eher vorbereitet oder angepasst?"
+            ]
+          },
+          {
+            "when": {
+              "support_timing": "leicht verspätet"
+            },
+            "questions": [
+              "Welche Wirkung ging durch die leichte Verspätung verloren?",
+              "War das Passfenster schon zu klein oder nur knapp offen?",
+              "Welche frühere Bewegung hätte den Moment stabilisiert?"
+            ]
+          },
+          {
+            "when": {
+              "support_timing": "deutlich zu spät"
+            },
+            "questions": [
+              "Warum war der Support in diesem Moment praktisch wertlos?",
+              "Welche Option war bereits geschlossen, bevor Hilfe kam?",
+              "War die Bewegung klar reaktiv auf Druck statt antizipativ?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "sample_key": "timing_samples",
+        "sample_label": "Timing-Moment",
+        "max_samples_per_phase": 3,
+        "state_key": "support_timing",
+        "state_label": "Timing",
+        "factor_key": "main_effect",
+        "factor_label": "Wirkung",
+        "quality_key": "movement_character",
+        "quality_label": "Bewegung wirkte",
+        "quality_options": [
+          "proaktiv gelesen",
+          "auf Mitspieler reagiert",
+          "nur auf Druck reagiert",
+          "unklar"
+        ],
+        "note_key": "note",
+        "note_label": "Notiz (optional)",
+        "note_max_chars": 120,
+        "state_options": [
+          "antizipiert früh",
+          "rechtzeitig",
+          "leicht verspätet",
+          "deutlich zu spät"
+        ],
+        "factors_by_state": {
+          "antizipiert früh": [
+            "Option früh geöffnet",
+            "Druck vermieden",
+            "Spiel beschleunigt",
+            "mehrere Optionen geschaffen"
+          ],
+          "rechtzeitig": [
+            "sichere Anspielstation",
+            "Struktur gehalten",
+            "Puckführer unterstützt",
+            "Rush ermöglicht"
+          ],
+          "leicht verspätet": [
+            "Option fast geschlossen",
+            "Puckführer unter Druck",
+            "Passfenster klein",
+            "Angriff verlangsamt"
+          ],
+          "deutlich zu spät": [
+            "keine echte Hilfe mehr",
+            "Isolation entstanden",
+            "Turnover begünstigt",
+            "Struktur kollabiert"
+          ]
+        }
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P1",
+      "answers": {
+        "timing_samples": [
+          {
+            "support_timing": "rechtzeitig",
+            "main_effect": "sichere Anspielstation",
+            "movement_character": "proaktiv gelesen",
+            "note": ""
+          },
+          {
+            "support_timing": "leicht verspätet",
+            "main_effect": "Passfenster klein",
+            "movement_character": "auf Mitspieler reagiert",
+            "note": ""
+          },
+          {
+            "support_timing": "antizipiert früh",
+            "main_effect": "Option früh geöffnet",
+            "movement_character": "proaktiv gelesen",
+            "note": ""
+          }
+        ],
+        "selected_sample_index": 2
+      },
+      "timestamp": "2026-06-28T14:59:24.596251"
+    },
+    {
+      "phase": "P2",
+      "answers": {},
+      "timestamp": "2026-06-28T20:21:42.311093"
+    },
+    {
+      "phase": "P3",
+      "answers": {},
+      "timestamp": "2026-06-28T20:21:47.234275"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-06-28T20:27:04.895854"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "timing_samples": [
+        {
+          "support_timing": "rechtzeitig",
+          "main_effect": "sichere Anspielstation",
+          "movement_character": "proaktiv gelesen",
+          "note": ""
+        },
+        {
+          "support_timing": "leicht verspätet",
+          "main_effect": "Passfenster klein",
+          "movement_character": "auf Mitspieler reagiert",
+          "note": ""
+        },
+        {
+          "support_timing": "antizipiert früh",
+          "main_effect": "Option früh geöffnet",
+          "movement_character": "proaktiv gelesen",
+          "note": ""
+        }
+      ],
+      "selected_sample_index": 2
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-06-28T20:27:05.134596"
+  },
+  "game_info": {
+    "league": "NHL",
+    "team_home": "Edmonton Oilers",
+    "team_away": "Anaheim Ducks",
+    "observed_team": "Edmonton Oilers",
+    "date": "2026-06-28T12:31:56.610Z",
+    "season": "2025/26",
+    "matchday": "Playoff Runde 1 Spiel 1"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Weil das passfenster sofort da war und kein Druck entstandet",
+      "ts": "2026-06-28T14:59:44.094797"
+    },
+    "P2": {
+      "done": true,
+      "text": "ja",
+      "ts": "2026-06-28T20:21:46.318506"
+    },
+    "P3": {
+      "done": true,
+      "text": "ja",
+      "ts": "2026-06-28T20:21:49.757004"
+    }
+  }
+}

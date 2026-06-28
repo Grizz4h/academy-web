@@ -1,6 +1,6 @@
 {
   "team_id": "adler_mannheim",
-  "updated_at": "2026-06-16T18:48:20.115043Z",
+  "updated_at": "2026-06-28T21:18:39.275566Z",
   "players": [
     {
       "player_name": "Kristian Reichel",
@@ -239,7 +239,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 25,
+      "age": 26,
       "height_cm": 181,
       "weight_kg": 84.0,
       "birthplace": "Kassel",
@@ -323,7 +323,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "CAN",
-      "age": 33,
+      "age": 34,
       "height_cm": 182,
       "weight_kg": 87.0,
       "birthplace": "Flin Flon,MB",

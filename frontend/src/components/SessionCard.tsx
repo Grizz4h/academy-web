@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
 import { useState } from 'react'
 import styles from './SessionCard.module.css'
+import { getObservationScopeLabel } from '../utils/observationScope'
 
 interface SessionCardProps {
   session: Session
@@ -206,6 +207,10 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
                 <span className={styles.metaValue}>{session.game_info.season}</span>
               </div>
             )}
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Beobachtungsumfang</span>
+              <span className={styles.metaValue}>{getObservationScopeLabel(session.observation_scope)}</span>
+            </div>
             {gameDate && (
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Spiel</span>

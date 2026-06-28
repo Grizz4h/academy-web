@@ -117,6 +117,7 @@ export interface Session {
   state: string
   current_phase?: string
   created_at: string
+  observation_scope?: string
   drills: Drill[]
   progress: {
     current_drill_index: number
@@ -153,6 +154,11 @@ export interface GameInfo {
   league: string
   season?: string
   matchday?: string
+  competition_phase?: string
+  competition_phase_label?: string
+  competition_unit_type?: string
+  competition_unit_label?: string
+  competition_unit_value?: string
 }
 
 export interface Checkin {
@@ -461,14 +467,25 @@ export interface SceneMarker {
   drill_id?: string
   drill_title?: string
   track_id?: string
+  status?: string
   league?: string
   season?: string
+  competition_phase?: string
+  competition_phase_label?: string
+  competition_unit_type?: string
+  competition_unit_label?: string
+  competition_unit_value?: string
+  matchday?: string
   team_home?: string
   team_away?: string
   observed_team?: string
   period?: string
+  episode_season?: string
+  episode_number?: string
   game_time: string
   note?: string
+  extensions?: Record<string, string>
+  extension_labels?: Record<string, string>
   created_at: string
 }
 
@@ -478,14 +495,37 @@ export interface SceneMarkerCreate {
   drill_id?: string
   drill_title?: string
   track_id?: string
+  status?: string
+  overwrite_episode?: boolean
   league?: string
   season?: string
+  competition_phase?: string
+  competition_phase_label?: string
+  competition_unit_type?: string
+  competition_unit_label?: string
+  competition_unit_value?: string
+  matchday?: string
   team_home?: string
   team_away?: string
   observed_team?: string
   period?: string
+  episode_season?: string
+  episode_number?: string
   game_time: string
   note?: string
+  extensions?: Record<string, string>
+  extension_labels?: Record<string, string>
+}
+
+export interface SceneMarkerUpdate {
+  game_time?: string
+  note?: string
+  status?: string
+  episode_season?: string
+  episode_number?: string
+  overwrite_episode?: boolean
+  extensions?: Record<string, string>
+  extension_labels?: Record<string, string>
 }
 
 // ==== API Helpers ====
@@ -507,6 +547,29 @@ const resolveApiBase = () => {
 const API_BASE = resolveApiBase()
 
 const buildUrl = (path: string) => `${API_BASE}${path}`
+
+async function readApiError(res: Response, fallback: string): Promise<Error> {
+  let detail = ''
+  try {
+    const payload = await res.json()
+    if (typeof payload?.detail === 'string') {
+      detail = payload.detail
+    } else if (payload?.detail?.message) {
+      detail = payload.detail.message
+    } else if (typeof payload?.message === 'string') {
+      detail = payload.message
+    }
+  } catch {
+    try {
+      const text = await res.text()
+      if (text) detail = text
+    } catch {}
+  }
+
+  const error = new Error(`${fallback}${detail ? `: ${detail}` : ''}`)
+  ;(error as any).status = res.status
+  return error
+}
 
 
 
@@ -954,15 +1017,25 @@ export const api = {
     league?: string
     season?: string
     team?: string
+    status?: string
     track_id?: string
     drill_id?: string
+    competition_phase?: string
+    competition_unit_type?: string
+    competition_unit_value?: string
+    episode_season?: string
   }): Promise<{ scenes: SceneMarker[] }> => {
     const qs = new URLSearchParams()
     if (params?.league) qs.append('league', params.league)
     if (params?.season) qs.append('season', params.season)
     if (params?.team) qs.append('team', params.team)
+    if (params?.status) qs.append('status', params.status)
     if (params?.track_id) qs.append('track_id', params.track_id)
     if (params?.drill_id) qs.append('drill_id', params.drill_id)
+    if (params?.competition_phase) qs.append('competition_phase', params.competition_phase)
+    if (params?.competition_unit_type) qs.append('competition_unit_type', params.competition_unit_type)
+    if (params?.competition_unit_value) qs.append('competition_unit_value', params.competition_unit_value)
+    if (params?.episode_season) qs.append('episode_season', params.episode_season)
     const query = qs.toString() ? `?${qs.toString()}` : ''
     const res = await fetch(buildUrl(`/scenes${query}`), {
       headers: { ...authHeaders() },
@@ -977,6 +1050,16 @@ export const api = {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw new Error('Failed to delete scene')
+    return res.json()
+  },
+
+  updateScene: async (sceneId: string, payload: SceneMarkerUpdate): Promise<SceneMarker> => {
+    const res = await fetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw await readApiError(res, 'Failed to update scene')
     return res.json()
   },
 

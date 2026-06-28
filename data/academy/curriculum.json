@@ -2116,7 +2116,20 @@
                     "Struktur flexibel gehalten",
                     "Aufgabe klar erkennbar"
                   ]
-                }
+                },
+                "sceneMarkerExtensions": [
+                  {
+                    "type": "select",
+                    "key": "dominantRead",
+                    "label": "Dominanter Read",
+                    "options": [
+                      "Angreifen",
+                      "Verbinden",
+                      "Absichern",
+                      "Verteidigen"
+                    ]
+                  }
+                ]
               }
             },
             {
@@ -2585,7 +2598,20 @@
                   "dominant_template": "In deinen drei Beobachtungen war {aggregated} am häufigsten ausschlaggebend.",
                   "match_text": "Dein Check-in passt zu den beobachteten Situationen.",
                   "mismatch_template": "Deine Beobachtungen sprechen eher für {aggregated} als für {checkin}."
-                }
+                },
+                "sceneMarkerExtensions": [
+                  {
+                    "type": "select",
+                    "key": "dominantPressureSource",
+                    "label": "Dominante Druckquelle",
+                    "options": [
+                      "Zeitdruck",
+                      "Raumdruck",
+                      "Gegnerdruck",
+                      "Optionsdruck"
+                    ]
+                  }
+                ]
               }
             },
             {

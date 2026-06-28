@@ -161,6 +161,55 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.activeSessionLink {
+  gap: 8px;
+  min-width: 176px;
+  height: 44px;
+  padding: 0 14px;
+  color: rgba(226, 255, 251, 0.98);
+  background: rgba(20, 184, 166, 0.14);
+  border-color: rgba(45, 212, 191, 0.52);
+  box-shadow: 0 0 18px rgba(20, 184, 166, 0.22);
+}
+
+.activeSessionLink:hover {
+  color: #ffffff;
+  background: rgba(20, 184, 166, 0.2);
+  border-color: rgba(94, 234, 212, 0.72);
+}
+
+.activeSessionPulse {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #5eead4;
+  box-shadow: 0 0 10px rgba(94, 234, 212, 0.95);
+}
+
+.activeSessionText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+  line-height: 1;
+  text-align: left;
+}
+
+.activeSessionText span:first-child {
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.activeSessionText span:last-child {
+  max-width: 132px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.68rem;
+  color: rgba(226, 255, 251, 0.78);
+}
+
+
 .navLinkActive {
   color: rgba(247, 247, 255, 0.98);
   background: rgba(81, 145, 162, 0.13);

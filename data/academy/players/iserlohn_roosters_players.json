@@ -1,6 +1,6 @@
 {
   "team_id": "iserlohn_roosters",
-  "updated_at": "2026-06-16T18:48:19.921728Z",
+  "updated_at": "2026-06-28T21:18:35.673064Z",
   "players": [
     {
       "player_name": "Daniel Geiger",
@@ -92,7 +92,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "NOR",
-      "age": 31,
+      "age": 32,
       "height_cm": 184,
       "weight_kg": 88.0,
       "birthplace": "Oslo",

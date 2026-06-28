@@ -3,7 +3,7 @@
 # und beendet ggf. laufende Instanzen
 
 # Backend stoppen (uvicorn)
-pkill -f "uvicorn.*backend.main:app" 2>/dev/null
+pkill -f "uvicorn.*main:app" 2>/dev/null
 sleep 1
 
 # Frontend stoppen (vite)
@@ -11,7 +11,9 @@ pkill -f "vite" 2>/dev/null
 sleep 1
 
 # Backend starten (Port 8000)
-nohup ~/.local/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000 > backend/backend.log 2>&1 &
+cd backend
+nohup ~/.local/bin/uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+cd ..
 echo "Backend gestartet auf Port 8000."
 sleep 2
 

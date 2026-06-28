@@ -42,6 +42,14 @@ export type TeamExposure = {
   sessions: Session[]
 }
 
+export type ObservedTeamStat = {
+  team: string
+  sessionCount: number
+  completedCount: number
+  lastSeen?: string
+  sessions: Session[]
+}
+
 export function normalizeTeamName(name?: string): string {
   return (name ?? '')
     .trim()
@@ -86,6 +94,41 @@ function updateLastSeen(current: string | undefined, next: string | undefined): 
   if (!next) return current
   if (!current) return next
   return asTime(next) > asTime(current) ? next : current
+}
+
+function resolveObservedTeams(session: Session): string[] {
+  const gameInfo = session.game_info
+  const observedTeam = gameInfo?.observed_team || session.observed_team
+  if (observedTeam) return [observedTeam]
+
+  return [gameInfo?.team_home, gameInfo?.team_away].filter((team): team is string => Boolean(team))
+}
+
+export function computeObservedTeamStats(sessions: Session[]): ObservedTeamStat[] {
+  const byTeam = new Map<string, ObservedTeamStat>()
+
+  for (const session of sessions || []) {
+    for (const team of resolveObservedTeams(session)) {
+      const existing = byTeam.get(team) || {
+        team,
+        sessionCount: 0,
+        completedCount: 0,
+        lastSeen: undefined,
+        sessions: []
+      }
+
+      existing.sessionCount += 1
+      if (session.state === 'COMPLETED') existing.completedCount += 1
+      existing.lastSeen = updateLastSeen(existing.lastSeen, session.created_at)
+      existing.sessions.push(session)
+      byTeam.set(team, existing)
+    }
+  }
+
+  return Array.from(byTeam.values()).map((entry) => ({
+    ...entry,
+    sessions: [...entry.sessions].sort((a, b) => asTime(b.created_at) - asTime(a.created_at))
+  }))
 }
 
 export function computeMatchupExposure(sessions: Session[]): MatchupExposure[] {

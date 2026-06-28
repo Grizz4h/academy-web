@@ -1,6 +1,6 @@
 {
   "team_id": "loewen_frankfurt",
-  "updated_at": "2026-06-16T18:48:19.866997Z",
+  "updated_at": "2026-06-28T21:18:33.625570Z",
   "players": [
     {
       "player_name": "Ty Glover",
@@ -491,7 +491,7 @@
       "position": "Goalie",
       "position_group": "goalie",
       "nationality": "GER",
-      "age": 21,
+      "age": 22,
       "height_cm": 176,
       "weight_kg": 65.0,
       "birthplace": "Tajga",
