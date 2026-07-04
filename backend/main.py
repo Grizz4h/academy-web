@@ -57,6 +57,7 @@ import json
 import os
 import logging
 import re
+from threading import Lock
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
@@ -129,6 +130,7 @@ OBS_RUNS_DIR = os.path.join(OBSERVATIONS_DIR, "runs")
 OBS_ENTRIES_DIR = os.path.join(OBSERVATIONS_DIR, "entries")
 OBS_PLAYERS_DIR = os.path.join(OBSERVATIONS_DIR, "players")
 SCENES_DIR = os.path.join(ROOT_DATA_DIR, "scenes")
+SCENE_CODE_COUNTER_FILE = os.path.join(ROOT_DATA_DIR, "scene_code_counter.json")
 PENNY_DEL_IMPORT_CONFIG_FILE = os.path.join(DATA_DIR, "penny_del_import_teams.json")
 
 # Pydantic Models
@@ -173,6 +175,18 @@ OBSERVATION_SCOPE_LABELS = {
 
 SCENE_STATUS_NEW = "NEW"
 SCENE_STATUS_ASSIGNED = "ASSIGNED"
+SCENE_CODE_PREFIX = "SC"
+SCENE_CODE_WIDTH = 3
+SCENE_CODE_LEGACY_FLOOR = 16
+SCENE_CODE_LOCK = Lock()
+
+
+def _normalize_scene_rating(value):
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1 or value > 5:
+        raise HTTPException(status_code=400, detail="rating must be null or an integer from 1 to 5")
+    return value
 
 
 class RewardApplyData(BaseModel):
@@ -205,8 +219,12 @@ class SceneMarkerCreate(BaseModel):
     period: Optional[str] = None
     episode_season: Optional[str] = None
     episode_number: Optional[str] = None
+    season_code: Optional[str] = None
+    episode_code: Optional[str] = None
+    overwrite_episode: Optional[bool] = None
     game_time: str
     note: Optional[str] = None
+    rating: Optional[int] = None
     extensions: Optional[dict] = None
     extension_labels: Optional[dict] = None
 
@@ -217,7 +235,10 @@ class SceneMarkerUpdate(BaseModel):
     status: Optional[str] = None
     episode_season: Optional[str] = None
     episode_number: Optional[str] = None
+    season_code: Optional[str] = None
+    episode_code: Optional[str] = None
     overwrite_episode: Optional[bool] = None
+    rating: Optional[int] = None
     extensions: Optional[dict] = None
     extension_labels: Optional[dict] = None
 
@@ -1766,18 +1787,42 @@ def _normalize_scene_status(status: Optional[str]) -> str:
 
 
 def _normalize_episode_season(episode_season: Optional[str]) -> Optional[str]:
-    value = (episode_season or "").strip()
-    return value or None
+    return _normalize_episode_code_part(episode_season, 2, "episode_season")
 
 
 def _normalize_episode_number(episode_number: Optional[str]) -> Optional[str]:
-    value = (episode_number or "").strip()
+    return _normalize_episode_code_part(episode_number, 3, "episode_number")
+
+
+def _normalize_episode_code_part(value: Optional[str], width: int, field_name: str, *, strict: bool = False) -> Optional[str]:
+    value = (value or "").strip()
     if not value:
         return None
-    digits = re.sub(r"\D", "", value)
+
+    digits = value if value.isdigit() else re.sub(r"\D", "", value)
     if not digits:
-        raise HTTPException(status_code=400, detail="episode_number must contain digits")
-    return digits.zfill(3)
+        raise HTTPException(status_code=400, detail=f"{field_name} must contain digits")
+    if strict and not value.isdigit():
+        raise HTTPException(status_code=400, detail=f"{field_name} must contain digits only")
+    if len(digits) > width:
+        raise HTTPException(status_code=400, detail=f"{field_name} must be at most {width} digits")
+    return digits.zfill(width)
+
+
+def _normalize_episode_season_input(episode_season: Optional[str]) -> Optional[str]:
+    return _normalize_episode_code_part(episode_season, 2, "episode_season", strict=True)
+
+
+def _normalize_episode_number_input(episode_number: Optional[str]) -> Optional[str]:
+    return _normalize_episode_code_part(episode_number, 3, "episode_number", strict=True)
+
+
+def _scene_episode_season(scene: dict) -> Optional[str]:
+    return _normalize_episode_season(scene.get("episode_season") or scene.get("season_code"))
+
+
+def _scene_episode_number(scene: dict) -> Optional[str]:
+    return _normalize_episode_number(scene.get("episode_number") or scene.get("episode_code"))
 
 
 def _scene_track_key(scene: dict) -> str:
@@ -1799,11 +1844,116 @@ def _find_episode_conflict(episode_season: str, episode_number: str, current_use
             continue
         if _normalize_user_key(scene.get("user", "")) != user_key:
             continue
-        if _normalize_episode_season(scene.get("episode_season")) != episode_season:
+        if _scene_episode_season(scene) != episode_season:
             continue
-        if _normalize_episode_number(scene.get("episode_number")) != episode_number:
+        if _scene_episode_number(scene) != episode_number:
             continue
         return scene
+    return None
+
+
+
+def _normalize_scene_code(value: Optional[str]) -> Optional[str]:
+    value = (value or "").strip().upper()
+    if not value:
+        return None
+    match = re.fullmatch(r"SC(\d+)", value)
+    if not match:
+        return None
+    number = int(match.group(1))
+    if number < 1:
+        return None
+    return f"{SCENE_CODE_PREFIX}{number:0{SCENE_CODE_WIDTH}d}"
+
+
+def _scene_code_number(scene: dict) -> Optional[int]:
+    scene_code = _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id"))
+    if not scene_code:
+        return None
+    return int(scene_code[len(SCENE_CODE_PREFIX):])
+
+
+def _load_scene_code_counter() -> int:
+    if not os.path.exists(SCENE_CODE_COUNTER_FILE):
+        return SCENE_CODE_LEGACY_FLOOR
+    try:
+        data = load_json(SCENE_CODE_COUNTER_FILE)
+    except Exception:
+        return SCENE_CODE_LEGACY_FLOOR
+    value = data.get("last_number")
+    return value if isinstance(value, int) and value > 0 else SCENE_CODE_LEGACY_FLOOR
+
+
+def _save_scene_code_counter(last_number: int) -> None:
+    save_json(SCENE_CODE_COUNTER_FILE, {
+        "prefix": SCENE_CODE_PREFIX,
+        "last_number": last_number,
+        "updated_at": datetime.now().isoformat(),
+    })
+
+
+def _ensure_legacy_scene_codes() -> int:
+    paths = list(_iter_json_files(SCENES_DIR) or [])
+    scenes_with_paths = []
+    used_numbers = set()
+
+    for path in paths:
+        try:
+            scene = load_json(path)
+        except Exception:
+            continue
+        number = _scene_code_number(scene)
+        if number is not None:
+            scene_code = f"{SCENE_CODE_PREFIX}{number:0{SCENE_CODE_WIDTH}d}"
+            if scene.get("scene_code") != scene_code:
+                scene["scene_code"] = scene_code
+                save_json(path, scene)
+            used_numbers.add(number)
+        scenes_with_paths.append((path, scene))
+
+    legacy_candidate = 1
+    for path, scene in sorted(scenes_with_paths, key=lambda item: (item[1].get("created_at", ""), item[1].get("id", ""))):
+        if _scene_code_number(scene) is not None:
+            continue
+        while legacy_candidate in used_numbers:
+            legacy_candidate += 1
+        scene_code = f"{SCENE_CODE_PREFIX}{legacy_candidate:0{SCENE_CODE_WIDTH}d}"
+        scene["scene_code"] = scene_code
+        save_json(path, scene)
+        used_numbers.add(legacy_candidate)
+        legacy_candidate += 1
+
+    highest_existing = max(used_numbers, default=0)
+    last_number = max(_load_scene_code_counter(), highest_existing, SCENE_CODE_LEGACY_FLOOR)
+    if last_number != _load_scene_code_counter() or not os.path.exists(SCENE_CODE_COUNTER_FILE):
+        _save_scene_code_counter(last_number)
+    return last_number
+
+
+def _allocate_scene_code() -> str:
+    with SCENE_CODE_LOCK:
+        highest_number = _ensure_legacy_scene_codes()
+        next_number = highest_number + 1
+        _save_scene_code_counter(next_number)
+        return f"{SCENE_CODE_PREFIX}{next_number:0{SCENE_CODE_WIDTH}d}"
+
+
+def _find_scene_path_by_identifier(identifier: str) -> Optional[str]:
+    scene_path = _find_json_file_by_id(SCENES_DIR, identifier)
+    if scene_path:
+        return scene_path
+
+    scene_code = _normalize_scene_code(identifier)
+    if not scene_code:
+        return None
+
+    for path in _iter_json_files(SCENES_DIR):
+        try:
+            scene = load_json(path)
+        except Exception:
+            continue
+        if _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id")) == scene_code:
+            return path
     return None
 
 
@@ -1819,9 +1969,27 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
     user_cased = _resolve_user_cased(current_user)
     now_iso = datetime.now().isoformat()
     scene_id = f"scene_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
+    episode_season = _normalize_episode_season_input(payload.season_code or payload.episode_season)
+    episode_number = _normalize_episode_number_input(payload.episode_code or payload.episode_number)
+
+    if episode_season and episode_number:
+        conflict = _find_episode_conflict(episode_season, episode_number, current_user)
+        if conflict and not payload.overwrite_episode:
+            conflict_label = conflict.get("drill_title") or conflict.get("drill_id") or conflict.get("id")
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "message": f"Episode {episode_season} / {episode_number} ist bereits vergeben.",
+                    "conflict_scene_id": conflict.get("id"),
+                    "conflict_scene_label": conflict_label,
+                },
+            )
+
+    scene_code = _allocate_scene_code()
 
     scene = {
         "id": scene_id,
+        "scene_code": scene_code,
         "user": user_cased,
         "session_id": payload.session_id,
         "module_id": payload.module_id,
@@ -1841,10 +2009,13 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "team_away": payload.team_away,
         "observed_team": payload.observed_team,
         "period": payload.period,
-        "episode_season": _normalize_episode_season(payload.episode_season),
-        "episode_number": _normalize_episode_number(payload.episode_number),
+        "episode_season": episode_season,
+        "episode_number": episode_number,
+        "season_code": episode_season,
+        "episode_code": episode_number,
         "game_time": payload.game_time.strip(),
         "note": (payload.note or "").strip(),
+        "rating": _normalize_scene_rating(payload.rating),
         "extensions": payload.extensions or {},
         "extension_labels": payload.extension_labels or {},
         "created_at": now_iso,
@@ -1852,7 +2023,7 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
 
     scene_path = _build_scene_path(scene_id, now_iso)
     save_json(scene_path, scene)
-    logging.info(f"[scene] created scene_id={scene_id} user={user_cased} game_time={scene['game_time']}")
+    logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={user_cased} game_time={scene['game_time']}")
     return scene
 
 
@@ -1872,6 +2043,8 @@ async def get_scenes(
 ):
     user_norm = _normalize_user_key(current_user)
     scenes = []
+    with SCENE_CODE_LOCK:
+        _ensure_legacy_scene_codes()
     for path in _iter_json_files(SCENES_DIR):
         try:
             scene = load_json(path)
@@ -1903,11 +2076,14 @@ async def get_scenes(
             continue
         if competition_unit_value and str(scene.get("competition_unit_value") or "") != str(competition_unit_value):
             continue
-        if episode_season and _normalize_episode_season(scene.get("episode_season")) != _normalize_episode_season(episode_season):
+        if episode_season and _scene_episode_season(scene) != _normalize_episode_season(episode_season):
             continue
         scene["status"] = scene_status
-        scene["episode_season"] = _normalize_episode_season(scene.get("episode_season"))
-        scene["episode_number"] = _normalize_episode_number(scene.get("episode_number")) if scene.get("episode_number") else None
+        scene["scene_code"] = _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id"))
+        scene["episode_season"] = _scene_episode_season(scene)
+        scene["episode_number"] = _scene_episode_number(scene)
+        scene["season_code"] = scene["episode_season"]
+        scene["episode_code"] = scene["episode_number"]
         scenes.append(scene)
 
     scenes.sort(key=lambda s: s.get("created_at", ""), reverse=True)
@@ -1916,7 +2092,7 @@ async def get_scenes(
 
 @app.delete("/api/scenes/{scene_id}")
 async def delete_scene(scene_id: str, current_user: str = Depends(get_current_user)):
-    scene_path = _find_json_file_by_id(SCENES_DIR, scene_id)
+    scene_path = _find_scene_path_by_identifier(scene_id)
     if not scene_path:
         raise HTTPException(status_code=404, detail="Scene not found")
     scene = load_json(scene_path)
@@ -1929,7 +2105,7 @@ async def delete_scene(scene_id: str, current_user: str = Depends(get_current_us
 
 @app.put("/api/scenes/{scene_id}")
 async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: str = Depends(get_current_user)):
-    scene_path = _find_json_file_by_id(SCENES_DIR, scene_id)
+    scene_path = _find_scene_path_by_identifier(scene_id)
     if not scene_path:
         raise HTTPException(status_code=404, detail="Scene not found")
     scene = load_json(scene_path)
@@ -1952,18 +2128,23 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
     if payload.status is not None:
         scene["status"] = _normalize_scene_status(payload.status)
 
-    episode_season = scene.get("episode_season")
-    episode_number = scene.get("episode_number")
+    episode_season = _scene_episode_season(scene)
+    episode_number = _scene_episode_number(scene)
     episode_fields_touched = False
 
-    if payload.episode_season is not None:
-        episode_season = _normalize_episode_season(payload.episode_season)
+    requested_episode_season = payload.season_code if payload.season_code is not None else payload.episode_season
+    requested_episode_number = payload.episode_code if payload.episode_code is not None else payload.episode_number
+
+    if requested_episode_season is not None:
+        episode_season = _normalize_episode_season_input(requested_episode_season)
         scene["episode_season"] = episode_season
+        scene["season_code"] = episode_season
         episode_fields_touched = True
 
-    if payload.episode_number is not None:
-        episode_number = _normalize_episode_number(payload.episode_number)
+    if requested_episode_number is not None:
+        episode_number = _normalize_episode_number_input(requested_episode_number)
         scene["episode_number"] = episode_number
+        scene["episode_code"] = episode_number
         episode_fields_touched = True
 
     if episode_season and episode_number:
@@ -1983,6 +2164,10 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
                     "conflict_scene_label": conflict_label,
                 },
             )
+    
+    payload_fields = getattr(payload, "model_fields_set", getattr(payload, "__fields_set__", set()))
+    if "rating" in payload_fields:
+        scene["rating"] = _normalize_scene_rating(payload.rating)
     
     # Update extensions if provided
     if payload.extensions is not None:

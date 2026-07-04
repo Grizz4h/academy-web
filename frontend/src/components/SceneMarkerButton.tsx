@@ -68,7 +68,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
     setError(null)
 
     try {
-      await api.createScene({
+      const scene = await api.createScene({
         session_id: session.id,
         module_id: session.module_id,
         track_id: session.module_id,
@@ -96,7 +96,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         ),
       })
       setShowModal(false)
-      setSavedMsg(`🎬 ${trimmed} gespeichert`)
+      setSavedMsg("🎬 " + (scene.scene_code || trimmed) + " gespeichert")
       setTimeout(() => setSavedMsg(null), 2500)
     } catch {
       setError('Fehler beim Speichern. Bitte nochmal versuchen.')

@@ -50,74 +50,74 @@
                 },
                 "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
               },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "center_mostly": "low"
+                "miniFeedback": {
+                  "trigger": "onNext",
+                  "oncePerSection": true,
+                  "groups": [
+                    {
+                      "when": {
+                        "center_mostly": "low"
+                      },
+                      "questions": [
+                        "Welche Aufgabe hat der Center in dieser Tiefe primär erfüllt – Absicherung oder Spielaufbau?",
+                        "Hat seine tiefe Position eher Ruhe oder Enge ins Spiel gebracht?",
+                        "War der Center anspielbar oder nur absichernd präsent?",
+                        "Wie hätte sich das Spiel verändert, wenn er früher nach Middle geschoben hätte?"
+                      ]
                     },
-                    "questions": [
-                      "Welche Aufgabe hat der Center in dieser Tiefe primär erfüllt – Absicherung oder Spielaufbau?",
-                      "Hat seine tiefe Position eher Ruhe oder Enge ins Spiel gebracht?",
-                      "War der Center anspielbar oder nur absichernd präsent?",
-                      "Wie hätte sich das Spiel verändert, wenn er früher nach Middle geschoben hätte?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "center_mostly": "middle"
+                    {
+                      "when": {
+                        "center_mostly": "middle"
+                      },
+                      "questions": [
+                        "Welche Vorteile entstehen, wenn der Center das Middle kontrolliert?",
+                        "War seine Position eher verbindend oder passiv?",
+                        "Hat er Passoptionen geschaffen oder nur Raum besetzt?"
+                      ]
                     },
-                    "questions": [
-                      "Welche Vorteile entstehen, wenn der Center das Middle kontrolliert?",
-                      "War seine Position eher verbindend oder passiv?",
-                      "Hat er Passoptionen geschaffen oder nur Raum besetzt?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "center_mostly": "high"
+                    {
+                      "when": {
+                        "center_mostly": "high"
+                      },
+                      "questions": [
+                        "Warum konnte sich der Center so hoch positionieren – Struktur oder Spielsituation?",
+                        "Hat seine Höhe das Spiel beschleunigt oder risikoreicher gemacht?",
+                        "Wer hat dann die Absicherung übernommen?"
+                      ]
+                    }
+                  ]
+                },
+                "config": {
+                  "questions": [
+                    {
+                      "key": "center_mostly",
+                      "type": "radio",
+                      "label": "Center meist:",
+                      "options": [
+                        "low",
+                        "middle",
+                        "high"
+                      ]
                     },
-                    "questions": [
-                      "Warum konnte sich der Center so hoch positionieren – Struktur oder Spielsituation?",
-                      "Hat seine Höhe das Spiel beschleunigt oder risikoreicher gemacht?",
-                      "Wer hat dann die Absicherung übernommen?"
-                    ]
-                  }
-                ]
+                    {
+                      "key": "structure_feeling",
+                      "type": "radio",
+                      "label": "Strukturgefühl:",
+                      "options": [
+                        "geordnet",
+                        "chaotisch",
+                        "mixed"
+                      ]
+                    },
+                    {
+                      "key": "note",
+                      "type": "text",
+                      "label": "Auffälligkeit (optional, 1 Satz)",
+                      "max_chars": 1500
+                    }
+                  ]
+                }
               },
-              "config": {
-                "questions": [
-                  {
-                    "key": "center_mostly",
-                    "type": "radio",
-                    "label": "Center meist:",
-                    "options": [
-                      "low",
-                      "middle",
-                      "high"
-                    ]
-                  },
-                  {
-                    "key": "structure_feeling",
-                    "type": "radio",
-                    "label": "Strukturgefühl:",
-                    "options": [
-                      "geordnet",
-                      "chaotisch",
-                      "mixed"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Auffälligkeit (optional, 1 Satz)",
-                    "max_chars": 1500
-                  }
-                ]
-              }
-            },
             {
               "id": "A1_D2",
               "title": "Shift Marker → 2-Sekunden-Scan (Center)",
@@ -2736,29 +2736,30 @@
             },
             {
               "id": "B2_D3",
-              "title": "Fehler erzwingen vs. provozieren",
+              "title": "Entscheidungsursache erkennen",
               "drill_type": "period_checkin",
-              "description": "Unterscheiden, ob ein Fehler aktiv erzwungen oder nur passiv provoziert wird.",
+              "description": "Analysiere die dominante Ursache hinter Entscheidungen und Puckverlusten.",
               "didactics": {
-                "explanation": "Nicht jeder gegnerische Fehler ist gleichwertig. Gute Teams erzwingen Fehler durch Struktur, Winkel und Timing – schwächere Teams hoffen auf Fehler.",
+                "explanation": "Dritter Schritt im B2-Lernpfad: Nach Druckprofil (B2_D1) und Lösungsort (B2_D2) untersuchst du jetzt die Entscheidungsursache. Fokus ist nicht das Ergebnis, sondern der Hauptauslöser der Entscheidung.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wurde der Gegner zu einer Handlung gezwungen?",
-                    "Gab es klare Winkel oder Laufwege, die Optionen nahmen?",
-                    "War der Fehler die logische Folge des Drucks?"
+                    "Welche Spielsituation ging der Entscheidung oder dem Puckverlust unmittelbar voraus?",
+                    "Welcher Auslöser war in diesem Moment dominant?",
+                    "Wird dieselbe Ursache in mehreren Szenen wieder sichtbar?"
                   ],
                   "how_to_decide": [
-                    "Frage dich: Hatte der Gegner realistische Alternativen?",
-                    "Beurteile Aktivität und Struktur des Drucks",
-                    "Erzwungen = keine saubere Option mehr",
-                    "Provoziert = Gegner hätte bessere Wahl gehabt"
+                    "Waehle pro Szene genau eine dominante Ursache",
+                    "Bewerte den Ausloeser, nicht den spaeteren Ausgang",
+                    "Nutze Notizen nur kurz und konkret (Kontext statt Roman)",
+                    "Vergleiche deine drei Pflichtbeobachtungen und leite daraus einen aktiven Fokus ab"
                   ],
                   "ignore": [
-                    "Ob der Fehler genutzt wurde",
-                    "Was danach aus dem Spielzug entsteht"
+                    "Bewertung nur nach Tor, Turnover oder Highlight",
+                    "Mischformen ohne dominante Priorisierung",
+                    "Checklisten-Denken statt Ursachenanalyse"
                   ]
                 },
-                "learning_hint": "Erzwungene Fehler sind reproduzierbar – provozierte Fehler sind Glück."
+                "learning_hint": "Situation -> Loesung -> Ursache: Erst diese Kette macht Entscheidungen wiederholbar lesbar."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2766,82 +2767,138 @@
                 "groups": [
                   {
                     "when": {
-                      "error_type": "erzwungen"
+                      "dominant_cause_observed": "Zeitdruck"
                     },
                     "questions": [
-                      "Wodurch wurde der Gegner konkret eingeschränkt?",
-                      "Welche Option wurde ihm genommen?",
-                      "War der Fehler unausweichlich?"
+                      "Welche Hinweise zeigten klaren Zeitdruck in diesen Szenen?",
+                      "War die Entscheidung dadurch verkuerzt oder ueberhastet?"
                     ]
                   },
                   {
                     "when": {
-                      "error_type": "provoziert"
+                      "dominant_cause_observed": "Raumdruck"
                     },
                     "questions": [
-                      "Welche bessere Option hätte der Gegner gehabt?",
-                      "War der Druck strukturiert oder nur präsent?",
-                      "Warum hätte dieser Fehler auch ausbleiben können?"
+                      "Wie wurde nutzbarer Raum begrenzt oder zugestellt?",
+                      "Welche Entscheidungsoption fiel dadurch weg?"
                     ]
                   },
                   {
                     "when": {
-                      "error_type": "zufaellig"
+                      "dominant_cause_observed": "Gegnerdruck"
                     },
                     "questions": [
-                      "Warum hatte der Fehler nichts mit Druck zu tun?",
-                      "Gab es überhaupt Einfluss durch das verteidigende Team?",
-                      "Wäre der Fehler unabhängig vom Gegner passiert?"
+                      "War der Druck gegnerseitig direkt oder nur angedeutet?",
+                      "Wie veraenderte dieser Druck die Entscheidung konkret?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "dominant_cause_observed": "Technischer Fehler"
+                    },
+                    "questions": [
+                      "Welche technische Ausfuehrung war der eigentliche Ausloeser?",
+                      "War der Fehler eher unter Druck oder ohne unmittelbaren Druck entstanden?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "dominant_cause_observed": "Fehlentscheidung ohne unmittelbaren Druck"
+                    },
+                    "questions": [
+                      "Welche bessere Entscheidung waere ohne Druck verfuegbar gewesen?",
+                      "Welche Wahrnehmung oder Priorisierung war vermutlich fehlerhaft?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "dominant_cause_observed": "Kommunikationsfehler"
+                    },
+                    "questions": [
+                      "Welches Informationssignal fehlte oder war widerspruechlich?",
+                      "Wie haette klare Kommunikation die Entscheidung veraendern koennen?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "decision_cause_diagnosis",
+                "sample_key": "decision_cause_samples",
+                "sample_label": "Beobachtung",
+                "required_samples": 3,
+                "max_samples_per_phase": 3,
+                "phase1_title": "Phase 1 - Entscheidungsursachen erfassen",
+                "phase1_description": "Erfasse drei Pflichtbeobachtungen. Beantworte pro Szene die Leitfrage: Was war der Hauptausloeser dafuer, dass diese Entscheidung entstand?",
+                "sample_note_key": "note",
+                "sample_note_label": "Kurze Notiz (optional)",
+                "sample_note_max_chars": 240,
+                "aggregate_by": "cause",
+                "aggregation_totals_key": "cause_totals",
+                "observed_dominant_key": "dominant_cause_observed",
+                "aggregation_label": "Bisher haeufig beobachtet",
+                "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere Situationen zu analysieren oder interessante Szenen fuer Rink About It zu markieren.",
+                "enable_checkin": false,
+                "sample_fields": [
                   {
-                    "key": "error_type",
-                    "type": "radio",
-                    "label": "Art des Fehlers",
+                    "key": "cause",
+                    "label": "Dominante Ursache",
+                    "question": "Was war der Hauptausloeser dafuer, dass diese Entscheidung entstand?",
                     "options": [
-                      "erzwungen",
-                      "provoziert",
-                      "zufaellig"
+                      {
+                        "value": "zeitdruck",
+                        "label": "Zeitdruck"
+                      },
+                      {
+                        "value": "raumdruck",
+                        "label": "Raumdruck"
+                      },
+                      {
+                        "value": "gegnerdruck",
+                        "label": "Gegnerdruck"
+                      },
+                      {
+                        "value": "technischer_fehler",
+                        "label": "Technischer Fehler"
+                      },
+                      {
+                        "value": "fehlentscheidung_ohne_druck",
+                        "label": "Fehlentscheidung ohne unmittelbaren Druck"
+                      },
+                      {
+                        "value": "kommunikationsfehler",
+                        "label": "Kommunikationsfehler"
+                      }
                     ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
                   }
                 ]
               }
             },
             {
               "id": "B2_D4",
-              "title": "Anschluss nach Fehler",
+              "title": "Anschlussentscheidung bewerten",
               "drill_type": "period_checkin",
-              "description": "Beobachte, wie das verteidigende Team nach einem Fehler reagiert: Tempo erzwingen oder Kontrolle sichern.",
+              "description": "Bewerte nur die erste Entscheidung 2-3 Sekunden nach Puckgewinn: war sie angemessen, nicht ob sie spaeter erfolgreich war.",
               "didactics": {
-                "explanation": "Ein Fehler ist nur wertvoll, wenn der Anschluss passt. Gute Teams wählen bewusst zwischen sofortigem Tempo und kontrollierter Sicherung.",
+                "explanation": "Vierter Schritt im B2-Lernpfad: Nach Druck, Loesungsort und Entscheidungsursache bewertest du jetzt die erste Anschlussentscheidung nach Puckgewinn. Fokus ist Angemessenheit im Moment, nicht der spaetere Ausgang.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Erster Kontakt nach dem Fehler",
-                    "Entscheidung zwischen Beschleunigen und Sichern",
-                    "Positionierung der nächsten Mitspieler"
+                    "Nur die ersten 2-3 Sekunden nach dem Puckgewinn",
+                    "Welche erste Anschlussentscheidung dominant erkennbar ist",
+                    "Ob eine klare Anschlusslogik entsteht oder der Uebergang zerfaellt"
                   ],
                   "how_to_decide": [
-                    "Beobachte nur die ersten 2–3 Sekunden nach dem Fehler",
-                    "Frage dich: Wird Tempo erzwungen oder Kontrolle aufgebaut?",
-                    "Tempo = direkter Zugriff, Kontrolle = Stabilisierung",
-                    "Bewerte Entscheidung, nicht Ausgang"
+                    "Waehle pro Szene genau eine dominante Anschlussentscheidung",
+                    "Tempo gewaehlt = schneller erster Pass, direkter Vorwaertsgedanke, Gegner nicht ordnen lassen",
+                    "Kontrolle gewaehlt = Puckbesitz sichern, Struktur herstellen, Risiko bewusst reduzieren",
+                    "Uebergang misslungen = keine klare Anschlussentscheidung, Unsicherheit oder sofortiger Verlust"
                   ],
                   "ignore": [
-                    "Spätere Torchancen",
-                    "Abschluss oder Puckverlust danach"
+                    "Alles nach dem 2-3-Sekunden-Fenster",
+                    "Ob spaeter eine Torchance entsteht",
+                    "Erfolgslogik statt Entscheidungslogik"
                   ]
                 },
-                "learning_hint": "Nicht jeder Fehler verlangt Tempo – manchmal ist Kontrolle die stärkere Fortsetzung."
+                "learning_hint": "Die erste Anschlussentscheidung zeigt, ob ein Team den Gewinnmoment wirklich lesen kann: Druck -> Loesung -> Ursache -> Anschlussentscheidung."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2849,58 +2906,74 @@
                 "groups": [
                   {
                     "when": {
-                      "followup_type": "tempo"
+                      "dominant_followup_observed": "Tempo gewählt"
                     },
                     "questions": [
-                      "Warum war sofortiges Tempo hier sinnvoll?",
-                      "Gab es klare Unterzahl- oder Unordnungsmomente?",
-                      "Wurde der Gegner weiter unter Druck gehalten?"
+                      "Welche Unordnung wurde mit Tempo direkt attackiert?",
+                      "War die Beschleunigung in diesem Moment angemessen?"
                     ]
                   },
                   {
                     "when": {
-                      "followup_type": "kontrolle"
+                      "dominant_followup_observed": "Kontrolle gewählt"
                     },
                     "questions": [
-                      "Warum war Absichern die bessere Wahl?",
-                      "Welche Gefahr hätte Tempo erzeugt?",
-                      "Wirkte die Entscheidung bewusst oder automatisch?"
+                      "Welche Risiken wurden durch Kontrolle bewusst reduziert?",
+                      "Hat die Entscheidung stabile Anschlussoptionen vorbereitet?"
                     ]
                   },
                   {
                     "when": {
-                      "followup_type": "ungeordnet"
+                      "dominant_followup_observed": "Übergang misslungen"
                     },
                     "questions": [
-                      "Woran hast du fehlende Struktur erkannt?",
-                      "War der Fehler dadurch neutralisiert?",
-                      "Was hätte Stabilität gebracht?"
+                      "Woran war erkennbar, dass keine klare Anschlussentscheidung entstand?",
+                      "Welche Struktur oder Rollen-Klarheit haette den Uebergang stabilisiert?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "transition_followup_assessment",
+                "sample_key": "followup_samples",
+                "sample_label": "Beobachtung",
+                "required_samples": 3,
+                "max_samples_per_phase": 3,
+                "phase1_title": "Phase 1 - Anschlussentscheidungen erfassen",
+                "phase1_description": "Erfasse drei Pflichtbeobachtungen. Betrachte nur die ersten 2-3 Sekunden nach dem Puckgewinn und bewerte die erste Anschlussentscheidung.",
+                "sample_note_key": "note",
+                "sample_note_label": "Kurze Begruendung (optional)",
+                "sample_note_max_chars": 240,
+                "aggregate_by": "followup_type",
+                "aggregation_totals_key": "followup_totals",
+                "observed_dominant_key": "dominant_followup_observed",
+                "aggregation_label": "Bisher haeufig beobachtet",
+                "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere Anschlussentscheidungen zu analysieren oder interessante Szenen fuer Rink About It zu markieren.",
+                "enable_checkin": false,
+                "sample_fields": [
                   {
                     "key": "followup_type",
-                    "type": "radio",
-                    "label": "Anschluss",
+                    "label": "Dominante Anschlussentscheidung",
+                    "question": "Welche Anschlussentscheidung wurde unmittelbar nach dem Puckgewinn gewählt?",
                     "options": [
-                      "tempo",
-                      "kontrolle",
-                      "ungeordnet"
+                      {
+                        "value": "tempo",
+                        "label": "Tempo aufgenommen"
+                      },
+                      {
+                        "value": "kontrolle",
+                        "label": "Kontrolle gesichert"
+                      },
+                      {
+                        "value": "uebergang_misslungen",
+                        "label": "Übergang misslungen"
+                      }
                     ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
-                  }
+                      }
                 ]
               }
             },
-            {
+              {
               "id": "B2_D5",
               "title": "Druckkette vs. Einzelaktion",
               "drill_type": "period_checkin",

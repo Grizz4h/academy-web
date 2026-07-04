@@ -22,5 +22,11 @@
   "competition_unit_type": "series_game",
   "competition_unit_label": "Game",
   "competition_unit_value": "1",
-  "matchday": "NHL · 2025/26 · Round 1 · Game 1"
+  "matchday": "NHL · 2025/26 · Round 1 · Game 1",
+  "episode_season": null,
+  "episode_number": null,
+  "status": "NEW",
+  "updated_at": "2026-07-02T09:34:32.343918",
+  "scene_code": "SC009",
+  "rating": null
 }

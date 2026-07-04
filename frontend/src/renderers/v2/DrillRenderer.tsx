@@ -44,7 +44,7 @@ function ObservationModeCard({ count, target, focus, mirror }: { count: number; 
 				{focus}
 			</p>
 			<p style={{ marginTop: 0, marginBottom: mirror.length > 0 ? "0.75rem" : 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.5 }}>
-				Nutze die verbleibende Zeit, um weitere Situationen zu beobachten oder interessa zu markieren.
+				Nutze die verbleibende Beobachtungszeit, um weitere Situationen zu analysieren oder interessante Szenen fuer Rink About It zu markieren.
 			</p>
 			{mirror.length > 0 && (
 				<div>
@@ -285,7 +285,7 @@ function computeSampleAggregation(samples: any[] = [], fields: any[] = [], check
 export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRendererV2Props) {
 	switch (drill.drill_type) {
 		case "period_checkin":
-			if (drill?.config?.mode === "pressure_diagnosis" || drill?.config?.mode === "solution_type_diagnosis") {
+			if (drill?.config?.mode === "pressure_diagnosis" || drill?.config?.mode === "solution_type_diagnosis" || drill?.config?.mode === "decision_cause_diagnosis" || drill?.config?.mode === "transition_followup_assessment") {
 				return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
 			}
 			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
@@ -314,6 +314,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const sampleKey = drill?.config?.sample_key || "pressure_samples";
 	const checkinConfig = drill?.config?.checkin || {};
 	const checkinKey = checkinConfig?.key || "dominant_source";
+	const requiresCheckin = drill?.config?.enable_checkin !== false && drill?.config?.mode !== "decision_cause_diagnosis";
 	const aggregateBy = drill?.config?.aggregate_by;
 	const reflectionAlignmentKey = drill?.config?.reflection_alignment_key || "reflection_alignment";
 	const totalsKey = drill?.config?.aggregation_totals_key || "pressure_totals";
@@ -372,11 +373,13 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					.replace("{checkin}", selectedCheckinLabel || checkinSelection);
 
 	useEffect(() => {
+		const shouldStoreReflection = requiresCheckin && !!checkinSelection;
 		const shouldUpdateDerived =
 			JSON.stringify(safeAnswers[totalsKey] || {}) !== JSON.stringify(aggregation.totals) ||
 			safeAnswers[observedDominantKey] !== aggregation.dominantLabel ||
-			safeAnswers[reflectionAlignmentKey] !== (checkinSelection ? reflectionAlignment : undefined) ||
-			safeAnswers[reflectionMessageKey] !== (checkinSelection ? reflectionMessage : undefined);
+			safeAnswers[reflectionAlignmentKey] !== (shouldStoreReflection ? reflectionAlignment : undefined) ||
+			safeAnswers[reflectionMessageKey] !== (shouldStoreReflection ? reflectionMessage : undefined) ||
+			(!requiresCheckin && safeAnswers[checkinKey] !== undefined);
 
 		if (!shouldUpdateDerived) return;
 
@@ -386,7 +389,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 			[observedDominantKey]: aggregation.dominantLabel,
 		};
 
-		if (checkinSelection) {
+		if (shouldStoreReflection) {
 			next[reflectionAlignmentKey] = reflectionAlignment;
 			next[reflectionMessageKey] = reflectionMessage;
 		} else {
@@ -394,9 +397,13 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 			delete next[reflectionMessageKey];
 		}
 
+		if (!requiresCheckin) {
+			delete next[checkinKey];
+		}
+
 		setAnswers(next);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [samples, checkinSelection]);
+	}, [samples, checkinSelection, requiresCheckin]);
 
 	const updateForm = (key: string, value: string) => {
 		setForm((prev: any) => ({ ...prev, [key]: value }));
@@ -424,13 +431,14 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 			...safeAnswers,
 			[sampleKey]: nextSamples,
 		};
-		if (nextSamples.length < requiredSamples) {
+		if (!requiresCheckin || nextSamples.length < requiredSamples) {
 			delete nextAnswers[checkinKey];
 		}
 		setAnswers(nextAnswers);
 	};
 
-	const canRenderCheckin = samples.length >= requiredSamples;
+	const canRenderCheckin = requiresCheckin && samples.length >= requiredSamples;
+	const focusLabel = drill?.config?.observation_focus || (requiresCheckin ? checkinConfig?.label : sampleFields?.[0]?.question) || "Muster erkennen";
 
 	return (
 		<div className="card">
@@ -474,7 +482,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					<ObservationModeCard
 						count={samples.length}
 						target={requiredSamples}
-						focus={drill?.config?.observation_focus || checkinConfig?.label || "Druck erkennen"}
+						focus={focusLabel}
 						mirror={observationMirror}
 					/>
 				)}
@@ -573,6 +581,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 				</div>
 			</section>
 
+			{requiresCheckin && (
 			<section style={{ marginBottom: "0.5rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
 				<h4 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Phase 2 - Period Check-in</h4>
 				<p style={{ marginTop: 0, marginBottom: "0.75rem", fontSize: "0.9rem", color: "rgba(255,255,255,0.76)" }}>
@@ -600,8 +609,9 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					</p>
 				)}
 			</section>
+			)}
 
-			{checkinSelection && (
+			{requiresCheckin && checkinSelection && (
 				<section style={{ marginTop: "0.85rem", padding: "0.9rem 1rem", borderRadius: "6px", background: "rgba(81,145,162,0.12)", border: "1px solid rgba(81,145,162,0.4)" }}>
 					<h4 style={{ marginTop: 0, marginBottom: "0.45rem", color: "#89c8da" }}>Reflexionsmoment</h4>
 					<p style={{ marginTop: 0, marginBottom: "0.55rem" }}>

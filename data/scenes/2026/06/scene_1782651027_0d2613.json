@@ -17,14 +17,18 @@
   "extensions": {},
   "extension_labels": {},
   "created_at": "2026-06-28T14:50:27.852198",
-  "updated_at": "2026-06-28T21:09:55.599009",
-  "episode_season": "1",
-  "episode_number": "014",
-  "status": "ASSIGNED",
+  "updated_at": "2026-07-01T19:03:35.043511",
+  "episode_season": null,
+  "episode_number": null,
+  "status": "NEW",
   "competition_phase": "round_1",
   "competition_phase_label": "Round 1",
   "competition_unit_type": "series_game",
   "competition_unit_label": "Game",
   "competition_unit_value": "1",
-  "matchday": "NHL · 2025/26 · Round 1 · Game 1"
+  "matchday": "NHL · 2025/26 · Round 1 · Game 1",
+  "season_code": null,
+  "episode_code": null,
+  "rating": 3,
+  "scene_code": "SC010"
 }

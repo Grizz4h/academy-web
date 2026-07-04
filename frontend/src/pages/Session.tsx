@@ -318,10 +318,11 @@ export default function SessionPage() {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
 
-    if (drill.id === 'B2_D1' || drill.id === 'B2_D2' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis' || drill?.config?.mode === 'solution_type_diagnosis') {
+    if (drill.id === 'B2_D1' || drill.id === 'B2_D2' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis' || drill?.config?.mode === 'solution_type_diagnosis' || drill?.config?.mode === 'decision_cause_diagnosis' || drill?.config?.mode === 'transition_followup_assessment') {
       const sampleKey = drill?.config?.sample_key || 'pressure_samples'
       const requiredSamples = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3)
       const checkinKey = drill?.config?.checkin?.key || 'dominant_source'
+      const requiresCheckin = drill?.config?.enable_checkin !== false && drill?.config?.mode !== 'decision_cause_diagnosis' && drill?.config?.mode !== 'transition_followup_assessment'
       const samples = Array.isArray(answers?.[sampleKey]) ? answers[sampleKey] : []
       const sampleFields = Array.isArray(drill?.config?.sample_fields) && drill.config.sample_fields.length > 0
         ? drill.config.sample_fields
@@ -342,8 +343,8 @@ export default function SessionPage() {
         return 'Bitte vervollständige jede gespeicherte Situation.'
       }
 
-      if (!answers?.[checkinKey]) {
-        return 'Bitte wähle im Period Check-in die häufigste Option aus.'
+      if (requiresCheckin && !answers?.[checkinKey]) {
+        return 'Bitte waehle die haeufigste Option aus, bevor du weitergehst.'
       }
     }
 

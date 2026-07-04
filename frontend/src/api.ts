@@ -461,6 +461,8 @@ export interface RewardApplyResponse {
 
 export interface SceneMarker {
   id: string
+  scene_code?: string
+  internal_scene_id?: string
   user: string
   session_id: string
   module_id: string
@@ -482,8 +484,11 @@ export interface SceneMarker {
   period?: string
   episode_season?: string
   episode_number?: string
+  season_code?: string
+  episode_code?: string
   game_time: string
   note?: string
+  rating?: 1 | 2 | 3 | 4 | 5 | null
   extensions?: Record<string, string>
   extension_labels?: Record<string, string>
   created_at: string
@@ -511,8 +516,11 @@ export interface SceneMarkerCreate {
   period?: string
   episode_season?: string
   episode_number?: string
+  season_code?: string
+  episode_code?: string
   game_time: string
   note?: string
+  rating?: 1 | 2 | 3 | 4 | 5 | null
   extensions?: Record<string, string>
   extension_labels?: Record<string, string>
 }
@@ -520,9 +528,12 @@ export interface SceneMarkerCreate {
 export interface SceneMarkerUpdate {
   game_time?: string
   note?: string
+  rating?: 1 | 2 | 3 | 4 | 5 | null
   status?: string
   episode_season?: string
   episode_number?: string
+  season_code?: string
+  episode_code?: string
   overwrite_episode?: boolean
   extensions?: Record<string, string>
   extension_labels?: Record<string, string>
@@ -618,6 +629,7 @@ export const api = {
       const base = (import.meta as any).env?.BASE_URL || '/'
       const fallbackCandidates = [
         `${String(base).replace(/\/$/, '')}/curriculum-fallback.json`,
+        'http://localhost:8000/api/curriculum',
         'curriculum-fallback.json'
       ]
       let lastErr: any = err

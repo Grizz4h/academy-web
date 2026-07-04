@@ -21,5 +21,6 @@
   "competition_unit_type": "matchday",
   "competition_unit_label": "Spieltag",
   "competition_unit_value": "1",
-  "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 1"
+  "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 1",
+  "scene_code": "SC005"
 }

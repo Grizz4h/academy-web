@@ -1,8 +1,10 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
-import { api, type SceneMarker } from '../api'
+import { api, type SceneMarker, type SceneMarkerUpdate } from '../api'
 import { formatCompetitionContext, getCompetitionConfig } from '../data/competitionConfig'
+
+type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
 const PERIOD_LABELS: Record<string, string> = {
   PRE: 'Vor dem Spiel',
@@ -31,6 +33,62 @@ function sceneStatusLabel(status?: string) {
   return 'Neu'
 }
 
+function normalizeEpisodeCodeInput(value: string, width: number): string | null {
+  const trimmed = value.trim()
+  if (!trimmed) return ''
+  if (!/^\d+$/.test(trimmed) || trimmed.length > width) return null
+  return trimmed.padStart(width, '0')
+}
+
+function sceneSeasonCode(scene: SceneMarker) {
+  return scene.episode_season || scene.season_code || ''
+}
+
+function sceneEpisodeCode(scene: SceneMarker) {
+  return scene.episode_number || scene.episode_code || ''
+}
+
+function sceneCompetitionContextKey(scene: SceneMarker) {
+  const league = scene.league || ''
+  const season = scene.season || ''
+  const phase = scene.competition_phase || scene.competition_phase_label || ''
+  const unitType = scene.competition_unit_type || ''
+  const unitValue = String(scene.competition_unit_value || '').trim()
+  if (!league || !phase || !unitValue) return ''
+  return [league, season, phase, unitType, unitValue].join('__')
+}
+
+function seasonRankValue(season?: string) {
+  const numbers = String(season || '').match(/\d{2,4}/g)
+  if (!numbers?.length) return 0
+  return Math.max(...numbers.map((value) => {
+    const numeric = Number(value)
+    return value.length === 2 ? 2000 + numeric : numeric
+  }))
+}
+
+function sceneContextRank(scene: SceneMarker) {
+  const phaseConfig = getCompetitionConfig(scene.league)?.phases ?? []
+  const phaseIndex = phaseConfig.findIndex((phase) => phase.id === scene.competition_phase)
+  const unitValue = Number.parseInt(String(scene.competition_unit_value || ''), 10)
+  const createdAt = Date.parse(scene.created_at || '') || 0
+  return {
+    season: seasonRankValue(scene.season),
+    phase: phaseIndex >= 0 ? phaseIndex : -1,
+    unit: Number.isFinite(unitValue) ? unitValue : 0,
+    createdAt,
+  }
+}
+
+function compareSceneContext(a: SceneMarker, b: SceneMarker) {
+  const left = sceneContextRank(a)
+  const right = sceneContextRank(b)
+  return left.season - right.season
+    || left.phase - right.phase
+    || left.unit - right.unit
+    || left.createdAt - right.createdAt
+}
+
 export default function RingAbout() {
   const queryClient = useQueryClient()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -49,26 +107,11 @@ export default function RingAbout() {
   const updateMutation = useMutation({
     mutationFn: ({
       sceneId,
-      gameTime,
-      note,
-      episodeSeason,
-      episodeNumber,
-      overwriteEpisode,
+      payload,
     }: {
       sceneId: string
-      gameTime: string
-      note: string
-      episodeSeason?: string
-      episodeNumber?: string
-      overwriteEpisode?: boolean
-    }) =>
-      api.updateScene(sceneId, {
-        game_time: gameTime,
-        note,
-        episode_season: episodeSeason,
-        episode_number: episodeNumber,
-        overwrite_episode: overwriteEpisode,
-      }),
+      payload: SceneMarkerUpdate
+    }) => api.updateScene(sceneId, payload),
     onSuccess: (updatedScene) => {
       queryClient.setQueryData<{ scenes: SceneMarker[] }>(['scenes'], (current) => {
         if (!current?.scenes) return current
@@ -86,19 +129,59 @@ export default function RingAbout() {
     deleteMutation.mutate(sceneId)
   }
 
+  const handleRatingChange = (scene: SceneMarker, rating: SceneRatingValue) => {
+    const nextRating = scene.rating === rating ? null : rating
+    const previousScenes = queryClient.getQueryData<{ scenes: SceneMarker[] }>(['scenes'])
+
+    queryClient.setQueryData<{ scenes: SceneMarker[] }>(['scenes'], (current) => {
+      if (!current?.scenes) return current
+      return {
+        ...current,
+        scenes: current.scenes.map((item) => (item.id === scene.id ? { ...item, rating: nextRating } : item)),
+      }
+    })
+
+    updateMutation.mutate(
+      {
+        sceneId: scene.id,
+        payload: { rating: nextRating },
+      },
+      {
+        onError: () => {
+          if (previousScenes) queryClient.setQueryData(['scenes'], previousScenes)
+        },
+      }
+    )
+  }
+
   const [editingSceneId, setEditingSceneId] = useState<string | null>(null)
   const [editGameTime, setEditGameTime] = useState('')
   const [editNote, setEditNote] = useState('')
   const [editEpisodeSeason, setEditEpisodeSeason] = useState('')
   const [editEpisodeNumber, setEditEpisodeNumber] = useState('')
   const [editError, setEditError] = useState<string | null>(null)
+  const [celebratedSceneId, setCelebratedSceneId] = useState<string | null>(null)
+  const celebrationTimeoutRef = useRef<number | null>(null)
+
+  useEffect(() => () => {
+    if (celebrationTimeoutRef.current) window.clearTimeout(celebrationTimeoutRef.current)
+  }, [])
+
+  const celebrateScene = (sceneId: string) => {
+    if (celebrationTimeoutRef.current) window.clearTimeout(celebrationTimeoutRef.current)
+    setCelebratedSceneId(sceneId)
+    celebrationTimeoutRef.current = window.setTimeout(() => {
+      setCelebratedSceneId(null)
+      celebrationTimeoutRef.current = null
+    }, 900)
+  }
 
   const handleEditOpen = (scene: SceneMarker) => {
     setEditingSceneId(scene.id)
     setEditGameTime(scene.game_time)
     setEditNote(scene.note || '')
-    setEditEpisodeSeason(scene.episode_season || '')
-    setEditEpisodeNumber(scene.episode_number || '')
+    setEditEpisodeSeason(sceneSeasonCode(scene))
+    setEditEpisodeNumber(sceneEpisodeCode(scene))
     setEditError(null)
   }
 
@@ -122,26 +205,41 @@ export default function RingAbout() {
       return
     }
 
-    const trimmedEpisodeSeason = editEpisodeSeason.trim()
-    const trimmedEpisodeNumber = editEpisodeNumber.trim()
-    if (!trimmedEpisodeSeason && trimmedEpisodeNumber) {
+    const normalizedEpisodeSeason = normalizeEpisodeCodeInput(editEpisodeSeason, 2)
+    const normalizedEpisodeNumber = normalizeEpisodeCodeInput(editEpisodeNumber, 3)
+    if (normalizedEpisodeSeason === null) {
+      setEditError('Staffel bitte nur als Zahl mit maximal 2 Stellen eingeben, z. B. 1 oder 01.')
+      return
+    }
+    if (normalizedEpisodeNumber === null) {
+      setEditError('Episode bitte nur als Zahl mit maximal 3 Stellen eingeben, z. B. 13 oder 013.')
+      return
+    }
+    if (!normalizedEpisodeSeason && normalizedEpisodeNumber) {
       setEditError('Bitte erst eine Staffel angeben, bevor du eine Episode zuordnest.')
       return
     }
-    if (trimmedEpisodeSeason && !trimmedEpisodeNumber) {
+    if (normalizedEpisodeSeason && !normalizedEpisodeNumber) {
       setEditError('Bitte auch eine Episodennummer angeben oder beide Felder leeren.')
       return
     }
+    setEditEpisodeSeason(normalizedEpisodeSeason)
+    setEditEpisodeNumber(normalizedEpisodeNumber)
 
     if (editingSceneId) {
       try {
         await updateMutation.mutateAsync({
           sceneId: editingSceneId,
-          gameTime: trimmed,
-          note: editNote.trim(),
-          episodeSeason: trimmedEpisodeSeason,
-          episodeNumber: trimmedEpisodeNumber,
+          payload: {
+            game_time: trimmed,
+            note: editNote.trim(),
+            episode_season: normalizedEpisodeSeason,
+            episode_number: normalizedEpisodeNumber,
+          },
         })
+        if (normalizedEpisodeSeason && normalizedEpisodeNumber) {
+          celebrateScene(editingSceneId)
+        }
         handleEditClose()
       } catch (err: any) {
         if (err?.status === 409) {
@@ -150,12 +248,17 @@ export default function RingAbout() {
             try {
               await updateMutation.mutateAsync({
                 sceneId: editingSceneId,
-                gameTime: trimmed,
-                note: editNote.trim(),
-                episodeSeason: trimmedEpisodeSeason,
-                episodeNumber: trimmedEpisodeNumber,
-                overwriteEpisode: true,
+                payload: {
+                  game_time: trimmed,
+                  note: editNote.trim(),
+                  episode_season: normalizedEpisodeSeason,
+                  episode_number: normalizedEpisodeNumber,
+                  overwrite_episode: true,
+                },
               })
+              if (normalizedEpisodeSeason && normalizedEpisodeNumber) {
+                celebrateScene(editingSceneId)
+              }
               handleEditClose()
               return
             } catch {
@@ -186,7 +289,7 @@ export default function RingAbout() {
   // Derive filter options from data
   const leagues = useMemo(() => unique(scenes.map(s => s.league).filter(Boolean) as string[]).sort(), [scenes])
   const seasons = useMemo(() => unique(scenes.map(s => s.season).filter(Boolean) as string[]).sort().reverse(), [scenes])
-  const episodeSeasons = useMemo(() => unique(scenes.map(s => s.episode_season).filter(Boolean) as string[]).sort().reverse(), [scenes])
+  const episodeSeasons = useMemo(() => unique(scenes.map(s => sceneSeasonCode(s)).filter(Boolean)).sort().reverse(), [scenes])
   const teams = useMemo(() => {
     const all: string[] = []
     for (const s of scenes) {
@@ -200,12 +303,15 @@ export default function RingAbout() {
   const [filterSeason, setFilterSeason] = useState('')
   const [filterTeam, setFilterTeam] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
+  const [filterMinRating, setFilterMinRating] = useState('')
+  const [sortMode, setSortMode] = useState<'created' | 'rating_desc'>('created')
   const [filterTrack, setFilterTrack] = useState('')
   const [filterDrill, setFilterDrill] = useState('')
   const [filterCompetitionPhase, setFilterCompetitionPhase] = useState('')
   const [filterCompetitionUnitType, setFilterCompetitionUnitType] = useState('')
   const [filterCompetitionUnitValue, setFilterCompetitionUnitValue] = useState('')
   const [filterEpisodeSeason, setFilterEpisodeSeason] = useState('')
+  const [filterCurrentContext, setFilterCurrentContext] = useState(false)
 
   const tracks = useMemo(() => unique(scenes.map(s => getSceneTrack(s)).filter(Boolean)).sort(), [scenes])
   const drills = useMemo(() => unique((filterTrack ? scenes.filter((scene) => getSceneTrack(scene) === filterTrack) : scenes).map(s => s.drill_id).filter(Boolean) as string[]).sort(), [scenes, filterTrack])
@@ -251,42 +357,98 @@ export default function RingAbout() {
     }
   }, [selectedCompetitionPhase, competitionUnits, filterCompetitionUnitValue])
 
-  const filtered = useMemo(() => {
-    return scenes.filter(s => {
-      if (sessionFilter && s.session_id !== sessionFilter) return false
-      if (filterLeague && s.league !== filterLeague) return false
-      if (filterSeason && s.season !== filterSeason) return false
-      if (filterStatus && (s.status || 'NEW') !== filterStatus) return false
-      if (filterTeam) {
-        const t = filterTeam.toLowerCase()
-        const matchHome = (s.team_home ?? '').toLowerCase() === t
-        const matchAway = (s.team_away ?? '').toLowerCase() === t
-        const matchObs = (s.observed_team ?? '').toLowerCase() === t
-        if (!matchHome && !matchAway && !matchObs) return false
+  const sceneStats = useMemo(() => {
+    const assigned = scenes.filter((scene) => (scene.status || 'NEW') === 'ASSIGNED').length
+    return {
+      assigned,
+      new: Math.max(scenes.length - assigned, 0),
+    }
+  }, [scenes])
+
+  const matchesNonCompetitionFilters = (s: SceneMarker) => {
+    if (sessionFilter && s.session_id !== sessionFilter) return false
+    if (filterLeague && s.league !== filterLeague) return false
+    if (filterSeason && s.season !== filterSeason) return false
+    if (filterStatus && (s.status || 'NEW') !== filterStatus) return false
+    if (filterMinRating && (s.rating || 0) < Number(filterMinRating)) return false
+    if (filterTeam) {
+      const t = filterTeam.toLowerCase()
+      const matchHome = (s.team_home ?? '').toLowerCase() === t
+      const matchAway = (s.team_away ?? '').toLowerCase() === t
+      const matchObs = (s.observed_team ?? '').toLowerCase() === t
+      if (!matchHome && !matchAway && !matchObs) return false
+    }
+    if (filterTrack && getSceneTrack(s) !== filterTrack) return false
+    if (filterDrill && s.drill_id !== filterDrill) return false
+    if (filterEpisodeSeason && sceneSeasonCode(s) !== filterEpisodeSeason) return false
+    return true
+  }
+
+  const currentContextKeys = useMemo(() => {
+    if (!filterCurrentContext) return new Set<string>()
+    const latestByLeague = new Map<string, SceneMarker>()
+    for (const scene of scenes) {
+      if (!matchesNonCompetitionFilters(scene)) continue
+      if (!sceneCompetitionContextKey(scene)) continue
+      const league = scene.league || ''
+      if (!league) continue
+      const current = latestByLeague.get(league)
+      if (!current || compareSceneContext(scene, current) > 0) {
+        latestByLeague.set(league, scene)
       }
-      if (filterTrack && getSceneTrack(s) !== filterTrack) return false
-      if (filterDrill && s.drill_id !== filterDrill) return false
-      if (filterCompetitionPhase && s.competition_phase !== filterCompetitionPhase) return false
-      if (filterCompetitionUnitType && s.competition_unit_type !== filterCompetitionUnitType) return false
-      if (filterCompetitionUnitValue && String(s.competition_unit_value || '') !== filterCompetitionUnitValue) return false
-      if (filterEpisodeSeason && (s.episode_season || '') !== filterEpisodeSeason) return false
+    }
+    return new Set(Array.from(latestByLeague.values()).map(sceneCompetitionContextKey).filter(Boolean))
+  }, [scenes, filterCurrentContext, sessionFilter, filterLeague, filterSeason, filterStatus, filterMinRating, filterTeam, filterTrack, filterDrill, filterEpisodeSeason])
+
+  const currentContextLabel = useMemo(() => {
+    if (!filterCurrentContext || currentContextKeys.size === 0) return 'Aktuell'
+    const labels = scenes
+      .filter((scene) => currentContextKeys.has(sceneCompetitionContextKey(scene)))
+      .map((scene) => formatCompetitionContext(scene))
+      .filter(Boolean)
+    const uniqueLabels = unique(labels)
+    if (uniqueLabels.length === 1) return `Aktuell: ${uniqueLabels[0]}`
+    return `Aktuell: ${uniqueLabels.length} Ligen`
+  }, [filterCurrentContext, currentContextKeys, scenes])
+
+  const filtered = useMemo(() => {
+    const result = scenes.filter(s => {
+      if (!matchesNonCompetitionFilters(s)) return false
+      if (filterCurrentContext) {
+        if (!currentContextKeys.has(sceneCompetitionContextKey(s))) return false
+      } else {
+        if (filterCompetitionPhase && s.competition_phase !== filterCompetitionPhase) return false
+        if (filterCompetitionUnitType && s.competition_unit_type !== filterCompetitionUnitType) return false
+        if (filterCompetitionUnitValue && String(s.competition_unit_value || '') !== filterCompetitionUnitValue) return false
+      }
       return true
     })
-  }, [scenes, sessionFilter, filterLeague, filterSeason, filterTeam, filterStatus, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason])
+    if (sortMode === "rating_desc") {
+      return [...result].sort((a, b) => {
+        const ratingDiff = (b.rating || 0) - (a.rating || 0)
+        if (ratingDiff !== 0) return ratingDiff
+        return (Date.parse(b.created_at || "") || 0) - (Date.parse(a.created_at || "") || 0)
+      })
+    }
+    return result
+  }, [scenes, sessionFilter, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterCurrentContext, currentContextKeys, sortMode])
 
-  const hasActiveFilter = sessionFilter || filterLeague || filterSeason || filterTeam || filterStatus || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason
+  const hasActiveFilter = sessionFilter || filterLeague || filterSeason || filterTeam || filterStatus || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterCurrentContext
 
   const resetFilters = () => {
     setFilterLeague('')
     setFilterSeason('')
     setFilterTeam('')
     setFilterStatus('')
+    setFilterMinRating('')
+    setSortMode('created')
     setFilterTrack('')
     setFilterDrill('')
     setFilterCompetitionPhase('')
     setFilterCompetitionUnitType('')
     setFilterCompetitionUnitValue('')
     setFilterEpisodeSeason('')
+    setFilterCurrentContext(false)
     if (sessionFilter) {
       setSearchParams({})
     }
@@ -304,6 +466,17 @@ export default function RingAbout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <style>{`
+        @keyframes ringAboutAssignedGlow {
+          0% { box-shadow: 0 0 0 rgba(20,184,166,0), 0 0 0 rgba(34,197,94,0); transform: translateY(0) scale(1); }
+          45% { box-shadow: 0 0 0 1px rgba(45,212,191,0.7), 0 0 34px rgba(20,184,166,0.34), 0 0 58px rgba(34,197,94,0.18); transform: translateY(-2px) scale(1.01); }
+          100% { box-shadow: 0 0 0 1px rgba(45,212,191,0.32), 0 18px 42px rgba(6,78,59,0.18); transform: translateY(0) scale(1); }
+        }
+        @keyframes ringAboutBadgeIn {
+          0% { opacity: 0; transform: translateY(4px) scale(0.96); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
       <div>
         <h1 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           🎬 Rink About It – Szenenpool
@@ -312,6 +485,70 @@ export default function RingAbout() {
           Gemerkte Szenen aus deinen Drills – dein Rohmaterial für Rink About It.
         </p>
       </div>
+
+      {scenes.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem', alignItems: 'center' }}>
+          <button
+            type="button"
+            onClick={() => setFilterStatus(filterStatus === 'NEW' ? '' : 'NEW')}
+            aria-pressed={filterStatus === 'NEW'}
+            style={{
+              padding: '0.38rem 0.7rem', borderRadius: '0.45rem',
+              background: filterStatus === 'NEW' ? 'rgba(148,163,184,0.16)' : 'rgba(255,255,255,0.06)',
+              border: filterStatus === 'NEW' ? '1px solid rgba(203,213,225,0.48)' : '1px solid rgba(148,163,184,0.18)',
+              color: '#cbd5e1', fontSize: '0.82rem', fontWeight: 750,
+              cursor: 'pointer',
+              boxShadow: filterStatus === 'NEW' ? '0 0 18px rgba(148,163,184,0.12)' : undefined,
+            }}
+          >
+            Neu: {sceneStats.new}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const next = !filterCurrentContext
+              setFilterCurrentContext(next)
+              if (next) {
+                setFilterCompetitionPhase('')
+                setFilterCompetitionUnitType('')
+                setFilterCompetitionUnitValue('')
+              }
+            }}
+            aria-pressed={filterCurrentContext}
+            disabled={scenes.length === 0}
+            title={filterCurrentContext && currentContextKeys.size === 0 ? 'Kein aktueller Spielkontext für die aktiven Filter gefunden' : 'Neueste Spielkontexte anzeigen'}
+            style={{
+              padding: '0.38rem 0.72rem', borderRadius: '0.45rem',
+              background: filterCurrentContext ? 'rgba(14,165,233,0.22)' : 'rgba(14,165,233,0.10)',
+              border: filterCurrentContext ? '1px solid rgba(125,211,252,0.56)' : '1px solid rgba(125,211,252,0.24)',
+              color: '#bae6fd',
+              boxShadow: filterCurrentContext ? '0 0 22px rgba(14,165,233,0.18)' : undefined,
+              fontSize: '0.82rem', fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            {currentContextLabel}
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterStatus(filterStatus === 'ASSIGNED' ? '' : 'ASSIGNED')}
+            aria-pressed={filterStatus === 'ASSIGNED'}
+            style={{
+              padding: '0.38rem 0.72rem', borderRadius: '0.45rem',
+              background: filterStatus === 'ASSIGNED'
+                ? 'linear-gradient(135deg, rgba(20,184,166,0.34), rgba(34,197,94,0.22))'
+                : 'linear-gradient(135deg, rgba(20,184,166,0.22), rgba(34,197,94,0.14))',
+              border: filterStatus === 'ASSIGNED' ? '1px solid rgba(153,246,228,0.62)' : '1px solid rgba(45,212,191,0.38)',
+              color: '#99f6e4',
+              boxShadow: filterStatus === 'ASSIGNED' ? '0 0 24px rgba(20,184,166,0.2)' : '0 0 20px rgba(20,184,166,0.12)',
+              fontSize: '0.82rem', fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            ✓ Zugeordnet: {sceneStats.assigned}
+          </button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="card" style={{ padding: '1rem' }}>
@@ -347,6 +584,16 @@ export default function RingAbout() {
             <option value="NEW">Neu</option>
             <option value="ASSIGNED">Zugeordnet</option>
           </select>
+          <select value={filterMinRating} onChange={e => setFilterMinRating(e.target.value)} style={selectStyle}>
+            <option value="">Alle Bewertungen</option>
+            <option value="3">3★+</option>
+            <option value="4">4★+</option>
+            <option value="5">5★</option>
+          </select>
+          <select value={sortMode} onChange={e => setSortMode(e.target.value as 'created' | 'rating_desc')} style={selectStyle}>
+            <option value="created">Neueste zuerst</option>
+            <option value="rating_desc">Bewertung zuerst</option>
+          </select>
           {teams.length > 0 && (
             <select value={filterTeam} onChange={e => setFilterTeam(e.target.value)} style={selectStyle}>
               <option value="">Alle Teams</option>
@@ -369,6 +616,7 @@ export default function RingAbout() {
             <select
               value={filterCompetitionPhase}
               onChange={e => {
+                setFilterCurrentContext(false)
                 setFilterCompetitionPhase(e.target.value)
                 const nextPhase = competitionPhases.find((phase) => phase.id === e.target.value)
                 setFilterCompetitionUnitType(nextPhase?.unit.type || '')
@@ -384,6 +632,7 @@ export default function RingAbout() {
             <select
               value={filterCompetitionUnitValue}
               onChange={e => {
+                setFilterCurrentContext(false)
                 setFilterCompetitionUnitType(selectedCompetitionPhase.unit.type)
                 setFilterCompetitionUnitValue(e.target.value)
               }}
@@ -438,7 +687,14 @@ export default function RingAbout() {
       {!isLoading && filtered.length > 0 && (
         <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
           {filtered.map(scene => (
-            <SceneCard key={scene.id} scene={scene} onDelete={handleDelete} onEdit={handleEditOpen} />
+            <SceneCard
+              key={scene.id}
+              scene={scene}
+              onDelete={handleDelete}
+              onEdit={handleEditOpen}
+              onRatingChange={handleRatingChange}
+              celebrate={celebratedSceneId === scene.id}
+            />
           ))}
         </div>
       )}
@@ -514,8 +770,12 @@ export default function RingAbout() {
                 <input
                   type="text"
                   value={editEpisodeSeason}
-                  onChange={e => setEditEpisodeSeason(e.target.value)}
-                  placeholder="z. B. 1"
+                  onChange={e => setEditEpisodeSeason(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                  onBlur={() => {
+                    const normalized = normalizeEpisodeCodeInput(editEpisodeSeason, 2)
+                    if (normalized !== null) setEditEpisodeSeason(normalized)
+                  }}
+                  placeholder="z. B. 01"
                   style={{
                     width: '100%', padding: '0.55rem', marginTop: '0.35rem', borderRadius: '0.4rem',
                     border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
@@ -528,8 +788,12 @@ export default function RingAbout() {
                 <input
                   type="text"
                   value={editEpisodeNumber}
-                  onChange={e => setEditEpisodeNumber(e.target.value)}
-                  placeholder="z. B. 017"
+                  onChange={e => setEditEpisodeNumber(e.target.value.replace(/\D/g, '').slice(0, 3))}
+                  onBlur={() => {
+                    const normalized = normalizeEpisodeCodeInput(editEpisodeNumber, 3)
+                    if (normalized !== null) setEditEpisodeNumber(normalized)
+                  }}
+                  placeholder="z. B. 013"
                   style={{
                     width: '100%', padding: '0.55rem', marginTop: '0.35rem', borderRadius: '0.4rem',
                     border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
@@ -540,7 +804,7 @@ export default function RingAbout() {
             </div>
 
             <div style={{ marginTop: '0.55rem', fontSize: '0.8rem', color: '#94a3b8' }}>
-              Wenn beide Felder gesetzt sind, wird die Szene als zugeordnet markiert.
+              Staffel und Episode werden automatisch als 01 / 013 gespeichert.
             </div>
 
             {/* Error message */}
@@ -584,7 +848,45 @@ export default function RingAbout() {
   )
 }
 
-function SceneCard({ scene, onDelete, onEdit }: { scene: SceneMarker; onDelete: (id: string) => void; onEdit: (scene: SceneMarker) => void }) {
+function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onChange: (rating: SceneRatingValue) => void }) {
+  const currentRating = rating || 0
+
+  return (
+    <div
+      aria-label={currentRating ? String(currentRating) + " von 5 Sterne" : "Keine Bewertung"}
+      style={{ display: "inline-flex", alignItems: "center", gap: "0.06rem" }}
+    >
+      {[1, 2, 3, 4, 5].map((value) => {
+        const star = value as SceneRatingValue
+        const active = star <= currentRating
+        return (
+          <button
+            key={star}
+            type="button"
+            onClick={() => onChange(star)}
+            title={currentRating === star ? "Bewertung entfernen" : String(star) + " Sterne setzen"}
+            aria-label={currentRating === star ? "Bewertung entfernen" : String(star) + " Sterne setzen"}
+            style={{
+              width: "1.15rem",
+              height: "1.15rem",
+              border: "none",
+              background: "transparent",
+              color: active ? "#fbbf24" : "#475569",
+              cursor: "pointer",
+              fontSize: "1rem",
+              lineHeight: 1,
+              padding: 0,
+            }}
+          >
+            {active ? "★" : "☆"}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function SceneCard({ scene, onDelete, onEdit, onRatingChange, celebrate = false }: { scene: SceneMarker; onDelete: (id: string) => void; onEdit: (scene: SceneMarker) => void; onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void; celebrate?: boolean }) {
   const gameLabel = scene.team_home && scene.team_away
     ? `${scene.team_home} vs ${scene.team_away}`
     : scene.team_home || scene.team_away || '–'
@@ -595,9 +897,13 @@ function SceneCard({ scene, onDelete, onEdit }: { scene: SceneMarker; onDelete: 
   const drillSuffix = scene.drill_id
     ? (scene.drill_id.match(/_(D\d+)$/i)?.[1] ?? scene.drill_id)
     : null
-  const episodeLabel = scene.episode_season && scene.episode_number
-    ? `Staffel ${scene.episode_season} · Episode ${scene.episode_number}`
+  const seasonCode = sceneSeasonCode(scene)
+  const episodeCode = sceneEpisodeCode(scene)
+  const episodeLabel = seasonCode && episodeCode
+    ? `Staffel ${seasonCode} · Episode ${episodeCode}`
     : null
+  const isAssigned = (scene.status || 'NEW') === 'ASSIGNED'
+  const sceneCode = scene.scene_code || scene.internal_scene_id || scene.id
 
   return (
     <div
@@ -605,10 +911,30 @@ function SceneCard({ scene, onDelete, onEdit }: { scene: SceneMarker; onDelete: 
       className="card"
       style={{
         padding: '1rem 1.1rem',
-        borderLeft: '3px solid #4fc3f7',
+        borderLeft: isAssigned ? '3px solid #2dd4bf' : '3px solid #4fc3f7',
+        borderColor: isAssigned ? 'rgba(45,212,191,0.36)' : undefined,
+        background: isAssigned
+          ? 'linear-gradient(145deg, rgba(8,47,73,0.74) 0%, rgba(6,78,59,0.38) 48%, rgba(15,23,42,0.92) 100%)'
+          : undefined,
+        boxShadow: isAssigned
+          ? '0 0 0 1px rgba(45,212,191,0.22), 0 18px 42px rgba(6,78,59,0.16)'
+          : undefined,
+        position: 'relative', overflow: 'hidden',
+        animation: celebrate ? 'ringAboutAssignedGlow 720ms cubic-bezier(0.18, 0.9, 0.28, 1)' : undefined,
         display: 'flex', flexDirection: 'column', gap: '0.6rem',
       }}
     >
+      {isAssigned && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'linear-gradient(115deg, transparent 8%, rgba(153,246,228,0.10) 38%, transparent 62%)',
+            opacity: 0.72,
+          }}
+        />
+      )}
+
       {/* Begegnung */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
         <div style={{ fontWeight: 700, fontSize: '1rem', color: '#e2e8f0', lineHeight: 1.3 }}>
@@ -660,28 +986,63 @@ function SceneCard({ scene, onDelete, onEdit }: { scene: SceneMarker; onDelete: 
         </span>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', position: 'relative' }}>
         <span style={{
-          background: scene.status === 'ASSIGNED' ? 'rgba(34,197,94,0.16)' : 'rgba(255,255,255,0.08)',
-          color: scene.status === 'ASSIGNED' ? '#86efac' : '#cbd5e1',
-          border: '1px solid rgba(255,255,255,0.14)',
-          borderRadius: '0.3rem',
-          padding: '0.12rem 0.45rem',
-          fontSize: '0.72rem',
-          fontWeight: 700,
+          background: 'rgba(79,195,247,0.15)',
+          color: '#7dd3fc',
+          border: '1px solid rgba(125,211,252,0.36)',
+          borderRadius: '0.32rem',
+          padding: '0.18rem 0.52rem',
+          fontSize: '0.76rem',
+          fontWeight: 900,
+          fontFamily: 'monospace',
+          letterSpacing: '0.02em',
+        }} title="Interne Szenen-ID">
+          {sceneCode}
+        </span>
+        <span style={{
+          background: isAssigned
+            ? 'linear-gradient(135deg, rgba(34,197,94,0.34), rgba(20,184,166,0.24))'
+            : 'rgba(255,255,255,0.08)',
+          color: isAssigned ? '#d1fae5' : '#cbd5e1',
+          border: isAssigned ? '1px solid rgba(134,239,172,0.52)' : '1px solid rgba(255,255,255,0.14)',
+          borderRadius: '0.32rem',
+          padding: isAssigned ? '0.18rem 0.58rem' : '0.12rem 0.45rem',
+          fontSize: isAssigned ? '0.76rem' : '0.72rem',
+          fontWeight: 850,
+          boxShadow: isAssigned ? '0 0 16px rgba(34,197,94,0.18)' : undefined,
+          animation: celebrate ? 'ringAboutBadgeIn 280ms ease-out both' : undefined,
         }}>
-          {sceneStatusLabel(scene.status)}
+          {isAssigned ? '✓ Zugeordnet' : sceneStatusLabel(scene.status)}
         </span>
         {episodeLabel && (
           <span style={{
-            background: 'rgba(96,165,250,0.14)', color: '#bfdbfe',
-            border: '1px solid rgba(96,165,250,0.22)',
-            borderRadius: '0.3rem', padding: '0.12rem 0.45rem',
-            fontSize: '0.72rem', fontWeight: 700,
+            background: isAssigned
+              ? 'linear-gradient(135deg, rgba(14,165,233,0.26), rgba(45,212,191,0.22))'
+              : 'rgba(96,165,250,0.14)',
+            color: isAssigned ? '#e0f2fe' : '#bfdbfe',
+            border: isAssigned ? '1px solid rgba(125,211,252,0.42)' : '1px solid rgba(96,165,250,0.22)',
+            borderRadius: '0.32rem', padding: isAssigned ? '0.18rem 0.58rem' : '0.12rem 0.45rem',
+            fontSize: isAssigned ? '0.76rem' : '0.72rem', fontWeight: 850,
+            boxShadow: isAssigned ? '0 0 18px rgba(14,165,233,0.14)' : undefined,
+            animation: celebrate ? 'ringAboutBadgeIn 300ms 70ms ease-out both' : undefined,
           }}>
-            {episodeLabel}
+            {isAssigned ? `🎬 ${episodeLabel}` : episodeLabel}
           </span>
         )}
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            minHeight: "1.35rem",
+            padding: "0.08rem 0.38rem",
+            borderRadius: "0.32rem",
+            background: "rgba(251,191,36,0.08)",
+            border: "1px solid rgba(251,191,36,0.18)",
+          }}
+        >
+          <SceneRating rating={scene.rating} onChange={(rating) => onRatingChange(scene, rating)} />
+        </span>
       </div>
 
       {/* Eigene Notiz */}
