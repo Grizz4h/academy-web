@@ -1,6 +1,6 @@
 {
   "team_id": "pinguins_bremerhaven",
-  "updated_at": "2026-06-28T21:18:31.547484Z",
+  "updated_at": "2026-07-08T21:02:45.765075Z",
   "players": [
     {
       "player_name": "Nino Kinder",
@@ -260,7 +260,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 22,
+      "age": 23,
       "height_cm": 178,
       "weight_kg": 80.0,
       "birthplace": "Bremerhaven",

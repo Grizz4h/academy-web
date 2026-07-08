@@ -2975,80 +2975,48 @@
             },
               {
               "id": "B2_D5",
-              "title": "Druckkette vs. Einzelaktion",
+                "title": "Entscheidungsmuster erkennen",
               "drill_type": "period_checkin",
-              "description": "Erkenne, ob Druck als zusammenhängende Kette wirkt oder nur als einzelne Aktion verpufft.",
+                "description": "Verdichte mehrere Beobachtungen zu einer wiederkehrenden Tendenz: Welches Entscheidungsmuster zeigt das Team heute unter Druck?",
               "didactics": {
-                "explanation": "Effektiver Druck entsteht selten durch eine einzelne Aktion. Entscheidend ist, ob nach dem ersten Druckmoment Anschluss entsteht – durch Nachgehen, Staffelung und erneuten Zugriff.",
+                  "explanation": "Dieser Drill schließt B2 als Synthese-Aufgabe ab. Du bewertest nicht mehr einzelne Szenen, sondern verdichtest deine Beobachtungen zu einer übergeordneten taktischen Erkenntnis: Welches Muster zeigt das Team heute unter Druck immer wieder?",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Folgt auf die erste Druckaktion sofort weiterer Druck?",
-                    "Sind mehrere Spieler zeitlich und räumlich beteiligt?",
-                    "Bleibt der Gegner unter Stress oder kann er neu ordnen?"
+                      "Welche Reaktion taucht unter Druck immer wieder auf?",
+                      "Wirkt das Team in mehreren Situationen ähnlich oder unterschiedlich?",
+                      "Lässt sich aus mehreren Beobachtungen eine klare Tendenz ableiten?"
                   ],
                   "how_to_decide": [
-                    "Beobachte Druck als Sequenz, nicht als Einzelmoment",
-                    "Achte auf Nachgehen und Staffelung",
-                    "Frage dich: Hört der Druck nach dem ersten Kontakt auf?"
+                      "Vergleiche mehrere Situationen statt Einzelaktionen zu bewerten",
+                      "Suche nach dem wiederkehrenden Muster, nicht nach dem besten Highlight",
+                      "Formuliere am Ende eine belastbare Tendenz in einem Satz"
                   ],
                   "ignore": [
-                    "Ob direkt ein Puckverlust entsteht",
-                    "Einzelne starke Zweikämpfe ohne Anschluss"
+                      "Die Beschreibung einer einzelnen Szene als alleinige Begründung",
+                      "Einzelne Highlights ohne gemeinsame Linie"
                   ]
                 },
-                "learning_hint": "Druck wirkt erst dann nachhaltig, wenn er fortgesetzt wird. Einzelaktionen beeindrucken – Druckketten entscheiden."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "pressure_sequence": "druckkette"
-                    },
-                    "questions": [
-                      "Wodurch blieb der Gegner dauerhaft unter Druck?",
-                      "Welche Spieler hielten die Kette am Leben?",
-                      "Wirkte der Druck geplant oder instinktiv?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "pressure_sequence": "einzelaktion"
-                    },
-                    "questions": [
-                      "Warum brach der Druck nach der ersten Aktion ab?",
-                      "Fehlte Nachgehen, Staffelung oder Kommunikation?",
-                      "Wie hätte die Situation verlängert werden können?"
-                    ]
-                  }
-                ]
+                  "learning_hint": "Der Drill trainiert erstmals Synthese statt Beobachtung. Du bündelst mehrere Eindrücke zu einer taktischen Erkenntnis und schließt damit den B2-Track ab."
               },
               "config": {
                 "questions": [
                   {
-                    "key": "pressure_sequence",
+                      "key": "decision_pattern",
                     "type": "radio",
-                    "label": "Druckform",
+                      "label": "Welches Entscheidungsmuster hast du heute am häufigsten beobachtet?",
                     "options": [
-                      "druckkette",
-                      "einzelaktion"
+                        "Das Team vereinfacht unter Druck konsequent.",
+                        "Das Team sucht trotz Druck spielerische Lösungen.",
+                        "Das Team verliert unter Druck häufig die Struktur.",
+                        "Das Team hält auch unter Druck an seiner Spielidee fest.",
+                        "Kein klares Muster erkennbar."
                     ]
                   },
                   {
-                    "key": "impact",
-                    "type": "radio",
-                    "label": "Wirkung auf den Gegner",
-                    "options": [
-                      "dauerhaft_unter_stress",
-                      "kurzzeitig",
-                      "keine"
-                    ]
-                  },
-                  {
-                    "key": "note",
+                      "key": "pattern_reason",
                     "type": "text",
-                    "label": "Kurze Beobachtung",
+                      "label": "Woran hast du dieses Muster erkannt?",
+                      "placeholder": "Optional: kurze Zusammenfassung deiner Beobachtungen",
                     "max_chars": 1500
                   }
                 ]

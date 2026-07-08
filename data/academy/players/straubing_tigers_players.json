@@ -1,6 +1,6 @@
 {
   "team_id": "straubing_tigers",
-  "updated_at": "2026-06-28T21:18:45.965252Z",
+  "updated_at": "2026-07-08T21:02:58.558065Z",
   "players": [
     {
       "player_name": "Tyler Madden",
@@ -71,7 +71,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 36,
+      "age": 37,
       "height_cm": 175,
       "weight_kg": 82.0,
       "birthplace": "Calgary, AB",
@@ -155,7 +155,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 19,
+      "age": 20,
       "height_cm": 178,
       "weight_kg": 83.0,
       "birthplace": "Deggendorf",

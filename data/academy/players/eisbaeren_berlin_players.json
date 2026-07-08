@@ -1,6 +1,6 @@
 {
   "team_id": "eisbaeren_berlin",
-  "updated_at": "2026-06-28T21:18:30.158940Z",
+  "updated_at": "2026-07-08T21:02:44.299523Z",
   "players": [
     {
       "player_name": "Ty Ronning",
@@ -428,7 +428,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "GER",
-      "age": 23,
+      "age": 24,
       "height_cm": 183,
       "weight_kg": 92.0,
       "birthplace": "Starnberg",

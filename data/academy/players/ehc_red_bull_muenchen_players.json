@@ -1,6 +1,6 @@
 {
   "team_id": "ehc_red_bull_muenchen",
-  "updated_at": "2026-06-28T21:18:40.702082Z",
+  "updated_at": "2026-07-08T21:02:53.681039Z",
   "players": [
     {
       "player_name": "Tobias Rieder",
@@ -113,7 +113,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "CAN",
-      "age": 29,
+      "age": 30,
       "height_cm": 178,
       "weight_kg": 77.0,
       "birthplace": "Winnipeg",

@@ -1,6 +1,6 @@
 {
   "team_id": "koelner_haie",
-  "updated_at": "2026-06-28T21:18:37.191785Z",
+  "updated_at": "2026-07-08T21:02:50.480643Z",
   "players": [
     {
       "player_name": "Robin van Calster",
@@ -449,7 +449,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "FIN",
-      "age": 35,
+      "age": 36,
       "height_cm": 185,
       "weight_kg": 95.0,
       "birthplace": "Turku",

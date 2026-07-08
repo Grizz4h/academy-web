@@ -13,7 +13,14 @@ interface DrillRendererV2Props {
 // Helper: Format snake_case to readable text (e.g., "raum_offen" → "Raum Offen")
 function formatOptionText(text: string): string {
 	if (!text) return text;
-	return text
+	const trimmed = text.trim();
+	const hasUnderscore = trimmed.includes("_");
+	const isNaturalSentence = trimmed.includes(" ") && !hasUnderscore && /[.!?]$/.test(trimmed);
+
+	if (isNaturalSentence) return trimmed;
+	if (!hasUnderscore && trimmed.includes(" ")) return trimmed;
+
+	return trimmed
 		.replace(/_/g, " ")
 		.split(" ")
 		.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -765,7 +772,9 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 												checked={safeAnswers[q.key] === opt}
 												onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 											/>
-											{highlightGlossaryTerms(formatOptionText(opt), glossary)}
+											<span style={{ textTransform: "none" }}>
+												{highlightGlossaryTerms(formatOptionText(opt), glossary)}
+											</span>
 										</span>
 										{explanation && (
 											<span style={{ fontSize: "0.85em", color: "#aaa", marginLeft: 24 }}>{explanation}</span>
@@ -785,7 +794,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 							<option value="">Bitte auswählen</option>
 							{effectiveOptions.map((opt: string) => (
 								<option key={opt} value={opt}>
-									{formatOptionText(opt)}
+										{opt}
 								</option>
 							))}
 						</select>
