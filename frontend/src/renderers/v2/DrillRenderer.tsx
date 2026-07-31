@@ -1,6 +1,6 @@
 // ✅ ACTIVE: Renderer v2 for A2+ (UI-only, no Buttons, no API, no onComplete)
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 
@@ -8,6 +8,29 @@ interface DrillRendererV2Props {
   drill: Drill;
   answers: any;
   setAnswers: (next: any) => void;
+	session?: any;
+	phase?: string;
+}
+
+const DEFAULT_5V5_BASE_FORMATION_RIGHT = [
+	{ value: "LW", label: "LW", start_x: 0.62, start_y: 0.32 },
+	{ value: "RW", label: "RW", start_x: 0.62, start_y: 0.68 },
+	{ value: "C", label: "C", start_x: 0.48, start_y: 0.50 },
+	{ value: "LD", label: "LD", start_x: 0.30, start_y: 0.38 },
+	{ value: "RD", label: "RD", start_x: 0.30, start_y: 0.62 },
+];
+
+const PERSPECTIVE_ROLE_SWAP: Record<string, string> = {
+	LW: "RW",
+	RW: "LW",
+	LD: "RD",
+	RD: "LD",
+	C: "C",
+};
+
+function getFormationPreset(preset: string) {
+	if (preset === "5v5_default") return DEFAULT_5V5_BASE_FORMATION_RIGHT;
+	return DEFAULT_5V5_BASE_FORMATION_RIGHT;
 }
 
 // Helper: Format snake_case to readable text (e.g., "raum_offen" → "Raum Offen")
@@ -289,12 +312,19 @@ function computeSampleAggregation(samples: any[] = [], fields: any[] = [], check
 	return { totals, dominantKey, dominantLabel };
 }
 
-export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRendererV2Props) {
+export default function DrillRendererV2({ drill, answers, setAnswers, session, phase }: DrillRendererV2Props) {
 	switch (drill.drill_type) {
+		case "draggable_rink_observation":
+			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "clickable_rink_observation":
-			return <ClickableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "observation_log_drill":
+		case "impact_classification_observation":
+		case "support_classification_observation":
+		case "sequence_classification_observation":
 			return <ObservationLogDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "pattern_reflection_observation":
+			return <PatternReflectionObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "period_checkin":
 			if (drill?.config?.mode === "pressure_diagnosis" || drill?.config?.mode === "solution_type_diagnosis" || drill?.config?.mode === "decision_cause_diagnosis" || drill?.config?.mode === "transition_followup_assessment") {
 				return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
@@ -319,37 +349,45 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 	}
 }
 
-function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
+function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, phase }: any) {
 	const safeAnswers = answers || {};
 	const config = drill?.config || {};
 
 	const observationCount = Number(config?.observation_count || 3);
 	const observationsKey = config?.observations_key || "observations";
+	const attackDirectionKey = config?.attack_direction_key || "attackDirection";
+	const attackDirectionOverrideKey = config?.attack_direction_override_key || attackDirectionKey;
+	const attackDirectionDefault = config?.attack_direction_default || "right";
+	const homeAttackDirectionP1 = config?.home_attack_direction_p1 || "right";
+	const mirrorBubblesWithDirection = config?.mirror_bubbles_with_attack_direction !== false;
+	const manualAttackDirection = safeAnswers[attackDirectionOverrideKey] || "";
 	const reflectionConfig = config?.completion_reflection || {};
 	const reflectionKey = reflectionConfig?.key || "final_reflection";
 	const reflectionOptions = Array.isArray(reflectionConfig?.options) ? reflectionConfig.options : ["ja", "nein", "kein klares Muster"];
 
 	const initiatorKey = config?.initiator_key || "initiatorPosition";
 	const locationKey = config?.location_key || "accessLocation";
+	const zoneKey = config?.zone_key || "zone";
 	const noteKey = config?.note_key || "note";
 	const observationIndexKey = config?.observation_index_key || "observationIndex";
 	const createdAtKey = config?.created_at_key || "createdAt";
 
 	const missions = Array.isArray(config?.missions) ? config.missions : [];
-	const positionMarkers = Array.isArray(config?.position_markers) && config.position_markers.length > 0
-		? config.position_markers
-		: [
-			{ value: "LW", label: "LW", x: 0.2, y: 0.28 },
-			{ value: "C", label: "C", x: 0.42, y: 0.46 },
-			{ value: "RW", label: "RW", x: 0.64, y: 0.28 },
-			{ value: "LD", label: "LD", x: 0.34, y: 0.72 },
-			{ value: "RD", label: "RD", x: 0.56, y: 0.72 },
-		];
-	const unclearValue = config?.unclear_value || "unclear";
-	const unclearLabel = config?.unclear_label || "nicht klar erkennbar";
+	const formationPreset = String(config?.formation_preset || config?.formationPreset || "5v5_default");
+	const presetPositionBubbles = getFormationPreset(formationPreset);
+	const positionBubbles = Array.isArray(config?.position_bubbles) && config.position_bubbles.length > 0
+		? config.position_bubbles
+		: presetPositionBubbles;
+	const leftBlueLineX = Number(config?.zone_boundaries?.left_blue_line_x ?? 0.291);
+	const rightBlueLineX = Number(config?.zone_boundaries?.right_blue_line_x ?? 0.709);
+	const zoneLabels = {
+		defensive: config?.zone_labels?.defensive || "Defensive Zone",
+		neutral: config?.zone_labels?.neutral || "Neutrale Zone",
+		offensive: config?.zone_labels?.offensive || "Offensive Zone",
+	};
 
-	const selectionLabel = config?.selection_label || "Spielerposition wählen";
-	const locationLabel = config?.location_label || "Ort des Zugriffs markieren";
+	const selectionLabel = config?.selection_label || "Ziehe eine Positions-Bubble an den Zugriffsort";
+	const locationLabel = config?.location_label || "Bubble bewegen = Position und Zugriffsort in einer Aktion";
 	const observeHint = config?.observe_hint || "Sobald du eine passende Situation entdeckt hast, erfasse deine Beobachtung.";
 	const noteLabel = config?.note_label || "Woran hast du erkannt, dass hier der defensive Druck beginnt?";
 	const notePlaceholder = config?.note_placeholder || "Optional";
@@ -368,23 +406,129 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const currentMission = missions[currentIndex] || {
 		title: `Mission ${currentIndex + 1} von ${observationCount}`,
 		prompt: "Finde eine passende Situation mit erstem defensivem Druck.",
-		hint: "Wähle die Position und markiere den Zugriffsort.",
+		hint: "Ziehe die passende Positions-Bubble direkt an den Zugriffsort.",
 	};
 
-	const draft = safeAnswers.__clickable_rink_observation_draft || {};
+	const draft = safeAnswers.__draggable_rink_observation_draft || {};
 	const selectedPosition = draft[initiatorKey] || "";
-	const selectedLocation = draft[locationKey] || null;
+	const selectedLocationRaw = draft[locationKey] || null;
 	const draftNote = draft[noteKey] || "";
-	const canSave = !!selectedPosition && !!selectedLocation;
+
+	const rinkRef = useRef<HTMLDivElement | null>(null);
+	const [draggingPosition, setDraggingPosition] = useState<string>("");
+	const [dragPoint, setDragPoint] = useState<{ x: number; y: number } | null>(null);
 
 	const [flashMessage, setFlashMessage] = useState<string>("");
 
 	const clamp = (value: number) => Math.max(0, Math.min(1, value));
+	const movementThreshold = Number(config?.movement_threshold || 0.015);
+
+	const normalizeTeam = (value: any) => String(value || "").trim().toLowerCase();
+	const inferPeriodNumber = () => {
+		const fromPhase = String(phase || session?.current_phase || "").toUpperCase();
+		if (fromPhase.startsWith("P")) {
+			const n = Number(fromPhase.replace("P", ""));
+			if (Number.isFinite(n) && n >= 1) return n;
+		}
+		return 1;
+	};
+
+	const inferAutoAttackDirection = (): "left" | "right" => {
+		const period = inferPeriodNumber();
+		const homeDirection = period % 2 === 1
+			? homeAttackDirectionP1
+			: (homeAttackDirectionP1 === "right" ? "left" : "right");
+
+		const observedTeam = normalizeTeam(session?.game_info?.observed_team || session?.observed_team);
+		const homeTeam = normalizeTeam(session?.game_info?.team_home);
+		const awayTeam = normalizeTeam(session?.game_info?.team_away);
+
+		if (observedTeam && homeTeam && observedTeam === homeTeam) {
+			return homeDirection === "left" ? "left" : "right";
+		}
+		if (observedTeam && awayTeam && observedTeam === awayTeam) {
+			return homeDirection === "left" ? "right" : "left";
+		}
+
+		return attackDirectionDefault === "left" ? "left" : "right";
+	};
+
+	const autoAttackDirection = inferAutoAttackDirection();
+	const attackDirection: "left" | "right" = manualAttackDirection === "left" || manualAttackDirection === "right"
+		? manualAttackDirection
+		: autoAttackDirection;
+	const isDirectionOverrideActive = manualAttackDirection === "left" || manualAttackDirection === "right";
+
+	const normalizeLocation = (location: any): { x: number; y: number } | null => {
+		const x = Number(location?.x);
+		const y = Number(location?.y);
+		if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+		return {
+			x: clamp(x),
+			y: clamp(y),
+		};
+	};
+
+	const selectedLocation = normalizeLocation(selectedLocationRaw);
+
+	const baseFormationByRole: Record<string, { x: number; y: number }> = useMemo(
+		() => Object.fromEntries(
+			positionBubbles.map((bubble: any) => [
+				bubble.value,
+				{
+					x: clamp(Number(bubble.start_x)),
+					y: clamp(Number(bubble.start_y)),
+				},
+			]),
+		),
+		[positionBubbles],
+	);
+
+	const getFormationForDirection = (baseFormation: Record<string, { x: number; y: number }>, direction: "left" | "right") => {
+		return Object.fromEntries(
+			Object.keys(baseFormation).map((role) => {
+				const sourceRole = mirrorBubblesWithDirection && direction === "left"
+					? (PERSPECTIVE_ROLE_SWAP[role] || role)
+					: role;
+				const source = baseFormation[sourceRole] || baseFormation[role];
+				const mirroredX = mirrorBubblesWithDirection && direction === "left"
+					? (1 - source.x)
+					: source.x;
+				return [
+					role,
+					{
+						x: Number(mirroredX.toFixed(3)),
+						y: Number(source.y.toFixed(3)),
+					},
+				];
+			}),
+		);
+	};
+
+	const startByPosition: Record<string, { x: number; y: number }> = useMemo(
+		() => getFormationForDirection(baseFormationByRole, attackDirection),
+		[attackDirection, baseFormationByRole, mirrorBubblesWithDirection],
+	);
+
+	const getBaseZone = (x: number): "left" | "neutral" | "right" => {
+		if (x < leftBlueLineX) return "left";
+		if (x > rightBlueLineX) return "right";
+		return "neutral";
+	};
+
+	const deriveZone = (x: number): "defensive" | "neutral" | "offensive" => {
+		const base = getBaseZone(x);
+		if (base === "neutral") return "neutral";
+		if (attackDirection === "left") {
+			return base === "left" ? "offensive" : "defensive";
+		}
+		return base === "left" ? "defensive" : "offensive";
+	};
 
 	const updateDraft = (nextDraft: any) => {
 		setAnswers({
 			...safeAnswers,
-			__clickable_rink_observation_draft: {
+			__draggable_rink_observation_draft: {
 				...draft,
 				...nextDraft,
 			},
@@ -394,7 +538,7 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const clearDraft = () => {
 		setAnswers({
 			...safeAnswers,
-			__clickable_rink_observation_draft: {
+			__draggable_rink_observation_draft: {
 				[initiatorKey]: "",
 				[locationKey]: null,
 				[noteKey]: "",
@@ -402,19 +546,93 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 		});
 	};
 
-	const onRinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		const rect = event.currentTarget.getBoundingClientRect();
+	const locationFromPointer = (event: PointerEvent) => {
+		if (!rinkRef.current) return null;
+		const rect = rinkRef.current.getBoundingClientRect();
 		const x = clamp((event.clientX - rect.left) / rect.width);
 		const y = clamp((event.clientY - rect.top) / rect.height);
-		updateDraft({ [locationKey]: { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) } });
+		return { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) };
 	};
+
+	useEffect(() => {
+		if (!draggingPosition) return;
+
+		const onPointerMove = (event: PointerEvent) => {
+			const nextPoint = locationFromPointer(event);
+			if (!nextPoint) return;
+			setDragPoint(nextPoint);
+		};
+
+		const onPointerUp = () => {
+			if (!draggingPosition || !dragPoint) {
+				setDraggingPosition("");
+				setDragPoint(null);
+				return;
+			}
+
+			updateDraft({
+				[initiatorKey]: draggingPosition,
+				[locationKey]: dragPoint,
+			});
+			setDraggingPosition("");
+			setDragPoint(null);
+		};
+
+		window.addEventListener("pointermove", onPointerMove);
+		window.addEventListener("pointerup", onPointerUp);
+
+		return () => {
+			window.removeEventListener("pointermove", onPointerMove);
+			window.removeEventListener("pointerup", onPointerUp);
+		};
+	}, [dragPoint, draggingPosition]);
+
+	const startDrag = (positionValue: string, event: any) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setDraggingPosition(positionValue);
+		const startPoint = draft[initiatorKey] === positionValue && draft[locationKey]
+			? draft[locationKey]
+			: startByPosition[positionValue];
+		setDragPoint(startPoint || null);
+	};
+
+	const applyDirectionChange = (nextDirection: "left" | "right", useManualOverride: boolean) => {
+		const nextAnswers: any = {
+			...safeAnswers,
+		};
+
+		if (useManualOverride) {
+			nextAnswers[attackDirectionOverrideKey] = nextDirection;
+		} else {
+			delete nextAnswers[attackDirectionOverrideKey];
+		}
+
+		setAnswers(nextAnswers);
+	};
+
+	const setAttackDirection = (value: "left" | "right") => {
+		applyDirectionChange(value, true);
+	};
+
+	const resetAttackDirectionOverride = () => {
+		applyDirectionChange(autoAttackDirection, false);
+	};
+
+	const effectivePosition = draggingPosition || selectedPosition;
+	const effectiveLocation = draggingPosition ? dragPoint : selectedLocation;
+	const effectiveZone = effectiveLocation ? deriveZone(effectiveLocation.x) : null;
+	const startForActive = effectivePosition ? startByPosition[effectivePosition] : null;
+	const movedEnough = !!(effectivePosition && effectiveLocation && startForActive && Math.hypot(effectiveLocation.x - startForActive.x, effectiveLocation.y - startForActive.y) > movementThreshold);
+	const canSave = movedEnough;
 
 	const onSaveObservation = () => {
 		if (!canSave || isComplete) return;
 
 		const nextObservation = {
-			[initiatorKey]: selectedPosition,
-			[locationKey]: selectedLocation,
+			[initiatorKey]: effectivePosition,
+			[locationKey]: effectiveLocation,
+			[zoneKey]: effectiveLocation ? deriveZone(effectiveLocation.x) : undefined,
 			[noteKey]: draftNote.trim() || undefined,
 			[observationIndexKey]: currentIndex + 1,
 			[createdAtKey]: new Date().toISOString(),
@@ -423,7 +641,7 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 		setAnswers({
 			...safeAnswers,
 			[observationsKey]: [...observations, nextObservation],
-			__clickable_rink_observation_draft: {
+			__draggable_rink_observation_draft: {
 				[initiatorKey]: "",
 				[locationKey]: null,
 				[noteKey]: "",
@@ -444,15 +662,28 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 
 	const reflectionValue = safeAnswers[reflectionKey] || "";
 	const positionCounts = observations.reduce((acc: Record<string, number>, entry: any) => {
-		const key = entry?.[initiatorKey] || unclearValue;
+		const key = entry?.[initiatorKey] || "";
+		if (!key) return acc;
+		acc[key] = (acc[key] || 0) + 1;
+		return acc;
+	}, {});
+	const zoneCounts = observations.reduce((acc: Record<string, number>, entry: any) => {
+		const key = entry?.[zoneKey] || "";
+		if (!key) return acc;
 		acc[key] = (acc[key] || 0) + 1;
 		return acc;
 	}, {});
 
 	const findMarkerLabel = (value: string) => {
-		if (value === unclearValue) return unclearLabel;
-		const found = positionMarkers.find((marker: any) => marker.value === value);
+		const found = positionBubbles.find((bubble: any) => bubble.value === value);
 		return found?.label || value;
+	};
+
+	const zoneDisplay = (zoneValue: string) => {
+		if (zoneValue === "defensive") return zoneLabels.defensive;
+		if (zoneValue === "offensive") return zoneLabels.offensive;
+		if (zoneValue === "neutral") return zoneLabels.neutral;
+		return zoneValue;
 	};
 
 	return (
@@ -491,13 +722,81 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 
 					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{observeHint}</p>
 
+					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem", alignItems: "center", marginBottom: "0.45rem" }}>
+						<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.76)" }}>
+							Angriffsrichtung: <strong>{attackDirection === "right" ? "nach rechts" : "nach links"}</strong> {isDirectionOverrideActive ? "(manuell)" : "(auto aus Session)"}
+						</span>
+						<button
+							type="button"
+							onClick={() => setAttackDirection("right")}
+							style={{
+								padding: "0.2rem 0.55rem",
+								borderRadius: "999px",
+								border: attackDirection === "right" ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+								background: attackDirection === "right" ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
+								color: "#f7f7ff",
+								fontSize: "0.8rem",
+								cursor: "pointer",
+							}}
+						>
+							nach rechts
+						</button>
+						<button
+							type="button"
+							onClick={() => setAttackDirection("left")}
+							style={{
+								padding: "0.2rem 0.55rem",
+								borderRadius: "999px",
+								border: attackDirection === "left" ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+								background: attackDirection === "left" ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
+								color: "#f7f7ff",
+								fontSize: "0.8rem",
+								cursor: "pointer",
+							}}
+						>
+							nach links
+						</button>
+						<button
+							type="button"
+							onClick={() => setAttackDirection(attackDirection === "right" ? "left" : "right")}
+							style={{
+								padding: "0.2rem 0.55rem",
+								borderRadius: "999px",
+								border: "1px solid rgba(255,255,255,0.3)",
+								background: "rgba(255,255,255,0.04)",
+								color: "#f7f7ff",
+								fontSize: "0.8rem",
+								cursor: "pointer",
+							}}
+						>
+							Angriffsrichtung wechseln ↔
+						</button>
+						{isDirectionOverrideActive && (
+							<button
+								type="button"
+								onClick={resetAttackDirectionOverride}
+								style={{
+									padding: "0.2rem 0.55rem",
+									borderRadius: "999px",
+									border: "1px solid rgba(255,255,255,0.3)",
+									background: "rgba(255,255,255,0.04)",
+									color: "#f7f7ff",
+									fontSize: "0.8rem",
+									cursor: "pointer",
+								}}
+							>
+								Auto wiederherstellen
+							</button>
+						)}
+					</div>
+
 					<div style={{ marginBottom: "0.45rem" }}>
 						<label style={{ display: "block", marginBottom: "0.22rem", fontWeight: 600 }}>{selectionLabel}</label>
 						<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>{locationLabel}</p>
 					</div>
 
 					<div
-						onClick={onRinkClick}
+						ref={rinkRef}
 						style={{
 							position: "relative",
 							width: "100%",
@@ -508,7 +807,7 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 							overflow: "hidden",
 							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
 							marginBottom: "0.55rem",
-							cursor: "crosshair",
+							cursor: draggingPosition ? "grabbing" : "default",
 						}}
 					>
 						<svg viewBox="0 0 1100 700" role="img" aria-label="Klickbare Eisflaeche" style={{ width: "100%", height: "100%", display: "block" }}>
@@ -519,73 +818,44 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 							<circle cx="550" cy="350" r="74" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
 						</svg>
 
-						{positionMarkers.map((marker: any) => {
-							const active = selectedPosition === marker.value;
+						{positionBubbles.map((bubble: any) => {
+							const isActive = effectivePosition === bubble.value;
+							const isMuted = !!effectivePosition && !isActive;
+							const mirroredStart = startByPosition[bubble.value] || { x: Number(bubble.start_x), y: Number(bubble.start_y) };
+							const renderedLocation = isActive && effectiveLocation
+								? effectiveLocation
+								: mirroredStart;
 							return (
 								<button
-									key={marker.value}
+									key={bubble.value}
 									type="button"
-									onClick={(e) => {
-										e.stopPropagation();
-										updateDraft({ [initiatorKey]: marker.value });
-									}}
+									onPointerDown={(e) => startDrag(bubble.value, e)}
+									draggable={false}
 									style={{
 										position: "absolute",
-										left: `${Number(marker.x) * 100}%`,
-										top: `${Number(marker.y) * 100}%`,
+										left: `${Number(renderedLocation.x) * 100}%`,
+										top: `${Number(renderedLocation.y) * 100}%`,
 										transform: "translate(-50%, -50%)",
 										minWidth: "42px",
 										height: "42px",
 										padding: "0 0.55rem",
 										borderRadius: "999px",
-										border: active ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.45)",
-										background: active ? "rgba(20,184,166,0.88)" : "rgba(13,29,46,0.84)",
+										border: isActive ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.45)",
+										background: isActive ? "rgba(20,184,166,0.88)" : "rgba(13,29,46,0.84)",
+										opacity: isMuted ? 0.45 : 1,
 										color: "#f7f7ff",
 										fontWeight: 700,
 										fontSize: "0.82rem",
-										cursor: "pointer",
+										cursor: draggingPosition && isActive ? "grabbing" : "grab",
 									}}
 								>
-									{marker.label}
+									{bubble.label}
 								</button>
 							);
 						})}
-
-						{selectedLocation && (
-							<div
-								style={{
-									position: "absolute",
-									left: `${selectedLocation.x * 100}%`,
-									top: `${selectedLocation.y * 100}%`,
-									transform: "translate(-50%, -50%)",
-									width: "20px",
-									height: "20px",
-									borderRadius: "999px",
-									border: "2px solid rgba(255,255,255,0.95)",
-									background: "rgba(239,68,68,0.95)",
-									boxShadow: "0 0 0 3px rgba(239,68,68,0.25)",
-									pointerEvents: "none",
-								}}
-							/>
-						)}
 					</div>
 
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.5rem" }}>
-						<button
-							type="button"
-							onClick={() => updateDraft({ [initiatorKey]: unclearValue })}
-							style={{
-								padding: "0.28rem 0.55rem",
-								borderRadius: "999px",
-								border: selectedPosition === unclearValue ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
-								background: selectedPosition === unclearValue ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
-								color: "#f7f7ff",
-								fontSize: "0.82rem",
-								cursor: "pointer",
-							}}
-						>
-							{unclearLabel}
-						</button>
 						<button
 							type="button"
 							onClick={clearDraft}
@@ -604,11 +874,14 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 					</div>
 
 					<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
-						<div>Gewählte Position: <strong>{selectedPosition ? findMarkerLabel(selectedPosition) : "noch nicht gewählt"}</strong></div>
-						<div>Zugriffsort: <strong>{selectedLocation ? `${Math.round(selectedLocation.x * 100)}% / ${Math.round(selectedLocation.y * 100)}%` : "noch nicht markiert"}</strong></div>
+						<div>
+							<strong>{effectivePosition ? findMarkerLabel(effectivePosition) : "Keine Auswahl"}</strong>
+							{effectiveZone && <> - <strong>{zoneDisplay(effectiveZone)}</strong></>}
+						</div>
+						<div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>Position oder Ort ändern? Ziehe die Bubble erneut.</div>
 					</div>
 
-					{canSave && (
+					{effectivePosition && effectiveLocation && (
 						<details style={{ marginBottom: "0.45rem" }} open={!!draftNote}>
 							<summary style={{ cursor: "pointer", fontSize: "0.82rem", color: "#8fd3df" }}>Optionale Notiz</summary>
 							<textarea
@@ -677,7 +950,7 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 								</button>
 							</div>
 							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
-								{findMarkerLabel(entry?.[initiatorKey])} | {entry?.[locationKey] ? `${Math.round(entry[locationKey].x * 100)}% / ${Math.round(entry[locationKey].y * 100)}%` : "kein Ort"}
+								{findMarkerLabel(entry?.[initiatorKey])} - {zoneDisplay(entry?.[zoneKey] || "neutral")}
 							</div>
 						</div>
 					))}
@@ -708,6 +981,9 @@ function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 
 						<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.35 }}>
 							<strong>Positionen:</strong> {Object.entries(positionCounts).map(([key, count]) => `${findMarkerLabel(key)} (${count})`).join(", ") || "keine"}
+						</div>
+						<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.35 }}>
+							<strong>Zonen:</strong> {Object.entries(zoneCounts).map(([key, count]) => `${zoneDisplay(key)} (${count})`).join(", ") || "keine"}
 						</div>
 
 						<div style={{ position: "relative", width: "100%", maxWidth: "640px", aspectRatio: "11 / 7", borderRadius: "10px", border: "1px solid rgba(81,145,162,0.38)", overflow: "hidden", background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)", marginBottom: "0.55rem" }}>
@@ -778,6 +1054,19 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 	const reflectionLabel = reflectionConfig?.label || "Woran hast du erkannt, dass genau hier die Defensivaktion beginnt?";
 	const reflectionPlaceholder = reflectionConfig?.placeholder || "Optional: kurze Reflexion";
 	const reflectionMaxChars = Number(reflectionConfig?.max_chars || 500);
+	const completionReflectionConfig = config?.completion_reflection || {};
+	const completionReflectionKey = completionReflectionConfig?.key || "completion_reflection";
+	const completionReflectionLabel = completionReflectionConfig?.label || "Welche Wirkung war am häufigsten zu sehen?";
+	const completionReflectionOptions = Array.isArray(completionReflectionConfig?.options) ? completionReflectionConfig.options : [];
+	const completionReflectionValue = safeAnswers?.[completionReflectionKey] || "";
+
+	const secondaryDecisionConfig = config?.secondary_decision || {};
+	const secondaryDecisionKey = secondaryDecisionConfig?.key || "secondary_decision";
+	const secondaryDecisionLabel = secondaryDecisionConfig?.label || "Welche Funktion übernimmt die Unterstützung?";
+	const secondaryDecisionOptions = Array.isArray(secondaryDecisionConfig?.options) ? secondaryDecisionConfig.options : [];
+	const secondaryDecisionShowWhen = Array.isArray(secondaryDecisionConfig?.show_when_decision_in) ? secondaryDecisionConfig.show_when_decision_in : [];
+	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const activeFocusText = config?.active_focus_text || "";
 
 	const currentIndex = logs.length;
 	const currentMission = missions[currentIndex] || {
@@ -787,8 +1076,17 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 
 	const draftDecision = safeAnswers.__observation_log_draft_decision || "";
 	const draftReflection = safeAnswers.__observation_log_draft_reflection || "";
+	const draftSecondaryDecision = safeAnswers.__observation_log_draft_secondary_decision || "";
 	const isComplete = logs.length >= targetCount;
 	const progressPercent = targetCount > 0 ? Math.min(100, Math.round((logs.length / targetCount) * 100)) : 0;
+	const decisionCounts = decisionOptions.reduce((acc: Record<string, number>, opt: string) => {
+		acc[opt] = logs.filter((entry: any) => entry?.[decisionKey] === opt).length;
+		return acc;
+	}, {});
+	const showCompletionReflection = isComplete && completionReflectionOptions.length > 0;
+	const showSecondaryDecision = !!draftDecision
+		&& secondaryDecisionOptions.length > 0
+		&& (secondaryDecisionShowWhen.length === 0 || secondaryDecisionShowWhen.includes(draftDecision));
 
 	const updateDraft = (next: any) => {
 		setAnswers({
@@ -804,6 +1102,7 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 			mission_title: currentMission?.title || `Mission ${currentIndex + 1}`,
 			mission_prompt: currentMission?.prompt || "",
 			[decisionKey]: draftDecision,
+			...(showSecondaryDecision && draftSecondaryDecision ? { [secondaryDecisionKey]: draftSecondaryDecision } : {}),
 			[reflectionKey]: draftReflection.trim(),
 		};
 
@@ -811,6 +1110,7 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 			...safeAnswers,
 			[logsKey]: [...logs, nextLog],
 			__observation_log_draft_decision: "",
+			__observation_log_draft_secondary_decision: "",
 			__observation_log_draft_reflection: "",
 		});
 	};
@@ -840,6 +1140,9 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 						{currentMission?.prompt && (
 							<p style={{ margin: "0.2rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.35 }}>{currentMission.prompt}</p>
 						)}
+						{currentMission?.hint && (
+							<p style={{ margin: "0.22rem 0 0", color: "rgba(255,255,255,0.72)", fontSize: "0.84rem" }}>{currentMission.hint}</p>
+						)}
 					</div>
 					<div style={{ marginBottom: "0.55rem" }}>
 						<div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "rgba(255,255,255,0.62)", marginBottom: "0.2rem" }}>
@@ -866,13 +1169,41 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 										name="observation_log_decision"
 										value={opt}
 										checked={draftDecision === opt}
-										onChange={(e) => updateDraft({ __observation_log_draft_decision: e.target.value })}
+										onChange={(e) => {
+											const nextDecision = e.target.value;
+											const shouldKeepSecondary = secondaryDecisionOptions.length > 0
+												&& (secondaryDecisionShowWhen.length === 0 || secondaryDecisionShowWhen.includes(nextDecision));
+											updateDraft({
+												__observation_log_draft_decision: nextDecision,
+												__observation_log_draft_secondary_decision: shouldKeepSecondary ? draftSecondaryDecision : "",
+											});
+										}}
 									/>
 									<span style={{ fontSize: "0.92rem" }}>{opt}</span>
 								</label>
 							))}
 						</div>
 					</div>
+
+					{showSecondaryDecision && (
+						<div style={{ marginBottom: "0.6rem" }}>
+							<label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 600 }}>{secondaryDecisionLabel}</label>
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+								{secondaryDecisionOptions.map((opt: string) => (
+									<label key={`secondary-${opt}`} style={{ display: "flex", alignItems: "center", gap: "0.4rem", lineHeight: 1.15 }}>
+										<input
+											type="radio"
+											name="observation_log_secondary_decision"
+											value={opt}
+											checked={draftSecondaryDecision === opt}
+											onChange={(e) => updateDraft({ __observation_log_draft_secondary_decision: e.target.value })}
+										/>
+										<span style={{ fontSize: "0.9rem" }}>{opt}</span>
+									</label>
+								))}
+							</div>
+						</div>
+					)}
 
 					{draftDecision && (
 						<div style={{ marginBottom: "0.6rem" }}>
@@ -949,6 +1280,11 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 							<div style={{ marginTop: "0.25rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.73)", lineHeight: 1.35 }}>
 								{decisionLabel}: {log?.[decisionKey] || "-"}
 							</div>
+							{log?.[secondaryDecisionKey] && (
+								<div style={{ marginTop: "0.15rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.68)", lineHeight: 1.35 }}>
+									{secondaryDecisionLabel}: {log?.[secondaryDecisionKey]}
+								</div>
+							)}
 							{log?.[reflectionKey] && (
 								<div style={{ marginTop: "0.2rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.35 }}>
 									{log[reflectionKey]}
@@ -959,9 +1295,279 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 				</div>
 
 				{isComplete && (
-					<p style={{ marginTop: "0.6rem", marginBottom: 0, color: "rgba(153,246,228,0.95)" }}>
-						Drill abgeschlossen. Du kannst jetzt weitergehen.
-					</p>
+					<div style={{ marginTop: "0.6rem" }}>
+						<p style={{ marginTop: 0, marginBottom: "0.45rem", color: "rgba(153,246,228,0.95)" }}>
+							Drill abgeschlossen. Du kannst jetzt weitergehen.
+						</p>
+						<div style={{ marginBottom: "0.45rem", fontSize: "0.84rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.35 }}>
+							<strong>{config?.summary_title || "Automatische Zusammenfassung"}</strong>
+						</div>
+						<div style={{ display: "grid", gap: "0.2rem", marginBottom: showCompletionReflection ? "0.55rem" : 0 }}>
+							{decisionOptions.map((opt: string) => (
+								<div key={`summary-${opt}`} style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.72)" }}>
+									{opt}: <strong>{decisionCounts[opt] || 0}</strong>
+								</div>
+							))}
+						</div>
+
+						{showCompletionReflection && (
+							<div>
+								<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>
+									{completionReflectionLabel}
+								</label>
+								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+									{completionReflectionOptions.map((opt: string) => (
+										<label key={`completion-${opt}`} style={{ display: "flex", alignItems: "center", gap: "0.4rem", lineHeight: 1.15 }}>
+											<input
+												type="radio"
+												name="observation_log_completion_reflection"
+												value={opt}
+												checked={completionReflectionValue === opt}
+												onChange={(e) => setAnswers({ ...safeAnswers, [completionReflectionKey]: e.target.value })}
+											/>
+											<span style={{ fontSize: "0.9rem" }}>{opt}</span>
+										</label>
+									))}
+								</div>
+							</div>
+						)}
+
+						{activeFocusText && (!showCompletionReflection || !!completionReflectionValue) && (
+							<section style={{ marginTop: "0.65rem", padding: "0.7rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
+								<h4 style={{ marginTop: 0, marginBottom: "0.3rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
+								<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>
+							</section>
+						)}
+					</div>
+				)}
+			</section>
+
+			{drill.didactics?.learning_hint && (
+				<p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
+					{drill.didactics.learning_hint}
+				</p>
+			)}
+		</div>
+	);
+}
+
+function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) {
+	const safeAnswers = answers || {};
+	const config = drill?.config || {};
+
+	const observationPhaseTitle = config?.observation_phase?.title || "Beobachtungsphase";
+	const observationPhaseText = config?.observation_phase?.text || "Beobachte mehrere Situationen und suche wiederkehrende Muster.";
+	const observationPhaseHint = config?.observation_phase?.hint || "Achte darauf, wie das Team Druck erzeugt, Räume kontrolliert und auf gegnerische Aktionen reagiert.";
+
+	const analysisPhaseTitle = config?.analysis_phase?.title || "Defensive Identität";
+	const analysisPhaseText = config?.analysis_phase?.text || "Welche Beschreibung passt am besten zu diesem Team?";
+
+	const reflectionPhaseTitle = config?.reflection_phase?.title || "Warum?";
+	const reflectionPhaseText = config?.reflection_phase?.text || "Welche Beobachtungen unterstützen deine Einschätzung?";
+
+	const identityConfig = config?.identity || {};
+	const identityKey = identityConfig?.key || "patternIdentity";
+	const identityLabel = identityConfig?.label || "Welche defensive Identität beschreibt das Team am besten?";
+	const identityOptions = Array.isArray(identityConfig?.options) ? identityConfig.options : [];
+
+	const supportConfig = config?.supporting_observations || {};
+	const supportKey = supportConfig?.key || "supportingObservations";
+	const supportLabel = supportConfig?.label || "Welche Beobachtung unterstützt deine Einschätzung?";
+	const supportOptions = Array.isArray(supportConfig?.options) ? supportConfig.options : [];
+
+	const changedConfig = config?.changed_during_observation || {};
+	const changedKey = changedConfig?.key || "changedDuringObservation";
+	const changedLabel = changedConfig?.label || "Hat sich deine Einschätzung während der Beobachtung verändert?";
+	const changedOptions = Array.isArray(changedConfig?.options) ? changedConfig.options : [];
+
+	const noteConfig = config?.note || {};
+	const noteKey = noteConfig?.key || "note";
+	const noteLabel = noteConfig?.label || "Optionale Notiz";
+	const notePlaceholder = noteConfig?.placeholder || "Optional: kurze Beobachtung";
+	const noteMaxChars = Number(noteConfig?.max_chars || 500);
+
+	const summaryTitle = config?.summary_title || "Deine Einschätzung";
+	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const activeFocusText = config?.active_focus_text || "";
+	const createdAtKey = config?.created_at_key || "createdAt";
+
+	const identityValue = safeAnswers?.[identityKey] || "";
+	const supportValues = Array.isArray(safeAnswers?.[supportKey]) ? safeAnswers[supportKey] : [];
+	const changedValue = safeAnswers?.[changedKey] || "";
+	const noteValue = safeAnswers?.[noteKey] || "";
+
+	const isComplete = !!identityValue && supportValues.length > 0 && !!changedValue;
+
+	useEffect(() => {
+		if (!isComplete || safeAnswers?.[createdAtKey]) return;
+		setAnswers({
+			...safeAnswers,
+			[createdAtKey]: new Date().toISOString(),
+		});
+	}, [createdAtKey, isComplete, safeAnswers, setAnswers]);
+
+	const selectedIdentity = identityOptions.find((opt: any) => opt?.value === identityValue);
+
+	const updateValue = (key: string, value: any) => {
+		setAnswers({
+			...safeAnswers,
+			[key]: value,
+		});
+	};
+
+	const toggleSupportValue = (value: string) => {
+		const hasValue = supportValues.includes(value);
+		const nextValues = hasValue
+			? supportValues.filter((item: string) => item !== value)
+			: [...supportValues, value];
+		updateValue(supportKey, nextValues);
+	};
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word", marginBottom: "0.45rem" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "0.75rem" }}>
+					{drill.description}
+				</p>
+			)}
+
+			<ObservationGuide drill={drill} />
+
+			<section style={{ marginBottom: "0.75rem", padding: "0.85rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+				<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>👀 {observationPhaseTitle}</h4>
+				<p style={{ marginTop: 0, marginBottom: "0.4rem", color: "rgba(255,255,255,0.82)", lineHeight: 1.45 }}>{observationPhaseText}</p>
+				<p style={{ margin: 0, color: "rgba(255,255,255,0.7)", fontSize: "0.86rem", lineHeight: 1.4 }}>{observationPhaseHint}</p>
+			</section>
+
+			<section style={{ marginBottom: "0.75rem", padding: "0.85rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+				<h4 style={{ marginTop: 0, marginBottom: "0.3rem" }}>🧭 {analysisPhaseTitle}</h4>
+				<p style={{ marginTop: 0, marginBottom: "0.55rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{analysisPhaseText}</p>
+				<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>{identityLabel}</label>
+				<div style={{ display: "grid", gap: "0.45rem" }}>
+					{identityOptions.map((opt: any) => {
+						const checked = identityValue === opt?.value;
+						const markers = Array.isArray(opt?.markers) ? opt.markers : [];
+						return (
+							<label key={opt?.value} style={{ display: "block", padding: "0.55rem 0.6rem", borderRadius: "6px", border: checked ? "1px solid rgba(45,212,191,0.7)" : "1px solid rgba(255,255,255,0.15)", background: checked ? "rgba(20,184,166,0.12)" : "rgba(255,255,255,0.02)", cursor: "pointer" }}>
+								<div style={{ display: "flex", alignItems: "flex-start", gap: "0.45rem" }}>
+									<input
+										type="radio"
+										name="pattern_identity"
+										value={opt?.value}
+										checked={checked}
+										onChange={(e) => updateValue(identityKey, e.target.value)}
+									/>
+									<div>
+										<div style={{ fontWeight: 600, color: "#f7f7ff" }}>{opt?.label || opt?.value}</div>
+										{opt?.description && <div style={{ marginTop: "0.2rem", color: "rgba(255,255,255,0.74)", fontSize: "0.84rem", lineHeight: 1.35 }}>{opt.description}</div>}
+										{markers.length > 0 && (
+											<ul style={{ margin: "0.3rem 0 0", paddingLeft: "1rem", color: "rgba(255,255,255,0.68)", fontSize: "0.82rem", lineHeight: 1.35 }}>
+												{markers.map((marker: string) => (<li key={`${opt?.value}-${marker}`}>{marker}</li>))}
+											</ul>
+										)}
+									</div>
+								</div>
+							</label>
+						);
+					})}
+				</div>
+			</section>
+
+			<section style={{ marginBottom: "0.4rem", padding: "0.85rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+				<h4 style={{ marginTop: 0, marginBottom: "0.3rem" }}>🧩 {reflectionPhaseTitle}</h4>
+				<p style={{ marginTop: 0, marginBottom: "0.55rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{reflectionPhaseText}</p>
+
+				<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>{supportLabel}</label>
+				<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", marginBottom: "0.65rem" }}>
+					{supportOptions.map((opt: any) => {
+						const value = typeof opt === "string" ? opt : opt?.value;
+						const label = typeof opt === "string" ? opt : (opt?.label || opt?.value);
+						if (!value) return null;
+						return (
+							<label key={`support-${value}`} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+								<input
+									type="checkbox"
+									checked={supportValues.includes(value)}
+									onChange={() => toggleSupportValue(value)}
+								/>
+								<span style={{ fontSize: "0.9rem" }}>{label}</span>
+							</label>
+						);
+					})}
+				</div>
+
+				{changedOptions.length > 0 && (
+					<div style={{ marginBottom: "0.65rem" }}>
+						<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>{changedLabel}</label>
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+							{changedOptions.map((opt: any) => {
+								const value = typeof opt === "string" ? opt : opt?.value;
+								const label = typeof opt === "string" ? opt : (opt?.label || opt?.value);
+								if (!value) return null;
+								return (
+									<label key={`changed-${value}`} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+										<input
+											type="radio"
+											name="pattern_changed_during_observation"
+											value={value}
+											checked={changedValue === value}
+											onChange={(e) => updateValue(changedKey, e.target.value)}
+										/>
+										<span style={{ fontSize: "0.9rem" }}>{label}</span>
+									</label>
+								);
+							})}
+						</div>
+					</div>
+				)}
+
+				<div>
+					<label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 600 }}>{noteLabel}</label>
+					<textarea
+						value={noteValue}
+						onChange={(e) => updateValue(noteKey, e.target.value)}
+						maxLength={noteMaxChars}
+						placeholder={notePlaceholder}
+						style={{
+							width: "100%",
+							minHeight: "56px",
+							padding: "0.45rem",
+							backgroundColor: "#050712",
+							color: "#f7f7ff",
+							border: "1px solid rgba(81,145,162,0.5)",
+							borderRadius: "4px",
+							fontFamily: "inherit",
+							fontSize: "0.9rem",
+						}}
+					/>
+				</div>
+
+				{identityValue && (
+					<section style={{ marginTop: "0.7rem", padding: "0.7rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
+						<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {summaryTitle}</h4>
+						<div style={{ marginBottom: "0.35rem", color: "rgba(240,253,250,0.92)", lineHeight: 1.4 }}>
+							<strong>Defensive Identität:</strong><br />
+							{selectedIdentity?.label || identityValue}
+						</div>
+						<div style={{ color: "rgba(240,253,250,0.9)", lineHeight: 1.4 }}>
+							<strong>Begründung:</strong>
+							<div style={{ marginTop: "0.25rem", display: "grid", gap: "0.15rem" }}>
+								{supportValues.length > 0 ? supportValues.map((value: string) => {
+									const found = supportOptions.find((opt: any) => (typeof opt === "string" ? opt : opt?.value) === value);
+									const label = typeof found === "string" ? found : (found?.label || value);
+									return <div key={`summary-support-${value}`}>✓ {label}</div>;
+								}) : <div>Keine Begründung ausgewählt.</div>}
+							</div>
+						</div>
+					</section>
+				)}
+
+				{activeFocusText && isComplete && (
+					<section style={{ marginTop: "0.65rem", padding: "0.7rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
+						<h4 style={{ marginTop: 0, marginBottom: "0.3rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
+						<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>
+					</section>
 				)}
 			</section>
 

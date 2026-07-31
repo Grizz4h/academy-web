@@ -318,7 +318,7 @@ export default function SessionPage() {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
 
-    if (drill.drill_type === 'clickable_rink_observation') {
+    if (drill.drill_type === 'clickable_rink_observation' || drill.drill_type === 'draggable_rink_observation') {
       const observationsKey = drill?.config?.observations_key || 'observations'
       const requiredObservations = Number(drill?.config?.observation_count || 3)
       const reflectionKey = drill?.config?.completion_reflection?.key || 'final_reflection'
@@ -333,13 +333,37 @@ export default function SessionPage() {
       }
     }
 
-    if (drill.drill_type === 'observation_log_drill') {
+    if (drill.drill_type === 'observation_log_drill' || drill.drill_type === 'impact_classification_observation' || drill.drill_type === 'support_classification_observation' || drill.drill_type === 'sequence_classification_observation') {
       const logsKey = drill?.config?.logs_key || 'logs'
       const requiredLogs = Number(drill?.config?.log_count || 3)
+      const completionReflectionKey = drill?.config?.completion_reflection?.key
       const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
 
       if (logs.length < requiredLogs) {
         return 'Bitte erfasse alle ' + requiredLogs + ' Beobachtungen, bevor du weitergehst.'
+      }
+
+      if (completionReflectionKey && !answers?.[completionReflectionKey]) {
+        return 'Bitte beantworte kurz die Abschluss-Reflexion, bevor du weitergehst.'
+      }
+    }
+
+    if (drill.drill_type === 'pattern_reflection_observation') {
+      const identityKey = drill?.config?.identity?.key || 'patternIdentity'
+      const supportKey = drill?.config?.supporting_observations?.key || 'supportingObservations'
+      const changedKey = drill?.config?.changed_during_observation?.key || 'changedDuringObservation'
+      const supportValues = Array.isArray(answers?.[supportKey]) ? answers[supportKey] : []
+
+      if (!answers?.[identityKey]) {
+        return 'Bitte wähle eine defensive Identität aus, bevor du weitergehst.'
+      }
+
+      if (supportValues.length === 0) {
+        return 'Bitte wähle mindestens eine Beobachtung zur Begründung aus, bevor du weitergehst.'
+      }
+
+      if (!answers?.[changedKey]) {
+        return 'Bitte beantworte die kurze Reflexionsfrage, bevor du weitergehst.'
       }
     }
 
@@ -592,6 +616,7 @@ export default function SessionPage() {
                   initialAnswers={answersByPhase[currentPhase]}
                   onChangeAnswers={handleDraftChange}
                   session={session}
+                  phase={currentPhase}
                 />
               ) : (
                 <p>Keine Drills für diese Session verfügbar.</p>

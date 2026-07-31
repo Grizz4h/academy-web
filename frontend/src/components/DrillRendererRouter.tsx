@@ -10,6 +10,7 @@ interface DrillRendererRouterProps {
   initialAnswers?: any;
   onChangeAnswers?: (answers: any) => void;
   session?: any;
+  phase?: string;
 }
 
 function pickRenderer(moduleId?: string): 'v1' | 'v2' | 'v3' | 'v4' {
@@ -46,5 +47,5 @@ export function DrillRendererRouter(props: DrillRendererRouterProps) {
   if (!props.setAnswers) {
     return null;
   }
-  return <DrillRendererV2 drill={props.drill} answers={props.answers} setAnswers={props.setAnswers} />;
+  return <DrillRendererV2 drill={props.drill} answers={props.answers} setAnswers={props.setAnswers} session={props.session} phase={props.phase} />;
 }

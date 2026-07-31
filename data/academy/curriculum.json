@@ -3041,7 +3041,7 @@
             {
               "id": "B3_D1",
               "title": "Wer setzt den ersten defensiven Druck?",
-              "drill_type": "clickable_rink_observation",
+              "drill_type": "draggable_rink_observation",
               "description": "Defensiver Zugriff kann überall auf dem Eis entstehen: im Forecheck, beim Backcheck, in der Neutralen Zone oder in der eigenen Zone. Finde drei Situationen und beobachte, welcher Spieler als Erster aktiv Druck aufbaut und wo dieser Zugriff beginnt.",
               "didactics": {
                 "explanation": "Defensiver Druck beginnt nicht erst beim Zweikampf. Er beginnt, sobald ein Spieler den Gegner aktiv dazu zwingt, Zeit, Raum, Laufweg oder eine Option anzupassen. Der erste Zugriff kann im Forecheck, Backcheck, in der Neutralen Zone oder in der eigenen Zone entstehen.",
@@ -3064,61 +3064,106 @@
                 },
                 "learning_hint": "Nur der erste aktive Zugriff zählt: Wer setzt ihn, und wo beginnt er?"
               },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {
+                      "pressure_pattern_reflection": "ja"
+                    },
+                    "questions": [
+                      "Welche Hinweise haben dir früh gezeigt, dass immer wieder dieselbe Position den ersten defensiven Druck auslöst?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "pressure_pattern_reflection": "nein"
+                    },
+                    "questions": [
+                      "Wodurch hat sich in deinen Szenen verändert, welche Position den ersten defensiven Druck initiiert?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "pressure_pattern_reflection": "kein klares Muster"
+                    },
+                    "questions": [
+                      "Welche zusätzliche Beobachtung würdest du im nächsten Abschnitt priorisieren, um ein klareres Muster beim ersten Zugriff zu erkennen?"
+                    ]
+                  }
+                ]
+              },
               "config": {
                 "observation_count": 3,
                 "observations_key": "defensive_pressure_observations",
+                "attack_direction_key": "attackDirection",
+                "attack_direction_override_key": "attackDirection",
+                "attack_direction_default": "right",
+                "home_attack_direction_p1": "right",
+                "mirror_bubbles_with_attack_direction": true,
+                "formation_preset": "5v5_default",
                 "initiator_key": "initiatorPosition",
                 "location_key": "accessLocation",
+                "zone_key": "zone",
                 "note_key": "note",
                 "observation_index_key": "observationIndex",
                 "created_at_key": "createdAt",
-                "selection_label": "Position des Initiators auswählen",
-                "location_label": "Klicke auf den Ort, an dem der Zugriff beginnt",
-                "unclear_value": "unclear",
-                "unclear_label": "nicht klar erkennbar",
+                "selection_label": "Ziehe die passende Positions-Bubble an den Zugriffsort",
+                "location_label": "Eine Drag-Aktion erfasst Position und Zugriffsort gleichzeitig",
                 "observe_hint": "Sobald du eine passende Situation entdeckt hast, erfasse deine Beobachtung.",
                 "note_label": "Woran hast du erkannt, dass hier der defensive Druck beginnt?",
                 "note_placeholder": "Optional: kurzer Hinweis",
                 "note_max_chars": 220,
                 "save_button_label": "Beobachtung speichern",
                 "saved_feedback_template": "Beobachtung {index} gespeichert",
-                "position_markers": [
+                "position_bubbles": [
                   {
                     "value": "LW",
                     "label": "LW",
-                    "x": 0.2,
-                    "y": 0.28
-                  },
-                  {
-                    "value": "C",
-                    "label": "C",
-                    "x": 0.42,
-                    "y": 0.46
+                    "start_x": 0.8,
+                    "start_y": 0.25
                   },
                   {
                     "value": "RW",
                     "label": "RW",
-                    "x": 0.64,
-                    "y": 0.28
+                    "start_x": 0.8,
+                    "start_y": 0.75
+                  },
+                  {
+                    "value": "C",
+                    "label": "C",
+                    "start_x": 0.62,
+                    "start_y": 0.5
                   },
                   {
                     "value": "LD",
                     "label": "LD",
-                    "x": 0.34,
-                    "y": 0.72
+                    "start_x": 0.20,
+                    "start_y": 0.33
                   },
                   {
                     "value": "RD",
                     "label": "RD",
-                    "x": 0.56,
-                    "y": 0.72
+                    "start_x": 0.20,
+                    "start_y": 0.67
                   }
                 ],
+                "zone_boundaries": {
+                  "left_blue_line_x": 0.291,
+                  "right_blue_line_x": 0.709
+                },
+                "zone_labels": {
+                  "defensive": "Defensive Zone",
+                  "neutral": "Neutrale Zone",
+                  "offensive": "Offensive Zone"
+                },
+                "movement_threshold": 0.015,
                 "missions": [
                   {
                     "title": "Mission 1 von 3",
                     "prompt": "Finde eine Situation, in der ein Spieler als Erster defensiven Druck aufbaut.",
-                    "hint": "Wähle seine Position und markiere, wo der Zugriff beginnt."
+                    "hint": "Ziehe die passende Position an den Ort, an dem der Zugriff beginnt."
                   },
                   {
                     "title": "Mission 2 von 3",
@@ -3146,28 +3191,30 @@
             },
             {
               "id": "B3_D2",
-              "title": "Zweiter Zugriff & Staffelung",
-              "drill_type": "period_checkin",
-              "description": "Erkennen, ob nach dem ersten Zugriff kollektive Defensive entsteht oder der Moment verpufft.",
+              "title": "Wirkung des ersten defensiven Drucks",
+              "drill_type": "impact_classification_observation",
+              "description": "Ein defensiver Zugriff ist nicht nur eine Aktion gegen den Puckfuehrer. Entscheidend ist, welche Wirkung dieser Druck auf die gegnerische Aktion hat. Ein guter Zugriff fuehrt nicht immer direkt zum Puckgewinn, reduziert aber haeufig Zeit, Raum oder Optionen.",
               "didactics": {
-                "explanation": "Der erste Zugriff gewinnt Zeit – der zweite Zugriff entscheidet über Kontrolle. Ohne Staffelung wird selbst ein guter erster Zugriff wirkungslos.",
+                "explanation": "Beobachte nach einem defensiven Zugriff die direkte Reaktion des Gegners: Verliert er Zeit, Raum oder Optionen? Du bewertest nicht den Gesamtverlauf der Aktion, sondern nur die unmittelbare Wirkung des ersten defensiven Drucks.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Position des zweiten Verteidigers / Forwards",
-                    "Abstände zwischen erstem und zweitem Zugriff",
-                    "Wird Raum geschlossen oder nur begleitet?"
+                    "Zeit: Gegner muss frueher entscheiden, verliert Ruhe oder verlangsamt den Angriff",
+                    "Raum: Gegner wird nach aussen gelenkt oder aus gefaehrlicher Zone gedraengt",
+                    "Optionen: Passweg schliesst sich, Anschlussaktion faellt weg, Alternativloesung noetig",
+                    "Kein klarer Effekt: Gegner kann seine Aktion ohne erkennbare Einschraenkung fortsetzen"
                   ],
                   "how_to_decide": [
-                    "Beobachte den Moment nach dem ersten Kontakt",
-                    "Achte auf Winkel und Laufwege des zweiten Spielers",
-                    "Frage dich: Entsteht echte Enge oder nur Bewegung?"
+                    "Erkenne zuerst den ersten aktiven Druckmoment",
+                    "Beobachte direkt danach nur die Reaktion des Gegners",
+                    "Waehle die staerkste erkennbare Wirkung: Zeit, Raum, Optionen oder kein klarer Effekt"
                   ],
                   "ignore": [
-                    "Ob der Puck sofort gewonnen wird",
-                    "Härte oder individuelle Duelle"
+                    "Spaeteren Puckgewinn oder Gegentor",
+                    "Gesamterfolg der kompletten Defensivaktion",
+                    "Nebensaechliche Einzelduelle ohne klaren Einfluss auf die Gegnersituation"
                   ]
                 },
-                "learning_hint": "Gute Defensive ist gestaffelt. Der zweite Zugriff entscheidet, ob aus Stören Kontrolle wird."
+                "learning_hint": "Zeit, Raum und Optionen sind eine Grundsprache der Spielanalyse. Der erste Druckmoment wird dadurch messbar und vergleichbar."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -3175,81 +3222,133 @@
                 "groups": [
                   {
                     "when": {
-                      "second_access": "geschlossen"
+                      "impact_most_frequent": "Gegner verliert Zeit"
                     },
                     "questions": [
-                      "Woran hast du die funktionierende Staffelung erkannt?",
-                      "War der zweite Zugriff im richtigen Winkel?",
-                      "Hatte der Gegner sichtbar weniger Optionen?"
+                      "An welchen Signalen hast du frueh erkannt, dass der Gegner vor allem Zeit verliert?"
                     ]
                   },
                   {
                     "when": {
-                      "second_access": "zu spät"
+                      "impact_most_frequent": "Gegner verliert Raum"
                     },
                     "questions": [
-                      "Was hat das Timing verzögert?",
-                      "War der Abstand zu groß oder der Laufweg falsch?",
-                      "Hätte früheres Antizipieren geholfen?"
+                      "Welche Bewegungen oder Winkel haben den Gegner sichtbar aus seiner bevorzugten Zone gedraengt?"
                     ]
                   },
                   {
                     "when": {
-                      "second_access": "fehlt"
+                      "impact_most_frequent": "Gegner verliert Optionen"
                     },
                     "questions": [
-                      "Warum blieb der erste Zugriff isoliert?",
-                      "War keine Staffelung vorhanden oder wurde sie ignoriert?",
-                      "Welche Rolle hätte eigentlich sichern müssen?"
+                      "Welche Option wurde dem Gegner in deinen Szenen am haeufigsten genommen?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "impact_most_frequent": "Kein klarer Effekt"
+                    },
+                    "questions": [
+                      "Was fehlte beim ersten Zugriff, damit daraus ein klarer Effekt auf Zeit, Raum oder Optionen entsteht?"
                     ]
                   }
                 ]
               },
               "config": {
+                "logs_key": "impact_observations",
+                "log_count": 3,
+                "observe_hint": "Finde drei voneinander unabhaengige Situationen und klassifiziere jeweils die direkte Wirkung des ersten defensiven Drucks.",
+                "submit_label": "Beobachtung speichern",
+                "summary_title": "Automatische Zusammenfassung",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der ein defensiver Zugriff den Gegner beeinflusst.",
+                    "hint": "Fokus: Erkennen, dass Druck eine Wirkung erzeugt."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere Situation und achte darauf, ob der Gegner Zeit, Raum oder Optionen verliert.",
+                    "hint": "Fokus: Die Art der Wirkung unterscheiden."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation und pruefe, ob dieselbe Wirkung erneut entsteht.",
+                    "hint": "Fokus: Erste Muster erkennen."
+                  }
+                ],
+                "decision": {
+                  "key": "impact_type",
+                  "label": "Welche unmittelbare Wirkung war am deutlichsten erkennbar?",
+                  "options": [
+                    "Gegner verliert Zeit",
+                    "Gegner verliert Raum",
+                    "Gegner verliert Optionen",
+                    "Kein klarer Effekt"
+                  ]
+                },
+                "reflection": {
+                  "key": "note",
+                  "label": "Optionale Notiz: Woran hast du die Wirkung erkannt?",
+                  "placeholder": "Optional: kurze Beobachtung",
+                  "max_chars": 500
+                },
+                "completion_reflection": {
+                  "key": "impact_most_frequent",
+                  "label": "Welche Wirkung hat der defensive Druck in deinen Beobachtungen am haeufigsten erzeugt?",
+                  "options": [
+                    "Gegner verliert Zeit",
+                    "Gegner verliert Raum",
+                    "Gegner verliert Optionen",
+                    "Kein klarer Effekt"
+                  ]
+                },
                 "questions": [
                   {
-                    "key": "second_access",
+                    "key": "impact_type",
                     "type": "radio",
-                    "label": "Zweiter Zugriff",
+                    "label": "Welche unmittelbare Wirkung war am deutlichsten erkennbar?",
                     "options": [
-                      "geschlossen",
-                      "zu spät",
-                      "fehlt"
+                      "Gegner verliert Zeit",
+                      "Gegner verliert Raum",
+                      "Gegner verliert Optionen",
+                      "Kein klarer Effekt"
                     ]
                   },
                   {
                     "key": "note",
                     "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "label": "Optionale Notiz: Woran hast du die Wirkung erkannt?",
+                    "max_chars": 500
                   }
                 ]
               }
             },
             {
               "id": "B3_D3",
-              "title": "Drucktiming: Kollektiv oder Chaos",
-              "drill_type": "period_checkin",
-              "description": "Erkennen, ob defensiver Druck abgestimmt erfolgt oder isoliert ins Leere läuft.",
+              "title": "Unterstützt das Team den Zugriff?",
+              "drill_type": "support_classification_observation",
+              "description": "Ein defensiver Zugriff ist selten eine Einzelaktion. Entscheidend ist, ob das Team den ersten Druck unterstützt und daraus eine gemeinsame Defensivaktion entsteht.",
               "didactics": {
-                "explanation": "Druck wirkt nur dann, wenn er abgestimmt erfolgt. Einzelner Aktionismus erzeugt Tempo für den Gegner statt Kontrolle.",
+                "explanation": "Nach D1 und D2 verschiebt sich der Fokus: Nicht nur wer den Zugriff startet und welche Wirkung entsteht, sondern ob das Team den ersten Druck gemeinsam weiterträgt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Zeitpunkt des Drucks",
-                    "Anzahl der beteiligten Spieler",
-                    "Absicherung hinter dem Druck"
+                    "Kommt nach dem ersten Zugriff sofort ein zweiter Teamimpuls?",
+                    "Wird ein Passweg geschlossen oder Raum abgesichert?",
+                    "Bleibt der erste Zugriff isoliert oder entsteht Teamdruck?"
                   ],
                   "how_to_decide": [
-                    "Beobachte den Moment des Anlaufens",
-                    "Frage dich: Wer geht mit?",
-                    "Achte darauf, ob Passoptionen gleichzeitig geschlossen werden"
+                    "Finde eine Situation mit erstem defensiven Druck",
+                    "Beobachte direkt danach die Teamreaktion",
+                    "Bewerte die Unterstützung als sofortig, verzögert oder nicht erkennbar"
                   ],
                   "ignore": [
-                    "Ob der Puck sofort verloren geht",
-                    "Einzelne erfolgreiche Tacklings"
+                    "Ob am Ende ein Puckgewinn entsteht",
+                    "Ob die Defensive insgesamt perfekt gespielt wurde",
+                    "Ob die Aktion am Ende erfolgreich abgeschlossen wird"
                   ]
                 },
-                "learning_hint": "Guter Druck ist gemeinsam getimt – nicht mutig, sondern abgestimmt."
+                "learning_hint": "Fokus bleibt eng: Es geht nur darum, ob aus individuellem Zugriff eine Teamaktion entsteht."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -3257,81 +3356,149 @@
                 "groups": [
                   {
                     "when": {
-                      "pressure_timing": "abgestimmt"
+                      "support_teamaction_frequency": "meistens"
                     },
                     "questions": [
-                      "Woran hast du die Abstimmung erkannt?",
-                      "Welche Passoptionen wurden gleichzeitig geschlossen?",
-                      "Wirkte der Gegner sichtbar eingeengt?"
+                      "Welches Muster hat in deinen Szenen am häufigsten dazu geführt, dass aus dem ersten Zugriff eine Teamaktion wurde?"
                     ]
                   },
                   {
                     "when": {
-                      "pressure_timing": "verzögert"
+                      "support_teamaction_frequency": "manchmal"
                     },
                     "questions": [
-                      "Was hat die Abstimmung verzögert?",
-                      "Kam der zweite Spieler zu spät oder zögerlich?",
-                      "War das Timing knapp oder klar verpasst?"
+                      "Was hat in den Szenen mit verzögerter Unterstützung gefehlt, damit der Zugriff sofort gemeinsam getragen wird?"
                     ]
                   },
                   {
                     "when": {
-                      "pressure_timing": "isoliert"
+                      "support_teamaction_frequency": "selten"
                     },
                     "questions": [
-                      "Warum lief der Druck ins Leere?",
-                      "Welche Absicherung fehlte?",
-                      "Hat der Druck dem Gegner sogar Zeit verschafft?"
+                      "Was war der häufigste Grund, dass der erste Zugriff isoliert blieb?"
                     ]
                   }
                 ]
               },
               "config": {
+                "logs_key": "support_observations",
+                "log_count": 3,
+                "observe_hint": "Finde eine Situation, in der ein Spieler defensiven Druck ausübt. Beobachte danach, ob das Team diesen Zugriff unterstützt.",
+                "submit_label": "Beobachtung speichern",
+                "summary_title": "Deine Beobachtungen",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der ein Spieler defensiven Druck ausübt.",
+                    "hint": "Fokus: Erkenne, ob daraus eine gemeinsame Aktion entsteht."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere Situation mit erstem defensiven Druck.",
+                    "hint": "Fokus: Achte darauf, wie schnell ein zweiter Spieler oder die Mannschaft reagiert."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation und vergleiche: Wird der erste Zugriff wieder unterstützt?",
+                    "hint": "Fokus: Erkenne erste Muster im Teamverhalten."
+                  }
+                ],
+                "decision": {
+                  "key": "supportLevel",
+                  "label": "Wird dieser Zugriff unterstützt?",
+                  "options": [
+                    "Sofortige Unterstützung",
+                    "Verzögerte Unterstützung",
+                    "Keine Unterstützung erkennbar"
+                  ]
+                },
+                "secondary_decision": {
+                  "key": "supportFunction",
+                  "label": "Welche Funktion übernimmt die Unterstützung?",
+                  "show_when_decision_in": [
+                    "Sofortige Unterstützung",
+                    "Verzögerte Unterstützung"
+                  ],
+                  "options": [
+                    "Passweg schließen",
+                    "Raum absichern",
+                    "Druck aufrechterhalten",
+                    "Gegner übernehmen"
+                  ]
+                },
+                "reflection": {
+                  "key": "note",
+                  "label": "Optionale Notiz",
+                  "placeholder": "Optional: kurze Beobachtung",
+                  "max_chars": 500
+                },
+                "completion_reflection": {
+                  "key": "support_teamaction_frequency",
+                  "label": "Wie häufig wurde aus einem ersten Zugriff eine Teamaktion?",
+                  "options": [
+                    "meistens",
+                    "manchmal",
+                    "selten"
+                  ]
+                },
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte im laufenden Spiel weiter, ob erste defensive Zugriffe regelmäßig Unterstützung durch weitere Spieler erhalten.",
                 "questions": [
                   {
-                    "key": "pressure_timing",
+                    "key": "supportLevel",
                     "type": "radio",
-                    "label": "Drucktiming",
+                    "label": "Wird dieser Zugriff unterstützt?",
                     "options": [
-                      "abgestimmt",
-                      "verzögert",
-                      "isoliert"
+                      "Sofortige Unterstützung",
+                      "Verzögerte Unterstützung",
+                      "Keine Unterstützung erkennbar"
+                    ]
+                  },
+                  {
+                    "key": "supportFunction",
+                    "type": "radio",
+                    "label": "Welche Funktion übernimmt die Unterstützung?",
+                    "options": [
+                      "Passweg schließen",
+                      "Raum absichern",
+                      "Druck aufrechterhalten",
+                      "Gegner übernehmen"
                     ]
                   },
                   {
                     "key": "note",
                     "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "label": "Optionale Notiz",
+                    "max_chars": 500
                   }
                 ]
               }
             },
             {
               "id": "B3_D4",
-              "title": "Kontrollierte Enge vs. Überaggression",
-              "drill_type": "period_checkin",
-              "description": "Unterscheide, ob defensive Enge Kontrolle erzeugt oder dem Gegner neue Optionen öffnet.",
+              "title": "Defensive Sequenz lesen",
+              "drill_type": "sequence_classification_observation",
+              "description": "Betrachte defensive Aktionen als zusammenhängende Sequenz statt als Einzelmoment. Entscheidend ist, wie sich die Struktur nach dem ersten Zugriff entwickelt.",
               "didactics": {
-                "explanation": "Enge ist kein Selbstzweck. Gute Defensive reduziert Raum, ohne Struktur aufzugeben. Überaggression öffnet genau die Räume, die man schließen will.",
+                "explanation": "Nach D1 bis D3 geht es jetzt um den zeitlichen Ablauf: Was passiert nach dem ersten Zugriff? Bleibt die defensive Struktur erhalten, verschiebt sie sich kontrolliert oder zerfällt sie?",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Abstände zwischen den verteidigenden Spielern",
-                    "Seitliche und rückwärtige Absicherung",
-                    "Reaktion auf kleine Richtungswechsel des Gegners"
+                    "Wie reagiert das Team nach dem ersten defensiven Zugriff?",
+                    "Bleibt die Struktur über mehrere Folgeaktionen stabil?",
+                    "Entstehen neue Lücken oder bleibt die Kontrolle erhalten?"
                   ],
                   "how_to_decide": [
-                    "Beobachte die Teamform, nicht den einzelnen Zweikampf",
-                    "Frage dich: Bleibt die Struktur stabil?",
-                    "Achte darauf, ob Pässe durch Enge verhindert oder provoziert werden"
+                    "Finde eine defensive Sequenz, die nach dem ersten Zugriff weiterläuft",
+                    "Klassifiziere den Verlauf der Sequenz",
+                    "Bestimme den entscheidenden Moment für Stabilität oder Strukturverlust"
                   ],
                   "ignore": [
-                    "Härte der Zweikämpfe",
-                    "Kurzfristige Puckgewinne ohne Absicherung"
+                    "Einfache Bewertung als gut oder schlecht",
+                    "Puckgewinn als alleiniges Kriterium",
+                    "Tor verhindert oder nicht verhindert als Hauptmaß"
                   ]
                 },
-                "learning_hint": "Gute Enge nimmt Optionen. Schlechte Enge schenkt Durchbrüche."
+                "learning_hint": "Der Drill bewertet den Ablauf der Sequenz: Wie entwickelt sich die Defensive nach dem ersten Zugriff?"
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -3339,81 +3506,161 @@
                 "groups": [
                   {
                     "when": {
-                      "defensive_compactness": "kontrolliert"
+                      "sequence_stability_reason": "gute Unterstützung"
                     },
                     "questions": [
-                      "Woran hast du die Stabilität der Enge erkannt?",
-                      "Welche Optionen wurden dem Gegner sichtbar genommen?",
-                      "Blieb die Staffelung auch nach Richtungswechsel stabil?"
+                      "Welche Form von Unterstützung hat die defensive Sequenz in deinen Beobachtungen am häufigsten stabilisiert?"
                     ]
                   },
                   {
                     "when": {
-                      "defensive_compactness": "grenzwertig"
+                      "sequence_stability_reason": "Raumkontrolle"
                     },
                     "questions": [
-                      "Wo wurde es knapp zwischen Druck und Risiko?",
-                      "Welche Zone war kurz offen?",
-                      "Hätte ein kleiner Abstand mehr Kontrolle gebracht?"
+                      "An welchen Momenten war Raumkontrolle der entscheidende Faktor für stabile Sequenzen?"
                     ]
                   },
                   {
                     "when": {
-                      "defensive_compactness": "ueberaggressiv"
+                      "sequence_stability_reason": "Gegner wurde früh gestoppt"
                     },
                     "questions": [
-                      "Welche Räume wurden durch die Aggression geöffnet?",
-                      "Wer musste kompensieren?",
-                      "Warum kippte Kontrolle in Chaos?"
+                      "Wodurch konnte der Gegner in stabilen Sequenzen früh gestoppt werden?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "sequence_stability_reason": "kein klares Muster"
+                    },
+                    "questions": [
+                      "Welche zusätzliche Beobachtung würdest du im nächsten Abschnitt priorisieren, um ein klareres Sequenzmuster zu erkennen?"
                     ]
                   }
                 ]
               },
               "config": {
+                "logs_key": "sequence_observations",
+                "log_count": 3,
+                "observe_hint": "Finde eine defensive Sequenz, die nach dem ersten Zugriff weiterläuft. Beobachte, ob das Team die Kontrolle behält oder ob die Struktur verloren geht.",
+                "submit_label": "Beobachtung speichern",
+                "summary_title": "Deine Beobachtungen",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine defensive Sequenz, die nach dem ersten Zugriff weiterläuft.",
+                    "hint": "Fokus: Beobachte nicht nur den ersten Druck, sondern die gesamte Reaktion."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere defensive Sequenz und achte darauf, ob die Mannschaft organisiert bleibt.",
+                    "hint": "Fokus: Erkenne stabile und instabile Verläufe."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Sequenz und vergleiche: Was entscheidet darüber, ob die Defensive stabil bleibt?",
+                    "hint": "Fokus: Erste Muster erkennen."
+                  }
+                ],
+                "decision": {
+                  "key": "sequenceOutcome",
+                  "label": "Wie entwickelt sich die defensive Sequenz?",
+                  "options": [
+                    "Struktur bleibt erhalten",
+                    "Struktur verschiebt sich kontrolliert",
+                    "Struktur bricht auseinander",
+                    "Unklar"
+                  ]
+                },
+                "secondary_decision": {
+                  "key": "decisiveMoment",
+                  "label": "Was war der entscheidende Moment?",
+                  "show_when_decision_in": [
+                    "Struktur bleibt erhalten",
+                    "Struktur verschiebt sich kontrolliert",
+                    "Struktur bricht auseinander"
+                  ],
+                  "options": [
+                    "Unterstützung kam rechtzeitig",
+                    "Raum wurde kontrolliert",
+                    "Gegner löst den Druck",
+                    "Strukturverlust entsteht"
+                  ]
+                },
+                "reflection": {
+                  "key": "note",
+                  "label": "Optionale Notiz",
+                  "placeholder": "Optional: kurze Beobachtung",
+                  "max_chars": 500
+                },
+                "completion_reflection": {
+                  "key": "sequence_stability_reason",
+                  "label": "Was war heute der häufigste Grund für stabile Defensive?",
+                  "options": [
+                    "gute Unterstützung",
+                    "Raumkontrolle",
+                    "Gegner wurde früh gestoppt",
+                    "kein klares Muster"
+                  ]
+                },
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte weiter defensive Sequenzen und achte darauf, welcher Moment über Stabilität oder Strukturverlust entscheidet.",
                 "questions": [
                   {
-                    "key": "defensive_compactness",
+                    "key": "sequenceOutcome",
                     "type": "radio",
-                    "label": "Defensive Enge",
+                    "label": "Wie entwickelt sich die defensive Sequenz?",
                     "options": [
-                      "kontrolliert",
-                      "grenzwertig",
-                      "ueberaggressiv"
+                      "Struktur bleibt erhalten",
+                      "Struktur verschiebt sich kontrolliert",
+                      "Struktur bricht auseinander",
+                      "Unklar"
+                    ]
+                  },
+                  {
+                    "key": "decisiveMoment",
+                    "type": "radio",
+                    "label": "Was war der entscheidende Moment?",
+                    "options": [
+                      "Unterstützung kam rechtzeitig",
+                      "Raum wurde kontrolliert",
+                      "Gegner löst den Druck",
+                      "Strukturverlust entsteht"
                     ]
                   },
                   {
                     "key": "note",
                     "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "label": "Optionale Notiz",
+                    "max_chars": 500
                   }
                 ]
               }
             },
             {
               "id": "B3_D5",
-              "title": "Defensive Sequenzen lesen (1.–2.–3. Aktion)",
-              "drill_type": "period_checkin",
-              "description": "Verstehe Defensive als Abfolge von Aktionen – nicht als Einzelmoment.",
+              "title": "Defensive Identität erkennen",
+              "drill_type": "pattern_reflection_observation",
+              "description": "Leite aus mehreren beobachteten Situationen ein übergeordnetes defensives Muster ab. Der Fokus liegt auf wiederkehrenden Prinzipien, nicht auf der Bewertung einzelner Aktionen.",
               "didactics": {
-                "explanation": "Gute Defensive besteht selten aus einer Aktion. Entscheidend ist, ob erste, zweite und dritte Aktion logisch aufeinander aufbauen.",
+                "explanation": "D5 führt die vorherigen Ebenen zusammen: Wer setzt Zugriff, welche Wirkung entsteht, wird der Zugriff unterstützt und bleibt die Sequenz stabil? Daraus ergibt sich die defensive Identität des Teams.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Was ist die erste defensive Aktion?",
-                    "Wie reagiert das Team auf die nächste gegnerische Entscheidung?",
-                    "Gibt es eine dritte, absichernde Aktion?"
+                    "Wie erzeugt das Team Druck auf den Gegner?",
+                    "Wie werden Räume und Zentrum kontrolliert?",
+                    "Wie reagiert die Mannschaft auf gegnerische Anschlussaktionen?"
                   ],
                   "how_to_decide": [
-                    "Beobachte Sequenzen statt Einzelaktionen",
-                    "Zähle gedanklich: 1 – 2 – 3",
-                    "Frage dich: Bleibt Kontrolle über mehrere Momente bestehen?"
+                    "Beobachte mehrere defensive Situationen",
+                    "Suche wiederkehrende Prinzipien statt Einzelmomente",
+                    "Wähle die Identität, die das Gesamtbild am besten beschreibt"
                   ],
                   "ignore": [
-                    "Ob der Puck sofort gewonnen wird",
-                    "Einzelne gute Zweikämpfe ohne Folgeaktion"
+                    "Einfache Bewertung als gute oder schlechte Defensive",
+                    "Ergebnis einzelner Aktionen",
+                    "Gewinner oder Verlierer als Schlussfolgerung"
                   ]
                 },
-                "learning_hint": "Defensive Qualität zeigt sich in der Anschlussaktion – nicht im ersten Kontakt."
+                "learning_hint": "Der Drill ist eine Synthese: Beobachten, Muster wählen, Einschätzung begründen."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -3421,55 +3668,170 @@
                 "groups": [
                   {
                     "when": {
-                      "sequence_quality": "stabil"
+                      "patternIdentity": "aggressive_pressure"
                     },
                     "questions": [
-                      "Welche Aktionen griffen sauber ineinander?",
-                      "Wer sicherte die erste Aktion ab?",
-                      "Wirkte das Verhalten abgestimmt oder automatisch?"
+                      "Welche Beobachtungen zeigen am klarsten, dass das Team über frühen aktiven Zugriff verteidigt?"
                     ]
                   },
                   {
                     "when": {
-                      "sequence_quality": "bruchstueckhaft"
+                      "patternIdentity": "controlled_guiding"
                     },
                     "questions": [
-                      "Wo brach die Kette ab?",
-                      "Kam die zweite oder dritte Aktion zu spät?",
-                      "Lag es an Timing oder Positionierung?"
+                      "Woran erkennst du, dass das Team den Gegner bewusst lenkt statt permanent zu attackieren?"
                     ]
                   },
                   {
                     "when": {
-                      "sequence_quality": "chaotisch"
+                      "patternIdentity": "compact_structure"
                     },
                     "questions": [
-                      "Warum fehlte eine klare Abfolge?",
-                      "Welche Aktion war isoliert?",
-                      "Was hätte Struktur herstellen können?"
+                      "Welche Merkmale zeigen dir eine kompakte Raumverteidigung mit stabilen Abständen?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "patternIdentity": "reactive_defense"
+                    },
+                    "questions": [
+                      "Woran siehst du, dass das Team eher reagiert als aktiv den ersten Impuls setzt?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "patternIdentity": "unclear"
+                    },
+                    "questions": [
+                      "Welche zusätzliche Beobachtung würdest du priorisieren, um beim nächsten Abschnitt eine klarere Identität zu erkennen?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "sequence_quality",
-                    "type": "radio",
-                    "label": "Defensive Sequenz",
-                    "options": [
-                      "stabil",
-                      "bruchstueckhaft",
-                      "chaotisch"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
-                  }
-                ]
+                "observation_phase": {
+                  "title": "Beobachtungsphase",
+                  "text": "Beobachte mehrere defensive Situationen und suche wiederkehrende Muster.",
+                  "hint": "Achte darauf, wie das Team Druck erzeugt, Räume kontrolliert und auf gegnerische Aktionen reagiert."
+                },
+                "analysis_phase": {
+                  "title": "Defensive Identität",
+                  "text": "Welche Beschreibung passt am besten zu diesem Team?"
+                },
+                "reflection_phase": {
+                  "title": "Warum?",
+                  "text": "Welche Beobachtungen unterstützen deine Einschätzung?"
+                },
+                "identity": {
+                  "key": "patternIdentity",
+                  "label": "Welche defensive Identität beschreibt das Team am besten?",
+                  "options": [
+                    {
+                      "value": "aggressive_pressure",
+                      "label": "Aggressiver Zugriff",
+                      "description": "Das Team nimmt früh Einfluss und setzt den Gegner aktiv unter Druck.",
+                      "markers": [
+                        "früher Druck",
+                        "wenig Zeit für den Gegner",
+                        "viele aktive Zugriffsmomente"
+                      ]
+                    },
+                    {
+                      "value": "controlled_guiding",
+                      "label": "Kontrolliertes Lenken",
+                      "description": "Das Team steuert den Gegner gezielt in bestimmte Räume und wartet auf Fehler.",
+                      "markers": [
+                        "Zentrum wird geschützt",
+                        "Gegner wird nach außen geleitet",
+                        "geduldige Verteidigung"
+                      ]
+                    },
+                    {
+                      "value": "compact_structure",
+                      "label": "Kompakte Raumverteidigung",
+                      "description": "Das Team priorisiert enge Abstände und kontrolliert gefährliche Räume.",
+                      "markers": [
+                        "wenig Raum zwischen Spielern",
+                        "Passwege werden geschlossen",
+                        "Gegner muss schwierige Lösungen finden"
+                      ]
+                    },
+                    {
+                      "value": "reactive_defense",
+                      "label": "Reaktive Defensive",
+                      "description": "Das Team reagiert stärker auf gegnerische Aktionen und priorisiert Absicherung.",
+                      "markers": [
+                        "weniger aktiver Druck",
+                        "Fokus auf Struktur",
+                        "Gegner wird aufgenommen"
+                      ]
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Kein klares Muster erkennbar",
+                      "description": "Die Beobachtungen reichen nicht für eine eindeutige defensive Identität.",
+                      "markers": []
+                    }
+                  ]
+                },
+                "supporting_observations": {
+                  "key": "supportingObservations",
+                  "label": "Welche Beobachtung unterstützt deine Einschätzung?",
+                  "options": [
+                    {
+                      "value": "early_pressure",
+                      "label": "Früher erster Druck"
+                    },
+                    {
+                      "value": "outside_guiding",
+                      "label": "Gegner wurde häufig nach außen gelenkt"
+                    },
+                    {
+                      "value": "center_protection",
+                      "label": "Zentrum blieb geschützt"
+                    },
+                    {
+                      "value": "consistent_support",
+                      "label": "Unterstützung kam regelmäßig"
+                    },
+                    {
+                      "value": "patient_defense",
+                      "label": "Defensive blieb geduldig"
+                    },
+                    {
+                      "value": "no_clear_pattern",
+                      "label": "Kein klares Muster"
+                    }
+                  ]
+                },
+                "changed_during_observation": {
+                  "key": "changedDuringObservation",
+                  "label": "Hat sich deine Einschätzung während der Beobachtung verändert?",
+                  "options": [
+                    {
+                      "value": "yes",
+                      "label": "ja"
+                    },
+                    {
+                      "value": "no",
+                      "label": "nein"
+                    },
+                    {
+                      "value": "partially",
+                      "label": "teilweise"
+                    }
+                  ]
+                },
+                "note": {
+                  "key": "note",
+                  "label": "Optionale Notiz",
+                  "placeholder": "Optional: kurze Beobachtung",
+                  "max_chars": 500
+                },
+                "summary_title": "Deine Einschätzung",
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte weiter, ob die defensive Identität über verschiedene Spielsituationen konstant bleibt oder sich anpasst.",
+                "created_at_key": "createdAt"
               }
             }
           ]
