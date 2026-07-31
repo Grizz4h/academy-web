@@ -291,6 +291,10 @@ function computeSampleAggregation(samples: any[] = [], fields: any[] = [], check
 
 export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRendererV2Props) {
 	switch (drill.drill_type) {
+		case "clickable_rink_observation":
+			return <ClickableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "observation_log_drill":
+			return <ObservationLogDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "period_checkin":
 			if (drill?.config?.mode === "pressure_diagnosis" || drill?.config?.mode === "solution_type_diagnosis" || drill?.config?.mode === "decision_cause_diagnosis" || drill?.config?.mode === "transition_followup_assessment") {
 				return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
@@ -313,6 +317,661 @@ export default function DrillRendererV2({ drill, answers, setAnswers }: DrillRen
 		default:
 			return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
 	}
+}
+
+function ClickableRinkObservationDrill({ drill, answers, setAnswers }: any) {
+	const safeAnswers = answers || {};
+	const config = drill?.config || {};
+
+	const observationCount = Number(config?.observation_count || 3);
+	const observationsKey = config?.observations_key || "observations";
+	const reflectionConfig = config?.completion_reflection || {};
+	const reflectionKey = reflectionConfig?.key || "final_reflection";
+	const reflectionOptions = Array.isArray(reflectionConfig?.options) ? reflectionConfig.options : ["ja", "nein", "kein klares Muster"];
+
+	const initiatorKey = config?.initiator_key || "initiatorPosition";
+	const locationKey = config?.location_key || "accessLocation";
+	const noteKey = config?.note_key || "note";
+	const observationIndexKey = config?.observation_index_key || "observationIndex";
+	const createdAtKey = config?.created_at_key || "createdAt";
+
+	const missions = Array.isArray(config?.missions) ? config.missions : [];
+	const positionMarkers = Array.isArray(config?.position_markers) && config.position_markers.length > 0
+		? config.position_markers
+		: [
+			{ value: "LW", label: "LW", x: 0.2, y: 0.28 },
+			{ value: "C", label: "C", x: 0.42, y: 0.46 },
+			{ value: "RW", label: "RW", x: 0.64, y: 0.28 },
+			{ value: "LD", label: "LD", x: 0.34, y: 0.72 },
+			{ value: "RD", label: "RD", x: 0.56, y: 0.72 },
+		];
+	const unclearValue = config?.unclear_value || "unclear";
+	const unclearLabel = config?.unclear_label || "nicht klar erkennbar";
+
+	const selectionLabel = config?.selection_label || "Spielerposition wählen";
+	const locationLabel = config?.location_label || "Ort des Zugriffs markieren";
+	const observeHint = config?.observe_hint || "Sobald du eine passende Situation entdeckt hast, erfasse deine Beobachtung.";
+	const noteLabel = config?.note_label || "Woran hast du erkannt, dass hier der defensive Druck beginnt?";
+	const notePlaceholder = config?.note_placeholder || "Optional";
+	const noteMaxChars = Number(config?.note_max_chars || 220);
+	const saveButtonLabel = config?.save_button_label || "Beobachtung speichern";
+	const savedFeedbackTemplate = config?.saved_feedback_template || "Beobachtung {index} gespeichert";
+
+	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const activeFocusText = config?.active_focus_text || "Halte weiterhin Ausschau nach erstem defensivem Druck und markiere interessante Szenen im Live-Spiel.";
+
+	const observations = Array.isArray(safeAnswers[observationsKey]) ? safeAnswers[observationsKey] : [];
+	const currentIndex = observations.length;
+	const isComplete = observations.length >= observationCount;
+	const progressPct = observationCount > 0 ? Math.round((observations.length / observationCount) * 100) : 0;
+
+	const currentMission = missions[currentIndex] || {
+		title: `Mission ${currentIndex + 1} von ${observationCount}`,
+		prompt: "Finde eine passende Situation mit erstem defensivem Druck.",
+		hint: "Wähle die Position und markiere den Zugriffsort.",
+	};
+
+	const draft = safeAnswers.__clickable_rink_observation_draft || {};
+	const selectedPosition = draft[initiatorKey] || "";
+	const selectedLocation = draft[locationKey] || null;
+	const draftNote = draft[noteKey] || "";
+	const canSave = !!selectedPosition && !!selectedLocation;
+
+	const [flashMessage, setFlashMessage] = useState<string>("");
+
+	const clamp = (value: number) => Math.max(0, Math.min(1, value));
+
+	const updateDraft = (nextDraft: any) => {
+		setAnswers({
+			...safeAnswers,
+			__clickable_rink_observation_draft: {
+				...draft,
+				...nextDraft,
+			},
+		});
+	};
+
+	const clearDraft = () => {
+		setAnswers({
+			...safeAnswers,
+			__clickable_rink_observation_draft: {
+				[initiatorKey]: "",
+				[locationKey]: null,
+				[noteKey]: "",
+			},
+		});
+	};
+
+	const onRinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		const rect = event.currentTarget.getBoundingClientRect();
+		const x = clamp((event.clientX - rect.left) / rect.width);
+		const y = clamp((event.clientY - rect.top) / rect.height);
+		updateDraft({ [locationKey]: { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) } });
+	};
+
+	const onSaveObservation = () => {
+		if (!canSave || isComplete) return;
+
+		const nextObservation = {
+			[initiatorKey]: selectedPosition,
+			[locationKey]: selectedLocation,
+			[noteKey]: draftNote.trim() || undefined,
+			[observationIndexKey]: currentIndex + 1,
+			[createdAtKey]: new Date().toISOString(),
+		};
+
+		setAnswers({
+			...safeAnswers,
+			[observationsKey]: [...observations, nextObservation],
+			__clickable_rink_observation_draft: {
+				[initiatorKey]: "",
+				[locationKey]: null,
+				[noteKey]: "",
+			},
+		});
+
+		setFlashMessage(savedFeedbackTemplate.replace("{index}", String(currentIndex + 1)));
+		window.setTimeout(() => setFlashMessage(""), 1200);
+	};
+
+	const removeObservation = (index: number) => {
+		const next = observations.filter((_: any, idx: number) => idx !== index);
+		setAnswers({
+			...safeAnswers,
+			[observationsKey]: next,
+		});
+	};
+
+	const reflectionValue = safeAnswers[reflectionKey] || "";
+	const positionCounts = observations.reduce((acc: Record<string, number>, entry: any) => {
+		const key = entry?.[initiatorKey] || unclearValue;
+		acc[key] = (acc[key] || 0) + 1;
+		return acc;
+	}, {});
+
+	const findMarkerLabel = (value: string) => {
+		if (value === unclearValue) return unclearLabel;
+		const found = positionMarkers.find((marker: any) => marker.value === value);
+		return found?.label || value;
+	};
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word", marginBottom: "0.45rem" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.93rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "0.65rem" }}>
+					{drill.description}
+				</p>
+			)}
+
+			<details style={{ marginBottom: "0.7rem" }}>
+				<summary style={{ cursor: "pointer", color: "#8fd3df", fontWeight: 600 }}>Didaktischer Fokus</summary>
+				<p style={{ marginTop: "0.45rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.45 }}>
+					{drill?.didactics?.explanation || "Defensiver Druck beginnt, sobald ein Spieler den Gegner aktiv zwingt, Zeit, Raum, Laufweg oder eine Option anzupassen."}
+				</p>
+			</details>
+
+			{!isComplete && (
+				<section style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+					<div style={{ marginBottom: "0.45rem", padding: "0.5rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(153,246,228,0.4)", background: "rgba(20,184,166,0.12)" }}>
+						<p style={{ margin: 0, color: "#99f6e4", fontWeight: 700 }}>🎯 Mission {currentIndex + 1} von {observationCount}</p>
+						<p style={{ margin: "0.18rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.32 }}>{currentMission?.prompt}</p>
+						{currentMission?.hint && <p style={{ margin: "0.24rem 0 0", color: "rgba(255,255,255,0.74)", fontSize: "0.84rem" }}>{currentMission.hint}</p>}
+					</div>
+
+					<div style={{ marginBottom: "0.55rem" }}>
+						<div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.76rem", color: "rgba(255,255,255,0.62)", marginBottom: "0.2rem" }}>
+							<span>Fortschritt</span>
+							<span>{observations.length}/{observationCount}</span>
+						</div>
+						<div style={{ height: "5px", width: "100%", borderRadius: "999px", background: "rgba(255,255,255,0.12)", overflow: "hidden" }}>
+							<div style={{ height: "100%", width: `${progressPct}%`, background: "linear-gradient(90deg, #2dd4bf 0%, #14b8a6 100%)" }} />
+						</div>
+					</div>
+
+					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{observeHint}</p>
+
+					<div style={{ marginBottom: "0.45rem" }}>
+						<label style={{ display: "block", marginBottom: "0.22rem", fontWeight: 600 }}>{selectionLabel}</label>
+						<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>{locationLabel}</p>
+					</div>
+
+					<div
+						onClick={onRinkClick}
+						style={{
+							position: "relative",
+							width: "100%",
+							maxWidth: "660px",
+							aspectRatio: "11 / 7",
+							borderRadius: "10px",
+							border: "1px solid rgba(81,145,162,0.45)",
+							overflow: "hidden",
+							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
+							marginBottom: "0.55rem",
+							cursor: "crosshair",
+						}}
+					>
+						<svg viewBox="0 0 1100 700" role="img" aria-label="Klickbare Eisflaeche" style={{ width: "100%", height: "100%", display: "block" }}>
+							<rect x="28" y="28" width="1044" height="644" rx="78" ry="78" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
+							<line x1="550" y1="34" x2="550" y2="666" stroke="rgba(255,120,120,0.65)" strokeWidth="4" />
+							<line x1="320" y1="34" x2="320" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+							<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+							<circle cx="550" cy="350" r="74" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+						</svg>
+
+						{positionMarkers.map((marker: any) => {
+							const active = selectedPosition === marker.value;
+							return (
+								<button
+									key={marker.value}
+									type="button"
+									onClick={(e) => {
+										e.stopPropagation();
+										updateDraft({ [initiatorKey]: marker.value });
+									}}
+									style={{
+										position: "absolute",
+										left: `${Number(marker.x) * 100}%`,
+										top: `${Number(marker.y) * 100}%`,
+										transform: "translate(-50%, -50%)",
+										minWidth: "42px",
+										height: "42px",
+										padding: "0 0.55rem",
+										borderRadius: "999px",
+										border: active ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.45)",
+										background: active ? "rgba(20,184,166,0.88)" : "rgba(13,29,46,0.84)",
+										color: "#f7f7ff",
+										fontWeight: 700,
+										fontSize: "0.82rem",
+										cursor: "pointer",
+									}}
+								>
+									{marker.label}
+								</button>
+							);
+						})}
+
+						{selectedLocation && (
+							<div
+								style={{
+									position: "absolute",
+									left: `${selectedLocation.x * 100}%`,
+									top: `${selectedLocation.y * 100}%`,
+									transform: "translate(-50%, -50%)",
+									width: "20px",
+									height: "20px",
+									borderRadius: "999px",
+									border: "2px solid rgba(255,255,255,0.95)",
+									background: "rgba(239,68,68,0.95)",
+									boxShadow: "0 0 0 3px rgba(239,68,68,0.25)",
+									pointerEvents: "none",
+								}}
+							/>
+						)}
+					</div>
+
+					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.5rem" }}>
+						<button
+							type="button"
+							onClick={() => updateDraft({ [initiatorKey]: unclearValue })}
+							style={{
+								padding: "0.28rem 0.55rem",
+								borderRadius: "999px",
+								border: selectedPosition === unclearValue ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+								background: selectedPosition === unclearValue ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
+								color: "#f7f7ff",
+								fontSize: "0.82rem",
+								cursor: "pointer",
+							}}
+						>
+							{unclearLabel}
+						</button>
+						<button
+							type="button"
+							onClick={clearDraft}
+							style={{
+								padding: "0.28rem 0.55rem",
+								borderRadius: "999px",
+								border: "1px solid rgba(255,255,255,0.25)",
+								background: "transparent",
+								color: "rgba(255,255,255,0.82)",
+								fontSize: "0.82rem",
+								cursor: "pointer",
+							}}
+						>
+							Zurücksetzen
+						</button>
+					</div>
+
+					<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+						<div>Gewählte Position: <strong>{selectedPosition ? findMarkerLabel(selectedPosition) : "noch nicht gewählt"}</strong></div>
+						<div>Zugriffsort: <strong>{selectedLocation ? `${Math.round(selectedLocation.x * 100)}% / ${Math.round(selectedLocation.y * 100)}%` : "noch nicht markiert"}</strong></div>
+					</div>
+
+					{canSave && (
+						<details style={{ marginBottom: "0.45rem" }} open={!!draftNote}>
+							<summary style={{ cursor: "pointer", fontSize: "0.82rem", color: "#8fd3df" }}>Optionale Notiz</summary>
+							<textarea
+								value={draftNote}
+								onChange={(e) => updateDraft({ [noteKey]: e.target.value })}
+								maxLength={noteMaxChars}
+								placeholder={notePlaceholder}
+								aria-label={noteLabel}
+								style={{
+									width: "100%",
+									minHeight: "56px",
+									marginTop: "0.35rem",
+									padding: "0.45rem",
+									backgroundColor: "#050712",
+									color: "#f7f7ff",
+									border: "1px solid rgba(81,145,162,0.5)",
+									borderRadius: "4px",
+									fontFamily: "inherit",
+									fontSize: "0.9rem",
+								}}
+							/>
+						</details>
+					)}
+
+					<button
+						type="button"
+						onClick={onSaveObservation}
+						disabled={!canSave}
+						style={{
+							padding: "0.5rem 0.85rem",
+							background: canSave ? "rgba(81,145,162,0.36)" : "rgba(81,145,162,0.14)",
+							border: "1px solid rgba(81,145,162,0.62)",
+							borderRadius: "4px",
+							color: "#f7f7ff",
+							fontWeight: 600,
+							fontSize: "0.9rem",
+							cursor: canSave ? "pointer" : "not-allowed",
+						}}
+					>
+						{saveButtonLabel}
+					</button>
+
+					{flashMessage && (
+						<p style={{ margin: "0.45rem 0 0", color: "#99f6e4", fontSize: "0.84rem" }}>{flashMessage}</p>
+					)}
+				</section>
+			)}
+
+			<section style={{ marginBottom: "0.4rem", padding: "0.8rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", marginBottom: "0.55rem" }}>
+					<h4 style={{ margin: 0 }}>Erfasste Beobachtungen</h4>
+					<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>{observations.length}/{observationCount}</span>
+				</div>
+
+				<div style={{ display: "grid", gap: "0.4rem" }}>
+					{observations.map((entry: any, idx: number) => (
+						<div key={idx} style={{ padding: "0.5rem 0.62rem", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", background: "rgba(255,255,255,0.03)" }}>
+							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.55rem" }}>
+								<strong>Beobachtung {idx + 1}</strong>
+								<button
+									type="button"
+									onClick={() => removeObservation(idx)}
+									style={{ padding: "0.14rem 0.45rem", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "#f7f7ff", fontSize: "0.82rem", cursor: "pointer" }}
+								>
+									Entfernen
+								</button>
+							</div>
+							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
+								{findMarkerLabel(entry?.[initiatorKey])} | {entry?.[locationKey] ? `${Math.round(entry[locationKey].x * 100)}% / ${Math.round(entry[locationKey].y * 100)}%` : "kein Ort"}
+							</div>
+						</div>
+					))}
+				</div>
+
+				{isComplete && (
+					<div style={{ marginTop: "0.7rem" }}>
+						<p style={{ margin: "0 0 0.45rem", color: "rgba(153,246,228,0.96)", fontWeight: 600 }}>
+							Du hast drei Situationen mit erstem defensivem Druck beobachtet.
+						</p>
+						<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
+							{reflectionConfig?.label || "Kam der erste Druck meistens von derselben Spielerposition?"}
+						</label>
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", marginBottom: "0.55rem" }}>
+							{reflectionOptions.map((opt: string) => (
+								<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.42rem", fontSize: "0.88rem" }}>
+									<input
+										type="radio"
+										name="clickable_rink_reflection"
+										value={opt}
+										checked={reflectionValue === opt}
+										onChange={(e) => setAnswers({ ...safeAnswers, [reflectionKey]: e.target.value })}
+									/>
+									<span>{opt}</span>
+								</label>
+							))}
+						</div>
+
+						<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.35 }}>
+							<strong>Positionen:</strong> {Object.entries(positionCounts).map(([key, count]) => `${findMarkerLabel(key)} (${count})`).join(", ") || "keine"}
+						</div>
+
+						<div style={{ position: "relative", width: "100%", maxWidth: "640px", aspectRatio: "11 / 7", borderRadius: "10px", border: "1px solid rgba(81,145,162,0.38)", overflow: "hidden", background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)", marginBottom: "0.55rem" }}>
+							<svg viewBox="0 0 1100 700" role="img" aria-label="Rink Uebersicht" style={{ width: "100%", height: "100%", display: "block" }}>
+								<rect x="28" y="28" width="1044" height="644" rx="78" ry="78" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
+								<line x1="550" y1="34" x2="550" y2="666" stroke="rgba(255,120,120,0.65)" strokeWidth="4" />
+								<line x1="320" y1="34" x2="320" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+								<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+							</svg>
+							{observations.map((entry: any, idx: number) => {
+								const loc = entry?.[locationKey];
+								if (!loc) return null;
+								return (
+									<div
+										key={`pt-${idx}`}
+										style={{
+											position: "absolute",
+											left: `${loc.x * 100}%`,
+											top: `${loc.y * 100}%`,
+											transform: "translate(-50%, -50%)",
+											width: "16px",
+											height: "16px",
+											borderRadius: "999px",
+											border: "2px solid rgba(255,255,255,0.94)",
+											background: "rgba(239,68,68,0.92)",
+											boxShadow: "0 0 0 2px rgba(239,68,68,0.24)",
+										}}
+									/>
+								);
+							})}
+						</div>
+
+						{reflectionValue && (
+							<section style={{ marginTop: "0.45rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
+								<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
+								<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>
+							</section>
+						)}
+					</div>
+				)}
+			</section>
+
+			{drill.didactics?.learning_hint && (
+				<p style={{ marginTop: "0.68rem", marginBottom: 0, fontSize: "0.85rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
+					{drill.didactics.learning_hint}
+				</p>
+			)}
+		</div>
+	);
+}
+
+function ObservationLogDrill({ drill, answers, setAnswers }: any) {
+	const safeAnswers = answers || {};
+	const config = drill?.config || {};
+	const logsKey = config?.logs_key || "logs";
+	const targetCount = Number(config?.log_count || 3);
+	const logs = Array.isArray(safeAnswers[logsKey]) ? safeAnswers[logsKey] : [];
+	const missions = Array.isArray(config?.missions) ? config.missions : [];
+	const observeHint = config?.observe_hint || "Sobald du eine passende Situation entdeckt hast, erfasse deine Beobachtung.";
+
+	const decisionConfig = config?.decision || {};
+	const decisionKey = decisionConfig?.key || "decision";
+	const decisionLabel = decisionConfig?.label || "Wer setzt den ersten defensiven Impuls?";
+	const decisionOptions = Array.isArray(decisionConfig?.options) ? decisionConfig.options : [];
+
+	const reflectionConfig = config?.reflection || {};
+	const reflectionKey = reflectionConfig?.key || "reflection";
+	const reflectionLabel = reflectionConfig?.label || "Woran hast du erkannt, dass genau hier die Defensivaktion beginnt?";
+	const reflectionPlaceholder = reflectionConfig?.placeholder || "Optional: kurze Reflexion";
+	const reflectionMaxChars = Number(reflectionConfig?.max_chars || 500);
+
+	const currentIndex = logs.length;
+	const currentMission = missions[currentIndex] || {
+		title: `Mission ${currentIndex + 1}`,
+		prompt: "Finde eine passende Beobachtungssituation.",
+	};
+
+	const draftDecision = safeAnswers.__observation_log_draft_decision || "";
+	const draftReflection = safeAnswers.__observation_log_draft_reflection || "";
+	const isComplete = logs.length >= targetCount;
+	const progressPercent = targetCount > 0 ? Math.min(100, Math.round((logs.length / targetCount) * 100)) : 0;
+
+	const updateDraft = (next: any) => {
+		setAnswers({
+			...safeAnswers,
+			...next,
+		});
+	};
+
+	const addLog = () => {
+		if (!draftDecision || isComplete) return;
+		const nextLog = {
+			mission_index: currentIndex + 1,
+			mission_title: currentMission?.title || `Mission ${currentIndex + 1}`,
+			mission_prompt: currentMission?.prompt || "",
+			[decisionKey]: draftDecision,
+			[reflectionKey]: draftReflection.trim(),
+		};
+
+		setAnswers({
+			...safeAnswers,
+			[logsKey]: [...logs, nextLog],
+			__observation_log_draft_decision: "",
+			__observation_log_draft_reflection: "",
+		});
+	};
+
+	const removeLog = (index: number) => {
+		const nextLogs = logs.filter((_: any, idx: number) => idx !== index);
+		setAnswers({
+			...safeAnswers,
+			[logsKey]: nextLogs,
+		});
+	};
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "0.75rem" }}>
+					{drill.description}
+				</p>
+			)}
+			<ObservationGuide drill={drill} />
+
+			{!isComplete && (
+				<section style={{ marginBottom: "0.75rem", padding: "0.85rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+					<div style={{ marginBottom: "0.5rem", padding: "0.5rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(153,246,228,0.4)", background: "rgba(20,184,166,0.12)" }}>
+						<p style={{ margin: 0, color: "#99f6e4", fontWeight: 700 }}>🎯 Mission {currentIndex + 1} von {targetCount}</p>
+						{currentMission?.prompt && (
+							<p style={{ margin: "0.2rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.35 }}>{currentMission.prompt}</p>
+						)}
+					</div>
+					<div style={{ marginBottom: "0.55rem" }}>
+						<div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "rgba(255,255,255,0.62)", marginBottom: "0.2rem" }}>
+							<span>Fortschritt</span>
+							<span>{logs.length}/{targetCount}</span>
+						</div>
+						<div style={{ height: "5px", width: "100%", borderRadius: "999px", background: "rgba(255,255,255,0.12)", overflow: "hidden" }}>
+							<div style={{ height: "100%", width: `${progressPercent}%`, background: "linear-gradient(90deg, #2dd4bf 0%, #14b8a6 100%)" }} />
+						</div>
+					</div>
+					{currentMission?.prompt && (
+						<p style={{ marginTop: 0, marginBottom: "0.55rem", color: "rgba(255,255,255,0.7)", fontSize: "0.86rem" }}>
+							{observeHint}
+						</p>
+					)}
+
+					<div style={{ marginBottom: draftDecision ? "0.6rem" : "0.45rem" }}>
+						<label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 600 }}>{decisionLabel}</label>
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+							{decisionOptions.map((opt: string) => (
+								<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.4rem", lineHeight: 1.15 }}>
+									<input
+										type="radio"
+										name="observation_log_decision"
+										value={opt}
+										checked={draftDecision === opt}
+										onChange={(e) => updateDraft({ __observation_log_draft_decision: e.target.value })}
+									/>
+									<span style={{ fontSize: "0.92rem" }}>{opt}</span>
+								</label>
+							))}
+						</div>
+					</div>
+
+					{draftDecision && (
+						<div style={{ marginBottom: "0.6rem" }}>
+							<label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 600 }}>{reflectionLabel}</label>
+							<textarea
+								value={draftReflection}
+								onChange={(e) => updateDraft({ __observation_log_draft_reflection: e.target.value })}
+								maxLength={reflectionMaxChars}
+								placeholder={reflectionPlaceholder}
+								style={{
+									width: "100%",
+									minHeight: "52px",
+									padding: "0.45rem",
+									backgroundColor: "#050712",
+									color: "#f7f7ff",
+									border: "1px solid rgba(81,145,162,0.5)",
+									borderRadius: "4px",
+									fontFamily: "inherit",
+									fontSize: "0.92rem",
+								}}
+							/>
+						</div>
+					)}
+
+					<button
+						type="button"
+						onClick={addLog}
+						disabled={!draftDecision}
+						style={{
+							padding: "0.48rem 0.85rem",
+							background: draftDecision ? "rgba(81,145,162,0.35)" : "rgba(81,145,162,0.15)",
+							border: "1px solid rgba(81,145,162,0.6)",
+							borderRadius: "4px",
+							color: "#f7f7ff",
+							fontWeight: 600,
+							fontSize: "0.9rem",
+							cursor: draftDecision ? "pointer" : "not-allowed",
+						}}
+					>
+						{config?.submit_label || "Beobachtung speichern"}
+					</button>
+				</section>
+			)}
+
+			<section style={{ marginBottom: "0.4rem", padding: "0.85rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.65rem", flexWrap: "wrap", marginBottom: "0.6rem" }}>
+					<h4 style={{ margin: 0 }}>Erfasste Beobachtungen</h4>
+					<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>
+						{logs.length}/{targetCount} erfasst
+					</span>
+				</div>
+
+				<div style={{ display: "grid", gap: "0.4rem" }}>
+					{logs.map((log: any, idx: number) => (
+						<div key={idx} style={{ padding: "0.55rem 0.65rem", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", background: "rgba(255,255,255,0.03)" }}>
+							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.65rem" }}>
+								<strong>{log?.mission_title || `Mission ${idx + 1}`}</strong>
+								<button
+									type="button"
+									onClick={() => removeLog(idx)}
+									style={{
+										padding: "0.15rem 0.45rem",
+										borderRadius: "4px",
+										border: "1px solid rgba(255,255,255,0.2)",
+										background: "transparent",
+										color: "#f7f7ff",
+										fontSize: "0.82rem",
+										cursor: "pointer",
+									}}
+								>
+									Entfernen
+								</button>
+							</div>
+							<div style={{ marginTop: "0.25rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.73)", lineHeight: 1.35 }}>
+								{decisionLabel}: {log?.[decisionKey] || "-"}
+							</div>
+							{log?.[reflectionKey] && (
+								<div style={{ marginTop: "0.2rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.35 }}>
+									{log[reflectionKey]}
+								</div>
+							)}
+						</div>
+					))}
+				</div>
+
+				{isComplete && (
+					<p style={{ marginTop: "0.6rem", marginBottom: 0, color: "rgba(153,246,228,0.95)" }}>
+						Drill abgeschlossen. Du kannst jetzt weitergehen.
+					</p>
+				)}
+			</section>
+
+			{drill.didactics?.learning_hint && (
+				<p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
+					{drill.didactics.learning_hint}
+				</p>
+			)}
+		</div>
+	);
 }
 
 function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {

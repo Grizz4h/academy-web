@@ -24,6 +24,10 @@ function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr))
 }
 
+function isScenePublished(scene: SceneMarker): boolean {
+  return (scene.status || 'NEW') === 'ASSIGNED'
+}
+
 function getSceneTrack(scene: SceneMarker) {
   return scene.track_id || scene.module_id?.split('_')[0] || ''
 }
@@ -358,7 +362,7 @@ export default function RingAbout() {
   }, [selectedCompetitionPhase, competitionUnits, filterCompetitionUnitValue])
 
   const sceneStats = useMemo(() => {
-    const assigned = scenes.filter((scene) => (scene.status || 'NEW') === 'ASSIGNED').length
+    const assigned = scenes.filter((scene) => isScenePublished(scene)).length
     return {
       assigned,
       new: Math.max(scenes.length - assigned, 0),
@@ -464,6 +468,83 @@ export default function RingAbout() {
     minWidth: 120,
   }
 
+  const activeTab: 'pool' | 'insights' = searchParams.get('tab') === 'insights' ? 'insights' : 'pool'
+
+  const setActiveTab = (tab: 'pool' | 'insights') => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (tab === 'insights') {
+      nextParams.set('tab', 'insights')
+    } else {
+      nextParams.delete('tab')
+    }
+    setSearchParams(nextParams)
+  }
+
+  const insights = useMemo(() => {
+    const teamMap = new Map<string, { team: string; scenes: number; published: number }>()
+    const leagueMap = new Map<string, number>()
+    const drillMap = new Map<string, number>()
+    let publishedCount = 0
+
+    for (const scene of scenes) {
+      const published = isScenePublished(scene)
+      if (published) publishedCount += 1
+
+      if (scene.league) {
+        leagueMap.set(scene.league, (leagueMap.get(scene.league) || 0) + 1)
+      }
+
+      if (scene.drill_id) {
+        drillMap.set(scene.drill_id, (drillMap.get(scene.drill_id) || 0) + 1)
+      }
+
+      const teamsInScene = unique([
+        scene.team_home,
+        scene.team_away,
+      ].filter((team): team is string => Boolean(team)))
+
+      for (const team of teamsInScene) {
+        const row = teamMap.get(team) || { team, scenes: 0, published: 0 }
+        row.scenes += 1
+        if (published) row.published += 1
+        teamMap.set(team, row)
+      }
+    }
+
+    const teamDistribution = Array.from(teamMap.values()).sort((a, b) => b.scenes - a.scenes || a.team.localeCompare(b.team))
+    const leagueDistribution = Array.from(leagueMap.entries())
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+    const drillDistribution = Array.from(drillMap.entries())
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+
+    const teamMax = teamDistribution[0]?.scenes || 1
+    const leagueMax = leagueDistribution[0]?.count || 1
+    const drillMax = drillDistribution[0]?.count || 1
+
+    const totalTeamMentions = teamDistribution.reduce((sum, row) => sum + row.scenes, 0)
+    const teamAverage = teamDistribution.length > 0 ? totalTeamMentions / teamDistribution.length : 0
+    const topTeam = teamDistribution[0]
+    const showContentHint = Boolean(
+      topTeam && teamAverage > 0 && topTeam.scenes >= Math.ceil(teamAverage * 1.4) && (topTeam.scenes - teamAverage) >= 2
+    )
+
+    return {
+      teamDistribution,
+      leagueDistribution,
+      drillDistribution,
+      publishedCount,
+      unpublishedCount: Math.max(scenes.length - publishedCount, 0),
+      teamMax,
+      leagueMax,
+      drillMax,
+      teamAverage,
+      topTeam,
+      showContentHint,
+    }
+  }, [scenes])
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <style>{`
@@ -479,12 +560,51 @@ export default function RingAbout() {
       `}</style>
       <div>
         <h1 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🎬 Rink About It – Szenenpool
+          🎬 Rink About It
         </h1>
         <p style={{ margin: '0.4rem 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>
-          Gemerkte Szenen aus deinen Drills – dein Rohmaterial für Rink About It.
+          Szenenpool und redaktionelle Insights für die nächste Episode.
         </p>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.9rem', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => setActiveTab('pool')}
+            aria-pressed={activeTab === 'pool'}
+            style={{
+              padding: '0.38rem 0.82rem',
+              borderRadius: '0.5rem',
+              border: activeTab === 'pool' ? '1px solid rgba(125,211,252,0.56)' : '1px solid rgba(148,163,184,0.26)',
+              background: activeTab === 'pool' ? 'rgba(14,165,233,0.18)' : 'rgba(15,23,42,0.45)',
+              color: activeTab === 'pool' ? '#e0f2fe' : '#cbd5e1',
+              fontSize: '0.84rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Szenenpool
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('insights')}
+            aria-pressed={activeTab === 'insights'}
+            style={{
+              padding: '0.38rem 0.82rem',
+              borderRadius: '0.5rem',
+              border: activeTab === 'insights' ? '1px solid rgba(74,222,128,0.56)' : '1px solid rgba(148,163,184,0.26)',
+              background: activeTab === 'insights' ? 'rgba(34,197,94,0.16)' : 'rgba(15,23,42,0.45)',
+              color: activeTab === 'insights' ? '#dcfce7' : '#cbd5e1',
+              fontSize: '0.84rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Insights
+          </button>
+        </div>
       </div>
+
+      {activeTab === 'pool' && (
+        <>
 
       {scenes.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem', alignItems: 'center' }}>
@@ -843,6 +963,128 @@ export default function RingAbout() {
             </div>
           </div>
         </div>
+      )}
+
+        </>
+      )}
+
+      {activeTab === 'insights' && (
+        <>
+          {isLoading && <div className="card">Lade Insights…</div>}
+          {error && <div className="card" style={{ color: '#f87171' }}>Fehler beim Laden der Insights.</div>}
+
+          {!isLoading && !error && scenes.length === 0 && (
+            <div className="card" style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#64748b' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎬</div>
+              <div style={{ fontWeight: 600, marginBottom: '0.3rem' }}>Noch keine Szenen im Pool</div>
+              <div style={{ fontSize: '0.85rem' }}>
+                Sobald du Szenen markierst, erscheinen hier automatisch die redaktionellen Insights.
+              </div>
+            </div>
+          )}
+
+          {!isLoading && !error && scenes.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="card" style={{ padding: '1rem 1.1rem' }}>
+                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Team-Verteilung</h3>
+                <div style={{ display: 'grid', gap: '0.45rem' }}>
+                  {insights.teamDistribution.map((row) => (
+                    <div key={row.team} style={{ display: 'grid', gridTemplateColumns: '220px 1fr auto', gap: '0.6rem', alignItems: 'center' }}>
+                      <span style={{ color: '#e2e8f0', fontSize: '0.87rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.team}</span>
+                      <div style={{ height: '0.55rem', borderRadius: '999px', background: 'rgba(148,163,184,0.2)', overflow: 'hidden' }}>
+                        <div style={{ width: `${Math.max((row.scenes / insights.teamMax) * 100, 2)}%`, height: '100%', background: 'linear-gradient(90deg, rgba(34,197,94,0.72), rgba(45,212,191,0.92))' }} />
+                      </div>
+                      <span style={{ color: '#cbd5e1', fontWeight: 700, fontSize: '0.82rem' }}>{row.scenes}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1rem 1.1rem' }}>
+                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Liga-Verteilung</h3>
+                <div style={{ display: 'grid', gap: '0.45rem' }}>
+                  {insights.leagueDistribution.map((row) => (
+                    <div key={row.label} style={{ display: 'grid', gridTemplateColumns: '120px 1fr auto', gap: '0.6rem', alignItems: 'center' }}>
+                      <span style={{ color: '#e2e8f0', fontSize: '0.86rem' }}>{row.label}</span>
+                      <div style={{ height: '0.5rem', borderRadius: '999px', background: 'rgba(148,163,184,0.2)', overflow: 'hidden' }}>
+                        <div style={{ width: `${Math.max((row.count / insights.leagueMax) * 100, 2)}%`, height: '100%', background: 'linear-gradient(90deg, rgba(14,165,233,0.74), rgba(56,189,248,0.92))' }} />
+                      </div>
+                      <span style={{ color: '#cbd5e1', fontWeight: 700, fontSize: '0.82rem' }}>{row.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1rem 1.1rem' }}>
+                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Drill-Verteilung</h3>
+                <div style={{ display: 'grid', gap: '0.45rem' }}>
+                  {insights.drillDistribution.map((row) => (
+                    <div key={row.label} style={{ display: 'grid', gridTemplateColumns: '140px 1fr auto', gap: '0.6rem', alignItems: 'center' }}>
+                      <span style={{ color: '#e2e8f0', fontFamily: 'monospace', fontSize: '0.85rem' }}>{row.label}</span>
+                      <div style={{ height: '0.5rem', borderRadius: '999px', background: 'rgba(148,163,184,0.2)', overflow: 'hidden' }}>
+                        <div style={{ width: `${Math.max((row.count / insights.drillMax) * 100, 2)}%`, height: '100%', background: 'linear-gradient(90deg, rgba(245,158,11,0.74), rgba(251,191,36,0.92))' }} />
+                      </div>
+                      <span style={{ color: '#cbd5e1', fontWeight: 700, fontSize: '0.82rem' }}>{row.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1rem 1.1rem' }}>
+                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Veroeffentlichte Szenen</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.65rem' }}>
+                  <div style={{ border: '1px solid rgba(45,212,191,0.32)', borderRadius: '0.55rem', padding: '0.75rem', background: 'rgba(20,184,166,0.10)' }}>
+                    <div style={{ color: '#99f6e4', fontSize: '0.82rem' }}>Veroeffentlicht</div>
+                    <div style={{ color: '#e2e8f0', fontSize: '1.55rem', fontWeight: 800 }}>{insights.publishedCount}</div>
+                  </div>
+                  <div style={{ border: '1px solid rgba(148,163,184,0.32)', borderRadius: '0.55rem', padding: '0.75rem', background: 'rgba(148,163,184,0.09)' }}>
+                    <div style={{ color: '#cbd5e1', fontSize: '0.82rem' }}>Nicht veroeffentlicht</div>
+                    <div style={{ color: '#e2e8f0', fontSize: '1.55rem', fontWeight: 800 }}>{insights.unpublishedCount}</div>
+                  </div>
+                </div>
+                <p style={{ margin: '0.55rem 0 0', color: '#94a3b8', fontSize: '0.78rem' }}>
+                  Veroeffentlicht basiert auf dem Szenenstatus Zugeordnet (Episode gesetzt).
+                </p>
+              </div>
+
+              <div className="card" style={{ padding: '1rem 1.1rem' }}>
+                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Team x Veroeffentlicht</h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
+                    <thead>
+                      <tr style={{ textAlign: 'left', borderBottom: '1px solid rgba(148,163,184,0.26)' }}>
+                        <th style={{ padding: '0.45rem 0.35rem' }}>Team</th>
+                        <th style={{ padding: '0.45rem 0.35rem' }}>Szenen</th>
+                        <th style={{ padding: '0.45rem 0.35rem' }}>Veroeffentlicht</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {insights.teamDistribution.map((row) => (
+                        <tr key={`table-${row.team}`} style={{ borderBottom: '1px solid rgba(148,163,184,0.12)' }}>
+                          <td style={{ padding: '0.45rem 0.35rem', color: '#e2e8f0' }}>{row.team}</td>
+                          <td style={{ padding: '0.45rem 0.35rem', color: '#cbd5e1', fontWeight: 700 }}>{row.scenes}</td>
+                          <td style={{ padding: '0.45rem 0.35rem', color: '#99f6e4', fontWeight: 700 }}>{row.published}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {insights.showContentHint && insights.topTeam && (
+                <div className="card" style={{ padding: '1rem 1.1rem', border: '1px solid rgba(250,204,21,0.36)', background: 'linear-gradient(145deg, rgba(120,53,15,0.24), rgba(15,23,42,0.92))' }}>
+                  <h3 style={{ margin: '0 0 0.45rem', fontSize: '1.02rem' }}>Content-Hinweis</h3>
+                  <p style={{ margin: 0, color: '#fef3c7', fontSize: '0.87rem', lineHeight: 1.55 }}>
+                    {insights.topTeam.team} taucht aktuell besonders haeufig im Szenenpool auf ({insights.topTeam.scenes} Szenen, Durchschnitt {insights.teamAverage.toFixed(1)}).
+                  </p>
+                  <p style={{ margin: '0.45rem 0 0', color: '#fde68a', fontSize: '0.86rem', lineHeight: 1.55 }}>
+                    Fuer mehr Vielfalt koennte als naechstes ein anderes Team priorisiert werden.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   )

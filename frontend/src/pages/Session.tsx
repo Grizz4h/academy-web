@@ -318,6 +318,31 @@ export default function SessionPage() {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
 
+    if (drill.drill_type === 'clickable_rink_observation') {
+      const observationsKey = drill?.config?.observations_key || 'observations'
+      const requiredObservations = Number(drill?.config?.observation_count || 3)
+      const reflectionKey = drill?.config?.completion_reflection?.key || 'final_reflection'
+      const observations = Array.isArray(answers?.[observationsKey]) ? answers[observationsKey] : []
+
+      if (observations.length < requiredObservations) {
+        return 'Bitte erfasse alle ' + requiredObservations + ' Beobachtungen, bevor du weitergehst.'
+      }
+
+      if (!answers?.[reflectionKey]) {
+        return 'Bitte beantworte kurz die Abschluss-Reflexion, bevor du weitergehst.'
+      }
+    }
+
+    if (drill.drill_type === 'observation_log_drill') {
+      const logsKey = drill?.config?.logs_key || 'logs'
+      const requiredLogs = Number(drill?.config?.log_count || 3)
+      const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
+
+      if (logs.length < requiredLogs) {
+        return 'Bitte erfasse alle ' + requiredLogs + ' Beobachtungen, bevor du weitergehst.'
+      }
+    }
+
     if (drill.id === 'B2_D1' || drill.id === 'B2_D2' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis' || drill?.config?.mode === 'solution_type_diagnosis' || drill?.config?.mode === 'decision_cause_diagnosis' || drill?.config?.mode === 'transition_followup_assessment') {
       const sampleKey = drill?.config?.sample_key || 'pressure_samples'
       const requiredSamples = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3)
