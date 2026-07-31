@@ -83,14 +83,25 @@ def render_checkin_phase(session, phase):
             'session_id': session['id'],
             'phase': phase
         }
-        responses = render_drill(drill, context)
+        if drill.get('drill_type') == 'observation_log_drill':
+            responses = render_drill(drill, context)
+            save_key = f"{session['id']}_{phase}_{drill['id']}_saved"
 
-        if responses and st.button("Speichern"):
-            # Simple coaching rules
-            feedback = "Gut gemacht!"
-            next_task = "Nächste Phase vorbereiten"
-            add_checkin(session['id'], phase, responses, feedback, next_task)
-            st.success("Check-in gespeichert!")
+            if responses and responses.get('completed') and not st.session_state.get(save_key):
+                add_checkin(session['id'], phase, {'logs': responses.get('logs', [])})
+                st.session_state[save_key] = True
+                st.success("Drei Logs erfasst. Der Drill ist abgeschlossen.")
+            elif responses and responses.get('completed'):
+                st.success("Drei Logs erfasst. Der Drill ist abgeschlossen.")
+        else:
+            responses = render_drill(drill, context)
+
+            if responses and st.button("Speichern"):
+                # Simple coaching rules
+                feedback = "Gut gemacht!"
+                next_task = "Nächste Phase vorbereiten"
+                add_checkin(session['id'], phase, responses, feedback, next_task)
+                st.success("Check-in gespeichert!")
 
 def render_post_phase(session):
     st.subheader("Post-Session")

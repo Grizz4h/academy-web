@@ -3040,84 +3040,108 @@
           "drills": [
             {
               "id": "B3_D1",
-              "title": "Erster Zugriff: Stören oder Kontrollieren",
-              "drill_type": "period_checkin",
-              "description": "Unterscheide, ob der erste defensive Zugriff Kontrolle erzeugt oder nur stört.",
+              "title": "Wer setzt den ersten defensiven Druck?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Defensiver Zugriff kann überall auf dem Eis entstehen: im Forecheck, beim Backcheck, in der Neutralen Zone oder in der eigenen Zone. Finde drei Situationen und beobachte, welcher Spieler als Erster aktiv Druck aufbaut und wo dieser Zugriff beginnt.",
               "didactics": {
-                "explanation": "Der erste Zugriff entscheidet nicht durch Härte, sondern durch Wirkung: Wird Zeit gekauft, Raum geschlossen oder nur kurz gestört?",
+                "explanation": "Defensiver Druck beginnt nicht erst beim Zweikampf. Er beginnt, sobald ein Spieler den Gegner aktiv dazu zwingt, Zeit, Raum, Laufweg oder eine Option anzupassen. Der erste Zugriff kann im Forecheck, Backcheck, in der Neutralen Zone oder in der eigenen Zone entstehen.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Zeitgewinn durch den ersten Zugriff",
-                    "Winkel und Körperstellung des Verteidigers",
-                    "Reaktion des Angreifers nach dem Kontakt"
+                    "Ersten aktiven defensiven Druckmoment",
+                    "Spielerposition des Initiators (LW, C, RW, LD, RD oder unklar)",
+                    "Ort auf dem Eis, an dem der Zugriff startet"
                   ],
                   "how_to_decide": [
-                    "Beobachte nur den ersten Kontakt",
-                    "Bewerte Wirkung, nicht Intensität",
-                    "Frage dich: Hat der Angreifer weniger Optionen?"
+                    "Zuerst die initiierende Position wählen",
+                    "Danach den Zugriffsort auf dem Rink markieren",
+                    "Nur den Start der Defensivaktion erfassen"
                   ],
                   "ignore": [
-                    "Ob der Puck sofort verloren geht",
-                    "Härte oder Checks"
+                    "Erfolg oder Misserfolg der Defensivaktion",
+                    "Späteren Puckgewinn",
+                    "Allgemeine Nähe ohne aktiven Druck"
                   ]
                 },
-                "learning_hint": "Ein guter erster Zugriff reduziert Optionen – er muss nichts erzwingen."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "first_contact": "kontrollierend"
-                    },
-                    "questions": [
-                      "Woran hast du erkannt, dass Optionen wirklich reduziert wurden?",
-                      "War der Winkel so, dass Hilfe/zweiter Zugriff möglich war?",
-                      "Hat der Gegner sichtbar Zeit verloren oder nur kurz gezuckt?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "first_contact": "störend"
-                    },
-                    "questions": [
-                      "Was hat gefehlt, damit daraus Kontrolle wird?",
-                      "War der Zugriff zu gerade, zu spät oder ohne Support?",
-                      "Konnten Mitspieler den Moment nutzen oder verpuffte er?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "first_contact": "wirkungslos"
-                    },
-                    "questions": [
-                      "Warum blieb der Gegner trotzdem handlungsfähig?",
-                      "War der Abstand/Winkel falsch oder kam der Zugriff zu spät?",
-                      "Welche minimale Anpassung hätte Wirkung erzeugt?"
-                    ]
-                  }
-                ]
+                "learning_hint": "Nur der erste aktive Zugriff zählt: Wer setzt ihn, und wo beginnt er?"
               },
               "config": {
-                "questions": [
+                "observation_count": 3,
+                "observations_key": "defensive_pressure_observations",
+                "initiator_key": "initiatorPosition",
+                "location_key": "accessLocation",
+                "note_key": "note",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "selection_label": "Position des Initiators auswählen",
+                "location_label": "Klicke auf den Ort, an dem der Zugriff beginnt",
+                "unclear_value": "unclear",
+                "unclear_label": "nicht klar erkennbar",
+                "observe_hint": "Sobald du eine passende Situation entdeckt hast, erfasse deine Beobachtung.",
+                "note_label": "Woran hast du erkannt, dass hier der defensive Druck beginnt?",
+                "note_placeholder": "Optional: kurzer Hinweis",
+                "note_max_chars": 220,
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "position_markers": [
                   {
-                    "key": "first_contact",
-                    "type": "radio",
-                    "label": "Erster Zugriff",
-                    "options": [
-                      "kontrollierend",
-                      "störend",
-                      "wirkungslos"
-                    ]
+                    "value": "LW",
+                    "label": "LW",
+                    "x": 0.2,
+                    "y": 0.28
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "value": "C",
+                    "label": "C",
+                    "x": 0.42,
+                    "y": 0.46
+                  },
+                  {
+                    "value": "RW",
+                    "label": "RW",
+                    "x": 0.64,
+                    "y": 0.28
+                  },
+                  {
+                    "value": "LD",
+                    "label": "LD",
+                    "x": 0.34,
+                    "y": 0.72
+                  },
+                  {
+                    "value": "RD",
+                    "label": "RD",
+                    "x": 0.56,
+                    "y": 0.72
                   }
-                ]
+                ],
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der ein Spieler als Erster defensiven Druck aufbaut.",
+                    "hint": "Wähle seine Position und markiere, wo der Zugriff beginnt."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere Situation mit erstem defensivem Druck.",
+                    "hint": "Achte diesmal bewusst darauf, ob der Zugriff im Forecheck, Backcheck oder in geordneter Defensive entsteht."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation und beobachte, ob erneut dieselbe Spielerposition den Zugriff auslöst.",
+                    "hint": "Es geht noch nicht um Erfolg oder Misserfolg, sondern nur um den Start der Defensivaktion."
+                  }
+                ],
+                "completion_reflection": {
+                  "key": "pressure_pattern_reflection",
+                  "label": "Kam der erste Druck meistens von derselben Spielerposition?",
+                  "options": [
+                    "ja",
+                    "nein",
+                    "kein klares Muster"
+                  ]
+                },
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte im laufenden Spiel weiter den ersten defensiven Druckmoment. Priorisiere klare Trigger und markiere interessante Szenen fuer die Nachbesprechung."
               }
             },
             {

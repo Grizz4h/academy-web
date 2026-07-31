@@ -15,12 +15,13 @@
   "game_time": "09:15",
   "note": "Center antizipiert und schafft mit den Wingern 3 auf 2",
   "created_at": "2026-06-22T15:18:10.591812",
-  "updated_at": "2026-06-22T21:22:17.791578",
+  "updated_at": "2026-07-15T05:17:59.676316",
   "competition_phase": "regular_season",
   "competition_phase_label": "Hauptrunde",
   "competition_unit_type": "matchday",
   "competition_unit_label": "Spieltag",
   "competition_unit_value": "1",
   "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 1",
-  "scene_code": "SC006"
+  "scene_code": "SC006",
+  "rating": null
 }
