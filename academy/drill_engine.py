@@ -10,6 +10,8 @@ DRILL_REGISTRY = {
     "pattern_reflection_observation": observation_log_drill.render,
     "clickable_rink_observation": observation_log_drill.render,
     "draggable_rink_observation": observation_log_drill.render,
+    "rink_zone_priority_observation": observation_log_drill.render,
+    "paintable_rink_observation": observation_log_drill.render,
     "sample_log": sample_log.render,
     "shift_tracker": shift_tracker.render,
     "triangle_spotting": triangle_spotting.render,

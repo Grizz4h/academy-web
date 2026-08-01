@@ -318,17 +318,23 @@ export default function SessionPage() {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
 
-    if (drill.drill_type === 'clickable_rink_observation' || drill.drill_type === 'draggable_rink_observation') {
+    if (
+      drill.drill_type === 'clickable_rink_observation'
+      || drill.drill_type === 'draggable_rink_observation'
+      || drill.drill_type === 'rink_zone_priority_observation'
+      || drill.drill_type === 'paintable_rink_observation'
+    ) {
       const observationsKey = drill?.config?.observations_key || 'observations'
       const requiredObservations = Number(drill?.config?.observation_count || 3)
-      const reflectionKey = drill?.config?.completion_reflection?.key || 'final_reflection'
+      const reflectionKey = drill?.config?.reflection?.key || drill?.config?.completion_reflection?.key || 'final_reflection'
+      const reflectionEnabled = drill?.config?.reflection_enabled !== false
       const observations = Array.isArray(answers?.[observationsKey]) ? answers[observationsKey] : []
 
       if (observations.length < requiredObservations) {
         return 'Bitte erfasse alle ' + requiredObservations + ' Beobachtungen, bevor du weitergehst.'
       }
 
-      if (!answers?.[reflectionKey]) {
+      if (reflectionEnabled && !answers?.[reflectionKey]) {
         return 'Bitte beantworte kurz die Abschluss-Reflexion, bevor du weitergehst.'
       }
     }

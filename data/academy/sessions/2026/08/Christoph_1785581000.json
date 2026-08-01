@@ -1,0 +1,148 @@
+{
+  "id": "Christoph_1785581000",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "C1",
+  "goal": "Auto: C1 – Defensive Zone Systeme",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "C1_D1",
+  "observation_scope": "FULL_GAME",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-08-01T12:43:20.408073",
+  "drills": [
+    {
+      "id": "C1_D1",
+      "title": "Welchen Raum schützt die Defensive zuerst?",
+      "drill_type": "rink_zone_priority_observation",
+      "description": "Beobachte drei Situationen, in denen ein Team bereits geordnet in der eigenen Zone verteidigt. Markiere jeweils den Raum, den es dort am deutlichsten priorisiert schützt.",
+      "didactics": {
+        "explanation": "Defensive Organisation beginnt bereits vor der eigenen Zone. Dieser Drill betrachtet jedoch bewusst nur die etablierte Defensive-Zone-Struktur. Achte nicht nur auf den Puck. Beobachte, welchen Raum die Defensive auch dann absichert, wenn sich der Puck bewegt.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Wo verdichtet sich die Defensive?",
+            "Welcher Raum wird auch bei Puckbewegung weiter abgesichert?",
+            "Welchen Bereich will das Team möglichst nicht preisgeben?"
+          ],
+          "how_to_decide": [
+            "Nur Situationen mit kontrolliertem Puckbesitz des Gegners in der Offensivzone bewerten",
+            "Beobachtung nur speichern, wenn das verteidigende Team bereits eine erkennbare Ordnung eingenommen hat",
+            "Mehrere Verteidiger müssen räumlich organisiert reagieren",
+            "Nicht den Puckort markieren, sondern die Schutzpriorität des Teams"
+          ],
+          "common_mistakes": [
+            "Rush-Defense direkt nach Zone Entry als etablierte Zonenordnung deuten",
+            "Einzelduelle oder chaotische Rebounds als Teamstruktur interpretieren",
+            "Automatisch dort markieren, wo gerade der Puck ist"
+          ],
+          "ignore": [
+            "Direkte Konter",
+            "Ungeordnete Turnover-Situationen",
+            "Spielerwechsel mit noch nicht etablierter Ordnung",
+            "Reine Einzelduelle ohne erkennbare Teamstruktur"
+          ]
+        },
+        "learning_hint": "Defensive Systeme erkennst du zuerst daran, welche Räume eine Mannschaft besonders konsequent schützt."
+      },
+      "config": {
+        "rink_scope": "defensive_zone",
+        "observation_count": 3,
+        "selection_mode": "single",
+        "observations_key": "observations",
+        "observation_index_key": "observationIndex",
+        "selected_zone_key": "selectedZone",
+        "note_key": "note",
+        "created_at_key": "createdAt",
+        "most_frequent_zone_key": "mostFrequentZone",
+        "decision_rule": "Markiere nicht einfach den Ort des Pucks. Markiere den Raum, den die Defensive sichtbar priorisiert schützt.",
+        "zones": [
+          "crease",
+          "low_slot",
+          "high_slot",
+          "left_halfwall",
+          "right_halfwall",
+          "behind_net",
+          "left_point_lane",
+          "right_point_lane"
+        ],
+        "missions": [
+          {
+            "title": "Mission 1 von 3",
+            "prompt": "Finde eine Situation, in der das Team bereits geordnet in der eigenen Zone verteidigt.",
+            "hint": "Markiere den Raum, den die Defensive hier am deutlichsten schützt."
+          },
+          {
+            "title": "Mission 2 von 3",
+            "prompt": "Finde eine weitere geordnete Defensivszene.",
+            "hint": "Achte darauf, welcher Raum auch bei Bewegung des Pucks abgesichert bleibt."
+          },
+          {
+            "title": "Mission 3 von 3",
+            "prompt": "Finde eine dritte Situation und vergleiche sie mit deinen bisherigen Beobachtungen.",
+            "hint": "Erkennst du dieselbe Schutzpriorität erneut?"
+          }
+        ],
+        "note_enabled": true,
+        "note_label": "Woran hast du die Priorität erkannt?",
+        "note_placeholder": "Optional",
+        "note_max_chars": 300,
+        "summary_enabled": true,
+        "reflection_enabled": true,
+        "reflection": {
+          "key": "reflection",
+          "label": "Welcher Raum hatte in deinen Beobachtungen die höchste erkennbare Schutzpriorität?"
+        },
+        "active_focus_enabled": true,
+        "active_focus_title": "Active Focus",
+        "active_focus_text": "Beobachte im weiteren Spiel, ob dieselbe Raumpriorität bestehen bleibt oder sich je nach Puckposition und Spielsituation verändert."
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [],
+  "drafts": {
+    "P1": {
+      "__rink_zone_priority_observation_draft": {
+        "selectedZone": "behind_net",
+        "note": ""
+      },
+      "observations": [],
+      "mostFrequentZone": "point_lanes"
+    }
+  },
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-08-01T10:43:20.373Z",
+    "season": "2027/28",
+    "competition_phase": "regular_season",
+    "competition_phase_label": "Hauptrunde",
+    "competition_unit_type": "matchday",
+    "competition_unit_label": "Spieltag",
+    "competition_unit_value": "1",
+    "matchday": "DEL · 2027/28 · Hauptrunde · Spieltag 1"
+  },
+  "observed_team": null,
+  "microfeedback": {
+    "P1": {
+      "done": false,
+      "text": ""
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}

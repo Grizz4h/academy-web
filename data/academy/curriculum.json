@@ -3859,84 +3859,88 @@
           "drills": [
             {
               "id": "C1_D1",
-              "title": "Slot-Kontrolle lesen",
-              "drill_type": "period_checkin",
-              "description": "Beobachte, wie der Slot verteidigt wird – geschlossen, situativ offen oder dauerhaft offen.",
+              "title": "Welchen Raum schützt die Defensive zuerst?",
+              "drill_type": "rink_zone_priority_observation",
+              "description": "Beobachte drei Situationen, in denen ein Team bereits geordnet in der eigenen Zone verteidigt. Markiere jeweils den Raum, den es dort am deutlichsten priorisiert schützt.",
               "didactics": {
-                "explanation": "Defensive Systeme unterscheiden sich nicht durch ihren Namen, sondern durch das, was sie schützen. Der Slot ist der zentrale Referenzraum.",
+                "explanation": "Defensive Organisation beginnt bereits vor der eigenen Zone. Dieser Drill betrachtet jedoch bewusst nur die etablierte Defensive-Zone-Struktur. Achte nicht nur auf den Puck. Beobachte, welchen Raum die Defensive auch dann absichert, wenn sich der Puck bewegt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Positionierung der Verteidiger relativ zum Slot",
-                    "Abstände zwischen Slot und Puckseite",
-                    "Reaktion auf Pässe oder Drives durch die Mitte"
+                    "Wo verdichtet sich die Defensive?",
+                    "Welcher Raum wird auch bei Puckbewegung weiter abgesichert?",
+                    "Welchen Bereich will das Team möglichst nicht preisgeben?"
                   ],
                   "how_to_decide": [
-                    "Bewerte den Zustand des Slots, nicht das System",
-                    "Achte auf Wiederholungen über mehrere Sequenzen",
-                    "Frage dich: Wird der Slot aktiv geschützt?"
+                    "Nur Situationen mit kontrolliertem Puckbesitz des Gegners in der Offensivzone bewerten",
+                    "Beobachtung nur speichern, wenn das verteidigende Team bereits eine erkennbare Ordnung eingenommen hat",
+                    "Mehrere Verteidiger müssen räumlich organisiert reagieren",
+                    "Nicht den Puckort markieren, sondern die Schutzpriorität des Teams"
+                  ],
+                  "common_mistakes": [
+                    "Rush-Defense direkt nach Zone Entry als etablierte Zonenordnung deuten",
+                    "Einzelduelle oder chaotische Rebounds als Teamstruktur interpretieren",
+                    "Automatisch dort markieren, wo gerade der Puck ist"
                   ],
                   "ignore": [
-                    "Ob ein Tor fällt",
-                    "Einzelne technische Fehler"
+                    "Direkte Konter",
+                    "Ungeordnete Turnover-Situationen",
+                    "Spielerwechsel mit noch nicht etablierter Ordnung",
+                    "Reine Einzelduelle ohne erkennbare Teamstruktur"
                   ]
                 },
-                "learning_hint": "Gute Defensiven definieren klar, was sie schützen – und was sie bewusst freigeben."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "slot_control": "geschlossen"
-                    },
-                    "questions": [
-                      "Woran hast du erkannt, dass der Slot Priorität hatte?",
-                      "Welche Räume wurden dafür freigegeben?",
-                      "Wirkte die Kontrolle geplant?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "slot_control": "situativ offen"
-                    },
-                    "questions": [
-                      "Warum öffnete sich der Slot?",
-                      "War das Öffnen Teil des Systems oder erzwungen?",
-                      "Wie schnell wurde reagiert?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "slot_control": "dauerhaft offen"
-                    },
-                    "questions": [
-                      "Warum blieb der Slot offen?",
-                      "Lag es an System oder Staffelung?",
-                      "Welche Gefahr entsteht daraus?"
-                    ]
-                  }
-                ]
+                "learning_hint": "Defensive Systeme erkennst du zuerst daran, welche Räume eine Mannschaft besonders konsequent schützt."
               },
               "config": {
-                "questions": [
+                "rink_scope": "defensive_zone",
+                "observation_count": 3,
+                "selection_mode": "single",
+                "observations_key": "observations",
+                "observation_index_key": "observationIndex",
+                "selected_zone_key": "selectedZone",
+                "note_key": "note",
+                "created_at_key": "createdAt",
+                "most_frequent_zone_key": "mostFrequentZone",
+                "decision_rule": "Markiere nicht einfach den Ort des Pucks. Markiere den Raum, den die Defensive sichtbar priorisiert schützt.",
+                "zones": [
+                  "crease",
+                  "low_slot",
+                  "high_slot",
+                  "left_halfwall",
+                  "right_halfwall",
+                  "behind_net",
+                  "left_point_lane",
+                  "right_point_lane"
+                ],
+                "missions": [
                   {
-                    "key": "slot_control",
-                    "type": "radio",
-                    "label": "Slot-Kontrolle",
-                    "options": [
-                      "geschlossen",
-                      "situativ offen",
-                      "dauerhaft offen"
-                    ]
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der das Team bereits geordnet in der eigenen Zone verteidigt.",
+                    "hint": "Markiere den Raum, den die Defensive hier am deutlichsten schützt."
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere geordnete Defensivszene.",
+                    "hint": "Achte darauf, welcher Raum auch bei Bewegung des Pucks abgesichert bleibt."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation und vergleiche sie mit deinen bisherigen Beobachtungen.",
+                    "hint": "Erkennst du dieselbe Schutzpriorität erneut?"
                   }
-                ]
+                ],
+                "note_enabled": true,
+                "note_label": "Woran hast du die Priorität erkannt?",
+                "note_placeholder": "Optional",
+                "note_max_chars": 300,
+                "summary_enabled": true,
+                "reflection_enabled": true,
+                "reflection": {
+                  "key": "reflection",
+                  "label": "Welcher Raum hatte in deinen Beobachtungen die höchste erkennbare Schutzpriorität?"
+                },
+                "active_focus_enabled": true,
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte im weiteren Spiel, ob dieselbe Raumpriorität bestehen bleibt oder sich je nach Puckposition und Spielsituation verändert."
               }
             },
             {

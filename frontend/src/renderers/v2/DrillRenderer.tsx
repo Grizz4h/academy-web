@@ -314,6 +314,9 @@ function computeSampleAggregation(samples: any[] = [], fields: any[] = [], check
 
 export default function DrillRendererV2({ drill, answers, setAnswers, session, phase }: DrillRendererV2Props) {
 	switch (drill.drill_type) {
+		case "rink_zone_priority_observation":
+		case "paintable_rink_observation":
+			return <RinkZonePriorityObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "draggable_rink_observation":
 			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "clickable_rink_observation":
@@ -347,6 +350,485 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 		default:
 			return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
 	}
+}
+
+type PriorityZone =
+	| "crease"
+	| "low_slot"
+	| "high_slot"
+	| "left_halfwall"
+	| "right_halfwall"
+	| "behind_net"
+	| "left_point_lane"
+	| "right_point_lane";
+
+type ReflectionBucket = "crease" | "low_slot" | "high_slot" | "halfwalls" | "behind_net" | "point_lanes" | "unclear";
+
+const ZONE_CONFIG: Record<PriorityZone, { label: string; bucket: Exclude<ReflectionBucket, "unclear">; bucketLabel: string; path: string }> = {
+	crease: {
+		label: "Torraum",
+		bucket: "crease",
+		bucketLabel: "Torraum",
+		path: "M124 258 L206 258 L206 362 L124 362 Z",
+	},
+	low_slot: {
+		label: "Low Slot",
+		bucket: "low_slot",
+		bucketLabel: "Low Slot",
+		path: "M206 242 L356 206 L356 414 L206 378 Z",
+	},
+	high_slot: {
+		label: "High Slot",
+		bucket: "high_slot",
+		bucketLabel: "High Slot",
+		path: "M356 206 L500 176 L500 444 L356 414 Z",
+	},
+	left_halfwall: {
+		label: "linke Halfwall",
+		bucket: "halfwalls",
+		bucketLabel: "Halfwalls",
+		path: "M254 86 L580 86 L580 226 L254 226 Z",
+	},
+	right_halfwall: {
+		label: "rechte Halfwall",
+		bucket: "halfwalls",
+		bucketLabel: "Halfwalls",
+		path: "M254 394 L580 394 L580 534 L254 534 Z",
+	},
+	behind_net: {
+		label: "hinter dem Tor",
+		bucket: "behind_net",
+		bucketLabel: "Hinter dem Tor",
+		path: "M56 206 L124 206 L124 414 L56 414 Z",
+	},
+	left_point_lane: {
+		label: "linke obere Zone",
+		bucket: "point_lanes",
+		bucketLabel: "Obere Zone",
+		path: "M500 86 L848 86 L848 266 L500 266 Z",
+	},
+	right_point_lane: {
+		label: "rechte obere Zone",
+		bucket: "point_lanes",
+		bucketLabel: "Obere Zone",
+		path: "M500 354 L848 354 L848 534 L500 534 Z",
+	},
+};
+
+function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
+	const safeAnswers = answers || {};
+	const config = drill?.config || {};
+
+	const observationCount = Number(config?.observation_count ?? config?.observationCount ?? 3);
+	const observationsKey = config?.observations_key || "observations";
+	const observationIndexKey = config?.observation_index_key || "observationIndex";
+	const selectedZoneKey = config?.selected_zone_key || "selectedZone";
+	const noteKey = config?.note_key || "note";
+	const createdAtKey = config?.created_at_key || "createdAt";
+	const mostFrequentZoneKey = config?.most_frequent_zone_key || "mostFrequentZone";
+	const reflectionConfig = config?.reflection || {};
+	const reflectionKey = reflectionConfig?.key || "reflection";
+
+	const noteEnabled = config?.note_enabled !== false;
+	const summaryEnabled = config?.summary_enabled !== false;
+	const reflectionEnabled = config?.reflection_enabled !== false;
+	const activeFocusEnabled = config?.active_focus_enabled !== false;
+	const zoneValues: PriorityZone[] = Array.isArray(config?.zones) && config.zones.length > 0
+		? config.zones.filter((zone: string) => zone in ZONE_CONFIG)
+		: [
+			"crease",
+			"low_slot",
+			"high_slot",
+			"left_halfwall",
+			"right_halfwall",
+			"behind_net",
+			"left_point_lane",
+			"right_point_lane",
+		];
+
+	const missions = Array.isArray(config?.missions) ? config.missions : [];
+	const observations = Array.isArray(safeAnswers[observationsKey]) ? safeAnswers[observationsKey] : [];
+	const currentIndex = observations.length;
+	const isComplete = observations.length >= observationCount;
+	const progressPct = observationCount > 0 ? Math.round((observations.length / observationCount) * 100) : 0;
+
+	const currentMission = missions[currentIndex] || {
+		title: `Mission ${currentIndex + 1} von ${observationCount}`,
+		prompt: "Finde eine geordnete Defensivszene.",
+		hint: "Markiere den Raum, den die Defensive sichtbar priorisiert schützt.",
+	};
+
+	const draft = safeAnswers.__rink_zone_priority_observation_draft || {};
+	const selectedZone: PriorityZone | "" = draft[selectedZoneKey] || "";
+	const draftNote = draft[noteKey] || "";
+	const reflectionValue: ReflectionBucket | "" = safeAnswers[reflectionKey] || "";
+
+	const [isInteracting, setIsInteracting] = useState(false);
+
+	const noteLabel = config?.note_label || "Woran hast du die Priorität erkannt?";
+	const notePlaceholder = config?.note_placeholder || "Optional";
+	const noteMaxChars = Number(config?.note_max_chars || 220);
+	const saveButtonLabel = config?.save_button_label || "Beobachtung speichern";
+	const decisionRule = config?.decision_rule || "Markiere nicht einfach den Ort des Pucks. Markiere den Raum, den die Defensive sichtbar priorisiert schützt.";
+	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const activeFocusText = config?.active_focus_text || "Beobachte im weiteren Spiel, ob dieselbe Raumpriorität bestehen bleibt oder sich je nach Puckposition und Spielsituation verändert.";
+
+	const updateDraft = (nextDraft: any) => {
+		setAnswers({
+			...safeAnswers,
+			__rink_zone_priority_observation_draft: {
+				...draft,
+				...nextDraft,
+			},
+		});
+	};
+
+	const zoneCounts = observations.reduce((acc: Record<PriorityZone, number>, entry: any) => {
+		const zone = entry?.[selectedZoneKey] as PriorityZone;
+		if (zone && zone in ZONE_CONFIG) {
+			acc[zone] = (acc[zone] || 0) + 1;
+		}
+		return acc;
+	}, {} as Record<PriorityZone, number>);
+
+	const bucketCounts = observations.reduce((acc: Record<Exclude<ReflectionBucket, "unclear">, number>, entry: any) => {
+		const zone = entry?.[selectedZoneKey] as PriorityZone;
+		if (!zone || !(zone in ZONE_CONFIG)) return acc;
+		const bucket = ZONE_CONFIG[zone].bucket;
+		acc[bucket] = (acc[bucket] || 0) + 1;
+		return acc;
+	}, {
+		crease: 0,
+		low_slot: 0,
+		high_slot: 0,
+		halfwalls: 0,
+		behind_net: 0,
+		point_lanes: 0,
+	});
+
+	const mostFrequentBucket = (Object.entries(bucketCounts) as Array<[Exclude<ReflectionBucket, "unclear">, number]>)
+		.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+		.find(([, count]) => count > 0)?.[0];
+
+	const mostFrequentLabel = mostFrequentBucket
+		? {
+			crease: "Torraum",
+			low_slot: "Low Slot",
+			high_slot: "High Slot",
+			halfwalls: "Halfwalls",
+			behind_net: "Hinter dem Tor",
+			point_lanes: "Obere Zone",
+		}[mostFrequentBucket]
+		: "";
+
+	const reflectionOptions: Array<{ value: ReflectionBucket; label: string }> = [
+		...(Object.entries(bucketCounts)
+			.filter(([, count]) => count > 0)
+			.map(([bucket]) => ({
+				value: bucket as ReflectionBucket,
+				label: {
+					crease: "Torraum",
+					low_slot: "Low Slot",
+					high_slot: "High Slot",
+					halfwalls: "Halfwalls",
+					behind_net: "Hinter dem Tor",
+					point_lanes: "Obere Zone",
+				}[bucket as Exclude<ReflectionBucket, "unclear">],
+			}))),
+		{ value: "unclear", label: "Kein klares Muster" },
+	];
+
+	const setReflection = (nextReflection: ReflectionBucket) => {
+		setAnswers({
+			...safeAnswers,
+			[reflectionKey]: nextReflection,
+			[mostFrequentZoneKey]: mostFrequentBucket,
+		});
+	};
+
+	const onSaveObservation = () => {
+		if (!selectedZone || isComplete) return;
+
+		const nextObservation = {
+			[observationIndexKey]: currentIndex + 1,
+			[selectedZoneKey]: selectedZone,
+			[noteKey]: noteEnabled && draftNote.trim() ? draftNote.trim() : undefined,
+			[createdAtKey]: new Date().toISOString(),
+		};
+
+		setAnswers({
+			...safeAnswers,
+			[observationsKey]: [...observations, nextObservation],
+			__rink_zone_priority_observation_draft: {
+				[selectedZoneKey]: "",
+				[noteKey]: "",
+			},
+			[mostFrequentZoneKey]: mostFrequentBucket,
+		});
+	};
+
+	const removeObservation = (index: number) => {
+		const nextObservations = observations.filter((_: any, idx: number) => idx !== index);
+		setAnswers({
+			...safeAnswers,
+			[observationsKey]: nextObservations,
+		});
+	};
+
+	const isZoneSelected = (zone: PriorityZone) => selectedZone === zone;
+
+	return (
+		<div className="card">
+			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word", marginBottom: "0.45rem" }}>{drill.title}</h3>
+			{drill.description && (
+				<p style={{ fontSize: "0.93rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "0.65rem" }}>
+					{drill.description}
+				</p>
+			)}
+
+			<details style={{ marginBottom: "0.7rem" }}>
+				<summary style={{ cursor: "pointer", color: "#8fd3df", fontWeight: 600 }}>Didaktischer Fokus</summary>
+				<p style={{ marginTop: "0.45rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.45 }}>
+					{drill?.didactics?.explanation || "Achte nicht nur auf den Puck. Beobachte, welchen Raum die Defensive auch dann absichert, wenn sich der Puck bewegt."}
+				</p>
+			</details>
+
+			<ObservationGuide drill={drill} />
+
+			{!isComplete && (
+				<section style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+					<div style={{ marginBottom: "0.45rem", padding: "0.5rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(153,246,228,0.4)", background: "rgba(20,184,166,0.12)" }}>
+						<p style={{ margin: 0, color: "#99f6e4", fontWeight: 700 }}>{currentMission?.title || `Mission ${currentIndex + 1} von ${observationCount}`}</p>
+						{currentMission?.prompt && <p style={{ margin: "0.18rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.32 }}>{currentMission.prompt}</p>}
+						{currentMission?.hint && <p style={{ margin: "0.22rem 0 0", color: "rgba(255,255,255,0.74)", fontSize: "0.84rem" }}>{currentMission.hint}</p>}
+					</div>
+
+					<div style={{ marginBottom: "0.55rem" }}>
+						<div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.76rem", color: "rgba(255,255,255,0.62)", marginBottom: "0.2rem" }}>
+							<span>Fortschritt</span>
+							<span>{observations.length}/{observationCount}</span>
+						</div>
+						<div style={{ height: "5px", width: "100%", borderRadius: "999px", background: "rgba(255,255,255,0.12)", overflow: "hidden" }}>
+							<div style={{ height: "100%", width: `${progressPct}%`, background: "linear-gradient(90deg, #2dd4bf 0%, #14b8a6 100%)" }} />
+						</div>
+					</div>
+
+					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem", lineHeight: 1.35 }}>
+						<strong>Zentrale Entscheidungsregel:</strong><br />
+						{decisionRule}
+					</p>
+
+					<div
+						className={`rink-interaction-surface${isInteracting ? " is-interacting" : ""}`}
+						onPointerDown={(event) => {
+							if (event.pointerType === "touch") setIsInteracting(true);
+						}}
+						onPointerUp={() => setIsInteracting(false)}
+						onPointerCancel={() => setIsInteracting(false)}
+						style={{
+							position: "relative",
+							width: "100%",
+							maxWidth: "760px",
+							aspectRatio: "900 / 620",
+							borderRadius: "10px",
+							border: "1px solid rgba(81,145,162,0.45)",
+							overflow: "hidden",
+							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
+							marginBottom: "0.55rem",
+							touchAction: isInteracting ? "none" : "manipulation",
+						}}
+					>
+						<svg viewBox="0 0 900 620" role="img" aria-label="Defensivzone mit auswählbaren Räumen" style={{ width: "100%", height: "100%", display: "block" }}>
+							<rect x="30" y="40" width="840" height="540" rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
+							<line x1="850" y1="50" x2="850" y2="570" stroke="rgba(86,153,255,0.75)" strokeWidth="5" />
+							<rect x="118" y="268" width="14" height="84" fill="rgba(220,38,38,0.95)" />
+							<path d="M132 258 A60 60 0 0 0 132 362" fill="none" stroke="rgba(220,38,38,0.82)" strokeWidth="5" />
+							<circle cx="250" cy="165" r="62" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+							<circle cx="250" cy="455" r="62" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+							{zoneValues.map((zone) => {
+								const zoneDef = ZONE_CONFIG[zone];
+								const selected = isZoneSelected(zone);
+								return (
+									<g key={zone}>
+										<path
+											d={zoneDef.path}
+											fill={selected ? "rgba(45,212,191,0.35)" : "rgba(255,255,255,0.02)"}
+											stroke={selected ? "rgba(153,246,228,0.95)" : "rgba(255,255,255,0.22)"}
+											strokeWidth={selected ? 3 : 2}
+											onClick={() => updateDraft({ [selectedZoneKey]: zone })}
+											style={{ cursor: "pointer" }}
+										/>
+										<title>{zoneDef.label}</title>
+									</g>
+								);
+							})}
+						</svg>
+					</div>
+
+					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(148px, 1fr))", gap: "0.35rem", marginBottom: "0.5rem" }}>
+						{zoneValues.map((zone) => {
+							const zoneDef = ZONE_CONFIG[zone];
+							const selected = isZoneSelected(zone);
+							return (
+								<button
+									key={zone}
+									type="button"
+									onClick={() => updateDraft({ [selectedZoneKey]: zone })}
+									style={{
+										minHeight: "44px",
+										padding: "0.42rem 0.55rem",
+										borderRadius: "6px",
+										border: selected ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+										background: selected ? "rgba(20,184,166,0.24)" : "rgba(255,255,255,0.04)",
+										color: "#f7f7ff",
+										fontSize: "0.83rem",
+										textAlign: "left",
+										cursor: "pointer",
+									}}
+								>
+									{zoneDef.label}
+								</button>
+							);
+						})}
+					</div>
+
+					<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+						Ausgewählt: <strong>{selectedZone ? ZONE_CONFIG[selectedZone].label : "Keine Zone"}</strong>
+					</div>
+
+					{noteEnabled && (
+						<details style={{ marginBottom: "0.45rem" }} open={!!draftNote}>
+							<summary style={{ cursor: "pointer", fontSize: "0.82rem", color: "#8fd3df" }}>Optionale Notiz</summary>
+							<textarea
+								value={draftNote}
+								onChange={(e) => updateDraft({ [noteKey]: e.target.value })}
+								maxLength={noteMaxChars}
+								placeholder={notePlaceholder}
+								aria-label={noteLabel}
+								style={{
+									width: "100%",
+									minHeight: "56px",
+									marginTop: "0.35rem",
+									padding: "0.45rem",
+									backgroundColor: "#050712",
+									color: "#f7f7ff",
+									border: "1px solid rgba(81,145,162,0.5)",
+									borderRadius: "4px",
+									fontFamily: "inherit",
+									fontSize: "0.9rem",
+								}}
+							/>
+						</details>
+					)}
+
+					<button
+						type="button"
+						onClick={onSaveObservation}
+						disabled={!selectedZone}
+						style={{
+							padding: "0.5rem 0.85rem",
+							background: selectedZone ? "rgba(81,145,162,0.36)" : "rgba(81,145,162,0.14)",
+							border: "1px solid rgba(81,145,162,0.62)",
+							borderRadius: "4px",
+							color: "#f7f7ff",
+							fontWeight: 600,
+							fontSize: "0.9rem",
+							cursor: selectedZone ? "pointer" : "not-allowed",
+						}}
+					>
+						{saveButtonLabel}
+					</button>
+				</section>
+			)}
+
+			<section style={{ marginBottom: "0.4rem", padding: "0.8rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", marginBottom: "0.55rem" }}>
+					<h4 style={{ margin: 0 }}>Erfasste Beobachtungen</h4>
+					<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>{observations.length}/{observationCount}</span>
+				</div>
+
+				<div style={{ display: "grid", gap: "0.4rem" }}>
+					{observations.map((entry: any, idx: number) => (
+						<div key={idx} style={{ padding: "0.5rem 0.62rem", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", background: "rgba(255,255,255,0.03)" }}>
+							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.55rem" }}>
+								<strong>Beobachtung {idx + 1}</strong>
+								<button
+									type="button"
+									onClick={() => removeObservation(idx)}
+									style={{ padding: "0.14rem 0.45rem", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "#f7f7ff", fontSize: "0.82rem", cursor: "pointer" }}
+								>
+									Entfernen
+								</button>
+							</div>
+							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
+								{ZONE_CONFIG[entry?.[selectedZoneKey] as PriorityZone]?.label || "Unbekannt"}
+							</div>
+							{entry?.[noteKey] && <div style={{ marginTop: "0.22rem", fontSize: "0.81rem", color: "rgba(255,255,255,0.64)" }}>{entry[noteKey]}</div>}
+						</div>
+					))}
+				</div>
+
+				{isComplete && summaryEnabled && (
+					<div style={{ marginTop: "0.7rem" }}>
+						<h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>Deine Beobachtungen</h4>
+						<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.4rem", marginBottom: "0.55rem" }}>
+							<div style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.82)" }}>Torraum: {bucketCounts.crease}</div>
+							<div style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.82)" }}>Low Slot: {bucketCounts.low_slot}</div>
+							<div style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.82)" }}>High Slot: {bucketCounts.high_slot}</div>
+							<div style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.82)" }}>Halfwalls: {bucketCounts.halfwalls}</div>
+							<div style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.82)" }}>Hinter dem Tor: {bucketCounts.behind_net}</div>
+							<div style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.82)" }}>Obere Zone: {bucketCounts.point_lanes}</div>
+						</div>
+
+						<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.35 }}>
+							<strong>Rohdaten:</strong> {zoneValues.map((zone) => `${ZONE_CONFIG[zone].label} (${zoneCounts[zone] || 0})`).join(", ")}
+						</div>
+
+						{reflectionEnabled && reflectionOptions.length > 0 && (
+							<>
+								<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
+									{reflectionConfig?.label || "Welcher Raum hatte in deinen Beobachtungen die höchste erkennbare Schutzpriorität?"}
+								</label>
+								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", marginBottom: "0.55rem" }}>
+									{reflectionOptions.map((opt) => (
+										<label key={opt.value} style={{ display: "flex", alignItems: "center", gap: "0.42rem", fontSize: "0.88rem" }}>
+											<input
+												type="radio"
+												name="rink_zone_priority_reflection"
+												value={opt.value}
+												checked={reflectionValue === opt.value}
+												onChange={() => setReflection(opt.value)}
+											/>
+											<span>{opt.label}</span>
+										</label>
+									))}
+								</div>
+							</>
+						)}
+
+						{activeFocusEnabled && (!reflectionEnabled || !!reflectionValue) && (
+							<section style={{ marginTop: "0.45rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
+								<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
+								<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>
+								{mostFrequentLabel && (
+									<p style={{ margin: "0.35rem 0 0", color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>
+										Bisher am häufigsten markiert:<br />
+										<strong>{mostFrequentLabel}</strong>
+									</p>
+								)}
+							</section>
+						)}
+					</div>
+				)}
+			</section>
+
+			{drill.didactics?.learning_hint && (
+				<p style={{ marginTop: "0.68rem", marginBottom: 0, fontSize: "0.85rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
+					{drill.didactics.learning_hint}
+				</p>
+			)}
+		</div>
+	);
 }
 
 function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, phase }: any) {

@@ -83,7 +83,7 @@ def render_checkin_phase(session, phase):
             'session_id': session['id'],
             'phase': phase
         }
-        if drill.get('drill_type') == 'observation_log_drill':
+        if drill.get('drill_type') in ['observation_log_drill', 'rink_zone_priority_observation', 'paintable_rink_observation']:
             responses = render_drill(drill, context)
             save_key = f"{session['id']}_{phase}_{drill['id']}_saved"
 
