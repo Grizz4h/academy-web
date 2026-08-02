@@ -1,0 +1,38 @@
+{
+  "id": "scene_1785592704_bc2104",
+  "scene_code": "SC019",
+  "user": "Christoph",
+  "session_id": "Christoph_1785592381",
+  "module_id": "B2",
+  "drill_id": "B2_D1",
+  "drill_title": "Druckquellen erkennen: Was begrenzt den Puckführer?",
+  "track_id": "B2",
+  "status": "NEW",
+  "league": "DEL",
+  "season": "2025/26",
+  "competition_phase": "regular_season",
+  "competition_phase_label": "Hauptrunde",
+  "competition_unit_type": "matchday",
+  "competition_unit_label": "Spieltag",
+  "competition_unit_value": "3",
+  "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 3",
+  "team_home": "EHC Red Bull München",
+  "team_away": "Augsburger Panther",
+  "observed_team": null,
+  "period": "P1",
+  "episode_season": null,
+  "episode_number": null,
+  "season_code": null,
+  "episode_code": null,
+  "game_time": "18:05",
+  "note": "wird schnell hinter dem Tor angegriffen und gerät eigentlich so ziemlich unter alle Drucksarten gleichzeitig :-D",
+  "rating": 4,
+  "extensions": {
+    "dominantPressureSource": "Zeitdruck"
+  },
+  "extension_labels": {
+    "dominantPressureSource": "Dominante Druckquelle"
+  },
+  "created_at": "2026-08-01T15:58:24.381155",
+  "updated_at": "2026-08-01T16:23:10.248172"
+}

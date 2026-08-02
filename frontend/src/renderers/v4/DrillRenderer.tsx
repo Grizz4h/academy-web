@@ -159,7 +159,7 @@ export default function DrillRendererV4({ answers, setAnswers, session }: DrillR
         <div className={styles.versionBadge}>
           [Renderer V4: Meta-Scan]
         </div>
-        <div className="card">
+        <div className="card primary-card">
           <h3>Zusammenfassung & Root Cause Analyse</h3>
           
           <div className={styles.section}>
@@ -232,7 +232,7 @@ export default function DrillRendererV4({ answers, setAnswers, session }: DrillR
       </div>
 
       {/* Meta Axes */}
-      <div className="card">
+      <div className="card primary-card">
         <h3>Meta-Scan Achsen ({periodNumber} Drittel)</h3>
         <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1.5rem' }}>
           Bewerte jede Achse von 1 (schwach) bis 5 (stark). Du kannst auch "unsicher" lassen (keine Auswahl).
@@ -269,7 +269,7 @@ export default function DrillRendererV4({ answers, setAnswers, session }: DrillR
       </div>
 
       {/* Timeline Markers */}
-      <div className="card">
+      <div className="card primary-card">
         <h3>Timeline Marker ({periodNumber} Drittel)</h3>
         <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
           Halte wichtige Ereignisse fest (z.B. Turnover → Chance, Momentum-Wechsel).

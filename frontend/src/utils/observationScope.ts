@@ -1,4 +1,12 @@
 export type ObservationScope = 'FULL_GAME' | 'P1' | 'P2' | 'P3'
+export type PeriodPhase = 'P1' | 'P2' | 'P3'
+
+export const ACTIVE_PERIODS_BY_SCOPE: Record<ObservationScope, PeriodPhase[]> = {
+  FULL_GAME: ['P1', 'P2', 'P3'],
+  P1: ['P1'],
+  P2: ['P2'],
+  P3: ['P3'],
+}
 
 export const OBSERVATION_SCOPE_OPTIONS: Array<{ value: ObservationScope; label: string }> = [
   { value: 'FULL_GAME', label: 'Gesamtes Spiel' },
@@ -23,4 +31,9 @@ export function getObservationScopeLabel(scope?: string | null): string {
     default:
       return scope
   }
+}
+
+export function getActivePeriodsForScope(scope?: string | null): PeriodPhase[] {
+  const normalized = (scope || '').trim().toUpperCase() as ObservationScope
+  return ACTIVE_PERIODS_BY_SCOPE[normalized] || ACTIVE_PERIODS_BY_SCOPE.FULL_GAME
 }

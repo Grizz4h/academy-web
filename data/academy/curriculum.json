@@ -2435,29 +2435,33 @@
           "drills": [
             {
               "id": "B2_D1",
-              "title": "Druck erkennen: Beobachten und Verdichten",
+              "title": "Druckquellen erkennen: Was begrenzt den Puckführer?",
               "drill_type": "period_checkin",
-              "description": "Sammle drei konkrete Drucksituationen und verdichte sie anschließend zu einem periodischen Gesamteindruck.",
+              "description": "Beobachte drei Situationen, in denen ein Puckführer eine Entscheidung treffen muss. Analysiere, wie stark Zeit, Raum, Gegnerdruck und verfügbare Optionen seine Handlungsmöglichkeiten einschränken.",
               "didactics": {
-                "explanation": "Nicht jede schlechte Aktion ist ein Fehler. Entscheidend ist, wodurch Druck entsteht. Beobachte zuerst drei konkrete Situationen und verdichte sie danach im Check-in.",
+                "explanation": "Druck entsteht nicht nur durch einen nahen Gegenspieler.\n\nEin Spieler kann eingeschränkt werden durch:\n- wenig verfügbare Zeit,\n- begrenzten Raum,\n- direkten Gegnereinfluss,\n- fehlende Anschlussoptionen.\n\nBeobachte immer den Moment unmittelbar vor der Handlung des Puckführers.\n\nBewerte nicht, ob die Aktion erfolgreich war, sondern unter welchen Bedingungen die Entscheidung getroffen werden musste.\n\nZentrale Entscheidungsregel:\nBewerte nicht, ob Druck vorhanden war.\nBewerte, wodurch die Entscheidung des Puckführers am stärksten eingeschränkt wurde.\n\nWichtige Klarstellung:\nGegnerdruck ist nicht automatisch die wichtigste Druckquelle.\nEin naher Gegner kann zum Beispiel vor allem Optionsdruck erzeugen, wenn alle Passwege geschlossen sind.\nWähle die Quelle, die die Entscheidung am stärksten beeinflusst hat.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Konkrete Entscheidungssituationen unter Druck",
-                    "Zeitfenster bis zur Handlung",
-                    "Verfügbarer Raum, Gegnereinfluss und verbleibende Optionen"
+                    "Den Moment unmittelbar vor einer Entscheidung des Puckführers",
+                    "Wie viel Zeit für Wahrnehmung und Handlung vorhanden ist",
+                    "Welcher nutzbare Raum zur Verfügung steht",
+                    "Wie direkt ein Gegenspieler Einfluss nimmt",
+                    "Welche realistischen Anschlussoptionen offen bleiben"
                   ],
                   "how_to_decide": [
-                    "Erfasse genau drei Situationen pro Drittel",
-                    "Diagnostiziere je Situation vier Druckquellen",
-                    "Verdichte erst nach den drei Beobachtungen",
-                    "Nutze den Check-in als Reflexion, nicht als Bauchgefühl"
+                    "Suche eine Situation, in der ein Spieler mit Puck eine erkennbare Entscheidung treffen muss",
+                    "Bewerte zuerst Zeit, Raum, Gegnerdruck und Optionsdruck getrennt voneinander",
+                    "Entscheide anschließend, welche Druckquelle die Handlung am stärksten geprägt hat",
+                    "Bewerte nicht den Erfolg der Aktion, sondern die Bedingungen vor der Entscheidung"
                   ],
                   "ignore": [
-                    "Ergebnis der Aktion (gelungen/fehlgeschlagen)",
-                    "Einzelne Highlights ohne Druckbezug"
+                    "Ob die Aktion erfolgreich oder erfolglos endet",
+                    "Ob die Entscheidung im Nachhinein gut oder schlecht war",
+                    "Highlights ohne klaren Entscheidungsdruck",
+                    "Allgemeine Hektik ohne erkennbare Einschränkung des Puckführers"
                   ]
                 },
-                "learning_hint": "Druck diagnostizieren heißt erkennen, welche Quelle die Entscheidung am stärksten begrenzt hat."
+                "learning_hint": "Druck diagnostizieren bedeutet nicht nur zu sehen, dass ein Gegner angreift. Entscheidend ist zu erkennen, welche Einschränkung die Handlungsmöglichkeiten des Spielers begrenzt."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2506,10 +2510,31 @@
                 "sample_key": "pressure_samples",
                 "sample_label": "Drucksituation",
                 "max_samples_per_phase": 3,
+                "sample_note_max_chars": 600,
+                "phase1_title": "Phase 1 - Drucksituationen erfassen",
+                "phase1_description": "Finde drei Situationen mit erkennbarem Entscheidungsdruck beim Puckführer. Bewerte pro Situation die vier Druckquellen getrennt und entscheide erst danach, welche Quelle die Handlung am stärksten begrenzt.",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der ein Puckführer unter erkennbarem Entscheidungsdruck steht.",
+                    "hint": "Analysiere alle vier Druckquellen."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere Situation.",
+                    "hint": "Achte besonders darauf, ob der Gegnerdruck direkt wirkt oder erst Zeit, Raum oder Optionen einschränkt."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation.",
+                    "hint": "Vergleiche deine Beobachtungen: Welche Druckquelle war am häufigsten entscheidend?"
+                  }
+                ],
                 "diagnosis_fields": [
                   {
                     "key": "zeitdruck",
                     "label": "Zeitdruck",
+                    "question": "Wie schnell muss der Spieler handeln?",
                     "options": [
                       "Viel Zeit",
                       "Etwas Zeit",
@@ -2526,6 +2551,7 @@
                   {
                     "key": "raumdruck",
                     "label": "Raumdruck",
+                    "question": "Wie viel nutzbarer Raum steht dem Spieler tatsächlich zur Verfügung?",
                     "options": [
                       "Frei",
                       "Eher frei",
@@ -2542,6 +2568,7 @@
                   {
                     "key": "gegnerdruck",
                     "label": "Gegnerdruck",
+                    "question": "Wie direkt beeinflusst ein Gegenspieler die Handlung?",
                     "options": [
                       "Kein Druck",
                       "Beobachtet",
@@ -2558,6 +2585,7 @@
                   {
                     "key": "optionsdruck",
                     "label": "Optionsdruck",
+                    "question": "Wie viele realistische Anschlussmöglichkeiten bleiben offen?",
                     "options": [
                       "Viele",
                       "Einige",
@@ -2616,30 +2644,36 @@
             },
             {
               "id": "B2_D2",
-              "title": "Lösungsart erkennen",
+              "title": "Wie löst der Puckführer den Druck?",
               "drill_type": "period_checkin",
-              "description": "Erkennen, wie ein Spieler versucht, eine Drucksituation zu lösen.",
+              "description": "Beobachte drei Situationen, in denen ein Puckführer des ausgewählten Teams unter Druck entscheiden muss. Ordne jeweils ein, ob er die Situation vereinfacht, stabilisiert oder aktiv nach vorne löst.",
               "didactics": {
-                "explanation": "Unter Druck zählt nicht nur, was der Spieler macht, sondern welche Lösungsart er wählt: Komplexität reduzieren, Struktur erhalten oder aktiv Raum gewinnen.",
+                "explanation": "Unter Druck können Spieler unterschiedliche Ziele verfolgen.\n\nSie können:\n- die Situation vereinfachen und die akute Gefahr reduzieren,\n- Kontrolle und Struktur stabilisieren,\n- oder den Druck aktiv nach vorne überwinden.\n\nBeobachte nicht nur, welche Aktion der Spieler ausführt. Frage dich, welches Problem er mit dieser Aktion zuerst lösen wollte.\n\nBewertet wird die erkennbare Lösungsabsicht - nicht, ob die Aktion später erfolgreich endet.\n\nZentrale Entscheidungsregel:\nFrage dich nicht nur: \"Was hat der Spieler gemacht?\"\nFrage dich: \"Was wollte er mit dieser Aktion zuerst erreichen?\"\n\nKurzregel:\nGefahr reduzieren -> Vereinfachen\nKontrolle und Ordnung sichern -> Stabilisieren\nDruck aktiv überwinden und Raum gewinnen -> Vorwärts lösen\n\nAbgrenzung:\nVereinfachen entschärft.\nStabilisieren bereitet vor.\nVorwärts lösen durchbricht.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welches Problem musste der Spieler lösen?",
-                    "Reduziert die Aktion Komplexität, hält sie Struktur stabil oder erzeugt sie Raumgewinn?",
-                    "Welche Absicht ist in der Lösung erkennbar?"
+                    "Einen Puckführer des ausgewählten Teams, der unter erkennbarem Druck entscheiden muss",
+                    "Welches konkrete Problem in der Situation besteht",
+                    "Was der Spieler mit seiner nächsten Aktion zuerst erreichen will",
+                    "Ob er Risiko reduziert, Kontrolle sichert oder aktiven Raumgewinn sucht",
+                    "Die Lösungsabsicht unmittelbar in der Drucksituation"
                   ],
                   "how_to_decide": [
-                    "Frage dich: Wie versucht der Spieler, das Problem zu lösen?",
-                    "Ordne die Lösungsart ein, nicht den Erfolg der Aktion",
-                    "Nutze die konkrete Spielsituation als Kontext",
-                    "Vergleiche deinen Drittel-Eindruck mit den drei gesammelten Situationen"
+                    "Erkenne zuerst das Problem, auf das der Spieler reagieren muss",
+                    "Frage dich danach, welches Ziel seine Aktion verfolgt",
+                    "Wähle Vereinfachen, wenn vor allem Gefahr und Komplexität reduziert werden sollen",
+                    "Wähle Stabilisieren, wenn Kontrolle erhalten und eine bessere nächste Aktion vorbereitet werden soll",
+                    "Wähle Vorwärts lösen, wenn der Druck aktiv überwunden und Raumgewinn erzeugt werden soll",
+                    "Ordne die Lösungsabsicht ein, nicht den Erfolg der Ausführung"
                   ],
                   "ignore": [
-                    "Tor oder Puckverlust als reine Ergebnisbewertung",
-                    "Technische Ausführung ohne Problemdruck",
-                    "Was der Spieler gemacht hat, ohne die Lösungsabsicht zu prüfen"
+                    "Ob die Aktion erfolgreich oder erfolglos endet",
+                    "Ob der Pass ankommt oder der Puck später verloren geht",
+                    "Die technische Schönheit der Ausführung",
+                    "Ob du persönlich eine andere Lösung gewählt hättest",
+                    "Szenen ohne erkennbaren Druck oder ohne nachvollziehbares Entscheidungsproblem"
                   ]
                 },
-                "learning_hint": "Gleiche Aktion, andere Lösungsart: Entscheidend ist, welches Problem der Spieler in diesem Moment lösen wollte."
+                "learning_hint": "Die gleiche sichtbare Aktion kann je nach Situation eine andere Lösungsart darstellen. Entscheidend ist, welches Problem der Spieler mit seiner Aktion zuerst lösen wollte."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2680,7 +2714,24 @@
                 "sample_label": "Entscheidungssituation",
                 "max_samples_per_phase": 3,
                 "phase1_title": "Phase 1 - Entscheidungssituationen sammeln",
-                "phase1_description": "Erfasse genau 3 Entscheidungssituationen aus dem Drittel. Ordne jeweils ein, welche Lösungsart der Spieler gewählt hat.",
+                "phase1_description": "Erfasse genau 3 Drucksituationen mit einem Puckführer des ausgewählten Teams. Nutze den Zusammenhang Problem -> gewählte Lösung und ordne die Lösungsabsicht ein.",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der ein Puckführer des ausgewählten Teams unter Druck entscheiden muss.",
+                    "hint": "Erkenne zuerst das Problem und ordne anschließend seine Lösungsart ein."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere Drucksituation.",
+                    "hint": "Achte besonders auf den Unterschied zwischen Vereinfachen und Stabilisieren."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation.",
+                    "hint": "Vergleiche anschließend, welche Lösungsart das Team am häufigsten gewählt hat."
+                  }
+                ],
                 "sample_note_key": "note",
                 "sample_note_label": "Kurze Situation / Beispiel (optional)",
                 "aggregate_by": "solution_type",
@@ -2696,15 +2747,18 @@
                     "options": [
                       {
                         "value": "vereinfachen",
-                        "label": "Vereinfachen"
+                        "label": "Vereinfachen",
+                        "description": "Akute Gefahr und Komplexität reduzieren"
                       },
                       {
                         "value": "stabilisieren",
-                        "label": "Stabilisieren"
+                        "label": "Stabilisieren",
+                        "description": "Kontrolle sichern und die nächste Aktion vorbereiten"
                       },
                       {
                         "value": "vorwaerts_loesen",
-                        "label": "Vorwärts lösen"
+                        "label": "Vorwärts lösen",
+                        "description": "Druck aktiv überwinden und Raum gewinnen"
                       }
                     ]
                   }

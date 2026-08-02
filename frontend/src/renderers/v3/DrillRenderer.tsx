@@ -19,6 +19,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 
 	return (
 		<div
+			className="nested-section mobile-flatten observation-guide-section"
 			style={{
 				marginBottom: "1.5rem",
 				padding: "1rem",
@@ -150,13 +151,13 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
           <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.description}</p>
         )}
         {drill.didactics?.explanation && (
-          <div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+					<div className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
             <h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
             <div style={{ whiteSpace: "pre-line" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
           </div>
         )}
         {/* Block A: Beobachtete Tendenz */}
-        <section style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
+					<section className="mobile-flatten-card" style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
           <h4 style={{ margin: 0, color: '#5191a2' }}>Beobachtete Tendenz</h4>
           <label style={{ fontWeight: 500, marginTop: 8, display: 'block' }}>{tendenzQ?.label || 'Welche Tendenz hast du über mehrere Szenen erkannt?'}</label>
 						<textarea
@@ -169,7 +170,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
         </section>
 
         {/* Block B: Trigger & Bedingungen */}
-        <section style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
+					<section className="mobile-flatten-card" style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
           <h4 style={{ margin: 0, color: '#5191a2' }}>Trigger & Bedingungen</h4>
           {/* Trigger 1 */}
           <div style={{ marginBottom: 12 }}>
@@ -219,7 +220,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
         </section>
 
         {/* Block C: Gültigkeit der Analyse */}
-        <section style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
+					<section className="mobile-flatten-card" style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(81,145,162,0.07)", borderRadius: 6 }}>
           <h4 style={{ margin: 0, color: '#5191a2' }}>Analyse-Sicherheit</h4>
           <label style={{ fontWeight: 500, display: 'block', marginBottom: 6 }}>{validQ?.label || 'Wie sicher bist du, dass diese Tendenz reproduzierbar ist?'}</label>
           <div style={{ display: 'flex', gap: 24 }}>
@@ -242,7 +243,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
         </section>
 
         {drill.didactics?.learning_hint && (
-          <div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+					<div className="mobile-flatten-card" style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
             <h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
             <p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
           </div>
@@ -278,19 +279,19 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	}, [signature, drill?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
 			{drill.description && (
 				<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.description}</p>
 			)}
 			{drill.didactics?.explanation && (
-				<div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+				<div className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
 					<div style={{ whiteSpace: "pre-line" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
 				</div>
 			)}
 			{drill.didactics?.role_context && (
-				<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.04)", borderRadius: "4px" }}>
+				<section className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.04)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0 }}>{drill.didactics.role_context.title}</h4>
 					<ul style={{ paddingLeft: 18, marginTop: 8 }}>
 						{drill.didactics.role_context.content?.map((item: any, idx: number) => (
@@ -365,7 +366,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				);
 			})}
 			{drill.didactics?.learning_hint && (
-				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+				<div className="mobile-flatten-card" style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
 					<p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
 				</div>
@@ -378,7 +379,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 function MicroQuiz({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3>{drill.title}</h3>
 			{questions.map((q: any, i: number) => (
 				<div key={i} style={{ marginBottom: "1rem" }}>
@@ -411,20 +412,20 @@ function ShiftTracker({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
 	const glossary = drill?.didactics?.glossary;
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3>{drill.title}</h3>
 			<p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", marginBottom: "1rem" }}>
 				{drill.description || "Beobachte Shifts konsequent – Muster erkennen, nicht raten."}
 			</p>
 			{drill.didactics?.explanation && (
-				<div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "4px", borderLeft: "4px solid #5191a2" }}>
+				<div className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "4px", borderLeft: "4px solid #5191a2" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
 					<div style={{ whiteSpace: "pre-line" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
 				</div>
 			)}
 			<ObservationGuide drill={drill} />
 			{drill.didactics?.shift_marker_explanation && (
-				<div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "4px", borderLeft: "4px solid #ffc107" }}>
+				<div className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "4px", borderLeft: "4px solid #ffc107" }}>
 					<p>{drill.didactics.shift_marker_explanation}</p>
 				</div>
 			)}
@@ -494,7 +495,7 @@ function ShiftTracker({ drill, answers, setAnswers }: any) {
 				})}
 			</div>
 			{drill.didactics?.learning_hint && (
-				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "4px", borderLeft: "4px solid #ffc107" }}>
+				<div className="mobile-flatten-card" style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "4px", borderLeft: "4px solid #ffc107" }}>
 					<h4 style={{ marginTop: 0, color: "#ffc107" }}>Lernhinweis</h4>
 					<p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
 				</div>
@@ -507,11 +508,11 @@ function ShiftTracker({ drill, answers, setAnswers }: any) {
 function TriangleSpotting({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3>{drill.title}</h3>
 			{drill.description && <p style={{ opacity: 0.75 }}>{drill.description}</p>}
 			{drill.didactics?.drill_intro && (
-				<div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+				<div className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>{drill.didactics.drill_intro.title}</h4>
 					<p>{drill.didactics.drill_intro.text}</p>
 				</div>
@@ -557,7 +558,7 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 				))}
 			</div>
 			{drill.didactics?.learning_hint && (
-				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+				<div className="mobile-flatten-card" style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
 					<p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
 				</div>
@@ -570,11 +571,11 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 function RoleIdentification({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3>{drill.title}</h3>
 			{drill.description && <p style={{ opacity: 0.75 }}>{drill.description}</p>}
 			{drill.didactics?.explanation && (
-				<div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+				<div className="mobile-flatten-card" style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>Drill-Erklärung</h4>
 					<div style={{ whiteSpace: "pre-line" }}>{renderWithGlossary(drill.didactics.explanation)}</div>
 				</div>
@@ -629,7 +630,7 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 				))}
 			</div>
 			{drill.didactics?.learning_hint && (
-				<div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
+				<div className="mobile-flatten-card" style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.05)", borderRadius: "4px" }}>
 					<h4 style={{ marginTop: 0, color: "#5191a2" }}>🧠 Lernhinweis</h4>
 					<p style={{ fontStyle: "italic", whiteSpace: "pre-line" }}>{drill.didactics.learning_hint}</p>
 				</div>

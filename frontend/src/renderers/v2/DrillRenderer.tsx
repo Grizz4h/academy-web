@@ -102,6 +102,7 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 
 	return (
 		<div
+			className="nested-section mobile-flatten observation-guide-section"
 			style={{
 				marginBottom: "1.5rem",
 				padding: "1rem",
@@ -578,7 +579,7 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 	const isZoneSelected = (zone: PriorityZone) => selectedZone === zone;
 
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word", marginBottom: "0.45rem" }}>{drill.title}</h3>
 			{drill.description && (
 				<p style={{ fontSize: "0.93rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "0.65rem" }}>
@@ -586,7 +587,7 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 				</p>
 			)}
 
-			<details style={{ marginBottom: "0.7rem" }}>
+			<details className="nested-section mobile-flatten didactic-focus-section" style={{ marginBottom: "0.7rem" }}>
 				<summary style={{ cursor: "pointer", color: "#8fd3df", fontWeight: 600 }}>Didaktischer Fokus</summary>
 				<p style={{ marginTop: "0.45rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.45 }}>
 					{drill?.didactics?.explanation || "Achte nicht nur auf den Puck. Beobachte, welchen Raum die Defensive auch dann absichert, wenn sich der Puck bewegt."}
@@ -596,7 +597,7 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 			<ObservationGuide drill={drill} />
 
 			{!isComplete && (
-				<section style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+				<section className="mobile-flatten-card" style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
 					<div style={{ marginBottom: "0.45rem", padding: "0.5rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(153,246,228,0.4)", background: "rgba(20,184,166,0.12)" }}>
 						<p style={{ margin: 0, color: "#99f6e4", fontWeight: 700 }}>{currentMission?.title || `Mission ${currentIndex + 1} von ${observationCount}`}</p>
 						{currentMission?.prompt && <p style={{ margin: "0.18rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.32 }}>{currentMission.prompt}</p>}
@@ -613,31 +614,32 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 						</div>
 					</div>
 
-					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem", lineHeight: 1.35 }}>
+					<p className="nested-section mobile-flatten decision-rule-section" style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem", lineHeight: 1.35 }}>
 						<strong>Zentrale Entscheidungsregel:</strong><br />
 						{decisionRule}
 					</p>
 
-					<div
-						className={`rink-interaction-surface${isInteracting ? " is-interacting" : ""}`}
-						onPointerDown={(event) => {
-							if (event.pointerType === "touch") setIsInteracting(true);
-						}}
-						onPointerUp={() => setIsInteracting(false)}
-						onPointerCancel={() => setIsInteracting(false)}
-						style={{
-							position: "relative",
-							width: "100%",
-							maxWidth: "760px",
-							aspectRatio: "900 / 620",
-							borderRadius: "10px",
-							border: "1px solid rgba(81,145,162,0.45)",
-							overflow: "hidden",
-							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
-							marginBottom: "0.55rem",
-							touchAction: isInteracting ? "none" : "manipulation",
-						}}
-					>
+					<div className="interaction-surface">
+						<div
+							className={`rink-wrapper rink-interaction-surface${isInteracting ? " is-interacting" : ""}`}
+							onPointerDown={(event) => {
+								if (event.pointerType === "touch") setIsInteracting(true);
+							}}
+							onPointerUp={() => setIsInteracting(false)}
+							onPointerCancel={() => setIsInteracting(false)}
+							style={{
+								position: "relative",
+								width: "100%",
+								maxWidth: "760px",
+								aspectRatio: "900 / 620",
+								borderRadius: "10px",
+								border: "1px solid rgba(81,145,162,0.45)",
+								overflow: "hidden",
+								background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
+								marginBottom: "0.55rem",
+								touchAction: isInteracting ? "none" : "manipulation",
+							}}
+						>
 						<svg viewBox="0 0 900 620" role="img" aria-label="Defensivzone mit auswählbaren Räumen" style={{ width: "100%", height: "100%", display: "block" }}>
 							<rect x="30" y="40" width="840" height="540" rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
 							<line x1="850" y1="50" x2="850" y2="570" stroke="rgba(86,153,255,0.75)" strokeWidth="5" />
@@ -663,6 +665,7 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 								);
 							})}
 						</svg>
+						</div>
 					</div>
 
 					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(148px, 1fr))", gap: "0.35rem", marginBottom: "0.5rem" }}>
@@ -741,7 +744,7 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 				</section>
 			)}
 
-			<section style={{ marginBottom: "0.4rem", padding: "0.8rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
+			<section className="mobile-flatten-card" style={{ marginBottom: "0.4rem", padding: "0.8rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
 				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", marginBottom: "0.55rem" }}>
 					<h4 style={{ margin: 0 }}>Erfasste Beobachtungen</h4>
 					<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>{observations.length}/{observationCount}</span>
@@ -1169,7 +1172,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	};
 
 	return (
-		<div className="card">
+		<div className="card primary-card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word", marginBottom: "0.45rem" }}>{drill.title}</h3>
 			{drill.description && (
 				<p style={{ fontSize: "0.93rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "0.65rem" }}>
@@ -1177,7 +1180,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				</p>
 			)}
 
-			<details style={{ marginBottom: "0.7rem" }}>
+			<details className="nested-section mobile-flatten didactic-focus-section" style={{ marginBottom: "0.7rem" }}>
 				<summary style={{ cursor: "pointer", color: "#8fd3df", fontWeight: 600 }}>Didaktischer Fokus</summary>
 				<p style={{ marginTop: "0.45rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.45 }}>
 					{drill?.didactics?.explanation || "Defensiver Druck beginnt, sobald ein Spieler den Gegner aktiv zwingt, Zeit, Raum, Laufweg oder eine Option anzupassen."}
@@ -1185,7 +1188,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			</details>
 
 			{!isComplete && (
-				<section style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
+				<section className="mobile-flatten-card" style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
 					<div style={{ marginBottom: "0.45rem", padding: "0.5rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(153,246,228,0.4)", background: "rgba(20,184,166,0.12)" }}>
 						<p style={{ margin: 0, color: "#99f6e4", fontWeight: 700 }}>🎯 Mission {currentIndex + 1} von {observationCount}</p>
 						<p style={{ margin: "0.18rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.32 }}>{currentMission?.prompt}</p>
@@ -1277,7 +1280,9 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>{locationLabel}</p>
 					</div>
 
-					<div
+					<div className="interaction-surface">
+						<div
+							className={`rink-wrapper rink-interaction-surface${draggingPosition ? " is-interacting" : ""}`}
 						ref={rinkRef}
 						style={{
 							position: "relative",
@@ -1290,6 +1295,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
 							marginBottom: "0.55rem",
 							cursor: draggingPosition ? "grabbing" : "default",
+							touchAction: draggingPosition ? "none" : "manipulation",
 						}}
 					>
 						<svg viewBox="0 0 1100 700" role="img" aria-label="Klickbare Eisflaeche" style={{ width: "100%", height: "100%", display: "block" }}>
@@ -1335,6 +1341,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								</button>
 							);
 						})}
+						</div>
 					</div>
 
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.5rem" }}>
@@ -2083,11 +2090,13 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const phaseOneTitle = drill?.config?.phase1_title || "Phase 1 - Drucksituationen sammeln";
 	const phaseOneDescription = drill?.config?.phase1_description || `Erfasse genau ${requiredSamples} Situationen aus dem Drittel. Erst danach folgt die Verdichtung.`;
 	const aggregationLabel = drill?.config?.aggregation_label || "Interne Aggregation";
+	const missions = Array.isArray(drill?.config?.missions) ? drill.config.missions : [];
 
 	const samples: any[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
 	const pressureLabels = Object.fromEntries(sampleFields.map((field: any) => [field.key, field.label]));
 	const isObservationMode = samples.length >= requiredSamples;
 	const canAddMore = true;
+	const currentMission = missions[samples.length] || null;
 
 	const defaultFormState = sampleFields.reduce((next: any, field: any) => {
 		next[field.key] = "";
@@ -2210,6 +2219,14 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					{phaseOneDescription}
 				</p>
 
+				{currentMission && !isObservationMode && (
+					<div style={{ marginBottom: "0.75rem", padding: "0.55rem 0.65rem", borderRadius: "6px", border: "1px solid rgba(153,246,228,0.4)", background: "rgba(20,184,166,0.12)" }}>
+						<p style={{ margin: 0, color: "#99f6e4", fontWeight: 700 }}>{currentMission.title || `Mission ${samples.length + 1} von ${requiredSamples}`}</p>
+						{currentMission.prompt && <p style={{ margin: "0.2rem 0 0", color: "rgba(240,253,250,0.92)", lineHeight: 1.32 }}>{currentMission.prompt}</p>}
+						{currentMission.hint && <p style={{ margin: "0.22rem 0 0", color: "rgba(255,255,255,0.74)", fontSize: "0.84rem" }}>{currentMission.hint}</p>}
+					</div>
+				)}
+
 				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem", gap: "0.75rem", flexWrap: "wrap" }}>
 					<button
 						type="button"
@@ -2249,15 +2266,22 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 								{field.question && <p style={{ marginTop: 0, marginBottom: "0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.65)" }}>{field.question}</p>}
 								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
 									{field.options.map((opt: any) => (
-										<label key={optionValue(opt)} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-											<input
-												type="radio"
-												name={`${field.key}_sample`}
-												value={optionValue(opt)}
-												checked={form[field.key] === optionValue(opt)}
-												onChange={(e) => updateForm(field.key, e.target.value)}
-											/>
-											<span>{optionLabel(opt)}</span>
+										<label key={optionValue(opt)} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
+											<span style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+												<input
+													type="radio"
+													name={`${field.key}_sample`}
+													value={optionValue(opt)}
+													checked={form[field.key] === optionValue(opt)}
+													onChange={(e) => updateForm(field.key, e.target.value)}
+												/>
+												<span>{optionLabel(opt)}</span>
+											</span>
+											{typeof opt === "object" && opt?.description && (
+												<span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.64)", marginLeft: "1.45rem", lineHeight: 1.35 }}>
+													{opt.description}
+												</span>
+											)}
 										</label>
 									))}
 								</div>

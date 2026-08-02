@@ -16,6 +16,31 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
   const queryClient = useQueryClient()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [expandedPhases, setExpandedPhases] = useState<Set<number>>(new Set())
+  const [isEditingSeason, setIsEditingSeason] = useState<boolean>(false)
+  const [seasonDraft, setSeasonDraft] = useState<string>(session.game_info?.season || '')
+
+  const updateSessionMutation = useMutation({
+    mutationFn: (nextSeason: string) => {
+      const trimmed = nextSeason.trim()
+      if (!session.game_info) {
+        throw new Error('Keine Spiel-Info vorhanden.')
+      }
+      return api.updateSession(session.id, {
+        game_info: {
+          ...session.game_info,
+          season: trimmed || undefined,
+        },
+      })
+    },
+    onSuccess: () => {
+      setIsEditingSeason(false)
+      queryClient.invalidateQueries({ queryKey: ['sessions'] })
+      queryClient.invalidateQueries({ queryKey: ['session', session.id] })
+    },
+    onError: (err: any) => {
+      alert(`Saison konnte nicht gespeichert werden: ${err?.message || err}`)
+    }
+  })
 
   const deleteCheckinMutation = useMutation({
     mutationFn: (checkinIndex: number) => api.deleteCheckin(session.id, checkinIndex),
@@ -377,6 +402,124 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
                 {session.drills && session.drills.length > 0 && (
                   <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
                     Drill: {session.drills[0].title}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {session.game_info && (
+            <div
+              style={{
+                padding: '1rem 1.5rem',
+                backgroundColor: 'rgba(15, 23, 42, 0.3)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      marginBottom: '0.25rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}
+                  >
+                    Saison bearbeiten
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)' }}>
+                    Korrigiere hier den Saisonwert im Verlauf (z. B. 2026/27).
+                  </div>
+                </div>
+
+                {!isEditingSeason ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSeasonDraft(session.game_info?.season || '')
+                      setIsEditingSeason(true)
+                    }}
+                    style={{
+                      padding: '0.45rem 0.75rem',
+                      backgroundColor: 'transparent',
+                      border: '1px solid rgba(148, 163, 184, 0.4)',
+                      borderRadius: '8px',
+                      fontSize: '0.8rem',
+                      fontWeight: '500',
+                      color: 'rgba(226, 232, 240, 0.9)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Saison ändern
+                  </button>
+                ) : (
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <input
+                      value={seasonDraft}
+                      onChange={(e) => setSeasonDraft(e.target.value)}
+                      placeholder="z. B. 2026/27"
+                      maxLength={32}
+                      style={{
+                        minWidth: '120px',
+                        padding: '0.42rem 0.6rem',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255,255,255,0.22)',
+                        background: 'rgba(15,23,42,0.75)',
+                        color: 'rgba(255,255,255,0.92)',
+                        fontSize: '0.85rem'
+                      }}
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        updateSessionMutation.mutate(seasonDraft)
+                      }}
+                      disabled={updateSessionMutation.isPending}
+                      style={{
+                        padding: '0.45rem 0.75rem',
+                        backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                        border: '1px solid rgba(34, 197, 94, 0.45)',
+                        borderRadius: '8px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                        color: 'rgba(187, 247, 208, 1)',
+                        cursor: updateSessionMutation.isPending ? 'wait' : 'pointer'
+                      }}
+                    >
+                      {updateSessionMutation.isPending ? 'Speichere...' : 'Speichern'}
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsEditingSeason(false)
+                        setSeasonDraft(session.game_info?.season || '')
+                      }}
+                      disabled={updateSessionMutation.isPending}
+                      style={{
+                        padding: '0.45rem 0.75rem',
+                        backgroundColor: 'transparent',
+                        border: '1px solid rgba(148, 163, 184, 0.4)',
+                        borderRadius: '8px',
+                        fontSize: '0.8rem',
+                        fontWeight: '500',
+                        color: 'rgba(226, 232, 240, 0.9)',
+                        cursor: updateSessionMutation.isPending ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      Abbrechen
+                    </button>
                   </div>
                 )}
               </div>

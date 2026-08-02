@@ -8,7 +8,7 @@ import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
 import { formatCompetitionContext } from '../data/competitionConfig';
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { getObservationScopeLabel } from '../utils/observationScope'
+import { getActivePeriodsForScope, getObservationScopeLabel } from '../utils/observationScope'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -28,6 +28,7 @@ export default function SessionPage() {
   const { grantRewardResult, rewardState } = useRewards()
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
+  type PeriodPhase = 'P1' | 'P2' | 'P3'
 
   const [currentPhase, setCurrentPhase] = useState<Phase>('P1')
   const [drillCompleted, setDrillCompleted] = useState(false)
@@ -84,6 +85,42 @@ export default function SessionPage() {
     return latest || sessionDrill
   }, [session, curriculum])
 
+  const activePeriods = useMemo<PeriodPhase[]>(
+    () => getActivePeriodsForScope(session?.observation_scope),
+    [session?.observation_scope]
+  )
+
+  const firstActivePeriod: PeriodPhase = activePeriods[0] || 'P1'
+
+  const normalizePhaseForScope = (phaseRaw: string | undefined | null): Phase => {
+    const phase = (phaseRaw || '').toUpperCase()
+    if (phase === 'PRE' || phase === '') return firstActivePeriod
+    if (phase === 'P1' || phase === 'P2' || phase === 'P3') {
+      return (activePeriods.includes(phase as PeriodPhase) ? phase : firstActivePeriod) as Phase
+    }
+    if (phase === 'POST') return 'POST'
+    return firstActivePeriod
+  }
+
+  const getNextPhaseForFlow = (phase: Phase): Phase | null => {
+    if (phase === 'PRE') return firstActivePeriod
+    if (phase === 'POST') return null
+    if (phase === 'P1' || phase === 'P2' || phase === 'P3') {
+      const currentIndex = activePeriods.indexOf(phase)
+      if (currentIndex === -1) return firstActivePeriod
+      if (currentIndex === activePeriods.length - 1) return 'POST'
+      return activePeriods[currentIndex + 1]
+    }
+    return null
+  }
+
+  const getPreviousPhaseForFlow = (phase: Phase): Phase | null => {
+    if (phase !== 'P1' && phase !== 'P2' && phase !== 'P3') return null
+    const currentIndex = activePeriods.indexOf(phase)
+    if (currentIndex <= 0) return null
+    return activePeriods[currentIndex - 1]
+  }
+
   useEffect(() => {
     remoteDraftsRef.current = session?.drafts || {}
   }, [session?.drafts])
@@ -102,11 +139,11 @@ export default function SessionPage() {
   useEffect(() => {
     if (!session) return;
 
-    // initial currentPhase setzen (nur einmal); PRE wird im Standard-Workflow übersprungen.
-    const initialPhase = session.current_phase === 'PRE' ? 'P1' : session.current_phase
+    // Initiale Phase auf Scope abbilden (z. B. P2-Sessions starten direkt in P2).
+    const initialPhase = normalizePhaseForScope(session.current_phase)
     if (firstLoadRef.current) {
       if (initialPhase && initialPhase !== currentPhase) {
-        setCurrentPhase(initialPhase as Phase)
+        setCurrentPhase(initialPhase)
       }
       firstLoadRef.current = false
     }
@@ -306,14 +343,6 @@ export default function SessionPage() {
     })
   }
 
-  const nextPhaseMap: Record<Phase, Phase | null> = {
-    PRE: 'P1',
-    P1: 'P2',
-    P2: 'P3',
-    P3: 'POST',
-    POST: null
-  }
-
   function validateDrillBeforeAdvance(phase: Phase, drill: any, answers: any): string | null {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
@@ -429,7 +458,7 @@ export default function SessionPage() {
 
     try {
       const phase = currentPhase
-      const next = nextPhaseMap[phase]
+      const next = getNextPhaseForFlow(phase)
 
       const validationError = validateDrillBeforeAdvance(phase, activeDrill, answersByPhase[currentPhase])
       if (validationError) {
@@ -503,9 +532,9 @@ export default function SessionPage() {
       })
     }
 
-    const prevPhase = Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase as Phase] === currentPhase)
-    if (prevPhase && prevPhase !== 'PRE') {
-      setCurrentPhase(prevPhase as Phase)
+    const prevPhase = getPreviousPhaseForFlow(currentPhase)
+    if (prevPhase) {
+      setCurrentPhase(prevPhase)
       setDrillCompleted(false)
       updatePhaseMutation.mutate({ phase: prevPhase })
 
@@ -640,14 +669,16 @@ export default function SessionPage() {
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
                 <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center' }}>{getPhaseTitle(currentPhase)}</div>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
-                  {currentPhase !== 'P1' && Object.keys(nextPhaseMap).find(phase => nextPhaseMap[phase as Phase] === currentPhase) && (
+                  {currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
                     <button onClick={handleGoBack} className="btn" style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}>
                       ← Zurück
                     </button>
                   )}
-                  {nextPhaseMap[currentPhase] && (
+                  {getNextPhaseForFlow(currentPhase) && (
                     <button onClick={handleAdvanceToNext} className="btn" style={{ minWidth: 120 }} disabled={isAdvancing}>
-                      {isAdvancing ? "Speichere…" : "Weiter →"}
+                      {isAdvancing
+                        ? "Speichere…"
+                        : (getNextPhaseForFlow(currentPhase) === 'POST' ? "Session abschließen" : "Weiter →")}
                     </button>
                   )}
                 </div>
@@ -686,7 +717,7 @@ export default function SessionPage() {
       {isCompleted && (
         <div className="card">
           <h2>Session abgeschlossen! 🎉</h2>
-          <p>Alle Phasen wurden erfolgreich absolviert.</p>
+          <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
           <a href="/dashboard" className="btn">Zurück zum Dashboard</a>
         </div>
       )}
@@ -834,7 +865,7 @@ export default function SessionPage() {
                     }
                   }}
                 >
-                  Speichern & Weiter
+                  {pendingNextPhase === 'POST' ? 'Speichern & Session abschließen' : 'Speichern & Weiter'}
                 </button>
               </div>
 

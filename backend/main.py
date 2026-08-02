@@ -1335,7 +1335,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "drill_id": session.drill_id,  # Store selected drill
         "observation_scope": _normalize_observation_scope(session.observation_scope),
         "state": "IN_PROGRESS",  # Start as in progress instead of PRE
-        "current_phase": "P1",  # Start directly in the first drill phase; PRE remains supported for legacy sessions
+        "current_phase": _initial_phase_for_scope(session.observation_scope),
         "created_at": now.isoformat(),
         "drills": module_drills,
         "progress": {
@@ -1364,9 +1364,22 @@ async def get_session(session_id: str):
     """Session Details"""
     session_path = get_session_path_or_404(session_id)
     session = load_json(session_path)
-    session["observation_scope"] = _normalize_observation_scope(session.get("observation_scope"))
-    if session.get("current_phase") == "PRE":
-        session["current_phase"] = "P1"
+    scope = _normalize_observation_scope(session.get("observation_scope"))
+    active_periods = _active_periods_for_scope(scope)
+    current_phase = (session.get("current_phase") or "").strip().upper()
+    should_save = False
+
+    session["observation_scope"] = scope
+
+    if current_phase == "PRE" or not current_phase:
+        session["current_phase"] = _initial_phase_for_scope(scope)
+        should_save = True
+    elif current_phase in {"P1", "P2", "P3"} and current_phase not in set(active_periods):
+        if not session.get("checkins"):
+            session["current_phase"] = _initial_phase_for_scope(scope)
+            should_save = True
+
+    if should_save:
         save_json(session_path, session)
     return session
 
@@ -1406,7 +1419,7 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
     session_path = get_session_path_or_404(session_id)
     session = load_json(session_path)
     if phase_norm == "PRE":
-        session["current_phase"] = "P1"
+        session["current_phase"] = _initial_phase_for_scope(session.get("observation_scope"))
         save_json(session_path, session)
         return session
 
@@ -1559,7 +1572,7 @@ async def update_session_phase(session_id: str, phase_data: dict):
     enforce_max_text_length(phase_data, "phase_data")
 
     if "phase" in phase_data:
-        session["current_phase"] = "P1" if phase_data["phase"] == "PRE" else phase_data["phase"]
+        session["current_phase"] = _initial_phase_for_scope(session.get("observation_scope")) if phase_data["phase"] == "PRE" else phase_data["phase"]
     if "state" in phase_data:
         session["state"] = phase_data["state"]
 
@@ -1777,6 +1790,21 @@ def _normalize_observation_scope(scope: Optional[str]) -> str:
     if value in OBSERVATION_SCOPE_LABELS:
         return value
     return "FULL_GAME"
+
+
+def _active_periods_for_scope(scope: Optional[str]) -> List[str]:
+    normalized = _normalize_observation_scope(scope)
+    if normalized == "P1":
+        return ["P1"]
+    if normalized == "P2":
+        return ["P2"]
+    if normalized == "P3":
+        return ["P3"]
+    return ["P1", "P2", "P3"]
+
+
+def _initial_phase_for_scope(scope: Optional[str]) -> str:
+    return _active_periods_for_scope(scope)[0]
 
 
 def _normalize_scene_status(status: Optional[str]) -> str:

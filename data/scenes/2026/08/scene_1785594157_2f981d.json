@@ -1,0 +1,38 @@
+{
+  "id": "scene_1785594157_2f981d",
+  "scene_code": "SC020",
+  "user": "Christoph",
+  "session_id": "Christoph_1785592381",
+  "module_id": "B2",
+  "drill_id": "B2_D1",
+  "drill_title": "Druckquellen erkennen: Was begrenzt den Puckführer?",
+  "track_id": "B2",
+  "status": "NEW",
+  "league": "DEL",
+  "season": "2025/26",
+  "competition_phase": "regular_season",
+  "competition_phase_label": "Hauptrunde",
+  "competition_unit_type": "matchday",
+  "competition_unit_label": "Spieltag",
+  "competition_unit_value": "3",
+  "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 3",
+  "team_home": "EHC Red Bull München",
+  "team_away": "Augsburger Panther",
+  "observed_team": null,
+  "period": "P1",
+  "episode_season": null,
+  "episode_number": null,
+  "season_code": null,
+  "episode_code": null,
+  "game_time": "13:45",
+  "note": "Puckführer im eigenen Drittel und hätte eigentlich gesamthaft nicht den größten Druck spielt aber einen nicht wirklich guten Pass und verliert den Puck unnötig. Es wird ein riskanter Pass gespielt obwohl Optionen vorhanden waren. Eher ein Negativ Beispiel.",
+  "rating": 2,
+  "extensions": {
+    "dominantPressureSource": "Gegnerdruck"
+  },
+  "extension_labels": {
+    "dominantPressureSource": "Dominante Druckquelle"
+  },
+  "created_at": "2026-08-01T16:22:37.985917",
+  "updated_at": "2026-08-01T16:23:32.515112"
+}

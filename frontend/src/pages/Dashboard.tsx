@@ -10,6 +10,7 @@ import { CoverageMap } from '../components/dashboard/CoverageMap';
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
 import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
 import { computeObservedTeamStats } from '../stats/exposureStats';
+import { getActivePeriodsForScope } from '../utils/observationScope';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string =>
@@ -331,8 +332,8 @@ export default function Dashboard() {
         if (count > 1) hygieneIssues.push(`Session ${s.id}: Phase ${phase} doppelt (${count}x)`);
       }
 
-      // Microfeedback: Prüfe s.microfeedback für P1/P2/P3
-      ["P1", "P2", "P3"].forEach((phase) => {
+      // Scope-aware: Nur aktive Drittel der Session auf Microfeedback prüfen.
+      getActivePeriodsForScope(s.observation_scope).forEach((phase) => {
         const mf = s.microfeedback?.[phase];
         if (!mf || !mf.done) {
           hygieneIssues.push(`Session ${s.id}: Microfeedback fehlt in ${phase}`);

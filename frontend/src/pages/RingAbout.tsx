@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
-import { api, type SceneMarker, type SceneMarkerUpdate } from '../api'
+import { api, type SceneMarker, type SceneMarkerUpdate, type Session } from '../api'
 import { formatCompetitionContext, getCompetitionConfig } from '../data/competitionConfig'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
@@ -35,6 +35,15 @@ function getSceneTrack(scene: SceneMarker) {
 function sceneStatusLabel(status?: string) {
   if (status === 'ASSIGNED') return 'Zugeordnet'
   return 'Neu'
+}
+
+function normalizeObservedTeamValue(value?: string | null): string {
+  const normalized = (value || '').trim()
+  const lower = normalized.toLowerCase()
+  if (!normalized || lower === 'none' || lower === 'null' || lower === 'undefined' || lower === '-') {
+    return ''
+  }
+  return normalized
 }
 
 function normalizeEpisodeCodeInput(value: string, width: number): string | null {
@@ -102,6 +111,11 @@ export default function RingAbout() {
   })
 
   const sessionFilter = (searchParams.get('session_id') || '').trim()
+
+  const { data: sessionsData } = useQuery({
+    queryKey: ['sessions-for-scene-insights'],
+    queryFn: () => api.getSessions(),
+  })
 
   const deleteMutation = useMutation({
     mutationFn: (sceneId: string) => api.deleteScene(sceneId),
@@ -289,6 +303,20 @@ export default function RingAbout() {
   }
 
   const scenes: SceneMarker[] = data?.scenes ?? []
+  const sessionsById = useMemo(() => {
+    const map = new Map<string, Session>()
+    for (const session of sessionsData || []) {
+      map.set(session.id, session)
+    }
+    return map
+  }, [sessionsData])
+
+  const getObservedTeamForScene = (scene: SceneMarker): string => {
+    const direct = normalizeObservedTeamValue(scene.observed_team)
+    if (direct) return direct
+    const session = sessionsById.get(scene.session_id)
+    return normalizeObservedTeamValue(session?.game_info?.observed_team || session?.observed_team)
+  }
 
   // Derive filter options from data
   const leagues = useMemo(() => unique(scenes.map(s => s.league).filter(Boolean) as string[]).sort(), [scenes])
@@ -498,16 +526,12 @@ export default function RingAbout() {
         drillMap.set(scene.drill_id, (drillMap.get(scene.drill_id) || 0) + 1)
       }
 
-      const teamsInScene = unique([
-        scene.team_home,
-        scene.team_away,
-      ].filter((team): team is string => Boolean(team)))
-
-      for (const team of teamsInScene) {
-        const row = teamMap.get(team) || { team, scenes: 0, published: 0 }
+      const observedTeam = getObservedTeamForScene(scene)
+      if (observedTeam) {
+        const row = teamMap.get(observedTeam) || { team: observedTeam, scenes: 0, published: 0 }
         row.scenes += 1
         if (published) row.published += 1
-        teamMap.set(team, row)
+        teamMap.set(observedTeam, row)
       }
     }
 
@@ -543,7 +567,7 @@ export default function RingAbout() {
       topTeam,
       showContentHint,
     }
-  }, [scenes])
+  }, [scenes, sessionsById])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
