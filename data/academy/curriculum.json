@@ -2790,30 +2790,45 @@
             },
             {
               "id": "B2_D3",
-              "title": "Entscheidungsursache erkennen",
+              "title": "Warum scheitert die gewählte Lösung?",
               "drill_type": "period_checkin",
-              "description": "Analysiere die dominante Ursache hinter Entscheidungen und Puckverlusten.",
+              "description": "Beobachte drei Situationen, in denen ein Spieler des ausgewählten Teams eine Lösung wählt, die nicht funktioniert oder keine stabile Fortsetzung erzeugt. Ordne jeweils ein, woran die Lösung hauptsächlich gescheitert ist.",
               "didactics": {
-                "explanation": "Dritter Schritt im B2-Lernpfad: Nach Druckprofil (B2_D1) und Lösungsort (B2_D2) untersuchst du jetzt die Entscheidungsursache. Fokus ist nicht das Ergebnis, sondern der Hauptauslöser der Entscheidung.",
+                "explanation": "Dritter Schritt im B2-Lernpfad:\n\nIn B2_D1 hast du untersucht, wodurch ein Puckführer eingeschränkt wird.\n\nIn B2_D2 hast du beobachtet, wie er versucht, diese Drucksituation zu lösen.\n\nJetzt untersuchst du, warum eine gewählte Lösung nicht funktioniert oder keine stabile Fortsetzung erzeugt.\n\nBeobachte nicht nur den Puckverlust oder das Ergebnis. Frage dich, welcher Faktor hauptsächlich dafür verantwortlich war, dass die gewählte Lösung scheiterte.\n\nBedingungen → Lösungsstrategie → Ursache des Scheiterns",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welche Spielsituation ging der Entscheidung oder dem Puckverlust unmittelbar voraus?",
-                    "Welcher Auslöser war in diesem Moment dominant?",
+                    "Welche Lösung hat der Spieler des ausgewählten Teams versucht?",
+                    "An welchem Moment verliert die Lösung ihre Wirkung oder Kontrolle?",
+                    "Welcher Faktor erklärt das Scheitern am stärksten?",
+                    "War die Lösung wegen der Situation, der Entscheidung, der Ausführung oder der Abstimmung problematisch?",
                     "Wird dieselbe Ursache in mehreren Szenen wieder sichtbar?"
                   ],
                   "how_to_decide": [
-                    "Waehle pro Szene genau eine dominante Ursache",
-                    "Bewerte den Ausloeser, nicht den spaeteren Ausgang",
-                    "Nutze Notizen nur kurz und konkret (Kontext statt Roman)",
-                    "Vergleiche deine drei Pflichtbeobachtungen und leite daraus einen aktiven Fokus ab"
+                    "Beobachte immer einen Spieler des ausgewählten Teams.",
+                    "Suche eine Situation, in der dieser Spieler eine erkennbare Lösung wählt, die nicht funktioniert oder keine kontrollierte Anschlussaktion ermöglicht.",
+                    "Wähle pro Beobachtung genau eine dominante Ursache.",
+                    "Bewerte den Hauptgrund des Scheiterns, nicht nur das sichtbare Endergebnis.",
+                    "Wähle Gegnerdruck, wenn ein Gegner direkt in die Aktion eingreift.",
+                    "Wähle Zeit- oder Raumdruck, wenn die Lösung vor allem durch das geringe Zeitfenster oder den eingeschränkten Raum kaum ausführbar war.",
+                    "Wähle Technischer Fehler, wenn die Lösung grundsätzlich möglich war, aber die Ausführung misslingt.",
+                    "Wähle Unpassende Entscheidung ohne unmittelbaren Druck, wenn gute Bedingungen vorhanden waren, aber eine ungeeignete Option gewählt wurde.",
+                    "Wähle Abstimmungsproblem, wenn Spieler erkennbar unterschiedliche Erwartungen oder Laufwege hatten.",
+                    "Mehrere Faktoren können gleichzeitig beteiligt sein. Wähle den Faktor, der das Scheitern der Lösung am stärksten erklärt.",
+                    "Hat der Gegner direkt eingegriffen? → Direkter Gegnerdruck",
+                    "War die Lösung wegen zu wenig Zeit oder Raum kaum ausführbar? → Zeitdruck oder Raumdruck",
+                    "War die Lösung möglich, aber technisch schlecht ausgeführt? → Technischer Fehler",
+                    "Waren gute Bedingungen vorhanden, aber die falsche Option wurde gewählt? → Unpassende Entscheidung ohne unmittelbaren Druck",
+                    "Passten Laufweg, Übergabe oder Erwartung der Spieler nicht zusammen? → Abstimmungsproblem"
                   ],
                   "ignore": [
-                    "Bewertung nur nach Tor, Turnover oder Highlight",
-                    "Mischformen ohne dominante Priorisierung",
-                    "Checklisten-Denken statt Ursachenanalyse"
+                    "Bewertung nur nach Tor, Turnover oder Puckverlust",
+                    "Mehrere Ursachen ohne eine dominante Priorisierung",
+                    "Vermutungen über Kommunikation, die von außen nicht erkennbar sind",
+                    "Technische Fehler, die hauptsächlich durch starken Zeit-, Raum- oder Gegnerdruck entstanden sind",
+                    "Szenen ohne erkennbare Lösungsabsicht"
                   ]
                 },
-                "learning_hint": "Situation -> Loesung -> Ursache: Erst diese Kette macht Entscheidungen wiederholbar lesbar."
+                "learning_hint": "Beobachte nicht nur, dass eine Aktion scheitert. Erkenne, warum die gewählte Lösung in dieser Situation nicht funktioniert hat."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2824,8 +2839,8 @@
                       "dominant_cause_observed": "Zeitdruck"
                     },
                     "questions": [
-                      "Welche Hinweise zeigten klaren Zeitdruck in diesen Szenen?",
-                      "War die Entscheidung dadurch verkuerzt oder ueberhastet?"
+                      "Welche Hinweise zeigten, dass der Spieler zu wenig Zeit für Vorbereitung oder Ausführung hatte?",
+                      "War die Lösung wegen des verkürzten Entscheidungsfensters kaum ausführbar?"
                     ]
                   },
                   {
@@ -2833,17 +2848,17 @@
                       "dominant_cause_observed": "Raumdruck"
                     },
                     "questions": [
-                      "Wie wurde nutzbarer Raum begrenzt oder zugestellt?",
-                      "Welche Entscheidungsoption fiel dadurch weg?"
+                      "Wie wurde der nutzbare Raum für die gewählte Lösung eingeschränkt?",
+                      "Welche Bewegung oder Aktion war dadurch nicht mehr möglich?"
                     ]
                   },
                   {
                     "when": {
-                      "dominant_cause_observed": "Gegnerdruck"
+                      "dominant_cause_observed": "Direkter Gegnerdruck"
                     },
                     "questions": [
-                      "War der Druck gegnerseitig direkt oder nur angedeutet?",
-                      "Wie veraenderte dieser Druck die Entscheidung konkret?"
+                      "Wie griff der Gegner direkt in die gewählte Lösung ein?",
+                      "Wurde die Aktion durch Stick, Körperkontakt oder geschlossenen Passweg verhindert?"
                     ]
                   },
                   {
@@ -2851,26 +2866,26 @@
                       "dominant_cause_observed": "Technischer Fehler"
                     },
                     "questions": [
-                      "Welche technische Ausfuehrung war der eigentliche Ausloeser?",
-                      "War der Fehler eher unter Druck oder ohne unmittelbaren Druck entstanden?"
+                      "Welche technische Ausführung misslang?",
+                      "War die Lösung grundsätzlich möglich oder bereits durch die Spielsituation stark erschwert?"
                     ]
                   },
                   {
                     "when": {
-                      "dominant_cause_observed": "Fehlentscheidung ohne unmittelbaren Druck"
+                      "dominant_cause_observed": "Unpassende Entscheidung ohne unmittelbaren Druck"
                     },
                     "questions": [
-                      "Welche bessere Entscheidung waere ohne Druck verfuegbar gewesen?",
-                      "Welche Wahrnehmung oder Priorisierung war vermutlich fehlerhaft?"
+                      "Welche passendere Option war in dieser Situation erkennbar?",
+                      "Welche Wahrnehmung oder Priorisierung könnte zur unpassenden Wahl geführt haben?"
                     ]
                   },
                   {
                     "when": {
-                      "dominant_cause_observed": "Kommunikationsfehler"
+                      "dominant_cause_observed": "Abstimmungsproblem"
                     },
                     "questions": [
-                      "Welches Informationssignal fehlte oder war widerspruechlich?",
-                      "Wie haette klare Kommunikation die Entscheidung veraendern koennen?"
+                      "Welche Laufwege oder Erwartungen passten erkennbar nicht zusammen?",
+                      "Wie hätte eine klarere Abstimmung die Anschlussaktion verändern können?"
                     ]
                   }
                 ]
@@ -2881,46 +2896,69 @@
                 "sample_label": "Beobachtung",
                 "required_samples": 3,
                 "max_samples_per_phase": 3,
-                "phase1_title": "Phase 1 - Entscheidungsursachen erfassen",
-                "phase1_description": "Erfasse drei Pflichtbeobachtungen. Beantworte pro Szene die Leitfrage: Was war der Hauptausloeser dafuer, dass diese Entscheidung entstand?",
+                "phase1_title": "Phase 1 – Ursachen gescheiterter Lösungen erfassen",
+                "phase1_description": "Erfasse drei Situationen, in denen eine gewählte Lösung nicht funktioniert oder keine stabile Fortsetzung erzeugt. Wähle jeweils den Faktor, der das Scheitern am stärksten erklärt.",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der ein Spieler des ausgewählten Teams eine erkennbare Lösung versucht, die nicht funktioniert.",
+                    "hint": "Woran scheitert sie hauptsächlich?"
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere gescheiterte Lösung.",
+                    "hint": "Unterscheide diesmal besonders zwischen direktem Gegnerdruck und einer technisch misslungenen Ausführung."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde eine dritte Situation.",
+                    "hint": "Vergleiche anschließend, welche Ursache in deinen Beobachtungen am häufigsten entscheidend war."
+                  }
+                ],
                 "sample_note_key": "note",
                 "sample_note_label": "Kurze Notiz (optional)",
                 "sample_note_max_chars": 240,
                 "aggregate_by": "cause",
                 "aggregation_totals_key": "cause_totals",
                 "observed_dominant_key": "dominant_cause_observed",
-                "aggregation_label": "Bisher haeufig beobachtet",
-                "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere Situationen zu analysieren oder interessante Szenen fuer Rink About It zu markieren.",
+                "aggregation_label": "Bisher häufig beobachtet",
+                "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere gescheiterte Lösungen zu analysieren. Achte darauf, ob dieselbe Ursache erneut auftritt oder ob unterschiedliche Probleme sichtbar werden. Interessante Situationen kannst du weiterhin für Rink About It markieren.",
                 "enable_checkin": false,
                 "sample_fields": [
                   {
                     "key": "cause",
                     "label": "Dominante Ursache",
-                    "question": "Was war der Hauptausloeser dafuer, dass diese Entscheidung entstand?",
+                    "question": "Woran ist die gewählte Lösung hauptsächlich gescheitert?",
                     "options": [
                       {
                         "value": "zeitdruck",
-                        "label": "Zeitdruck"
+                        "label": "Zeitdruck",
+                        "description": "Die Lösung scheitert vor allem, weil zu wenig Zeit für Wahrnehmung, Vorbereitung oder Ausführung vorhanden war."
                       },
                       {
                         "value": "raumdruck",
-                        "label": "Raumdruck"
+                        "label": "Raumdruck",
+                        "description": "Die Lösung scheitert vor allem, weil der nutzbare Bewegungs- oder Aktionsraum zu klein war."
                       },
                       {
                         "value": "gegnerdruck",
-                        "label": "Gegnerdruck"
+                        "label": "Direkter Gegnerdruck",
+                        "description": "Ein Gegenspieler greift direkt in die Aktion ein und verhindert oder stört die gewählte Lösung."
                       },
                       {
                         "value": "technischer_fehler",
-                        "label": "Technischer Fehler"
+                        "label": "Technischer Fehler",
+                        "description": "Die Lösung war grundsätzlich möglich, aber die technische Ausführung misslingt."
                       },
                       {
                         "value": "fehlentscheidung_ohne_druck",
-                        "label": "Fehlentscheidung ohne unmittelbaren Druck"
+                        "label": "Unpassende Entscheidung ohne unmittelbaren Druck",
+                        "description": "Der Spieler hatte ausreichend Zeit, Raum oder Optionen, wählte aber eine ungeeignete Lösung."
                       },
                       {
                         "value": "kommunikationsfehler",
-                        "label": "Kommunikationsfehler"
+                        "label": "Abstimmungsproblem",
+                        "description": "Die Aktion scheitert, weil Laufwege, Erwartungen oder Verantwortlichkeiten der beteiligten Spieler erkennbar nicht zusammenpassen."
                       }
                     ]
                   }
