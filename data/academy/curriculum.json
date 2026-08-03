@@ -4066,114 +4066,153 @@
           "drills": [
             {
               "id": "C1_D1",
-              "title": "Welchen Raum schützt die Defensive zuerst?",
-              "drill_type": "rink_zone_priority_observation",
-              "description": "Beobachte drei Situationen, in denen ein Team bereits geordnet in der eigenen Zone verteidigt. Markiere jeweils den Raum, den es dort am deutlichsten priorisiert schützt.",
+              "title": "Welche Räume schützt die Defensive?",
+              "drill_type": "paintable_rink_observation",
+              "description": "Analysiere mehrere defensive Situationen und markiere, welche Räume das Team schützt, welche Räume besonders gefährlich wären und welche Räume bewusst zugelassen werden.",
               "didactics": {
-                "explanation": "Defensive Organisation beginnt bereits vor der eigenen Zone. Dieser Drill betrachtet jedoch bewusst nur die etablierte Defensive-Zone-Struktur. Achte nicht nur auf den Puck. Beobachte, welchen Raum die Defensive auch dann absichert, wenn sich der Puck bewegt.",
+                "explanation": "Defensive Systeme beginnen nicht erst beim Zweikampf. Entscheidend ist, welche Räume ein Team priorisiert.\n\nEine gute Defensive schützt nicht jeden Bereich gleichzeitig. Sie entscheidet, welche Räume geschlossen werden müssen und welche Bereiche weniger gefährlich sind.\n\nBeobachte nicht den Erfolg einer einzelnen Aktion, sondern die wiederkehrende Raumpriorität des Teams.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wo verdichtet sich die Defensive?",
-                    "Welcher Raum wird auch bei Puckbewegung weiter abgesichert?",
-                    "Welchen Bereich will das Team möglichst nicht preisgeben?"
+                    "Welcher Raum wird vor dem Tor konsequent geschützt?",
+                    "Welche Passwege oder Angriffswege werden geschlossen?",
+                    "Welche Räume lässt die Defensive bewusst zu?",
+                    "Welche Räume wären für den Gegner besonders gefährlich?"
                   ],
                   "how_to_decide": [
-                    "Nur Situationen mit kontrolliertem Puckbesitz des Gegners in der Offensivzone bewerten",
-                    "Beobachtung nur speichern, wenn das verteidigende Team bereits eine erkennbare Ordnung eingenommen hat",
-                    "Mehrere Verteidiger müssen räumlich organisiert reagieren",
-                    "Nicht den Puckort markieren, sondern die Schutzpriorität des Teams"
-                  ],
-                  "common_mistakes": [
-                    "Rush-Defense direkt nach Zone Entry als etablierte Zonenordnung deuten",
-                    "Einzelduelle oder chaotische Rebounds als Teamstruktur interpretieren",
-                    "Automatisch dort markieren, wo gerade der Puck ist"
+                    "Sammle mehrere Situationen innerhalb deiner Session",
+                    "Suche nach wiederkehrenden Raumprioritäten",
+                    "Bewerte die Struktur vor dem Ergebnis",
+                    "Markiere nicht den Ort des Pucks, sondern die Bedeutung des Raumes"
                   ],
                   "ignore": [
-                    "Direkte Konter",
-                    "Ungeordnete Turnover-Situationen",
-                    "Spielerwechsel mit noch nicht etablierter Ordnung",
-                    "Reine Einzelduelle ohne erkennbare Teamstruktur"
+                    "Einzelne Fehler oder Tore",
+                    "Nur die Position eines einzelnen Verteidigers",
+                    "Erfolg oder Misserfolg einer Aktion",
+                    "Eine Szene ohne wiederkehrendes Muster"
                   ]
                 },
                 "learning_hint": "Defensive Systeme erkennst du zuerst daran, welche Räume eine Mannschaft besonders konsequent schützt."
               },
               "config": {
-                "rink_scope": "defensive_zone",
+                "mode": "zone_priority",
                 "observation_count": 3,
-                "selection_mode": "single",
                 "observations_key": "observations",
                 "observation_index_key": "observationIndex",
-                "selected_zone_key": "selectedZone",
+                "annotations_key": "rinkAnnotations",
                 "note_key": "note",
                 "created_at_key": "createdAt",
-                "most_frequent_zone_key": "mostFrequentZone",
-                "decision_rule": "Markiere nicht einfach den Ort des Pucks. Markiere den Raum, den die Defensive sichtbar priorisiert schützt.",
-                "zones": [
-                  "crease",
-                  "low_slot",
-                  "high_slot",
-                  "left_halfwall",
-                  "right_halfwall",
-                  "behind_net",
-                  "left_point_lane",
-                  "right_point_lane"
+                "paintLayers": [
+                  {
+                    "id": "protected_space",
+                    "label": "Geschützter Raum",
+                    "color": "#22c55e"
+                  },
+                  {
+                    "id": "danger_space",
+                    "label": "Gefährlicher Raum",
+                    "color": "#ef4444"
+                  },
+                  {
+                    "id": "accepted_space",
+                    "label": "Bewusst zugelassener Raum",
+                    "color": "#facc15"
+                  }
                 ],
+                "minimumLayers": 2,
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false,
+                  "defendingSide": "left",
+                  "showDefendingHint": true
+                },
                 "missions": [
                   {
                     "title": "Mission 1 von 3",
-                    "prompt": "Finde eine Situation, in der das Team bereits geordnet in der eigenen Zone verteidigt.",
-                    "hint": "Markiere den Raum, den die Defensive hier am deutlichsten schützt."
+                    "prompt": "Finde eine geordnete Defensivszene und markiere die wichtigsten Raumprioritäten.",
+                    "hint": "Markiere mindestens zwei Ebenen, wenn mehrere Prioritäten gleichzeitig sichtbar sind."
                   },
                   {
                     "title": "Mission 2 von 3",
-                    "prompt": "Finde eine weitere geordnete Defensivszene.",
-                    "hint": "Achte darauf, welcher Raum auch bei Bewegung des Pucks abgesichert bleibt."
+                    "prompt": "Finde eine weitere Szene und vergleiche die Raumverteilung.",
+                    "hint": "Achte darauf, welche Räume konstant geschützt oder bewusst freigegeben bleiben."
                   },
                   {
                     "title": "Mission 3 von 3",
-                    "prompt": "Finde eine dritte Situation und vergleiche sie mit deinen bisherigen Beobachtungen.",
-                    "hint": "Erkennst du dieselbe Schutzpriorität erneut?"
+                    "prompt": "Finde eine dritte Szene und prüfe, ob sich ein wiederkehrendes Muster zeigt.",
+                    "hint": "Markiere Struktur, nicht Einzelaktion."
                   }
                 ],
-                "note_enabled": true,
-                "note_label": "Woran hast du die Priorität erkannt?",
+                "note_label": "Optionale Notiz",
                 "note_placeholder": "Optional",
                 "note_max_chars": 300,
-                "summary_enabled": true,
-                "reflection_enabled": true,
-                "reflection": {
-                  "key": "reflection",
-                  "label": "Welcher Raum hatte in deinen Beobachtungen die höchste erkennbare Schutzpriorität?"
+                "completion_question": {
+                  "key": "defensive_space_priority",
+                  "label": "Welche Raumpriorität zeigte die Defensive heute am häufigsten?",
+                  "options": [
+                    {
+                      "value": "center_priority",
+                      "label": "Das Zentrum wurde konsequent geschlossen"
+                    },
+                    {
+                      "value": "outside_control",
+                      "label": "Der Gegner wurde bewusst nach außen gelenkt"
+                    },
+                    {
+                      "value": "shot_lane_priority",
+                      "label": "Schusswege wurden priorisiert"
+                    },
+                    {
+                      "value": "situational",
+                      "label": "Die Defensive passte sich stark situativ an"
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Kein klares Muster erkennbar"
+                    }
+                  ]
                 },
-                "active_focus_enabled": true,
-                "active_focus_title": "Active Focus",
-                "active_focus_text": "Beobachte im weiteren Spiel, ob dieselbe Raumpriorität bestehen bleibt oder sich je nach Puckposition und Spielsituation verändert."
+                "completion_note": {
+                  "key": "defensive_space_priority_reason",
+                  "label": "Woran hast du dieses Muster erkannt?",
+                  "placeholder": "Optional: kurze Begründung",
+                  "max_chars": 600
+                },
+                "save_button_label": "Beobachtung speichern"
               }
             },
             {
               "id": "C1_D2",
-              "title": "Slot Control & Prioritäten",
-              "drill_type": "period_checkin",
-              "description": "Beurteile, wie konsequent der Slot geschützt wird und welche Prioritäten die Defensive setzt.",
+              "title": "Wie organisiert die Defensive den Raum?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Rekonstruiere die defensive Struktur einer Spielsituation und analysiere, wie die fünf Spieler gemeinsam Räume schützen.",
               "didactics": {
-                "explanation": "Defensive Stabilität entsteht durch klare Prioritäten: Der Slot hat Vorrang vor Druck an der Bande. Gute Teams schützen gefährliche Zonen konsequent.",
+                "explanation": "Eine Defensive verteidigt nicht nur durch einzelne Aktionen.\n\nDie Position eines einzelnen Spielers ist weniger entscheidend als die Beziehung zwischen allen fünf Spielern.\n\nBeobachte, wie Abstände, Staffelung und Unterstützung dazu beitragen, gefährliche Räume geschlossen zu halten.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Positionierung der Verteidiger im Slot",
-                    "Abstände zwischen Slot-Spielern",
-                    "Wann wird der Slot verlassen?"
+                    "Wie kompakt stehen die fünf Spieler zusammen?",
+                    "Welche Spieler unterstützen den ersten Verteidiger?",
+                    "Bleibt das Zentrum geschützt?",
+                    "Welche Passwege werden durch die Struktur geschlossen?",
+                    "Entstehen offene Räume zwischen den Spielern?",
+                    "Stehen die Spieler auf mehreren Ebenen oder auf einer Linie?"
                   ],
                   "how_to_decide": [
-                    "Beobachte mehrere Aktionen nacheinander",
-                    "Achte auf Wiederholungen, nicht auf Ausnahmen",
-                    "Frage dich: Was wird zuerst verteidigt?"
+                    "Positioniere die Spieler ungefähr auf dem Rink.",
+                    "Exakte Positionen sind nicht entscheidend.",
+                    "Bewerte Abstände und Beziehungen zwischen Spielern.",
+                    "Frage dich, welche taktische Funktion diese Struktur erfüllt."
                   ],
                   "ignore": [
-                    "Schüsse von außen",
-                    "Individuelle Fehler ohne Systembezug"
+                    "Perfekte Positionsgenauigkeit",
+                    "Einzelne Zweikämpfe",
+                    "Tor oder Puckverlust als Ergebnis",
+                    "Bewertung einzelner Spieler ohne Systemkontext"
                   ]
                 },
-                "learning_hint": "Slot Control ist eine bewusste Priorität – kein Zufall."
+                "learning_hint": "Entscheidend ist nicht nur, wo jemand steht, sondern welche Wirkung die gesamte Fünferstruktur erzeugt."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -4181,53 +4220,170 @@
                 "groups": [
                   {
                     "when": {
-                      "slot_control": "konsequent"
+                      "defensive_structure_summary": "compact"
                     },
                     "questions": [
-                      "Wodurch blieb der Slot stabil besetzt?",
-                      "Wurden Risiken an der Bande bewusst akzeptiert?",
-                      "Wirkte die Staffelung klar abgestimmt?"
+                      "Wodurch blieben zentrale Räume schwer bespielbar?",
+                      "Welche Abstände sorgten für schnelle Unterstützung?",
+                      "Welche Wirkung hatte die Struktur auf die gegnerischen Optionen?"
                     ]
                   },
                   {
                     "when": {
-                      "slot_control": "situativ"
+                      "defensive_structure_summary": "balanced"
                     },
                     "questions": [
-                      "Wann wurde der Slot gut kontrolliert – wann nicht?",
-                      "Welche Situation brachte die Ordnung ins Wanken?",
-                      "Lag es an Timing oder Rollenverteilung?"
+                      "Welche Elemente machten die Struktur flexibel?",
+                      "Wann blieb die Unterstützung stabil, wann nicht?",
+                      "Wo entstand die größte taktische Wirkung?"
                     ]
                   },
                   {
                     "when": {
-                      "slot_control": "vernachlässigt"
+                      "defensive_structure_summary": "stretched"
                     },
                     "questions": [
-                      "Warum wurde der Slot preisgegeben?",
-                      "War der Druck an der Scheibe überpriorisiert?",
-                      "Welche einfache Regel hätte geholfen?"
+                      "Welche Abstände erschwerten die Unterstützung?",
+                      "Welche Verbindungen öffneten direkte Wege zum Tor?",
+                      "Welche Anpassung hätte die Raumkontrolle verbessert?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "defensive_structure",
+                "observation_count": 3,
+                "observations_key": "defensive_structure_observations",
+                "player_positions_key": "playerPositions",
+                "note_key": "note",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "formation_preset": "5v5_default",
+                "selection_label": "Positioniere alle 5 Defensivrollen auf der Eisfläche",
+                "location_label": "Ziehe jede Bubble an ihre vermutete Defensivposition",
+                "observe_hint": "Nutze den Spielmoment und rekonstruiere die kollektive Defensivform.",
+                "save_button_label": "Struktur speichern",
+                "saved_feedback_template": "Struktur {index} gespeichert",
+                "structure_rating": {
+                  "key": "structureRating",
+                  "label": "Wie wirkt die defensive Struktur?",
+                  "options": [
+                    {
+                      "value": "compact",
+                      "label": "Kompakt",
+                      "description": "Die Spieler stehen eng zusammen und ermöglichen schnelle Unterstützung. Zentrale Räume bleiben schwer zugänglich."
+                    },
+                    {
+                      "value": "balanced",
+                      "label": "Ausgewogen",
+                      "description": "Die Defensive hält stabile Abstände und kann flexibel auf unterschiedliche Spielsituationen reagieren."
+                    },
+                    {
+                      "value": "stretched",
+                      "label": "Gestreckt",
+                      "description": "Große Abstände erschweren gegenseitige Unterstützung und können offene Verbindungen erzeugen."
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Kein klares Muster"
+                    }
+                  ]
+                },
+                "structural_function": {
+                  "key": "structuralFunction",
+                  "label": "Welche Funktion erfüllt diese Struktur hauptsächlich?",
+                  "options": [
+                    {
+                      "value": "center_protection",
+                      "label": "Zentrum schützen",
+                      "description": "Die Defensive priorisiert gefährliche Räume vor dem Tor und lenkt Angriffe nach außen."
+                    },
+                    {
+                      "value": "pressure_support",
+                      "label": "Druck unterstützen",
+                      "description": "Die Struktur ermöglicht einem Spieler aktiven Zugriff, weil Absicherung vorhanden ist."
+                    },
+                    {
+                      "value": "pass_lane_control",
+                      "label": "Passwege schließen",
+                      "description": "Die Defensive reduziert direkte Verbindungen zum Tor."
+                    },
+                    {
+                      "value": "space_control",
+                      "label": "Raum kontrollieren",
+                      "description": "Die Defensive hält ihre Struktur und wartet auf Fehler oder schlechte Entscheidungen."
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Keine klare Wirkung erkennbar"
+                    }
+                  ]
+                },
+                "key_structure_element": {
+                  "key": "keyStructureElement",
+                  "label": "Welcher Teil der Struktur war entscheidend?",
+                  "options": [
+                    {
+                      "value": "center",
+                      "label": "Der Center als Verbindungsspieler"
+                    },
+                    {
+                      "value": "defenders",
+                      "label": "Das Verteidigerpaar"
+                    },
+                    {
+                      "value": "forwards",
+                      "label": "Die Unterstützung der Stürmer"
+                    },
+                    {
+                      "value": "team",
+                      "label": "Die gesamte Fünferstruktur"
+                    }
+                  ]
+                },
+                "completion_question": {
+                  "key": "defensive_structure_summary",
+                  "label": "Welche Struktureigenschaft war insgesamt am häufigsten zu sehen?",
+                  "options": [
+                    {
+                      "value": "compact",
+                      "label": "Kompakt"
+                    },
+                    {
+                      "value": "balanced",
+                      "label": "Ausgewogen"
+                    },
+                    {
+                      "value": "stretched",
+                      "label": "Gestreckt"
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Kein klares Muster"
+                    }
+                  ]
+                },
+                "completion_note": {
+                  "key": "defensive_structure_reason",
+                  "label": "Wie ermöglicht diese Struktur der Defensive, gefährliche Räume zu kontrollieren?",
+                  "placeholder": "Optional: kurze Begründung",
+                  "max_chars": 600
+                },
+                "missions": [
                   {
-                    "key": "slot_control",
-                    "type": "radio",
-                    "label": "Slot-Kontrolle",
-                    "options": [
-                      "konsequent",
-                      "situativ",
-                      "vernachlässigt"
-                    ]
+                    "title": "Mission 1",
+                    "prompt": "Rekonstruiere die Defensivstruktur in einer Slot-Schutz-Szene.",
+                    "hint": "Positioniere alle fünf Rollen relativ zueinander."
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "title": "Mission 2",
+                    "prompt": "Finde eine zweite Szene und vergleiche die Staffelung.",
+                    "hint": "Achte besonders auf Tiefe zwischen Verteidigern und Stürmern."
+                  },
+                  {
+                    "title": "Mission 3",
+                    "prompt": "Erfasse eine dritte Szene mit Fokus auf Slot-Absicherung bei Puckwechsel.",
+                    "hint": "Bewerte, ob die Struktur kompakt bleibt oder aufklafft."
                   }
                 ]
               }
