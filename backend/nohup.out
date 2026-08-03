@@ -46973,3 +46973,204 @@ INFO:     Application startup complete.
 ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
+INFO:     Started server process [415323]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [415709]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49494 - "GET /api/lab/content HTTP/1.1" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.133.240:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "PATCH /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "POST /api/sessions/Christoph_1785775094/post HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "DELETE /api/sessions/Christoph_1785775094 HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     66.132.186.159:19912 - "GET / HTTP/1.1" 404 Not Found
+INFO:     66.132.186.159:34468 - "PRI %2A HTTP/2.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     66.132.186.159:25490 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.186.159:60078 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.186.159:60102 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.159:18656 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK

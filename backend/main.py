@@ -147,6 +147,9 @@ class SessionCreate(BaseModel):
     focus: Optional[str] = None  # Module-specific focus area
     session_method: Optional[str] = None  # "live_watch" oder andere
     drill_id: Optional[str] = None  # Specific drill to use
+    learning_area: Optional[str] = None
+    lab_mode: Optional[str] = None
+    lab_template_id: Optional[str] = None
 
 class MicroFeedbackData(BaseModel):
     phase: str  # P1, P2, P3
@@ -837,6 +840,14 @@ async def get_curriculum():
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
+@app.get("/api/lab/content")
+async def get_lab_content():
+    """Lab-Inhalte laden (separat vom Academy-Curriculum)."""
+    try:
+        return load_json(os.path.join(DATA_DIR, "lab_content.json"))
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Lab content not found")
+
 @app.get("/api/teams")
 async def get_teams(league: Optional[str] = None):
     """Teams laden basierend auf Liga"""
@@ -1287,6 +1298,8 @@ async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
             continue
         if not session.get('created_by'):
             session['created_by'] = session.get('user', 'Unbekannt')
+        if not session.get('learning_area'):
+            session['learning_area'] = 'academy'
         session['observation_scope'] = _normalize_observation_scope(session.get('observation_scope'))
         sessions.append(session)
     return sessions
@@ -1337,6 +1350,9 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "focus": session.focus,  # Store focus area
         "session_method": session.session_method,  # Store session method
         "drill_id": session.drill_id,  # Store selected drill
+        "learning_area": session.learning_area or "academy",
+        "lab_mode": session.lab_mode,
+        "lab_template_id": session.lab_template_id,
         "observation_scope": _normalize_observation_scope(session.observation_scope),
         "state": "IN_PROGRESS",  # Start as in progress instead of PRE
         "current_phase": _initial_phase_for_scope(session.observation_scope),
@@ -1360,6 +1376,11 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         }
     }
 
+    if session_data.get("learning_area") == "lab" and session_data.get("lab_mode") == "predict":
+        session_data["prediction_entries"] = []
+        session_data["open_prediction_id"] = None
+        session_data["prediction_summary"] = None
+
     print(f"[AUTH] request by user={user} path=/api/sessions")
     session_path = build_session_storage_path(session_id, session_data.get("created_at"))
     save_json(session_path, session_data)
@@ -1370,6 +1391,13 @@ async def get_session(session_id: str):
     """Session Details"""
     session_path = get_session_path_or_404(session_id)
     session = load_json(session_path)
+    if not session.get("learning_area"):
+        session["learning_area"] = "academy"
+    if session.get("learning_area") == "lab" and session.get("lab_mode") == "predict":
+        if "prediction_entries" not in session:
+            session["prediction_entries"] = []
+        if "open_prediction_id" not in session:
+            session["open_prediction_id"] = None
     scope = _normalize_observation_scope(session.get("observation_scope"))
     active_periods = _active_periods_for_scope(scope)
     current_phase = (session.get("current_phase") or "").strip().upper()
@@ -1605,6 +1633,9 @@ async def download_session(session_id: str, phase: Optional[str] = Query(None)):
         "session_id": session.get("id"),
         "user": session.get("user"),
         "module_id": session.get("module_id"),
+        "learning_area": session.get("learning_area", "academy"),
+        "lab_mode": session.get("lab_mode"),
+        "lab_template_id": session.get("lab_template_id"),
         "drill_id": session.get("drill_id"),
         "goal": session.get("goal"),
         "confidence": session.get("confidence"),

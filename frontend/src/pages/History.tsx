@@ -20,6 +20,22 @@ export default function History() {
     enabled: Boolean(user)
   })
 
+  const { data: labContent } = useQuery({
+    queryKey: ['lab-content'],
+    queryFn: () => api.getLabContent(),
+    enabled: Boolean(user)
+  })
+
+  const labTemplateTitleById = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const template of labContent?.prediction_templates || []) {
+      if (template?.id && template?.title) {
+        map.set(template.id, template.title)
+      }
+    }
+    return map
+  }, [labContent])
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.deleteSession(id),
     onSuccess: () => {
@@ -216,7 +232,13 @@ export default function History() {
           sortedSessions.map((session: Session) => (
             <SessionCard
               key={session.id}
-              session={{ ...session, observed_team: session.game_info?.observed_team }}
+              session={{
+                ...session,
+                observed_team: session.game_info?.observed_team,
+                lab_template_id: session.lab_template_id && labTemplateTitleById.get(session.lab_template_id)
+                  ? `${session.lab_template_id} · ${labTemplateTitleById.get(session.lab_template_id)}`
+                  : session.lab_template_id
+              }}
               sceneEntries={scenesBySession.get(session.id) || []}
               onDelete={(id) => deleteMutation.mutate(id)}
               isDeletingId={

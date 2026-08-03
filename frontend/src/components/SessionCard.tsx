@@ -4,6 +4,7 @@ import { api } from '../api'
 import { useState } from 'react'
 import styles from './SessionCard.module.css'
 import { getObservationScopeLabel } from '../utils/observationScope'
+import { getSessionRoute } from '../features/lab/sessionRouting'
 
 interface SessionCardProps {
   session: Session
@@ -125,6 +126,7 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
   }
 
   const statusBadge = getStatusBadge(session.state)
+  const isLabPredict = session.learning_area === 'lab' && session.lab_mode === 'predict'
 
   const gameDate = session.game_info?.date
     ? new Date(session.game_info.date).toLocaleDateString('de-DE', {
@@ -212,6 +214,12 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
             Beobachtet: {session.observed_team}
           </div>
         )}
+
+        {isLabPredict && (
+          <div className={styles.observedBadge} style={{ marginTop: '0.4rem', background: 'rgba(129,196,214,0.2)', borderColor: 'rgba(129,196,214,0.45)' }}>
+            Lab · Predict
+          </div>
+        )}
          
 
           {/* Meta Grid */}
@@ -236,6 +244,12 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
               <span className={styles.metaLabel}>Beobachtungsumfang</span>
               <span className={styles.metaValue}>{getObservationScopeLabel(session.observation_scope)}</span>
             </div>
+            {isLabPredict && (
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Predictions</span>
+                <span className={styles.metaValue}>{session.prediction_entries?.length || 0}</span>
+              </div>
+            )}
             {gameDate && (
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Spiel</span>
@@ -295,7 +309,7 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
               }}
             >
               <a
-                href={`/session/${session.id}`}
+                href={getSessionRoute(session)}
                 style={{
                   display: 'inline-block',
                   padding: '0.75rem 1.5rem',
@@ -404,6 +418,33 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
                     Drill: {session.drills[0].title}
                   </div>
                 )}
+                {isLabPredict && session.lab_template_id && (
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '0.25rem' }}>
+                    Template: {session.lab_template_id}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {isLabPredict && session.prediction_summary && (
+            <div
+              style={{
+                padding: '1rem 1.5rem',
+                backgroundColor: 'rgba(15, 23, 42, 0.4)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+              }}
+            >
+              <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.5)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Predict-Zusammenfassung
+              </div>
+              <div style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.86)', display: 'grid', gap: '0.15rem' }}>
+                <span>{session.prediction_summary.total} Predictions</span>
+                <span>{session.prediction_summary.resolved} aufgelöst</span>
+                <span>{session.prediction_summary.correct} eingetroffen</span>
+                <span>{session.prediction_summary.partial} teilweise eingetroffen</span>
+                <span>{session.prediction_summary.incorrect} nicht eingetroffen</span>
+                <span>{session.prediction_summary.unjudgeable} nicht beurteilbar</span>
               </div>
             </div>
           )}

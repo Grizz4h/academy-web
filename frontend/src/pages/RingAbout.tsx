@@ -355,6 +355,7 @@ export default function RingAbout() {
   const [filterCompetitionUnitValue, setFilterCompetitionUnitValue] = useState('')
   const [filterEpisodeSeason, setFilterEpisodeSeason] = useState('')
   const [filterCurrentContext, setFilterCurrentContext] = useState(false)
+  const [insightsLeagueFilter, setInsightsLeagueFilter] = useState('')
 
   const tracks = useMemo(() => unique(scenes.map(s => getSceneTrack(s)).filter(Boolean)).sort(), [scenes])
   const drills = useMemo(() => unique((filterTrack ? scenes.filter((scene) => getSceneTrack(scene) === filterTrack) : scenes).map(s => s.drill_id).filter(Boolean) as string[]).sort(), [scenes, filterTrack])
@@ -519,13 +520,18 @@ export default function RingAbout() {
     setSearchParams(nextParams)
   }
 
+  const insightsScenes = useMemo(() => {
+    if (!insightsLeagueFilter) return scenes
+    return scenes.filter((scene) => scene.league === insightsLeagueFilter)
+  }, [scenes, insightsLeagueFilter])
+
   const insights = useMemo(() => {
     const teamMap = new Map<string, { team: string; scenes: number; published: number }>()
     const leagueMap = new Map<string, number>()
     const drillMap = new Map<string, number>()
     let publishedCount = 0
 
-    for (const scene of scenes) {
+    for (const scene of insightsScenes) {
       const published = isScenePublished(scene)
       if (published) publishedCount += 1
 
@@ -570,7 +576,7 @@ export default function RingAbout() {
       leagueDistribution,
       drillDistribution,
       publishedCount,
-      unpublishedCount: Math.max(scenes.length - publishedCount, 0),
+      unpublishedCount: Math.max(insightsScenes.length - publishedCount, 0),
       teamMax,
       leagueMax,
       drillMax,
@@ -578,7 +584,7 @@ export default function RingAbout() {
       topTeam,
       showContentHint,
     }
-  }, [scenes, sessionsById])
+  }, [insightsScenes, sessionsById])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -1021,6 +1027,29 @@ export default function RingAbout() {
 
           {!isLoading && !error && scenes.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {leagues.length > 0 && (
+                <div className="card" style={{ padding: '1rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', alignItems: 'center' }}>
+                    <select
+                      value={insightsLeagueFilter}
+                      onChange={e => setInsightsLeagueFilter(e.target.value)}
+                      style={selectStyle}
+                    >
+                      <option value="">Alle Ligen</option>
+                      {leagues.map((league) => <option key={league} value={league}>{league}</option>)}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {insightsScenes.length === 0 && (
+                <div className="card" style={{ textAlign: 'center', padding: '2rem 1rem', color: '#64748b' }}>
+                  Keine Insights fuer die gewaehlte Liga.
+                </div>
+              )}
+
+              {insightsScenes.length > 0 && (
+                <>
               <div className="card" style={{ padding: '1rem 1.1rem' }}>
                 <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Team-Verteilung</h3>
                 <div style={{ display: 'grid', gap: '0.45rem' }}>
@@ -1117,6 +1146,8 @@ export default function RingAbout() {
                     Fuer mehr Vielfalt koennte als naechstes ein anderes Team priorisiert werden.
                   </p>
                 </div>
+              )}
+                </>
               )}
             </div>
           )}

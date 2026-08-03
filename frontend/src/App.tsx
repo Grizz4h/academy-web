@@ -13,6 +13,9 @@ import ObservationSetup from './pages/ObservationSetup'
 import ObservationRun from './pages/ObservationRun'
 import ObservationStats from './pages/ObservationStats'
 import RingAbout from './pages/RingAbout'
+import LabPage from './pages/Lab'
+import LabPredictSetup from './pages/LabPredictSetup'
+import LabPredictSession from './pages/LabPredictSession'
 import TopNav from './components/TopNav'
 import { RewardHost, RewardProvider } from './features/rewards'
 
@@ -25,6 +28,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/curriculum" element={<Curriculum />} />
+            <Route path="/lab" element={<LabPage />} />
+            <Route path="/lab/predict/setup" element={<LabPredictSetup />} />
+            <Route path="/lab/predict/session/:id" element={<LabPredictSession />} />
             <Route path="/theory/:moduleId" element={<TheoryDetail />} />
             <Route path="/drills/:moduleId" element={<Drills />} />
             <Route path="/setup/:moduleId" element={<SessionSetup />} />

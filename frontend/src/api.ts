@@ -38,6 +38,8 @@ export async function login(username: string, password: string): Promise<{ token
   return res.json();
 }
 
+import { labModules, predictionTemplates } from './features/lab/config'
+
 
 // ==== Type Definitions ====
 export interface Curriculum {
@@ -107,6 +109,52 @@ export interface Drill {
   // miniFeedback entfernt, nur noch microfeedback auf Session-Ebene
 }
 
+export type LearningArea = 'academy' | 'lab'
+
+export type LabMode =
+  | 'predict'
+  | 'compare'
+  | 'hypothesis'
+  | 'reconstruction'
+  | 'review'
+
+export type PredictionResolution = 'correct' | 'partial' | 'incorrect' | 'unjudgeable'
+
+export interface PredictionEntry {
+  id: string
+  sessionId: string
+  templateId: string
+  categoryId: string
+  observedTeamId: string
+  observedTeamName: string
+  period: number
+  gameTime?: string
+  predictedValue: string
+  confidence: 'low' | 'medium' | 'high'
+  actualValue?: string
+  resolution?: PredictionResolution
+  missedCue?: string
+  note?: string
+  createdAt: string
+  resolvedAt?: string
+}
+
+export interface PredictionSessionSummary {
+  total: number
+  resolved: number
+  correct: number
+  partial: number
+  incorrect: number
+  unjudgeable: number
+  mostPredictedValue?: string
+  mostActualValue?: string
+  confidenceTotals: {
+    low: number
+    medium: number
+    high: number
+  }
+}
+
 export interface Session {
   id: string
   user: string
@@ -145,6 +193,12 @@ export interface Session {
   observed_team?: string
   observed_team_id?: string
   observed_team_name?: string
+  learning_area?: LearningArea
+  lab_mode?: LabMode
+  lab_template_id?: string
+  prediction_entries?: PredictionEntry[]
+  open_prediction_id?: string
+  prediction_summary?: PredictionSessionSummary
 }
 
 export interface GameInfo {
@@ -547,6 +601,18 @@ export interface SceneMarkerUpdate {
   extension_labels?: Record<string, string>
 }
 
+export interface LabModuleContent {
+  id: string
+  label: string
+  description: string
+  enabled: boolean
+}
+
+export interface LabContent {
+  modules: LabModuleContent[]
+  prediction_templates: any[]
+}
+
 // ==== API Helpers ====
 const resolveApiBase = () => {
   const envBase = import.meta.env.VITE_API_BASE
@@ -654,6 +720,20 @@ export const api = {
     }
   },
 
+  getLabContent: async (): Promise<LabContent> => {
+    try {
+      const res = await fetch(buildUrl('/lab/content'))
+      if (res.ok) return res.json()
+      throw new Error(`Failed to fetch lab content (${res.status})`)
+    } catch (err) {
+      console.warn('Lab content endpoint unavailable, using local fallback config', err)
+      return {
+        modules: labModules,
+        prediction_templates: predictionTemplates,
+      }
+    }
+  },
+
   // Sessions
   getSessions: async (user?: string, state?: string): Promise<Session[]> => {
     const params = new URLSearchParams()
@@ -668,7 +748,7 @@ export const api = {
     return res.json()
   },
 
-  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo }): Promise<Session> => {
+  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string }): Promise<Session> => {
     const res = await fetch(buildUrl('/sessions'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },

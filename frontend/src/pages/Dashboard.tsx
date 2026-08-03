@@ -13,6 +13,7 @@ import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRe
 import { computeObservedTeamStats } from '../stats/exposureStats';
 import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
+import { getSessionRoute } from '../features/lab/sessionRouting';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string =>
@@ -668,7 +669,7 @@ export default function Dashboard() {
                 <span className={styles.recentDate}>{new Date(s.created_at).toLocaleDateString()}</span>
                 <span className={styles.recentModule}>{s.module_id}</span>
                 <span className={styles.statusBadge}>{formatSessionState(s.state)}</span>
-                <a href={`/session/${s.id}`} className={styles.openBtn}>Öffnen</a>
+                <a href={getSessionRoute(s)} className={styles.openBtn}>Öffnen</a>
               </li>
             ))}
           </ul>

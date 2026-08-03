@@ -7,11 +7,13 @@ import Pill from './Pill';
 import UserName from './UserName';
 import { useUser } from '../context/UserContext';
 import { formatPux, useRewards } from '../features/rewards';
+import { getSessionRoute } from '../features/lab/sessionRouting';
 import styles from './TopNav.module.css';
 
 const navTabs = [
   { to: '/', label: 'Start', exact: true },
-  { to: '/curriculum', label: 'Tracks' },
+  { to: '/curriculum', label: 'Academy' },
+  { to: '/lab', label: 'Lab' },
   { to: '/history', label: 'Verlauf' },
   { to: '/progress', label: 'Stats' },
   { to: '/observation/setup', label: 'Obs Setup' },
@@ -23,6 +25,13 @@ const navTabs = [
 const getSessionSortDate = (session: Session) => new Date(session.created_at).getTime() || 0;
 
 const getSessionContext = (session: Session): string => {
+  if (session.learning_area === 'lab' && session.lab_mode === 'predict') {
+    const matchup = session.game_info?.team_home && session.game_info?.team_away
+      ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
+      : 'Predict-Session'
+    return `Lab · Predict · ${matchup}`
+  }
+
   if (session.game_info?.team_home && session.game_info?.team_away) {
     return session.game_info.team_home + ' vs ' + session.game_info.team_away;
   }
@@ -68,7 +77,7 @@ const TopNav: React.FC = () => {
                 <React.Fragment key={tab.to}>
                   {tab.to === "/history" && activeSession && (
                     <NavLink
-                      to={"/session/" + activeSession.id}
+                      to={getSessionRoute(activeSession)}
                       className={({ isActive }) =>
                         isActive
                           ? styles.navLink + " " + styles.navLinkActive + " " + styles.activeSessionLink
