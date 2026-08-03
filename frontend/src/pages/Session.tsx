@@ -626,7 +626,7 @@ export default function SessionPage() {
       </div>
 
       {!isCompleted && (
-        <div className="card">
+        <div className={`card ${(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') ? 'period-analysis-wrapper' : ''}`}>
           {currentPhase === 'POST' && (
             <div>
               <button onClick={() => handleDrillComplete(answersByPhase[currentPhase])} className="btn btn-success" style={{ minWidth: 120 }}>
@@ -637,7 +637,7 @@ export default function SessionPage() {
 
           {(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') && (
             <div>
-              <p>Analysiere das letzte Drittel und gib Feedback.</p>
+              <p className="period-analysis-title">Analysiere das letzte Drittel und gib Feedback.</p>
               {advanceError && (
                 <div style={{ marginBottom: '0.8rem', padding: '0.6rem 0.8rem', background: 'rgba(220,53,69,0.12)', border: '1px solid rgba(220,53,69,0.4)', borderRadius: '0.45rem', color: '#ffb7bf', fontSize: '0.9rem' }}>
                   {advanceError}

@@ -2967,30 +2967,40 @@
             },
             {
               "id": "B2_D4",
-              "title": "Anschlussentscheidung bewerten",
+              "title": "Was passiert direkt nach dem Puckgewinn?",
               "drill_type": "period_checkin",
-              "description": "Bewerte nur die erste Entscheidung 2-3 Sekunden nach Puckgewinn: war sie angemessen, nicht ob sie spaeter erfolgreich war.",
+              "description": "Beobachte drei Puckgewinne des ausgewählten Teams. Ordne jeweils ein, ob das Team in den ersten zwei bis drei Sekunden sofort Tempo aufnimmt, zunächst Kontrolle sichert oder keine klare Anschlussentscheidung entwickelt.",
               "didactics": {
-                "explanation": "Vierter Schritt im B2-Lernpfad: Nach Druck, Loesungsort und Entscheidungsursache bewertest du jetzt die erste Anschlussentscheidung nach Puckgewinn. Fokus ist Angemessenheit im Moment, nicht der spaetere Ausgang.",
+                "explanation": "Vierter Schritt im B2-Lernpfad:\n\nIn B2_D1 hast du untersucht, wodurch die Handlungsmöglichkeiten eines Puckführers eingeschränkt werden.\n\nIn B2_D2 hast du beobachtet, wie ein Puckführer versucht, diese Drucksituation zu lösen.\n\nIn B2_D3 hast du analysiert, warum eine gewählte Lösung nicht funktioniert.\n\nJetzt wechselst du den Blick auf den Moment des Puckgewinns.\n\nBeobachte, welche erste Priorität das ausgewählte Team innerhalb der ersten zwei bis drei Sekunden setzt:\n\nWill es die gegnerische Unordnung sofort mit Tempo nutzen, zunächst den eigenen Puckbesitz stabilisieren oder entsteht keine klare Anschlussentscheidung?\n\nBewerte nur diese erste erkennbare Priorität und nicht den späteren Ausgang des Angriffs.\n\nBeobachte immer einen eigenen Puckgewinn des ausgewählten Teams.\n\nWenn beispielsweise Augsburg ausgewählt ist, beginnt die Beobachtung erst in dem Moment, in dem Augsburg den Puck erobert oder kontrolliert übernimmt.\n\nDanach beobachtest du ausschließlich, was Augsburg in den nächsten zwei bis drei Sekunden mit diesem Puckgewinn macht.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Nur die ersten 2-3 Sekunden nach dem Puckgewinn",
-                    "Welche erste Anschlussentscheidung dominant erkennbar ist",
-                    "Ob eine klare Anschlusslogik entsteht oder der Uebergang zerfaellt"
+                    "Den Moment, in dem das ausgewählte Team den Puck erkennbar gewinnt oder kontrolliert übernimmt",
+                    "Nur die ersten zwei bis drei Sekunden nach diesem Puckgewinn",
+                    "Welche erste Priorität in der Anschlussaktion sichtbar wird",
+                    "Ob das Team sofort beschleunigt, zunächst Kontrolle sichert oder keine klare Anschlusslogik entwickelt",
+                    "Ob die Entscheidung bereits im ersten Pass, Laufweg oder Sicherungsmoment erkennbar ist"
                   ],
                   "how_to_decide": [
-                    "Waehle pro Szene genau eine dominante Anschlussentscheidung",
-                    "Tempo gewaehlt = schneller erster Pass, direkter Vorwaertsgedanke, Gegner nicht ordnen lassen",
-                    "Kontrolle gewaehlt = Puckbesitz sichern, Struktur herstellen, Risiko bewusst reduzieren",
-                    "Uebergang misslungen = keine klare Anschlussentscheidung, Unsicherheit oder sofortiger Verlust"
+                    "Wähle pro Beobachtung genau eine dominante Anschlussentscheidung",
+                    "Wähle Tempo aufgenommen, wenn das Team die gegnerische Unordnung sofort mit Vorwärtsbewegung oder schnellem Passspiel attackiert",
+                    "Wähle Kontrolle gesichert, wenn das Team zunächst Puckbesitz, Ordnung und sichere Anschlussoptionen herstellt",
+                    "Wähle Keine klare Anschlussentscheidung, wenn weder eine erkennbare Beschleunigung noch eine kontrollierte Stabilisierung entsteht",
+                    "Bewerte nur die ersten zwei bis drei Sekunden und nicht den späteren Erfolg des Angriffs",
+                    "Bewerte nicht, ob der Angriff später erfolgreich wird.",
+                    "Bewerte nur, welche erste Priorität das ausgewählte Team direkt nach dem Puckgewinn setzt.",
+                    "Sofort Raum gewinnen und beschleunigen → Tempo aufgenommen",
+                    "Puckbesitz und Ordnung sichern → Kontrolle gesichert",
+                    "Keine klare Priorität erkennbar → Keine klare Anschlussentscheidung"
                   ],
                   "ignore": [
-                    "Alles nach dem 2-3-Sekunden-Fenster",
-                    "Ob spaeter eine Torchance entsteht",
-                    "Erfolgslogik statt Entscheidungslogik"
+                    "Alles, was erst nach dem Zwei-bis-drei-Sekunden-Fenster passiert",
+                    "Ob später eine Torchance, ein Zonenentry oder ein Puckverlust entsteht",
+                    "Die Qualität der gesamten Angriffssequenz",
+                    "Bloße Puckkontakte ohne echte Kontrolle",
+                    "Die Reaktion des Gegners nach dem Puckverlust"
                   ]
                 },
-                "learning_hint": "Die erste Anschlussentscheidung zeigt, ob ein Team den Gewinnmoment wirklich lesen kann: Druck -> Loesung -> Ursache -> Anschlussentscheidung."
+                "learning_hint": "Die ersten Sekunden nach einem Puckgewinn zeigen, ob ein Team die gegnerische Unordnung sofort attackiert oder zunächst den eigenen Puckbesitz stabilisiert."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -3001,8 +3011,8 @@
                       "dominant_followup_observed": "Tempo gewählt"
                     },
                     "questions": [
-                      "Welche Unordnung wurde mit Tempo direkt attackiert?",
-                      "War die Beschleunigung in diesem Moment angemessen?"
+                      "Welche gegnerische Unordnung sollte mit der schnellen Anschlussaktion genutzt werden?",
+                      "War der unmittelbare Vorwärtsimpuls in dieser Situation klar erkennbar?"
                     ]
                   },
                   {
@@ -3010,8 +3020,8 @@
                       "dominant_followup_observed": "Kontrolle gewählt"
                     },
                     "questions": [
-                      "Welche Risiken wurden durch Kontrolle bewusst reduziert?",
-                      "Hat die Entscheidung stabile Anschlussoptionen vorbereitet?"
+                      "Welche Risiken wurden durch die kontrollierte Anschlussentscheidung reduziert?",
+                      "Welche stabile nächste Option wurde dadurch vorbereitet?"
                     ]
                   },
                   {
@@ -3019,8 +3029,8 @@
                       "dominant_followup_observed": "Übergang misslungen"
                     },
                     "questions": [
-                      "Woran war erkennbar, dass keine klare Anschlussentscheidung entstand?",
-                      "Welche Struktur oder Rollen-Klarheit haette den Uebergang stabilisiert?"
+                      "Woran war erkennbar, dass weder Tempo noch kontrollierte Stabilisierung entstand?",
+                      "Welche Laufwege, Unterstützung oder Rollenklärung hätten eine klarere Anschlussaktion ermöglicht?"
                     ]
                   }
                 ]
@@ -3031,34 +3041,54 @@
                 "sample_label": "Beobachtung",
                 "required_samples": 3,
                 "max_samples_per_phase": 3,
-                "phase1_title": "Phase 1 - Anschlussentscheidungen erfassen",
-                "phase1_description": "Erfasse drei Pflichtbeobachtungen. Betrachte nur die ersten 2-3 Sekunden nach dem Puckgewinn und bewerte die erste Anschlussentscheidung.",
+                "phase1_title": "Phase 1 – Erste Priorität nach Puckgewinn erfassen",
+                "phase1_description": "Erfasse drei eigene Puckgewinne des ausgewählten Teams. Betrachte jeweils nur die ersten zwei bis drei Sekunden und ordne ein, ob das Team Tempo aufnimmt, Kontrolle sichert oder keine klare Anschlussentscheidung entwickelt.",
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde einen Puckgewinn des ausgewählten Teams.",
+                    "hint": "Beobachte nur die ersten zwei bis drei Sekunden: Welche erste Priorität wird sichtbar?"
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde einen weiteren Puckgewinn.",
+                    "hint": "Achte besonders darauf, ob das Team sofort Tempo aufnimmt oder zunächst Kontrolle sichert."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Finde einen dritten Puckgewinn.",
+                    "hint": "Vergleiche anschließend, welche Anschlusslogik in deinen Beobachtungen am häufigsten vorkam."
+                  }
+                ],
                 "sample_note_key": "note",
-                "sample_note_label": "Kurze Begruendung (optional)",
+                "sample_note_label": "Kurze Begründung (optional)",
                 "sample_note_max_chars": 240,
                 "aggregate_by": "followup_type",
                 "aggregation_totals_key": "followup_totals",
                 "observed_dominant_key": "dominant_followup_observed",
-                "aggregation_label": "Bisher haeufig beobachtet",
-                "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere Anschlussentscheidungen zu analysieren oder interessante Szenen fuer Rink About It zu markieren.",
+                "aggregation_label": "Bisher häufig beobachtet",
+                "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere Puckgewinne und die erste Anschlusspriorität des ausgewählten Teams zu analysieren. Interessante Situationen kannst du für Rink About It markieren.",
                 "enable_checkin": false,
                 "sample_fields": [
                   {
                     "key": "followup_type",
                     "label": "Dominante Anschlussentscheidung",
-                    "question": "Welche Anschlussentscheidung wurde unmittelbar nach dem Puckgewinn gewählt?",
+                    "question": "Welche erste Priorität war unmittelbar nach dem Puckgewinn erkennbar?",
                     "options": [
                       {
                         "value": "tempo",
-                        "label": "Tempo aufgenommen"
+                        "label": "Tempo aufgenommen",
+                        "description": "Das Team versucht, die kurze Unordnung des Gegners sofort mit einem schnellen Pass, einem direkten Laufweg oder aktivem Raumgewinn auszunutzen."
                       },
                       {
                         "value": "kontrolle",
-                        "label": "Kontrolle gesichert"
+                        "label": "Kontrolle gesichert",
+                        "description": "Das Team versucht, zunächst Puckbesitz und eigene Ordnung zu stabilisieren und eine kontrollierte nächste Aktion vorzubereiten."
                       },
                       {
                         "value": "uebergang_misslungen",
-                        "label": "Übergang misslungen"
+                        "label": "Keine klare Anschlussentscheidung",
+                        "description": "Nach dem Puckgewinn ist weder eine klare Beschleunigung noch eine kontrollierte Stabilisierung erkennbar. Ein sofortiger Puckverlust allein reicht nicht für diese Kategorie. Wenn vorher eine klare Tempo- oder Kontrollentscheidung erkennbar war, soll diese Entscheidung bewertet werden, auch wenn sie später misslingt."
                       }
                     ]
                       }
@@ -3066,54 +3096,139 @@
               }
             },
               {
-              "id": "B2_D5",
-                "title": "Entscheidungsmuster erkennen",
-              "drill_type": "period_checkin",
-                "description": "Verdichte mehrere Beobachtungen zu einer wiederkehrenden Tendenz: Welches Entscheidungsmuster zeigt das Team heute unter Druck?",
-              "didactics": {
-                  "explanation": "Dieser Drill schließt B2 als Synthese-Aufgabe ab. Du bewertest nicht mehr einzelne Szenen, sondern verdichtest deine Beobachtungen zu einer übergeordneten taktischen Erkenntnis: Welches Muster zeigt das Team heute unter Druck immer wieder?",
-                "observation_guide": {
-                  "what_to_watch": [
-                      "Welche Reaktion taucht unter Druck immer wieder auf?",
-                      "Wirkt das Team in mehreren Situationen ähnlich oder unterschiedlich?",
-                      "Lässt sich aus mehreren Beobachtungen eine klare Tendenz ableiten?"
-                  ],
-                  "how_to_decide": [
-                      "Vergleiche mehrere Situationen statt Einzelaktionen zu bewerten",
-                      "Suche nach dem wiederkehrenden Muster, nicht nach dem besten Highlight",
-                      "Formuliere am Ende eine belastbare Tendenz in einem Satz"
-                  ],
-                  "ignore": [
-                      "Die Beschreibung einer einzelnen Szene als alleinige Begründung",
-                      "Einzelne Highlights ohne gemeinsame Linie"
-                  ]
-                },
-                  "learning_hint": "Der Drill trainiert erstmals Synthese statt Beobachtung. Du bündelst mehrere Eindrücke zu einer taktischen Erkenntnis und schließt damit den B2-Track ab."
-              },
-              "config": {
-                "questions": [
-                  {
-                      "key": "decision_pattern",
-                    "type": "radio",
-                      "label": "Welches Entscheidungsmuster hast du heute am häufigsten beobachtet?",
-                    "options": [
-                        "Das Team vereinfacht unter Druck konsequent.",
-                        "Das Team sucht trotz Druck spielerische Lösungen.",
-                        "Das Team verliert unter Druck häufig die Struktur.",
-                        "Das Team hält auch unter Druck an seiner Spielidee fest.",
-                        "Kein klares Muster erkennbar."
+                "id": "B2_D5",
+                "title": "Wie entscheidet das Team heute?",
+                "drill_type": "period_checkin",
+                "description": "Beobachte mehrere Entscheidungen des ausgewählten Teams unter Druck und unmittelbar nach eigenen Puckgewinnen. Verdichte deine Eindrücke anschließend zu einer wiederkehrenden Tendenz zwischen Vereinfachung, Kontrolle, aktivem Vorwärtsspiel und instabilen Entscheidungen.",
+                "didactics": {
+                  "explanation": "Dieser Drill schließt B2 als Synthese-Aufgabe ab.\n\nIn den vorherigen Drills hast du untersucht, wodurch ein Puckführer eingeschränkt wird, wie er Drucksituationen löst, warum Lösungen scheitern und welche erste Priorität das Team nach einem Puckgewinn setzt.\n\nJetzt betrachtest du nicht mehr nur einzelne Situationen.\n\nSuche nach einer wiederkehrenden Entscheidungslogik des ausgewählten Teams:\n\nReduziert es vor allem Risiko?\nSichert es zunächst Kontrolle und Struktur?\nSucht es häufig aktiven Raumgewinn?\nOder entstehen wiederholt unklare beziehungsweise instabile Anschlussaktionen?\n\nDeine Auswahl beschreibt eine Tendenz in der heutigen Beobachtung. Sie ist keine dauerhafte Bewertung oder feste Identität des Teams.",
+                  "observation_guide": {
+                    "what_to_watch": [
+                      "Wie das ausgewählte Team in mehreren Situationen unter Druck entscheidet",
+                      "Welche Lösungsart wiederholt sichtbar wird",
+                      "Welche erste Priorität das Team nach eigenen Puckgewinnen setzt",
+                      "Ob Risiko reduziert, Kontrolle gesichert oder aktiver Raumgewinn gesucht wird",
+                      "Ob wiederholt unklare oder instabile Anschlussaktionen entstehen",
+                      "Ob sich aus mehreren Situationen eine belastbare Tendenz ableiten lässt"
+                    ],
+                    "how_to_decide": [
+                      "Vergleiche mehrere Situationen und nicht nur einzelne Highlights",
+                      "Wähle das Muster, das in deiner heutigen Beobachtung am häufigsten erkennbar war",
+                      "Unterscheide zwischen Sicherheit, Kontrolle, aktivem Vorwärtsspiel und instabilen Entscheidungen",
+                      "Wähle Wechselhaft oder instabil nur dann, wenn unklare oder zerfallende Entscheidungslogiken selbst wiederholt auftreten",
+                      "Wähle Kein klares Muster, wenn die Situationen zu unterschiedlich sind oder die Beobachtungsbasis nicht ausreicht",
+                      "Formuliere eine Tendenz für diese Session und keine allgemeine Bewertung des Teams",
+                      "Wähle nicht die auffälligste Szene.",
+                      "Wähle die Entscheidungslogik, die in mehreren Situationen am häufigsten sichtbar wurde.",
+                      "Das Ergebnis beschreibt nur die heutige Beobachtung.",
+                      "Es bedeutet nicht automatisch, dass das Team grundsätzlich immer so entscheidet."
+                    ],
+                    "ignore": [
+                      "Eine einzelne Szene als alleinige Begründung",
+                      "Das spektakulärste oder erfolgreichste Highlight",
+                      "Eine dauerhafte Bewertung des Teams aus nur einer Session",
+                      "Reine Ergebnisbewertung nach Tor, Puckverlust oder Torchance",
+                      "Muster, die nicht in mehreren Situationen wiederkehren"
                     ]
                   },
-                  {
+                  "learning_hint": "Synthese bedeutet, mehrere einzelne Beobachtungen zu einer vorsichtigen Tendenz zusammenzuführen. Suche nach einer wiederkehrenden Entscheidungslogik, ohne aus einer Session eine dauerhafte Teamidentität abzuleiten."
+                },
+                "config": {
+                  "observation_phase": {
+                    "title": "Beobachtungsphase",
+                    "text": "Beobachte mehrere Entscheidungen des ausgewählten Teams unter Druck und unmittelbar nach eigenen Puckgewinnen.\n\nAchte darauf, ob das Team wiederholt Sicherheit, Kontrolle oder aktiven Raumgewinn priorisiert – oder ob häufig keine klare Anschlusslogik entsteht."
+                  },
+                  "analysis_phase": {
+                    "title": "Analysephase",
+                    "text": "Welche Entscheidungslogik war heute am häufigsten erkennbar?"
+                  },
+                  "reflection_phase": {
+                    "title": "Begründungsphase",
+                    "text": "Welche Beobachtungen unterstützen deine Einschätzung?"
+                  },
+                  "summary_title": "Deine Einschätzung",
+                  "summary_disclaimer": "Diese Einschätzung beschreibt deine heutige Beobachtung und keine dauerhafte Eigenschaft des Teams.",
+                  "active_focus_title": "Active Focus",
+                  "active_focus_text": "Beobachte im weiteren Spiel, ob die gewählte Entscheidungslogik bestehen bleibt oder sich bei Spielstand, Druckhöhe und Spielsituation verändert.",
+                  "questions": [
+                    {
+                      "key": "decision_pattern",
+                      "type": "radio",
+                      "label": "Welche Entscheidungslogik war heute beim ausgewählten Team am häufigsten erkennbar?",
+                      "options": [
+                        {
+                          "value": "sicherheit_vereinfachung",
+                          "label": "Sicherheit und Vereinfachung",
+                          "description": "Das Team reduziert unter Druck häufig Risiko und wählt einfache, direkte Lösungen."
+                        },
+                        {
+                          "value": "kontrolle_stabilisierung",
+                          "label": "Kontrolle und Stabilisierung",
+                          "description": "Das Team versucht häufig, Besitz und Struktur zu sichern, bevor es die nächste Aktion vorbereitet."
+                        },
+                        {
+                          "value": "aktiver_vorwaertsimpuls",
+                          "label": "Aktiver Vorwärtsimpuls",
+                          "description": "Das Team versucht häufig, Druck oder gegnerische Unordnung direkt nach vorne zu überwinden."
+                        },
+                        {
+                          "value": "wechselhaft_instabil",
+                          "label": "Wechselhaft oder instabil",
+                          "description": "Es entsteht wiederholt keine klare oder verlässliche Entscheidungslogik."
+                        },
+                        {
+                          "value": "unklar",
+                          "label": "Kein klares Muster erkennbar",
+                          "description": "Die beobachteten Situationen waren zu unterschiedlich oder die Beobachtungsbasis reicht nicht aus, um eine belastbare Tendenz abzuleiten."
+                        }
+                      ]
+                    },
+                    {
+                      "key": "pattern_evidence",
+                      "type": "multi_select",
+                      "label": "Welche Beobachtungen unterstützen deine Einschätzung?",
+                      "optional": true,
+                      "options": [
+                        {
+                          "value": "haeufige_sicherheitsloesungen",
+                          "label": "Häufige Sicherheitslösungen"
+                        },
+                        {
+                          "value": "kontrollierte_rueck_querpaesse",
+                          "label": "Kontrollierte Rück- und Querpässe"
+                        },
+                        {
+                          "value": "struktur_vor_tempo",
+                          "label": "Struktur wurde vor Tempo priorisiert"
+                        },
+                        {
+                          "value": "direkte_vertikalaktionen",
+                          "label": "Direkte Vertikalaktionen"
+                        },
+                        {
+                          "value": "tempo_nach_puckgewinn",
+                          "label": "Schnelles Tempo nach Puckgewinn"
+                        },
+                        {
+                          "value": "wiederholte_unklare_anschluesse",
+                          "label": "Wiederholte unklare Anschlussaktionen"
+                        },
+                        {
+                          "value": "unterschiedliche_situationen",
+                          "label": "Viele unterschiedliche Situationen ohne klare Tendenz"
+                        }
+                      ]
+                    },
+                    {
                       "key": "pattern_reason",
-                    "type": "text",
-                      "label": "Woran hast du dieses Muster erkannt?",
-                      "placeholder": "Optional: kurze Zusammenfassung deiner Beobachtungen",
-                    "max_chars": 1500
-                  }
-                ]
+                      "type": "text",
+                      "label": "Wie zeigt sich dieses Muster in deinen Beobachtungen?",
+                      "placeholder": "Optional: Fasse deine wichtigsten Beobachtungen kurz zusammen.",
+                      "max_chars": 600
+                    }
+                  ]
+                }
               }
-            }
           ]
         },
         {

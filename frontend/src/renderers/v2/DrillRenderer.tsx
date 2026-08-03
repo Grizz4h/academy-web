@@ -2419,6 +2419,20 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
 	const safeAnswers = answers || {};
+	const normalizeOptions = (options: any[]) =>
+		(options || []).map((opt: any) => {
+			if (typeof opt === "string") {
+				return { value: opt, label: opt, description: undefined as string | undefined };
+			}
+			if (opt && typeof opt === "object") {
+				const value = String(opt.value ?? opt.label ?? "");
+				const label = String(opt.label ?? opt.value ?? "");
+				const description = typeof opt.description === "string" ? opt.description : undefined;
+				return { value, label, description };
+			}
+			const fallback = String(opt ?? "");
+			return { value: fallback, label: fallback, description: undefined as string | undefined };
+		});
 
 	// Cleanup: remove stale answers when conditional options change
 	const controllers = questions
@@ -2435,7 +2449,8 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 			const controllerKey = Object.keys(q.conditional_options)[0];
 			if (!controllerKey) continue;
 			const controllerValue = safeAnswers?.[controllerKey];
-			const effectiveOptions = q.conditional_options?.[controllerKey]?.[controllerValue] || q.options || [];
+			const effectiveOptionsRaw = q.conditional_options?.[controllerKey]?.[controllerValue] || q.options || [];
+			const effectiveOptions = normalizeOptions(Array.isArray(effectiveOptionsRaw) ? effectiveOptionsRaw : []);
 			const currentValue = next[q.key];
 
 			if (Array.isArray(effectiveOptions) && effectiveOptions.length === 0) {
@@ -2448,7 +2463,8 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 
 			if (q.type === "multi_select") {
 				if (Array.isArray(currentValue)) {
-					const filtered = currentValue.filter((v: string) => effectiveOptions.includes(v));
+					const optionValues = new Set(effectiveOptions.map((opt: any) => opt.value));
+					const filtered = currentValue.filter((v: string) => optionValues.has(v));
 					if (filtered.length !== currentValue.length) {
 						if (filtered.length > 0) next[q.key] = filtered;
 						else delete next[q.key];
@@ -2461,7 +2477,8 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				continue;
 			}
 
-			if (currentValue && Array.isArray(effectiveOptions) && !effectiveOptions.includes(currentValue)) {
+			const optionValues = new Set(effectiveOptions.map((opt: any) => opt.value));
+			if (currentValue && !optionValues.has(currentValue)) {
 				delete next[q.key];
 				changed = true;
 			}
@@ -2475,6 +2492,30 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const guidingQuestions = Array.isArray(drill?.didactics?.guiding_questions)
 		? drill.didactics.guiding_questions
 		: [];
+	const observationPhase = drill?.config?.observation_phase;
+	const analysisPhase = drill?.config?.analysis_phase;
+	const reflectionPhase = drill?.config?.reflection_phase;
+	const summaryTitle = drill?.config?.summary_title;
+	const summaryDisclaimer = drill?.config?.summary_disclaimer;
+	const summarizeQuestionValue = (q: any, rawValue: any) => {
+		if (rawValue === undefined || rawValue === null || rawValue === "") return null;
+		const optionMap = new Map(normalizeOptions(Array.isArray(q.options) ? q.options : []).map((opt: any) => [opt.value, opt.label]));
+
+		if (q.type === "multi_select") {
+			if (!Array.isArray(rawValue) || rawValue.length === 0) return null;
+			return rawValue.map((v: string) => optionMap.get(v) || formatOptionText(String(v))).join(", ");
+		}
+
+		if (typeof rawValue === "string") {
+			if (q.type === "radio" || q.type === "select") return optionMap.get(rawValue) || formatOptionText(rawValue);
+			return rawValue;
+		}
+
+		return String(rawValue);
+	};
+	const summaryRows = questions
+		.map((q: any) => ({ q, value: summarizeQuestionValue(q, safeAnswers?.[q.key]) }))
+		.filter((row: any) => row.value);
 	return (
 		<div className="card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
@@ -2509,14 +2550,34 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				</section>
 			)}
 			{guidingQuestions.length === 0 && <ObservationGuide drill={drill} />}
+			{observationPhase?.title || observationPhase?.text || observationPhase?.hint ? (
+				<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.12)", border: "1px solid rgba(81,145,162,0.28)", borderRadius: "4px" }}>
+					{observationPhase?.title && <h4 style={{ marginTop: 0, marginBottom: "0.4rem", color: "#89c8da" }}>{observationPhase.title}</h4>}
+					{observationPhase?.text && <p style={{ marginTop: 0, marginBottom: observationPhase?.hint ? "0.45rem" : 0, color: "rgba(255,255,255,0.86)", whiteSpace: "pre-line" }}>{observationPhase.text}</p>}
+					{observationPhase?.hint && <p style={{ margin: 0, color: "rgba(255,255,255,0.72)", fontSize: "0.86rem", whiteSpace: "pre-line" }}>{observationPhase.hint}</p>}
+				</section>
+			) : null}
+			{analysisPhase?.title || analysisPhase?.text ? (
+				<section style={{ marginBottom: "0.7rem" }}>
+					{analysisPhase?.title && <h4 style={{ marginTop: 0, marginBottom: "0.25rem", color: "rgba(255,255,255,0.9)" }}>{analysisPhase.title}</h4>}
+					{analysisPhase?.text && <p style={{ marginTop: 0, marginBottom: 0, color: "rgba(255,255,255,0.72)", fontSize: "0.88rem", whiteSpace: "pre-line" }}>{analysisPhase.text}</p>}
+				</section>
+			) : null}
+			{reflectionPhase?.title || reflectionPhase?.text ? (
+				<section style={{ marginBottom: "0.7rem" }}>
+					{reflectionPhase?.title && <h4 style={{ marginTop: 0, marginBottom: "0.25rem", color: "rgba(255,255,255,0.9)" }}>{reflectionPhase.title}</h4>}
+					{reflectionPhase?.text && <p style={{ marginTop: 0, marginBottom: 0, color: "rgba(255,255,255,0.72)", fontSize: "0.88rem", whiteSpace: "pre-line" }}>{reflectionPhase.text}</p>}
+				</section>
+			) : null}
 			{questions.map((q: any) => {
 				const controllerKey = q.conditional_options ? Object.keys(q.conditional_options)[0] : null;
 				const controllerValue = controllerKey ? safeAnswers?.[controllerKey] : undefined;
-				const effectiveOptions = q.conditional_options && controllerKey
+				const effectiveOptionsRaw = q.conditional_options && controllerKey
 					? q.conditional_options?.[controllerKey]?.[controllerValue] || []
 					: q.options || [];
+				const effectiveOptions = normalizeOptions(Array.isArray(effectiveOptionsRaw) ? effectiveOptionsRaw : []);
 				const hasConditionalOptions = !!q.conditional_options;
-				const shouldRenderQuestion = !hasConditionalOptions || !Array.isArray(effectiveOptions) || effectiveOptions.length > 0;
+				const shouldRenderQuestion = !hasConditionalOptions || effectiveOptions.length > 0;
 
 				if (!shouldRenderQuestion) {
 					return null;
@@ -2527,24 +2588,26 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 					<label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>{q.label}</label>
 					{q.type === "radio" && Array.isArray(effectiveOptions) && (
 						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-							{effectiveOptions.map((opt: string) => {
+							{effectiveOptions.map((opt: any) => {
 								const inlineExplanations = drill.didactics?.inline_explanations || {};
+								const rawLabel = String(opt.label ?? opt.value ?? "");
+								const explanationFromOption = typeof opt.description === "string" ? opt.description : undefined;
 								const optKey = Object.keys(inlineExplanations).find(
-									k => k === opt || k.toLowerCase() === opt.toLowerCase()
+									k => k === rawLabel || k.toLowerCase() === rawLabel.toLowerCase()
 								);
-								const explanation = optKey ? inlineExplanations[optKey]?.meaning : undefined;
+								const explanation = explanationFromOption || (optKey ? inlineExplanations[optKey]?.meaning : undefined);
 								return (
-									<label key={opt} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
+									<label key={opt.value} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
 										<span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
 											<input
 												type="radio"
 												name={q.key}
-												value={opt}
-												checked={safeAnswers[q.key] === opt}
+												value={opt.value}
+												checked={safeAnswers[q.key] === opt.value}
 												onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 											/>
 											<span style={{ textTransform: "none" }}>
-												{highlightGlossaryTerms(formatOptionText(opt), glossary)}
+												{highlightGlossaryTerms(rawLabel, glossary)}
 											</span>
 										</span>
 										{explanation && (
@@ -2563,34 +2626,39 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 							style={{ width: "100%" }}
 						>
 							<option value="">Bitte auswählen</option>
-							{effectiveOptions.map((opt: string) => (
-								<option key={opt} value={opt}>
-										{opt}
+							{effectiveOptions.map((opt: any) => (
+								<option key={opt.value} value={opt.value}>
+										{opt.label}
 								</option>
 							))}
 						</select>
 					)}
 					{q.type === "multi_select" && Array.isArray(effectiveOptions) && (
 						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-							{effectiveOptions.map((opt: string) => {
+							{effectiveOptions.map((opt: any) => {
 								const currentValues = Array.isArray(safeAnswers[q.key]) ? safeAnswers[q.key] : [];
-								const checked = currentValues.includes(opt);
+								const checked = currentValues.includes(opt.value);
 								return (
-									<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+									<label key={opt.value} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
+										<span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
 										<input
 											type="checkbox"
 											checked={checked}
 											onChange={(e) => {
 												const nextValues = e.target.checked
-													? [...currentValues, opt]
-													: currentValues.filter((v: string) => v !== opt);
+														? [...currentValues, opt.value]
+														: currentValues.filter((v: string) => v !== opt.value);
 												const nextAnswers = { ...safeAnswers };
 												if (nextValues.length > 0) nextAnswers[q.key] = nextValues;
 												else delete nextAnswers[q.key];
 												setAnswers(nextAnswers);
 											}}
 										/>
-										{highlightGlossaryTerms(formatOptionText(opt), glossary)}
+											<span>{highlightGlossaryTerms(String(opt.label ?? opt.value ?? ""), glossary)}</span>
+										</span>
+										{opt.description && (
+											<span style={{ fontSize: "0.85em", color: "#aaa", marginLeft: 24 }}>{opt.description}</span>
+										)}
 									</label>
 								);
 							})}
@@ -2617,6 +2685,22 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				</div>
 				);
 			})}
+			{summaryTitle && summaryRows.length > 0 && (
+				<section style={{ marginTop: "0.9rem", padding: "0.9rem 1rem", border: "1px solid rgba(120,180,210,0.26)", borderRadius: "6px", background: "rgba(120,180,210,0.08)" }}>
+					<h4 style={{ marginTop: 0, marginBottom: "0.55rem", color: "#89c8da" }}>{summaryTitle}</h4>
+					<div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+						{summaryRows.map((row: any) => (
+							<div key={row.q.key}>
+								<strong>{row.q.label}</strong>
+								<div style={{ color: "rgba(240,253,250,0.94)", marginTop: "0.15rem", whiteSpace: "pre-line" }}>{row.value}</div>
+							</div>
+						))}
+					</div>
+					{summaryDisclaimer && (
+						<p style={{ marginTop: "0.6rem", marginBottom: 0, color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{summaryDisclaimer}</p>
+					)}
+				</section>
+			)}
 			{drill.didactics?.learning_hint && (
 				<p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.86rem", color: "rgba(255,255,255,0.58)", whiteSpace: "pre-line" }}>
 					{drill.didactics.learning_hint}

@@ -259,6 +259,19 @@ p {
     overflow: hidden;
   }
 
+  .period-analysis-wrapper {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin-inline: 0 !important;
+  }
+
+  .period-analysis-title {
+    margin: 0 0 12px;
+  }
+
   .primary-card .interaction-surface .rink-wrapper {
     max-width: none !important;
     width: 100% !important;

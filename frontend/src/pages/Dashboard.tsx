@@ -7,6 +7,7 @@ import Card from '../components/Card';
 import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
 import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
 import { CoverageMap } from '../components/dashboard/CoverageMap';
+import { LearningRhythmWidget } from '../components/dashboard/LearningRhythmWidget';
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
 import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
 import { computeObservedTeamStats } from '../stats/exposureStats';
@@ -508,6 +509,16 @@ export default function Dashboard() {
           <div className={styles.kpiValue}>{derived.streak} Tage</div>
         </Card>
       </div>
+
+      <Card>
+        <LearningRhythmWidget
+          sessions={sessions ?? []}
+          weeks={8}
+          showAverage
+          showStatus
+          compact
+        />
+      </Card>
 
       {/* Progress & Hygiene */}
       <div className={styles.flexWrapRow}>

@@ -1,0 +1,157 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.compact {
+  gap: 0.62rem;
+}
+
+.title {
+  margin: 0;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.activeWeeks {
+  margin: 0;
+  color: rgba(247, 247, 255, 0.95);
+  font-weight: 600;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.emptyTitle {
+  margin: 0;
+  color: rgba(247, 247, 255, 0.95);
+  font-weight: 600;
+}
+
+.emptyDescription {
+  margin: 0;
+  color: rgba(216, 225, 255, 0.75);
+  font-size: 0.92rem;
+}
+
+.barsGrid {
+  display: grid;
+  gap: 0.42rem;
+  align-items: end;
+  width: 100%;
+}
+
+.barButton {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.3rem;
+  cursor: pointer;
+  min-height: 96px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.barButton:hover {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.barButton:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 80%, white 20%);
+  outline-offset: 2px;
+}
+
+.barTrack {
+  width: 100%;
+  height: 84px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  width: 100%;
+  background-color: var(--accent);
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 65%, white 35%) 0%,
+    color-mix(in srgb, var(--accent) 92%, black 8%) 100%
+  );
+  transition: height 0.2s ease;
+}
+
+.level0 { height: 7%; }
+.level1 { height: 27%; }
+.level2 { height: 45%; }
+.level3 { height: 67%; }
+.level4 { height: 88%; }
+
+.currentWeek {
+  border-color: color-mix(in srgb, var(--accent) 75%, white 25%);
+}
+
+.selected {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.axisLabels {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  color: rgba(216, 225, 255, 0.72);
+  font-size: 0.8rem;
+}
+
+.axisLabels span:nth-child(2) {
+  text-align: center;
+}
+
+.axisLabels span:last-child {
+  text-align: right;
+}
+
+.weekDetail {
+  margin: 0;
+  color: rgba(216, 225, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.average {
+  margin: 0;
+  color: rgba(247, 247, 255, 0.96);
+  font-weight: 600;
+}
+
+.status {
+  margin: 0;
+  color: rgba(216, 225, 255, 0.85);
+}
+
+@media (max-width: 768px) {
+  .barsGrid {
+    gap: 0.35rem;
+  }
+
+  .barButton {
+    min-height: 88px;
+    padding: 0.25rem;
+  }
+
+  .barTrack {
+    height: 76px;
+  }
+
+  .axisLabels {
+    font-size: 0.74rem;
+  }
+}
