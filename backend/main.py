@@ -142,6 +142,8 @@ class SessionCreate(BaseModel):
     observation_scope: Optional[str] = None
     game_info: Optional[dict] = None
     observed_team: Optional[str] = None
+    observed_team_id: Optional[str] = None
+    observed_team_name: Optional[str] = None
     focus: Optional[str] = None  # Module-specific focus area
     session_method: Optional[str] = None  # "live_watch" oder andere
     drill_id: Optional[str] = None  # Specific drill to use
@@ -216,6 +218,8 @@ class SceneMarkerCreate(BaseModel):
     team_home: Optional[str] = None
     team_away: Optional[str] = None
     observed_team: Optional[str] = None
+    observed_team_id: Optional[str] = None
+    observed_team_name: Optional[str] = None
     period: Optional[str] = None
     episode_season: Optional[str] = None
     episode_number: Optional[str] = None
@@ -1347,6 +1351,8 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "post": None,
         "game_info": session.game_info,
         "observed_team": session.observed_team,
+        "observed_team_id": session.observed_team_id,
+        "observed_team_name": session.observed_team_name,
         "microfeedback": {
             "P1": {"done": False, "text": ""},
             "P2": {"done": False, "text": ""},
@@ -2036,6 +2042,8 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "team_home": payload.team_home,
         "team_away": payload.team_away,
         "observed_team": payload.observed_team,
+        "observed_team_id": payload.observed_team_id,
+        "observed_team_name": payload.observed_team_name or payload.observed_team,
         "period": payload.period,
         "episode_season": episode_season,
         "episode_number": episode_number,
@@ -2088,7 +2096,7 @@ async def get_scenes(
             team_norm = team.strip().lower()
             home_match = (scene.get("team_home") or "").strip().lower() == team_norm
             away_match = (scene.get("team_away") or "").strip().lower() == team_norm
-            obs_match = (scene.get("observed_team") or "").strip().lower() == team_norm
+            obs_match = ((scene.get("observed_team_name") or scene.get("observed_team") or "").strip().lower() == team_norm)
             if not (home_match or away_match or obs_match):
                 continue
         scene_status = _normalize_scene_status(scene.get("status"))

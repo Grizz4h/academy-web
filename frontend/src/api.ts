@@ -143,6 +143,8 @@ export interface Session {
     }
   }
   observed_team?: string
+  observed_team_id?: string
+  observed_team_name?: string
 }
 
 export interface GameInfo {
@@ -151,6 +153,8 @@ export interface GameInfo {
   team_away: string
   date: string
   observed_team?: string
+  observed_team_id?: string
+  observed_team_name?: string
   league: string
   season?: string
   matchday?: string
@@ -481,6 +485,8 @@ export interface SceneMarker {
   team_home?: string
   team_away?: string
   observed_team?: string
+  observed_team_id?: string
+  observed_team_name?: string
   period?: string
   episode_season?: string
   episode_number?: string
@@ -513,6 +519,8 @@ export interface SceneMarkerCreate {
   team_home?: string
   team_away?: string
   observed_team?: string
+  observed_team_id?: string
+  observed_team_name?: string
   period?: string
   episode_season?: string
   episode_number?: string

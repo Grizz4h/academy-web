@@ -590,6 +590,7 @@ export default function SessionPage() {
         {session.game_info ? (
           <>
             <p><strong>Teams:</strong> {session.game_info.team_home} vs {session.game_info.team_away}</p>
+            <p><strong>Beobachtetes Team:</strong> {session.game_info.observed_team_name || session.game_info.observed_team || session.observed_team || 'Beobachtetes Team nicht hinterlegt'}</p>
             <p><strong>Datum:</strong> {session.game_info.date}</p>
             <p><strong>Liga:</strong> {session.game_info.league.replace(/_/g, ' ')}</p>
             {session.game_info.season && <p><strong>Saison:</strong> {session.game_info.season}</p>}
@@ -601,6 +602,7 @@ export default function SessionPage() {
         ) : (
           <>
             <p>Keine Spiel-Info verfügbar</p>
+            <p><strong>Beobachtetes Team:</strong> {session.observed_team || 'Beobachtetes Team nicht hinterlegt'}</p>
             <p><strong>Ziel:</strong> {session.goal}</p>
             <p><strong>Status:</strong> {session.state}</p>
             <p><strong>Beobachtungsumfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>

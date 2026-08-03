@@ -85,6 +85,8 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         team_home: session.game_info?.team_home,
         team_away: session.game_info?.team_away,
         observed_team: session.observed_team,
+        observed_team_id: session.game_info?.observed_team_id || session.observed_team_id,
+        observed_team_name: session.game_info?.observed_team_name || session.game_info?.observed_team || session.observed_team,
         period: currentPhase,
         game_time: trimmed,
         note: note.trim() || undefined,

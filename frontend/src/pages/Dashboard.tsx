@@ -11,6 +11,7 @@ import { LearningRhythmWidget } from '../components/dashboard/LearningRhythmWidg
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
 import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
 import { computeObservedTeamStats } from '../stats/exposureStats';
+import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
 import styles from './Dashboard.module.css';
 
@@ -102,13 +103,7 @@ export default function Dashboard() {
   // ✅ WICHTIG: useMemo läuft IMMER (auch wenn user null ist). Das verhindert React #310.
   const derived = useMemo(() => {
     const list = sessions ?? [];
-    const now = new Date();
-
-    const sessionsThisWeek = list.filter((s) => {
-      const d = new Date(s.created_at);
-      const weekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
-      return d >= weekAgo;
-    });
+    const sessionsThisWeek = buildWeeklyActivity(list, { weeks: 1, weekStartsOn: 1 })[0]?.completedSessions ?? 0;
 
     // --- Drill-Fortschritt pro Track berechnen ---
     // Map: trackId -> { total: number, completed: number, title: string }
@@ -502,7 +497,7 @@ export default function Dashboard() {
         </Card>
         <Card>
           <div className={styles.kpiTitle}>Diese Woche</div>
-          <div className={styles.kpiValue}>{derived.sessionsThisWeek.length}</div>
+          <div className={styles.kpiValue}>{derived.sessionsThisWeek}</div>
         </Card>
         <Card>
           <div className={styles.kpiTitle}>Streak</div>

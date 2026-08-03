@@ -46,6 +46,10 @@ function normalizeObservedTeamValue(value?: string | null): string {
   return normalized
 }
 
+function sceneObservedTeamSnapshot(scene: SceneMarker): string {
+  return normalizeObservedTeamValue(scene.observed_team_name || scene.observed_team)
+}
+
 function normalizeEpisodeCodeInput(value: string, width: number): string | null {
   const trimmed = value.trim()
   if (!trimmed) return ''
@@ -312,10 +316,15 @@ export default function RingAbout() {
   }, [sessionsData])
 
   const getObservedTeamForScene = (scene: SceneMarker): string => {
-    const direct = normalizeObservedTeamValue(scene.observed_team)
+    const direct = sceneObservedTeamSnapshot(scene)
     if (direct) return direct
     const session = sessionsById.get(scene.session_id)
-    return normalizeObservedTeamValue(session?.game_info?.observed_team || session?.observed_team)
+    return normalizeObservedTeamValue(
+      session?.game_info?.observed_team_name ||
+      session?.game_info?.observed_team ||
+      session?.observed_team_name ||
+      session?.observed_team
+    )
   }
 
   // Derive filter options from data
@@ -327,9 +336,11 @@ export default function RingAbout() {
     for (const s of scenes) {
       if (s.team_home) all.push(s.team_home)
       if (s.team_away) all.push(s.team_away)
+      const observedTeam = getObservedTeamForScene(s)
+      if (observedTeam) all.push(observedTeam)
     }
     return unique(all).sort()
-  }, [scenes])
+  }, [scenes, sessionsById])
 
   const [filterLeague, setFilterLeague] = useState('')
   const [filterSeason, setFilterSeason] = useState('')
@@ -407,7 +418,7 @@ export default function RingAbout() {
       const t = filterTeam.toLowerCase()
       const matchHome = (s.team_home ?? '').toLowerCase() === t
       const matchAway = (s.team_away ?? '').toLowerCase() === t
-      const matchObs = (s.observed_team ?? '').toLowerCase() === t
+      const matchObs = getObservedTeamForScene(s).toLowerCase() === t
       if (!matchHome && !matchAway && !matchObs) return false
     }
     if (filterTrack && getSceneTrack(s) !== filterTrack) return false
@@ -834,6 +845,7 @@ export default function RingAbout() {
             <SceneCard
               key={scene.id}
               scene={scene}
+              observedTeam={getObservedTeamForScene(scene) || 'Beobachtetes Team nicht hinterlegt'}
               onDelete={handleDelete}
               onEdit={handleEditOpen}
               onRatingChange={handleRatingChange}
@@ -1152,7 +1164,7 @@ function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onC
   )
 }
 
-function SceneCard({ scene, onDelete, onEdit, onRatingChange, celebrate = false }: { scene: SceneMarker; onDelete: (id: string) => void; onEdit: (scene: SceneMarker) => void; onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void; celebrate?: boolean }) {
+function SceneCard({ scene, observedTeam, onDelete, onEdit, onRatingChange, celebrate = false }: { scene: SceneMarker; observedTeam: string; onDelete: (id: string) => void; onEdit: (scene: SceneMarker) => void; onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void; celebrate?: boolean }) {
   const gameLabel = scene.team_home && scene.team_away
     ? `${scene.team_home} vs ${scene.team_away}`
     : scene.team_home || scene.team_away || '–'
@@ -1249,6 +1261,24 @@ function SceneCard({ scene, onDelete, onEdit, onRatingChange, celebrate = false 
           letterSpacing: '0.05em',
         }}>
           {scene.game_time}
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center' }}>
+        <span style={{
+          background: 'rgba(148,163,184,0.12)',
+          color: '#e2e8f0',
+          border: '1px solid rgba(148,163,184,0.24)',
+          borderRadius: '999px',
+          padding: '0.22rem 0.62rem',
+          fontSize: '0.76rem',
+          fontWeight: 700,
+          maxWidth: '100%',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }} title={`Beobachtet: ${observedTeam}`}>
+          Beobachtet: {observedTeam}
         </span>
       </div>
 
