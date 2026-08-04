@@ -732,7 +732,7 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 								border: "1px solid rgba(81,145,162,0.45)",
 								overflow: "hidden",
 								background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
-								touchAction: "none",
+								touchAction: isDrawing ? "none" : "manipulation",
 							}}
 						>
 							<svg
@@ -1473,6 +1473,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const config = drill?.config || {};
 	const rinkMode = String(config?.mode || "position_observation");
 	const isDefensiveStructureMode = rinkMode === "defensive_structure";
+	const isFormationShiftMode = rinkMode === "formation_shift";
 
 	const observationCount = Number(config?.observation_count || 3);
 	const observationsKey = config?.observations_key || "observations";
@@ -1514,6 +1515,37 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const completionNoteLabel = completionNoteConfig?.label || "Woran hast du diese Struktur erkannt?";
 	const completionNotePlaceholder = completionNoteConfig?.placeholder || "Optional";
 	const completionNoteMaxChars = Number(completionNoteConfig?.max_chars || 600);
+	const formationStatesKey = config?.formation_states_key || "formationStates";
+	const beforeStateKey = config?.before_state_key || "before";
+	const afterStateKey = config?.after_state_key || "after";
+	const activeFormationStateKey = config?.active_formation_state_key || "activeFormationState";
+	const copyBeforeToAfterEnabled = config?.copy_before_to_after_enabled !== false;
+	const copyBeforeToAfterLabel = config?.copy_before_to_after_label || "Positionen aus Vorher übernehmen";
+	const beforeHeading = config?.before_heading || "1. Struktur vor der Bewegung";
+	const beforeHint = config?.before_hint || "Positioniere die fünf Defensivspieler so, wie die Formation vor der Puckverlagerung oder offensiven Bewegung organisiert war.";
+	const afterHeading = config?.after_heading || "2. Struktur nach der Reaktion";
+	const afterHint = config?.after_hint || "Positioniere die Spieler so, wie die Defensive nach der Bewegung reagiert hat.";
+
+	const reactionTypeConfig = config?.reaction_type || {};
+	const reactionTypeKey = reactionTypeConfig?.key || "reactionType";
+	const reactionTypeLabel = reactionTypeConfig?.label || "Wie reagierte die Defensive auf die Bewegung?";
+	const reactionTypeOptions = Array.isArray(reactionTypeConfig?.options) ? reactionTypeConfig.options : [];
+
+	const structuralOutcomeConfig = config?.structural_outcome || {};
+	const structuralOutcomeKey = structuralOutcomeConfig?.key || "structuralOutcome";
+	const structuralOutcomeLabel = structuralOutcomeConfig?.label || "Was geschah mit der defensiven Struktur?";
+	const structuralOutcomeOptions = Array.isArray(structuralOutcomeConfig?.options) ? structuralOutcomeConfig.options : [];
+
+	const movementTriggerConfig = config?.movement_trigger || {};
+	const movementTriggerKey = movementTriggerConfig?.key || "movementTrigger";
+	const movementTriggerLabel = movementTriggerConfig?.label || "Was löste die defensive Anpassung hauptsächlich aus?";
+	const movementTriggerOptions = Array.isArray(movementTriggerConfig?.options) ? movementTriggerConfig.options : [];
+
+	const observationNoteConfig = config?.observation_note || {};
+	const observationNoteKey = observationNoteConfig?.key || "observationNote";
+	const observationNoteLabel = observationNoteConfig?.label || "Woran hast du die Veränderung der Struktur erkannt?";
+	const observationNotePlaceholder = observationNoteConfig?.placeholder || "Optional";
+	const observationNoteMaxChars = Number(observationNoteConfig?.max_chars || 600);
 
 	const missions = Array.isArray(config?.missions) ? config.missions : [];
 	const formationPreset = String(config?.formation_preset || config?.formationPreset || "5v5_default");
@@ -1560,15 +1592,36 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const draftStructuralFunction = draft[structuralFunctionKey] || "";
 	const draftKeyStructureElement = draft[keyStructureElementKey] || "";
 	const draftNote = draft[noteKey] || "";
+	const draftReactionType = draft[reactionTypeKey] || "";
+	const draftStructuralOutcome = draft[structuralOutcomeKey] || "";
+	const draftMovementTrigger = draft[movementTriggerKey] || "";
+	const draftObservationNote = draft[observationNoteKey] || "";
+	const activeFormationState = draft[activeFormationStateKey] === afterStateKey ? afterStateKey : beforeStateKey;
 
 	const rinkRef = useRef<HTMLDivElement | null>(null);
 	const [draggingPosition, setDraggingPosition] = useState<string>("");
 	const [dragPoint, setDragPoint] = useState<{ x: number; y: number } | null>(null);
+	const [dragPointerType, setDragPointerType] = useState<string>("");
 
 	const [flashMessage, setFlashMessage] = useState<string>("");
 
 	const clamp = (value: number) => Math.max(0, Math.min(1, value));
 	const movementThreshold = Number(config?.movement_threshold || 0.015);
+	const normalizePositionMap = (raw: any) => Object.fromEntries(
+		positionBubbles.map((bubble: any) => {
+			const point = raw?.[bubble.value];
+			const x = Number(point?.x);
+			const y = Number(point?.y);
+			if (!Number.isFinite(x) || !Number.isFinite(y)) return [bubble.value, undefined];
+			return [bubble.value, { x: clamp(Number(x.toFixed(3))), y: clamp(Number(y.toFixed(3))) }];
+		}),
+	) as Record<string, { x: number; y: number } | undefined>;
+
+	const normalizeStateMap = (raw: any) => ({
+		[beforeStateKey]: normalizePositionMap(raw?.[beforeStateKey] || {}),
+		[afterStateKey]: normalizePositionMap(raw?.[afterStateKey] || {}),
+	});
+
 	const draftPlayerPositions = Object.fromEntries(
 		positionBubbles.map((bubble: any) => {
 			const raw = draftPlayerPositionsRaw?.[bubble.value];
@@ -1579,12 +1632,21 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		}),
 	) as Record<string, { x: number; y: number } | undefined>;
 	const [localPlayerPositions, setLocalPlayerPositions] = useState<Record<string, { x: number; y: number } | undefined>>(draftPlayerPositions);
+	const [localFormationStates, setLocalFormationStates] = useState<Record<string, Record<string, { x: number; y: number } | undefined>>>(
+		normalizeStateMap(draft[formationStatesKey] || {}),
+	);
 	const serializedDraftPlayerPositions = JSON.stringify(draftPlayerPositionsRaw || {});
+	const serializedDraftFormationStates = JSON.stringify(draft[formationStatesKey] || {});
 
 	useEffect(() => {
 		if (!isDefensiveStructureMode) return;
 		setLocalPlayerPositions(draftPlayerPositions);
 	}, [isDefensiveStructureMode, serializedDraftPlayerPositions]);
+
+	useEffect(() => {
+		if (!isFormationShiftMode) return;
+		setLocalFormationStates(normalizeStateMap(draft[formationStatesKey] || {}));
+	}, [isFormationShiftMode, serializedDraftFormationStates]);
 
 	const normalizeTeam = (value: any) => String(value || "").trim().toLowerCase();
 	const inferPeriodNumber = () => {
@@ -1702,15 +1764,30 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		if (isDefensiveStructureMode) {
 			setLocalPlayerPositions({});
 		}
+		if (isFormationShiftMode) {
+			setLocalFormationStates({
+				[beforeStateKey]: {},
+				[afterStateKey]: {},
+			});
+		}
 		setAnswers({
 			...safeAnswers,
 			__draggable_rink_observation_draft: {
 				[initiatorKey]: "",
 				[locationKey]: null,
 				[playerPositionsKey]: {},
+				[formationStatesKey]: {
+					[beforeStateKey]: {},
+					[afterStateKey]: {},
+				},
+				[activeFormationStateKey]: beforeStateKey,
 				[structureRatingKey]: "",
 				[structuralFunctionKey]: "",
 				[keyStructureElementKey]: "",
+				[reactionTypeKey]: "",
+				[structuralOutcomeKey]: "",
+				[movementTriggerKey]: "",
+				[observationNoteKey]: "",
 				[noteKey]: "",
 			},
 		});
@@ -1728,7 +1805,9 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		if (!draggingPosition) return;
 
 		const onPointerMove = (event: PointerEvent) => {
-			event.preventDefault();
+			if (dragPointerType === "touch" || dragPointerType === "pen") {
+				event.preventDefault();
+			}
 			const nextPoint = locationFromPointer(event);
 			if (!nextPoint) return;
 			setDragPoint(nextPoint);
@@ -1738,6 +1817,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			if (!draggingPosition || !dragPoint) {
 				setDraggingPosition("");
 				setDragPoint(null);
+				setDragPointerType("");
 				return;
 			}
 
@@ -1750,6 +1830,19 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				updateDraft({
 					[playerPositionsKey]: nextPositions,
 				});
+			} else if (isFormationShiftMode) {
+				const nextStatePositions = {
+					...(localFormationStates[activeFormationState] || {}),
+					[draggingPosition]: dragPoint,
+				};
+				const nextFormationStates = {
+					...localFormationStates,
+					[activeFormationState]: nextStatePositions,
+				};
+				setLocalFormationStates(nextFormationStates);
+				updateDraft({
+					[formationStatesKey]: nextFormationStates,
+				});
 			} else {
 				updateDraft({
 					[initiatorKey]: draggingPosition,
@@ -1758,6 +1851,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			}
 			setDraggingPosition("");
 			setDragPoint(null);
+			setDragPointerType("");
 		};
 
 		window.addEventListener("pointermove", onPointerMove);
@@ -1767,10 +1861,11 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			window.removeEventListener("pointermove", onPointerMove);
 			window.removeEventListener("pointerup", onPointerUp);
 		};
-	}, [dragPoint, draggingPosition, isDefensiveStructureMode, localPlayerPositions]);
+	}, [dragPoint, draggingPosition, dragPointerType, isDefensiveStructureMode, isFormationShiftMode, localPlayerPositions, localFormationStates, activeFormationState]);
 
 	useEffect(() => {
 		if (!draggingPosition) return;
+		if (dragPointerType !== "touch" && dragPointerType !== "pen") return;
 
 		const previousOverflow = document.body.style.overflow;
 		const previousTouchAction = document.body.style.touchAction;
@@ -1785,19 +1880,44 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			document.body.style.touchAction = previousTouchAction;
 			document.body.style.overscrollBehavior = previousOverscrollBehavior;
 		};
-	}, [draggingPosition]);
+	}, [draggingPosition, dragPointerType]);
 
 	const startDrag = (positionValue: string, event: any) => {
 		event.preventDefault();
 		event.stopPropagation();
+		setDragPointerType(String(event.pointerType || ""));
 		setDraggingPosition(positionValue);
 		event.currentTarget?.setPointerCapture?.(event.pointerId);
 		const startPoint = isDefensiveStructureMode
 			? (localPlayerPositions[positionValue] || startByPosition[positionValue])
+			: isFormationShiftMode
+				? ((localFormationStates[activeFormationState] || {})[positionValue] || startByPosition[positionValue])
 			: (draft[initiatorKey] === positionValue && draft[locationKey]
 				? draft[locationKey]
 				: startByPosition[positionValue]);
 		setDragPoint(startPoint || null);
+	};
+
+	const setActiveFormationState = (nextState: string) => {
+		if (!isFormationShiftMode) return;
+		updateDraft({ [activeFormationStateKey]: nextState });
+	};
+
+	const copyBeforeToAfter = () => {
+		if (!isFormationShiftMode || !copyBeforeToAfterEnabled) return;
+		const copiedAfter = Object.fromEntries(
+			positionBubbles.map((bubble: any) => {
+				const source = localFormationStates[beforeStateKey]?.[bubble.value];
+				if (!source) return [bubble.value, undefined];
+				return [bubble.value, { x: source.x, y: source.y }];
+			}),
+		) as Record<string, { x: number; y: number } | undefined>;
+		const nextFormationStates = {
+			...localFormationStates,
+			[afterStateKey]: copiedAfter,
+		};
+		setLocalFormationStates(nextFormationStates);
+		updateDraft({ [formationStatesKey]: nextFormationStates, [activeFormationStateKey]: afterStateKey });
 	};
 
 	const applyDirectionChange = (nextDirection: "left" | "right", useManualOverride: boolean) => {
@@ -1825,18 +1945,79 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const effectivePosition = draggingPosition || selectedPosition;
 	const effectiveLocation = draggingPosition ? dragPoint : selectedLocation;
 	const effectiveZone = effectiveLocation ? deriveZone(effectiveLocation.x) : null;
+	const activeFormationPositions = localFormationStates[activeFormationState] || {};
 	const startForActive = effectivePosition ? startByPosition[effectivePosition] : null;
 	const movedEnough = !!(effectivePosition && effectiveLocation && startForActive && Math.hypot(effectiveLocation.x - startForActive.x, effectiveLocation.y - startForActive.y) > movementThreshold);
 	const positionedPlayers = positionBubbles
 		.map((bubble: any) => ({ position: bubble.value, location: (isDefensiveStructureMode ? localPlayerPositions[bubble.value] : draftPlayerPositions[bubble.value]) }))
 		.filter((entry: { position: string; location?: { x: number; y: number } }) => !!entry.location);
+	const beforePositionedPlayers = positionBubbles
+		.map((bubble: any) => ({ position: bubble.value, location: localFormationStates[beforeStateKey]?.[bubble.value] }))
+		.filter((entry: { position: string; location?: { x: number; y: number } }) => !!entry.location);
+	const afterPositionedPlayers = positionBubbles
+		.map((bubble: any) => ({ position: bubble.value, location: localFormationStates[afterStateKey]?.[bubble.value] }))
+		.filter((entry: { position: string; location?: { x: number; y: number } }) => !!entry.location);
 	const allPlayersPositioned = positionedPlayers.length === positionBubbles.length;
-	const canSave = isDefensiveStructureMode
+	const canSaveFormationShift = beforePositionedPlayers.length === positionBubbles.length
+		&& afterPositionedPlayers.length === positionBubbles.length
+		&& !!draftReactionType
+		&& !!draftStructuralOutcome
+		&& !!draftMovementTrigger;
+	const canSave = isFormationShiftMode
+		? canSaveFormationShift
+		: isDefensiveStructureMode
 		? (allPlayersPositioned && !!draftStructureRating && !!draftStructuralFunction)
 		: movedEnough;
 
 	const onSaveObservation = () => {
 		if (!canSave || isComplete) return;
+
+		if (isFormationShiftMode) {
+			const serializePositions = (entries: Array<{ position: string; location?: { x: number; y: number } }>) => entries
+				.filter((entry) => !!entry.location)
+				.map((entry) => ({
+					position: entry.position,
+					x: Number(entry.location!.x.toFixed(4)),
+					y: Number(entry.location!.y.toFixed(4)),
+				}));
+
+			const nextObservation = {
+				[observationIndexKey]: currentIndex + 1,
+				[formationStatesKey]: {
+					[beforeStateKey]: serializePositions(beforePositionedPlayers),
+					[afterStateKey]: serializePositions(afterPositionedPlayers),
+				},
+				[reactionTypeKey]: draftReactionType,
+				[structuralOutcomeKey]: draftStructuralOutcome,
+				[movementTriggerKey]: draftMovementTrigger,
+				[observationNoteKey]: draftObservationNote.trim() || "",
+				[createdAtKey]: new Date().toISOString(),
+			};
+
+			setAnswers({
+				...safeAnswers,
+				[observationsKey]: [...observations, nextObservation],
+				__draggable_rink_observation_draft: {
+					[formationStatesKey]: {
+						[beforeStateKey]: {},
+						[afterStateKey]: {},
+					},
+					[activeFormationStateKey]: beforeStateKey,
+					[reactionTypeKey]: "",
+					[structuralOutcomeKey]: "",
+					[movementTriggerKey]: "",
+					[observationNoteKey]: "",
+				},
+			});
+			setLocalFormationStates({
+				[beforeStateKey]: {},
+				[afterStateKey]: {},
+			});
+
+			setFlashMessage(savedFeedbackTemplate.replace("{index}", String(currentIndex + 1)));
+			window.setTimeout(() => setFlashMessage(""), 1200);
+			return;
+		}
 
 		if (isDefensiveStructureMode) {
 			const nextObservation = {
@@ -1952,7 +2133,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				</p>
 			</details>
 
-			{isDefensiveStructureMode && <ObservationGuide drill={drill} />}
+			<ObservationGuide drill={drill} />
 
 			{!isComplete && (
 				<section className="mobile-flatten-card" style={{ marginBottom: "0.75rem", padding: "0.8rem", backgroundColor: "rgba(81,145,162,0.08)", border: "1px solid rgba(81,145,162,0.35)", borderRadius: "6px" }}>
@@ -1974,7 +2155,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{observeHint}</p>
 
-					{!isDefensiveStructureMode && (
+					{!(isDefensiveStructureMode || isFormationShiftMode) && (
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem", alignItems: "center", marginBottom: "0.45rem" }}>
 						<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.76)" }}>
 							Angriffsrichtung: <strong>{attackDirection === "right" ? "nach rechts" : "nach links"}</strong> {isDirectionOverrideActive ? "(manuell)" : "(auto aus Session)"}
@@ -2044,6 +2225,68 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					</div>
 					)}
 
+					{isFormationShiftMode && (
+						<div style={{ marginBottom: "0.5rem" }}>
+							<div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.45rem", flexWrap: "wrap" }}>
+								<button
+									type="button"
+									onClick={() => setActiveFormationState(beforeStateKey)}
+									style={{
+										padding: "0.28rem 0.7rem",
+										borderRadius: "999px",
+										border: activeFormationState === beforeStateKey ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+										background: activeFormationState === beforeStateKey ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
+										color: "#f7f7ff",
+										fontSize: "0.82rem",
+										fontWeight: 700,
+										cursor: "pointer",
+									}}
+								>
+									Vorher
+								</button>
+								<button
+									type="button"
+									onClick={() => setActiveFormationState(afterStateKey)}
+									style={{
+										padding: "0.28rem 0.7rem",
+										borderRadius: "999px",
+										border: activeFormationState === afterStateKey ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+										background: activeFormationState === afterStateKey ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
+										color: "#f7f7ff",
+										fontSize: "0.82rem",
+										fontWeight: 700,
+										cursor: "pointer",
+									}}
+								>
+									Nachher
+								</button>
+								{copyBeforeToAfterEnabled && (
+									<button
+										type="button"
+										onClick={copyBeforeToAfter}
+										style={{
+											padding: "0.28rem 0.7rem",
+											borderRadius: "999px",
+											border: "1px solid rgba(255,255,255,0.3)",
+											background: "rgba(255,255,255,0.04)",
+											color: "#f7f7ff",
+											fontSize: "0.82rem",
+											cursor: "pointer",
+										}}
+									>
+										{copyBeforeToAfterLabel}
+									</button>
+								)}
+							</div>
+							<div style={{ marginBottom: "0.32rem" }}>
+								<strong>{activeFormationState === beforeStateKey ? beforeHeading : afterHeading}</strong>
+							</div>
+							<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+								{activeFormationState === beforeStateKey ? beforeHint : afterHint}
+							</p>
+						</div>
+					)}
+
 					<div style={{ marginBottom: "0.45rem" }}>
 						<label style={{ display: "block", marginBottom: "0.22rem", fontWeight: 600 }}>{selectionLabel}</label>
 						<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>{locationLabel}</p>
@@ -2056,19 +2299,19 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						style={{
 							position: "relative",
 							width: "100%",
-							maxWidth: isDefensiveStructureMode ? "760px" : "660px",
-							aspectRatio: isDefensiveStructureMode ? "900 / 620" : "11 / 7",
+							maxWidth: (isDefensiveStructureMode || isFormationShiftMode) ? "760px" : "660px",
+							aspectRatio: (isDefensiveStructureMode || isFormationShiftMode) ? "900 / 620" : "11 / 7",
 							borderRadius: "10px",
 							border: "1px solid rgba(81,145,162,0.45)",
 							overflow: "hidden",
 							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
 							marginBottom: "0.55rem",
 							cursor: draggingPosition ? "grabbing" : "default",
-							touchAction: "none",
-							overscrollBehavior: "contain",
+							touchAction: draggingPosition ? "none" : "manipulation",
+							overscrollBehavior: draggingPosition ? "contain" : "auto",
 						}}
 					>
-						{isDefensiveStructureMode ? (
+						{(isDefensiveStructureMode || isFormationShiftMode) ? (
 							<svg viewBox="0 0 900 620" role="img" aria-label="Klickbare Eisfläche" style={{ width: "100%", height: "100%", display: "block" }}>
 								<rect x="30" y="40" width="840" height="540" rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
 								<line x1="450" y1="44" x2="450" y2="576" stroke="rgba(255,120,120,0.55)" strokeWidth="4" />
@@ -2120,13 +2363,15 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						)}
 
 						{positionBubbles.map((bubble: any) => {
-							const isActive = isDefensiveStructureMode
+							const isActive = (isDefensiveStructureMode || isFormationShiftMode)
 								? draggingPosition === bubble.value
 								: effectivePosition === bubble.value;
-							const isMuted = isDefensiveStructureMode ? false : (!!effectivePosition && !isActive);
+							const isMuted = (isDefensiveStructureMode || isFormationShiftMode) ? false : (!!effectivePosition && !isActive);
 							const mirroredStart = startByPosition[bubble.value] || { x: Number(bubble.start_x), y: Number(bubble.start_y) };
 							const renderedLocation = isDefensiveStructureMode
 								? ((draggingPosition === bubble.value && dragPoint) ? dragPoint : (localPlayerPositions[bubble.value] || mirroredStart))
+								: isFormationShiftMode
+									? ((draggingPosition === bubble.value && dragPoint) ? dragPoint : (activeFormationPositions[bubble.value] || mirroredStart))
 								: (isActive && effectiveLocation
 									? effectiveLocation
 									: mirroredStart);
@@ -2185,6 +2430,12 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					{isDefensiveStructureMode && (
 						<div style={{ marginBottom: "0.5rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
 							Spieler positioniert: <strong>{positionedPlayers.length}/{positionBubbles.length}</strong>
+						</div>
+					)}
+
+					{isFormationShiftMode && (
+						<div style={{ marginBottom: "0.5rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+							Vorher positioniert: <strong>{beforePositionedPlayers.length}/{positionBubbles.length}</strong> · Nachher positioniert: <strong>{afterPositionedPlayers.length}/{positionBubbles.length}</strong>
 						</div>
 					)}
 
@@ -2268,7 +2519,87 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						</div>
 					)}
 
-					{!isDefensiveStructureMode && (
+					{isFormationShiftMode && reactionTypeOptions.length > 0 && (
+						<div style={{ marginBottom: "0.55rem" }}>
+							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{reactionTypeLabel}</label>
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+								{reactionTypeOptions.map((opt: any, idx: number) => {
+									const value = typeof opt === "string" ? opt : String(opt?.value || `reaction_${idx}`);
+									const label = typeof opt === "string" ? opt : String(opt?.label || value);
+									const description = typeof opt === "string" ? "" : String(opt?.description || "");
+									return (
+										<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
+											<input
+												type="radio"
+												name="formation_shift_reaction"
+												value={value}
+												checked={draftReactionType === value}
+												onChange={() => updateDraft({ [reactionTypeKey]: value })}
+											/>
+											<span>
+												<span>{label}</span>
+												{description && <span style={{ display: "block", color: "rgba(255,255,255,0.62)", marginTop: "0.1rem" }}>{description}</span>}
+											</span>
+										</label>
+									);
+								})}
+							</div>
+						</div>
+					)}
+
+					{isFormationShiftMode && structuralOutcomeOptions.length > 0 && (
+						<div style={{ marginBottom: "0.55rem" }}>
+							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{structuralOutcomeLabel}</label>
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+								{structuralOutcomeOptions.map((opt: any, idx: number) => {
+									const value = typeof opt === "string" ? opt : String(opt?.value || `outcome_${idx}`);
+									const label = typeof opt === "string" ? opt : String(opt?.label || value);
+									const description = typeof opt === "string" ? "" : String(opt?.description || "");
+									return (
+										<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
+											<input
+												type="radio"
+												name="formation_shift_outcome"
+												value={value}
+												checked={draftStructuralOutcome === value}
+												onChange={() => updateDraft({ [structuralOutcomeKey]: value })}
+											/>
+											<span>
+												<span>{label}</span>
+												{description && <span style={{ display: "block", color: "rgba(255,255,255,0.62)", marginTop: "0.1rem" }}>{description}</span>}
+											</span>
+										</label>
+									);
+								})}
+							</div>
+						</div>
+					)}
+
+					{isFormationShiftMode && movementTriggerOptions.length > 0 && (
+						<div style={{ marginBottom: "0.55rem" }}>
+							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{movementTriggerLabel}</label>
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+								{movementTriggerOptions.map((opt: any, idx: number) => {
+									const value = typeof opt === "string" ? opt : String(opt?.value || `trigger_${idx}`);
+									const label = typeof opt === "string" ? opt : String(opt?.label || value);
+									return (
+										<label key={value} style={{ display: "flex", alignItems: "center", gap: "0.42rem", fontSize: "0.88rem" }}>
+											<input
+												type="radio"
+												name="formation_shift_trigger"
+												value={value}
+												checked={draftMovementTrigger === value}
+												onChange={() => updateDraft({ [movementTriggerKey]: value })}
+											/>
+											<span>{label}</span>
+										</label>
+									);
+								})}
+							</div>
+						</div>
+					)}
+
+					{!(isDefensiveStructureMode || isFormationShiftMode) && (
 					<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
 						<div>
 							<strong>{effectivePosition ? findMarkerLabel(effectivePosition) : "Keine Auswahl"}</strong>
@@ -2278,15 +2609,15 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					</div>
 					)}
 
-					{(isDefensiveStructureMode || (effectivePosition && effectiveLocation)) && (
-						<details style={{ marginBottom: "0.45rem" }} open={!!draftNote}>
+					{(isDefensiveStructureMode || isFormationShiftMode || (effectivePosition && effectiveLocation)) && (
+						<details style={{ marginBottom: "0.45rem" }} open={!!(isFormationShiftMode ? draftObservationNote : draftNote)}>
 							<summary style={{ cursor: "pointer", fontSize: "0.82rem", color: "#8fd3df" }}>Optionale Notiz</summary>
 							<textarea
-								value={draftNote}
-								onChange={(e) => updateDraft({ [noteKey]: e.target.value })}
-								maxLength={noteMaxChars}
-								placeholder={notePlaceholder}
-								aria-label={noteLabel}
+								value={isFormationShiftMode ? draftObservationNote : draftNote}
+								onChange={(e) => updateDraft({ [isFormationShiftMode ? observationNoteKey : noteKey]: e.target.value })}
+								maxLength={isFormationShiftMode ? observationNoteMaxChars : noteMaxChars}
+								placeholder={isFormationShiftMode ? observationNotePlaceholder : notePlaceholder}
+								aria-label={isFormationShiftMode ? observationNoteLabel : noteLabel}
 								style={{
 									width: "100%",
 									minHeight: "56px",
@@ -2349,6 +2680,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
 								{isDefensiveStructureMode
 									? `Spieler platziert: ${Array.isArray(entry?.[playerPositionsKey]) ? entry[playerPositionsKey].length : 0}/${positionBubbles.length} - Struktur: ${getOptionLabel(structureRatingOptions, entry?.[structureRatingKey] || "-")} - Wirkung: ${getOptionLabel(structuralFunctionOptions, entry?.[structuralFunctionKey] || "-")}${entry?.[keyStructureElementKey] ? ` - Kern: ${getOptionLabel(keyStructureElementOptions, entry[keyStructureElementKey])}` : ""}`
+									: isFormationShiftMode
+										? `Vorher: ${Array.isArray(entry?.[formationStatesKey]?.[beforeStateKey]) ? entry[formationStatesKey][beforeStateKey].length : 0}/${positionBubbles.length} - Nachher: ${Array.isArray(entry?.[formationStatesKey]?.[afterStateKey]) ? entry[formationStatesKey][afterStateKey].length : 0}/${positionBubbles.length} - Reaktion: ${getOptionLabel(reactionTypeOptions, entry?.[reactionTypeKey] || "-")} - Wirkung: ${getOptionLabel(structuralOutcomeOptions, entry?.[structuralOutcomeKey] || "-")} - Auslöser: ${getOptionLabel(movementTriggerOptions, entry?.[movementTriggerKey] || "-")}`
 									: `${findMarkerLabel(entry?.[initiatorKey])} - ${zoneDisplay(entry?.[zoneKey] || "neutral")}`}
 							</div>
 						</div>
@@ -2414,6 +2747,11 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									</section>
 								)}
 							</>
+						) : isFormationShiftMode ? (
+							<section style={{ marginTop: "0.45rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
+								<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
+								<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>
+							</section>
 						) : (
 							<>
 						<p style={{ margin: "0 0 0.45rem", color: "rgba(153,246,228,0.96)", fontWeight: 600 }}>

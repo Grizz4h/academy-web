@@ -4388,88 +4388,226 @@
                 ]
               }
             },
-            {
-              "id": "C1_D3",
-              "title": "Switches & Übergaben",
-              "drill_type": "period_checkin",
-              "description": "Erkenne, ob defensive Übergaben (Switches) klar kommuniziert und sauber ausgeführt werden.",
-              "didactics": {
-                "explanation": "Switches sind keine Einzelentscheidungen, sondern kollektive Absprachen. Gute Teams übergeben klar, schlechte verlieren Zuordnung oder Zeit.",
-                "observation_guide": {
-                  "what_to_watch": [
-                    "Zeitpunkt der Übergabe",
-                    "Abstände während des Switches",
-                    "Reaktion beider beteiligter Spieler"
-                  ],
-                  "how_to_decide": [
-                    "Beobachte nur die Übergabe, nicht den Ausgang",
-                    "Achte auf Gleichzeitigkeit der Bewegung",
-                    "Frage dich: War klar, wer wen übernimmt?"
-                  ],
-                  "ignore": [
-                    "Ob daraus ein Abschluss entsteht",
-                    "Einzelne technische Fehler"
-                  ]
+              {
+                "id": "C1_D3",
+                "title": "Wie verschiebt sich die Defensive?",
+                "drill_type": "clickable_rink_observation",
+                "description": "Vergleiche die defensive Struktur vor und nach einer Puckverlagerung oder offensiven Bewegung. Rekonstruiere beide Zustände und analysiere, wie die Defensive ihre Ordnung anpasst.",
+                "didactics": {
+                  "explanation": "Eine defensive Struktur muss sich ständig verändern, ohne ihre Ordnung zu verlieren.\n\nWenn der Puck verlagert wird oder Angreifer ihre Positionen wechseln, müssen mehrere Verteidiger gemeinsam reagieren. Manche Spieler rücken heraus, andere sichern ab oder übernehmen neue Räume und Gegenspieler.\n\nBeobachte deshalb nicht nur die Bewegung eines einzelnen Spielers. Vergleiche, wie sich die gesamte Fünferstruktur zwischen zwei Momenten verändert.",
+                  "observation_guide": {
+                    "what_to_watch": [
+                      "Wo befindet sich der Puck vor der Verlagerung?",
+                      "Welche defensive Grundstruktur ist vor der Bewegung erkennbar?",
+                      "Welcher Spieler reagiert zuerst?",
+                      "Welche Mitspieler verschieben gemeinsam mit ihm?",
+                      "Wer sichert hinter einem herausrückenden Spieler ab?",
+                      "Werden Gegenspieler oder Räume sichtbar übergeben?",
+                      "Bleiben Zentrum und Torraum geschützt?",
+                      "Entsteht nach der Bewegung eine offene Verbindung oder Lücke?"
+                    ],
+                    "how_to_decide": [
+                      "Rekonstruiere zuerst die Struktur vor der Bewegung.",
+                      "Rekonstruiere danach die Struktur nach der defensiven Reaktion.",
+                      "Exakte Koordinaten sind nicht entscheidend.",
+                      "Achte besonders auf veränderte Abstände und Verantwortlichkeiten.",
+                      "Bewerte die gemeinsame Reaktion der Formation, nicht nur einen Einzelspieler."
+                    ],
+                    "ignore": [
+                      "Perfekte Positionsgenauigkeit",
+                      "Das spätere Ergebnis der Szene",
+                      "Ob ein Schuss oder Tor entsteht",
+                      "Einzelne technische Fehler ohne strukturelle Bedeutung",
+                      "Spielerbewegungen außerhalb des beobachteten Defensivablaufs"
+                    ]
+                  },
+                  "learning_hint": "Beurteile die gemeinsame Anpassung der Formation, nicht nur eine Einzelbewegung."
                 },
-                "learning_hint": "Ein guter Switch ist früh, klar und ohne Tempoverlust."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "switch_quality": "sauber"
+                "config": {
+                  "mode": "formation_shift",
+                  "observation_count": 3,
+                  "observations_key": "formation_shift_observations",
+                  "observation_index_key": "observationIndex",
+                  "created_at_key": "createdAt",
+                  "formation_states_key": "formationStates",
+                  "before_state_key": "before",
+                  "after_state_key": "after",
+                  "active_formation_state_key": "activeFormationState",
+                  "copy_before_to_after_enabled": true,
+                  "copy_before_to_after_label": "Positionen aus „Vorher“ übernehmen",
+                  "before_heading": "1. Struktur vor der Bewegung",
+                  "before_hint": "Positioniere die fünf Defensivspieler so, wie die Formation vor der Puckverlagerung oder offensiven Bewegung organisiert war.",
+                  "after_heading": "2. Struktur nach der Reaktion",
+                  "after_hint": "Positioniere die Spieler so, wie die Defensive nach der Bewegung reagiert hat.",
+                  "formation_preset": "5v5_default",
+                  "position_bubbles": [
+                    {
+                      "value": "LD",
+                      "label": "LD",
+                      "start_x": 0.30,
+                      "start_y": 0.38
                     },
-                    "questions": [
-                      "Woran war die Klarheit der Übergabe erkennbar?",
-                      "Blieb der Gegner unter Kontrolle?",
-                      "Wirkte die Aktion abgestimmt oder automatisch?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "switch_quality": "unsicher"
+                    {
+                      "value": "RD",
+                      "label": "RD",
+                      "start_x": 0.30,
+                      "start_y": 0.62
                     },
-                    "questions": [
-                      "Wo entstand der Moment der Unsicherheit?",
-                      "Lag es an Timing oder Kommunikation?",
-                      "Musste jemand improvisieren?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "switch_quality": "verpasst"
+                    {
+                      "value": "C",
+                      "label": "C",
+                      "start_x": 0.48,
+                      "start_y": 0.50
                     },
-                    "questions": [
-                      "Warum kam es zu keiner Übergabe?",
-                      "War die Situation früh genug erkennbar?",
-                      "Welche einfache Regel hätte geholfen?"
-                    ]
-                  }
-                ]
-              },
-              "config": {
-                "questions": [
-                  {
-                    "key": "switch_quality",
-                    "type": "radio",
-                    "label": "Übergabe / Switch",
+                    {
+                      "value": "LW",
+                      "label": "LW",
+                      "start_x": 0.62,
+                      "start_y": 0.32
+                    },
+                    {
+                      "value": "RW",
+                      "label": "RW",
+                      "start_x": 0.62,
+                      "start_y": 0.68
+                    }
+                  ],
+                  "selection_label": "Positioniere die fünf Defensivrollen auf der Eisfläche",
+                  "location_label": "Ziehe jede Bubble an ihre vermutete Position im aktiven Zustand",
+                  "observe_hint": "Vergleiche Vorher und Nachher, um die gemeinsame Reaktion der Formation zu erkennen.",
+                  "save_button_label": "Beobachtung speichern",
+                  "saved_feedback_template": "Beobachtung {index} gespeichert",
+                  "reaction_type": {
+                    "key": "reactionType",
+                    "label": "Wie reagierte die Defensive auf die Bewegung?",
                     "options": [
-                      "sauber",
-                      "unsicher",
-                      "verpasst"
+                      {
+                        "value": "collective_shift",
+                        "label": "Kollektiv verschoben",
+                        "description": "Mehrere Spieler passen ihre Positionen und Abstände gemeinsam an und halten die Formation verbunden."
+                      },
+                      {
+                        "value": "controlled_handoff",
+                        "label": "Gezielte Übergabe",
+                        "description": "Ein Gegenspieler oder Verantwortungsbereich wird erkennbar von einem Verteidiger an einen anderen übergeben."
+                      },
+                      {
+                        "value": "pressure_with_cover",
+                        "label": "Herausrücken mit Absicherung",
+                        "description": "Ein Spieler greift aktiv an oder verlässt kurz seine Grundposition, während Mitspieler den entstehenden Raum absichern."
+                      },
+                      {
+                        "value": "man_oriented_follow",
+                        "label": "Gegnerorientiert mitgelaufen",
+                        "description": "Ein oder mehrere Verteidiger folgen ihren Gegenspielern und verändern dadurch die ursprüngliche Formation."
+                      },
+                      {
+                        "value": "uncoordinated_reaction",
+                        "label": "Unkoordinierte Reaktion",
+                        "description": "Die Bewegungen der Spieler wirken nicht aufeinander abgestimmt. Abstände oder Zuständigkeiten werden unklar."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar",
+                        "description": "Die Szene zeigt keine ausreichend eindeutige Reaktion."
+                      }
                     ]
                   },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
-                  }
-                ]
-              }
-            },
+                  "structural_outcome": {
+                    "key": "structuralOutcome",
+                    "label": "Was geschah mit der defensiven Struktur?",
+                    "options": [
+                      {
+                        "value": "stable",
+                        "label": "Struktur blieb stabil",
+                        "description": "Die Formation veränderte sich nur wenig und behielt ihre ursprüngliche Ordnung."
+                      },
+                      {
+                        "value": "controlled_adjustment",
+                        "label": "Struktur passte sich kontrolliert an",
+                        "description": "Die Spieler veränderten ihre Positionen deutlich, blieben dabei aber verbunden und schützten die zentralen Räume."
+                      },
+                      {
+                        "value": "temporary_gap",
+                        "label": "Eine begrenzte Lücke entstand",
+                        "description": "Ein Bereich war kurzzeitig offen, die Grundstruktur blieb jedoch grundsätzlich erhalten."
+                      },
+                      {
+                        "value": "dangerous_gap",
+                        "label": "Eine gefährliche Lücke entstand",
+                        "description": "Durch die Reaktion öffnete sich ein direkter gefährlicher Raum oder eine klare Verbindung zum Tor."
+                      },
+                      {
+                        "value": "structure_breakdown",
+                        "label": "Struktur brach auseinander",
+                        "description": "Abstände, Zuständigkeiten und gegenseitige Unterstützung gingen deutlich verloren."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
+                  },
+                  "movement_trigger": {
+                    "key": "movementTrigger",
+                    "label": "Was löste die defensive Anpassung hauptsächlich aus?",
+                    "options": [
+                      {
+                        "value": "puck_side_change",
+                        "label": "Puckverlagerung auf die andere Seite"
+                      },
+                      {
+                        "value": "puck_low_high",
+                        "label": "Verlagerung zwischen Tiefe und blauer Linie"
+                      },
+                      {
+                        "value": "attacker_rotation",
+                        "label": "Positionswechsel oder Rotation eines Angreifers"
+                      },
+                      {
+                        "value": "drive_to_net",
+                        "label": "Bewegung eines Angreifers zum Tor"
+                      },
+                      {
+                        "value": "defensive_pressure",
+                        "label": "Aktiver Zugriff eines Verteidigers"
+                      },
+                      {
+                        "value": "other",
+                        "label": "Anderer Auslöser"
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
+                  },
+                  "observation_note": {
+                    "key": "observationNote",
+                    "label": "Woran hast du die Veränderung der Struktur erkannt?",
+                    "placeholder": "Optional",
+                    "max_chars": 600
+                  },
+                  "required_observation_fields": [
+                    "reactionType",
+                    "structuralOutcome",
+                    "movementTrigger"
+                  ],
+                  "required_position_groups": [
+                    {
+                      "key": "formationStates.before",
+                      "count": 5
+                    },
+                    {
+                      "key": "formationStates.after",
+                      "count": 5
+                    }
+                  ],
+                  "reflection_enabled": false,
+                  "active_focus_title": "Aktiver Fokus",
+                  "active_focus_text": "Vergleiche weiterhin, wie sich die Formation zwischen zwei Momenten gemeinsam anpasst."
+                }
+              },
             {
               "id": "C1_D4",
               "title": "Box & Box+1 – Grundordnung erkennen",

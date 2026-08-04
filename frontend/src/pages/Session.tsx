@@ -347,6 +347,11 @@ export default function SessionPage() {
     if (!['P1', 'P2', 'P3'].includes(phase)) return null
     if (!drill) return null
 
+    const readPathValue = (obj: any, path: string) => {
+      if (!obj || !path) return undefined
+      return path.split('.').reduce((acc: any, key: string) => (acc == null ? undefined : acc[key]), obj)
+    }
+
     if (
       drill.drill_type === 'clickable_rink_observation'
       || drill.drill_type === 'draggable_rink_observation'
@@ -361,6 +366,43 @@ export default function SessionPage() {
 
       if (observations.length < requiredObservations) {
         return 'Bitte erfasse alle ' + requiredObservations + ' Beobachtungen, bevor du weitergehst.'
+      }
+
+      const requiredObservationFields = Array.isArray(drill?.config?.required_observation_fields)
+        ? drill.config.required_observation_fields
+        : []
+
+      if (requiredObservationFields.length > 0) {
+        const hasAllRequiredObservationFields = observations.every((entry: any) => (
+          requiredObservationFields.every((fieldPath: any) => {
+            const value = readPathValue(entry, String(fieldPath || ''))
+            if (Array.isArray(value)) return value.length > 0
+            return value !== undefined && value !== null && value !== ''
+          })
+        ))
+
+        if (!hasAllRequiredObservationFields) {
+          return 'Bitte vervollständige alle erforderlichen Angaben in jeder Beobachtung, bevor du weitergehst.'
+        }
+      }
+
+      const requiredPositionGroups = Array.isArray(drill?.config?.required_position_groups)
+        ? drill.config.required_position_groups
+        : []
+
+      if (requiredPositionGroups.length > 0) {
+        const hasAllRequiredPositionGroups = observations.every((entry: any) => (
+          requiredPositionGroups.every((group: any) => {
+            const path = String(group?.key || '')
+            const minCount = Number(group?.count || 0)
+            const value = readPathValue(entry, path)
+            return Array.isArray(value) && value.length >= minCount
+          })
+        ))
+
+        if (!hasAllRequiredPositionGroups) {
+          return 'Bitte positioniere alle erforderlichen Spieler in jeder Beobachtung, bevor du weitergehst.'
+        }
       }
 
       if (reflectionEnabled && !answers?.[reflectionKey]) {
