@@ -1,6 +1,6 @@
 {
   "team_id": "iserlohn_roosters",
-  "updated_at": "2026-07-09T18:09:12.759367Z",
+  "updated_at": "2026-08-05T19:31:18.803023Z",
   "players": [
     {
       "player_name": "Daniel Geiger",
@@ -575,7 +575,7 @@
       "position": "Goalie",
       "position_group": "goalie",
       "nationality": "GER",
-      "age": 37,
+      "age": 38,
       "height_cm": 180,
       "weight_kg": 80.0,
       "birthplace": "Hamburg",

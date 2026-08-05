@@ -4513,7 +4513,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 
 
 // ----------------------------- PERIOD CHECKIN -----------------------------
-function PeriodCheckin({ drill, answers, setAnswers }: any) {
+export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
 	const safeAnswers = answers || {};
 	const optionLayout = String(drill?.config?.option_layout || "inline");
@@ -4658,8 +4658,10 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 		setAnswers({ ...safeAnswers, [targetKey]: next });
 	};
 
+	const isCompactUi = drill?.config?.compact_ui === true;
+
 	return (
-		<div className="card primary-card">
+		<div className={isCompactUi ? undefined : "card primary-card"}>
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{drill.title}</h3>
 			{focusText && (
 				<p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.82)", whiteSpace: "pre-line", marginBottom: "1rem", wordWrap: "break-word", overflowWrap: "break-word" }}>
@@ -4699,7 +4701,7 @@ function PeriodCheckin({ drill, answers, setAnswers }: any) {
 					)}
 				</section>
 			)}
-			{guidingQuestions.length === 0 && <ObservationGuide drill={drill} />}
+			{!isCompactUi && guidingQuestions.length === 0 && <ObservationGuide drill={drill} />}
 			{observationPhase?.title || observationPhase?.text || observationPhase?.hint ? (
 				<section style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "rgba(81,145,162,0.12)", border: "1px solid rgba(81,145,162,0.28)", borderRadius: "4px" }}>
 					{observationPhase?.title && <h4 style={{ marginTop: 0, marginBottom: "0.4rem", color: "#89c8da" }}>{observationPhase.title}</h4>}

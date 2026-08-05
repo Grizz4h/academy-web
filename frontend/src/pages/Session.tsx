@@ -6,6 +6,7 @@ import { detectDeviceType, evaluateSessionRewards, useRewards } from '../feature
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
+import { SpecialTeamsSidequestButton } from '../components/SpecialTeamsSidequestButton';
 import { formatCompetitionContext } from '../data/competitionConfig';
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { getActivePeriodsForScope, getObservationScopeLabel } from '../utils/observationScope'
@@ -733,12 +734,19 @@ export default function SessionPage() {
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}
 
-              {/* RingAbout Szenenmarker */}
-              <div style={{ margin: '1.2rem 0 0.6rem', display: 'flex', justifyContent: 'center' }}>
+              {/* RingAbout Szenenmarker + Special-Teams-Sidequest */}
+              <div style={{ margin: '1.2rem 0 0.6rem', display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <SceneMarkerButton
                   session={session}
                   currentPhase={currentPhase}
                   activeDrill={activeDrill}
+                />
+                <SpecialTeamsSidequestButton
+                  session={session}
+                  currentPhase={currentPhase}
+                  activeDrill={activeDrill}
+                  phaseAnswers={answersByPhase[currentPhase]}
+                  onAppendSidequest={handleDraftChange}
                 />
               </div>
 

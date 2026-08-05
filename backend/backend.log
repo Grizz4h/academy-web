@@ -12958,3 +12958,17 @@ INFO:     141.78.160.207:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS
 INFO:     141.78.160.207:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.160.207:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.160.207:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[scene] created scene_id=scene_1785958884_e705f1 scene_code=SC026 user=Christoph game_time=14:25
+[scene] updated scene_id=scene_1785958884_e705f1 user=christoph
+[scene] created scene_id=scene_1785958972_64957d scene_code=SC027 user=Christoph game_time=13:17
+[scene] updated scene_id=scene_1785958972_64957d user=christoph
+[scene] created scene_id=scene_1785959047_fb5835 scene_code=SC028 user=Christoph game_time=12:33
+[scene] updated scene_id=scene_1785959047_fb5835 user=christoph
+[scene] created scene_id=scene_1785959676_132b9d scene_code=SC029 user=Christoph game_time=07:12
+[scene] updated scene_id=scene_1785959676_132b9d user=christoph
+[scene] updated scene_id=scene_1785959676_132b9d user=christoph
+[checkin:ddfd57ec] session=Christoph_1785957207 phase_raw='P1' phase_norm='P1' action=append trace_id=503e33dc-9497-4d01-bc57-37013e16c6b5 trace_action=saveCheckin counts_before={}
+[checkin:ddfd57ec] session=Christoph_1785957207 counts_after={'P1': 1}
+[microfeedback] session=Christoph_1785957207 phase=P1 trace_id=f8ca2df5-1544-4ead-bc1f-07855afb8c5b trace_action=submitMicrofeedback text_len=88
+[checkin:80b24b9c] session=Christoph_1785957207 phase_raw='POST' phase_norm='POST' action=append trace_id=eeb24fe0-3430-4c34-9a91-4da0b36a247d trace_action=saveCheckin counts_before={'P1': 1}
+[checkin:80b24b9c] session=Christoph_1785957207 counts_after={'P1': 1, 'POST': 1}

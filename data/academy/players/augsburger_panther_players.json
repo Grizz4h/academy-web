@@ -1,6 +1,6 @@
 {
   "team_id": "augsburger_panther",
-  "updated_at": "2026-07-09T18:09:07.750487Z",
+  "updated_at": "2026-08-05T19:31:12.593139Z",
   "players": [
     {
       "player_name": "Donald D.J. Busdeker",
@@ -113,7 +113,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 22,
+      "age": 23,
       "height_cm": 185,
       "weight_kg": 84.0,
       "birthplace": "Forchheim",
@@ -155,7 +155,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 26,
+      "age": 27,
       "height_cm": 183,
       "weight_kg": 85.0,
       "birthplace": "Landsberg am Lech",
@@ -218,7 +218,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 24,
+      "age": 25,
       "height_cm": 173,
       "weight_kg": 86.0,
       "birthplace": "Bad Aibling",

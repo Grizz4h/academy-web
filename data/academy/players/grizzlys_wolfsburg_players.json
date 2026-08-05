@@ -1,6 +1,6 @@
 {
   "team_id": "grizzlys_wolfsburg",
-  "updated_at": "2026-07-09T18:09:24.705482Z",
+  "updated_at": "2026-08-05T19:31:28.908768Z",
   "players": [
     {
       "player_name": "Jimmy Lambert",
@@ -176,7 +176,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 31,
+      "age": 32,
       "height_cm": 182,
       "weight_kg": 82.0,
       "birthplace": "Nürnberg",
@@ -218,7 +218,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 25,
+      "age": 26,
       "height_cm": 185,
       "weight_kg": 84.0,
       "birthplace": "Landshut",
@@ -239,7 +239,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 33,
+      "age": 34,
       "height_cm": 175,
       "weight_kg": 81.0,
       "birthplace": "Red Deer, AB",
@@ -470,7 +470,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "GER",
-      "age": 21,
+      "age": 22,
       "height_cm": 185,
       "weight_kg": 84.0,
       "birthplace": "Nürnberg, GER",

@@ -1,6 +1,6 @@
 {
   "team_id": "koelner_haie",
-  "updated_at": "2026-07-09T18:09:14.538051Z",
+  "updated_at": "2026-08-05T19:31:18.919575Z",
   "players": [
     {
       "player_name": "Robin van Calster",
@@ -50,7 +50,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "USA",
-      "age": 33,
+      "age": 34,
       "height_cm": 183,
       "weight_kg": 84.0,
       "birthplace": "Hancock, MI",

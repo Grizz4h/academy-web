@@ -1,6 +1,6 @@
 {
   "team_id": "ehc_red_bull_muenchen",
-  "updated_at": "2026-07-09T18:09:18.131458Z",
+  "updated_at": "2026-08-05T19:31:22.313634Z",
   "players": [
     {
       "player_name": "Tobias Rieder",
@@ -533,7 +533,7 @@
       "position": "Goalie",
       "position_group": "goalie",
       "nationality": "GER",
-      "age": 21,
+      "age": 22,
       "height_cm": 189,
       "weight_kg": 89.0,
       "birthplace": "Schwabach",

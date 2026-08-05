@@ -1,6 +1,6 @@
 {
   "team_id": "erc_ingolstadt",
-  "updated_at": "2026-07-15T03:19:46.499787Z",
+  "updated_at": "2026-08-05T19:32:03.697846Z",
   "players": [
     {
       "player_name": "Philipp Krauß",
@@ -28,7 +28,7 @@
       "jersey_number": 9,
       "position": "Forward",
       "nationality": "CAN",
-      "age": 31,
+      "age": 32,
       "height_cm": 175,
       "weight_kg": 82.0,
       "birthplace": "Comox, BC",
@@ -554,7 +554,7 @@
       "position": "Goalie",
       "position_group": "goalie",
       "nationality": "GER",
-      "age": 20,
+      "age": 21,
       "height_cm": 190,
       "weight_kg": 96.0,
       "birthplace": "Landshut",

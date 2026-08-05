@@ -1,0 +1,282 @@
+{
+  "id": "Christoph_1785957207",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B2",
+  "goal": "Auto: B2 – Entscheidungen unter Druck",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B2_D4",
+  "learning_area": "academy",
+  "lab_mode": null,
+  "lab_template_id": null,
+  "observation_scope": "P1",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-08-05T21:13:27.256062",
+  "drills": [
+    {
+      "id": "B2_D4",
+      "title": "Was passiert direkt nach dem Puckgewinn?",
+      "drill_type": "period_checkin",
+      "description": "Beobachte drei Puckgewinne des ausgewählten Teams. Ordne jeweils ein, ob das Team in den ersten zwei bis drei Sekunden sofort Tempo aufnimmt, zunächst Kontrolle sichert oder keine klare Anschlussentscheidung entwickelt.",
+      "didactics": {
+        "explanation": "Vierter Schritt im B2-Lernpfad:\n\nIn B2_D1 hast du untersucht, wodurch die Handlungsmöglichkeiten eines Puckführers eingeschränkt werden.\n\nIn B2_D2 hast du beobachtet, wie ein Puckführer versucht, diese Drucksituation zu lösen.\n\nIn B2_D3 hast du analysiert, warum eine gewählte Lösung nicht funktioniert.\n\nJetzt wechselst du den Blick auf den Moment des Puckgewinns.\n\nBeobachte, welche erste Priorität das ausgewählte Team innerhalb der ersten zwei bis drei Sekunden setzt:\n\nWill es die gegnerische Unordnung sofort mit Tempo nutzen, zunächst den eigenen Puckbesitz stabilisieren oder entsteht keine klare Anschlussentscheidung?\n\nBewerte nur diese erste erkennbare Priorität und nicht den späteren Ausgang des Angriffs.\n\nBeobachte immer einen eigenen Puckgewinn des ausgewählten Teams.\n\nWenn beispielsweise Augsburg ausgewählt ist, beginnt die Beobachtung erst in dem Moment, in dem Augsburg den Puck erobert oder kontrolliert übernimmt.\n\nDanach beobachtest du ausschließlich, was Augsburg in den nächsten zwei bis drei Sekunden mit diesem Puckgewinn macht.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Den Moment, in dem das ausgewählte Team den Puck erkennbar gewinnt oder kontrolliert übernimmt",
+            "Nur die ersten zwei bis drei Sekunden nach diesem Puckgewinn",
+            "Welche erste Priorität in der Anschlussaktion sichtbar wird",
+            "Ob das Team sofort beschleunigt, zunächst Kontrolle sichert oder keine klare Anschlusslogik entwickelt",
+            "Ob die Entscheidung bereits im ersten Pass, Laufweg oder Sicherungsmoment erkennbar ist"
+          ],
+          "how_to_decide": [
+            "Wähle pro Beobachtung genau eine dominante Anschlussentscheidung",
+            "Wähle Tempo aufgenommen, wenn das Team die gegnerische Unordnung sofort mit Vorwärtsbewegung oder schnellem Passspiel attackiert",
+            "Wähle Kontrolle gesichert, wenn das Team zunächst Puckbesitz, Ordnung und sichere Anschlussoptionen herstellt",
+            "Wähle Keine klare Anschlussentscheidung, wenn weder eine erkennbare Beschleunigung noch eine kontrollierte Stabilisierung entsteht",
+            "Bewerte nur die ersten zwei bis drei Sekunden und nicht den späteren Erfolg des Angriffs",
+            "Bewerte nicht, ob der Angriff später erfolgreich wird.",
+            "Bewerte nur, welche erste Priorität das ausgewählte Team direkt nach dem Puckgewinn setzt.",
+            "Sofort Raum gewinnen und beschleunigen → Tempo aufgenommen",
+            "Puckbesitz und Ordnung sichern → Kontrolle gesichert",
+            "Keine klare Priorität erkennbar → Keine klare Anschlussentscheidung"
+          ],
+          "ignore": [
+            "Alles, was erst nach dem Zwei-bis-drei-Sekunden-Fenster passiert",
+            "Ob später eine Torchance, ein Zonenentry oder ein Puckverlust entsteht",
+            "Die Qualität der gesamten Angriffssequenz",
+            "Bloße Puckkontakte ohne echte Kontrolle",
+            "Die Reaktion des Gegners nach dem Puckverlust"
+          ]
+        },
+        "learning_hint": "Die ersten Sekunden nach einem Puckgewinn zeigen, ob ein Team die gegnerische Unordnung sofort attackiert oder zunächst den eigenen Puckbesitz stabilisiert."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "dominant_followup_observed": "Tempo gewählt"
+            },
+            "questions": [
+              "Welche gegnerische Unordnung sollte mit der schnellen Anschlussaktion genutzt werden?",
+              "War der unmittelbare Vorwärtsimpuls in dieser Situation klar erkennbar?"
+            ]
+          },
+          {
+            "when": {
+              "dominant_followup_observed": "Kontrolle gewählt"
+            },
+            "questions": [
+              "Welche Risiken wurden durch die kontrollierte Anschlussentscheidung reduziert?",
+              "Welche stabile nächste Option wurde dadurch vorbereitet?"
+            ]
+          },
+          {
+            "when": {
+              "dominant_followup_observed": "Übergang misslungen"
+            },
+            "questions": [
+              "Woran war erkennbar, dass weder Tempo noch kontrollierte Stabilisierung entstand?",
+              "Welche Laufwege, Unterstützung oder Rollenklärung hätten eine klarere Anschlussaktion ermöglicht?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "mode": "transition_followup_assessment",
+        "sample_key": "followup_samples",
+        "sample_label": "Beobachtung",
+        "required_samples": 3,
+        "max_samples_per_phase": 3,
+        "phase1_title": "Phase 1 – Erste Priorität nach Puckgewinn erfassen",
+        "phase1_description": "Erfasse drei eigene Puckgewinne des ausgewählten Teams. Betrachte jeweils nur die ersten zwei bis drei Sekunden und ordne ein, ob das Team Tempo aufnimmt, Kontrolle sichert oder keine klare Anschlussentscheidung entwickelt.",
+        "missions": [
+          {
+            "title": "Mission 1 von 3",
+            "prompt": "Finde einen Puckgewinn des ausgewählten Teams.",
+            "hint": "Beobachte nur die ersten zwei bis drei Sekunden: Welche erste Priorität wird sichtbar?"
+          },
+          {
+            "title": "Mission 2 von 3",
+            "prompt": "Finde einen weiteren Puckgewinn.",
+            "hint": "Achte besonders darauf, ob das Team sofort Tempo aufnimmt oder zunächst Kontrolle sichert."
+          },
+          {
+            "title": "Mission 3 von 3",
+            "prompt": "Finde einen dritten Puckgewinn.",
+            "hint": "Vergleiche anschließend, welche Anschlusslogik in deinen Beobachtungen am häufigsten vorkam."
+          }
+        ],
+        "sample_note_key": "note",
+        "sample_note_label": "Kurze Begründung (optional)",
+        "sample_note_max_chars": 240,
+        "aggregate_by": "followup_type",
+        "aggregation_totals_key": "followup_totals",
+        "observed_dominant_key": "dominant_followup_observed",
+        "aggregation_label": "Bisher häufig beobachtet",
+        "observation_focus": "Nutze die verbleibende Beobachtungszeit, um weitere Puckgewinne und die erste Anschlusspriorität des ausgewählten Teams zu analysieren. Interessante Situationen kannst du für Rink About It markieren.",
+        "enable_checkin": false,
+        "sample_fields": [
+          {
+            "key": "followup_type",
+            "label": "Dominante Anschlussentscheidung",
+            "question": "Welche erste Priorität war unmittelbar nach dem Puckgewinn erkennbar?",
+            "options": [
+              {
+                "value": "tempo",
+                "label": "Tempo aufgenommen",
+                "description": "Das Team versucht, die kurze Unordnung des Gegners sofort mit einem schnellen Pass, einem direkten Laufweg oder aktivem Raumgewinn auszunutzen."
+              },
+              {
+                "value": "kontrolle",
+                "label": "Kontrolle gesichert",
+                "description": "Das Team versucht, zunächst Puckbesitz und eigene Ordnung zu stabilisieren und eine kontrollierte nächste Aktion vorzubereiten."
+              },
+              {
+                "value": "uebergang_misslungen",
+                "label": "Keine klare Anschlussentscheidung",
+                "description": "Nach dem Puckgewinn ist weder eine klare Beschleunigung noch eine kontrollierte Stabilisierung erkennbar. Ein sofortiger Puckverlust allein reicht nicht für diese Kategorie. Wenn vorher eine klare Tempo- oder Kontrollentscheidung erkennbar war, soll diese Entscheidung bewertet werden, auch wenn sie später misslingt."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P1",
+      "answers": {
+        "followup_totals": {
+          "followup_type": 0,
+          "tempo": 3
+        },
+        "dominant_followup_observed": "tempo",
+        "followup_samples": [
+          {
+            "note": "direkt puckgewin quer gespielt torschuss",
+            "followup_type": "tempo"
+          },
+          {
+            "note": "wollte skaten und Fahrt aufnehmen",
+            "followup_type": "tempo"
+          },
+          {
+            "note": "direkt spiel über der bande",
+            "followup_type": "tempo"
+          }
+        ],
+        "__session_sidequests": [
+          {
+            "id": "b39739d3-bba1-482c-9f3f-682271fbd7d8",
+            "type": "special_teams_sidequest",
+            "category": "special_teams",
+            "gameState": "penalty_kill",
+            "miniDrillId": "PK1",
+            "parentDrillId": "B2_D4",
+            "phase": "P1",
+            "observedTeam": "Augsburger Panther",
+            "answers": {
+              "protectedSpace": "central_slot",
+              "protectionStability": "mostly_stable"
+            },
+            "createdAt": "2026-08-05T19:35:46.338Z"
+          }
+        ]
+      },
+      "timestamp": "2026-08-05T21:55:41.288065"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-08-05T21:56:21.091943"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "followup_totals": {
+        "followup_type": 0,
+        "tempo": 3
+      },
+      "dominant_followup_observed": "tempo",
+      "followup_samples": [
+        {
+          "note": "direkt puckgewin quer gespielt torschuss",
+          "followup_type": "tempo"
+        },
+        {
+          "note": "wollte skaten und Fahrt aufnehmen",
+          "followup_type": "tempo"
+        },
+        {
+          "note": "direkt spiel über der bande",
+          "followup_type": "tempo"
+        }
+      ],
+      "__session_sidequests": [
+        {
+          "id": "b39739d3-bba1-482c-9f3f-682271fbd7d8",
+          "type": "special_teams_sidequest",
+          "category": "special_teams",
+          "gameState": "penalty_kill",
+          "miniDrillId": "PK1",
+          "parentDrillId": "B2_D4",
+          "phase": "P1",
+          "observedTeam": "Augsburger Panther",
+          "answers": {
+            "protectedSpace": "central_slot",
+            "protectionStability": "mostly_stable"
+          },
+          "createdAt": "2026-08-05T19:35:46.338Z"
+        }
+      ]
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-08-05T21:56:21.193118"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Augsburger Panther",
+    "team_away": "Kölner Haie",
+    "observed_team": "Augsburger Panther",
+    "date": "2026-08-05T19:13:27.215Z",
+    "season": "2025/26",
+    "competition_phase": "regular_season",
+    "competition_phase_label": "Hauptrunde",
+    "competition_unit_type": "matchday",
+    "competition_unit_label": "Spieltag",
+    "competition_unit_value": "5",
+    "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 5"
+  },
+  "observed_team": null,
+  "observed_team_id": null,
+  "observed_team_name": null,
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Hab ich nicht drauf geachtet, ich glaub dass der Gegner noch in der Vorwärtsbewegung war",
+      "ts": "2026-08-05T21:56:12.305685"
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  }
+}

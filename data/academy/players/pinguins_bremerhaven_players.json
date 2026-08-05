@@ -1,6 +1,6 @@
 {
   "team_id": "pinguins_bremerhaven",
-  "updated_at": "2026-07-09T18:09:09.590660Z",
+  "updated_at": "2026-08-05T19:31:15.846549Z",
   "players": [
     {
       "player_name": "Nino Kinder",
@@ -239,7 +239,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 22,
+      "age": 23,
       "height_cm": 192,
       "weight_kg": 95.0,
       "birthplace": "Zittau",
@@ -365,7 +365,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "SWE",
-      "age": 31,
+      "age": 32,
       "height_cm": 185,
       "weight_kg": 78.0,
       "birthplace": "Själevad",
@@ -407,7 +407,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "GER",
-      "age": 32,
+      "age": 33,
       "height_cm": 193,
       "weight_kg": 82.0,
       "birthplace": "Leduc, AB",
@@ -512,7 +512,7 @@
       "position": "Goalie",
       "position_group": "goalie",
       "nationality": "LAT",
-      "age": 33,
+      "age": 34,
       "height_cm": 192,
       "weight_kg": 97.0,
       "birthplace": "Ogre",

@@ -1,6 +1,6 @@
 {
   "team_id": "schwenninger_wild_wings",
-  "updated_at": "2026-07-09T18:09:21.455836Z",
+  "updated_at": "2026-08-05T19:31:25.366196Z",
   "players": [
     {
       "player_name": "Philip Feist",
@@ -8,7 +8,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 22,
+      "age": 23,
       "height_cm": 88,
       "weight_kg": 83.0,
       "birthplace": "Duisburg",
@@ -260,7 +260,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 31,
+      "age": 32,
       "height_cm": 184,
       "weight_kg": 85.0,
       "birthplace": "Lüneburg",

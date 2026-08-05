@@ -1,6 +1,6 @@
 {
   "team_id": "loewen_frankfurt",
-  "updated_at": "2026-07-09T18:09:11.199304Z",
+  "updated_at": "2026-08-05T19:31:17.221896Z",
   "players": [
     {
       "player_name": "Ty Glover",
@@ -29,7 +29,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 32,
+      "age": 33,
       "height_cm": 188,
       "weight_kg": 85.0,
       "birthplace": "Edmonton, AB",
@@ -260,7 +260,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "USA",
-      "age": 29,
+      "age": 30,
       "height_cm": 183,
       "weight_kg": 86.0,
       "birthplace": "Omaha, NE",
@@ -302,7 +302,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "GER",
-      "age": 24,
+      "age": 25,
       "height_cm": 193,
       "weight_kg": 99.0,
       "birthplace": "Schweinfurt",
@@ -407,7 +407,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "GER",
-      "age": 36,
+      "age": 37,
       "height_cm": 182,
       "weight_kg": 90.0,
       "birthplace": "White Plains, NY",

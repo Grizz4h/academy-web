@@ -1,0 +1,571 @@
+{
+  "id": "special_teams",
+  "title": "Special Teams",
+  "category": "special_teams",
+  "game_states": {
+    "power_play": {
+      "id": "power_play",
+      "label": "Überzahl",
+      "description": "Dein beobachtetes Team spielt fünf gegen vier.",
+      "mini_drills": [
+        {
+          "id": "PP1",
+          "title": "Wie kommt die Überzahl in ihre Ordnung?",
+          "description": "Beobachte, wie das Team nach dem Zoneneintritt seine Formation etabliert.",
+          "drill_type": "period_checkin",
+          "didactics": {
+            "explanation": "Nach dem Eintritt in die Angriffszone zeigt sich, ob die Überzahl schnell Ordnung herstellt oder den Angriff vor der vollständigen Formation sucht."
+          },
+          "config": {
+            "option_layout": "cards",
+            "validate_answers": true,
+            "questions": [
+              {
+                "key": "setupPattern",
+                "type": "radio",
+                "required": true,
+                "label": "Wie etabliert das Team seine Formation nach dem Zoneneintritt?",
+                "options": [
+                  {
+                    "value": "quick_controlled",
+                    "label": "Schneller kontrollierter Aufbau",
+                    "description": "Die Spieler finden rasch klare Positionen und halten den Puck unter Kontrolle."
+                  },
+                  {
+                    "value": "secure_then_distribute",
+                    "label": "Puck zunächst absichern und verteilen",
+                    "description": "Zuerst wird der Besitz gesichert, danach wird die Formation aufgebaut."
+                  },
+                  {
+                    "value": "direct_attack",
+                    "label": "Direkter Angriff vor vollständiger Ordnung",
+                    "description": "Das Team sucht sofort Gefahr, bevor alle fünf Spieler sinnvoll stehen."
+                  },
+                  {
+                    "value": "reset_to_blue",
+                    "label": "Puck wird an die blaue Linie zurückgespielt",
+                    "description": "Der Angriff wird neu aufgebaut, indem der Puck bewusst zurückkommt."
+                  },
+                  {
+                    "value": "unstable",
+                    "label": "Aufbau scheitert oder bleibt instabil",
+                    "description": "Es entsteht keine belastbare Ordnung; Rollen oder Abstände bleiben unklar."
+                  }
+                ]
+              },
+              {
+                "key": "setupTiming",
+                "type": "radio",
+                "required": true,
+                "label": "Wie lange dauerte es ungefähr, bis alle fünf Spieler sinnvoll positioniert waren?",
+                "options": [
+                  {
+                    "value": "immediate",
+                    "label": "Sofort"
+                  },
+                  {
+                    "value": "slightly_delayed",
+                    "label": "Kurz verzögert"
+                  },
+                  {
+                    "value": "clearly_delayed",
+                    "label": "Deutlich verzögert"
+                  },
+                  {
+                    "value": "never_stable",
+                    "label": "Nie stabil etabliert"
+                  }
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "optional": true,
+                "label": "Optionale Notiz",
+                "placeholder": "Optional",
+                "max_chars": 300
+              }
+            ],
+            "compact_ui": true
+          }
+        },
+        {
+          "id": "PP2",
+          "title": "Wie wird die Unterzahl bewegt?",
+          "description": "Beobachte, wodurch die Überzahl die defensive Formation auseinanderzuziehen versucht.",
+          "drill_type": "period_checkin",
+          "didactics": {
+            "explanation": "Bewegung des Pucks ist nicht das Ziel – Veränderung der Defensive ist das Ziel."
+          },
+          "config": {
+            "option_layout": "cards",
+            "validate_answers": true,
+            "questions": [
+              {
+                "key": "movementTrigger",
+                "type": "radio",
+                "required": true,
+                "label": "Wodurch versucht die Überzahl, die defensive Formation auseinanderzuziehen?",
+                "options": [
+                  {
+                    "value": "quick_puck_movement",
+                    "label": "Schnelle Puckverlagerung",
+                    "description": "Der Puck wechselt schnell die Seite und zwingt die Unterzahl mitzugehen."
+                  },
+                  {
+                    "value": "seam_pass",
+                    "label": "Pass durch die Mitte",
+                    "description": "Ein Pass zielt auf eine zentrale Naht oder Lücke in der Formation."
+                  },
+                  {
+                    "value": "high_low_switch",
+                    "label": "Wechsel zwischen hoher und tiefer Position",
+                    "description": "Spieler oder Puck wechseln bewusst zwischen blauer Linie und tiefer Zone."
+                  },
+                  {
+                    "value": "player_rotation",
+                    "label": "Spielerrotation",
+                    "description": "Positionen werden getauscht, um Verantwortlichkeiten der Unterzahl zu verändern."
+                  },
+                  {
+                    "value": "net_front_movement",
+                    "label": "Net-Front-Bewegung",
+                    "description": "Bewegung vor dem Tor soll Verteidiger binden oder Sicht nehmen."
+                  },
+                  {
+                    "value": "little_effect",
+                    "label": "Kaum erkennbare Bewegung der Unterzahl",
+                    "description": "Die defensive Formation bleibt weitgehend unbewegt oder unbeeinflusst."
+                  }
+                ]
+              },
+              {
+                "key": "movementEffect",
+                "type": "radio",
+                "required": true,
+                "label": "Was veränderte sich dadurch?",
+                "options": [
+                  {
+                    "value": "passing_lane_opened",
+                    "label": "Passweg öffnete sich"
+                  },
+                  {
+                    "value": "shot_lane_opened",
+                    "label": "Schussbahn öffnete sich"
+                  },
+                  {
+                    "value": "controlled_shift",
+                    "label": "Unterzahl verschob nur kontrolliert"
+                  },
+                  {
+                    "value": "no_clear_effect",
+                    "label": "Keine erkennbare Wirkung"
+                  },
+                  {
+                    "value": "puck_loss",
+                    "label": "Puckverlust"
+                  }
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "optional": true,
+                "label": "Optionale Notiz",
+                "placeholder": "Optional",
+                "max_chars": 300
+              }
+            ],
+            "compact_ui": true
+          }
+        },
+        {
+          "id": "PP3",
+          "title": "Wie entsteht der Abschluss?",
+          "description": "Beobachte, wie die gefährlichste Abschlusschance vorbereitet wurde.",
+          "drill_type": "period_checkin",
+          "didactics": {
+            "explanation": "Entscheidend ist nicht nur, woher der Schuss kommt, sondern welche Voraussetzung vorher geschaffen wurde."
+          },
+          "config": {
+            "option_layout": "cards",
+            "validate_answers": true,
+            "questions": [
+              {
+                "key": "chanceSetup",
+                "type": "radio",
+                "required": true,
+                "label": "Wie wurde die gefährlichste Abschlusschance vorbereitet?",
+                "options": [
+                  {
+                    "value": "direct_shot_from_top",
+                    "label": "Direkter Schuss von oben",
+                    "description": "Der Abschluss kommt ohne vorherigen Querpass direkt aus der hohen Zone."
+                  },
+                  {
+                    "value": "cross_ice_before_shot",
+                    "label": "Querpass vor dem Abschluss",
+                    "description": "Ein Seitenwechsel bereitet den Schuss oder die Ablage vor."
+                  },
+                  {
+                    "value": "pass_to_slot",
+                    "label": "Pass in den Slot",
+                    "description": "Der Puck kommt gezielt in den zentralen Gefahrenraum."
+                  },
+                  {
+                    "value": "net_front_tip",
+                    "label": "Net-Front-Ablage",
+                    "description": "Ein Spieler vor dem Tor leitet oder tippt den Puck weiter."
+                  },
+                  {
+                    "value": "rebound",
+                    "label": "Rebound oder zweiter Puck",
+                    "description": "Die Chance entsteht aus dem Nachsetzen nach dem ersten Abschluss."
+                  },
+                  {
+                    "value": "individual_play",
+                    "label": "Einzelaktion",
+                    "description": "Ein Spieler erzeugt die Chance weitgehend allein."
+                  },
+                  {
+                    "value": "no_clear_chance",
+                    "label": "Keine klare Abschlusschance",
+                    "description": "Es entstand keine ausreichend gefährliche Abschlussmöglichkeit."
+                  }
+                ]
+              },
+              {
+                "key": "precondition",
+                "type": "radio",
+                "required": true,
+                "label": "Welche Voraussetzung wurde vorher geschaffen?",
+                "options": [
+                  {
+                    "value": "open_shot_lane",
+                    "label": "Freie Schussbahn"
+                  },
+                  {
+                    "value": "goalie_moved",
+                    "label": "Torhüter seitlich bewegt"
+                  },
+                  {
+                    "value": "defender_tied",
+                    "label": "Verteidiger gebunden"
+                  },
+                  {
+                    "value": "vision_blocked",
+                    "label": "Sicht genommen"
+                  },
+                  {
+                    "value": "net_front_overload",
+                    "label": "Überzahl am Tor"
+                  },
+                  {
+                    "value": "unclear",
+                    "label": "Nicht erkennbar"
+                  }
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "optional": true,
+                "label": "Optionale Notiz",
+                "placeholder": "Optional",
+                "max_chars": 300
+              }
+            ],
+            "compact_ui": true
+          }
+        }
+      ]
+    },
+    "penalty_kill": {
+      "id": "penalty_kill",
+      "label": "Unterzahl",
+      "description": "Dein beobachtetes Team spielt vier gegen fünf.",
+      "mini_drills": [
+        {
+          "id": "PK1",
+          "title": "Welchen Raum schützt die Unterzahl zuerst?",
+          "description": "Beobachte, welcher Bereich selbst bei Puckbewegung konsequent geschlossen bleibt.",
+          "drill_type": "period_checkin",
+          "didactics": {
+            "explanation": "In Unterzahl priorisiert eine gute Defensive bestimmte gefährliche Räume und lässt andere eher zu."
+          },
+          "config": {
+            "option_layout": "cards",
+            "validate_answers": true,
+            "questions": [
+              {
+                "key": "protectedSpace",
+                "type": "radio",
+                "required": true,
+                "label": "Welcher Bereich bleibt selbst bei Puckbewegung konsequent geschlossen?",
+                "options": [
+                  {
+                    "value": "net_front",
+                    "label": "Unmittelbarer Torraum",
+                    "description": "Der Bereich direkt vor dem Tor bleibt priorisiert geschützt."
+                  },
+                  {
+                    "value": "central_slot",
+                    "label": "Zentraler Slot",
+                    "description": "Die Mitte vor dem Tor wird konsequent verdichtet."
+                  },
+                  {
+                    "value": "middle_seam",
+                    "label": "Querpass durch die Mitte",
+                    "description": "Verbindungen durch die Formation werden besonders geschlossen."
+                  },
+                  {
+                    "value": "top_shot_lane",
+                    "label": "Schussbahn von oben",
+                    "description": "Direkte Schüsse aus der hohen Zone werden priorisiert blockiert oder gestört."
+                  },
+                  {
+                    "value": "puck_side",
+                    "label": "Pucknahe Seite",
+                    "description": "Die Formation verdichtet sich stark zur aktuellen Puckseite."
+                  },
+                  {
+                    "value": "unclear",
+                    "label": "Kein klarer Schwerpunkt",
+                    "description": "Es war kein stabiles räumliches Prioritätsmuster erkennbar."
+                  }
+                ]
+              },
+              {
+                "key": "protectionStability",
+                "type": "radio",
+                "required": true,
+                "label": "Wie stabil blieb dieser Schutz?",
+                "options": [
+                  {
+                    "value": "very_stable",
+                    "label": "Sehr stabil über die Sequenz"
+                  },
+                  {
+                    "value": "mostly_stable",
+                    "label": "Meist stabil, mit kurzen Lücken"
+                  },
+                  {
+                    "value": "changing",
+                    "label": "Wechselhaft je nach Puckposition"
+                  },
+                  {
+                    "value": "unclear",
+                    "label": "Nicht klar beurteilbar"
+                  }
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "optional": true,
+                "label": "Optionale Notiz",
+                "placeholder": "Optional",
+                "max_chars": 300
+              }
+            ],
+            "compact_ui": true
+          }
+        },
+        {
+          "id": "PK2",
+          "title": "Wann geht die Unterzahl in den Druck?",
+          "description": "Beobachte, welcher Moment den aktiven Zugriff auslöst und wie viele Spieler daran beteiligt sind.",
+          "drill_type": "period_checkin",
+          "didactics": {
+            "explanation": "In Unterzahl ist der Zugriff besonders riskant. Entscheidend ist der Trigger und die Absicherung hinter dem Druck."
+          },
+          "config": {
+            "option_layout": "cards",
+            "validate_answers": true,
+            "questions": [
+              {
+                "key": "pressureTrigger",
+                "type": "radio",
+                "required": true,
+                "label": "Welcher Moment löste den aktiven Zugriff aus?",
+                "options": [
+                  {
+                    "value": "poor_reception",
+                    "label": "Unsaubere Puckannahme",
+                    "description": "Der Gegner kontrolliert den Puck kurzzeitig nicht sauber."
+                  },
+                  {
+                    "value": "slow_pass",
+                    "label": "Langsamer Pass",
+                    "description": "Ein vorhersehbarer oder langsamer Pass macht den Zielraum angreifbar."
+                  },
+                  {
+                    "value": "puck_on_wall",
+                    "label": "Puck an der Bande",
+                    "description": "Die Bande begrenzt den verfügbaren Raum und reduziert die Lösungen."
+                  },
+                  {
+                    "value": "back_to_play",
+                    "label": "Spieler mit Rücken zum Spiel",
+                    "description": "Der Puckführer nimmt Druck und Anschlussoptionen nur eingeschränkt wahr."
+                  },
+                  {
+                    "value": "isolated_carrier",
+                    "label": "Isolierter Puckführer",
+                    "description": "Der Puckführer hat wenig direkte Unterstützung."
+                  },
+                  {
+                    "value": "imminent_shot",
+                    "label": "Drohender Abschluss",
+                    "description": "Die Unterzahl muss eingreifen, weil sonst ein direkter Abschluss entsteht."
+                  },
+                  {
+                    "value": "unclear",
+                    "label": "Kein klarer Trigger",
+                    "description": "Der Zugriff wirkt spontan oder nicht eindeutig ausgelöst."
+                  }
+                ]
+              },
+              {
+                "key": "pressureShape",
+                "type": "radio",
+                "required": true,
+                "label": "Wie viele Spieler beteiligten sich am Zugriff?",
+                "options": [
+                  {
+                    "value": "single_player",
+                    "label": "Ein Spieler"
+                  },
+                  {
+                    "value": "two_player_trap",
+                    "label": "Zwei Spieler als Falle"
+                  },
+                  {
+                    "value": "collective_step",
+                    "label": "Gesamte Formation schob nach"
+                  },
+                  {
+                    "value": "unclear",
+                    "label": "Nicht klar"
+                  }
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "optional": true,
+                "label": "Optionale Notiz",
+                "placeholder": "Optional",
+                "max_chars": 300
+              }
+            ],
+            "compact_ui": true
+          }
+        },
+        {
+          "id": "PK3",
+          "title": "Wie endet die Unterzahl-Sequenz?",
+          "description": "Beobachte, wie sich die Unterzahl aus dem Druck löst und was die Lösung möglich oder unmöglich machte.",
+          "drill_type": "period_checkin",
+          "didactics": {
+            "explanation": "Das Ergebnis allein reicht nicht. Wichtig ist, welche strukturelle Voraussetzung die Lösung erleichtert oder verhindert hat."
+          },
+          "config": {
+            "option_layout": "cards",
+            "validate_answers": true,
+            "questions": [
+              {
+                "key": "exitOutcome",
+                "type": "radio",
+                "required": true,
+                "label": "Wie löst sich die Unterzahl aus dem Druck?",
+                "options": [
+                  {
+                    "value": "controlled_clear",
+                    "label": "Kontrollierte Befreiung",
+                    "description": "Der Puck wird mit ausreichender Sicherheit aus der Zone gespielt."
+                  },
+                  {
+                    "value": "high_risk_clear",
+                    "label": "Befreiung unter hohem Risiko",
+                    "description": "Der Puck geht raus, aber unter Druck und mit unsicherer Kontrolle."
+                  },
+                  {
+                    "value": "possession_recovery",
+                    "label": "Puckgewinn mit kurzer Kontrolle",
+                    "description": "Die Unterzahl gewinnt den Puck und hält ihn kurz unter Kontrolle."
+                  },
+                  {
+                    "value": "block_and_second_puck",
+                    "label": "Block und zweiter Puck",
+                    "description": "Ein Block erzeugt den entscheidenden zweiten Puck."
+                  },
+                  {
+                    "value": "goalie_freeze",
+                    "label": "Freeze durch den Torhüter",
+                    "description": "Der Torhüter beendet die Sequenz durch Festhalten des Pucks."
+                  },
+                  {
+                    "value": "pp_keeps_puck",
+                    "label": "Überzahl behält den Puck",
+                    "description": "Die Unterzahl löst die Situation nicht; der Gegner bleibt am Puck."
+                  },
+                  {
+                    "value": "goal_against",
+                    "label": "Gegentor",
+                    "description": "Die Sequenz endet mit einem Gegentreffer."
+                  }
+                ]
+              },
+              {
+                "key": "exitEnabler",
+                "type": "radio",
+                "required": true,
+                "label": "Was machte die Lösung möglich oder unmöglich?",
+                "options": [
+                  {
+                    "value": "closed_slot",
+                    "label": "Geschlossener Slot"
+                  },
+                  {
+                    "value": "won_duel",
+                    "label": "Gewonnener Zweikampf"
+                  },
+                  {
+                    "value": "blocked_pass",
+                    "label": "Geblockter Pass"
+                  },
+                  {
+                    "value": "support_on_loose_puck",
+                    "label": "Unterstützung am freien Puck"
+                  },
+                  {
+                    "value": "no_exit_option",
+                    "label": "Fehlende Ausstiegsmöglichkeit"
+                  },
+                  {
+                    "value": "exhausted_formation",
+                    "label": "Erschöpfte Formation"
+                  },
+                  {
+                    "value": "unclear",
+                    "label": "Nicht erkennbar"
+                  }
+                ]
+              },
+              {
+                "key": "note",
+                "type": "text",
+                "optional": true,
+                "label": "Optionale Notiz",
+                "placeholder": "Optional",
+                "max_chars": 300
+              }
+            ],
+            "compact_ui": true
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "team_id": "nuernberg_ice_tigers",
-  "updated_at": "2026-07-09T18:09:19.804216Z",
+  "updated_at": "2026-08-05T19:31:23.780006Z",
   "players": [
     {
       "player_name": "Evan Barratt",
@@ -50,7 +50,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 25,
+      "age": 26,
       "height_cm": 185,
       "weight_kg": 88.0,
       "birthplace": "Augsburg",
@@ -134,7 +134,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 23,
+      "age": 24,
       "height_cm": 183,
       "weight_kg": 84.0,
       "birthplace": "Hausham",
@@ -155,7 +155,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "GER",
-      "age": 28,
+      "age": 29,
       "height_cm": 183,
       "weight_kg": 73.0,
       "birthplace": "Kettering, OH",
@@ -260,7 +260,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "CAN",
-      "age": 27,
+      "age": 28,
       "height_cm": 195,
       "weight_kg": 103.0,
       "birthplace": "Barrie, ON",
