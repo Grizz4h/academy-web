@@ -356,6 +356,8 @@ export default function SessionPage() {
       drill.drill_type === 'clickable_rink_observation'
       || drill.drill_type === 'draggable_rink_observation'
       || drill.drill_type === 'rink_zone_priority_observation'
+      || drill.drill_type === 'rink_corridor_observation'
+      || drill.drill_type === 'rink_segmented_zone_observation'
       || drill.drill_type === 'paintable_rink_observation'
     ) {
       const observationsKey = drill?.config?.observations_key || 'observations'
@@ -441,6 +443,36 @@ export default function SessionPage() {
 
       if (!answers?.[changedKey]) {
         return 'Bitte beantworte die kurze Reflexionsfrage, bevor du weitergehst.'
+      }
+    }
+
+    if (drill.drill_type === 'period_checkin' && drill?.config?.validate_answers === true) {
+      const questions = Array.isArray(drill?.config?.questions) ? drill.config.questions : []
+      for (const question of questions) {
+        if (!question?.key) continue
+        if (question.optional === true) continue
+        if (question.required !== true && question.optional !== false) continue
+
+        const value = answers?.[question.key]
+        if (question.type === 'multi_select') {
+          if (!Array.isArray(value) || value.length === 0) {
+            return 'Bitte beantworte alle erforderlichen Fragen, bevor du weitergehst.'
+          }
+          continue
+        }
+
+        if (question.type === 'text') {
+          const trimmed = String(value || '').trim()
+          const minChars = Number(question.min_chars || 0)
+          if (!trimmed || (minChars > 0 && trimmed.length < minChars)) {
+            return 'Bitte formuliere eine kurze Zusammenfassung, bevor du weitergehst.'
+          }
+          continue
+        }
+
+        if (value === undefined || value === null || String(value).trim() === '') {
+          return 'Bitte beantworte alle erforderlichen Fragen, bevor du weitergehst.'
+        }
       }
     }
 

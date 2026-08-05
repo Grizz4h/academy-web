@@ -4610,142 +4610,538 @@
               },
             {
               "id": "C1_D4",
-              "title": "Box & Box+1 – Grundordnung erkennen",
-              "drill_type": "period_checkin",
-              "description": "Erkenne defensive Grundordnungen in der D-Zone und ihre Stabilität.",
+              "title": "Was löst den defensiven Zugriff aus?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Markiere den Ort, an dem aktiver defensiver Druck entsteht, und analysiere, welcher Trigger den Zugriff auslöst und wie die restliche Struktur darauf reagiert.",
               "didactics": {
-                "explanation": "Box-Varianten funktionieren nur, wenn Abstände stimmen und Rollen klar sind. Entscheidend ist nicht das System, sondern die Ordnung darin.",
+                "explanation": "Eine kompakte Defensive wartet nicht beliebig lange in ihrer Grundstruktur.\n\nBestimmte Situationen ermöglichen oder erzwingen aktiven Zugriff. Das kann beispielsweise ein schlechter erster Kontakt, ein vorhersehbarer Pass, eine isolierte Puckposition oder ein Gegner mit dem Rücken zum Spiel sein.\n\nBeobachte nicht nur, welcher Spieler Druck macht. Frage dich vor allem, welcher Moment den Zugriff auslöst und ob die übrige Formation den frei werdenden Raum absichert.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Form der Box (kompakt vs. verzogen)",
-                    "Abstände zum Slot",
-                    "Rolle des +1-Spielers"
+                    "Wann verändert sich die Defensive von Raumkontrolle zu aktivem Zugriff?",
+                    "Wo befindet sich der Puck in diesem Moment?",
+                    "Welche Einschränkung oder Schwäche des Angreifers wird attackiert?",
+                    "Welcher Verteidiger reagiert zuerst?",
+                    "Wie reagieren die übrigen Spieler auf den Zugriff?",
+                    "Wird der Raum hinter dem Druckspieler übernommen?",
+                    "Entsteht durch den Zugriff zusätzlicher Druck oder eine neue Lücke?"
                   ],
                   "how_to_decide": [
-                    "Beobachte die Grundordnung ohne Puckfokus",
-                    "Achte auf Gleichmäßigkeit der Abstände",
-                    "Frage dich: Wer schützt den Slot?"
+                    "Markiere den Ort, an dem der entscheidende Zugriff ausgelöst wird.",
+                    "Wähle den Auslöser, der die Situation am besten beschreibt.",
+                    "Bewerte anschließend die Ausführung und Absicherung.",
+                    "Beurteile den Moment des Zugriffs, nicht nur das spätere Ergebnis."
                   ],
                   "ignore": [
-                    "Schüsse von außen",
-                    "Individuelle Checks"
+                    "Das endgültige Ergebnis der Szene",
+                    "Ob anschließend ein Tor oder Puckgewinn entsteht",
+                    "Einzelne technische Fehler ohne Bedeutung für den Zugriff",
+                    "Perfekte Genauigkeit der Markerposition",
+                    "Aktionen außerhalb des beobachteten defensiven Ablaufs"
                   ]
                 },
-                "learning_hint": "Gute Ordnung reduziert Optionen – auch ohne aktiven Druck."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "formation": "stabil"
-                    },
-                    "questions": [
-                      "Wodurch blieb die Ordnung stabil?",
-                      "Welche Rolle hatte der +1-Spieler?",
-                      "Wie wirkte der Slot-Schutz?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "formation": "instabil"
-                    },
-                    "questions": [
-                      "Wo brach die Ordnung zuerst?",
-                      "Lag es an Abständen oder Rollen?",
-                      "Welche einfache Anpassung hätte geholfen?"
-                    ]
-                  }
-                ]
+                "learning_hint": "Eine geordnete Defensive geht nicht zufällig in den Zugriff. Bestimmte Situationen machen aktiven Druck möglich oder notwendig."
               },
               "config": {
-                "questions": [
+                "mode": "single_marker_observation",
+                "observation_count": 3,
+                "observations_key": "pressure_trigger_observations",
+                "location_key": "triggerLocation",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "marker_count": 1,
+                "allow_reposition": true,
+                "coordinate_system": "normalized",
+                "marker": {
+                  "id": "pressure_trigger",
+                  "label": "Trigger",
+                  "required": true
+                },
+                "markers": [
                   {
-                    "key": "formation",
-                    "type": "radio",
-                    "label": "Grundordnung",
+                    "id": "pressure_trigger",
+                    "label": "Trigger",
+                    "required": true
+                  }
+                ],
+                "selection_label": "1. Wo entstand der Trigger?",
+                "location_label": "Setze den Marker an den Ort, an dem die Defensive von kontrollierter Raumverteidigung zu aktivem Zugriff übergeht.",
+                "observe_hint": "Beobachte den Moment, in dem die Defensive von Raumkontrolle zu aktivem Zugriff wechselt.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "observation_fields": [
+                  {
+                    "key": "triggerType",
+                    "label": "2. Was löste den Zugriff hauptsächlich aus?",
+                    "required": true,
                     "options": [
-                      "stabil",
-                      "instabil"
+                      {
+                        "value": "poor_puck_control",
+                        "label": "Schlechte Puckkontrolle",
+                        "description": "Der Angreifer kann den Puck kurzzeitig nicht sauber schützen oder direkt weiterspielen."
+                      },
+                      {
+                        "value": "back_to_play",
+                        "label": "Gegner mit Rücken zum Spiel",
+                        "description": "Der Puckführer kann Druck und Anschlussoptionen nur eingeschränkt wahrnehmen."
+                      },
+                      {
+                        "value": "pass_to_wall",
+                        "label": "Pass an die Bande",
+                        "description": "Die Bande begrenzt den verfügbaren Raum und reduziert die möglichen Lösungen des Gegners."
+                      },
+                      {
+                        "value": "predictable_pass",
+                        "label": "Langsamer oder vorhersehbarer Pass",
+                        "description": "Die Defensive erkennt früh, wo der Puck ankommen wird, und attackiert den Zielraum."
+                      },
+                      {
+                        "value": "isolated_puck_carrier",
+                        "label": "Isolierter Puckführer",
+                        "description": "Der Puckführer hat wenig direkte Unterstützung oder sichere Anschlussoptionen."
+                      },
+                      {
+                        "value": "supported_pressure",
+                        "label": "Abgesicherter Zugriff",
+                        "description": "Ein Verteidiger kann aktiv herausrücken, weil der Raum hinter ihm bereits durch Mitspieler gesichert ist."
+                      },
+                      {
+                        "value": "necessary_pressure",
+                        "label": "Notwendiger Zugriff",
+                        "description": "Die Defensive muss aktiv reagieren, weil sonst unmittelbar ein gefährlicher Raum oder Abschluss entsteht."
+                      },
+                      {
+                        "value": "unclear_trigger",
+                        "label": "Kein klarer Trigger",
+                        "description": "Der Zugriff wirkt eher individuell, spontan oder nicht eindeutig durch die Situation ausgelöst."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "key": "pressureExecution",
+                    "label": "3. Wie wurde der Zugriff ausgeführt?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "single_player_pressure",
+                        "label": "Einzelner Spieler rückt heraus",
+                        "description": "Ein Verteidiger verlässt seine Grundposition und attackiert den Puckführer direkt."
+                      },
+                      {
+                        "value": "two_player_trap",
+                        "label": "Zwei Spieler erzeugen eine Falle",
+                        "description": "Zwei Verteidiger begrenzen gemeinsam Raum und Anschlussoptionen des Gegners."
+                      },
+                      {
+                        "value": "collective_step",
+                        "label": "Gesamte Formation schiebt nach",
+                        "description": "Nicht nur der erste Druckspieler, sondern mehrere Mitspieler verkürzen gemeinsam die Abstände."
+                      },
+                      {
+                        "value": "steer_to_wall",
+                        "label": "Puckführer wird zur Bande gelenkt",
+                        "description": "Der Zugriff nimmt dem Gegner den Weg zur Mitte und führt ihn in einen begrenzten Außenraum."
+                      },
+                      {
+                        "value": "attack_passing_lane",
+                        "label": "Passweg wird attackiert",
+                        "description": "Der Verteidiger greift nicht nur den Puckführer, sondern gezielt eine erwartete Verbindung an."
+                      },
+                      {
+                        "value": "uncoordinated_pressure",
+                        "label": "Unkoordinierter Einzelzugriff",
+                        "description": "Ein Spieler attackiert, ohne dass die übrige Formation erkennbar darauf abgestimmt reagiert."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
+                  },
+                  {
+                    "key": "coverageQuality",
+                    "label": "4. Wie war der Zugriff hinter dem ersten Druckspieler abgesichert?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "clearly_covered",
+                        "label": "Klar abgesichert",
+                        "description": "Der frei werdende Raum wird sichtbar durch Mitspieler übernommen und gefährliche Verbindungen bleiben geschlossen."
+                      },
+                      {
+                        "value": "partially_covered",
+                        "label": "Teilweise abgesichert",
+                        "description": "Unterstützung ist vorhanden, aber mindestens ein Raum oder Passweg bleibt angreifbar."
+                      },
+                      {
+                        "value": "not_covered",
+                        "label": "Nicht abgesichert",
+                        "description": "Der Druckspieler verlässt seine Position, ohne dass der entstehende Raum ausreichend übernommen wird."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht erkennbar"
+                      }
+                    ]
+                  },
+                  {
+                    "key": "pressureTiming",
+                    "label": "5. Wie war das Timing des Zugriffs?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "early_controlled",
+                        "label": "Früh und kontrolliert",
+                        "description": "Die Defensive erkennt den Trigger früh und erzeugt Druck, bevor der Gegner seine nächste Aktion stabil vorbereiten kann."
+                      },
+                      {
+                        "value": "well_timed",
+                        "label": "Passend zum Trigger",
+                        "description": "Der Zugriff beginnt genau in dem Moment, in dem die gegnerische Situation angreifbar wird."
+                      },
+                      {
+                        "value": "slightly_late",
+                        "label": "Leicht verspätet",
+                        "description": "Der Trigger ist bereits erkennbar, aber der Zugriff beginnt erst, nachdem der Gegner teilweise reagieren konnte."
+                      },
+                      {
+                        "value": "rushed",
+                        "label": "Überhastet",
+                        "description": "Der Zugriff beginnt, bevor die Situation oder die eigene Absicherung dafür ausreichend vorbereitet ist."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
                   }
-                ]
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Woran hast du den Trigger und die Qualität des Zugriffs erkannt?",
+                  "placeholder": "Optional",
+                  "max_chars": 600
+                },
+                "required_observation_fields": [
+                  "triggerLocation",
+                  "triggerType",
+                  "pressureExecution",
+                  "coverageQuality",
+                  "pressureTiming"
+                ],
+                "reflection_enabled": false,
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der die Defensive von Raumkontrolle zu aktivem Zugriff wechselt.",
+                    "hint": "Markiere den Trigger-Ort und bewerte Auslöser, Ausführung, Absicherung und Timing."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine zweite Zugriffssituation und vergleiche den Auslöser.",
+                    "hint": "Achte besonders darauf, ob der Raum hinter dem Druckspieler übernommen wird."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene mit Fokus auf Timing und Absicherung.",
+                    "hint": "Beurteile den Moment des Zugriffs, nicht nur das spätere Ergebnis."
+                  }
+                ],
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Beobachte weiterhin, welche Situationen aktiven defensiven Zugriff auslösen und wie die Formation dahinter absichert."
               }
             },
             {
               "id": "C1_D5",
-              "title": "Slot Control & Sticks im Raum",
+              "title": "Wie verteidigt dieses Team seine Zone?",
               "drill_type": "period_checkin",
-              "description": "Erkenne, wie effektiv der Slot durch Positionierung und Schlägerarbeit kontrolliert wird.",
+              "description": "Beobachte mehrere Defensivzonen-Situationen und leite daraus ein Profil ab: Welche Räume schützt das Team, wie hält es seine Struktur und wann geht es aktiv in den Zugriff?",
               "didactics": {
-                "explanation": "Slot Control entsteht nicht durch Härte, sondern durch Positionierung, Stick-Lanes und antizipatives Verhalten. Gute Defensiven nehmen Optionen, bevor sie entstehen.",
+                "explanation": "Einzelne Defensivsituationen können sehr unterschiedlich aussehen. Ein Team zeigt seine defensive Identität deshalb nicht in einem einzigen Standbild, sondern durch wiederkehrende Prioritäten und Reaktionen.\n\nBeobachte über einen längeren Abschnitt, welche Räume das Team besonders schützt, wie es sich organisiert, wie geschlossen es verschiebt und wann es seine Struktur für aktiven Druck verlässt.\n\nVersuche am Ende nicht, dem Verhalten bereits einen Systemnamen zu geben. Beschreibe zunächst möglichst genau, welche Prinzipien du tatsächlich wiederholt erkannt hast.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Position der Verteidiger relativ zum Slot",
-                    "Schlägerstellung in Passlinien",
-                    "Körper- vs. Stickorientierung"
+                    "Welche gefährlichen Räume schützt das Team wiederholt besonders konsequent?",
+                    "Wie eng oder weit sind die Abstände zwischen den fünf Spielern?",
+                    "Wie geschlossen verschiebt die Formation bei Puckbewegung?",
+                    "Bleiben Zentrum und Torraum auch bei Bewegung abgesichert?",
+                    "Wann verlässt ein Spieler die Grundstruktur und geht aktiv in den Zugriff?",
+                    "Wie reagieren die übrigen Spieler hinter dem ersten Druckspieler?",
+                    "Welche Muster treten in mehreren Situationen erneut auf?",
+                    "Welche Beobachtung war nur eine einzelne Ausnahme?"
                   ],
                   "how_to_decide": [
-                    "Beobachte nur den Raum vor dem Tor",
-                    "Achte auf aktive Sticks statt Körperkontakt",
-                    "Frage dich: Welche Passoptionen sind realistisch?"
+                    "Bewerte nicht nur die letzte Szene, sondern den gesamten beobachteten Abschnitt.",
+                    "Wähle pro Dimension das Muster, das am häufigsten oder deutlichsten erkennbar war.",
+                    "Nutze die Beschreibungen der Optionen und nicht nur deren Überschriften.",
+                    "Beschreibe das Verhalten des Teams, ohne bereits einen Systemnamen zu vergeben.",
+                    "Wähle bei wechselhaftem Verhalten ausdrücklich die entsprechende uneindeutige Option."
                   ],
                   "ignore": [
-                    "Schüsse von außen",
-                    "Torwartaktionen"
+                    "Eine einzelne spektakuläre Aktion ohne wiederkehrendes Muster",
+                    "Das reine Ergebnis wie Gegentor oder Puckgewinn",
+                    "Die individuelle Qualität eines einzelnen Spielers",
+                    "Systemnamen, die du noch nicht sicher zuordnen kannst",
+                    "Perfekte taktische Eindeutigkeit in jeder einzelnen Szene"
                   ]
                 },
-                "learning_hint": "Guter Slot-Schutz nimmt Optionen, bevor sie gefährlich werden."
-              },
-              "miniFeedback": {
-                "trigger": "onNext",
-                "oncePerSection": true,
-                "groups": [
-                  {
-                    "when": {
-                      "slot_control": "sauber"
-                    },
-                    "questions": [
-                      "Welche Passwege waren klar geschlossen?",
-                      "Wie aktiv waren die Sticks im Raum?",
-                      "Wirkte die Ordnung bewusst oder reaktiv?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "slot_control": "lückenhaft"
-                    },
-                    "questions": [
-                      "Wo entstanden die Lücken?",
-                      "Lag es eher an Position oder Stickarbeit?",
-                      "Welche kleine Anpassung hätte gereicht?"
-                    ]
-                  }
-                ]
+                "learning_hint": "C1_D5 schließt den Track ab: Beschreibe wiederkehrende Prinzipien, ohne dem Team bereits ein benanntes System zuzuordnen."
               },
               "config": {
+                "observation_scope": "period",
+                "option_layout": "cards",
+                "validate_answers": true,
+                "summary_when_complete": true,
+                "summary_title": "Defensivprofil",
+                "summary_disclaimer": "Diese Zusammenfassung zeigt ausschließlich deine beobachteten Dimensionen und deine eigene Formulierung. Sie vergibt keinen Systemnamen.",
+                "observation_phase": {
+                  "title": "Beobachtungsphase",
+                  "text": "Beobachte mehrere Defensivzonen-Situationen über einen längeren Abschnitt.",
+                  "hint": "Suche wiederkehrende Prioritäten und Reaktionen, nicht einzelne Highlights."
+                },
+                "analysis_phase": {
+                  "title": "Profildimensionen",
+                  "text": "Wähle pro Dimension das Muster, das im beobachteten Abschnitt am häufigsten oder deutlichsten erkennbar war."
+                },
+                "reflection_phase": {
+                  "title": "Profilformulierung",
+                  "text": "Fasse deine Beobachtungen in eigenen Worten zusammen – ohne einen Systemnamen zu verwenden."
+                },
+                "sentence_helpers": {
+                  "label": "Optionale Satzhilfe",
+                  "starter": "Dieses Team verteidigt seine Zone, indem es …"
+                },
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Prüfe im weiteren Spiel, ob die gewählten Prinzipien stabil bleiben oder sich mit Spielstand und Druckhöhe verändern.",
                 "questions": [
                   {
-                    "key": "slot_control",
+                    "key": "spatialPriority",
                     "type": "radio",
-                    "label": "Slot-Kontrolle",
+                    "required": true,
+                    "summary_label": "Raumpriorität",
+                    "label": "Welchen Raum schützt das Team am konsequentesten?",
                     "options": [
-                      "sauber",
-                      "lückenhaft"
+                      {
+                        "value": "net_front",
+                        "label": "Unmittelbarer Torraum",
+                        "description": "Die Defensive konzentriert sich besonders auf den Bereich direkt vor dem eigenen Tor und verhindert freie Abschlüsse aus kurzer Distanz.",
+                        "phrase": "… den unmittelbaren Torraum besonders konsequent schützt."
+                      },
+                      {
+                        "value": "central_slot",
+                        "label": "Zentraler Slot",
+                        "description": "Das Team verdichtet den Raum zwischen Tor, Bullykreisen und zentraler Schussbahn.",
+                        "phrase": "… die Mitte konsequent verdichtet."
+                      },
+                      {
+                        "value": "middle_passing_lanes",
+                        "label": "Passwege durch die Mitte",
+                        "description": "Die Defensive priorisiert Verbindungen und Querpässe, die den Puck in besonders gefährliche zentrale Räume bringen könnten.",
+                        "phrase": "… Passwege durch die Mitte priorisiert."
+                      },
+                      {
+                        "value": "puck_side_space",
+                        "label": "Pucknaher Raum",
+                        "description": "Mehrere Spieler orientieren sich stark zum Puck und versuchen dort schnell Überzahl und Druck zu erzeugen.",
+                        "phrase": "… sich stark zum pucknahen Raum orientiert."
+                      },
+                      {
+                        "value": "wide_coverage",
+                        "label": "Breite Raumkontrolle",
+                        "description": "Die Defensive verteilt sich stärker und versucht, mehrere Bereiche und Anschlussoptionen gleichzeitig erreichbar zu halten.",
+                        "phrase": "… eine breitere Raumkontrolle hält."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar erkennbar",
+                        "description": "Über den beobachteten Abschnitt war keine stabile räumliche Priorität erkennbar.",
+                        "phrase": "… keine stabile räumliche Priorität zeigt."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
+                    "key": "baseStructure",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Grundstruktur",
+                    "label": "Wie organisiert sich die Defensive überwiegend?",
+                    "options": [
+                      {
+                        "value": "very_compact",
+                        "label": "Sehr kompakt und zentral",
+                        "description": "Die Spieler halten kurze Abstände und verdichten vor allem die gefährlichen Räume vor dem Tor.",
+                        "phrase": "… sehr kompakt und zentral organisiert ist."
+                      },
+                      {
+                        "value": "compact_flexible",
+                        "label": "Kompakt und flexibel",
+                        "description": "Die Formation bleibt verbunden, kann ihre Abstände aber kontrolliert an Puckposition und Bewegung anpassen.",
+                        "phrase": "… kompakt und flexibel organisiert bleibt."
+                      },
+                      {
+                        "value": "balanced",
+                        "label": "Ausgewogen verteilt",
+                        "description": "Das Team verbindet zentrale Absicherung mit ausreichender Breite, ohne sich deutlich auf eine Seite zu verdichten.",
+                        "phrase": "… ausgewogen verteilt steht."
+                      },
+                      {
+                        "value": "opponent_oriented",
+                        "label": "Stark gegnerorientiert",
+                        "description": "Spieler verändern ihre Positionen deutlich anhand direkter Gegenspieler und verlassen dafür häufiger ihre räumliche Grundordnung.",
+                        "phrase": "… stark gegnerorientiert organisiert ist."
+                      },
+                      {
+                        "value": "aggressive_step_out",
+                        "label": "Häufig aggressiv herausrückend",
+                        "description": "Ein oder mehrere Spieler verlassen regelmäßig früh die kompakte Grundstruktur, um Druck auf den Puck oder eine Anschlussoption auszuüben.",
+                        "phrase": "… häufig aggressiv herausrückt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar erkennbar",
+                        "description": "Abstände und Rollen verändern sich stark, ohne dass ein stabiles Grundmuster eindeutig erkennbar wird.",
+                        "phrase": "… keine stabile Grundstruktur zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "shiftBehavior",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Verschiebung",
+                    "label": "Wie reagiert die Formation überwiegend auf Puckbewegung?",
+                    "options": [
+                      {
+                        "value": "collective_shift",
+                        "label": "Geschlossen und kollektiv",
+                        "description": "Mehrere Spieler verschieben gleichzeitig und halten dabei ihre Abstände und Verbindungen.",
+                        "phrase": "… geschlossen zur Puckseite verschiebt."
+                      },
+                      {
+                        "value": "controlled_handoffs",
+                        "label": "Kontrolliert mit klaren Übergaben",
+                        "description": "Räume oder Gegenspieler werden sichtbar zwischen Spielern übergeben, ohne dass die Grundstruktur verloren geht.",
+                        "phrase": "… mit klaren Übergaben reagiert."
+                      },
+                      {
+                        "value": "opponent_tracking",
+                        "label": "Stark gegnerorientiert",
+                        "description": "Die Bewegungen folgen vor allem den Laufwegen einzelner Angreifer und verändern die ursprüngliche Formation deutlich.",
+                        "phrase": "… stark den Laufwegen der Angreifer folgt."
+                      },
+                      {
+                        "value": "delayed_collective_response",
+                        "label": "Einzelne reagieren zuerst, der Rest folgt",
+                        "description": "Die Anpassung beginnt häufig durch einen einzelnen Spieler, während die übrige Formation zeitlich verzögert nachschiebt.",
+                        "phrase": "… oft verzögert kollektiv nachschiebt."
+                      },
+                      {
+                        "value": "frequent_structure_loss",
+                        "label": "Häufige Strukturverluste",
+                        "description": "Bei Puckbewegung entstehen wiederholt große Abstände, offene Räume oder unklare Verantwortlichkeiten.",
+                        "phrase": "… bei Bewegung häufig Struktur verliert."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar erkennbar",
+                        "description": "Die Reaktionen unterscheiden sich stark und ergeben kein ausreichend stabiles Muster.",
+                        "phrase": "… kein stabiles Verschiebungsmuster zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "pressurePattern",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Zugriff",
+                    "label": "Wann geht das Team überwiegend aktiv in den Druck?",
+                    "options": [
+                      {
+                        "value": "early_aggressive",
+                        "label": "Früh und aggressiv",
+                        "description": "Die Defensive versucht schnell, Zeit und Raum des Puckführenden zu reduzieren, auch wenn sie dafür ihre Grundstruktur früher verlassen muss.",
+                        "phrase": "… früh und aggressiv Druck erzeugt."
+                      },
+                      {
+                        "value": "technical_error_trigger",
+                        "label": "Bei technischen Fehlern",
+                        "description": "Das Team wartet häufig auf schlechte Puckkontrolle, ungenaue Pässe oder andere klar erkennbare Schwächen des Gegners.",
+                        "phrase": "… vor allem bei technischen Fehlern Druck erzeugt."
+                      },
+                      {
+                        "value": "wall_trigger",
+                        "label": "Vor allem an der Bande",
+                        "description": "Der Zugriff beginnt bevorzugt in Außenräumen, in denen die Bande die Lösungen des Puckführenden zusätzlich begrenzt.",
+                        "phrase": "… vor allem an der Bande zugreift."
+                      },
+                      {
+                        "value": "covered_pressure",
+                        "label": "Erst bei klarer Absicherung",
+                        "description": "Ein Spieler rückt vor allem dann heraus, wenn Mitspieler den Raum hinter ihm bereits kontrollieren.",
+                        "phrase": "… den Zugriff meist klar absichert."
+                      },
+                      {
+                        "value": "late_necessary_pressure",
+                        "label": "Erst bei unmittelbarer Gefahr",
+                        "description": "Das Team bleibt lange in seiner Struktur und greift erst aktiv ein, wenn ein direkter Abschluss oder gefährlicher Raum entsteht.",
+                        "phrase": "… erst bei unmittelbarer Gefahr zugreift."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Ohne klar erkennbaren Trigger",
+                        "description": "Die Zugriffsmomente wirken wechselhaft, individuell oder nicht eindeutig durch wiederkehrende Situationen ausgelöst.",
+                        "phrase": "… ohne klaren Trigger zugreift."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "riskProfile",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Risikoprofil",
+                    "label": "Welche Balance zwischen Struktur und aktivem Druck zeigt das Team?",
+                    "options": [
+                      {
+                        "value": "structure_first",
+                        "label": "Maximale Strukturkontrolle",
+                        "description": "Das Team schützt vor allem zentrale Räume und nimmt dafür weniger unmittelbaren Druck auf den Puck in Kauf.",
+                        "phrase": "… Strukturkontrolle vor Druck priorisiert."
+                      },
+                      {
+                        "value": "balanced_control",
+                        "label": "Kontrollierte Balance",
+                        "description": "Die Defensive verbindet stabile Raumkontrolle mit ausgewählten und abgesicherten Zugriffsmomenten.",
+                        "phrase": "… eine kontrollierte Balance aus Struktur und Druck hält."
+                      },
+                      {
+                        "value": "pressure_with_calculated_risk",
+                        "label": "Druckorientiert mit kalkuliertem Risiko",
+                        "description": "Das Team greift häufig aktiv an und akzeptiert dabei zeitweise größere Abstände oder offene Räume.",
+                        "phrase": "… druckorientiert mit kalkuliertem Risiko arbeitet."
+                      },
+                      {
+                        "value": "high_risk_aggressive",
+                        "label": "Stark aggressiv und anfällig",
+                        "description": "Frühe oder häufige Zugriffe erzeugen Druck, führen aber wiederholt zu Strukturverlusten und gefährlichen Lücken.",
+                        "phrase": "… stark aggressiv und anfällig verteidigt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar erkennbar",
+                        "description": "Es ist keine stabile Balance zwischen Raumkontrolle und aktivem Zugriff erkennbar.",
+                        "phrase": "… keine stabile Balance zwischen Struktur und Druck zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "profileSummary",
                     "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "required": true,
+                    "use_sentence_helpers": true,
+                    "summary_label": "Eigene Zusammenfassung",
+                    "label": "Wie würdest du die Defensivzonenarbeit dieses Teams zusammenfassen?",
+                    "help": "Formuliere ein bis drei Sätze. Beschreibe Raumpriorität, Struktur, Verschiebung und Zugriff möglichst konkret, ohne einen Systemnamen zu verwenden.",
+                    "placeholder": "Dieses Team verteidigt seine Zone, indem es …",
+                    "min_chars": 20,
+                    "max_chars": 800
                   }
                 ]
               }
@@ -4759,50 +5155,175 @@
           "description": "Verstehen, wie Teams in der Neutral Zone Raum kontrollieren, Tempo brechen und Gegner lenken. Fokus liegt auf Staffelung, Abständen und kollektiven Bewegungen – nicht auf einzelnen Steals.",
           "drills": [
             {
-              "id": "C1_D1",
-              "title": "Grundstruktur erkennen",
-              "drill_type": "period_checkin",
-              "description": "Erkenne die defensive Grundstruktur in der eigenen Zone.",
+              "id": "C2_D1",
+              "title": "Welcher Weg wird geschlossen?",
+              "drill_type": "rink_corridor_observation",
+              "description": "Erkenne, welchen Weg durch die Neutral Zone die Defensive primär wegnimmt und welche Route dem Gegner dadurch am ehesten bleibt.",
               "didactics": {
-                "explanation": "Defensive Systeme erkennt man an Staffelung und Raumpriorität – nicht an einzelnen Zweikämpfen.",
+                "explanation": "Eine Defensive kann in der Neutral Zone nicht jeden Raum gleichzeitig vollständig schließen.\n\nSie positioniert sich so, dass bestimmte Wege für den gegnerischen Aufbau schwer zugänglich werden. Dadurch bleiben andere Wege eher offen oder werden bewusst als weniger gefährliche Lösung angeboten.\n\nBeobachte deshalb nicht nur den Puckführer. Frage dich: Welcher Weg durch die Neutral Zone wird geschlossen – und welche Route bleibt dem Gegner dadurch am ehesten?",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Positionierung der vier Feldspieler ohne Puck",
-                    "Abstände zum Slot",
-                    "Reaktion auf Puckverlagerung"
+                    "Welche direkte Route zur offensiven blauen Linie ist für den Gegner schwer erreichbar?",
+                    "Wo stehen die meisten Verteidiger zwischen Puck und eigener Zone?",
+                    "Sind zentrale Passwege durch die Formation geschlossen?",
+                    "Muss der Puckführer nach außen ausweichen?",
+                    "Bleibt nur ein langsamer Eintritt oder ein Dump-in als sichere Lösung?",
+                    "Verändert sich der offene Weg mit der Puckposition?",
+                    "Ist das räumliche Prinzip über mehrere Sekunden stabil erkennbar?"
                   ],
                   "how_to_decide": [
-                    "Blende den Puck kurz aus",
-                    "Erkenne Linien und Ebenen",
-                    "Frage dich: Wird Raum oder Spieler verteidigt?"
+                    "Bewerte den Weg durch die Neutral Zone und nicht nur den aktuellen Standort des Pucks.",
+                    "Wähle zuerst den Korridor, den die Defensive primär wegnimmt.",
+                    "Wähle danach die Route, die dem Gegner am ehesten bleibt.",
+                    "Beziehe die gesamte Formation in deine Entscheidung ein.",
+                    "Nutze die Klarheitsbewertung, wenn das Muster nur teilweise oder wechselhaft erkennbar ist."
                   ],
                   "ignore": [
-                    "Schüsse von außen",
-                    "Einzelne Checks"
+                    "Den späteren Puckgewinn oder Gegentreffer",
+                    "Einzelne technische Fehler ohne räumliche Bedeutung",
+                    "Perfekte Spielerpositionen",
+                    "Systemnamen oder Formationszahlen",
+                    "Kurze Bewegungen, die keine erkennbare Wirkung auf die verfügbaren Wege haben"
                   ]
                 },
-                "learning_hint": "Systeme zeigen sich in Ordnung, nicht in Aktion."
+                "learning_hint": "Eine Defensive kontrolliert nicht jeden Weg gleichzeitig. Sie nimmt bestimmte Korridore weg und lässt andere eher offen."
               },
               "config": {
-                "questions": [
+                "mode": "corridor_selection",
+                "observation_count": 3,
+                "observations_key": "neutral_corridor_observations",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "active_selection_group_key": "activeSelectionGroup",
+                "reflection_enabled": false,
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "conflict_hint": "Du hast denselben Weg als primär geschlossen und als am ehesten verfügbar ausgewählt. Prüfe, ob das deine Beobachtung korrekt beschreibt.",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false
+                },
+                "zones": [
                   {
-                    "key": "dz_structure",
-                    "type": "radio",
-                    "label": "Grundstruktur",
-                    "options": [
-                      "Box",
-                      "Box+1",
-                      "mannnah",
-                      "unklar"
+                    "id": "left_lane",
+                    "label": "Linker Außenweg",
+                    "geometry": { "x0": 0.354, "y0": 0.071, "x1": 0.646, "y1": 0.357 }
+                  },
+                  {
+                    "id": "central_lane",
+                    "label": "Zentraler Weg",
+                    "geometry": { "x0": 0.354, "y0": 0.357, "x1": 0.646, "y1": 0.643 }
+                  },
+                  {
+                    "id": "right_lane",
+                    "label": "Rechter Außenweg",
+                    "geometry": { "x0": 0.354, "y0": 0.643, "x1": 0.646, "y1": 0.929 }
+                  }
+                ],
+                "selection_groups": [
+                  {
+                    "id": "closed_lane",
+                    "key": "closedLane",
+                    "label": "Geschlossener Weg",
+                    "question": "Welchen Weg nimmt die Defensive dem Gegner primär weg?",
+                    "hint": "Wähle den Korridor, den die Formation sichtbar schwer zugänglich macht.",
+                    "zone_ids": ["left_lane", "central_lane", "right_lane"],
+                    "off_rink_options": [
+                      {
+                        "value": "unclear",
+                        "label": "Kein klarer Weg",
+                        "description": "Es ließ sich kein eindeutig geschlossener Korridor erkennen."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Woran hast du die Struktur erkannt?",
-                    "max_chars": 1500
+                    "id": "available_route",
+                    "key": "availableRoute",
+                    "label": "Verbleibender Weg",
+                    "question": "Welcher Weg bleibt dem Gegner am ehesten?",
+                    "hint": "Wähle die Route oder Lösung, die dem Gegner nach der geschlossenen Formation am ehesten bleibt.",
+                    "zone_ids": ["left_lane", "central_lane", "right_lane"],
+                    "off_rink_options": [
+                      {
+                        "value": "dump_in",
+                        "label": "Dump-in",
+                        "description": "Ein kontrollierter Eintritt ist kaum möglich; der Puck muss eher tief gespielt werden."
+                      },
+                      {
+                        "value": "slow_entry",
+                        "label": "Langsamer Eintritt ohne Tempo",
+                        "description": "Der Gegner kann die Zone erreichen, verliert dabei aber Geschwindigkeit und direkte Anschlussoptionen."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Kein klar bevorzugter Weg",
+                        "description": "Mehrere Wege bleiben ähnlich verfügbar oder das Raumangebot ist nicht eindeutig erkennbar."
+                      }
+                    ]
                   }
-                ]
+                ],
+                "observation_fields": [
+                  {
+                    "key": "controlClarity",
+                    "label": "Wie eindeutig war die Wegkontrolle?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "clear",
+                        "label": "Sehr klar",
+                        "description": "Ein bestimmter Weg war deutlich geschlossen und eine andere Route sichtbar wahrscheinlicher."
+                      },
+                      {
+                        "value": "partially_clear",
+                        "label": "Teilweise erkennbar",
+                        "description": "Eine räumliche Tendenz war vorhanden, aber mehrere Wege blieben möglich."
+                      },
+                      {
+                        "value": "changing",
+                        "label": "Wechselhaft",
+                        "description": "Der geschlossene oder angebotene Weg änderte sich während der Situation deutlich."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar erkennbar",
+                        "description": "Es ließ sich kein ausreichend stabiles Wegprinzip bestimmen."
+                      }
+                    ]
+                  }
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Woran hast du erkannt, welcher Weg geschlossen und welcher angeboten wurde?",
+                  "placeholder": "Optional",
+                  "max_chars": 600
+                },
+                "required_observation_fields": [
+                  "closedLane",
+                  "availableRoute",
+                  "controlClarity"
+                ],
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde einen kontrollierten gegnerischen Aufbau aus der eigenen Zone in die Neutral Zone.",
+                    "hint": "Wähle zuerst den geschlossenen und danach den verbleibenden Weg."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine zweite Aufbausituation und vergleiche die Wegkontrolle.",
+                    "hint": "Achte darauf, ob die Formation den zentralen oder einen Außenweg priorisiert schließt."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene mit Fokus auf Klarheit und Stabilität der Wegkontrolle.",
+                    "hint": "Bewerte, ob das Muster über mehrere Sekunden stabil erkennbar bleibt."
+                  }
+                ],
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Beobachte weiterhin, welche Korridore durch die Neutral Zone geschlossen werden und welche dem Gegner bleiben."
               }
             },
             {
