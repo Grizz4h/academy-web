@@ -2,23 +2,17 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { api, type SceneMarker, type SceneMarkerUpdate, type Session } from '../api'
+import { ManualSceneForm, type ManualSceneFormMode } from '../components/ManualSceneForm'
 import { formatCompetitionContext, getCompetitionConfig } from '../data/competitionConfig'
+import {
+  formatGameTimeInput,
+  getSceneMetadataStatus,
+  getSceneSource,
+  isManualScene,
+  scenePeriodLabel,
+} from '../utils/sceneHelpers'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
-
-const PERIOD_LABELS: Record<string, string> = {
-  PRE: 'Vor dem Spiel',
-  P1: '1. Drittel',
-  P2: '2. Drittel',
-  P3: '3. Drittel',
-  POST: 'Nach dem Spiel',
-}
-
-function periodLabel(p?: string) {
-  if (!p) return '–'
-  return PERIOD_LABELS[p] ?? p
-}
-
 
 function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr))
@@ -184,6 +178,9 @@ export default function RingAbout() {
   const [editError, setEditError] = useState<string | null>(null)
   const [celebratedSceneId, setCelebratedSceneId] = useState<string | null>(null)
   const celebrationTimeoutRef = useRef<number | null>(null)
+  const [manualFormMode, setManualFormMode] = useState<ManualSceneFormMode | null>(null)
+  const [manualFormScene, setManualFormScene] = useState<SceneMarker | null>(null)
+  const [filterSource, setFilterSource] = useState<'' | 'drill' | 'manual'>('')
 
   useEffect(() => () => {
     if (celebrationTimeoutRef.current) window.clearTimeout(celebrationTimeoutRef.current)
@@ -199,12 +196,43 @@ export default function RingAbout() {
   }
 
   const handleEditOpen = (scene: SceneMarker) => {
+    if (isManualScene(scene)) {
+      setManualFormScene(scene)
+      setManualFormMode(getSceneMetadataStatus(scene) === 'incomplete' ? 'enrich' : 'edit')
+      return
+    }
     setEditingSceneId(scene.id)
     setEditGameTime(scene.game_time)
     setEditNote(scene.note || '')
     setEditEpisodeSeason(sceneSeasonCode(scene))
     setEditEpisodeNumber(sceneEpisodeCode(scene))
     setEditError(null)
+  }
+
+  const handleEnrichOpen = (scene: SceneMarker) => {
+    setManualFormScene(scene)
+    setManualFormMode('enrich')
+  }
+
+  const handleManualFormClose = () => {
+    setManualFormMode(null)
+    setManualFormScene(null)
+  }
+
+  const handleManualFormSaved = (scene: SceneMarker, options?: { continueEditing?: boolean }) => {
+    queryClient.setQueryData<{ scenes: SceneMarker[] }>(['scenes'], (current) => {
+      if (!current?.scenes) return { scenes: [scene] }
+      const exists = current.scenes.some((item) => item.id === scene.id)
+      return {
+        scenes: exists
+          ? current.scenes.map((item) => (item.id === scene.id ? { ...item, ...scene } : item))
+          : [scene, ...current.scenes],
+      }
+    })
+    if (options?.continueEditing) {
+      setManualFormScene(scene)
+    }
+    queryClient.invalidateQueries({ queryKey: ['scenes'] })
   }
 
   const handleEditClose = () => {
@@ -318,7 +346,7 @@ export default function RingAbout() {
   const getObservedTeamForScene = (scene: SceneMarker): string => {
     const direct = sceneObservedTeamSnapshot(scene)
     if (direct) return direct
-    const session = sessionsById.get(scene.session_id)
+    const session = scene.session_id ? sessionsById.get(scene.session_id) : undefined
     return normalizeObservedTeamValue(
       session?.game_info?.observed_team_name ||
       session?.game_info?.observed_team ||
@@ -411,6 +439,8 @@ export default function RingAbout() {
 
   const matchesNonCompetitionFilters = (s: SceneMarker) => {
     if (sessionFilter && s.session_id !== sessionFilter) return false
+    if (filterSource === 'manual' && !isManualScene(s)) return false
+    if (filterSource === 'drill' && isManualScene(s)) return false
     if (filterLeague && s.league !== filterLeague) return false
     if (filterSeason && s.season !== filterSeason) return false
     if (filterStatus && (s.status || 'NEW') !== filterStatus) return false
@@ -442,7 +472,7 @@ export default function RingAbout() {
       }
     }
     return new Set(Array.from(latestByLeague.values()).map(sceneCompetitionContextKey).filter(Boolean))
-  }, [scenes, filterCurrentContext, sessionFilter, filterLeague, filterSeason, filterStatus, filterMinRating, filterTeam, filterTrack, filterDrill, filterEpisodeSeason])
+  }, [scenes, filterCurrentContext, sessionFilter, filterSource, filterLeague, filterSeason, filterStatus, filterMinRating, filterTeam, filterTrack, filterDrill, filterEpisodeSeason])
 
   const currentContextLabel = useMemo(() => {
     if (!filterCurrentContext || currentContextKeys.size === 0) return 'Aktuell'
@@ -475,9 +505,9 @@ export default function RingAbout() {
       })
     }
     return result
-  }, [scenes, sessionFilter, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterCurrentContext, currentContextKeys, sortMode])
+  }, [scenes, sessionFilter, filterSource, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterCurrentContext, currentContextKeys, sortMode])
 
-  const hasActiveFilter = sessionFilter || filterLeague || filterSeason || filterTeam || filterStatus || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterCurrentContext
+  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || filterStatus || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterCurrentContext
 
   const resetFilters = () => {
     setFilterLeague('')
@@ -488,6 +518,7 @@ export default function RingAbout() {
     setSortMode('created')
     setFilterTrack('')
     setFilterDrill('')
+    setFilterSource('')
     setFilterCompetitionPhase('')
     setFilterCompetitionUnitType('')
     setFilterCompetitionUnitValue('')
@@ -606,7 +637,7 @@ export default function RingAbout() {
         <p style={{ margin: '0.4rem 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>
           Szenenpool und redaktionelle Insights für die nächste Episode.
         </p>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.9rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.9rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <button
             type="button"
             onClick={() => setActiveTab('pool')}
@@ -641,6 +672,29 @@ export default function RingAbout() {
           >
             Insights
           </button>
+          {activeTab === 'pool' && (
+            <button
+              type="button"
+              onClick={() => {
+                setManualFormScene(null)
+                setManualFormMode('create')
+              }}
+              style={{
+                marginLeft: 'auto',
+                padding: '0.48rem 0.95rem',
+                borderRadius: '0.55rem',
+                border: 'none',
+                background: 'linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%)',
+                color: '#0b1220',
+                fontSize: '0.9rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 0 18px rgba(56,189,248,0.28)',
+              }}
+            >
+              Szene hinzufügen
+            </button>
+          )}
         </div>
       </div>
 
@@ -745,6 +799,11 @@ export default function RingAbout() {
             <option value="NEW">Neu</option>
             <option value="ASSIGNED">Zugeordnet</option>
           </select>
+          <select value={filterSource} onChange={e => setFilterSource((e.target.value as '' | 'drill' | 'manual') || '')} style={selectStyle}>
+            <option value="">Alle Szenen</option>
+            <option value="drill">Aus Drills</option>
+            <option value="manual">Manuell erfasst</option>
+          </select>
           <select value={filterMinRating} onChange={e => setFilterMinRating(e.target.value)} style={selectStyle}>
             <option value="">Alle Bewertungen</option>
             <option value="3">3★+</option>
@@ -833,9 +892,27 @@ export default function RingAbout() {
         <div className="card" style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#64748b' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎬</div>
           <div style={{ fontWeight: 600, marginBottom: '0.3rem' }}>Noch keine Szenen gespeichert</div>
-          <div style={{ fontSize: '0.85rem' }}>
-            Während eines Drills kannst du mit dem Button „🎬 Szene merken" interessante Momente für Rink About It festhalten.
+          <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+            Erfasse Momente live mit „Szene hinzufügen“ oder während eines Drills mit „Szene merken“.
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              setManualFormScene(null)
+              setManualFormMode('create')
+            }}
+            style={{
+              padding: '0.55rem 1.1rem',
+              borderRadius: '0.5rem',
+              border: 'none',
+              background: '#4fc3f7',
+              color: '#0a0a1a',
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            Szene hinzufügen
+          </button>
         </div>
       )}
 
@@ -854,11 +931,26 @@ export default function RingAbout() {
               observedTeam={getObservedTeamForScene(scene) || 'Beobachtetes Team nicht hinterlegt'}
               onDelete={handleDelete}
               onEdit={handleEditOpen}
+              onEnrich={handleEnrichOpen}
               onRatingChange={handleRatingChange}
               celebrate={celebratedSceneId === scene.id}
             />
           ))}
         </div>
+      )}
+
+      {manualFormMode && (
+        <ManualSceneForm
+          mode={manualFormMode}
+          initialScene={manualFormScene}
+          onClose={handleManualFormClose}
+          onSaved={(scene, options) => {
+            handleManualFormSaved(scene, options)
+            if (!options?.continueEditing) {
+              handleManualFormClose()
+            }
+          }}
+        />
       )}
 
       {!isLoading && filtered.length > 0 && (
@@ -891,17 +983,13 @@ export default function RingAbout() {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              autoComplete="off"
               value={editGameTime}
               onChange={e => {
-                const raw = e.target.value.replace(/[^\d:]/g, '')
-                const digits = raw.replace(/:/g, '').slice(0, 4)
-                let formatted = digits
-                if (digits.length > 2) {
-                  formatted = digits.slice(0, 2) + ':' + digits.slice(2)
-                }
-                setEditGameTime(formatted)
+                setEditGameTime(formatGameTimeInput(e.target.value))
               }}
-              placeholder="z.B. 13:42"
+              placeholder="z. B. 13:42"
               style={{
                 width: '100%', padding: '0.6rem', borderRadius: '0.4rem',
                 border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
@@ -1195,12 +1283,23 @@ function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onC
   )
 }
 
-function SceneCard({ scene, observedTeam, onDelete, onEdit, onRatingChange, celebrate = false }: { scene: SceneMarker; observedTeam: string; onDelete: (id: string) => void; onEdit: (scene: SceneMarker) => void; onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void; celebrate?: boolean }) {
+function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingChange, celebrate = false }: {
+  scene: SceneMarker
+  observedTeam: string
+  onDelete: (id: string) => void
+  onEdit: (scene: SceneMarker) => void
+  onEnrich: (scene: SceneMarker) => void
+  onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void
+  celebrate?: boolean
+}) {
   const gameLabel = scene.team_home && scene.team_away
     ? `${scene.team_home} vs ${scene.team_away}`
     : scene.team_home || scene.team_away || '–'
 
   const competitionContext = formatCompetitionContext(scene)
+  const source = getSceneSource(scene)
+  const manual = source.type === 'manual'
+  const metadataStatus = getSceneMetadataStatus(scene)
 
   // Extract drill number suffix, e.g. "B1_D4" -> "D4", "A1_D1" -> "D1"
   const drillSuffix = scene.drill_id
@@ -1281,15 +1380,23 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onRatingChange, cele
         </div>
       </div>
 
-      {/* Drittel + Spielzeit */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#cbd5e1' }}>
-          {periodLabel(scene.period)}
+      {/* Drittel + Spielzeit – prominent zum Wiederfinden */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        padding: '0.45rem 0.55rem',
+        borderRadius: '0.5rem',
+        background: 'rgba(14,165,233,0.10)',
+        border: '1px solid rgba(125,211,252,0.22)',
+      }}>
+        <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#e2e8f0' }}>
+          {scenePeriodLabel(scene.period)}
         </span>
         <span style={{
-          background: '#1e293b', borderRadius: '0.35rem', padding: '0.2rem 0.65rem',
-          fontSize: '1.1rem', fontWeight: 800, color: '#4fc3f7',
-          letterSpacing: '0.05em',
+          background: '#0f172a', borderRadius: '0.35rem', padding: '0.22rem 0.7rem',
+          fontSize: '1.2rem', fontWeight: 850, color: '#7dd3fc',
+          letterSpacing: '0.05em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
         }}>
           {scene.game_time}
         </span>
@@ -1310,6 +1417,17 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onRatingChange, cele
           textOverflow: 'ellipsis',
         }} title={`Beobachtet: ${observedTeam}`}>
           Beobachtet: {observedTeam}
+        </span>
+        <span style={{
+          background: manual ? 'rgba(251,191,36,0.12)' : 'rgba(99,102,241,0.14)',
+          color: manual ? '#fde68a' : '#c7d2fe',
+          border: manual ? '1px solid rgba(251,191,36,0.28)' : '1px solid rgba(129,140,248,0.28)',
+          borderRadius: '999px',
+          padding: '0.18rem 0.55rem',
+          fontSize: '0.72rem',
+          fontWeight: 700,
+        }}>
+          {manual ? 'Manuell erfasst' : 'Aus Drill'}
         </span>
       </div>
 
@@ -1402,41 +1520,67 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onRatingChange, cele
       )}
 
       {/* Track + Drill */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', alignItems: 'center' }}>
-        {scene.module_id && (
-          <span style={{
-            background: 'rgba(99,102,241,0.18)', color: '#a5b4fc',
-            borderRadius: '0.3rem', padding: '0.1rem 0.45rem',
-            fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em',
-          }}>
-            {scene.module_id}
-          </span>
-        )}
-        {drillSuffix && (
-          <span style={{
-            background: 'rgba(34,197,94,0.13)', color: '#86efac',
-            borderRadius: '0.3rem', padding: '0.1rem 0.45rem',
-            fontSize: '0.72rem', fontWeight: 700,
-          }}>
-            {drillSuffix}
-          </span>
-        )}
-        {scene.drill_title && (
-          <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-            {scene.drill_title}
-          </span>
-        )}
-      </div>
+      {!manual && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', alignItems: 'center' }}>
+          {scene.module_id && (
+            <span style={{
+              background: 'rgba(99,102,241,0.18)', color: '#a5b4fc',
+              borderRadius: '0.3rem', padding: '0.1rem 0.45rem',
+              fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em',
+            }}>
+              {scene.module_id}
+            </span>
+          )}
+          {drillSuffix && (
+            <span style={{
+              background: 'rgba(34,197,94,0.13)', color: '#86efac',
+              borderRadius: '0.3rem', padding: '0.1rem 0.45rem',
+              fontSize: '0.72rem', fontWeight: 700,
+            }}>
+              {drillSuffix}
+            </span>
+          )}
+          {scene.drill_title && (
+            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+              {scene.drill_title}
+            </span>
+          )}
+        </div>
+      )}
+
+      {manual && metadataStatus === 'incomplete' && (
+        <button
+          type="button"
+          onClick={() => onEnrich(scene)}
+          style={{
+            alignSelf: 'flex-start',
+            padding: '0.35rem 0.7rem',
+            borderRadius: '0.4rem',
+            border: '1px solid rgba(148,163,184,0.32)',
+            background: 'rgba(148,163,184,0.08)',
+            color: '#cbd5e1',
+            fontSize: '0.78rem',
+            fontWeight: 650,
+            cursor: 'pointer',
+          }}
+        >
+          Metadaten ergänzen
+        </button>
+      )}
 
       {/* Wettbewerbskontext */}
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', fontSize: '0.78rem', color: '#94a3b8', marginTop: 'auto', paddingTop: '0.15rem' }}>
         <span style={{ color: '#cbd5e1', fontWeight: 650 }}>{competitionContext || 'Kein Wettbewerbskontext'}</span>
-        <a
-          href={'/session/' + scene.session_id}
-          style={{ color: '#7dd3fc', textDecoration: 'none', fontWeight: 600, whiteSpace: 'nowrap' }}
-        >
-          Zur Session
-        </a>
+        {scene.session_id ? (
+          <a
+            href={'/session/' + scene.session_id}
+            style={{ color: '#7dd3fc', textDecoration: 'none', fontWeight: 600, whiteSpace: 'nowrap' }}
+          >
+            Zur Session
+          </a>
+        ) : (
+          <span style={{ color: '#64748b', fontWeight: 600, whiteSpace: 'nowrap' }}>Ohne Session</span>
+        )}
       </div>
     </div>
   )

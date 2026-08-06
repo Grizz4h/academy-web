@@ -7,6 +7,7 @@ import {
   createSidequestId,
   type SessionSidequest,
 } from '../utils/sessionSidequests'
+import { formatGameTimeInput } from '../utils/sceneHelpers'
 
 type GameState = 'power_play' | 'penalty_kill'
 type Step = 'category' | 'pick' | 'drill'
@@ -376,17 +377,11 @@ export function SpecialTeamsSidequestButton({
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
                   value={gameTime}
-                  onChange={(e) => {
-                    const digits = e.target.value.replace(/[^\d]/g, '').slice(0, 4)
-                    let formatted = digits
-                    if (digits.length > 2) {
-                      formatted = `${digits.slice(0, digits.length - 2)}:${digits.slice(-2)}`
-                    }
-                    setGameTime(formatted.slice(0, 5))
-                  }}
+                  onChange={(e) => setGameTime(formatGameTimeInput(e.target.value))}
                   placeholder="12:43"
-                  maxLength={5}
                   style={{
                     width: '100%',
                     padding: '0.55rem 0.7rem',

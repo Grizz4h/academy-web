@@ -203,13 +203,22 @@ class RewardApplyData(BaseModel):
     unlocked_masteries: List[dict] = Field(default_factory=list)
 
 
+class SceneSourcePayload(BaseModel):
+    type: Optional[str] = None
+    session_id: Optional[str] = None
+    drill_id: Optional[str] = None
+    observation_id: Optional[str] = None
+
+
 class SceneMarkerCreate(BaseModel):
-    session_id: str
-    module_id: str
+    session_id: Optional[str] = None
+    module_id: Optional[str] = None
     drill_id: Optional[str] = None
     drill_title: Optional[str] = None
     track_id: Optional[str] = None
     status: Optional[str] = None
+    source: Optional[SceneSourcePayload] = None
+    metadata_status: Optional[str] = None
     league: Optional[str] = None
     season: Optional[str] = None
     competition_phase: Optional[str] = None
@@ -218,6 +227,7 @@ class SceneMarkerCreate(BaseModel):
     competition_unit_label: Optional[str] = None
     competition_unit_value: Optional[str] = None
     matchday: Optional[str] = None
+    game_date: Optional[str] = None
     team_home: Optional[str] = None
     team_away: Optional[str] = None
     observed_team: Optional[str] = None
@@ -240,6 +250,22 @@ class SceneMarkerUpdate(BaseModel):
     game_time: Optional[str] = None
     note: Optional[str] = None
     status: Optional[str] = None
+    metadata_status: Optional[str] = None
+    period: Optional[str] = None
+    league: Optional[str] = None
+    season: Optional[str] = None
+    competition_phase: Optional[str] = None
+    competition_phase_label: Optional[str] = None
+    competition_unit_type: Optional[str] = None
+    competition_unit_label: Optional[str] = None
+    competition_unit_value: Optional[str] = None
+    matchday: Optional[str] = None
+    game_date: Optional[str] = None
+    team_home: Optional[str] = None
+    team_away: Optional[str] = None
+    observed_team: Optional[str] = None
+    observed_team_id: Optional[str] = None
+    observed_team_name: Optional[str] = None
     episode_season: Optional[str] = None
     episode_number: Optional[str] = None
     season_code: Optional[str] = None
@@ -1851,6 +1877,102 @@ def _normalize_scene_status(status: Optional[str]) -> str:
     return SCENE_STATUS_NEW
 
 
+def _normalize_scene_metadata_status(status: Optional[str]) -> Optional[str]:
+    value = (status or "").strip().lower()
+    if value in ("incomplete", "complete"):
+        return value
+    return None
+
+
+def _build_scene_source(payload: SceneMarkerCreate) -> dict:
+    raw = payload.source.model_dump() if payload.source is not None else {}
+    source_type = str(raw.get("type") or "").strip().lower()
+    session_id = (payload.session_id or raw.get("session_id") or None)
+    session_id = str(session_id).strip() if session_id else None
+    drill_id = (payload.drill_id or raw.get("drill_id") or None)
+    drill_id = str(drill_id).strip() if drill_id else None
+    observation_id = raw.get("observation_id")
+    observation_id = str(observation_id).strip() if observation_id else None
+
+    if source_type not in ("manual", "drill"):
+        source_type = "drill" if session_id else "manual"
+
+    if source_type == "manual":
+        return {
+            "type": "manual",
+            "session_id": None,
+            "drill_id": None,
+            "observation_id": observation_id,
+        }
+
+    return {
+        "type": "drill",
+        "session_id": session_id,
+        "drill_id": drill_id,
+        "observation_id": observation_id,
+    }
+
+
+def _infer_metadata_status(scene: dict, explicit: Optional[str] = None) -> str:
+    normalized = _normalize_scene_metadata_status(explicit)
+    if normalized:
+        return normalized
+    has_core = bool(
+        (scene.get("game_time") or "").strip()
+        and (scene.get("period") or "").strip()
+        and (scene.get("team_home") or "").strip()
+        and (scene.get("team_away") or "").strip()
+        and (scene.get("note") or "").strip()
+    )
+    has_observed = bool(
+        (scene.get("observed_team_name") or scene.get("observed_team") or "").strip()
+    )
+    has_competition = bool(
+        (scene.get("league") or "").strip()
+        and (scene.get("season") or "").strip()
+    )
+    if has_core and has_observed and has_competition:
+        return "complete"
+    return "incomplete"
+
+
+def _ensure_scene_source(scene: dict) -> dict:
+    existing = scene.get("source")
+    if isinstance(existing, dict) and str(existing.get("type") or "").strip().lower() in ("manual", "drill"):
+        source_type = str(existing.get("type")).strip().lower()
+        if source_type == "manual":
+            scene["source"] = {
+                "type": "manual",
+                "session_id": None,
+                "drill_id": None,
+                "observation_id": existing.get("observation_id") or None,
+            }
+        else:
+            scene["source"] = {
+                "type": "drill",
+                "session_id": existing.get("session_id") or scene.get("session_id") or None,
+                "drill_id": existing.get("drill_id") or scene.get("drill_id") or None,
+                "observation_id": existing.get("observation_id") or None,
+            }
+        return scene
+
+    if scene.get("session_id"):
+        scene["source"] = {
+            "type": "drill",
+            "session_id": scene.get("session_id"),
+            "drill_id": scene.get("drill_id"),
+            "observation_id": None,
+        }
+    else:
+        scene["source"] = {
+            "type": "manual",
+            "session_id": None,
+            "drill_id": None,
+            "observation_id": None,
+        }
+    return scene
+
+
 def _normalize_episode_season(episode_season: Optional[str]) -> Optional[str]:
     return _normalize_episode_code_part(episode_season, 2, "episode_season")
 
@@ -2031,6 +2153,20 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
     enforce_max_text_length(payload.note, "scene.note")
     enforce_max_text_length(payload.drill_title, "scene.drill_title")
 
+    source = _build_scene_source(payload)
+    session_id = source.get("session_id")
+    drill_id = source.get("drill_id") if source.get("type") == "drill" else None
+    module_id = (payload.module_id or "").strip() or None
+    track_id = (payload.track_id or "").strip() or None
+
+    if source["type"] == "drill" and not session_id:
+        raise HTTPException(status_code=400, detail="session_id is required for drill scenes")
+    if source["type"] == "manual":
+        session_id = None
+        drill_id = None
+        module_id = None
+        track_id = None
+
     user_cased = _resolve_user_cased(current_user)
     now_iso = datetime.now().isoformat()
     scene_id = f"scene_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
@@ -2056,11 +2192,12 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "id": scene_id,
         "scene_code": scene_code,
         "user": user_cased,
-        "session_id": payload.session_id,
-        "module_id": payload.module_id,
-        "drill_id": payload.drill_id,
-        "drill_title": payload.drill_title,
-        "track_id": payload.track_id,
+        "session_id": session_id,
+        "module_id": module_id,
+        "drill_id": drill_id,
+        "drill_title": payload.drill_title if source["type"] == "drill" else None,
+        "track_id": track_id,
+        "source": source,
         "status": _normalize_scene_status(payload.status),
         "league": payload.league,
         "season": payload.season,
@@ -2070,6 +2207,7 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "competition_unit_label": payload.competition_unit_label,
         "competition_unit_value": payload.competition_unit_value,
         "matchday": payload.matchday,
+        "game_date": (payload.game_date or "").strip() or None,
         "team_home": payload.team_home,
         "team_away": payload.team_away,
         "observed_team": payload.observed_team,
@@ -2087,10 +2225,11 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "extension_labels": payload.extension_labels or {},
         "created_at": now_iso,
     }
+    scene["metadata_status"] = _infer_metadata_status(scene, payload.metadata_status)
 
     scene_path = _build_scene_path(scene_id, now_iso)
     save_json(scene_path, scene)
-    logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={user_cased} game_time={scene['game_time']}")
+    logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={user_cased} source={source.get('type')} game_time={scene['game_time']}")
     return scene
 
 
@@ -2106,10 +2245,12 @@ async def get_scenes(
     competition_unit_type: Optional[str] = None,
     competition_unit_value: Optional[str] = None,
     episode_season: Optional[str] = None,
+    source_type: Optional[str] = None,
     current_user: str = Depends(get_current_user),
 ):
     user_norm = _normalize_user_key(current_user)
     scenes = []
+    source_type_norm = (source_type or "").strip().lower() or None
     with SCENE_CODE_LOCK:
         _ensure_legacy_scene_codes()
     for path in _iter_json_files(SCENES_DIR):
@@ -2145,12 +2286,17 @@ async def get_scenes(
             continue
         if episode_season and _scene_episode_season(scene) != _normalize_episode_season(episode_season):
             continue
+        _ensure_scene_source(scene)
+        if source_type_norm and scene.get("source", {}).get("type") != source_type_norm:
+            continue
         scene["status"] = scene_status
         scene["scene_code"] = _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id"))
         scene["episode_season"] = _scene_episode_season(scene)
         scene["episode_number"] = _scene_episode_number(scene)
         scene["season_code"] = scene["episode_season"]
         scene["episode_code"] = scene["episode_number"]
+        if not scene.get("metadata_status"):
+            scene["metadata_status"] = _infer_metadata_status(scene)
         scenes.append(scene)
 
     scenes.sort(key=lambda s: s.get("created_at", ""), reverse=True)
@@ -2195,6 +2341,39 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
     if payload.status is not None:
         scene["status"] = _normalize_scene_status(payload.status)
 
+    optional_text_fields = (
+        "period",
+        "league",
+        "season",
+        "competition_phase",
+        "competition_phase_label",
+        "competition_unit_type",
+        "competition_unit_label",
+        "competition_unit_value",
+        "matchday",
+        "game_date",
+        "team_home",
+        "team_away",
+        "observed_team",
+        "observed_team_id",
+        "observed_team_name",
+    )
+    payload_fields = getattr(payload, "model_fields_set", getattr(payload, "__fields_set__", set()))
+    for field_name in optional_text_fields:
+        if field_name in payload_fields:
+            value = getattr(payload, field_name)
+            if value is None:
+                scene[field_name] = None
+            else:
+                cleaned = str(value).strip()
+                scene[field_name] = cleaned or None
+
+    if "observed_team" in payload_fields or "observed_team_name" in payload_fields:
+        observed_name = scene.get("observed_team_name") or scene.get("observed_team")
+        scene["observed_team_name"] = observed_name
+        if not scene.get("observed_team") and observed_name:
+            scene["observed_team"] = observed_name
+
     episode_season = _scene_episode_season(scene)
     episode_number = _scene_episode_number(scene)
     episode_fields_touched = False
@@ -2232,7 +2411,6 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
                 },
             )
     
-    payload_fields = getattr(payload, "model_fields_set", getattr(payload, "__fields_set__", set()))
     if "rating" in payload_fields:
         scene["rating"] = _normalize_scene_rating(payload.rating)
     
@@ -2243,6 +2421,29 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
     # Update extension_labels if provided
     if payload.extension_labels is not None:
         scene["extension_labels"] = payload.extension_labels
+
+    if "metadata_status" in payload_fields:
+        scene["metadata_status"] = _infer_metadata_status(scene, payload.metadata_status)
+    else:
+        scene["metadata_status"] = _infer_metadata_status(scene, scene.get("metadata_status"))
+
+    # Preserve drill provenance: never invent fake session/drill IDs on update
+    existing_source = scene.get("source") if isinstance(scene.get("source"), dict) else None
+    if not existing_source:
+        if scene.get("session_id"):
+            scene["source"] = {
+                "type": "drill",
+                "session_id": scene.get("session_id"),
+                "drill_id": scene.get("drill_id"),
+                "observation_id": None,
+            }
+        else:
+            scene["source"] = {
+                "type": "manual",
+                "session_id": None,
+                "drill_id": None,
+                "observation_id": None,
+            }
     
     scene["updated_at"] = datetime.now().isoformat()
     save_json(scene_path, scene)

@@ -405,8 +405,26 @@ function normalizePaintLayers(mode: string, config: any): PaintLayer[] {
 	return DEFAULT_PAINT_LAYERS[mode] || DEFAULT_PAINT_LAYERS.free_annotation;
 }
 
+/** Shared visual markings for the detailed 900×620 hockey rink (interaction-agnostic). */
+const DETAILED_HOCKEY_RINK_PRESET: Partial<RinkOverlays> = {
+	zones: true,
+	goals: true,
+	crease: true,
+	faceoffDots: true,
+	labels: false,
+	defendingSide: "left",
+	showDefendingHint: false,
+};
+
+function wantsDetailedHockeyRink(mode: string, config: any): boolean {
+	const presetName = String(config?.rink_preset || config?.rinkPreset || "");
+	if (presetName === "detailed") return true;
+	return mode === "defensive_structure" || mode === "formation_shift" || mode === "single_marker_observation";
+}
+
 function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 	const source = config?.rinkOverlays || config?.rink_overlays || {};
+	const presetName = String(config?.rink_preset || config?.rinkPreset || "");
 	const modeDefaults: Record<string, Partial<RinkOverlays>> = {
 		free_annotation: {
 			zones: false,
@@ -418,14 +436,15 @@ function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 			showDefendingHint: false,
 		},
 		zone_priority: {
-		 zones: true,
-		 goals: true,
-		 crease: true,
-		 faceoffDots: true,
-		 labels: false,
-		 defendingSide: "left",
-		 showDefendingHint: true,
+			zones: true,
+			goals: true,
+			crease: true,
+			faceoffDots: true,
+			labels: false,
+			defendingSide: "left",
+			showDefendingHint: true,
 		},
+		detailed: { ...DETAILED_HOCKEY_RINK_PRESET },
 		segmented_zone_selection: {
 			zones: true,
 			goals: true,
@@ -446,13 +465,15 @@ function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 		},
 	};
 
-	const defaults = modeDefaults[mode] || modeDefaults.free_annotation;
+	const defaults = (presetName === "detailed" ? modeDefaults.detailed : null)
+		|| modeDefaults[mode]
+		|| modeDefaults.free_annotation;
 	const defendingSide = (source?.defendingSide || source?.defending_side || defaults.defendingSide || "left") === "right" ? "right" : "left";
 
 	return {
 		zones: source?.zones ?? defaults.zones ?? false,
 		goals: source?.goals ?? source?.goal ?? defaults.goals ?? false,
-		crease: source?.crease ?? defaults.crease ?? false,
+		crease: source?.crease ?? source?.creases ?? defaults.crease ?? false,
 		faceoffDots: source?.faceoffDots ?? source?.faceoff_dots ?? source?.faceoffCircles ?? source?.faceoff_circles ?? defaults.faceoffDots ?? false,
 		labels: source?.labels ?? source?.zoneLabels ?? source?.zone_labels ?? defaults.labels ?? false,
 		defendingSide,
@@ -633,35 +654,6 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const defensiveLabel = overlays.defendingSide === "left" ? "Defensive Zone" : "Offensive Zone";
 	const offensiveLabel = overlays.defendingSide === "left" ? "Offensive Zone" : "Defensive Zone";
 
-	const rinkX = 30;
-	const rinkY = 40;
-	const rinkWidth = 840;
-	const rinkHeight = 540;
-	const rinkRight = rinkX + rinkWidth;
-	const rinkCenterX = rinkX + rinkWidth / 2;
-	const rinkCenterY = rinkY + rinkHeight / 2;
-	const leftBlueLineX = rinkX + rinkWidth * 0.3438;
-	const rightBlueLineX = rinkX + rinkWidth * 0.6562;
-	const leftGoalLineX = rinkX + rinkWidth * 0.11;
-	const rightGoalLineX = rinkRight - rinkWidth * 0.11;
-	const goalMouth = rinkHeight * 0.078;
-	const goalHalf = goalMouth / 2;
-	const goalDepth = rinkWidth * 0.018;
-	const creaseRadius = rinkHeight * 0.100;
-	const faceoffRadius = rinkHeight * 0.100;
-	const leftZoneFaceoffX = rinkX + rinkWidth * 0.26;
-	const rightZoneFaceoffX = rinkRight - rinkWidth * 0.26;
-	const topFaceoffY = rinkCenterY - rinkHeight * 0.26;
-	const bottomFaceoffY = rinkCenterY + rinkHeight * 0.26;
-	const neutralOffsetX = rinkWidth * 0.11;
-	const neutralOffsetY = rinkHeight * 0.22;
-	const neutralDots = [
-		{ x: rinkCenterX - neutralOffsetX, y: rinkCenterY - neutralOffsetY },
-		{ x: rinkCenterX - neutralOffsetX, y: rinkCenterY + neutralOffsetY },
-		{ x: rinkCenterX + neutralOffsetX, y: rinkCenterY - neutralOffsetY },
-		{ x: rinkCenterX + neutralOffsetX, y: rinkCenterY + neutralOffsetY },
-	];
-
 	return (
 		<div className="card primary-card">
 			<h3 style={{ wordWrap: "break-word", overflowWrap: "break-word", marginBottom: "0.45rem" }}>{drill.title}</h3>
@@ -768,67 +760,11 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 								aria-label="Paintable Rink"
 								style={{ width: "100%", height: "100%", display: "block", cursor: isDrawing ? "crosshair" : "pointer" }}
 							>
-								<rect x={rinkX} y={rinkY} width={rinkWidth} height={rinkHeight} rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
-								<line x1={rinkCenterX} y1={rinkY + 4} x2={rinkCenterX} y2={rinkY + rinkHeight - 4} stroke="rgba(255,120,120,0.55)" strokeWidth="4" />
-								<line x1={leftBlueLineX} y1={rinkY + 4} x2={leftBlueLineX} y2={rinkY + rinkHeight - 4} stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<line x1={rightBlueLineX} y1={rinkY + 4} x2={rightBlueLineX} y2={rinkY + rinkHeight - 4} stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<circle cx={rinkCenterX} cy={rinkCenterY} r={faceoffRadius} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="3" />
-
-								{overlays.faceoffDots && (
-									<>
-										<circle cx={leftZoneFaceoffX} cy={topFaceoffY} r={faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={leftZoneFaceoffX} cy={bottomFaceoffY} r={faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={rightZoneFaceoffX} cy={topFaceoffY} r={faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={rightZoneFaceoffX} cy={bottomFaceoffY} r={faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-
-										<circle cx={leftZoneFaceoffX} cy={topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										<circle cx={leftZoneFaceoffX} cy={bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										<circle cx={rightZoneFaceoffX} cy={topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										<circle cx={rightZoneFaceoffX} cy={bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-
-										{neutralDots.map((dot, idx) => (
-											<circle key={`neutral-dot-${idx}`} cx={dot.x} cy={dot.y} r="3.2" fill="rgba(203,213,225,0.78)" />
-										))}
-									</>
-								)}
-
-								{overlays.zones && (
-									<>
-										<line x1={leftGoalLineX} y1={rinkY + 6} x2={leftGoalLineX} y2={rinkY + rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-										<line x1={rightGoalLineX} y1={rinkY + 6} x2={rightGoalLineX} y2={rinkY + rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-									</>
-								)}
-
-								{overlays.goals && (
-									<>
-										<line x1={leftGoalLineX} y1={rinkCenterY - goalHalf} x2={leftGoalLineX} y2={rinkCenterY + goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-										<line x1={leftGoalLineX} y1={rinkCenterY - goalHalf} x2={leftGoalLineX - goalDepth} y2={rinkCenterY - goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-										<line x1={leftGoalLineX} y1={rinkCenterY + goalHalf} x2={leftGoalLineX - goalDepth} y2={rinkCenterY + goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-										<line x1={leftGoalLineX - goalDepth} y1={rinkCenterY - goalHalf} x2={leftGoalLineX - goalDepth} y2={rinkCenterY + goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
-										<path d={`M ${leftGoalLineX - goalDepth} ${rinkCenterY - goalHalf} L ${leftGoalLineX} ${rinkCenterY - goalHalf} L ${leftGoalLineX} ${rinkCenterY + goalHalf} L ${leftGoalLineX - goalDepth} ${rinkCenterY + goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
-
-										<line x1={rightGoalLineX} y1={rinkCenterY - goalHalf} x2={rightGoalLineX} y2={rinkCenterY + goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-										<line x1={rightGoalLineX} y1={rinkCenterY - goalHalf} x2={rightGoalLineX + goalDepth} y2={rinkCenterY - goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-										<line x1={rightGoalLineX} y1={rinkCenterY + goalHalf} x2={rightGoalLineX + goalDepth} y2={rinkCenterY + goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-										<line x1={rightGoalLineX + goalDepth} y1={rinkCenterY - goalHalf} x2={rightGoalLineX + goalDepth} y2={rinkCenterY + goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
-										<path d={`M ${rightGoalLineX + goalDepth} ${rinkCenterY - goalHalf} L ${rightGoalLineX} ${rinkCenterY - goalHalf} L ${rightGoalLineX} ${rinkCenterY + goalHalf} L ${rightGoalLineX + goalDepth} ${rinkCenterY + goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
-									</>
-								)}
-
-								{overlays.crease && (
-									<>
-										<path d={`M ${leftGoalLineX} ${rinkCenterY - creaseRadius} A ${creaseRadius} ${creaseRadius} 0 0 1 ${leftGoalLineX} ${rinkCenterY + creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-										<path d={`M ${rightGoalLineX} ${rinkCenterY - creaseRadius} A ${creaseRadius} ${creaseRadius} 0 0 0 ${rightGoalLineX} ${rinkCenterY + creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-									</>
-								)}
-
-								{overlays.labels && overlays.zones && (
-									<>
-										<text x={rinkX + rinkWidth * 0.08} y={rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{defensiveLabel}</text>
-										<text x={rinkCenterX - 32} y={rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">Neutral Zone</text>
-										<text x={rinkRight - rinkWidth * 0.26} y={rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{offensiveLabel}</text>
-									</>
-								)}
+								<DetailedHockeyRinkLayers
+									overlays={overlays}
+									defensiveLabel={defensiveLabel}
+									offensiveLabel={offensiveLabel}
+								/>
 
 								{layers.map((layer) => {
 									const layerAnnotation = draftAnnotations.find((annotation) => annotation.layerId === layer.id);
@@ -1017,6 +953,13 @@ type ConfigurableSegmentZone = {
 
 const DETAILED_RINK_VIEWBOX = { width: 900, height: 620 };
 
+/** Blue-line x as fraction of the detailed viewBox (for zone_boundaries). Matches painted blue lines. */
+const DETAILED_RINK_ZONE_BOUNDARIES = {
+	left_blue_line_x: (30 + 840 * 0.3438) / DETAILED_RINK_VIEWBOX.width,
+	right_blue_line_x: (30 + 840 * 0.6562) / DETAILED_RINK_VIEWBOX.width,
+};
+
+/** Geometry aligned with C1_D1 / paintable detailed rink visuals. */
 function getDetailedRinkMetrics() {
 	const rinkX = 30;
 	const rinkY = 40;
@@ -1033,16 +976,18 @@ function getDetailedRinkMetrics() {
 	const goalHalf = goalMouth / 2;
 	const goalDepth = rinkWidth * 0.018;
 	const creaseRadius = rinkHeight * 0.100;
-	const faceoffRadius = rinkHeight * 0.087;
-	const leftZoneFaceoffX = rinkX + rinkWidth * 0.252;
-	const rightZoneFaceoffX = rinkRight - rinkWidth * 0.252;
-	const topFaceoffY = rinkY + rinkHeight * 0.22;
-	const bottomFaceoffY = rinkY + rinkHeight * 0.78;
+	const faceoffRadius = rinkHeight * 0.100;
+	const leftZoneFaceoffX = rinkX + rinkWidth * 0.26;
+	const rightZoneFaceoffX = rinkRight - rinkWidth * 0.26;
+	const topFaceoffY = rinkCenterY - rinkHeight * 0.26;
+	const bottomFaceoffY = rinkCenterY + rinkHeight * 0.26;
+	const neutralOffsetX = rinkWidth * 0.11;
+	const neutralOffsetY = rinkHeight * 0.22;
 	const neutralDots = [
-		{ x: rinkX + rinkWidth * 0.375, y: topFaceoffY },
-		{ x: rinkX + rinkWidth * 0.375, y: bottomFaceoffY },
-		{ x: rinkRight - rinkWidth * 0.375, y: topFaceoffY },
-		{ x: rinkRight - rinkWidth * 0.375, y: bottomFaceoffY },
+		{ x: rinkCenterX - neutralOffsetX, y: rinkCenterY - neutralOffsetY },
+		{ x: rinkCenterX - neutralOffsetX, y: rinkCenterY + neutralOffsetY },
+		{ x: rinkCenterX + neutralOffsetX, y: rinkCenterY - neutralOffsetY },
+		{ x: rinkCenterX + neutralOffsetX, y: rinkCenterY + neutralOffsetY },
 	];
 	return {
 		rinkX,
@@ -1066,6 +1011,82 @@ function getDetailedRinkMetrics() {
 		bottomFaceoffY,
 		neutralDots,
 	};
+}
+
+/** Shared detailed rink markings (900×620). Interaction layers stay outside this base. */
+function DetailedHockeyRinkLayers({
+	overlays,
+	defensiveLabel = "Defensive Zone",
+	offensiveLabel = "Offensive Zone",
+}: {
+	overlays: RinkOverlays;
+	defensiveLabel?: string;
+	offensiveLabel?: string;
+}) {
+	const m = getDetailedRinkMetrics();
+	return (
+		<>
+			<rect x={m.rinkX} y={m.rinkY} width={m.rinkWidth} height={m.rinkHeight} rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
+			<line x1={m.rinkCenterX} y1={m.rinkY + 4} x2={m.rinkCenterX} y2={m.rinkY + m.rinkHeight - 4} stroke="rgba(255,120,120,0.55)" strokeWidth="4" />
+			<line x1={m.leftBlueLineX} y1={m.rinkY + 4} x2={m.leftBlueLineX} y2={m.rinkY + m.rinkHeight - 4} stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+			<line x1={m.rightBlueLineX} y1={m.rinkY + 4} x2={m.rightBlueLineX} y2={m.rinkY + m.rinkHeight - 4} stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+			<circle cx={m.rinkCenterX} cy={m.rinkCenterY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="3" />
+
+			{overlays.faceoffDots && (
+				<>
+					<circle cx={m.leftZoneFaceoffX} cy={m.topFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+					<circle cx={m.leftZoneFaceoffX} cy={m.bottomFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+					<circle cx={m.rightZoneFaceoffX} cy={m.topFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+					<circle cx={m.rightZoneFaceoffX} cy={m.bottomFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+					<circle cx={m.leftZoneFaceoffX} cy={m.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+					<circle cx={m.leftZoneFaceoffX} cy={m.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+					<circle cx={m.rightZoneFaceoffX} cy={m.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+					<circle cx={m.rightZoneFaceoffX} cy={m.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+					{m.neutralDots.map((dot, idx) => (
+						<circle key={`neutral-dot-${idx}`} cx={dot.x} cy={dot.y} r="3.2" fill="rgba(203,213,225,0.78)" />
+					))}
+				</>
+			)}
+
+			{overlays.zones && (
+				<>
+					<line x1={m.leftGoalLineX} y1={m.rinkY + 6} x2={m.leftGoalLineX} y2={m.rinkY + m.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
+					<line x1={m.rightGoalLineX} y1={m.rinkY + 6} x2={m.rightGoalLineX} y2={m.rinkY + m.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
+				</>
+			)}
+
+			{overlays.goals && (
+				<>
+					<line x1={m.leftGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
+					<line x1={m.leftGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY - m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+					<line x1={m.leftGoalLineX} y1={m.rinkCenterY + m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+					<line x1={m.leftGoalLineX - m.goalDepth} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
+					<path d={`M ${m.leftGoalLineX - m.goalDepth} ${m.rinkCenterY - m.goalHalf} L ${m.leftGoalLineX} ${m.rinkCenterY - m.goalHalf} L ${m.leftGoalLineX} ${m.rinkCenterY + m.goalHalf} L ${m.leftGoalLineX - m.goalDepth} ${m.rinkCenterY + m.goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
+
+					<line x1={m.rightGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
+					<line x1={m.rightGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY - m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+					<line x1={m.rightGoalLineX} y1={m.rinkCenterY + m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+					<line x1={m.rightGoalLineX + m.goalDepth} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
+					<path d={`M ${m.rightGoalLineX + m.goalDepth} ${m.rinkCenterY - m.goalHalf} L ${m.rightGoalLineX} ${m.rinkCenterY - m.goalHalf} L ${m.rightGoalLineX} ${m.rinkCenterY + m.goalHalf} L ${m.rightGoalLineX + m.goalDepth} ${m.rinkCenterY + m.goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
+				</>
+			)}
+
+			{overlays.crease && (
+				<>
+					<path d={`M ${m.leftGoalLineX} ${m.rinkCenterY - m.creaseRadius} A ${m.creaseRadius} ${m.creaseRadius} 0 0 1 ${m.leftGoalLineX} ${m.rinkCenterY + m.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
+					<path d={`M ${m.rightGoalLineX} ${m.rinkCenterY - m.creaseRadius} A ${m.creaseRadius} ${m.creaseRadius} 0 0 0 ${m.rightGoalLineX} ${m.rinkCenterY + m.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
+				</>
+			)}
+
+			{overlays.labels && overlays.zones && (
+				<>
+					<text x={m.rinkX + m.rinkWidth * 0.08} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{defensiveLabel}</text>
+					<text x={m.rinkCenterX - 32} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">Neutral Zone</text>
+					<text x={m.rinkRight - m.rinkWidth * 0.26} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{offensiveLabel}</text>
+				</>
+			)}
+		</>
+	);
 }
 
 function buildSegmentZonePath(zone: ConfigurableSegmentZone): string {
@@ -1094,7 +1115,6 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 	const config = drill?.config || {};
 	const mode = String(config?.mode || "segmented_zone_selection");
 	const overlays = normalizeRinkOverlays(mode, config);
-	const metrics = getDetailedRinkMetrics();
 
 	const observationCount = Number(config?.observation_count ?? config?.observationCount ?? 3);
 	const observationsKey = config?.observations_key || "observations";
@@ -1334,48 +1354,7 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 							}}
 						>
 							<svg viewBox="0 0 900 620" role="img" aria-label="Neutral Zone mit auswählbaren Korridoren" style={{ width: "100%", height: "100%", display: "block" }}>
-								<rect x={metrics.rinkX} y={metrics.rinkY} width={metrics.rinkWidth} height={metrics.rinkHeight} rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
-								<line x1={metrics.rinkCenterX} y1={metrics.rinkY + 4} x2={metrics.rinkCenterX} y2={metrics.rinkY + metrics.rinkHeight - 4} stroke="rgba(255,120,120,0.55)" strokeWidth="4" />
-								<line x1={metrics.leftBlueLineX} y1={metrics.rinkY + 4} x2={metrics.leftBlueLineX} y2={metrics.rinkY + metrics.rinkHeight - 4} stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<line x1={metrics.rightBlueLineX} y1={metrics.rinkY + 4} x2={metrics.rightBlueLineX} y2={metrics.rinkY + metrics.rinkHeight - 4} stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<circle cx={metrics.rinkCenterX} cy={metrics.rinkCenterY} r={metrics.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="3" />
-
-								{overlays.faceoffDots && (
-									<>
-										<circle cx={metrics.leftZoneFaceoffX} cy={metrics.topFaceoffY} r={metrics.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={metrics.leftZoneFaceoffX} cy={metrics.bottomFaceoffY} r={metrics.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={metrics.rightZoneFaceoffX} cy={metrics.topFaceoffY} r={metrics.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={metrics.rightZoneFaceoffX} cy={metrics.bottomFaceoffY} r={metrics.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-										<circle cx={metrics.leftZoneFaceoffX} cy={metrics.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										<circle cx={metrics.leftZoneFaceoffX} cy={metrics.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										<circle cx={metrics.rightZoneFaceoffX} cy={metrics.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										<circle cx={metrics.rightZoneFaceoffX} cy={metrics.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-										{metrics.neutralDots.map((dot, idx) => (
-											<circle key={`neutral-dot-${idx}`} cx={dot.x} cy={dot.y} r="3.2" fill="rgba(203,213,225,0.78)" />
-										))}
-									</>
-								)}
-
-								{overlays.zones && (
-									<>
-										<line x1={metrics.leftGoalLineX} y1={metrics.rinkY + 6} x2={metrics.leftGoalLineX} y2={metrics.rinkY + metrics.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-										<line x1={metrics.rightGoalLineX} y1={metrics.rinkY + 6} x2={metrics.rightGoalLineX} y2={metrics.rinkY + metrics.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-									</>
-								)}
-
-								{overlays.goals && (
-									<>
-										<line x1={metrics.leftGoalLineX} y1={metrics.rinkCenterY - metrics.goalHalf} x2={metrics.leftGoalLineX} y2={metrics.rinkCenterY + metrics.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-										<line x1={metrics.rightGoalLineX} y1={metrics.rinkCenterY - metrics.goalHalf} x2={metrics.rightGoalLineX} y2={metrics.rinkCenterY + metrics.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-									</>
-								)}
-
-								{overlays.crease && (
-									<>
-										<path d={`M ${metrics.leftGoalLineX} ${metrics.rinkCenterY - metrics.creaseRadius} A ${metrics.creaseRadius} ${metrics.creaseRadius} 0 0 1 ${metrics.leftGoalLineX} ${metrics.rinkCenterY + metrics.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-										<path d={`M ${metrics.rightGoalLineX} ${metrics.rinkCenterY - metrics.creaseRadius} A ${metrics.creaseRadius} ${metrics.creaseRadius} 0 0 0 ${metrics.rightGoalLineX} ${metrics.rinkCenterY + metrics.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-									</>
-								)}
+								<DetailedHockeyRinkLayers overlays={overlays} />
 
 								{activeGroupZoneIds.map((zoneId: string) => {
 									const zone = zoneMap[zoneId];
@@ -2077,7 +2056,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const isDefensiveStructureMode = rinkMode === "defensive_structure";
 	const isFormationShiftMode = rinkMode === "formation_shift";
 	const isSingleMarkerMode = rinkMode === "single_marker_observation";
-	const usesDetailedRink = isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode;
+	const usesDetailedRink = wantsDetailedHockeyRink(rinkMode, config);
+	const rinkOverlays = normalizeRinkOverlays(usesDetailedRink ? "detailed" : rinkMode, config);
 
 	const observationCount = Number(config?.observation_count || 3);
 	const observationsKey = config?.observations_key || "observations";
@@ -2167,8 +2147,14 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const positionBubbles = Array.isArray(config?.position_bubbles) && config.position_bubbles.length > 0
 		? config.position_bubbles
 		: presetPositionBubbles;
-	const leftBlueLineX = Number(config?.zone_boundaries?.left_blue_line_x ?? 0.291);
-	const rightBlueLineX = Number(config?.zone_boundaries?.right_blue_line_x ?? 0.709);
+	const leftBlueLineX = Number(
+		config?.zone_boundaries?.left_blue_line_x
+		?? (usesDetailedRink ? DETAILED_RINK_ZONE_BOUNDARIES.left_blue_line_x : 0.291),
+	);
+	const rightBlueLineX = Number(
+		config?.zone_boundaries?.right_blue_line_x
+		?? (usesDetailedRink ? DETAILED_RINK_ZONE_BOUNDARIES.right_blue_line_x : 0.709),
+	);
 	const zoneLabels = {
 		defensive: config?.zone_labels?.defensive || "Defensive Zone",
 		neutral: config?.zone_labels?.neutral || "Neutrale Zone",
@@ -3010,44 +2996,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					>
 						{usesDetailedRink ? (
 							<svg viewBox="0 0 900 620" role="img" aria-label="Klickbare Eisfläche" style={{ width: "100%", height: "100%", display: "block" }}>
-								<rect x="30" y="40" width="840" height="540" rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
-								<line x1="450" y1="44" x2="450" y2="576" stroke="rgba(255,120,120,0.55)" strokeWidth="4" />
-								<line x1="318.75" y1="44" x2="318.75" y2="576" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<line x1="581.25" y1="44" x2="581.25" y2="576" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<circle cx="450" cy="310" r="54" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="3" />
-
-								<circle cx="248.4" cy="169.6" r="54" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-								<circle cx="248.4" cy="450.4" r="54" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-								<circle cx="651.6" cy="169.6" r="54" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-								<circle cx="651.6" cy="450.4" r="54" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-
-								<circle cx="248.4" cy="169.6" r="4" fill="rgba(239,68,68,0.92)" />
-								<circle cx="248.4" cy="450.4" r="4" fill="rgba(239,68,68,0.92)" />
-								<circle cx="651.6" cy="169.6" r="4" fill="rgba(239,68,68,0.92)" />
-								<circle cx="651.6" cy="450.4" r="4" fill="rgba(239,68,68,0.92)" />
-
-								<circle cx="357.6" cy="191.2" r="3.2" fill="rgba(203,213,225,0.78)" />
-								<circle cx="357.6" cy="428.8" r="3.2" fill="rgba(203,213,225,0.78)" />
-								<circle cx="542.4" cy="191.2" r="3.2" fill="rgba(203,213,225,0.78)" />
-								<circle cx="542.4" cy="428.8" r="3.2" fill="rgba(203,213,225,0.78)" />
-
-								<line x1="122.4" y1="46" x2="122.4" y2="574" stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-								<line x1="777.6" y1="46" x2="777.6" y2="574" stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-
-								<line x1="122.4" y1="288.94" x2="122.4" y2="331.06" stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-								<line x1="122.4" y1="288.94" x2="107.28" y2="288.94" stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-								<line x1="122.4" y1="331.06" x2="107.28" y2="331.06" stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-								<line x1="107.28" y1="288.94" x2="107.28" y2="331.06" stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
-								<path d="M 107.28 288.94 L 122.4 288.94 L 122.4 331.06 L 107.28 331.06 Z" fill="rgba(148,163,184,0.08)" stroke="none" />
-
-								<line x1="777.6" y1="288.94" x2="777.6" y2="331.06" stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-								<line x1="777.6" y1="288.94" x2="792.72" y2="288.94" stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-								<line x1="777.6" y1="331.06" x2="792.72" y2="331.06" stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-								<line x1="792.72" y1="288.94" x2="792.72" y2="331.06" stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
-								<path d="M 792.72 288.94 L 777.6 288.94 L 777.6 331.06 L 792.72 331.06 Z" fill="rgba(148,163,184,0.08)" stroke="none" />
-
-								<path d="M 122.4 256 A 54 54 0 0 1 122.4 364" fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-								<path d="M 777.6 256 A 54 54 0 0 0 777.6 364" fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
+								<DetailedHockeyRinkLayers overlays={rinkOverlays} />
 							</svg>
 						) : (
 							<svg viewBox="0 0 1100 700" role="img" aria-label="Klickbare Eisfläche" style={{ width: "100%", height: "100%", display: "block" }}>
@@ -3570,13 +3519,29 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 							<strong>Zonen:</strong> {Object.entries(zoneCounts).map(([key, count]) => `${zoneDisplay(key)} (${count})`).join(", ") || "keine"}
 						</div>
 
-						<div style={{ position: "relative", width: "100%", maxWidth: "640px", aspectRatio: "11 / 7", borderRadius: "10px", border: "1px solid rgba(81,145,162,0.38)", overflow: "hidden", background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)", marginBottom: "0.55rem" }}>
-							<svg viewBox="0 0 1100 700" role="img" aria-label="Rink Übersicht" style={{ width: "100%", height: "100%", display: "block" }}>
-								<rect x="28" y="28" width="1044" height="644" rx="78" ry="78" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
-								<line x1="550" y1="34" x2="550" y2="666" stroke="rgba(255,120,120,0.65)" strokeWidth="4" />
-								<line x1="320" y1="34" x2="320" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-							</svg>
+						<div style={{
+							position: "relative",
+							width: "100%",
+							maxWidth: "640px",
+							aspectRatio: usesDetailedRink ? "900 / 620" : "11 / 7",
+							borderRadius: "10px",
+							border: "1px solid rgba(81,145,162,0.38)",
+							overflow: "hidden",
+							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
+							marginBottom: "0.55rem",
+						}}>
+							{usesDetailedRink ? (
+								<svg viewBox="0 0 900 620" role="img" aria-label="Rink Übersicht" style={{ width: "100%", height: "100%", display: "block" }}>
+									<DetailedHockeyRinkLayers overlays={rinkOverlays} />
+								</svg>
+							) : (
+								<svg viewBox="0 0 1100 700" role="img" aria-label="Rink Übersicht" style={{ width: "100%", height: "100%", display: "block" }}>
+									<rect x="28" y="28" width="1044" height="644" rx="78" ry="78" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
+									<line x1="550" y1="34" x2="550" y2="666" stroke="rgba(255,120,120,0.65)" strokeWidth="4" />
+									<line x1="320" y1="34" x2="320" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+									<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+								</svg>
+							)}
 							{observations.map((entry: any, idx: number) => {
 								const loc = entry?.[locationKey];
 								if (!loc) return null;

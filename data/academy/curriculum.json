@@ -3133,6 +3133,19 @@
                   },
                   "learning_hint": "Synthese bedeutet, mehrere einzelne Beobachtungen zu einer vorsichtigen Tendenz zusammenzuführen. Suche nach einer wiederkehrenden Entscheidungslogik, ohne aus einer Session eine dauerhafte Teamidentität abzuleiten."
                 },
+                "miniFeedback": {
+                  "trigger": "onNext",
+                  "oncePerSection": true,
+                  "groups": [
+                    {
+                      "when": {},
+                      "questions": [
+                        "Woran hast du das Entscheidungsprofil des Teams erkannt?"
+                      ],
+                      "hint": "Nenne ein wiederkehrendes Merkmal aus deinen Beobachtungen – zum Beispiel sofortiges Vertikalspiel, bewusste Pucksicherung oder das Nachrücken weiterer Spieler."
+                    }
+                  ]
+                },
                 "config": {
                   "observation_phase": {
                     "title": "Beobachtungsphase",
@@ -3304,6 +3317,16 @@
               "config": {
                 "observation_count": 3,
                 "observations_key": "defensive_pressure_observations",
+                "rink_preset": "detailed",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false,
+                  "defendingSide": "left",
+                  "showDefendingHint": false
+                },
                 "attack_direction_key": "attackDirection",
                 "attack_direction_override_key": "attackDirection",
                 "attack_direction_default": "right",
@@ -3357,8 +3380,8 @@
                   }
                 ],
                 "zone_boundaries": {
-                  "left_blue_line_x": 0.291,
-                  "right_blue_line_x": 0.709
+                  "left_blue_line_x": 0.354,
+                  "right_blue_line_x": 0.646
                 },
                 "zone_labels": {
                   "defensive": "Defensive Zone",
@@ -4095,6 +4118,7 @@
               },
               "config": {
                 "mode": "zone_priority",
+                "rink_preset": "detailed",
                 "observation_count": 3,
                 "observations_key": "observations",
                 "observation_index_key": "observationIndex",

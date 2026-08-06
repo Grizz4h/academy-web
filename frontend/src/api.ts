@@ -517,16 +517,27 @@ export interface RewardApplyResponse {
   reward_events: Array<Record<string, any>>
 }
 
+export interface SceneSource {
+  type: 'drill' | 'manual'
+  session_id?: string | null
+  drill_id?: string | null
+  observation_id?: string | null
+}
+
+export type SceneMetadataStatus = 'incomplete' | 'complete'
+
 export interface SceneMarker {
   id: string
   scene_code?: string
   internal_scene_id?: string
   user: string
-  session_id: string
-  module_id: string
-  drill_id?: string
+  session_id?: string | null
+  module_id?: string | null
+  drill_id?: string | null
   drill_title?: string
-  track_id?: string
+  track_id?: string | null
+  source?: SceneSource
+  metadata_status?: SceneMetadataStatus
   status?: string
   league?: string
   season?: string
@@ -536,6 +547,7 @@ export interface SceneMarker {
   competition_unit_label?: string
   competition_unit_value?: string
   matchday?: string
+  game_date?: string
   team_home?: string
   team_away?: string
   observed_team?: string
@@ -552,14 +564,17 @@ export interface SceneMarker {
   extensions?: Record<string, string>
   extension_labels?: Record<string, string>
   created_at: string
+  updated_at?: string
 }
 
 export interface SceneMarkerCreate {
-  session_id: string
-  module_id: string
-  drill_id?: string
+  session_id?: string | null
+  module_id?: string | null
+  drill_id?: string | null
   drill_title?: string
-  track_id?: string
+  track_id?: string | null
+  source?: SceneSource
+  metadata_status?: SceneMetadataStatus
   status?: string
   overwrite_episode?: boolean
   league?: string
@@ -570,6 +585,7 @@ export interface SceneMarkerCreate {
   competition_unit_label?: string
   competition_unit_value?: string
   matchday?: string
+  game_date?: string
   team_home?: string
   team_away?: string
   observed_team?: string
@@ -592,6 +608,22 @@ export interface SceneMarkerUpdate {
   note?: string
   rating?: 1 | 2 | 3 | 4 | 5 | null
   status?: string
+  metadata_status?: SceneMetadataStatus
+  period?: string
+  league?: string
+  season?: string
+  competition_phase?: string
+  competition_phase_label?: string
+  competition_unit_type?: string
+  competition_unit_label?: string
+  competition_unit_value?: string
+  matchday?: string
+  game_date?: string
+  team_home?: string
+  team_away?: string
+  observed_team?: string
+  observed_team_id?: string
+  observed_team_name?: string
   episode_season?: string
   episode_number?: string
   season_code?: string
@@ -1109,7 +1141,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload),
     })
-    if (!res.ok) throw new Error('Failed to create scene marker')
+    if (!res.ok) throw await readApiError(res, 'Failed to create scene marker')
     return res.json()
   },
 
@@ -1124,6 +1156,7 @@ export const api = {
     competition_unit_type?: string
     competition_unit_value?: string
     episode_season?: string
+    source_type?: string
   }): Promise<{ scenes: SceneMarker[] }> => {
     const qs = new URLSearchParams()
     if (params?.league) qs.append('league', params.league)
@@ -1136,6 +1169,7 @@ export const api = {
     if (params?.competition_unit_type) qs.append('competition_unit_type', params.competition_unit_type)
     if (params?.competition_unit_value) qs.append('competition_unit_value', params.competition_unit_value)
     if (params?.episode_season) qs.append('episode_season', params.episode_season)
+    if (params?.source_type) qs.append('source_type', params.source_type)
     const query = qs.toString() ? `?${qs.toString()}` : ''
     const res = await fetch(buildUrl(`/scenes${query}`), {
       headers: { ...authHeaders() },

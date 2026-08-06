@@ -280,11 +280,74 @@ export default function SessionPage() {
   })
 
   // Microfeedback-Guard: Nur für P1/P2/P3, wenn session.microfeedback[phase].done !== true
-  function needsMicrofeedback(phase: string, sessionObj: any, drill: any): boolean {
+  // und eine sichtbare Frage aus der Drill-Konfiguration auflösbar ist.
+  function resolveMicrofeedbackContent(drill: any, answers: any): { question: string; hint: string | null; contextSummary: string | null } | null {
+    if (!drill || !(drill as any).miniFeedback) return null
+    const groups = (drill as any).miniFeedback.groups
+    if (!Array.isArray(groups) || groups.length === 0) return null
+
+    const sampleKey = (drill as any)?.config?.sample_key
+    const samples = sampleKey && Array.isArray(answers?.[sampleKey])
+      ? answers[sampleKey]
+      : (Array.isArray(answers?.support_samples) ? answers.support_samples : [])
+    const selectedIdx = Number.isInteger(answers?.selected_sample_index)
+      ? answers.selected_sample_index
+      : (samples.length > 0 ? samples.length - 1 : -1)
+    const selectedSample = selectedIdx >= 0 && selectedIdx < samples.length ? samples[selectedIdx] : null
+
+    const resolveWhenValue = (key: string): any => {
+      if (key.startsWith('sample.') && selectedSample) {
+        return selectedSample[key.slice('sample.'.length)]
+      }
+      if (answers?.[key] !== undefined) {
+        return answers[key]
+      }
+      if (selectedSample && (selectedSample as any)[key] !== undefined) {
+        return (selectedSample as any)[key]
+      }
+      return undefined
+    }
+
+    const pickFromGroup = (group: any) => {
+      const questions = Array.isArray(group?.questions)
+        ? group.questions.map((q: any) => String(q || '').trim()).filter(Boolean)
+        : []
+      if (questions.length === 0) return null
+      const hintRaw = group?.hint || group?.helper_text || group?.help
+      const hint = typeof hintRaw === 'string' && hintRaw.trim() ? hintRaw.trim() : null
+      const contextSummary = typeof group?.context_summary === 'string' && group.context_summary.trim()
+        ? group.context_summary.trim()
+        : null
+      return { question: questions[0], hint, contextSummary }
+    }
+
+    for (const group of groups) {
+      let match = true
+      const when = group?.when && typeof group.when === 'object' ? group.when : {}
+      for (const key in when) {
+        if (resolveWhenValue(key) !== when[key]) {
+          match = false
+          break
+        }
+      }
+      if (!match) continue
+      const picked = pickFromGroup(group)
+      if (picked) return picked
+    }
+
+    for (const group of groups) {
+      const picked = pickFromGroup(group)
+      if (picked) return picked
+    }
+
+    return null
+  }
+
+  function needsMicrofeedback(phase: string, sessionObj: any, drill: any, answers?: any): boolean {
     if (!['P1', 'P2', 'P3'].includes(phase)) return false
     if (!drill) return false
     if (sessionObj?.microfeedback?.[phase]?.done === true) return false
-    return true
+    return !!resolveMicrofeedbackContent(drill, answers || {})
   }
 
   useEffect(() => {
@@ -551,10 +614,10 @@ export default function SessionPage() {
       // 2) Session frisch holen
       const sessionFresh = await queryClient.fetchQuery({ queryKey: ["session", id] })
       const sessionObj = sessionFresh as any
-      const drill = sessionObj?.drills?.[0]
+      const drill = activeDrill || sessionObj?.drills?.[0]
 
       // 3) Microfeedback-Guard
-      if (needsMicrofeedback(phase, sessionObj, drill)) {
+      if (needsMicrofeedback(phase, sessionObj, drill, answersByPhase[currentPhase])) {
         // FIX: microPhase ist die Phase, für die Feedback abgegeben wird
         setMicroPhase(phase)
         // nextPhase ist wohin wir danach wechseln
@@ -819,56 +882,10 @@ export default function SessionPage() {
       {/* Microfeedback Modal */}
       {showMicroModal && (() => {
         const drill = activeDrill
-        let question = 'Bitte gib ein kurzes Feedback.'
-        let contextSummary: string | null = null
-        if (drill && (drill as any).miniFeedback && Array.isArray((drill as any).miniFeedback.groups) && (drill as any).miniFeedback.groups.length > 0) {
-          const answers = answersByPhase[currentPhase] || {}
-          const sampleKey = (drill as any)?.config?.sample_key
-          const samples = sampleKey && Array.isArray((answers as any)[sampleKey])
-            ? (answers as any)[sampleKey]
-            : (Array.isArray((answers as any).support_samples) ? (answers as any).support_samples : [])
-          const selectedIdx = Number.isInteger((answers as any).selected_sample_index)
-            ? (answers as any).selected_sample_index
-            : (samples.length > 0 ? samples.length - 1 : -1)
-          const selectedSample = selectedIdx >= 0 && selectedIdx < samples.length ? samples[selectedIdx] : null
+        const resolved = resolveMicrofeedbackContent(drill, answersByPhase[currentPhase] || {})
+        if (!resolved) return null
 
-          const resolveWhenValue = (key: string): any => {
-            if (key.startsWith('sample.') && selectedSample) {
-              return selectedSample[key.slice('sample.'.length)]
-            }
-            if ((answers as any)[key] !== undefined) {
-              return (answers as any)[key]
-            }
-            if (selectedSample && (selectedSample as any)[key] !== undefined) {
-              return (selectedSample as any)[key]
-            }
-            return undefined
-          }
-
-          let found = false
-          for (const group of (drill as any).miniFeedback.groups) {
-            let match = true
-            for (const key in group.when) {
-              if (resolveWhenValue(key) !== group.when[key]) {
-                match = false
-                break
-              }
-            }
-            if (match && group.questions && group.questions.length > 0) {
-              contextSummary = group.context_summary || null
-              question = group.questions[0]
-              found = true
-              break
-            }
-          }
-          if (!found) {
-            const firstGroup = (drill as any).miniFeedback.groups[0]
-            if (firstGroup && firstGroup.questions && firstGroup.questions.length > 0) {
-              contextSummary = firstGroup.context_summary || null
-              question = firstGroup.questions[0]
-            }
-          }
-        }
+        const { question, hint, contextSummary } = resolved
 
         return (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -880,12 +897,19 @@ export default function SessionPage() {
                   {contextSummary}
                 </div>
               )}
-              <div style={{ marginBottom: '1.2rem', fontWeight: 500, textAlign: 'center', color: '#b6e2f7' }}>{question}</div>
+              <div style={{ marginBottom: hint ? '0.45rem' : '1.2rem', fontWeight: 600, textAlign: 'center', color: '#b6e2f7', fontSize: '1.02rem', lineHeight: 1.4 }}>
+                {question}
+              </div>
+              {hint && (
+                <p style={{ marginTop: 0, marginBottom: '1.1rem', textAlign: 'center', color: 'rgba(255,255,255,0.72)', fontSize: '0.88rem', lineHeight: 1.45 }}>
+                  {hint}
+                </p>
+              )}
 
               <textarea
                 value={microText}
                 onChange={e => setMicroText(e.target.value)}
-                placeholder="z. B. 'Ich habe zu spät auf die Hüfte geachtet und war oft beim Puck.'"
+                placeholder="Kurze Antwort …"
                 rows={3}
                 style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc', marginBottom: 8 }}
               />

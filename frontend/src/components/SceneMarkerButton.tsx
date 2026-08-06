@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { api, type Session, type Drill } from '../api'
+import { formatGameTimeInput } from '../utils/sceneHelpers'
 
 interface SceneMarkerExtension {
   type: 'select'
@@ -74,6 +75,12 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         track_id: session.module_id,
         drill_id: activeDrill?.id,
         drill_title: activeDrill?.title,
+        source: {
+          type: 'drill',
+          session_id: session.id,
+          drill_id: activeDrill?.id || null,
+        },
+        metadata_status: 'complete',
         league: session.game_info?.league,
         season: session.game_info?.season,
         competition_phase: session.game_info?.competition_phase,
@@ -200,20 +207,13 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             <input
               ref={inputRef}
               type="text"
+              inputMode="numeric"
+              autoComplete="off"
               value={gameTime}
               onChange={e => {
-                // Auto-format: digits only -> insert colon after first 1-2 digits
-                const raw = e.target.value.replace(/[^\d:]/g, '')
-                // Strip all colons, work with pure digits
-                const digits = raw.replace(/:/g, '').slice(0, 4)
-                let formatted = digits
-                if (digits.length > 2) {
-                  formatted = digits.slice(0, digits.length - 2) + ':' + digits.slice(-2)
-                }
-                setGameTime(formatted.slice(0, 5))
+                setGameTime(formatGameTimeInput(e.target.value))
               }}
               placeholder="13:42"
-              maxLength={5}
               style={{
                 width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
                 border: error ? '1.5px solid #f87171' : '1.5px solid #334155',
