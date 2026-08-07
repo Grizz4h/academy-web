@@ -419,7 +419,10 @@ const DETAILED_HOCKEY_RINK_PRESET: Partial<RinkOverlays> = {
 function wantsDetailedHockeyRink(mode: string, config: any): boolean {
 	const presetName = String(config?.rink_preset || config?.rinkPreset || "");
 	if (presetName === "detailed") return true;
-	return mode === "defensive_structure" || mode === "formation_shift" || mode === "single_marker_observation";
+	return mode === "defensive_structure"
+		|| mode === "formation_shift"
+		|| mode === "single_marker_observation"
+		|| mode === "directional_path_observation";
 }
 
 function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
@@ -488,6 +491,81 @@ function buildSvgPath(points: PaintPoint[], width: number, height: number): stri
 	if (rest.length === 0) return start;
 	const segments = rest.map((point) => `L ${Math.round(point.x * width)} ${Math.round(point.y * height)}`).join(" ");
 	return `${start} ${segments}`;
+}
+
+/** Generic two-point connection overlay (arrow or line) in normalized rink space. */
+function DirectionalPathConnection({
+	start,
+	end,
+	viewWidth,
+	viewHeight,
+	connectionType = "arrow",
+}: {
+	start: { x: number; y: number };
+	end: { x: number; y: number };
+	viewWidth: number;
+	viewHeight: number;
+	connectionType?: string;
+}) {
+	const x1 = start.x * viewWidth;
+	const y1 = start.y * viewHeight;
+	const x2 = end.x * viewWidth;
+	const y2 = end.y * viewHeight;
+	const dx = x2 - x1;
+	const dy = y2 - y1;
+	const len = Math.hypot(dx, dy);
+	if (len < 2) return null;
+
+	const showArrow = connectionType !== "line";
+	const markerClearance = Math.min(26, len * 0.28);
+	const ux = dx / len;
+	const uy = dy / len;
+	const sx = x1 + ux * markerClearance;
+	const sy = y1 + uy * markerClearance;
+	const tipInset = showArrow ? Math.min(20, len * 0.2) : markerClearance;
+	const ex = x2 - ux * tipInset;
+	const ey = y2 - uy * tipInset;
+
+	const headLen = Math.min(18, Math.max(11, len * 0.11));
+	const headWidth = headLen * 0.55;
+	const angle = Math.atan2(dy, dx);
+	const tipX = x2 - ux * (markerClearance * 0.25);
+	const tipY = y2 - uy * (markerClearance * 0.25);
+	const leftX = tipX - headLen * Math.cos(angle) + headWidth * Math.sin(angle);
+	const leftY = tipY - headLen * Math.sin(angle) - headWidth * Math.cos(angle);
+	const rightX = tipX - headLen * Math.cos(angle) - headWidth * Math.sin(angle);
+	const rightY = tipY - headLen * Math.sin(angle) + headWidth * Math.cos(angle);
+
+	return (
+		<svg
+			viewBox={`0 0 ${viewWidth} ${viewHeight}`}
+			aria-hidden="true"
+			style={{
+				position: "absolute",
+				inset: 0,
+				width: "100%",
+				height: "100%",
+				pointerEvents: "none",
+				overflow: "visible",
+			}}
+		>
+			<line
+				x1={sx}
+				y1={sy}
+				x2={ex}
+				y2={ey}
+				stroke="rgba(143,240,221,0.85)"
+				strokeWidth={3}
+				strokeLinecap="round"
+			/>
+			{showArrow && (
+				<polygon
+					points={`${tipX},${tipY} ${leftX},${leftY} ${rightX},${rightY}`}
+					fill="rgba(143,240,221,0.9)"
+				/>
+			)}
+		</svg>
+	);
 }
 
 function mergePointIntoLayer(annotations: PaintAnnotation[], layerId: string, point: PaintPoint): PaintAnnotation[] {
@@ -2056,6 +2134,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const isDefensiveStructureMode = rinkMode === "defensive_structure";
 	const isFormationShiftMode = rinkMode === "formation_shift";
 	const isSingleMarkerMode = rinkMode === "single_marker_observation";
+	const isDirectionalPathMode = rinkMode === "directional_path_observation";
 	const usesDetailedRink = wantsDetailedHockeyRink(rinkMode, config);
 	const rinkOverlays = normalizeRinkOverlays(usesDetailedRink ? "detailed" : rinkMode, config);
 
@@ -2090,6 +2169,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const keyStructureElementKey = keyStructureElementConfig?.key || "keyStructureElement";
 	const keyStructureElementLabel = keyStructureElementConfig?.label || "Welcher Teil der Struktur war entscheidend?";
 	const keyStructureElementOptions = Array.isArray(keyStructureElementConfig?.options) ? keyStructureElementConfig.options : [];
+	const keyStructureElementRequired = keyStructureElementConfig?.required === true;
 	const completionQuestionConfig = config?.completion_question || {};
 	const completionQuestionKey = completionQuestionConfig?.key || "defensiveStructureSummary";
 	const completionQuestionLabel = completionQuestionConfig?.label || "Welche Struktur zeigte die Defensive?";
@@ -2141,6 +2221,30 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const markerRequired = primaryMarker?.required !== false;
 	const allowMarkerReposition = config?.allow_reposition !== false && config?.allowReposition !== false;
 
+	const pathKey = config?.path_key || config?.direction_path_key || "directionPath";
+	const pathPointsConfig = Array.isArray(config?.points) && config.points.length >= 2
+		? config.points
+		: [
+			{ id: "start", label: "Ausgangspunkt", required: true },
+			{ id: "end", label: "Zielrichtung", required: true },
+		];
+	const pathStartId = String(pathPointsConfig[0]?.id || "start");
+	const pathEndId = String(pathPointsConfig[1]?.id || "end");
+	const pathStartLabel = String(pathPointsConfig[0]?.label || "Ausgangspunkt");
+	const pathEndLabel = String(pathPointsConfig[1]?.label || "Zielrichtung");
+	const pathStartDragId = `path_${pathStartId}`;
+	const pathEndDragId = `path_${pathEndId}`;
+	const connectionType = String(config?.connection?.type || config?.connection_type || "arrow");
+	const pathStepLabels = {
+		set_start: String(config?.path_step_labels?.set_start || config?.path_step_labels?.setStart || `1/2 ${pathStartLabel} setzen`),
+		set_end: String(config?.path_step_labels?.set_end || config?.path_step_labels?.setEnd || `2/2 ${pathEndLabel} setzen`),
+		complete: String(config?.path_step_labels?.complete || "Pfad gesetzt"),
+	};
+	const resetPathLabel = String(config?.reset_path_label || config?.resetPathLabel || (isDirectionalPathMode ? "Pfad zurücksetzen" : "Zurücksetzen"));
+	const allowPathReposition = config?.allow_reposition !== false && config?.allowReposition !== false;
+	const rinkViewWidth = usesDetailedRink ? 900 : 1100;
+	const rinkViewHeight = usesDetailedRink ? 620 : 700;
+
 	const missions = Array.isArray(config?.missions) ? config.missions : [];
 	const formationPreset = String(config?.formation_preset || config?.formationPreset || "5v5_default");
 	const presetPositionBubbles = getFormationPreset(formationPreset);
@@ -2161,10 +2265,16 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		offensive: config?.zone_labels?.offensive || "Offensive Zone",
 	};
 
-	const selectionLabel = config?.selection_label || (isSingleMarkerMode ? "1. Wo entstand der Trigger?" : "Ziehe eine Positions-Bubble an den Zugriffsort");
+	const selectionLabel = config?.selection_label || (isSingleMarkerMode
+		? "1. Wo entstand der Trigger?"
+		: isDirectionalPathMode
+			? "1. Lenkungsrichtung markieren"
+			: "Ziehe eine Positions-Bubble an den Zugriffsort");
 	const locationLabel = config?.location_label || (isSingleMarkerMode
 		? "Setze den Marker an den Ort, an dem die Defensive von kontrollierter Raumverteidigung zu aktivem Zugriff übergeht."
-		: "Bubble bewegen = Position und Zugriffsort in einer Aktion");
+		: isDirectionalPathMode
+			? "Setze zuerst den Ausgangspunkt des Puckführers und danach den Punkt, in den die Defensive den Angriff lenkt."
+			: "Bubble bewegen = Position und Zugriffsort in einer Aktion");
 	const markerHeading = config?.marker_heading || selectionLabel;
 	const markerHint = config?.marker_hint || locationLabel;
 	const observeHint = config?.observe_hint || "Sobald du eine passende Situation entdeckt hast, erfasse deine Beobachtung.";
@@ -2186,9 +2296,13 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		title: `Mission ${currentIndex + 1} von ${observationCount}`,
 		prompt: isSingleMarkerMode
 			? "Markiere den Ort, an dem aktiver defensiver Druck entsteht."
+			: isDirectionalPathMode
+				? "Markiere, von wo der Angriff startet und wohin er gelenkt wird."
 			: "Finde eine passende Situation mit erstem defensivem Druck.",
 		hint: isSingleMarkerMode
 			? "Tippe auf den Rink, um den Trigger-Marker zu setzen."
+			: isDirectionalPathMode
+				? "Erster Tap = Ausgangspunkt, zweiter Tap = Zielrichtung."
 			: "Ziehe die passende Positions-Bubble direkt an den Zugriffsort.",
 	};
 
@@ -2204,6 +2318,9 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const draftStructuralOutcome = draft[structuralOutcomeKey] || "";
 	const draftMovementTrigger = draft[movementTriggerKey] || "";
 	const draftObservationNote = draft[observationNoteKey] || "";
+	const draftPathRaw = draft[pathKey] || {};
+	const draftPathStart = draftPathRaw?.[pathStartId] || draftPathRaw?.start || null;
+	const draftPathEnd = draftPathRaw?.[pathEndId] || draftPathRaw?.end || null;
 	const activeFormationState = draft[activeFormationStateKey] === afterStateKey ? afterStateKey : beforeStateKey;
 	const draftObservationFieldValues = Object.fromEntries(
 		observationFields.map((field: any) => {
@@ -2312,6 +2429,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	};
 
 	const selectedLocation = normalizeLocation(selectedLocationRaw);
+	const selectedPathStart = normalizeLocation(draftPathStart);
+	const selectedPathEnd = normalizeLocation(draftPathEnd);
 
 	const baseFormationByRole: Record<string, { x: number; y: number }> = useMemo(
 		() => Object.fromEntries(
@@ -2392,6 +2511,10 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			__draggable_rink_observation_draft: {
 				[initiatorKey]: "",
 				[locationKey]: null,
+				[pathKey]: {
+					[pathStartId]: null,
+					[pathEndId]: null,
+				},
 				[playerPositionsKey]: {},
 				[formationStatesKey]: {
 					[beforeStateKey]: {},
@@ -2465,6 +2588,19 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				updateDraft({
 					[locationKey]: dragPoint,
 				});
+			} else if (isDirectionalPathMode) {
+				const nextPath = {
+					[pathStartId]: selectedPathStart,
+					[pathEndId]: selectedPathEnd,
+				};
+				if (draggingPosition === pathStartDragId) {
+					nextPath[pathStartId] = dragPoint;
+				} else if (draggingPosition === pathEndDragId) {
+					nextPath[pathEndId] = dragPoint;
+				}
+				updateDraft({
+					[pathKey]: nextPath,
+				});
 			} else {
 				updateDraft({
 					[initiatorKey]: draggingPosition,
@@ -2483,7 +2619,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 			window.removeEventListener("pointermove", onPointerMove);
 			window.removeEventListener("pointerup", onPointerUp);
 		};
-	}, [dragPoint, draggingPosition, dragPointerType, isDefensiveStructureMode, isFormationShiftMode, isSingleMarkerMode, localPlayerPositions, localFormationStates, activeFormationState]);
+	}, [dragPoint, draggingPosition, dragPointerType, isDefensiveStructureMode, isFormationShiftMode, isSingleMarkerMode, isDirectionalPathMode, localPlayerPositions, localFormationStates, activeFormationState, selectedPathStart, selectedPathEnd, pathStartDragId, pathEndDragId, pathStartId, pathEndId, pathKey]);
 
 	useEffect(() => {
 		if (!draggingPosition) return;
@@ -2516,6 +2652,12 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				? ((localFormationStates[activeFormationState] || {})[positionValue] || startByPosition[positionValue])
 			: isSingleMarkerMode
 				? (selectedLocation || null)
+			: isDirectionalPathMode
+				? (positionValue === pathStartDragId
+					? selectedPathStart
+					: positionValue === pathEndDragId
+						? selectedPathEnd
+						: null)
 			: (draft[initiatorKey] === positionValue && draft[locationKey]
 				? draft[locationKey]
 				: startByPosition[positionValue]);
@@ -2532,6 +2674,46 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		if (!point) return;
 		if (selectedLocation && !allowMarkerReposition) return;
 		updateDraft({ [locationKey]: point });
+	};
+
+	const placeDirectionalPathPoint = (event: any) => {
+		if (!isDirectionalPathMode || isComplete) return;
+		if ((event.target as HTMLElement)?.closest?.("button")) return;
+		if (event.pointerType === "touch" || event.pointerType === "pen") {
+			event.preventDefault?.();
+		}
+		const point = locationFromPointer(event.nativeEvent || event);
+		if (!point) return;
+
+		if (!selectedPathStart) {
+			updateDraft({
+				[pathKey]: {
+					[pathStartId]: point,
+					[pathEndId]: selectedPathEnd,
+				},
+			});
+			return;
+		}
+
+		if (!selectedPathEnd) {
+			updateDraft({
+				[pathKey]: {
+					[pathStartId]: selectedPathStart,
+					[pathEndId]: point,
+				},
+			});
+		}
+		// Both points set: reposition only via drag (MVP).
+	};
+
+	const resetDirectionalPath = () => {
+		if (!isDirectionalPathMode) return;
+		updateDraft({
+			[pathKey]: {
+				[pathStartId]: null,
+				[pathEndId]: null,
+			},
+		});
 	};
 
 	const setActiveFormationState = (nextState: string) => {
@@ -2608,18 +2790,81 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const markerLocationEffective = draggingPosition === markerId && dragPoint
 		? dragPoint
 		: selectedLocation;
+	const pathStartEffective = draggingPosition === pathStartDragId && dragPoint
+		? dragPoint
+		: selectedPathStart;
+	const pathEndEffective = draggingPosition === pathEndDragId && dragPoint
+		? dragPoint
+		: selectedPathEnd;
+	const pathPlacementStatus = !pathStartEffective
+		? "set_start"
+		: !pathEndEffective
+			? "set_end"
+			: "complete";
 	const canSaveSingleMarker = (!markerRequired || !!markerLocationEffective)
+		&& requiredObservationFieldsFilled;
+	const canSaveDirectionalPath = !!pathStartEffective
+		&& !!pathEndEffective
 		&& requiredObservationFieldsFilled;
 	const canSave = isFormationShiftMode
 		? canSaveFormationShift
 		: isDefensiveStructureMode
-		? (allPlayersPositioned && !!draftStructureRating && !!draftStructuralFunction)
+		? (allPlayersPositioned
+			&& !!draftStructureRating
+			&& !!draftStructuralFunction
+			&& (!keyStructureElementRequired || !!draftKeyStructureElement))
 		: isSingleMarkerMode
 		? canSaveSingleMarker
+		: isDirectionalPathMode
+		? canSaveDirectionalPath
 		: movedEnough;
 
 	const onSaveObservation = () => {
 		if (!canSave || isComplete) return;
+
+		if (isDirectionalPathMode) {
+			const nextObservation: Record<string, any> = {
+				[observationIndexKey]: currentIndex + 1,
+				[pathKey]: {
+					[pathStartId]: pathStartEffective
+						? {
+							x: Number(pathStartEffective.x.toFixed(4)),
+							y: Number(pathStartEffective.y.toFixed(4)),
+						}
+						: null,
+					[pathEndId]: pathEndEffective
+						? {
+							x: Number(pathEndEffective.x.toFixed(4)),
+							y: Number(pathEndEffective.y.toFixed(4)),
+						}
+						: null,
+				},
+				[observationNoteKey]: draftObservationNote.trim() || "",
+				[createdAtKey]: new Date().toISOString(),
+			};
+			observationFields.forEach((field: any) => {
+				const key = String(field?.key || "");
+				if (!key) return;
+				nextObservation[key] = draftObservationFieldValues[key] || "";
+			});
+
+			setAnswers({
+				...safeAnswers,
+				[observationsKey]: [...observations, nextObservation],
+				__draggable_rink_observation_draft: {
+					[pathKey]: {
+						[pathStartId]: null,
+						[pathEndId]: null,
+					},
+					[observationNoteKey]: "",
+					...emptyObservationFieldDraft,
+				},
+			});
+
+			setFlashMessage(savedFeedbackTemplate.replace("{index}", String(currentIndex + 1)));
+			window.setTimeout(() => setFlashMessage(""), 1200);
+			return;
+		}
 
 		if (isSingleMarkerMode) {
 			const nextObservation: Record<string, any> = {
@@ -2837,7 +3082,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{observeHint}</p>
 
-					{!(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode) && (
+					{!(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) && (
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem", alignItems: "center", marginBottom: "0.45rem" }}>
 						<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.76)" }}>
 							Angriffsrichtung: <strong>{attackDirection === "right" ? "nach rechts" : "nach links"}</strong> {isDirectionOverrideActive ? "(manuell)" : "(auto aus Session)"}
@@ -2970,15 +3215,23 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					)}
 
 					<div style={{ marginBottom: "0.45rem" }}>
-						<label style={{ display: "block", marginBottom: "0.22rem", fontWeight: 600 }}>{isSingleMarkerMode ? markerHeading : selectionLabel}</label>
-						<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>{isSingleMarkerMode ? markerHint : locationLabel}</p>
+						<label style={{ display: "block", marginBottom: "0.22rem", fontWeight: 600 }}>
+							{(isSingleMarkerMode || isDirectionalPathMode) ? markerHeading : selectionLabel}
+						</label>
+						<p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>
+							{(isSingleMarkerMode || isDirectionalPathMode) ? markerHint : locationLabel}
+						</p>
 					</div>
 
 					<div className="interaction-surface">
 						<div
 							className={`rink-wrapper rink-interaction-surface${draggingPosition ? " is-interacting" : ""}`}
 						ref={rinkRef}
-						onPointerDown={isSingleMarkerMode ? placeSingleMarker : undefined}
+						onPointerDown={isSingleMarkerMode
+							? placeSingleMarker
+							: isDirectionalPathMode
+								? placeDirectionalPathPoint
+								: undefined}
 						style={{
 							position: "relative",
 							width: "100%",
@@ -2989,7 +3242,9 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 							overflow: "hidden",
 							background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
 							marginBottom: "0.55rem",
-							cursor: draggingPosition ? "grabbing" : (isSingleMarkerMode ? "crosshair" : "default"),
+							cursor: draggingPosition
+								? "grabbing"
+								: ((isSingleMarkerMode || isDirectionalPathMode) ? "crosshair" : "default"),
 							touchAction: draggingPosition ? "none" : "manipulation",
 							overscrollBehavior: draggingPosition ? "contain" : "auto",
 						}}
@@ -3006,6 +3261,16 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
 								<circle cx="550" cy="350" r="74" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
 							</svg>
+						)}
+
+						{isDirectionalPathMode && pathStartEffective && pathEndEffective && (
+							<DirectionalPathConnection
+								start={pathStartEffective}
+								end={pathEndEffective}
+								viewWidth={rinkViewWidth}
+								viewHeight={rinkViewHeight}
+								connectionType={connectionType}
+							/>
 						)}
 
 						{isSingleMarkerMode ? (
@@ -3043,6 +3308,79 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									{markerLabel}
 								</button>
 							) : null
+						) : isDirectionalPathMode ? (
+							<>
+								{pathStartEffective && (
+									<button
+										key={pathStartDragId}
+										type="button"
+										onPointerDown={(e) => {
+											if (!allowPathReposition) return;
+											startDrag(pathStartDragId, e);
+										}}
+										draggable={false}
+										aria-label={pathStartLabel}
+										style={{
+											position: "absolute",
+											left: `${Number(pathStartEffective.x) * 100}%`,
+											top: `${Number(pathStartEffective.y) * 100}%`,
+											transform: "translate(-50%, -50%)",
+											minWidth: "46px",
+											height: "46px",
+											padding: "0 0.55rem",
+											borderRadius: "999px",
+											border: "2px solid #99f6e4",
+											background: "rgba(13,148,136,0.94)",
+											color: "#f7f7ff",
+											fontWeight: 700,
+											fontSize: "0.78rem",
+											cursor: allowPathReposition ? (draggingPosition === pathStartDragId ? "grabbing" : "grab") : "default",
+											touchAction: "none",
+											userSelect: "none",
+											WebkitUserSelect: "none",
+											boxShadow: "0 0 0 3px rgba(20,184,166,0.24)",
+											zIndex: 2,
+										}}
+									>
+										{pathStartLabel}
+									</button>
+								)}
+								{pathEndEffective && (
+									<button
+										key={pathEndDragId}
+										type="button"
+										onPointerDown={(e) => {
+											if (!allowPathReposition) return;
+											startDrag(pathEndDragId, e);
+										}}
+										draggable={false}
+										aria-label={pathEndLabel}
+										style={{
+											position: "absolute",
+											left: `${Number(pathEndEffective.x) * 100}%`,
+											top: `${Number(pathEndEffective.y) * 100}%`,
+											transform: "translate(-50%, -50%)",
+											minWidth: "46px",
+											height: "46px",
+											padding: "0 0.55rem",
+											borderRadius: "999px",
+											border: "2px solid #fde68a",
+											background: "rgba(180,83,9,0.92)",
+											color: "#fffbeb",
+											fontWeight: 700,
+											fontSize: "0.78rem",
+											cursor: allowPathReposition ? (draggingPosition === pathEndDragId ? "grabbing" : "grab") : "default",
+											touchAction: "none",
+											userSelect: "none",
+											WebkitUserSelect: "none",
+											boxShadow: "0 0 0 3px rgba(251,191,36,0.22)",
+											zIndex: 2,
+										}}
+									>
+										{pathEndLabel}
+									</button>
+								)}
+							</>
 						) : positionBubbles.map((bubble: any) => {
 							const isActive = (isDefensiveStructureMode || isFormationShiftMode)
 								? draggingPosition === bubble.value
@@ -3093,7 +3431,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.5rem" }}>
 						<button
 							type="button"
-							onClick={clearDraft}
+							onClick={isDirectionalPathMode ? resetDirectionalPath : clearDraft}
 							style={{
 								padding: "0.28rem 0.55rem",
 								borderRadius: "999px",
@@ -3104,7 +3442,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								cursor: "pointer",
 							}}
 						>
-							Zurücksetzen
+							{resetPathLabel}
 						</button>
 					</div>
 
@@ -3128,7 +3466,17 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						</div>
 					)}
 
-					{isSingleMarkerMode && observationFields.map((field: any, fieldIdx: number) => {
+					{isDirectionalPathMode && (
+						<div style={{ marginBottom: "0.5rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+							{pathPlacementStatus === "set_start" && <>{pathStepLabels.set_start}</>}
+							{pathPlacementStatus === "set_end" && <>{pathStepLabels.set_end}</>}
+							{pathPlacementStatus === "complete" && (
+								<>{pathStepLabels.complete} · Ziehe die Marker, um Start oder Ziel anzupassen.</>
+							)}
+						</div>
+					)}
+
+					{(isSingleMarkerMode || isDirectionalPathMode) && observationFields.map((field: any, fieldIdx: number) => {
 						const fieldKey = String(field?.key || `field_${fieldIdx}`);
 						const fieldLabel = String(field?.label || fieldKey);
 						const fieldOptions = Array.isArray(field?.options) ? field.options : [];
@@ -3145,7 +3493,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 											<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
 												<input
 													type="radio"
-													name={`single_marker_field_${fieldKey}`}
+													name={`${isDirectionalPathMode ? "directional_path" : "single_marker"}_field_${fieldKey}`}
 													value={value}
 													checked={draftObservationFieldValues[fieldKey] === value}
 													onChange={() => updateDraft({ [fieldKey]: value })}
@@ -3220,13 +3568,19 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 					{isDefensiveStructureMode && keyStructureElementOptions.length > 0 && (
 						<div style={{ marginBottom: "0.55rem" }}>
-							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{keyStructureElementLabel} <span style={{ fontSize: "0.8rem", fontWeight: 400, color: "rgba(255,255,255,0.62)" }}>(optional)</span></label>
+							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
+								{keyStructureElementLabel}
+								{!keyStructureElementRequired && (
+									<span style={{ fontSize: "0.8rem", fontWeight: 400, color: "rgba(255,255,255,0.62)" }}> (optional)</span>
+								)}
+							</label>
 							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
 								{keyStructureElementOptions.map((opt: any, idx: number) => {
 									const value = typeof opt === "string" ? opt : String(opt?.value || `key_element_${idx}`);
 									const label = typeof opt === "string" ? opt : String(opt?.label || value);
+									const description = typeof opt === "string" ? "" : String(opt?.description || "");
 									return (
-										<label key={value} style={{ display: "flex", alignItems: "center", gap: "0.42rem", fontSize: "0.88rem" }}>
+										<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
 											<input
 												type="radio"
 												name="defensive_key_structure_element"
@@ -3234,7 +3588,10 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 												checked={draftKeyStructureElement === value}
 												onChange={() => updateDraft({ [keyStructureElementKey]: value })}
 											/>
-											<span>{label}</span>
+											<span>
+												<span>{label}</span>
+												{description && <span style={{ display: "block", color: "rgba(255,255,255,0.62)", marginTop: "0.1rem" }}>{description}</span>}
+											</span>
 										</label>
 									);
 								})}
@@ -3322,7 +3679,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						</div>
 					)}
 
-					{!(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode) && (
+					{!(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) && (
 					<div style={{ marginBottom: "0.45rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
 						<div>
 							<strong>{effectivePosition ? findMarkerLabel(effectivePosition) : "Keine Auswahl"}</strong>
@@ -3332,22 +3689,22 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					</div>
 					)}
 
-					{(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || (effectivePosition && effectiveLocation)) && (
-						<details style={{ marginBottom: "0.45rem" }} open={!!((isFormationShiftMode || isSingleMarkerMode) ? draftObservationNote : draftNote)}>
+					{(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode || (effectivePosition && effectiveLocation)) && (
+						<details style={{ marginBottom: "0.45rem" }} open={!!((isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? draftObservationNote : draftNote)}>
 							<summary style={{ cursor: "pointer", fontSize: "0.82rem", color: "#8fd3df" }}>
-								{isSingleMarkerMode ? "Optionale Reflexion" : "Optionale Notiz"}
+								{isSingleMarkerMode || isDefensiveStructureMode || isDirectionalPathMode ? "Optionale Reflexion" : "Optionale Notiz"}
 							</summary>
-							{(isFormationShiftMode || isSingleMarkerMode) && (
+							{(isFormationShiftMode || isSingleMarkerMode || isDefensiveStructureMode || isDirectionalPathMode) && (
 								<p style={{ margin: "0.35rem 0 0", fontSize: "0.82rem", color: "rgba(255,255,255,0.72)" }}>
-									{observationNoteLabel}
+									{(isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? observationNoteLabel : noteLabel}
 								</p>
 							)}
 							<textarea
-								value={(isFormationShiftMode || isSingleMarkerMode) ? draftObservationNote : draftNote}
-								onChange={(e) => updateDraft({ [(isFormationShiftMode || isSingleMarkerMode) ? observationNoteKey : noteKey]: e.target.value })}
-								maxLength={(isFormationShiftMode || isSingleMarkerMode) ? observationNoteMaxChars : noteMaxChars}
-								placeholder={(isFormationShiftMode || isSingleMarkerMode) ? observationNotePlaceholder : notePlaceholder}
-								aria-label={(isFormationShiftMode || isSingleMarkerMode) ? observationNoteLabel : noteLabel}
+								value={(isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? draftObservationNote : draftNote}
+								onChange={(e) => updateDraft({ [(isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? observationNoteKey : noteKey]: e.target.value })}
+								maxLength={(isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? observationNoteMaxChars : noteMaxChars}
+								placeholder={(isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? observationNotePlaceholder : notePlaceholder}
+								aria-label={(isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) ? observationNoteLabel : noteLabel}
 								style={{
 									width: "100%",
 									minHeight: "56px",
@@ -3419,6 +3776,13 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 											const options = Array.isArray(field?.options) ? field.options : [];
 											return ` - ${getOptionLabel(options, entry?.[key] || "-")}`;
 										}).join("")}`
+									: isDirectionalPathMode
+										? `Pfad: ${entry?.[pathKey]?.[pathStartId] && entry?.[pathKey]?.[pathEndId] ? "gesetzt" : "unvollständig"}${observationFields.map((field: any) => {
+											const key = String(field?.key || "");
+											if (!key) return "";
+											const options = Array.isArray(field?.options) ? field.options : [];
+											return ` - ${getOptionLabel(options, entry?.[key] || "-")}`;
+										}).join("")}`
 									: `${findMarkerLabel(entry?.[initiatorKey])} - ${zoneDisplay(entry?.[zoneKey] || "neutral")}`}
 							</div>
 						</div>
@@ -3484,7 +3848,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									</section>
 								)}
 							</>
-						) : isFormationShiftMode || isSingleMarkerMode ? (
+						) : isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode ? (
 							<section style={{ marginTop: "0.45rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
 								<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
 								<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>

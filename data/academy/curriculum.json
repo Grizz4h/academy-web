@@ -5352,184 +5352,1041 @@
             },
             {
               "id": "C2_D2",
-              "title": "Lenkung statt Zugriff",
-              "drill_type": "period_checkin",
-              "description": "Beobachte, wie Angriffe gelenkt werden – nicht wie der Puck erobert wird.",
+              "title": "Wie ist die Defensive gestaffelt?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Rekonstruiere die defensive Fünferstruktur in der Neutral Zone und untersuche ihre Tiefenebenen, Abstände und Breite.",
               "didactics": {
-                "explanation": "Gute Neutral-Zone-Defensive zwingt Gegner in vorhersehbare Räume. Zugriff ist Folge, nicht Ziel.",
+                "explanation": "In der Neutral Zone verteidigen Spieler nicht nur nebeneinander, sondern auf mehreren Tiefenebenen.\n\nEine vordere Ebene beeinflusst den gegnerischen Aufbau. Weitere Spieler schließen Anschlusswege und sichern den Raum vor der eigenen blauen Linie.\n\nBeobachte deshalb nicht nur die Position einzelner Spieler. Entscheidend ist, ob die fünf Spieler über ihre Abstände und ihre Breite eine verbundene Struktur bilden.\n\nPositioniere die Spieler nur ungefähr. Es geht nicht um exaktes Tracking, sondern darum, die grobe Staffelung der Formation sichtbar zu machen.\n\nGeeignet sind kontrollierte Aufbauten mit erkennbarer Neutral-Zone-Ordnung. Weniger geeignet sind offene Konter, ungeordnete Wechsel oder bereits etablierte Defensivzonen-Situationen.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Laufwinkel der ersten Pressingaktion",
-                    "Seitliche oder mittige Lenkung",
-                    "Reaktion der zweiten Linie"
+                    "Welcher Spieler beeinflusst den Puckführer zuerst?",
+                    "Welche Spieler bilden eine weitere Ebene hinter dem ersten Druck?",
+                    "Gibt es noch eine hintere Absicherung vor der eigenen blauen Linie?",
+                    "Wie groß sind die Räume zwischen den defensiven Ebenen?",
+                    "Können die Spieler einander schnell unterstützen oder übernehmen?",
+                    "Ist die Formation zentral verdichtet, breit verteilt oder stark zur Puckseite verschoben?",
+                    "Kann ein einzelner Pass mehrere Verteidiger gleichzeitig überspielen?"
                   ],
                   "how_to_decide": [
-                    "Beobachte nur die Richtung des Angriffs",
-                    "Frage dich: Wohin darf der Gegner spielen?",
-                    "Achte auf kollektive Bewegung"
+                    "Positioniere die fünf Spieler nur ungefähr auf dem Rink.",
+                    "Suche zuerst nach unterschiedlichen Tiefenebenen.",
+                    "Beurteile danach die Abstände zwischen diesen Ebenen.",
+                    "Beschreibe anschließend die Breite der gesamten Formation.",
+                    "Bewerte die Struktur vor dem späteren Ergebnis der Szene.",
+                    "Nutze die Option „nicht klar erkennbar“, wenn keine stabile Staffelung sichtbar ist."
                   ],
                   "ignore": [
-                    "Ob der Puck sofort verloren geht",
-                    "Checks oder Zweikämpfe"
+                    "Perfekte Positionsgenauigkeit",
+                    "Systemnamen und Formationszahlen",
+                    "Den späteren Puckgewinn oder Gegentreffer",
+                    "Einzelne technische Fehler ohne strukturelle Wirkung",
+                    "Die Position des Pucks ohne den Zusammenhang zur gesamten Formation"
                   ]
                 },
-                "learning_hint": "Kontrolle entsteht durch Richtung, nicht durch Tempo."
+                "learning_hint": "Entscheidend sind Ebenen, Abstände und Breite – nicht die perfekte Zuordnung jedes Spielers zu seiner nominalen Position."
               },
-              "config": {
-                "questions": [
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "key": "direction",
-                    "type": "radio",
-                    "label": "Lenkung",
-                    "options": [
-                      "zur Bande",
-                      "zur Mitte",
-                      "keine erkennbare"
+                    "when": {
+                      "layer_depth_summary": "two_layers"
+                    },
+                    "questions": [
+                      "Wodurch blieb die zweite Ebene mit der ersten verbunden?",
+                      "Welche Wirkung hatte die Staffelung auf den gegnerischen Aufbau?"
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Beobachtung",
-                    "max_chars": 1500
+                    "when": {
+                      "layer_depth_summary": "three_layers"
+                    },
+                    "questions": [
+                      "Welche Rolle spielte die hintere Absicherung vor der blauen Linie?",
+                      "Wo entstand die stärkste Verbindung zwischen den Ebenen?"
+                    ]
+                  },
+                  {
+                    "when": {
+                      "layer_depth_summary": "single_flat_layer"
+                    },
+                    "questions": [
+                      "Welche Räume entstanden durch die flache Staffelung?",
+                      "Welche Anpassung hätte mehr Tiefe geschaffen?"
+                    ]
                   }
                 ]
+              },
+              "config": {
+                "mode": "defensive_structure",
+                "observation_count": 3,
+                "observations_key": "layered_structure_observations",
+                "player_positions_key": "playerPositions",
+                "note_key": "observationNote",
+                "note_label": "Woran hast du die Staffelung und Verbindung der Ebenen erkannt?",
+                "note_placeholder": "Optional: kurze Reflexion",
+                "note_max_chars": 600,
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "formation_preset": "5v5_default",
+                "selection_label": "1. Defensive Struktur positionieren",
+                "location_label": "Platziere die fünf Defensivspieler ungefähr so, wie sie zwischen Puck und eigener Zone gestaffelt waren.",
+                "observe_hint": "Sobald du eine klare Neutral-Zone-Struktur erkannt hast, rekonstruiere die Staffelung.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "structure_rating": {
+                  "key": "layerCount",
+                  "label": "Wie viele defensive Tiefenebenen waren erkennbar?",
+                  "options": [
+                    {
+                      "value": "single_flat_layer",
+                      "label": "Eine flache Ebene",
+                      "description": "Mehrere Spieler stehen ungefähr auf derselben Höhe. Eine einzelne Aktion kann dadurch einen großen Teil der Formation gleichzeitig überwinden."
+                    },
+                    {
+                      "value": "two_layers",
+                      "label": "Zwei klare Ebenen",
+                      "description": "Eine erste Gruppe beeinflusst den Aufbau, während eine zweite Ebene den Raum dahinter absichert."
+                    },
+                    {
+                      "value": "three_layers",
+                      "label": "Drei klare Ebenen",
+                      "description": "Eine vordere, eine mittlere und eine hintere Ebene erschweren es dem Gegner, mehrere Verteidiger mit einer einzigen Aktion zu überspielen."
+                    },
+                    {
+                      "value": "changing_layers",
+                      "label": "Wechselhaft",
+                      "description": "Die Anzahl oder Form der Ebenen verändert sich während der Szene deutlich."
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Nicht klar erkennbar",
+                      "description": "Es war keine ausreichend stabile Tiefenstaffelung sichtbar."
+                    }
+                  ]
+                },
+                "structural_function": {
+                  "key": "layerSpacing",
+                  "label": "Wie verbunden waren die defensiven Ebenen?",
+                  "options": [
+                    {
+                      "value": "tightly_connected",
+                      "label": "Eng verbunden",
+                      "description": "Die Abstände sind kurz. Die nächste Ebene kann schnell unterstützen, übernehmen oder einen offenen Raum schließen."
+                    },
+                    {
+                      "value": "balanced_spacing",
+                      "label": "Ausgewogen",
+                      "description": "Die Formation besitzt ausreichend Tiefe, ohne dass große freie Räume zwischen den Ebenen entstehen."
+                    },
+                    {
+                      "value": "too_far_apart",
+                      "label": "Zu weit auseinander",
+                      "description": "Zwischen den Ebenen entstehen Räume, in denen der Gegner den Puck kontrollieren, drehen oder neues Tempo aufnehmen kann."
+                    },
+                    {
+                      "value": "too_compressed",
+                      "label": "Zu eng zusammengedrängt",
+                      "description": "Mehrere Ebenen verlieren ihre Tiefenstaffelung und können mit einer Aktion gemeinsam überspielt werden."
+                    },
+                    {
+                      "value": "changing_spacing",
+                      "label": "Wechselhaft",
+                      "description": "Die Abstände verändern sich während der Szene deutlich und ergeben kein stabiles Muster."
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Nicht klar erkennbar",
+                      "description": "Es war keine ausreichend stabile Abstandsstruktur sichtbar."
+                    }
+                  ]
+                },
+                "key_structure_element": {
+                  "key": "formationWidth",
+                  "required": true,
+                  "label": "Wie kontrollierte die Formation die Breite des Eises?",
+                  "options": [
+                    {
+                      "value": "central_compact",
+                      "label": "Zentral verdichtet",
+                      "description": "Viele Spieler sichern vor allem den Weg durch die Mitte und akzeptieren eher Raum an den Außenbahnen."
+                    },
+                    {
+                      "value": "balanced_width",
+                      "label": "Ausgewogen verteilt",
+                      "description": "Die Formation hält Verbindung zur Mitte und bleibt gleichzeitig in beide Außenrichtungen handlungsfähig."
+                    },
+                    {
+                      "value": "wide_spread",
+                      "label": "Breit aufgefächert",
+                      "description": "Die Spieler decken viel Breite ab, haben dadurch aber größere horizontale Abstände untereinander."
+                    },
+                    {
+                      "value": "puck_side_overload",
+                      "label": "Stark puckseitig verschoben",
+                      "description": "Mehrere Spieler verdichten die Seite des Pucks, während die gegenüberliegende Seite offener bleibt."
+                    },
+                    {
+                      "value": "changing_width",
+                      "label": "Wechselhaft",
+                      "description": "Die Breite verändert sich deutlich mit Puckposition oder gegnerischer Bewegung."
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Nicht klar erkennbar",
+                      "description": "Es war keine ausreichend stabile Breitenstruktur sichtbar."
+                    }
+                  ]
+                },
+                "completion_question": {
+                  "key": "layer_depth_summary",
+                  "label": "Welche Tiefenstaffelung war insgesamt am häufigsten zu sehen?",
+                  "options": [
+                    {
+                      "value": "single_flat_layer",
+                      "label": "Eine flache Ebene"
+                    },
+                    {
+                      "value": "two_layers",
+                      "label": "Zwei klare Ebenen"
+                    },
+                    {
+                      "value": "three_layers",
+                      "label": "Drei klare Ebenen"
+                    },
+                    {
+                      "value": "changing_layers",
+                      "label": "Wechselhaft"
+                    },
+                    {
+                      "value": "unclear",
+                      "label": "Nicht klar erkennbar"
+                    }
+                  ]
+                },
+                "completion_note": {
+                  "key": "layer_structure_reason",
+                  "label": "Woran hast du die wiederkehrende Staffelung der Neutral-Zone-Defensive erkannt?",
+                  "placeholder": "Optional: kurze Begründung",
+                  "max_chars": 600
+                },
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde einen kontrollierten Aufbau und rekonstruiere die defensive Staffelung in der Neutral Zone.",
+                    "hint": "Positioniere alle fünf Spieler ungefähr und beschreibe danach Ebenen, Abstände und Breite."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine weitere Szene und vergleiche die Tiefenstaffelung.",
+                    "hint": "Achte besonders darauf, ob eine zweite oder dritte Ebene den Raum vor der blauen Linie absichert."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene und prüfe, ob Abstände und Breite ein wiederkehrendes Muster zeigen.",
+                    "hint": "Bewerte die Struktur, nicht den späteren Erfolg der Defensivaktion."
+                  }
+                ],
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte weiterhin, wie die Defensive in der Neutral Zone gestaffelt ist und welche Wirkung Ebenen, Abstände und Breite erzeugen."
               }
             },
             {
               "id": "C2_D3",
-              "title": "Abstände zwischen den Linien",
-              "drill_type": "period_checkin",
-              "description": "Erkenne, ob die Neutral-Zone-Staffelung kompakt oder löchrig ist.",
+              "title": "Wohin wird der Angriff gelenkt?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Markiere, von wo der Angriff startet und in welche Richtung die Defensive ihn lenkt. Analysiere anschließend, wodurch diese Lenkung entsteht und was sie bewirkt.",
               "didactics": {
-                "explanation": "Zu große Abstände öffnen Raum für Tempoaufnahmen, zu kleine Abstände öffnen Seitenwechsel.",
+                "explanation": "Gute Neutral-Zone-Defense versucht nicht nur, den Gegner aufzuhalten. Sie beeinflusst, wo und wie der Angriff weitergeführt werden kann.\n\nDurch Anlaufwinkel, geschlossene Passwege und die Staffelung dahinter können bestimmte Routen unattraktiv werden, während andere eher offen bleiben.\n\nBeobachte deshalb nicht nur, wohin der Puck geht. Frage dich: Welche Möglichkeiten hatte der Puckführer zunächst – und warum blieb am Ende genau diese Route übrig?",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Distanz zwischen erster und zweiter Linie",
-                    "Gleichmäßigkeit der Abstände",
-                    "Reaktion auf Tempowechsel"
+                    "Welche Wege hat der Puckführer zu Beginn der Situation?",
+                    "Welche Route wird durch die Defensive früh unattraktiv?",
+                    "Wie beeinflusst der Winkel des ersten Druckspielers die möglichen Wege?",
+                    "Welche Passwege werden durch Spieler dahinter geschlossen?",
+                    "Muss der Gegner nach außen, quer oder zurück spielen?",
+                    "Kann der Gegner mit Tempo durch die Mitte kommen?",
+                    "Endet die Lenkung in einem Dump-in, Tempoverlust oder einer isolierten Situation?"
                   ],
                   "how_to_decide": [
-                    "Beurteile Abstände, nicht Positionen",
-                    "Achte auf Gleichmäßigkeit",
-                    "Frage dich: Wo entsteht Raum?"
+                    "Markiere zuerst den ungefähren Ausgangspunkt des Puckführers.",
+                    "Markiere danach den Punkt oder Raum, in den der Angriff gelenkt wurde.",
+                    "Der Pfeil beschreibt die grobe Richtung, nicht den exakten Laufweg.",
+                    "Frage dich anschließend, wodurch diese Richtung entstanden ist.",
+                    "Beziehe nicht nur den ersten Druckspieler, sondern auch die Staffelung dahinter ein."
                   ],
                   "ignore": [
-                    "Individuelle Fehler",
-                    "Abschlussaktionen"
+                    "Perfekte Genauigkeit des Laufwegs",
+                    "Das spätere Ergebnis der Szene",
+                    "Puckgewinn, Tor oder Gegentor als Qualitätsmaß",
+                    "Systemnamen oder Formationszahlen",
+                    "Zufällige Richtungswechsel ohne erkennbare defensive Ursache"
                   ]
                 },
-                "learning_hint": "Neutral-Zone-Kontrolle ist ein Abstandsproblem."
+                "learning_hint": "Gute Neutral-Zone-Defense lenkt den Angriff – sie nimmt nicht nur Raum weg, sondern erzeugt eine Richtung."
               },
               "config": {
-                "questions": [
+                "mode": "directional_path_observation",
+                "observation_count": 3,
+                "observations_key": "directional_path_observations",
+                "path_key": "directionPath",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "allow_reposition": true,
+                "coordinate_system": "normalized",
+                "rink_preset": "detailed",
+                "connection": {
+                  "type": "arrow"
+                },
+                "points": [
                   {
-                    "key": "spacing",
-                    "type": "radio",
-                    "label": "Abstände",
+                    "id": "start",
+                    "label": "Ausgangspunkt",
+                    "required": true
+                  },
+                  {
+                    "id": "end",
+                    "label": "Zielrichtung",
+                    "required": true
+                  }
+                ],
+                "path_step_labels": {
+                  "set_start": "1/2 Ausgangspunkt setzen",
+                  "set_end": "2/2 Zielrichtung setzen",
+                  "complete": "Pfad gesetzt"
+                },
+                "reset_path_label": "Pfad zurücksetzen",
+                "selection_label": "1. Lenkungsrichtung markieren",
+                "location_label": "Setze zuerst den Ausgangspunkt des Puckführers und danach den Punkt, in den die Defensive den Angriff lenkt.",
+                "observe_hint": "Beobachte, welche Richtung die Defensive dem Angriff anbietet oder aufzwingt.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false
+                },
+                "observation_fields": [
+                  {
+                    "key": "steeringRoute",
+                    "label": "2. Welche Route wurde dem Gegner am stärksten angeboten oder aufgezwungen?",
+                    "required": true,
                     "options": [
-                      "kompakt",
-                      "instabil",
-                      "zu weit"
+                      {
+                        "value": "to_wall",
+                        "label": "Zur Bande",
+                        "description": "Der direkte Weg durch die Mitte wird begrenzt und der Puckführer wird in einen Außenkorridor geführt."
+                      },
+                      {
+                        "value": "puck_side",
+                        "label": "Auf die pucknahe Seite",
+                        "description": "Die Defensive verdichtet den Bereich um den Puck und hält den Angriff auf dieser Seite."
+                      },
+                      {
+                        "value": "weak_side",
+                        "label": "Auf die schwache Seite",
+                        "description": "Der Angriff wird auf die gegenüberliegende Seite oder in einen Seitenwechsel gedrängt."
+                      },
+                      {
+                        "value": "narrow_lane",
+                        "label": "In einen engen Korridor",
+                        "description": "Mehrere Anschlussoptionen werden entfernt, sodass nur ein begrenzter Raum für die Fortsetzung bleibt."
+                      },
+                      {
+                        "value": "dump_in",
+                        "label": "Zum Dump-in",
+                        "description": "Ein kontrollierter Zoneneintritt wird so stark erschwert, dass der Gegner den Puck eher tief spielen muss."
+                      },
+                      {
+                        "value": "slow_entry",
+                        "label": "Zu einem langsamen Eintritt",
+                        "description": "Der Gegner erreicht die Zone zwar kontrolliert, verliert aber Tempo oder direkte Anschlussoptionen."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Keine klare Lenkung",
+                        "description": "Es war keine eindeutige bevorzugte oder erzwungene Route erkennbar."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Warum?",
-                    "max_chars": 1500
+                    "key": "steeringCause",
+                    "label": "3. Was erzeugte die Lenkung hauptsächlich?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "pressure_angle",
+                        "label": "Anlaufwinkel des ersten Druckspielers",
+                        "description": "Der erste Verteidiger nimmt durch seinen Winkel einen direkten Weg oder eine Spielfeldseite weg."
+                      },
+                      {
+                        "value": "closed_passing_lane",
+                        "label": "Geschlossener Passweg",
+                        "description": "Eine wichtige Verbindung wird durch Position oder Stockarbeit blockiert."
+                      },
+                      {
+                        "value": "supporting_layers",
+                        "label": "Staffelung dahinter",
+                        "description": "Weitere Verteidiger kontrollieren die direkten Anschlussräume hinter dem ersten Druck."
+                      },
+                      {
+                        "value": "puck_side_overload",
+                        "label": "Puckseitige Verdichtung",
+                        "description": "Mehrere Spieler verkleinern gemeinsam den Raum auf der Seite des Pucks."
+                      },
+                      {
+                        "value": "blue_line_control",
+                        "label": "Kontrolle der blauen Linie",
+                        "description": "Die hintere Ebene erschwert einen kontrollierten Eintritt mit Tempo."
+                      },
+                      {
+                        "value": "combined_factors",
+                        "label": "Kombination mehrerer Faktoren",
+                        "description": "Die Lenkungsrichtung entsteht aus mehreren gleichzeitig wirkenden defensiven Elementen."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar erkennbar"
+                      }
+                    ]
+                  },
+                  {
+                    "key": "steeringEffect",
+                    "label": "4. Was erreicht die Defensive durch diese Lenkung?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "protect_middle",
+                        "label": "Mitte bleibt geschlossen",
+                        "description": "Der Gegner wird aus dem direkten zentralen Weg zur offensiven Zone herausgehalten."
+                      },
+                      {
+                        "value": "break_speed",
+                        "label": "Tempo wird gebrochen",
+                        "description": "Der Angriff muss abbremsen, quer spielen, zurückspielen oder neu aufbauen."
+                      },
+                      {
+                        "value": "force_dump",
+                        "label": "Dump-in wird erzwungen",
+                        "description": "Ein kontrollierter Zoneneintritt wird verhindert und der Gegner spielt den Puck tief."
+                      },
+                      {
+                        "value": "isolate_attack",
+                        "label": "Angriff wird isoliert",
+                        "description": "Der Puckführer verliert direkte Unterstützung und kann leichter unter Druck gesetzt werden."
+                      },
+                      {
+                        "value": "reduce_options",
+                        "label": "Anschlussoptionen werden reduziert",
+                        "description": "Der Angriff kann weiterlaufen, besitzt aber deutlich weniger saubere nächste Lösungen."
+                      },
+                      {
+                        "value": "no_clear_effect",
+                        "label": "Keine erkennbare Wirkung",
+                        "description": "Die defensive Lenkung verändert die Möglichkeiten des Angriffs nicht deutlich."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
                   }
-                ]
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Woran hast du erkannt, dass diese Richtung durch die Defensive beeinflusst wurde?",
+                  "placeholder": "Optional",
+                  "max_chars": 600
+                },
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine geordnete Neutral-Zone-Situation und markiere, wohin der Angriff gelenkt wird.",
+                    "hint": "Erster Tap = Ausgangspunkt des Puckführers, zweiter Tap = Zielrichtung."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Erfasse eine weitere Lenkung und prüfe, wodurch sie entsteht.",
+                    "hint": "Beziehe Anlaufwinkel, Passwege und die Staffelung dahinter ein."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Beobachte eine dritte Situation und bewerte die Wirkung der Lenkung.",
+                    "hint": "Der Pfeil zeigt die grobe Richtung – die Kategorien beschreiben Ursache und Wirkung."
+                  }
+                ],
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte weiterhin, welche Richtung die Defensive dem Angriff anbietet oder aufzwingt – und wodurch diese Lenkung entsteht."
               }
             },
             {
               "id": "C2_D4",
-              "title": "Übergang erzwingen oder zulassen",
-              "drill_type": "period_checkin",
-              "description": "Beurteile, ob der Gegner bewusst Tempo aufnehmen darf oder gestoppt wird.",
+              "title": "Was passiert nach dem Überspielen?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Markiere, wo die erste defensive Ebene überwunden wird und wie weit der Angriff danach kommt. Analysiere anschließend, wie die nächste Ebene reagiert und welchen Zoneneintritt die Defensive am Ende zulässt.",
               "didactics": {
-                "explanation": "Nicht jeder kontrollierte Übergang ist ein Fehler – entscheidend ist, ob er geplant oder erzwungen ist.",
+                "explanation": "Eine Neutral-Zone-Struktur muss nicht jeden Angriff bereits an der ersten Ebene stoppen.\n\nMit erster Ebene ist die vorderste defensive Linie gemeint, die den gegnerischen Aufbau zuerst beeinflusst. Wird sie überspielt, muss die nächste Ebene übernehmen oder die Formation gemeinsam zurückfallen.\n\nBeobachte deshalb nicht nur, dass die erste Linie überwunden wurde. Frage dich: Bleibt die Defensive danach verbunden, kann sie den Angriff weiter kontrollieren oder entsteht ein Eintritt mit Tempo und offenen Anschlussoptionen?",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Tempoaufnahme des Gegners",
-                    "Reaktion der hinteren Linie",
-                    "Rückzug oder Vorwärtsverteidigung"
+                    "Wo wird die erste defensive Ebene überwunden?",
+                    "Wie kommt der Gegner an dieser Ebene vorbei?",
+                    "Ist hinter ihr noch eine erkennbare nächste Absicherung vorhanden?",
+                    "Wer übernimmt den Puckführer oder den frei werdenden Raum?",
+                    "Fällt die Formation gemeinsam zurück oder reagiert nur ein einzelner Spieler?",
+                    "Bleibt die Mitte weiterhin geschlossen?",
+                    "Muss der Gegner Tempo herausnehmen oder den Puck tief spielen?",
+                    "Erreicht der Gegner die Zone kontrolliert und mit Anschlussoptionen?"
                   ],
                   "how_to_decide": [
-                    "Frage dich: War das einkalkuliert?",
-                    "Beobachte kollektives Verhalten",
-                    "Unterscheide Chaos von Kontrolle"
+                    "Markiere zuerst den Ort, an dem die erste defensive Ebene überwunden wird.",
+                    "Beobachte danach die Reaktion der gesamten Formation und nicht nur den Puck.",
+                    "Setze den zweiten Punkt dort, wo die Situation wieder kontrolliert oder endgültig verloren ist.",
+                    "Bewerte anschließend, wie die nächste Ebene reagiert.",
+                    "Beurteile den Ausgang der Neutral-Zone-Sequenz und nicht nur den ersten verlorenen Zugriff."
                   ],
                   "ignore": [
-                    "Ob daraus ein Rush entsteht",
-                    "Torabschlüsse"
+                    "Das spätere Ergebnis tief in der Offensivzone",
+                    "Tor oder Gegentor als Qualitätsmaß",
+                    "Perfekte Positionsgenauigkeit",
+                    "Systemnamen und Formationszahlen",
+                    "Einzelne technische Fehler ohne strukturelle Folge"
                   ]
                 },
-                "learning_hint": "Nicht stoppen ist manchmal die bessere Entscheidung."
+                "learning_hint": "Entscheidend ist nicht, ob die erste Ebene überspielt wird – sondern wie widerstandsfähig die Struktur dahinter bleibt."
               },
               "config": {
-                "questions": [
+                "mode": "directional_path_observation",
+                "observation_count": 3,
+                "observations_key": "transition_path_observations",
+                "path_key": "transitionPath",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "allow_reposition": true,
+                "coordinate_system": "normalized",
+                "rink_preset": "detailed",
+                "connection": {
+                  "type": "arrow"
+                },
+                "points": [
                   {
-                    "key": "transition",
-                    "type": "radio",
-                    "label": "Übergang",
+                    "id": "start",
+                    "label": "Überspielpunkt",
+                    "required": true
+                  },
+                  {
+                    "id": "end",
+                    "label": "Kontrollendpunkt",
+                    "required": true
+                  }
+                ],
+                "path_step_labels": {
+                  "set_start": "1/2 Überspielpunkt setzen",
+                  "set_end": "2/2 Kontrollendpunkt setzen",
+                  "complete": "Pfad gesetzt"
+                },
+                "reset_path_label": "Pfad zurücksetzen",
+                "selection_label": "1. Überspielen und Reaktion markieren",
+                "location_label": "Setze zuerst den Punkt, an dem die erste defensive Ebene überwunden wird. Setze danach den Punkt, an dem die Situation wieder kontrolliert oder endgültig verloren ist.",
+                "observe_hint": "Beobachte, was nach dem Überspielen der ersten defensiven Ebene mit der Struktur dahinter geschieht.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false
+                },
+                "observation_fields": [
+                  {
+                    "key": "breakMethod",
+                    "label": "2. Wie kam der Gegner an der ersten defensiven Ebene vorbei?",
+                    "required": true,
                     "options": [
-                      "bewusst zugelassen",
-                      "ungewollt",
-                      "verhindert"
+                      {
+                        "value": "pass_through_first_layer",
+                        "label": "Pass durch die erste Ebene",
+                        "description": "Der Puck wird hinter den ersten Druck oder hinter die vorderste defensive Linie gespielt."
+                      },
+                      {
+                        "value": "lateral_switch",
+                        "label": "Seitliche Verlagerung",
+                        "description": "Der Gegner wechselt die Angriffsseite und umgeht dadurch die ursprüngliche defensive Kontrolle."
+                      },
+                      {
+                        "value": "carry_through",
+                        "label": "Puckführer trägt vorbei",
+                        "description": "Der Puckführer überwindet die erste Ebene selbst mit Tempo oder Richtungswechsel."
+                      },
+                      {
+                        "value": "support_receiver",
+                        "label": "Unterstützungsspieler übernimmt",
+                        "description": "Ein Mitspieler erhält den Puck hinter oder neben der ersten Ebene und setzt den Angriff fort."
+                      },
+                      {
+                        "value": "dump_behind",
+                        "label": "Dump hinter die Struktur",
+                        "description": "Der Gegner spielt den Puck tief und umgeht damit die erste Neutral-Zone-Kontrolle."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar erkennbar"
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Einschätzung",
-                    "max_chars": 1500
+                    "key": "nextLayerReaction",
+                    "label": "3. Wie reagierte die Defensive hinter der überspielten ersten Ebene?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "controlled_takeover",
+                        "label": "Nächste Ebene übernimmt kontrolliert",
+                        "description": "Ein weiterer Spieler oder eine weitere Linie übernimmt den Angriff, ohne dass die Formation ihre Verbindung verliert."
+                      },
+                      {
+                        "value": "collective_retreat",
+                        "label": "Formation fällt gemeinsam zurück",
+                        "description": "Mehrere Spieler reduzieren gleichzeitig die Tiefe und schützen den Raum vor der eigenen Zone."
+                      },
+                      {
+                        "value": "continue_outside",
+                        "label": "Gegner wird weiter nach außen gelenkt",
+                        "description": "Trotz der überspielten ersten Ebene bleibt der zentrale Weg geschlossen und der Angriff wird weiter in einen Außenraum geführt."
+                      },
+                      {
+                        "value": "slow_entry_control",
+                        "label": "Eintritt wird kontrolliert verlangsamt",
+                        "description": "Die Defensive lässt Raum zu, verhindert aber einen schnellen Eintritt mit klaren Anschlussoptionen."
+                      },
+                      {
+                        "value": "isolated_recovery",
+                        "label": "Einzelspieler muss improvisieren",
+                        "description": "Ein Verteidiger reagiert weitgehend allein, weil die Staffelung dahinter nicht sauber vorbereitet ist."
+                      },
+                      {
+                        "value": "structure_breakdown",
+                        "label": "Struktur bricht auseinander",
+                        "description": "Abstände und Zuständigkeiten gehen verloren und mehrere gefährliche Wege öffnen sich gleichzeitig."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
+                  },
+                  {
+                    "key": "sequenceOutcome",
+                    "label": "4. Welchen Ausgang erreicht der Angriff nach dem Überspielen?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "no_controlled_entry",
+                        "label": "Kein kontrollierter Zoneneintritt",
+                        "description": "Die Defensive stabilisiert sich und verhindert einen kontrollierten Eintritt in die offensive Zone."
+                      },
+                      {
+                        "value": "dump_in",
+                        "label": "Dump-in",
+                        "description": "Der Gegner kann den Puck nur tief spielen und besitzt beim Eintritt keine direkte Kontrolle."
+                      },
+                      {
+                        "value": "wide_slow_entry",
+                        "label": "Eintritt außen ohne Tempo",
+                        "description": "Der Gegner erreicht die Zone über die Außenseite, besitzt aber wenig Geschwindigkeit oder direkte Anschlussoptionen."
+                      },
+                      {
+                        "value": "controlled_speed_entry",
+                        "label": "Kontrollierter Eintritt mit Tempo",
+                        "description": "Der Gegner überwindet die Neutral-Zone-Struktur und erreicht die Zone mit Puckkontrolle, Geschwindigkeit und Anschlussmöglichkeiten."
+                      },
+                      {
+                        "value": "dangerous_attack",
+                        "label": "Direkter gefährlicher Angriff",
+                        "description": "Das Überspielen erzeugt unmittelbar eine hochwertige Angriffssituation oder deutliche Überzahldynamik."
+                      },
+                      {
+                        "value": "sequence_ends",
+                        "label": "Szene endet vorher",
+                        "description": "Die beobachtete Sequenz endet, bevor der endgültige Zoneneintritt eindeutig beurteilt werden kann."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar beurteilbar"
+                      }
+                    ]
+                  },
+                  {
+                    "key": "endpointMeaning",
+                    "label": "5. Was beschreibt dein Endpunkt?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "control_restored",
+                        "label": "Kontrolle wiederhergestellt",
+                        "description": "Die Defensive hat den Angriff wieder in eine stabile und kontrollierbare Situation gebracht."
+                      },
+                      {
+                        "value": "forced_outside",
+                        "label": "Gegner nach außen gedrängt",
+                        "description": "Die Defensive besitzt nicht vollständig die Kontrolle, hält den Angriff aber weiterhin aus der Mitte heraus."
+                      },
+                      {
+                        "value": "dump_forced",
+                        "label": "Dump-in erzwungen",
+                        "description": "Der Endpunkt markiert den Moment, an dem nur noch ein tiefer Puck als sinnvolle Fortsetzung bleibt."
+                      },
+                      {
+                        "value": "entry_allowed",
+                        "label": "Zoneneintritt zugelassen",
+                        "description": "Der Endpunkt markiert einen kontrollierten Eintritt des Gegners in die offensive Zone."
+                      },
+                      {
+                        "value": "structure_lost",
+                        "label": "Struktur endgültig gebrochen",
+                        "description": "Ab diesem Punkt besitzt die Defensive keine stabile Neutral-Zone-Ordnung mehr."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar"
+                      }
+                    ]
                   }
-                ]
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Woran hast du erkannt, ob die Defensive nach dem Überspielen noch verbunden war?",
+                  "placeholder": "Optional",
+                  "max_chars": 600
+                },
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Situation, in der die erste defensive Ebene überspielt wird, und markiere Überspiel- sowie Kontrollendpunkt.",
+                    "hint": "Erster Tap = Überspielpunkt, zweiter Tap = wo Kontrolle zurückkehrt oder endgültig verloren ist."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Erfasse eine weitere Überspielsequenz und bewerte die Reaktion der nächsten Ebene.",
+                    "hint": "Achte darauf, ob die Formation verbunden bleibt oder nur ein Einzelspieler reagiert."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Beobachte eine dritte Situation und beurteile den Ausgang nach dem Überspielen.",
+                    "hint": "Der Endpunkt beschreibt, ob Kontrolle zurückkehrt, ein Dump erzwungen oder ein Eintritt zugelassen wird."
+                  }
+                ],
+                "active_focus_title": "Active Focus",
+                "active_focus_text": "Beobachte weiterhin, was nach dem Überspielen der ersten Ebene geschieht – und ob die Struktur dahinter verbunden bleibt."
               }
             },
             {
               "id": "C2_D5",
-              "title": "Systemtreue unter Druck",
+              "title": "Wie kontrolliert dieses Team die Neutral Zone?",
               "drill_type": "period_checkin",
-              "description": "Beobachte, ob die Neutral-Zone-Struktur auch unter Druck erhalten bleibt.",
+              "description": "Beobachte mehrere Neutral-Zone-Situationen und leite daraus ein Profil ab: Welche Wege schließt das Team, wie ist es gestaffelt, wohin lenkt es Angriffe und wie reagiert es nach überspieltem Druck?",
               "didactics": {
-                "explanation": "Gute Teams fallen unter Druck nicht auseinander – sie vereinfachen, ohne Struktur zu verlieren.",
+                "explanation": "Einzelne Neutral-Zone-Situationen können sehr unterschiedlich aussehen. Das defensive Profil eines Teams zeigt sich deshalb erst durch wiederkehrende räumliche Prioritäten und Reaktionen.\n\nBeobachte über einen längeren Abschnitt, welche Wege das Team bevorzugt schließt, wie seine Ebenen miteinander verbunden sind, wohin gegnerische Angriffe gelenkt werden und wie die Formation reagiert, wenn die erste defensive Ebene überwunden wird.\n\nVersuche am Ende noch nicht, dem Verhalten einen Systemnamen zu geben. Beschreibe zunächst möglichst genau, welche Prinzipien du tatsächlich wiederholt erkannt hast.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Positionsdisziplin bei Tempo",
-                    "Reaktionen nach überspielter Linie",
-                    "Kollektives Nachschieben"
+                    "Welche Route durch die Neutral Zone bleibt wiederholt schwer zugänglich?",
+                    "Wie viele defensive Ebenen sind meistens erkennbar?",
+                    "Wie groß sind die Abstände zwischen diesen Ebenen?",
+                    "Wohin werden gegnerische Aufbauten überwiegend gelenkt?",
+                    "Wird der Gegner häufig zu Dump-ins oder langsamen Entries gezwungen?",
+                    "Was passiert, wenn die erste Ebene überspielt wird?",
+                    "Welche Muster wiederholen sich über mehrere Angriffe?",
+                    "Welche Beobachtung war nur eine einzelne Ausnahme?"
                   ],
                   "how_to_decide": [
-                    "Beobachte mehrere Aktionen hintereinander",
-                    "Achte auf Wiederholung von Mustern",
-                    "Frage dich: Bleibt die Ordnung erkennbar?"
+                    "Bewerte nicht nur die letzte Szene, sondern den gesamten beobachteten Abschnitt.",
+                    "Wähle pro Dimension das deutlichste wiederkehrende Muster.",
+                    "Nutze die Beschreibungen der Optionen, nicht nur deren Überschriften.",
+                    "Beschreibe das Verhalten des Teams, ohne Systemnamen zu verwenden.",
+                    "Wähle bei wechselhaftem Verhalten ausdrücklich eine uneindeutige Option."
                   ],
                   "ignore": [
-                    "Einzelne Heldentaten",
-                    "Zufällige Steals"
+                    "einzelne spektakuläre Aktionen ohne wiederkehrendes Muster",
+                    "reine Ergebnisse wie Puckgewinn oder Gegentor",
+                    "individuelle Fehler ohne strukturelle Bedeutung",
+                    "Systemnamen oder Formationszahlen",
+                    "perfekte taktische Konsistenz in jeder Szene"
                   ]
                 },
-                "learning_hint": "Systeme erkennt man daran, was unter Druck übrig bleibt."
+                "learning_hint": "C2_D5 schließt den Track ab: Formuliere ein Neutral-Zone-Profil aus wiederkehrenden Prinzipien – noch ohne Systemnamen."
               },
               "config": {
+                "observation_scope": "period",
+                "option_layout": "cards",
+                "validate_answers": true,
+                "summary_when_complete": true,
+                "summary_title": "Neutral-Zone-Profil",
+                "summary_disclaimer": "Diese Zusammenfassung zeigt ausschließlich deine beobachteten Dimensionen und deine eigene Formulierung. Sie vergibt keinen Systemnamen.",
+                "observation_phase": {
+                  "title": "Beobachtungsphase",
+                  "text": "Beobachte mehrere Neutral-Zone-Situationen über einen längeren Abschnitt.",
+                  "hint": "Suche wiederkehrende Wege, Staffelungen und Reaktionen – nicht einzelne Highlights."
+                },
+                "analysis_phase": {
+                  "title": "Profildimensionen",
+                  "text": "Wähle pro Dimension das Muster, das im beobachteten Abschnitt am häufigsten oder deutlichsten erkennbar war."
+                },
+                "reflection_phase": {
+                  "title": "Profilformulierung",
+                  "text": "Fasse deine Beobachtungen in eigenen Worten zusammen – ohne einen Systemnamen zu verwenden."
+                },
+                "sentence_helpers": {
+                  "label": "Optionale Satzhilfe",
+                  "starter": "Dieses Team kontrolliert die Neutral Zone, indem es …"
+                },
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Prüfe im weiteren Spiel, ob die gewählten Neutral-Zone-Prinzipien stabil bleiben oder sich mit Spielstand und Druckhöhe verändern.",
                 "questions": [
                   {
-                    "key": "system_integrity",
+                    "key": "spatialPriority",
                     "type": "radio",
-                    "label": "Systemtreue",
+                    "required": true,
+                    "summary_label": "Raumpriorität",
+                    "label": "Welchen Weg nimmt das Team dem Gegner am konsequentesten weg?",
                     "options": [
-                      "stabil",
-                      "angepasst",
-                      "zerfallen"
+                      {
+                        "value": "central_lane",
+                        "label": "Zentraler Weg",
+                        "description": "Die Formation schützt konsequent die Mitte und erschwert direkte kontrollierte Angriffe durch das Zentrum.",
+                        "phrase": "… den zentralen Weg konsequent schließt."
+                      },
+                      {
+                        "value": "puck_side_lane",
+                        "label": "Pucknahe Außenseite",
+                        "description": "Mehrere Spieler verdichten regelmäßig die Seite des Pucks und begrenzen dort Raum und Anschlussmöglichkeiten.",
+                        "phrase": "… die pucknahe Außenseite verdichtet."
+                      },
+                      {
+                        "value": "preferred_side",
+                        "label": "Eine bevorzugte Seite",
+                        "description": "Die Defensive versucht wiederholt, eine bestimmte Spielfeldseite zu schließen und den Angriff in die Gegenrichtung zu lenken.",
+                        "phrase": "… eine bevorzugte Seite schließt."
+                      },
+                      {
+                        "value": "wide_control",
+                        "label": "Breite Raumkontrolle",
+                        "description": "Die Formation verteilt sich so, dass mehrere Eintrittswege gleichzeitig begrenzt werden.",
+                        "phrase": "… eine breite Raumkontrolle hält."
+                      },
+                      {
+                        "value": "changing",
+                        "label": "Wechselhaft",
+                        "description": "Die räumliche Priorität verändert sich deutlich zwischen verschiedenen Situationen.",
+                        "phrase": "… wechselhafte Raumprioritäten zeigt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Nicht klar erkennbar",
+                        "description": "Über den beobachteten Abschnitt war keine stabile räumliche Priorität erkennbar.",
+                        "phrase": "… keine stabile Raumpriorität zeigt."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
+                    "key": "depthStructure",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Staffelung",
+                    "label": "Wie ist die Defensive überwiegend in der Tiefe gestaffelt?",
+                    "options": [
+                      {
+                        "value": "flat_layer",
+                        "label": "Eine eher flache Ebene",
+                        "description": "Mehrere Spieler stehen häufig auf ähnlicher Höhe und bilden wenig Tiefenabsicherung.",
+                        "phrase": "… eher flach in einer Ebene steht."
+                      },
+                      {
+                        "value": "two_connected_layers",
+                        "label": "Zwei klar verbundene Ebenen",
+                        "description": "Eine vordere Ebene beeinflusst den Aufbau, während eine zweite den Raum dahinter absichert.",
+                        "phrase": "… in zwei klar verbundenen Ebenen gestaffelt ist."
+                      },
+                      {
+                        "value": "three_layers",
+                        "label": "Drei gestaffelte Ebenen",
+                        "description": "Mehrere nacheinander angeordnete Ebenen erschweren es, große Teile der Formation mit einer Aktion zu überspielen.",
+                        "phrase": "… in drei gestaffelten Ebenen organisiert ist."
+                      },
+                      {
+                        "value": "too_compressed",
+                        "label": "Eng zusammengedrängt",
+                        "description": "Die Ebenen verlieren häufig ihre Tiefe und stehen so nah zusammen, dass mehrere Spieler gemeinsam überspielt werden können.",
+                        "phrase": "… eng zusammengedrängt steht."
+                      },
+                      {
+                        "value": "large_gaps",
+                        "label": "Große Abstände",
+                        "description": "Zwischen den Ebenen entstehen regelmäßig größere Räume, in denen der Gegner Tempo oder Kontrolle aufnehmen kann.",
+                        "phrase": "… große Abstände zwischen den Ebenen zulässt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar",
+                        "description": "Die Tiefenstaffelung verändert sich stark oder ist nicht eindeutig erkennbar.",
+                        "phrase": "… keine stabile Tiefenstaffelung zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "steeringPattern",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Lenkung",
+                    "label": "Wohin lenkt das Team gegnerische Angriffe überwiegend?",
+                    "options": [
+                      {
+                        "value": "to_wall",
+                        "label": "Zur Bande",
+                        "description": "Die Mitte wird geschlossen und der Angriff wird bevorzugt in einen Außenkorridor geführt.",
+                        "phrase": "… Angriffe zur Bande lenkt."
+                      },
+                      {
+                        "value": "puck_side",
+                        "label": "Auf die pucknahe Seite",
+                        "description": "Der Angriff wird auf der Seite des Pucks gehalten und dort räumlich begrenzt.",
+                        "phrase": "… Angriffe auf der pucknahen Seite hält."
+                      },
+                      {
+                        "value": "weak_side",
+                        "label": "Auf die schwache Seite",
+                        "description": "Der Gegner wird häufiger zu einem Seitenwechsel oder zur gegenüberliegenden Spielfeldseite gezwungen.",
+                        "phrase": "… Angriffe auf die schwache Seite lenkt."
+                      },
+                      {
+                        "value": "narrow_lane",
+                        "label": "In einen engen Korridor",
+                        "description": "Mehrere Anschlussmöglichkeiten werden entfernt, sodass nur eine begrenzte Route verbleibt.",
+                        "phrase": "… Angriffe in einen engen Korridor führt."
+                      },
+                      {
+                        "value": "dump_in",
+                        "label": "Zum Dump-in",
+                        "description": "Kontrollierte Entries werden häufig verhindert und der Gegner muss den Puck tief spielen.",
+                        "phrase": "… häufig Dump-ins erzwingt."
+                      },
+                      {
+                        "value": "slow_entry",
+                        "label": "Zu langsamen Zoneneintritten",
+                        "description": "Der Gegner erreicht die Zone zwar kontrolliert, verliert dabei aber häufig Tempo oder direkte Anschlussmöglichkeiten.",
+                        "phrase": "… zu langsamen Zoneneintritten zwingt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Keine klare Lenkung",
+                        "description": "Über den beobachteten Abschnitt war kein stabiles Lenkungsprinzip erkennbar.",
+                        "phrase": "… keine klare Lenkung zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "recoveryPattern",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Nach Überspielen",
+                    "label": "Wie reagiert das Team überwiegend, wenn die erste defensive Ebene überspielt wird?",
+                    "options": [
+                      {
+                        "value": "controlled_takeover",
+                        "label": "Nächste Ebene übernimmt kontrolliert",
+                        "description": "Ein weiterer Spieler oder eine weitere Linie übernimmt, ohne dass die Formation ihre Verbindung verliert.",
+                        "phrase": "… nach Überspielen die nächste Ebene kontrolliert übernehmen lässt."
+                      },
+                      {
+                        "value": "collective_retreat",
+                        "label": "Formation fällt kollektiv zurück",
+                        "description": "Mehrere Spieler reduzieren gemeinsam die Tiefe und schützen den Raum vor der eigenen Zone.",
+                        "phrase": "… nach Überspielen kollektiv zurückfällt."
+                      },
+                      {
+                        "value": "protect_middle_after_break",
+                        "label": "Mitte bleibt geschlossen",
+                        "description": "Auch nach dem Überspielen wird der Angriff weiter nach außen gehalten.",
+                        "phrase": "… auch nach Überspielen die Mitte geschlossen hält."
+                      },
+                      {
+                        "value": "slow_entry_control",
+                        "label": "Eintritt wird verlangsamt",
+                        "description": "Die Defensive verhindert nicht immer den Zoneneintritt, reduziert aber Tempo und Anschlussmöglichkeiten.",
+                        "phrase": "… nach Überspielen den Eintritt verlangsamt."
+                      },
+                      {
+                        "value": "isolated_recovery",
+                        "label": "Einzelspieler müssen improvisieren",
+                        "description": "Die Absicherung hinter der ersten Ebene ist häufig nicht sauber vorbereitet.",
+                        "phrase": "… nach Überspielen oft auf Einzelspieler angewiesen ist."
+                      },
+                      {
+                        "value": "structure_breakdown",
+                        "label": "Struktur bricht häufiger auseinander",
+                        "description": "Nach dem Überspielen entstehen wiederholt große Abstände und mehrere offene Wege.",
+                        "phrase": "… nach Überspielen häufiger Struktur verliert."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar",
+                        "description": "Die Reaktionen nach dem Überspielen unterscheiden sich stark und ergeben kein stabiles Muster.",
+                        "phrase": "… nach Überspielen kein stabiles Muster zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "riskProfile",
+                    "type": "radio",
+                    "required": true,
+                    "summary_label": "Risikoprofil",
+                    "label": "Welche Balance zwischen aktivem Druck und struktureller Absicherung zeigt das Team?",
+                    "options": [
+                      {
+                        "value": "structure_first",
+                        "label": "Sehr kontrolliert",
+                        "description": "Das Team priorisiert stabile Raumkontrolle und akzeptiert eher einen äußeren Weg oder Dump-in, statt früh große Risiken einzugehen.",
+                        "phrase": "… Struktur und Kontrolle vor frühem Druck priorisiert."
+                      },
+                      {
+                        "value": "balanced_control",
+                        "label": "Kontrolliert mit ausgewählten Zugriffen",
+                        "description": "Die Formation bleibt überwiegend stabil, nutzt aber klare Situationen für aktiven Druck.",
+                        "phrase": "… eine kontrollierte Balance mit ausgewählten Zugriffen hält."
+                      },
+                      {
+                        "value": "pressure_oriented",
+                        "label": "Aktiv und druckorientiert",
+                        "description": "Das Team versucht häufig früh, den gegnerischen Aufbau zu stören und nimmt dafür größere Abstände in Kauf.",
+                        "phrase": "… aktiv und druckorientiert arbeitet."
+                      },
+                      {
+                        "value": "high_risk",
+                        "label": "Hochriskant",
+                        "description": "Aggressive Zugriffe erzeugen Druck, führen aber wiederholt zu offenen Wegen oder überspielten Ebenen.",
+                        "phrase": "… hochriskant und anfällig agiert."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Wechselhaft oder nicht klar",
+                        "description": "Es ist keine stabile Balance zwischen Raumkontrolle und aktivem Druck erkennbar.",
+                        "phrase": "… keine stabile Balance zwischen Druck und Absicherung zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "profileSummary",
                     "type": "text",
-                    "label": "Begründung",
-                    "max_chars": 1500
+                    "required": true,
+                    "use_sentence_helpers": true,
+                    "summary_label": "Eigene Zusammenfassung",
+                    "label": "Wie würdest du die Neutral-Zone-Defense dieses Teams zusammenfassen?",
+                    "help": "Formuliere ein bis drei Sätze. Beschreibe Raumpriorität, Staffelung, Lenkung und Reaktion nach überspieltem Druck möglichst konkret, ohne einen Systemnamen zu verwenden.",
+                    "placeholder": "Dieses Team kontrolliert die Neutral Zone, indem es …",
+                    "min_chars": 20,
+                    "max_chars": 800
                   }
                 ]
               }

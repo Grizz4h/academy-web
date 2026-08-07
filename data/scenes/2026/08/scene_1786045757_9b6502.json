@@ -35,9 +35,10 @@
   "episode_code": null,
   "game_time": "02:30",
   "note": "Druck im neutralen drittel. Dadurch keine Anschluss Möglichkeit",
-  "rating": null,
+  "rating": 3,
   "extensions": {},
   "extension_labels": {},
   "created_at": "2026-08-06T21:49:17.011018",
-  "metadata_status": "complete"
+  "metadata_status": "complete",
+  "updated_at": "2026-08-06T21:58:06.776255"
 }
