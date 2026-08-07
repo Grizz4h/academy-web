@@ -1,9 +1,11 @@
 import { useMemo, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
 import Card from '../components/Card';
+import { PageSkeleton } from '../components/Skeleton';
 import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
 import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
 import { CoverageMap } from '../components/dashboard/CoverageMap';
@@ -375,13 +377,22 @@ export default function Dashboard() {
     };
   }, [sessions, curriculum, currentScope]);
 
+  const resumeSession = useMemo(() => {
+    return (sessions || [])
+      .filter((s) => String(s.state || '').toUpperCase() === 'IN_PROGRESS')
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+  }, [sessions]);
+
   // ---- Render Branches (ab hier dürfen returns kommen) ----
   if (!user)
     return (
       <div className={styles.dashboardPage}>
-        <h1>Übersicht</h1>
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>Übersicht</h1>
+          <p className={styles.pageLead}>Melde dich an, um deinen Lernstand und die nächste Session zu sehen.</p>
+        </header>
         <Card>
-          <h2>{signupMode ? "Account erstellen" : "Anmelden"}</h2>
+          <h2 className={styles.sectionTitle}>{signupMode ? "Account erstellen" : "Anmelden"}</h2>
           {!signupMode ? (
             <div className={styles.formColumn}>
               <input
@@ -468,44 +479,130 @@ export default function Dashboard() {
       </div>
     );
 
-  if (isLoading) return <Card>Lade Sessions...</Card>;
+  if (isLoading) return <PageSkeleton />;
   if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>;
 
   const nearAchievements = getTopNearAchievements(sessions || [], rewardState, 5);
   const recentUnlocked = getRecentUnlockedAchievements(rewardState, 5);
+  const nextDrill = derived.recommendedNext[0] as DrillWithCount | undefined;
+  const nextDrillTitle = nextDrill
+    ? (nextDrill.moduleId ? `${nextDrill.moduleId} · ${nextDrill.title}` : nextDrill.title)
+    : null;
+  const drillProgressPct = derived.totalDrills
+    ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
+    : 0;
 
   return (
     <div className={styles.dashboardPage}>
-      <h1>Übersicht</h1>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Übersicht</h1>
+        <p className={styles.pageLead}>
+          Dein aktueller Stand auf einen Blick — und der nächste sinnvolle Schritt.
+        </p>
+      </header>
 
-      {/* KPI Cards */}
       <div className={styles.kpiGrid}>
-        <Card>
-          <div className={styles.kpiTitle}>Letzte Session</div>
-          {derived.lastSession ? (
-            <>
-              <div><strong>Datum:</strong> {new Date(derived.lastSession.created_at).toLocaleDateString()}</div>
-              <div><strong>Modul:</strong> {derived.lastSession.module_id}</div>
-              <div>
-                <strong>Status:</strong>{' '}
-                <span className={styles.statusBadge}>{formatSessionState(derived.lastSession.state)}</span>
-              </div>
-            </>
-          ) : <div>Keine Daten</div>}
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Streak</div>
+          <div className={styles.kpiValue}>{derived.streak}</div>
+          <div className={styles.kpiHint}>Tage in Folge</div>
         </Card>
-        <Card>
-          <div className={styles.kpiTitle}>Sessions gesamt</div>
-          <div className={styles.kpiValue}>{derived.total}</div>
-        </Card>
-        <Card>
+        <Card className={styles.kpiCard}>
           <div className={styles.kpiTitle}>Diese Woche</div>
           <div className={styles.kpiValue}>{derived.sessionsThisWeek}</div>
+          <div className={styles.kpiHint}>Sessions</div>
         </Card>
-        <Card>
-          <div className={styles.kpiTitle}>Streak</div>
-          <div className={styles.kpiValue}>{derived.streak} Tage</div>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Sessions gesamt</div>
+          <div className={styles.kpiValue}>{derived.total}</div>
+          <div className={styles.kpiHint}>{derived.completed} abgeschlossen</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Fortschritt</div>
+          <div className={styles.kpiValue}>{drillProgressPct}%</div>
+          <div className={styles.kpiHint}>{derived.completedDrills}/{derived.totalDrills} Drills</div>
         </Card>
       </div>
+
+      <Card className={styles.nextStepCard}>
+        <div className={styles.nextStepCopy}>
+          <h2 className={styles.sectionTitle}>
+            {resumeSession ? 'Weiter geht’s' : 'Nächster Schritt'}
+          </h2>
+          {resumeSession ? (
+            <p className={styles.nextStepText}>
+              Aktive Session offen
+              {derived.streak > 0 ? ` · Streak ${derived.streak}` : ''}.
+              {' '}Mach weiter, bevor der Faden reißt.
+            </p>
+          ) : nextDrillTitle ? (
+            <p className={styles.nextStepText}>
+              {derived.streak > 0 ? `Streak ${derived.streak} · ` : ''}
+              Als Nächstes empfohlen: <strong>{nextDrillTitle}</strong>
+            </p>
+          ) : (
+            <p className={styles.nextStepText}>
+              Noch keine klare Empfehlung — starte einfach in der Akademie.
+            </p>
+          )}
+          {derived.lastSession && !resumeSession && (
+            <p className={styles.nextStepMeta}>
+              Letzte Session: {new Date(derived.lastSession.created_at).toLocaleDateString('de-DE')}
+              {' · '}
+              {derived.lastSession.module_id}
+              {' · '}
+              {formatSessionState(derived.lastSession.state)}
+            </p>
+          )}
+          {resumeSession && (
+            <p className={styles.nextStepMeta}>
+              {resumeSession.module_id}
+              {resumeSession.game_info?.team_home && resumeSession.game_info?.team_away
+                ? ` · ${resumeSession.game_info.team_home} vs ${resumeSession.game_info.team_away}`
+                : ''}
+            </p>
+          )}
+        </div>
+        <div className={styles.nextStepActions}>
+          {resumeSession ? (
+            <>
+              <Link to={getSessionRoute(resumeSession)} className={styles.ctaBtn}>
+                Session fortsetzen
+              </Link>
+              {nextDrill?.moduleId ? (
+                <Link to={`/setup/${nextDrill.moduleId}`} className={styles.ctaSecondary}>
+                  Neue Session
+                </Link>
+              ) : (
+                <Link to="/curriculum" className={styles.ctaSecondary}>
+                  Akademie öffnen
+                </Link>
+              )}
+            </>
+          ) : nextDrill?.moduleId ? (
+            <>
+              <Link to={`/setup/${nextDrill.moduleId}`} className={styles.ctaBtn}>
+                Session starten
+              </Link>
+              <Link to="/curriculum" className={styles.ctaSecondary}>
+                Akademie öffnen
+              </Link>
+            </>
+          ) : (
+            <Link to="/curriculum" className={styles.ctaBtn}>
+              Zur Akademie
+            </Link>
+          )}
+        </div>
+      </Card>
+
+      <DrillPriorityCards
+        recommendedNext={derived.recommendedNext}
+        mostTrained={derived.mostTrained}
+        availableScopes={derived.availableScopes}
+        currentScope={currentScope}
+        onScopeChange={setCurrentScope}
+      />
 
       <Card>
         <LearningRhythmWidget
@@ -517,165 +614,176 @@ export default function Dashboard() {
         />
       </Card>
 
-      {/* Progress & Hygiene */}
-      <div className={styles.flexWrapRow}>
-        <Card className={styles.flexCard}>
-          <h2 className={styles.sectionTitle}>Fortschritt</h2>
-          <div className={styles.progressRow}>
-            <div className={styles.progressCol}>
-              <div className={styles.progressItem}>Abgeschlossen: <strong>{derived.completed}</strong></div>
-              <div className={styles.progressItem}>Abgebrochen: <strong>{derived.aborted}</strong></div>
-              <div className={styles.progressItem}>In Bearbeitung: <strong>{derived.inProgress}</strong></div>
-
-              <div className={styles.progressBarWrap}>
-                <div className={styles.progressBarBg}>
-                  <div className={styles.progressBarFill} style={{ width: `${derived.totalDrills ? (derived.completedDrills / derived.totalDrills) * 100 : 0}%` }} />
-                </div>
-                <div className={styles.progressBarLabel}>Drill-Fortschritt: {derived.totalDrills ? Math.round((derived.completedDrills / derived.totalDrills) * 100) : 0}%</div>
-                {/* Fortschritt pro Track */}
-                <div className={styles.trackProgressWrap}>
-                  <div className={styles.trackProgressTitle}>Drill-Fortschritt pro Track:</div>
-                  {Object.values(derived.trackProgress).map((track: any) => (
-                    <div key={track.title} className={styles.trackProgressItem}>
-                      <span className={styles.trackTitle}>{track.title}:</span>
-                      <div className={styles.trackBarBg}>
-                        <div className={styles.trackBarFill} style={{ width: `${track.total ? (track.completed / track.total) * 100 : 0}%` }} />
-                      </div>
-                      <span className={styles.trackBarLabel}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-        <Card className={styles.flexCard}>
-          <h2 className={styles.sectionTitle}>Session-Qualität</h2>
-          {derived.hygieneIssues.length === 0 ? (
-            <div className={styles.integrityStatus}>
-              <div className={styles.statusIndicator} data-status="clean" />
-              <span className={styles.statusText}>Alle Sessions sauber</span>
-            </div>
-          ) : (
-            <ul className={styles.hygieneList}>
-              {derived.hygieneIssues.map((issue, i) => (
-                <li key={i}>{issue}</li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      </div>
-
-      <Card>
-        <h2 className={styles.sectionTitle}>Belohnungen</h2>
-        <div className={styles.rewardHeaderRow}>
-          <div className={styles.rewardHeaderItem}><strong>PUX!:</strong> {formatPux(rewardState.currency.PUX || 0)}</div>
-          <div className={styles.rewardHeaderItem}><strong>Freigeschaltet:</strong> {Object.keys(rewardState.unlockedAchievements || {}).length}</div>
-        </div>
-
-        <div className={styles.rewardColumns}>
-          <div>
-            <h3 className={styles.rewardColumnTitle}>Top 5 nah dran</h3>
-            {nearAchievements.length === 0 ? (
-              <div className={styles.rewardHint}>Noch keine klaren Kandidaten.</div>
-            ) : (
-              <ul className={styles.rewardList}>
-                {nearAchievements.map((item) => (
-                  <li key={item.achievement.id} className={styles.rewardListItem}>
-                    <div>
-                      <div className={styles.rewardName}>{item.achievement.title}</div>
-                      <div className={styles.rewardMeta}>{item.label}</div>
-                    </div>
-                    <span className={styles.rewardProgress}>{Math.round(item.progress * 100)}%</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div>
-            <h3 className={styles.rewardColumnTitle}>Letzte 5 erreicht</h3>
-            {recentUnlocked.length === 0 ? (
-              <div className={styles.rewardHint}>Noch keine Erfolge erreicht.</div>
-            ) : (
-              <ul className={styles.rewardList}>
-                {recentUnlocked.map((item) => (
-                  <li key={item.achievement.id} className={styles.rewardListItem}>
-                    <div>
-                      <div className={styles.rewardName}>{item.achievement.title}</div>
-                      <div className={styles.rewardMeta}>{new Date(item.unlockedAt).toLocaleString('de-DE')}</div>
-                    </div>
-                    <span className={styles.rewardTag}>{item.achievement.category}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      {/* Drill Priority Cards mit Scope */}
-      <DrillPriorityCards
-        recommendedNext={derived.recommendedNext}
-        mostTrained={derived.mostTrained}
-        availableScopes={derived.availableScopes}
-        currentScope={currentScope}
-        onScopeChange={setCurrentScope}
-      />
-
-
-      <Card>
-        <h2 className={styles.sectionTitle}>Meist beobachtete Teams</h2>
-        {derived.mostObservedTeams.length === 0 ? (
-          <div className={styles.rewardHint}>Noch keine Team-Beobachtungen vorhanden.</div>
-        ) : (
-          <div className={styles.teamExposureGrid}>
-            <div>
-              <ol className={styles.teamExposureList}>
-                {derived.mostObservedTeams.map((team, index) => (
-                  <li key={team.team} className={styles.teamExposureItem}>
-                    <span>{index + 1}. {team.team}</span>
-                    <strong>({team.sessionCount})</strong>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div>
-              <h3 className={styles.rewardColumnTitle}>Wenigst beobachtete Teams</h3>
-              <ol className={styles.teamExposureList}>
-                {derived.leastObservedTeams.map((team, index) => (
-                  <li key={team.team} className={styles.teamExposureItem}>
-                    <span>{index + 1}. {team.team}</span>
-                    <strong>({team.sessionCount})</strong>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        )}
-      </Card>
-
-      {/* Coverage Map */}
-      <CoverageMap moduleCoverages={derived.moduleCoverages} />
-
-      {/* Recent Sessions */}
       <Card className={styles.recentCard}>
         <h2 className={styles.sectionTitle}>Zuletzt</h2>
         {derived.recentSessions.length === 0 ? (
-          <div>Keine Sessions vorhanden.</div>
+          <p className={styles.emptyState}>
+            Noch keine Sessions vorhanden. Starte in der Akademie mit dem ersten Modul.
+          </p>
         ) : (
           <ul className={styles.recentList}>
             {derived.recentSessions.map((s: Session) => (
               <li key={s.id} className={styles.recentItem}>
-                <span className={styles.recentDate}>{new Date(s.created_at).toLocaleDateString()}</span>
+                <span className={styles.recentDate}>{new Date(s.created_at).toLocaleDateString('de-DE')}</span>
                 <span className={styles.recentModule}>{s.module_id}</span>
                 <span className={styles.statusBadge}>{formatSessionState(s.state)}</span>
-                <a href={getSessionRoute(s)} className={styles.openBtn}>Öffnen</a>
+                <Link to={getSessionRoute(s)} className={styles.openBtn}>Öffnen</Link>
               </li>
             ))}
           </ul>
         )}
       </Card>
+
+      <details className={styles.morePanel}>
+        <summary className={styles.moreSummary}>
+          <span>Fortschritt & Session-Qualität</span>
+          <span className={styles.moreChevron} aria-hidden="true" />
+        </summary>
+        <div className={styles.moreBody}>
+          <div className={styles.flexWrapRow}>
+            <Card className={styles.flexCard}>
+              <h2 className={styles.sectionTitle}>Fortschritt</h2>
+              <div className={styles.progressRow}>
+                <div className={styles.progressCol}>
+                  <div className={styles.progressItem}>Abgeschlossen: <strong>{derived.completed}</strong></div>
+                  <div className={styles.progressItem}>Abgebrochen: <strong>{derived.aborted}</strong></div>
+                  <div className={styles.progressItem}>In Bearbeitung: <strong>{derived.inProgress}</strong></div>
+
+                  <div className={styles.progressBarWrap}>
+                    <div className={styles.progressBarBg}>
+                      <div className={styles.progressBarFill} style={{ width: `${drillProgressPct}%` }} />
+                    </div>
+                    <div className={styles.progressBarLabel}>Drill-Fortschritt: {drillProgressPct}%</div>
+                    <div className={styles.trackProgressWrap}>
+                      <div className={styles.trackProgressTitle}>Pro Track</div>
+                      {Object.values(derived.trackProgress).map((track: any) => (
+                        <div key={track.title} className={styles.trackProgressItem}>
+                          <span className={styles.trackTitle}>{track.title}</span>
+                          <div className={styles.trackBarBg}>
+                            <div className={styles.trackBarFill} style={{ width: `${track.total ? (track.completed / track.total) * 100 : 0}%` }} />
+                          </div>
+                          <span className={styles.trackBarLabel}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+            <Card className={styles.flexCard}>
+              <h2 className={styles.sectionTitle}>Session-Qualität</h2>
+              {derived.hygieneIssues.length === 0 ? (
+                <div className={styles.integrityStatus}>
+                  <div className={styles.statusIndicator} data-status="clean" />
+                  <span className={styles.statusText}>Alle Sessions sauber</span>
+                </div>
+              ) : (
+                <ul className={styles.hygieneList}>
+                  {derived.hygieneIssues.map((issue, i) => (
+                    <li key={i}>{issue}</li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          </div>
+        </div>
+      </details>
+
+      <details className={styles.morePanel}>
+        <summary className={styles.moreSummary}>
+          <span>Belohnungen</span>
+          <span className={styles.moreChevron} aria-hidden="true" />
+        </summary>
+        <div className={styles.moreBody}>
+          <Card>
+            <div className={styles.rewardHeaderRow}>
+              <div className={styles.rewardHeaderItem}><strong>PUX!:</strong> {formatPux(rewardState.currency.PUX || 0)}</div>
+              <div className={styles.rewardHeaderItem}><strong>Freigeschaltet:</strong> {Object.keys(rewardState.unlockedAchievements || {}).length}</div>
+            </div>
+
+            <div className={styles.rewardColumns}>
+              <div>
+                <h3 className={styles.rewardColumnTitle}>Nah dran</h3>
+                {nearAchievements.length === 0 ? (
+                  <div className={styles.rewardHint}>Noch keine klaren Kandidaten.</div>
+                ) : (
+                  <ul className={styles.rewardList}>
+                    {nearAchievements.map((item) => (
+                      <li key={item.achievement.id} className={styles.rewardListItem}>
+                        <div>
+                          <div className={styles.rewardName}>{item.achievement.title}</div>
+                          <div className={styles.rewardMeta}>{item.label}</div>
+                        </div>
+                        <span className={styles.rewardProgress}>{Math.round(item.progress * 100)}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div>
+                <h3 className={styles.rewardColumnTitle}>Zuletzt erreicht</h3>
+                {recentUnlocked.length === 0 ? (
+                  <div className={styles.rewardHint}>Noch keine Erfolge erreicht.</div>
+                ) : (
+                  <ul className={styles.rewardList}>
+                    {recentUnlocked.map((item) => (
+                      <li key={item.achievement.id} className={styles.rewardListItem}>
+                        <div>
+                          <div className={styles.rewardName}>{item.achievement.title}</div>
+                          <div className={styles.rewardMeta}>{new Date(item.unlockedAt).toLocaleString('de-DE')}</div>
+                        </div>
+                        <span className={styles.rewardTag}>{item.achievement.category}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </Card>
+        </div>
+      </details>
+
+      <details className={styles.morePanel}>
+        <summary className={styles.moreSummary}>
+          <span>Teams & Modul-Abdeckung</span>
+          <span className={styles.moreChevron} aria-hidden="true" />
+        </summary>
+        <div className={styles.moreBody}>
+          <Card>
+            <h2 className={styles.sectionTitle}>Meist beobachtete Teams</h2>
+            {derived.mostObservedTeams.length === 0 ? (
+              <div className={styles.rewardHint}>Noch keine Team-Beobachtungen vorhanden.</div>
+            ) : (
+              <div className={styles.teamExposureGrid}>
+                <div>
+                  <ol className={styles.teamExposureList}>
+                    {derived.mostObservedTeams.map((team, index) => (
+                      <li key={team.team} className={styles.teamExposureItem}>
+                        <span>{index + 1}. {team.team}</span>
+                        <strong>({team.sessionCount})</strong>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <div>
+                  <h3 className={styles.rewardColumnTitle}>Wenigst beobachtete Teams</h3>
+                  <ol className={styles.teamExposureList}>
+                    {derived.leastObservedTeams.map((team, index) => (
+                      <li key={team.team} className={styles.teamExposureItem}>
+                        <span>{index + 1}. {team.team}</span>
+                        <strong>({team.sessionCount})</strong>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            )}
+          </Card>
+
+          <CoverageMap moduleCoverages={derived.moduleCoverages} />
+        </div>
+      </details>
     </div>
   );
 }

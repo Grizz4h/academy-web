@@ -6,12 +6,14 @@
 
 .title {
   margin: 0 0 0.35rem;
+  font-size: clamp(1.5rem, 2.2vw, 1.9rem);
 }
 
 .hint {
   margin: 0 0 0.5rem;
-  color: rgba(216, 225, 255, 0.72);
-  font-size: 0.9rem;
+  color: rgba(210, 224, 240, 0.82);
+  font-size: 0.98rem;
+  line-height: 1.45;
 }
 
 .track {

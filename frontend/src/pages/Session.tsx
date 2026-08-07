@@ -7,9 +7,12 @@ import { detectDeviceType, evaluateSessionRewards, useRewards } from '../feature
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
 import { SpecialTeamsSidequestButton } from '../components/SpecialTeamsSidequestButton';
+import SyncStatusChip, { type SyncStatus } from '../components/SyncStatusChip';
 import { formatCompetitionContext } from '../data/competitionConfig';
+import { shareOrCopy } from '../utils/share';
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { getActivePeriodsForScope, getObservationScopeLabel } from '../utils/observationScope'
+import stickyStyles from './SessionSticky.module.css'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -47,6 +50,8 @@ export default function SessionPage() {
   const [microText, setMicroText] = useState('')
   const [microFeedbackError, setMicroFeedbackError] = useState<string>('')
   const [advanceError, setAdvanceError] = useState<string>('')
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
+  const [shareNote, setShareNote] = useState<string>('')
 
   // FIX: getrennte States für "Feedback gehört zu welcher Phase" und "wohin danach wechseln"
   const [microPhase, setMicroPhase] = useState<Phase | null>(null)
@@ -205,10 +210,16 @@ export default function SessionPage() {
 
     if (nextPhaseJson === remotePhaseJson) return
 
+    if (!navigator.onLine) {
+      setSyncStatus('offline')
+      return
+    }
+
     if (draftSaveTimeoutRef.current) {
       window.clearTimeout(draftSaveTimeoutRef.current)
     }
 
+    setSyncStatus('saving')
     draftSaveTimeoutRef.current = window.setTimeout(async () => {
       const hasAnswers = phaseAnswers && Object.keys(phaseAnswers).length > 0
       const nextDrafts = { ...remoteDraftsRef.current }
@@ -223,8 +234,10 @@ export default function SessionPage() {
         await api.saveDrafts(id, nextDrafts)
         remoteDraftsRef.current = nextDrafts
         queryClient.setQueryData(['session', id], (prev: any) => prev ? { ...prev, drafts: nextDrafts } : prev)
+        setSyncStatus(navigator.onLine ? 'saved' : 'offline')
       } catch (err) {
         console.error('Failed to save remote drafts', err)
+        setSyncStatus(navigator.onLine ? 'error' : 'offline')
       }
     }, 500)
 
@@ -234,6 +247,18 @@ export default function SessionPage() {
       }
     }
   }, [answersByPhase, currentPhase, id, queryClient, session])
+
+  useEffect(() => {
+    const onOnline = () => setSyncStatus((prev) => (prev === 'offline' ? 'saved' : prev))
+    const onOffline = () => setSyncStatus('offline')
+    window.addEventListener('online', onOnline)
+    window.addEventListener('offline', onOffline)
+    if (!navigator.onLine) setSyncStatus('offline')
+    return () => {
+      window.removeEventListener('online', onOnline)
+      window.removeEventListener('offline', onOffline)
+    }
+  }, [])
 
   const clearDraft = async () => {
     setAnswersByPhase(prev => ({ ...prev, [currentPhase]: {} }))
@@ -813,9 +838,9 @@ export default function SessionPage() {
                 />
               </div>
 
-              <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem' }}>
-                <div style={{ fontSize: '1.1rem', fontWeight: 500, color: '#888', textAlign: 'center' }}>{getPhaseTitle(currentPhase)}</div>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
+              <div className={stickyStyles.inlineNav}>
+                <div className={stickyStyles.inlinePhase}>{getPhaseTitle(currentPhase)}</div>
+                <div className={stickyStyles.inlineActions}>
                   {currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
                     <button onClick={handleGoBack} className="btn" style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}>
                       ← Zurück
@@ -829,7 +854,36 @@ export default function SessionPage() {
                     </button>
                   )}
                 </div>
+                <SyncStatusChip status={syncStatus} />
               </div>
+
+              {!isCompleted && session.state !== 'ABORTED' && (['P1', 'P2', 'P3'] as Phase[]).includes(currentPhase) && (
+                <div className={stickyStyles.stickyBar} data-session-sticky="true">
+                  <div className={stickyStyles.stickyTop}>
+                    <span className={stickyStyles.phaseLabel}>{getPhaseTitle(currentPhase)}</span>
+                    <SyncStatusChip status={syncStatus} />
+                  </div>
+                  <div className={stickyStyles.stickyActions}>
+                    {currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
+                      <button type="button" className={stickyStyles.stickyBtn} onClick={handleGoBack}>
+                        ← Zurück
+                      </button>
+                    )}
+                    {getNextPhaseForFlow(currentPhase) && (
+                      <button
+                        type="button"
+                        className={`${stickyStyles.stickyBtn} ${stickyStyles.stickyBtnPrimary}`}
+                        onClick={handleAdvanceToNext}
+                        disabled={isAdvancing}
+                      >
+                        {isAdvancing
+                          ? 'Speichere…'
+                          : (getNextPhaseForFlow(currentPhase) === 'POST' ? 'Abschließen' : 'Weiter →')}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -865,7 +919,31 @@ export default function SessionPage() {
         <div className="card">
           <h2>Session abgeschlossen! 🎉</h2>
           <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
-          <a href="/" className="btn">Zurück zur Übersicht</a>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.85rem' }}>
+            <a href="/" className="btn">Zurück zur Übersicht</a>
+            <button
+              type="button"
+              className="btn"
+              style={{ background: 'transparent', border: '1px solid rgba(129,221,245,0.45)', color: '#bae6fd' }}
+              onClick={async () => {
+                try {
+                  const matchup = session.game_info?.team_home && session.game_info?.team_away
+                    ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
+                    : session.module_id
+                  const result = await shareOrCopy({
+                    title: 'Rink Tank Session',
+                    text: `Session abgeschlossen: ${matchup} · ${session.module_id}`,
+                  })
+                  setShareNote(result === 'shared' ? 'Geteilt.' : 'In Zwischenablage kopiert.')
+                } catch {
+                  // user cancelled share
+                }
+              }}
+            >
+              Teilen
+            </button>
+          </div>
+          {shareNote && <p style={{ marginTop: '0.55rem', color: '#99f6e4', fontSize: '0.85rem' }}>{shareNote}</p>}
         </div>
       )}
 

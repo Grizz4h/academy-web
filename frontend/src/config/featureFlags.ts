@@ -43,7 +43,7 @@ export const NAV_FEATURES: NavFeature[] = [
     group: 'observation',
     note: 'Spielerbeobachtung Stats – intern, noch nicht Demo-ready.',
   },
-  { to: '/ringabout', label: 'Rink About It', navVisible: true, group: 'core' },
+  { to: '/ringabout', label: 'Rink About It!', navVisible: true, group: 'core' },
 ]
 
 export const DEV_MODE_STORAGE_KEY = 'academy.devNav'
@@ -60,6 +60,7 @@ export function setDevNavEnabled(enabled: boolean): void {
   try {
     if (enabled) localStorage.setItem(DEV_MODE_STORAGE_KEY, '1')
     else localStorage.removeItem(DEV_MODE_STORAGE_KEY)
+    window.dispatchEvent(new Event('academy-dev-nav'))
   } catch {
     // ignore storage errors (private mode etc.)
   }

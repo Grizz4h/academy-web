@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import type { Session } from '../api'
+import Card from '../components/Card'
+import FilterSheet from '../components/FilterSheet'
+import { PageSkeleton } from '../components/Skeleton'
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { useUser } from '../context/UserContext'
 import { formatPux, getAchievementProgressItems, useRewards } from '../features/rewards'
@@ -58,6 +61,7 @@ export default function Progress() {
   const [selectedTeam, setSelectedTeam] = useState<string>('')
   const [selectedMatchupKey, setSelectedMatchupKey] = useState<string>('')
   const [shouldScrollToDetails, setShouldScrollToDetails] = useState<boolean>(false)
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const detailRef = useRef<HTMLDivElement | null>(null)
   const scrollAnimationRef = useRef<number | null>(null)
   const useSplitSeason = isSplitSeasonLeague(selectedLeague)
@@ -271,6 +275,16 @@ export default function Progress() {
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }))
   const unlockedMasteriesCount = Object.keys(rewardState.unlockedMasteries || {}).length
 
+  const overview = useMemo(() => {
+    const total = sessionList.length
+    const completed = sessionList.filter((s) => s.state === 'COMPLETED').length
+    const aborted = sessionList.filter((s) => s.state === 'ABORTED').length
+    const active = sessionList.filter((s) => s.state !== 'COMPLETED' && s.state !== 'ABORTED').length
+    return { total, completed, aborted, active }
+  }, [sessionList])
+
+  const analyzedTeamCount = teamData.filter((team) => team.count > 0).length
+
   const replayAchievementAnimation = (item: (typeof allProgress)[number]) => {
     const tier = item.achievement.reward.visualTier || item.achievement.tier
     enqueueReward({
@@ -287,27 +301,59 @@ export default function Progress() {
     })
   }
 
-  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann können wir deinen Fortschritt anzeigen.</div>
-  if (isLoading) return <div className="card">Lade Fortschritt...</div>
-  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
+  if (!user) {
+    return (
+      <div className={styles.page}>
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>Stats</h1>
+          <p className={styles.pageLead}>Melde dich an, um Fortschritt, Teams und Belohnungen zu sehen.</p>
+        </header>
+        <Card>Bitte oben anmelden, dann zeigen wir dir deine Stats.</Card>
+      </div>
+    )
+  }
+  if (isLoading) return <PageSkeleton />
+  if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>
 
   return (
     <div className={styles.page}>
-      <h1>Lernfortschritt</h1>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Stats</h1>
+        <p className={styles.pageLead}>
+          Sessions, Team-Abdeckung und Belohnungen — zuerst der Überblick, Details bei Bedarf.
+        </p>
+      </header>
 
-      <div className="card">
-        <h2>Übersicht</h2>
-        <p><strong>Gesamt Sessions:</strong> {sessions?.length || 0}</p>
-        <p><strong>Abgeschlossen:</strong> {sessions?.filter(s => s.state === 'COMPLETED').length || 0}</p>
-        <p><strong>Abgebrochen:</strong> {sessions?.filter(s => s.state === 'ABORTED').length || 0}</p>
-        <p><strong>Aktiv:</strong> {sessions?.filter(s => s.state !== 'COMPLETED' && s.state !== 'ABORTED').length || 0}</p>
+      <div className={styles.kpiGrid}>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Sessions gesamt</div>
+          <div className={styles.kpiValue}>{overview.total}</div>
+          <div className={styles.kpiHint}>{overview.active} aktiv</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Abgeschlossen</div>
+          <div className={styles.kpiValue}>{overview.completed}</div>
+          <div className={styles.kpiHint}>{overview.aborted} abgebrochen</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Erfolge</div>
+          <div className={styles.kpiValue}>{unlockedAchievementsCount}/{totalAchievements}</div>
+          <div className={styles.kpiHint}>{unlockedMasteriesCount} Meisterschaften</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>PUX!</div>
+          <div className={styles.kpiValue}>{formatPux(rewardState.currency.PUX || 0)}</div>
+          <div className={styles.kpiHint}>{analyzedTeamCount} Teams analysiert</div>
+        </Card>
       </div>
 
-      <div className="card">
-        <h2>Team-Übersicht</h2>
-        <div className={styles.teamGridControls}>
-          <p className={styles.teamGridIntro}>Wie oft wurde jedes Team analysiert?</p>
-          <div className={styles.teamFilterSelects}>
+      <Card className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h2 className={styles.sectionTitle}>Team-Übersicht</h2>
+            <p className={styles.sectionLead}>Wie oft wurde jedes Team analysiert?</p>
+          </div>
+          <div className={styles.teamFilterSelectsDesktop}>
             <div className={styles.teamLeagueSelectWrap}>
               <label htmlFor="league-select" className={styles.teamLeagueLabel}>Liga</label>
               <select
@@ -329,14 +375,52 @@ export default function Progress() {
                 value={selectedSeason}
                 onChange={(e) => setSelectedSeason(e.target.value)}
               >
-                <option value="">-- Saison wählen --</option>
+                <option value="">Alle Saisons</option>
                 {seasonOptions.map((season) => (
                   <option key={season} value={season}>{season}</option>
                 ))}
               </select>
             </div>
           </div>
+          <button
+            type="button"
+            className={styles.filterOpenBtn}
+            onClick={() => setFilterSheetOpen(true)}
+          >
+            Liga / Saison
+            {selectedSeason ? ` · ${selectedSeason}` : ` · ${selectedLeague}`}
+          </button>
         </div>
+
+        <FilterSheet
+          open={filterSheetOpen}
+          title="Team-Filter"
+          onClose={() => setFilterSheetOpen(false)}
+          onReset={() => {
+            setSelectedLeague('DEL')
+            setSelectedSeason('')
+          }}
+        >
+          <div className="stack">
+            <div className="sheetSection">
+              <div className="sheetSectionTitle">Liga</div>
+              <select className="appSelect" value={selectedLeague} onChange={(e) => setSelectedLeague(e.target.value)} aria-label="Liga">
+                {LEAGUES.map((league) => (
+                  <option key={league} value={league}>{league.replace(/_/g, ' ')}</option>
+                ))}
+              </select>
+            </div>
+            <div className="sheetSection">
+              <div className="sheetSectionTitle">Saison</div>
+              <select className="appSelect" value={selectedSeason} onChange={(e) => setSelectedSeason(e.target.value)} aria-label="Saison">
+                <option value="">Alle Saisons</option>
+                {seasonOptions.map((season) => (
+                  <option key={season} value={season}>{season}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </FilterSheet>
 
         <div className={styles.teamGrid}>
           {teamData.map(team => {
@@ -346,15 +430,9 @@ export default function Progress() {
               <button
                 key={team.name}
                 type="button"
-                className={styles.teamTile}
+                className={`${styles.teamTile}${selectedTeam === team.name ? ` ${styles.teamTileSelected}` : ''}`}
                 data-intensity={intensity}
-                style={{
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  outline: selectedTeam === team.name ? '2px solid rgba(94, 234, 212, 0.8)' : 'none',
-                  outlineOffset: selectedTeam === team.name ? '2px' : '0',
-                  ...(tealSurface || {}),
-                }}
+                style={tealSurface || undefined}
                 onClick={() => {
                   setSelectedTeam(team.name)
                   setSelectedMatchupKey('')
@@ -373,270 +451,306 @@ export default function Progress() {
             )
           })}
         </div>
-      </div>
+      </Card>
 
       {selectedTeamExposure && (
-        <div
-          ref={detailRef}
-          className="card"
-          style={{ border: '1px solid rgba(94, 234, 212, 0.35)' }}
-        >
-          <h2 style={{ marginBottom: '0.45rem' }}>
-            Team-Detail: {selectedTeamExposure.team}
-          </h2>
-          <p><strong>{selectedTeamExposure.sessionCount} Analysen</strong> ({selectedTeamExposure.completedCount} abgeschlossen)</p>
-          <p>zuletzt: {selectedTeamExposure.lastSeen ? new Date(selectedTeamExposure.lastSeen).toLocaleDateString('de-DE') : '-'}</p>
-
-          <div style={{ marginTop: '1rem' }}>
-            <h3 style={{ marginBottom: '0.35rem' }}>Gegner / Paarungen</h3>
-            <p className={styles.matchupIntro}>Welche Gegner wurden wie tief analysiert?</p>
-            {selectedTeamExposure.matchups.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Keine Gegnerpaarungen für dieses Team in der gewählten Liga.</p>
-            ) : (
-              <div className={styles.matchupGrid}>
-                {selectedTeamExposure.matchups.map((matchup) => {
-                  const opponent = matchup.homeTeam === selectedTeamExposure.team
-                    ? matchup.awayTeam
-                    : matchup.awayTeam === selectedTeamExposure.team
-                      ? matchup.homeTeam
-                      : `${matchup.homeTeam} vs ${matchup.awayTeam}`
-
-                  const topModules = Object.entries(matchup.modules || {})
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 4)
-                  const hiddenModules = Math.max(Object.keys(matchup.modules || {}).length - topModules.length, 0)
-                  const isSelected = selectedMatchupKey === matchup.key
-
-                  return (
-                    <button
-                      key={matchup.key}
-                      type="button"
-                      onClick={() => setSelectedMatchupKey((prev) => prev === matchup.key ? '' : matchup.key)}
-                      className={`${styles.matchupCard} ${isSelected ? styles.matchupCardActive : ''}`}
-                    >
-                      <div className={styles.matchupHeaderRow}>
-                        <span className={styles.matchupOpponent}>vs {opponent}</span>
-                        <span className={styles.matchupCount}>{matchup.sessionCount} Analysen</span>
-                      </div>
-
-                      <div className={styles.matchupMetaRow}>
-                        <span>Zuletzt: {formatLastSeenLabel(matchup.lastSeen)}</span>
-                        <span>{matchup.completedCount}/{matchup.sessionCount} abgeschlossen</span>
-                      </div>
-
-                      <div className={styles.matchupModulesLabel}>Bisher analysiert</div>
-                      <div className={styles.matchupModuleChips}>
-                        {topModules.length === 0 ? (
-                          <span className={styles.matchupEmptyChip}>keine Module</span>
-                        ) : (
-                          topModules.map(([moduleId]) => (
-                            <span key={`${matchup.key}-${moduleId}`} className={styles.matchupModuleChip}>{moduleId}</span>
-                          ))
-                        )}
-                        {hiddenModules > 0 && (
-                          <span className={styles.matchupExtraChip}>+{hiddenModules}</span>
-                        )}
-                      </div>
-
-                      {isSelected && (
-                        <div className={styles.matchupExpandedMeta}>
-                          Drills: {Object.keys(matchup.drills || {}).join(', ') || '-'}
-                        </div>
-                      )}
-                    </button>
-                  )
-                })}
+        <Card className={styles.detailCard}>
+          <div ref={detailRef} className={styles.detailAnchor}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <h2 className={styles.sectionTitle}>Team-Detail: {selectedTeamExposure.team}</h2>
+                <p className={styles.sectionLead}>
+                  <strong>{selectedTeamExposure.sessionCount} Analysen</strong>
+                  {' '}({selectedTeamExposure.completedCount} abgeschlossen)
+                  {' · '}zuletzt {selectedTeamExposure.lastSeen ? new Date(selectedTeamExposure.lastSeen).toLocaleDateString('de-DE') : '-'}
+                </p>
               </div>
-            )}
-          </div>
-
-          <div style={{ marginTop: '1rem' }}>
-            <h3 style={{ marginBottom: '0.5rem' }}>Module</h3>
-            {topModuleEntries.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Keine Modul-Daten.</p>
-            ) : (
-              <ul style={{ margin: 0, paddingLeft: '1.1rem' }}>
-                {topModuleEntries.map(([moduleId, count]) => (
-                  <li key={moduleId}>{moduleId} ({getModuleTitle(moduleId)}) - {count}x</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div style={{ marginTop: '1rem' }}>
-            <h3 style={{ marginBottom: '0.5rem' }}>Drills</h3>
-            {topDrillEntries.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Keine Drill-Daten.</p>
-            ) : (
-              <ul style={{ margin: 0, paddingLeft: '1.1rem' }}>
-                {topDrillEntries.map(([drillId, count]) => (
-                  <li key={drillId}>{drillId} - {count}x</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div style={{ marginTop: '1rem' }}>
-            <h3 style={{ marginBottom: '0.5rem' }}>Letzte Sessions</h3>
-            {(selectedTeamExposure.sessions || []).slice(0, 5).length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Keine Sessions vorhanden.</p>
-            ) : (
-              <ul style={{ margin: 0, paddingLeft: '1.1rem' }}>
-                {selectedTeamExposure.sessions.slice(0, 5).map((session) => {
-                  const gameInfo = session.game_info
-                  const drillId = resolveDrillId(session) || '-'
-                  const matchup = gameInfo?.team_home && gameInfo?.team_away
-                    ? `${gameInfo.team_home} vs ${gameInfo.team_away}`
-                    : 'ohne Gegnerpaarung'
-                  return (
-                    <li key={session.id}>
-                      {new Date(session.created_at).toLocaleDateString('de-DE')} - {matchup} - {session.module_id} / {drillId} - {session.state}
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-          </div>
-
-        </div>
-      )}
-
-      <div className="card">
-        <h2>Belohnungen</h2>
-        <p><strong>PUX! Gesamt:</strong> {formatPux(rewardState.currency.PUX || 0)}</p>
-        <p><strong>Erfolge:</strong> {unlockedAchievementsCount}/{totalAchievements}</p>
-        <p><strong>Meisterschaften:</strong> {unlockedMasteriesCount}</p>
-
-        <div className={styles.achievementGroups}>
-          {sortedCategories.map((cat) => {
-            const items = byCategory[cat]
-            const unlockedInCat = items.filter((i) => i.isUnlocked).length
-            const isOpen = openCategories[cat] ?? false
-            return (
-              <div key={cat} className={styles.achievementGroup}>
-                <button
-                  className={styles.achievementGroupHeader}
-                  onClick={() => toggleCategory(cat)}
-                  aria-expanded={isOpen}
-                >
-                  <span className={styles.achievementGroupLabel}>
-                    {CATEGORY_LABELS[cat] ?? cat}
-                  </span>
-                  <span className={styles.achievementGroupCount}>
-                    {unlockedInCat}/{items.length}
-                  </span>
-                  <span className={`${styles.achievementChevron} ${isOpen ? styles.achievementChevronOpen : ''}`}>
-                    ›
-                  </span>
-                </button>
-                <div className={`${styles.achievementGroupBody} ${isOpen ? styles.achievementGroupBodyOpen : ''}`}>
-                  <ul className={styles.achievementGroupInner}>
-                    {items.map((item) => {
-                      const unlocked = rewardState.unlockedAchievements[item.achievement.id]
-                      return (
-                        <li
-                          key={item.achievement.id}
-                          className={`${styles.achievementItem} ${item.isUnlocked ? styles.achievementItemUnlocked : ''}`}
-                        >
-                          <span
-                            className={styles.achievementTierDot}
-                            style={{ background: TIER_COLORS[item.achievement.tier] ?? '#888' }}
-                            title={item.achievement.tier}
-                          />
-                          <div className={styles.achievementItemContent}>
-                            <div className={styles.achievementItemTitle}>
-                              {item.achievement.title}
-                              <span className={styles.achievementPux}>+{item.achievement.reward.PUX} PUX</span>
-                            </div>
-                            <div className={styles.achievementItemDesc}>{item.achievement.description}</div>
-                            {item.isUnlocked && unlocked && (
-                              <div className={styles.achievementMetaRow}>
-                                <div className={styles.achievementUnlockedAt}>
-                                  ✓ {new Date(unlocked.unlockedAt).toLocaleDateString('de-DE')}
-                                </div>
-                                <button
-                                  type="button"
-                                  className={styles.achievementReplayButton}
-                                  onClick={() => replayAchievementAnimation(item)}
-                                  aria-label={`Erfolg ${item.achievement.title} erneut abspielen`}
-                                  title="Animation erneut abspielen"
-                                >
-                                  Erneut
-                                </button>
-                              </div>
-                            )}
-                            {!item.isUnlocked && item.progress > 0 && (
-                              <div className={styles.achievementProgressWrap}>
-                                <div className={styles.achievementProgressTrack}>
-                                  <div
-                                    className={styles.achievementProgressFill}
-                                    style={{ width: `${Math.round(item.progress * 100)}%` }}
-                                  />
-                                </div>
-                                <span className={styles.achievementProgressLabel}>
-                                  {item.current}/{item.target}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        {Array.from(moduleProgress.entries()).map(([moduleId, progress]) => (
-          <div key={moduleId} className="card">
-            <h3>{getModuleTitle(moduleId)}</h3>
-
-            <div className={styles.progressSection}>
-              <div className={styles.progressHeader}>
-                <span>Fortschritt</span>
-                <span className={styles.completionCount}>{progress.completed}/{progress.total}</span>
-              </div>
-              <div className={styles.progressTrack}>
-                <div
-                  className={`${styles.progressFill} ${progress.total > 0 && progress.completed === progress.total ? styles.progressFillComplete : ''}`}
-                  style={{
-                    width: `${progress.total ? (progress.completed / progress.total) * 100 : 0}%`
-                  }}
-                />
-              </div>
+              <button
+                type="button"
+                className={styles.clearDetailBtn}
+                onClick={() => {
+                  setSelectedTeam('')
+                  setSelectedMatchupKey('')
+                }}
+              >
+                Schließen
+              </button>
             </div>
 
-            <p><strong>Abgebrochen:</strong> {progress.aborted}</p>
+            <div className={styles.detailBlock}>
+              <h3 className={styles.detailBlockTitle}>Gegner / Paarungen</h3>
+              <p className={styles.matchupIntro}>Welche Gegner wurden wie tief analysiert?</p>
+              {selectedTeamExposure.matchups.length === 0 ? (
+                <p className={styles.mutedText}>Keine Gegnerpaarungen für dieses Team in der gewählten Liga.</p>
+              ) : (
+                <div className={styles.matchupGrid}>
+                  {selectedTeamExposure.matchups.map((matchup) => {
+                    const opponent = matchup.homeTeam === selectedTeamExposure.team
+                      ? matchup.awayTeam
+                      : matchup.awayTeam === selectedTeamExposure.team
+                        ? matchup.homeTeam
+                        : `${matchup.homeTeam} vs ${matchup.awayTeam}`
 
-            {progress.lastSession && (
-              <div className={styles.lastSessionCard}>
-                <p><strong>Letzte Session:</strong></p>
-                <p>{new Date(progress.lastSession.created_at).toLocaleDateString()}</p>
-                <p>Beobachtungsumfang: {getObservationScopeLabel(progress.lastSession.observation_scope)}</p>
-                <p>
-                  Status:{' '}
-                  <span className={styles.statusBadge}>
-                    {progress.lastSession.state.replace(/_/g, ' ')}
-                  </span>
-                </p>
-                {progress.lastSession.abort && (
-                  <p>Abbruch: {progress.lastSession.abort.reason}</p>
-                )}
+                    const topModules = Object.entries(matchup.modules || {})
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 4)
+                    const hiddenModules = Math.max(Object.keys(matchup.modules || {}).length - topModules.length, 0)
+                    const isSelected = selectedMatchupKey === matchup.key
+
+                    return (
+                      <button
+                        key={matchup.key}
+                        type="button"
+                        onClick={() => setSelectedMatchupKey((prev) => prev === matchup.key ? '' : matchup.key)}
+                        className={`${styles.matchupCard} ${isSelected ? styles.matchupCardActive : ''}`}
+                      >
+                        <div className={styles.matchupHeaderRow}>
+                          <span className={styles.matchupOpponent}>vs {opponent}</span>
+                          <span className={styles.matchupCount}>{matchup.sessionCount} Analysen</span>
+                        </div>
+
+                        <div className={styles.matchupMetaRow}>
+                          <span>Zuletzt: {formatLastSeenLabel(matchup.lastSeen)}</span>
+                          <span>{matchup.completedCount}/{matchup.sessionCount} abgeschlossen</span>
+                        </div>
+
+                        <div className={styles.matchupModulesLabel}>Bisher analysiert</div>
+                        <div className={styles.matchupModuleChips}>
+                          {topModules.length === 0 ? (
+                            <span className={styles.matchupEmptyChip}>keine Module</span>
+                          ) : (
+                            topModules.map(([moduleId]) => (
+                              <span key={`${matchup.key}-${moduleId}`} className={styles.matchupModuleChip}>{moduleId}</span>
+                            ))
+                          )}
+                          {hiddenModules > 0 && (
+                            <span className={styles.matchupExtraChip}>+{hiddenModules}</span>
+                          )}
+                        </div>
+
+                        {isSelected && (
+                          <div className={styles.matchupExpandedMeta}>
+                            Drills: {Object.keys(matchup.drills || {}).join(', ') || '-'}
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            <details className={styles.inlineMore}>
+              <summary className={styles.inlineMoreSummary}>
+                <span>Module, Drills & letzte Sessions</span>
+                <span className={styles.moreChevron} aria-hidden="true" />
+              </summary>
+              <div className={styles.inlineMoreBody}>
+                <div className={styles.detailBlock}>
+                  <h3 className={styles.detailBlockTitle}>Module</h3>
+                  {topModuleEntries.length === 0 ? (
+                    <p className={styles.mutedText}>Keine Modul-Daten.</p>
+                  ) : (
+                    <ul className={styles.detailList}>
+                      {topModuleEntries.map(([moduleId, count]) => (
+                        <li key={moduleId}>{moduleId} ({getModuleTitle(moduleId)}) — {count}×</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className={styles.detailBlock}>
+                  <h3 className={styles.detailBlockTitle}>Drills</h3>
+                  {topDrillEntries.length === 0 ? (
+                    <p className={styles.mutedText}>Keine Drill-Daten.</p>
+                  ) : (
+                    <ul className={styles.detailList}>
+                      {topDrillEntries.map(([drillId, count]) => (
+                        <li key={drillId}>{drillId} — {count}×</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className={styles.detailBlock}>
+                  <h3 className={styles.detailBlockTitle}>Letzte Sessions</h3>
+                  {(selectedTeamExposure.sessions || []).slice(0, 5).length === 0 ? (
+                    <p className={styles.mutedText}>Keine Sessions vorhanden.</p>
+                  ) : (
+                    <ul className={styles.detailList}>
+                      {selectedTeamExposure.sessions.slice(0, 5).map((session) => {
+                        const gameInfo = session.game_info
+                        const drillId = resolveDrillId(session) || '-'
+                        const matchup = gameInfo?.team_home && gameInfo?.team_away
+                          ? `${gameInfo.team_home} vs ${gameInfo.team_away}`
+                          : 'ohne Gegnerpaarung'
+                        return (
+                          <li key={session.id}>
+                            {new Date(session.created_at).toLocaleDateString('de-DE')} — {matchup} — {session.module_id} / {drillId} — {session.state}
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  )}
+                </div>
               </div>
-            )}
+            </details>
           </div>
-        ))}
-      </div>
-
-      {moduleProgress.size === 0 && (
-        <div className="card">
-          <p>Noch keine Sessions vorhanden. Starte in der Akademie!</p>
-        </div>
+        </Card>
       )}
+
+      <details className={styles.morePanel}>
+        <summary className={styles.moreSummary}>
+          <span>Belohnungen · {unlockedAchievementsCount}/{totalAchievements} · {formatPux(rewardState.currency.PUX || 0)} PUX</span>
+          <span className={styles.moreChevron} aria-hidden="true" />
+        </summary>
+        <div className={styles.moreBody}>
+          <div className={styles.rewardSummaryRow}>
+            <span><strong>PUX! Gesamt:</strong> {formatPux(rewardState.currency.PUX || 0)}</span>
+            <span><strong>Erfolge:</strong> {unlockedAchievementsCount}/{totalAchievements}</span>
+            <span><strong>Meisterschaften:</strong> {unlockedMasteriesCount}</span>
+          </div>
+
+          <div className={styles.achievementGroups}>
+            {sortedCategories.map((cat) => {
+              const items = byCategory[cat]
+              const unlockedInCat = items.filter((i) => i.isUnlocked).length
+              const isOpen = openCategories[cat] ?? false
+              return (
+                <div key={cat} className={styles.achievementGroup}>
+                  <button
+                    type="button"
+                    className={styles.achievementGroupHeader}
+                    onClick={() => toggleCategory(cat)}
+                    aria-expanded={isOpen}
+                  >
+                    <span className={styles.achievementGroupLabel}>
+                      {CATEGORY_LABELS[cat] ?? cat}
+                    </span>
+                    <span className={styles.achievementGroupCount}>
+                      {unlockedInCat}/{items.length}
+                    </span>
+                    <span className={`${styles.achievementChevron} ${isOpen ? styles.achievementChevronOpen : ''}`}>
+                      ›
+                    </span>
+                  </button>
+                  <div className={`${styles.achievementGroupBody} ${isOpen ? styles.achievementGroupBodyOpen : ''}`}>
+                    <ul className={styles.achievementGroupInner}>
+                      {items.map((item) => {
+                        const unlocked = rewardState.unlockedAchievements[item.achievement.id]
+                        return (
+                          <li
+                            key={item.achievement.id}
+                            className={`${styles.achievementItem} ${item.isUnlocked ? styles.achievementItemUnlocked : ''}`}
+                          >
+                            <span
+                              className={styles.achievementTierDot}
+                              style={{ background: TIER_COLORS[item.achievement.tier] ?? '#888' }}
+                              title={item.achievement.tier}
+                            />
+                            <div className={styles.achievementItemContent}>
+                              <div className={styles.achievementItemTitle}>
+                                {item.achievement.title}
+                                <span className={styles.achievementPux}>+{item.achievement.reward.PUX} PUX</span>
+                              </div>
+                              <div className={styles.achievementItemDesc}>{item.achievement.description}</div>
+                              {item.isUnlocked && unlocked && (
+                                <div className={styles.achievementMetaRow}>
+                                  <div className={styles.achievementUnlockedAt}>
+                                    ✓ {new Date(unlocked.unlockedAt).toLocaleDateString('de-DE')}
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className={styles.achievementReplayButton}
+                                    onClick={() => replayAchievementAnimation(item)}
+                                    aria-label={`Erfolg ${item.achievement.title} erneut abspielen`}
+                                    title="Animation erneut abspielen"
+                                  >
+                                    Erneut
+                                  </button>
+                                </div>
+                              )}
+                              {!item.isUnlocked && item.progress > 0 && (
+                                <div className={styles.achievementProgressWrap}>
+                                  <div className={styles.achievementProgressTrack}>
+                                    <div
+                                      className={styles.achievementProgressFill}
+                                      style={{ width: `${Math.round(item.progress * 100)}%` }}
+                                    />
+                                  </div>
+                                  <span className={styles.achievementProgressLabel}>
+                                    {item.current}/{item.target}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </details>
+
+      <details className={styles.morePanel}>
+        <summary className={styles.moreSummary}>
+          <span>Modul-Fortschritt · {moduleProgress.size} Module</span>
+          <span className={styles.moreChevron} aria-hidden="true" />
+        </summary>
+        <div className={styles.moreBody}>
+          {moduleProgress.size === 0 ? (
+            <Card className={styles.emptyCard}>
+              <p className={styles.mutedText}>Noch keine Sessions vorhanden. Starte in der Akademie!</p>
+            </Card>
+          ) : (
+            <div className={styles.grid}>
+              {Array.from(moduleProgress.entries()).map(([moduleId, progress]) => (
+                <Card key={moduleId} className={styles.moduleCard}>
+                  <h3 className={styles.moduleTitle}>{getModuleTitle(moduleId)}</h3>
+
+                  <div className={styles.progressSection}>
+                    <div className={styles.progressHeader}>
+                      <span>Fortschritt</span>
+                      <span className={styles.completionCount}>{progress.completed}/{progress.total}</span>
+                    </div>
+                    <div className={styles.progressTrack}>
+                      <div
+                        className={`${styles.progressFill} ${progress.total > 0 && progress.completed === progress.total ? styles.progressFillComplete : ''}`}
+                        style={{
+                          width: `${progress.total ? (progress.completed / progress.total) * 100 : 0}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <p className={styles.moduleMeta}><strong>Abgebrochen:</strong> {progress.aborted}</p>
+
+                  {progress.lastSession && (
+                    <div className={styles.lastSessionCard}>
+                      <p><strong>Letzte Session:</strong></p>
+                      <p>{new Date(progress.lastSession.created_at).toLocaleDateString('de-DE')}</p>
+                      <p>Beobachtungsumfang: {getObservationScopeLabel(progress.lastSession.observation_scope)}</p>
+                      <p>
+                        Status:{' '}
+                        <span className={styles.statusBadge}>
+                          {progress.lastSession.state.replace(/_/g, ' ')}
+                        </span>
+                      </p>
+                      {progress.lastSession.abort && (
+                        <p>Abbruch: {progress.lastSession.abort.reason}</p>
+                      )}
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </details>
     </div>
   )
 }

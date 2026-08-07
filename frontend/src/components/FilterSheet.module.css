@@ -1,0 +1,17 @@
+.overlay {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.panel {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+.content {
+  max-height: min(60vh, 520px);
+}
+
+@media (min-width: 769px) {
+  .overlay {
+    display: none !important;
+  }
+}

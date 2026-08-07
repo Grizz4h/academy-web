@@ -1,0 +1,74 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 178, 198, 0.28);
+  background: rgba(12, 20, 34, 0.72);
+  color: rgba(210, 224, 240, 0.9);
+  font-size: 0.78rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.85);
+  flex: 0 0 auto;
+}
+
+.idle .dot {
+  background: rgba(148, 163, 184, 0.85);
+}
+
+.saved {
+  border-color: rgba(45, 212, 191, 0.4);
+  color: #99f6e4;
+}
+
+.saved .dot {
+  background: #5eead4;
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.7);
+}
+
+.saving {
+  border-color: rgba(125, 211, 252, 0.45);
+  color: #bae6fd;
+}
+
+.saving .dot {
+  background: #38bdf8;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.offline {
+  border-color: rgba(251, 191, 36, 0.45);
+  color: #fde68a;
+}
+
+.offline .dot {
+  background: #fbbf24;
+}
+
+.error {
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fecaca;
+}
+
+.error .dot {
+  background: #f87171;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saving .dot {
+    animation: none;
+  }
+}

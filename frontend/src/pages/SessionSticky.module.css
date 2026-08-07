@@ -1,0 +1,108 @@
+.stickyBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.55rem 0.75rem calc(0.55rem + env(safe-area-inset-bottom, 0px));
+  background: rgba(8, 12, 24, 0.94);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.stickyTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.phaseLabel {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: rgba(198, 214, 232, 0.88);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stickyActions {
+  display: flex;
+  gap: 0.55rem;
+  align-items: stretch;
+}
+
+.stickyBtn {
+  flex: 1 1 0;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 178, 198, 0.35);
+  background: rgba(12, 20, 34, 0.75);
+  color: rgba(230, 240, 250, 0.95);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.stickyBtnPrimary {
+  border: none;
+  background: linear-gradient(180deg, rgba(95, 210, 230, 0.95), rgba(81, 145, 162, 0.95));
+  color: #041018;
+}
+
+.stickyBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.inlineNav {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.inlinePhase {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #888;
+  text-align: center;
+}
+
+.inlineActions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .inlineNav {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .stickyBar {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(720px, calc(100% - 2rem));
+    border-radius: 16px 16px 0 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stickyBar {
+    transition: none;
+  }
+}

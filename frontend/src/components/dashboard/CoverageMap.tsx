@@ -17,6 +17,9 @@ export const CoverageMap: React.FC<CoverageMapProps> = ({ moduleCoverages }) => 
   return (
     <Card>
       <h2 className={styles.sectionTitle}>Modul-Abdeckung</h2>
+      {moduleCoverages.length === 0 ? (
+        <p className={styles.emptyHint}>Noch keine Module vorhanden.</p>
+      ) : null}
       <div className={styles.coverageGrid}>
         {moduleCoverages.map((module) => {
           const status = 

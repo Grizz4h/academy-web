@@ -23,6 +23,17 @@
   box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 1.25rem 1rem;
+  }
+
+  /* Extra space only when session sticky actions are present */
+  .app:has([data-session-sticky="true"]) .container {
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .card {
   background: rgba(10, 12, 26, 0.9);
   border-radius: 8px;

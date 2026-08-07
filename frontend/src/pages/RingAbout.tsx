@@ -1,8 +1,11 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, type KeyboardEvent } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { api, type SceneMarker, type SceneMarkerUpdate, type Session } from '../api'
+import Card from '../components/Card'
+import FilterSheet from '../components/FilterSheet'
 import { ManualSceneForm, type ManualSceneFormMode } from '../components/ManualSceneForm'
+import { PageSkeleton } from '../components/Skeleton'
 import { formatCompetitionContext, getCompetitionConfig } from '../data/competitionConfig'
 import {
   formatGameTimeInput,
@@ -11,6 +14,8 @@ import {
   isManualScene,
   scenePeriodLabel,
 } from '../utils/sceneHelpers'
+import { shareOrCopy } from '../utils/share'
+import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
@@ -324,7 +329,7 @@ export default function RingAbout() {
     }
   }
 
-  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+  const handleEditKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleEditSave()
@@ -384,6 +389,7 @@ export default function RingAbout() {
   const [filterEpisodeSeason, setFilterEpisodeSeason] = useState('')
   const [filterCurrentContext, setFilterCurrentContext] = useState(false)
   const [insightsLeagueFilter, setInsightsLeagueFilter] = useState('')
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
   const tracks = useMemo(() => unique(scenes.map(s => getSceneTrack(s)).filter(Boolean)).sort(), [scenes])
   const drills = useMemo(() => unique((filterTrack ? scenes.filter((scene) => getSceneTrack(scene) === filterTrack) : scenes).map(s => s.drill_id).filter(Boolean) as string[]).sort(), [scenes, filterTrack])
@@ -529,16 +535,6 @@ export default function RingAbout() {
     }
   }
 
-  const selectStyle: React.CSSProperties = {
-    padding: '0.4rem 0.6rem',
-    borderRadius: '0.4rem',
-    border: '1px solid #334155',
-    background: '#0f172a',
-    color: '#cbd5e1',
-    fontSize: '0.85rem',
-    minWidth: 120,
-  }
-
   const activeTab: 'pool' | 'insights' = searchParams.get('tab') === 'insights' ? 'insights' : 'pool'
 
   const setActiveTab = (tab: 'pool' | 'insights') => {
@@ -617,8 +613,45 @@ export default function RingAbout() {
     }
   }, [insightsScenes, sessionsById])
 
+  const activeFilterChips = [
+    sessionFilter ? { key: 'session', label: `Session: ${sessionFilter}`, clear: () => setSearchParams({}) } : null,
+    filterSource ? { key: 'source', label: filterSource === 'manual' ? 'Quelle: Manuell' : 'Quelle: Drills', clear: () => setFilterSource('') } : null,
+    filterLeague ? { key: 'league', label: `Liga: ${filterLeague}`, clear: () => {
+      setFilterLeague('')
+      setFilterCompetitionPhase('')
+      setFilterCompetitionUnitType('')
+      setFilterCompetitionUnitValue('')
+    } } : null,
+    filterSeason ? { key: 'season', label: `Saison: ${filterSeason}`, clear: () => setFilterSeason('') } : null,
+    filterStatus ? { key: 'status', label: `Status: ${filterStatus === 'ASSIGNED' ? 'Zugeordnet' : 'Neu'}`, clear: () => setFilterStatus('') } : null,
+    filterMinRating ? { key: 'rating', label: `Bewertung: ${filterMinRating}★+`, clear: () => setFilterMinRating('') } : null,
+    sortMode !== 'created' ? { key: 'sort', label: 'Sortierung: Bewertung', clear: () => setSortMode('created') } : null,
+    filterTeam ? { key: 'team', label: `Team: ${filterTeam}`, clear: () => setFilterTeam('') } : null,
+    filterTrack ? { key: 'track', label: `Track: ${filterTrack}`, clear: () => setFilterTrack('') } : null,
+    filterDrill ? { key: 'drill', label: `Drill: ${filterDrill}`, clear: () => setFilterDrill('') } : null,
+    filterCompetitionPhase ? { key: 'phase', label: `Phase: ${competitionPhases.find((p) => p.id === filterCompetitionPhase)?.label || filterCompetitionPhase}`, clear: () => {
+      setFilterCompetitionPhase('')
+      setFilterCompetitionUnitType('')
+      setFilterCompetitionUnitValue('')
+    } } : null,
+    filterCompetitionUnitValue ? { key: 'unit', label: `${selectedCompetitionPhase?.unit.label || 'Einheit'}: ${filterCompetitionUnitValue}`, clear: () => setFilterCompetitionUnitValue('') } : null,
+    filterEpisodeSeason ? { key: 'episodeSeason', label: `Staffel: ${filterEpisodeSeason}`, clear: () => setFilterEpisodeSeason('') } : null,
+    filterCurrentContext ? { key: 'current', label: currentContextLabel, clear: () => setFilterCurrentContext(false) } : null,
+  ].filter(Boolean) as Array<{ key: string; label: string; clear: () => void }>
+
+  const advancedFilterCount = [
+    filterMinRating,
+    sortMode !== 'created',
+    filterTeam,
+    filterTrack,
+    filterDrill,
+    filterCompetitionPhase,
+    filterCompetitionUnitValue,
+    filterEpisodeSeason,
+  ].filter(Boolean).length
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className={styles.page}>
       <style>{`
         @keyframes ringAboutAssignedGlow {
           0% { box-shadow: 0 0 0 rgba(20,184,166,0), 0 0 0 rgba(34,197,94,0); transform: translateY(0) scale(1); }
@@ -630,442 +663,573 @@ export default function RingAbout() {
           100% { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
-      <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🎬 Rink About It
-        </h1>
-        <p style={{ margin: '0.4rem 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>
-          Szenenpool und redaktionelle Insights für die nächste Episode.
+
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Rink About It!</h1>
+        <p className={styles.pageLead}>
+          Szenenpool und redaktionelle Insights — filtern, bewerten und für die nächste Episode vorbereiten.
         </p>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.9rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <button
-            type="button"
-            onClick={() => setActiveTab('pool')}
-            aria-pressed={activeTab === 'pool'}
-            style={{
-              padding: '0.38rem 0.82rem',
-              borderRadius: '0.5rem',
-              border: activeTab === 'pool' ? '1px solid rgba(125,211,252,0.56)' : '1px solid rgba(148,163,184,0.26)',
-              background: activeTab === 'pool' ? 'rgba(14,165,233,0.18)' : 'rgba(15,23,42,0.45)',
-              color: activeTab === 'pool' ? '#e0f2fe' : '#cbd5e1',
-              fontSize: '0.84rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Szenenpool
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('insights')}
-            aria-pressed={activeTab === 'insights'}
-            style={{
-              padding: '0.38rem 0.82rem',
-              borderRadius: '0.5rem',
-              border: activeTab === 'insights' ? '1px solid rgba(74,222,128,0.56)' : '1px solid rgba(148,163,184,0.26)',
-              background: activeTab === 'insights' ? 'rgba(34,197,94,0.16)' : 'rgba(15,23,42,0.45)',
-              color: activeTab === 'insights' ? '#dcfce7' : '#cbd5e1',
-              fontSize: '0.84rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Insights
-          </button>
-          {activeTab === 'pool' && (
+        <div className={styles.headerRow}>
+          <div className={styles.tabs}>
             <button
               type="button"
+              onClick={() => setActiveTab('pool')}
+              aria-pressed={activeTab === 'pool'}
+              className={`${styles.tab}${activeTab === 'pool' ? ` ${styles.tabActive}` : ''}`}
+            >
+              Szenenpool
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('insights')}
+              aria-pressed={activeTab === 'insights'}
+              className={`${styles.tab}${activeTab === 'insights' ? ` ${styles.tabActiveInsights}` : ''}`}
+            >
+              Insights
+            </button>
+            <button
+              type="button"
+              className={styles.addBtn}
               onClick={() => {
                 setManualFormScene(null)
                 setManualFormMode('create')
               }}
-              style={{
-                marginLeft: 'auto',
-                padding: '0.48rem 0.95rem',
-                borderRadius: '0.55rem',
-                border: 'none',
-                background: 'linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%)',
-                color: '#0b1220',
-                fontSize: '0.9rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 0 18px rgba(56,189,248,0.28)',
-              }}
             >
               Szene hinzufügen
             </button>
-          )}
+          </div>
         </div>
-      </div>
+      </header>
 
       {activeTab === 'pool' && (
         <>
-
-      {scenes.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem', alignItems: 'center' }}>
-          <button
-            type="button"
-            onClick={() => setFilterStatus(filterStatus === 'NEW' ? '' : 'NEW')}
-            aria-pressed={filterStatus === 'NEW'}
-            style={{
-              padding: '0.38rem 0.7rem', borderRadius: '0.45rem',
-              background: filterStatus === 'NEW' ? 'rgba(148,163,184,0.16)' : 'rgba(255,255,255,0.06)',
-              border: filterStatus === 'NEW' ? '1px solid rgba(203,213,225,0.48)' : '1px solid rgba(148,163,184,0.18)',
-              color: '#cbd5e1', fontSize: '0.82rem', fontWeight: 750,
-              cursor: 'pointer',
-              boxShadow: filterStatus === 'NEW' ? '0 0 18px rgba(148,163,184,0.12)' : undefined,
-            }}
-          >
-            Neu: {sceneStats.new}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const next = !filterCurrentContext
-              setFilterCurrentContext(next)
-              if (next) {
-                setFilterCompetitionPhase('')
-                setFilterCompetitionUnitType('')
-                setFilterCompetitionUnitValue('')
-              }
-            }}
-            aria-pressed={filterCurrentContext}
-            disabled={scenes.length === 0}
-            title={filterCurrentContext && currentContextKeys.size === 0 ? 'Kein aktueller Spielkontext für die aktiven Filter gefunden' : 'Neueste Spielkontexte anzeigen'}
-            style={{
-              padding: '0.38rem 0.72rem', borderRadius: '0.45rem',
-              background: filterCurrentContext ? 'rgba(14,165,233,0.22)' : 'rgba(14,165,233,0.10)',
-              border: filterCurrentContext ? '1px solid rgba(125,211,252,0.56)' : '1px solid rgba(125,211,252,0.24)',
-              color: '#bae6fd',
-              boxShadow: filterCurrentContext ? '0 0 22px rgba(14,165,233,0.18)' : undefined,
-              fontSize: '0.82rem', fontWeight: 800,
-              cursor: 'pointer',
-            }}
-          >
-            {currentContextLabel}
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterStatus(filterStatus === 'ASSIGNED' ? '' : 'ASSIGNED')}
-            aria-pressed={filterStatus === 'ASSIGNED'}
-            style={{
-              padding: '0.38rem 0.72rem', borderRadius: '0.45rem',
-              background: filterStatus === 'ASSIGNED'
-                ? 'linear-gradient(135deg, rgba(20,184,166,0.34), rgba(34,197,94,0.22))'
-                : 'linear-gradient(135deg, rgba(20,184,166,0.22), rgba(34,197,94,0.14))',
-              border: filterStatus === 'ASSIGNED' ? '1px solid rgba(153,246,228,0.62)' : '1px solid rgba(45,212,191,0.38)',
-              color: '#99f6e4',
-              boxShadow: filterStatus === 'ASSIGNED' ? '0 0 24px rgba(20,184,166,0.2)' : '0 0 20px rgba(20,184,166,0.12)',
-              fontSize: '0.82rem', fontWeight: 800,
-              cursor: 'pointer',
-            }}
-          >
-            ✓ Zugeordnet: {sceneStats.assigned}
-          </button>
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className="card" style={{ padding: '1rem' }}>
-        {sessionFilter && (
-          <div style={{ marginBottom: '0.6rem', fontSize: '0.8rem', color: '#7dd3fc' }}>
-            Session-Filter aktiv: <strong>{sessionFilter}</strong>
-          </div>
-        )}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', alignItems: 'center' }}>
-          {leagues.length > 0 && (
-            <select
-              value={filterLeague}
-              onChange={e => {
-                setFilterLeague(e.target.value)
-                setFilterCompetitionPhase('')
-                setFilterCompetitionUnitType('')
-                setFilterCompetitionUnitValue('')
-              }}
-              style={selectStyle}
-            >
-              <option value="">Alle Ligen</option>
-              {leagues.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
+          {scenes.length > 0 && (
+            <div className={styles.kpiGrid}>
+              <Card className={styles.kpiCard}>
+                <div className={styles.kpiTitle}>Szenen gesamt</div>
+                <div className={styles.kpiValue}>{scenes.length}</div>
+                <div className={styles.kpiHint}>im Pool gespeichert</div>
+              </Card>
+              <Card className={styles.kpiCard}>
+                <div className={styles.kpiTitle}>Neu</div>
+                <div className={styles.kpiValue}>{sceneStats.new}</div>
+                <div className={styles.kpiHint}>noch nicht zugeordnet</div>
+              </Card>
+              <Card className={styles.kpiCard}>
+                <div className={styles.kpiTitle}>Zugeordnet</div>
+                <div className={styles.kpiValue}>{sceneStats.assigned}</div>
+                <div className={styles.kpiHint}>für Episoden gesetzt</div>
+              </Card>
+              <Card className={styles.kpiCard}>
+                <div className={styles.kpiTitle}>Angezeigt</div>
+                <div className={styles.kpiValue}>{filtered.length}</div>
+                <div className={styles.kpiHint}>nach aktuellen Filtern</div>
+              </Card>
+            </div>
           )}
-          {seasons.length > 0 && (
-            <select value={filterSeason} onChange={e => setFilterSeason(e.target.value)} style={selectStyle}>
-              <option value="">Alle Saisons</option>
-              {seasons.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+
+          {scenes.length > 0 && (
+            <div className={styles.quickFilters}>
+              <button
+                type="button"
+                onClick={() => setFilterStatus(filterStatus === 'NEW' ? '' : 'NEW')}
+                aria-pressed={filterStatus === 'NEW'}
+                className={`${styles.quickChip}${filterStatus === 'NEW' ? ` ${styles.quickChipActive}` : ''}`}
+              >
+                Neu: {sceneStats.new}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !filterCurrentContext
+                  setFilterCurrentContext(next)
+                  if (next) {
+                    setFilterCompetitionPhase('')
+                    setFilterCompetitionUnitType('')
+                    setFilterCompetitionUnitValue('')
+                  }
+                }}
+                aria-pressed={filterCurrentContext}
+                disabled={scenes.length === 0}
+                title={filterCurrentContext && currentContextKeys.size === 0 ? 'Kein aktueller Spielkontext für die aktiven Filter gefunden' : 'Neueste Spielkontexte anzeigen'}
+                className={`${styles.quickChip} ${styles.quickChipCurrent}${filterCurrentContext ? ` ${styles.quickChipCurrentActive}` : ''}`}
+              >
+                {currentContextLabel}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterStatus(filterStatus === 'ASSIGNED' ? '' : 'ASSIGNED')}
+                aria-pressed={filterStatus === 'ASSIGNED'}
+                className={`${styles.quickChip} ${styles.quickChipAssigned}${filterStatus === 'ASSIGNED' ? ` ${styles.quickChipAssignedActive}` : ''}`}
+              >
+                Zugeordnet: {sceneStats.assigned}
+              </button>
+            </div>
           )}
-          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={selectStyle}>
-            <option value="">Alle Status</option>
-            <option value="NEW">Neu</option>
-            <option value="ASSIGNED">Zugeordnet</option>
-          </select>
-          <select value={filterSource} onChange={e => setFilterSource((e.target.value as '' | 'drill' | 'manual') || '')} style={selectStyle}>
-            <option value="">Alle Szenen</option>
-            <option value="drill">Aus Drills</option>
-            <option value="manual">Manuell erfasst</option>
-          </select>
-          <select value={filterMinRating} onChange={e => setFilterMinRating(e.target.value)} style={selectStyle}>
-            <option value="">Alle Bewertungen</option>
-            <option value="3">3★+</option>
-            <option value="4">4★+</option>
-            <option value="5">5★</option>
-          </select>
-          <select value={sortMode} onChange={e => setSortMode(e.target.value as 'created' | 'rating_desc')} style={selectStyle}>
-            <option value="created">Neueste zuerst</option>
-            <option value="rating_desc">Bewertung zuerst</option>
-          </select>
-          {teams.length > 0 && (
-            <select value={filterTeam} onChange={e => setFilterTeam(e.target.value)} style={selectStyle}>
-              <option value="">Alle Teams</option>
-              {teams.map(t => <option key={t} value={t.toLowerCase()}>{t}</option>)}
-            </select>
-          )}
-          {tracks.length > 0 && (
-            <select value={filterTrack} onChange={e => setFilterTrack(e.target.value)} style={selectStyle}>
-              <option value="">Alle Tracks</option>
-              {tracks.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          )}
-          {drills.length > 0 && (
-            <select value={filterDrill} onChange={e => setFilterDrill(e.target.value)} style={selectStyle}>
-              <option value="">Alle Drills</option>
-              {drills.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-          )}
-          {competitionPhases.length > 0 && (
-            <select
-              value={filterCompetitionPhase}
-              onChange={e => {
-                setFilterCurrentContext(false)
-                setFilterCompetitionPhase(e.target.value)
-                const nextPhase = competitionPhases.find((phase) => phase.id === e.target.value)
-                setFilterCompetitionUnitType(nextPhase?.unit.type || '')
-                setFilterCompetitionUnitValue('')
-              }}
-              style={selectStyle}
-            >
-              <option value="">Alle Phasen</option>
-              {competitionPhases.map((phase) => <option key={phase.id} value={phase.id}>{phase.label}</option>)}
-            </select>
-          )}
-          {selectedCompetitionPhase && competitionUnits.length > 0 && (
-            <select
-              value={filterCompetitionUnitValue}
-              onChange={e => {
-                setFilterCurrentContext(false)
-                setFilterCompetitionUnitType(selectedCompetitionPhase.unit.type)
-                setFilterCompetitionUnitValue(e.target.value)
-              }}
-              style={selectStyle}
-            >
-              <option value="">Alle {selectedCompetitionPhase.unit.label}</option>
-              {competitionUnits.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}
-            </select>
-          )}
-          {episodeSeasons.length > 0 && (
-            <select value={filterEpisodeSeason} onChange={e => setFilterEpisodeSeason(e.target.value)} style={selectStyle}>
-              <option value="">Alle Staffeln</option>
-              {episodeSeasons.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          )}
-          {hasActiveFilter && (
-            <button
-              type="button"
-              onClick={resetFilters}
-              style={{
-                padding: '0.4rem 0.8rem', borderRadius: '0.4rem',
-                border: '1px solid #475569', background: 'transparent',
-                color: '#94a3b8', cursor: 'pointer', fontSize: '0.8rem',
-              }}
-            >
-              ✕ Filter zurücksetzen
-            </button>
-          )}
-        </div>
-      </div>
 
-      {/* Content */}
-      {isLoading && <div className="card">Lade Szenen…</div>}
-      {error && <div className="card" style={{ color: '#f87171' }}>Fehler beim Laden der Szenen.</div>}
-
-      {!isLoading && !error && scenes.length === 0 && (
-        <div className="card" style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#64748b' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎬</div>
-          <div style={{ fontWeight: 600, marginBottom: '0.3rem' }}>Noch keine Szenen gespeichert</div>
-          <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-            Erfasse Momente live mit „Szene hinzufügen“ oder während eines Drills mit „Szene merken“.
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setManualFormScene(null)
-              setManualFormMode('create')
-            }}
-            style={{
-              padding: '0.55rem 1.1rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              background: '#4fc3f7',
-              color: '#0a0a1a',
-              fontWeight: 800,
-              cursor: 'pointer',
-            }}
-          >
-            Szene hinzufügen
-          </button>
-        </div>
-      )}
-
-      {!isLoading && !error && scenes.length > 0 && filtered.length === 0 && (
-        <div className="card" style={{ textAlign: 'center', padding: '2rem 1rem', color: '#64748b' }}>
-          Keine Szenen für die gewählten Filter.
-        </div>
-      )}
-
-      {!isLoading && filtered.length > 0 && (
-        <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-          {filtered.map(scene => (
-            <SceneCard
-              key={scene.id}
-              scene={scene}
-              observedTeam={getObservedTeamForScene(scene) || 'Beobachtetes Team nicht hinterlegt'}
-              onDelete={handleDelete}
-              onEdit={handleEditOpen}
-              onEnrich={handleEnrichOpen}
-              onRatingChange={handleRatingChange}
-              celebrate={celebratedSceneId === scene.id}
-            />
-          ))}
-        </div>
-      )}
-
-      {manualFormMode && (
-        <ManualSceneForm
-          mode={manualFormMode}
-          initialScene={manualFormScene}
-          onClose={handleManualFormClose}
-          onSaved={(scene, options) => {
-            handleManualFormSaved(scene, options)
-            if (!options?.continueEditing) {
-              handleManualFormClose()
-            }
-          }}
-        />
-      )}
-
-      {!isLoading && filtered.length > 0 && (
-        <div style={{ color: '#64748b', fontSize: '0.8rem', textAlign: 'center' }}>
-          {filtered.length} von {scenes.length} Szene{scenes.length !== 1 ? 'n' : ''}
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {editingSceneId && (
-        <div
-          style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.75)',
-            zIndex: 2000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-          onClick={e => { if (e.target === e.currentTarget) handleEditClose() }}
-        >
-          <div
-            className="card"
-            style={{ maxWidth: 420, width: '92%', margin: '0 auto', padding: '1.5rem' }}
-            onKeyDown={handleEditKeyDown}
-          >
-            <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.2rem' }}>✏️ Szene bearbeiten</h3>
-
-            {/* Game time input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', marginTop: '1rem' }}>
-              Minute <span style={{ color: '#f87171' }}>*</span>
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              value={editGameTime}
-              onChange={e => {
-                setEditGameTime(formatGameTimeInput(e.target.value))
-              }}
-              placeholder="z. B. 13:42"
-              style={{
-                width: '100%', padding: '0.6rem', borderRadius: '0.4rem',
-                border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
-                fontSize: '1rem', fontFamily: 'monospace', boxSizing: 'border-box',
-              }}
-              autoFocus
-            />
-
-            {/* Note input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', marginTop: '0.8rem' }}>
-              Notiz
-            </label>
-            <textarea
-              value={editNote}
-              onChange={e => setEditNote(e.target.value)}
-              placeholder="Optionale Notiz..."
-              style={{
-                width: '100%', padding: '0.6rem', borderRadius: '0.4rem',
-                border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
-                fontSize: '0.95rem', fontFamily: 'monospace', boxSizing: 'border-box',
-                minHeight: '4rem', resize: 'vertical',
-              }}
-            />
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginTop: '0.9rem' }}>
-              <label style={{ display: 'block', fontWeight: 600, fontSize: '0.92rem' }}>
-                Staffel
-                <input
-                  type="text"
-                  value={editEpisodeSeason}
-                  onChange={e => setEditEpisodeSeason(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                  onBlur={() => {
-                    const normalized = normalizeEpisodeCodeInput(editEpisodeSeason, 2)
-                    if (normalized !== null) setEditEpisodeSeason(normalized)
-                  }}
-                  placeholder="z. B. 01"
-                  style={{
-                    width: '100%', padding: '0.55rem', marginTop: '0.35rem', borderRadius: '0.4rem',
-                    border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
-                    fontSize: '0.95rem', fontFamily: 'monospace', boxSizing: 'border-box',
-                  }}
-                />
-              </label>
-              <label style={{ display: 'block', fontWeight: 600, fontSize: '0.92rem' }}>
-                Episode
-                <input
-                  type="text"
-                  value={editEpisodeNumber}
-                  onChange={e => setEditEpisodeNumber(e.target.value.replace(/\D/g, '').slice(0, 3))}
-                  onBlur={() => {
-                    const normalized = normalizeEpisodeCodeInput(editEpisodeNumber, 3)
-                    if (normalized !== null) setEditEpisodeNumber(normalized)
-                  }}
-                  placeholder="z. B. 013"
-                  style={{
-                    width: '100%', padding: '0.55rem', marginTop: '0.35rem', borderRadius: '0.4rem',
-                    border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
-                    fontSize: '0.95rem', fontFamily: 'monospace', boxSizing: 'border-box',
-                  }}
-                />
-              </label>
+          <Card className={styles.filterCard}>
+            <div className={styles.filterHeader}>
+              <h2 className={styles.filterTitle}>Filter</h2>
+              {hasActiveFilter && (
+                <button type="button" className={styles.filterReset} onClick={resetFilters}>
+                  Zurücksetzen
+                </button>
+              )}
             </div>
 
-            <div style={{ marginTop: '0.55rem', fontSize: '0.8rem', color: '#94a3b8' }}>
-              Staffel und Episode werden automatisch als 01 / 013 gespeichert.
-            </div>
-
-            {/* Error message */}
-            {editError && (
-              <div style={{ color: '#f87171', fontSize: '0.9rem', marginTop: '0.8rem' }}>
-                {editError}
-              </div>
+            {sessionFilter && (
+              <p className={styles.sessionFilterNote}>
+                Session-Filter aktiv: <strong>{sessionFilter}</strong>
+              </p>
             )}
 
-            {/* Buttons */}
-            <div style={{ display: 'flex', gap: '0.6rem', marginTop: '1.2rem' }}>
+            <div className={styles.filterBase}>
+              {leagues.length > 0 && (
+                <div className={styles.filterField}>
+                  <label htmlFor="scene-league">Liga</label>
+                  <select
+                    id="scene-league"
+                    className="appSelect"
+                    value={filterLeague}
+                    onChange={e => {
+                      setFilterLeague(e.target.value)
+                      setFilterCompetitionPhase('')
+                      setFilterCompetitionUnitType('')
+                      setFilterCompetitionUnitValue('')
+                    }}
+                  >
+                    <option value="">Alle</option>
+                    {leagues.map(l => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </div>
+              )}
+              {seasons.length > 0 && (
+                <div className={styles.filterField}>
+                  <label htmlFor="scene-season">Saison</label>
+                  <select id="scene-season" className="appSelect" value={filterSeason} onChange={e => setFilterSeason(e.target.value)}>
+                    <option value="">Alle</option>
+                    {seasons.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              )}
+              <div className={styles.filterField}>
+                <label htmlFor="scene-status">Status</label>
+                <select id="scene-status" className="appSelect" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                  <option value="">Alle</option>
+                  <option value="NEW">Neu</option>
+                  <option value="ASSIGNED">Zugeordnet</option>
+                </select>
+              </div>
+              <div className={styles.filterField}>
+                <label htmlFor="scene-source">Quelle</label>
+                <select id="scene-source" className="appSelect" value={filterSource} onChange={e => setFilterSource((e.target.value as '' | 'drill' | 'manual') || '')}>
+                  <option value="">Alle</option>
+                  <option value="drill">Aus Drills</option>
+                  <option value="manual">Manuell erfasst</option>
+                </select>
+              </div>
+            </div>
+
+            <details className={`${styles.filterMore} ${styles.filterMoreDesktop}`}>
+              <summary className={styles.filterMoreSummary}>
+                <span>
+                  Weitere Filter
+                  {advancedFilterCount > 0 ? ` · ${advancedFilterCount} aktiv` : ''}
+                </span>
+                <span className={styles.moreChevron} aria-hidden="true" />
+              </summary>
+              <div className={styles.filterMoreBody}>
+                <div className={styles.filterGroups}>
+                  <div className={styles.filterGroup}>
+                    <div className={styles.filterGroupLabel}>Inhalt</div>
+                    <div className={styles.filterRow}>
+                      <div className={styles.filterField}>
+                        <label htmlFor="scene-rating">Bewertung</label>
+                        <select id="scene-rating" className="appSelect" value={filterMinRating} onChange={e => setFilterMinRating(e.target.value)}>
+                          <option value="">Alle</option>
+                          <option value="3">3★+</option>
+                          <option value="4">4★+</option>
+                          <option value="5">5★</option>
+                        </select>
+                      </div>
+                      <div className={styles.filterField}>
+                        <label htmlFor="scene-sort">Sortierung</label>
+                        <select id="scene-sort" className="appSelect" value={sortMode} onChange={e => setSortMode(e.target.value as 'created' | 'rating_desc')}>
+                          <option value="created">Neueste zuerst</option>
+                          <option value="rating_desc">Bewertung zuerst</option>
+                        </select>
+                      </div>
+                      {teams.length > 0 && (
+                        <div className={styles.filterField}>
+                          <label htmlFor="scene-team">Team</label>
+                          <select id="scene-team" className="appSelect" value={filterTeam} onChange={e => setFilterTeam(e.target.value)}>
+                            <option value="">Alle</option>
+                            {teams.map(t => <option key={t} value={t.toLowerCase()}>{t}</option>)}
+                          </select>
+                        </div>
+                      )}
+                      {tracks.length > 0 && (
+                        <div className={styles.filterField}>
+                          <label htmlFor="scene-track">Track</label>
+                          <select id="scene-track" className="appSelect" value={filterTrack} onChange={e => setFilterTrack(e.target.value)}>
+                            <option value="">Alle</option>
+                            {tracks.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </div>
+                      )}
+                      {drills.length > 0 && (
+                        <div className={styles.filterField}>
+                          <label htmlFor="scene-drill">Drill</label>
+                          <select id="scene-drill" className="appSelect" value={filterDrill} onChange={e => setFilterDrill(e.target.value)}>
+                            <option value="">Alle</option>
+                            {drills.map(d => <option key={d} value={d}>{d}</option>)}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {(competitionPhases.length > 0 || episodeSeasons.length > 0) && (
+                    <div className={styles.filterGroup}>
+                      <div className={styles.filterGroupLabel}>Wettbewerb</div>
+                      <div className={styles.filterRow}>
+                        {competitionPhases.length > 0 && (
+                          <div className={styles.filterField}>
+                            <label htmlFor="scene-phase">Phase</label>
+                            <select
+                              id="scene-phase"
+                              className="appSelect"
+                              value={filterCompetitionPhase}
+                              onChange={e => {
+                                setFilterCurrentContext(false)
+                                setFilterCompetitionPhase(e.target.value)
+                                const nextPhase = competitionPhases.find((phase) => phase.id === e.target.value)
+                                setFilterCompetitionUnitType(nextPhase?.unit.type || '')
+                                setFilterCompetitionUnitValue('')
+                              }}
+                            >
+                              <option value="">Alle</option>
+                              {competitionPhases.map((phase) => <option key={phase.id} value={phase.id}>{phase.label}</option>)}
+                            </select>
+                          </div>
+                        )}
+                        {selectedCompetitionPhase && competitionUnits.length > 0 && (
+                          <div className={styles.filterField}>
+                            <label htmlFor="scene-unit">{selectedCompetitionPhase.unit.label}</label>
+                            <select
+                              id="scene-unit"
+                              className="appSelect"
+                              value={filterCompetitionUnitValue}
+                              onChange={e => {
+                                setFilterCurrentContext(false)
+                                setFilterCompetitionUnitType(selectedCompetitionPhase.unit.type)
+                                setFilterCompetitionUnitValue(e.target.value)
+                              }}
+                            >
+                              <option value="">Alle</option>
+                              {competitionUnits.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}
+                            </select>
+                          </div>
+                        )}
+                        {episodeSeasons.length > 0 && (
+                          <div className={styles.filterField}>
+                            <label htmlFor="scene-episode-season">Staffel</label>
+                            <select id="scene-episode-season" className="appSelect" value={filterEpisodeSeason} onChange={e => setFilterEpisodeSeason(e.target.value)}>
+                              <option value="">Alle</option>
+                              {episodeSeasons.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </details>
+
+            <button
+              type="button"
+              className={styles.filterOpenBtn}
+              onClick={() => setFilterSheetOpen(true)}
+            >
+              Weitere Filter{advancedFilterCount > 0 ? ` · ${advancedFilterCount} aktiv` : ''}
+            </button>
+
+            <FilterSheet
+              open={filterSheetOpen}
+              title="Weitere Filter"
+              onClose={() => setFilterSheetOpen(false)}
+              onReset={() => {
+                setFilterMinRating('')
+                setSortMode('created')
+                setFilterTeam('')
+                setFilterTrack('')
+                setFilterDrill('')
+                setFilterCompetitionPhase('')
+                setFilterCompetitionUnitType('')
+                setFilterCompetitionUnitValue('')
+                setFilterEpisodeSeason('')
+              }}
+            >
+              <div className="stack">
+                <div className="sheetSection">
+                  <div className="sheetSectionTitle">Inhalt</div>
+                  <div className="stack">
+                    <select className="appSelect" value={filterMinRating} onChange={e => setFilterMinRating(e.target.value)} aria-label="Bewertung">
+                      <option value="">Bewertung: Alle</option>
+                      <option value="3">3★+</option>
+                      <option value="4">4★+</option>
+                      <option value="5">5★</option>
+                    </select>
+                    <select className="appSelect" value={sortMode} onChange={e => setSortMode(e.target.value as 'created' | 'rating_desc')} aria-label="Sortierung">
+                      <option value="created">Neueste zuerst</option>
+                      <option value="rating_desc">Bewertung zuerst</option>
+                    </select>
+                    {teams.length > 0 && (
+                      <select className="appSelect" value={filterTeam} onChange={e => setFilterTeam(e.target.value)} aria-label="Team">
+                        <option value="">Team: Alle</option>
+                        {teams.map(t => <option key={t} value={t.toLowerCase()}>{t}</option>)}
+                      </select>
+                    )}
+                    {tracks.length > 0 && (
+                      <select className="appSelect" value={filterTrack} onChange={e => setFilterTrack(e.target.value)} aria-label="Track">
+                        <option value="">Track: Alle</option>
+                        {tracks.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    )}
+                    {drills.length > 0 && (
+                      <select className="appSelect" value={filterDrill} onChange={e => setFilterDrill(e.target.value)} aria-label="Drill">
+                        <option value="">Drill: Alle</option>
+                        {drills.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    )}
+                  </div>
+                </div>
+                {(competitionPhases.length > 0 || episodeSeasons.length > 0) && (
+                  <div className="sheetSection">
+                    <div className="sheetSectionTitle">Wettbewerb</div>
+                    <div className="stack">
+                      {competitionPhases.length > 0 && (
+                        <select
+                          className="appSelect"
+                          value={filterCompetitionPhase}
+                          onChange={e => {
+                            setFilterCurrentContext(false)
+                            setFilterCompetitionPhase(e.target.value)
+                            const nextPhase = competitionPhases.find((phase) => phase.id === e.target.value)
+                            setFilterCompetitionUnitType(nextPhase?.unit.type || '')
+                            setFilterCompetitionUnitValue('')
+                          }}
+                          aria-label="Phase"
+                        >
+                          <option value="">Phase: Alle</option>
+                          {competitionPhases.map((phase) => <option key={phase.id} value={phase.id}>{phase.label}</option>)}
+                        </select>
+                      )}
+                      {selectedCompetitionPhase && competitionUnits.length > 0 && (
+                        <select
+                          className="appSelect"
+                          value={filterCompetitionUnitValue}
+                          onChange={e => {
+                            setFilterCurrentContext(false)
+                            setFilterCompetitionUnitType(selectedCompetitionPhase.unit.type)
+                            setFilterCompetitionUnitValue(e.target.value)
+                          }}
+                          aria-label={selectedCompetitionPhase.unit.label}
+                        >
+                          <option value="">Alle {selectedCompetitionPhase.unit.label}</option>
+                          {competitionUnits.map((unit) => <option key={unit.value} value={unit.value}>{unit.label}</option>)}
+                        </select>
+                      )}
+                      {episodeSeasons.length > 0 && (
+                        <select className="appSelect" value={filterEpisodeSeason} onChange={e => setFilterEpisodeSeason(e.target.value)} aria-label="Staffel">
+                          <option value="">Staffel: Alle</option>
+                          {episodeSeasons.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </FilterSheet>
+
+            {activeFilterChips.length > 0 && (
+              <div className={styles.activeFilters}>
+                {activeFilterChips.map((chip) => (
+                  <span key={chip.key} className={styles.chip}>
+                    {chip.label}
+                    <button type="button" className={styles.chipClear} onClick={chip.clear} aria-label={`${chip.label} entfernen`}>
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {isLoading && <PageSkeleton />}
+          {error && <Card><span style={{ color: '#f87171' }}>Fehler beim Laden der Szenen.</span></Card>}
+
+          {!isLoading && !error && scenes.length === 0 && (
+            <Card className={styles.emptyCard}>
+              <h2 className={styles.emptyTitle}>Noch keine Szenen gespeichert</h2>
+              <p className={styles.emptyText}>
+                Erfasse Momente live mit „Szene hinzufügen“ oder während eines Drills mit „Szene merken“.
+              </p>
+              <div className={styles.emptyActions}>
+                <button
+                  type="button"
+                  className={styles.addBtn}
+                  onClick={() => {
+                    setManualFormScene(null)
+                    setManualFormMode('create')
+                  }}
+                >
+                  Szene hinzufügen
+                </button>
+              </div>
+            </Card>
+          )}
+
+          {!isLoading && !error && scenes.length > 0 && filtered.length === 0 && (
+            <Card className={styles.emptyCard}>
+              <h2 className={styles.emptyTitle}>Keine Szenen für die gewählten Filter</h2>
+              <p className={styles.emptyText}>Passe die Filter an oder setze sie zurück, um wieder Szenen zu sehen.</p>
+              <div className={styles.emptyActions}>
+                <button type="button" className={styles.filterReset} onClick={resetFilters}>
+                  Filter zurücksetzen
+                </button>
+              </div>
+            </Card>
+          )}
+
+          {!isLoading && filtered.length > 0 && (
+            <>
+              <div className={styles.resultsBar}>
+                <h2 className={styles.resultsTitle}>Szenen</h2>
+                <p className={styles.resultsMeta}>
+                  {filtered.length} von {scenes.length} Szene{scenes.length !== 1 ? 'n' : ''}
+                </p>
+              </div>
+              <div className={styles.sceneGrid}>
+                {filtered.map(scene => (
+                  <SceneCard
+                    key={scene.id}
+                    scene={scene}
+                    observedTeam={getObservedTeamForScene(scene) || 'Beobachtetes Team nicht hinterlegt'}
+                    onDelete={handleDelete}
+                    onEdit={handleEditOpen}
+                    onEnrich={handleEnrichOpen}
+                    onRatingChange={handleRatingChange}
+                    celebrate={celebratedSceneId === scene.id}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {editingSceneId && (
+            <div
+              style={{
+                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(0,0,0,0.75)',
+                zIndex: 2000,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+              onClick={e => { if (e.target === e.currentTarget) handleEditClose() }}
+            >
+              <div
+                className="card"
+                style={{ maxWidth: 420, width: '92%', margin: '0 auto', padding: '1.5rem' }}
+                onKeyDown={handleEditKeyDown}
+              >
+                <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.2rem' }}>Szene bearbeiten</h3>
+
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', marginTop: '1rem' }}>
+                  Minute <span style={{ color: '#f87171' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  value={editGameTime}
+                  onChange={e => {
+                    setEditGameTime(formatGameTimeInput(e.target.value))
+                  }}
+                  placeholder="z. B. 13:42"
+                  style={{
+                    width: '100%', padding: '0.6rem', borderRadius: '0.4rem',
+                    border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
+                    fontSize: '1rem', fontFamily: 'monospace', boxSizing: 'border-box',
+                  }}
+                  autoFocus
+                />
+
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', marginTop: '0.8rem' }}>
+                  Notiz
+                </label>
+                <textarea
+                  value={editNote}
+                  onChange={e => setEditNote(e.target.value)}
+                  placeholder="Optionale Notiz..."
+                  style={{
+                    width: '100%', padding: '0.6rem', borderRadius: '0.4rem',
+                    border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
+                    fontSize: '0.95rem', fontFamily: 'monospace', boxSizing: 'border-box',
+                    minHeight: '4rem', resize: 'vertical',
+                  }}
+                />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginTop: '0.9rem' }}>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.92rem' }}>
+                    Staffel
+                    <input
+                      type="text"
+                      value={editEpisodeSeason}
+                      onChange={e => setEditEpisodeSeason(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                      onBlur={() => {
+                        const normalized = normalizeEpisodeCodeInput(editEpisodeSeason, 2)
+                        if (normalized !== null) setEditEpisodeSeason(normalized)
+                      }}
+                      placeholder="z. B. 01"
+                      style={{
+                        width: '100%', padding: '0.55rem', marginTop: '0.35rem', borderRadius: '0.4rem',
+                        border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
+                        fontSize: '0.95rem', fontFamily: 'monospace', boxSizing: 'border-box',
+                      }}
+                    />
+                  </label>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.92rem' }}>
+                    Episode
+                    <input
+                      type="text"
+                      value={editEpisodeNumber}
+                      onChange={e => setEditEpisodeNumber(e.target.value.replace(/\D/g, '').slice(0, 3))}
+                      onBlur={() => {
+                        const normalized = normalizeEpisodeCodeInput(editEpisodeNumber, 3)
+                        if (normalized !== null) setEditEpisodeNumber(normalized)
+                      }}
+                      placeholder="z. B. 013"
+                      style={{
+                        width: '100%', padding: '0.55rem', marginTop: '0.35rem', borderRadius: '0.4rem',
+                        border: '1px solid #334155', background: '#0f172a', color: '#cbd5e1',
+                        fontSize: '0.95rem', fontFamily: 'monospace', boxSizing: 'border-box',
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div style={{ marginTop: '0.55rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+                  Staffel und Episode werden automatisch als 01 / 013 gespeichert.
+                </div>
+
+                {editError && (
+                  <div style={{ color: '#f87171', fontSize: '0.9rem', marginTop: '0.8rem' }}>
+                    {editError}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '0.6rem', marginTop: '1.2rem' }}>
               <button
                 type="button"
                 onClick={handleEditClose}
@@ -1090,156 +1254,207 @@ export default function RingAbout() {
               >
                 {updateMutation.isPending ? 'Speichert...' : 'Speichern'}
               </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-
+          )}
         </>
       )}
 
       {activeTab === 'insights' && (
         <>
-          {isLoading && <div className="card">Lade Insights…</div>}
-          {error && <div className="card" style={{ color: '#f87171' }}>Fehler beim Laden der Insights.</div>}
+          {isLoading && <PageSkeleton />}
+          {error && <Card><span style={{ color: '#f87171' }}>Fehler beim Laden der Insights.</span></Card>}
 
           {!isLoading && !error && scenes.length === 0 && (
-            <div className="card" style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#64748b' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎬</div>
-              <div style={{ fontWeight: 600, marginBottom: '0.3rem' }}>Noch keine Szenen im Pool</div>
-              <div style={{ fontSize: '0.85rem' }}>
+            <Card className={styles.emptyCard}>
+              <h2 className={styles.emptyTitle}>Noch keine Szenen im Pool</h2>
+              <p className={styles.emptyText}>
                 Sobald du Szenen markierst, erscheinen hier automatisch die redaktionellen Insights.
-              </div>
-            </div>
+              </p>
+            </Card>
           )}
 
           {!isLoading && !error && scenes.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className={styles.insightsStack}>
+              <div className={styles.kpiGrid}>
+                <Card className={styles.kpiCard}>
+                  <div className={styles.kpiTitle}>Szenen</div>
+                  <div className={styles.kpiValue}>{insightsScenes.length}</div>
+                  <div className={styles.kpiHint}>{insightsLeagueFilter ? `Liga ${insightsLeagueFilter}` : 'alle Ligen'}</div>
+                </Card>
+                <Card className={styles.kpiCard}>
+                  <div className={styles.kpiTitle}>Veröffentlicht</div>
+                  <div className={styles.kpiValue}>{insights.publishedCount}</div>
+                  <div className={styles.kpiHint}>Status Zugeordnet</div>
+                </Card>
+                <Card className={styles.kpiCard}>
+                  <div className={styles.kpiTitle}>Offen</div>
+                  <div className={styles.kpiValue}>{insights.unpublishedCount}</div>
+                  <div className={styles.kpiHint}>noch nicht zugeordnet</div>
+                </Card>
+                <Card className={styles.kpiCard}>
+                  <div className={styles.kpiTitle}>Teams</div>
+                  <div className={styles.kpiValue}>{insights.teamDistribution.length}</div>
+                  <div className={styles.kpiHint}>mit beobachteten Szenen</div>
+                </Card>
+              </div>
+
               {leagues.length > 0 && (
-                <div className="card" style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', alignItems: 'center' }}>
-                    <select
-                      value={insightsLeagueFilter}
-                      onChange={e => setInsightsLeagueFilter(e.target.value)}
-                      style={selectStyle}
-                    >
-                      <option value="">Alle Ligen</option>
-                      {leagues.map((league) => <option key={league} value={league}>{league}</option>)}
-                    </select>
+                <Card className={styles.filterCard}>
+                  <div className={styles.filterHeader}>
+                    <h2 className={styles.filterTitle}>Insights-Filter</h2>
                   </div>
-                </div>
+                  <div className={styles.filterRow}>
+                    <div className={styles.filterField}>
+                      <label htmlFor="insights-league">Liga</label>
+                      <select
+                        id="insights-league"
+                        className="appSelect"
+                        value={insightsLeagueFilter}
+                        onChange={e => setInsightsLeagueFilter(e.target.value)}
+                      >
+                        <option value="">Alle Ligen</option>
+                        {leagues.map((league) => <option key={league} value={league}>{league}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </Card>
               )}
 
               {insightsScenes.length === 0 && (
-                <div className="card" style={{ textAlign: 'center', padding: '2rem 1rem', color: '#64748b' }}>
-                  Keine Insights fuer die gewaehlte Liga.
-                </div>
+                <Card className={styles.emptyCard}>
+                  <h2 className={styles.emptyTitle}>Keine Insights für die gewählte Liga</h2>
+                  <p className={styles.emptyText}>Wähle eine andere Liga oder setze den Filter zurück.</p>
+                </Card>
               )}
 
               {insightsScenes.length > 0 && (
                 <>
-              <div className="card" style={{ padding: '1rem 1.1rem' }}>
-                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Team-Verteilung</h3>
-                <div style={{ display: 'grid', gap: '0.45rem' }}>
-                  {insights.teamDistribution.map((row) => (
-                    <div key={row.team} style={{ display: 'grid', gridTemplateColumns: '220px 1fr auto', gap: '0.6rem', alignItems: 'center' }}>
-                      <span style={{ color: '#e2e8f0', fontSize: '0.87rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.team}</span>
-                      <div style={{ height: '0.55rem', borderRadius: '999px', background: 'rgba(148,163,184,0.2)', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.max((row.scenes / insights.teamMax) * 100, 2)}%`, height: '100%', background: 'linear-gradient(90deg, rgba(34,197,94,0.72), rgba(45,212,191,0.92))' }} />
-                      </div>
-                      <span style={{ color: '#cbd5e1', fontWeight: 700, fontSize: '0.82rem' }}>{row.scenes}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                  {insights.showContentHint && insights.topTeam && (
+                    <Card className={styles.contentHint}>
+                      <h3 className={styles.insightTitle}>Content-Hinweis</h3>
+                      <p className={styles.contentHintText}>
+                        {insights.topTeam.team} taucht aktuell besonders häufig im Szenenpool auf ({insights.topTeam.scenes} Szenen, Durchschnitt {insights.teamAverage.toFixed(1)}).
+                      </p>
+                      <p className={styles.contentHintFollow}>
+                        Für mehr Vielfalt könnte als Nächstes ein anderes Team priorisiert werden.
+                      </p>
+                    </Card>
+                  )}
 
-              <div className="card" style={{ padding: '1rem 1.1rem' }}>
-                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Liga-Verteilung</h3>
-                <div style={{ display: 'grid', gap: '0.45rem' }}>
-                  {insights.leagueDistribution.map((row) => (
-                    <div key={row.label} style={{ display: 'grid', gridTemplateColumns: '120px 1fr auto', gap: '0.6rem', alignItems: 'center' }}>
-                      <span style={{ color: '#e2e8f0', fontSize: '0.86rem' }}>{row.label}</span>
-                      <div style={{ height: '0.5rem', borderRadius: '999px', background: 'rgba(148,163,184,0.2)', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.max((row.count / insights.leagueMax) * 100, 2)}%`, height: '100%', background: 'linear-gradient(90deg, rgba(14,165,233,0.74), rgba(56,189,248,0.92))' }} />
-                      </div>
-                      <span style={{ color: '#cbd5e1', fontWeight: 700, fontSize: '0.82rem' }}>{row.count}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="card" style={{ padding: '1rem 1.1rem' }}>
-                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Drill-Verteilung</h3>
-                <div style={{ display: 'grid', gap: '0.45rem' }}>
-                  {insights.drillDistribution.map((row) => (
-                    <div key={row.label} style={{ display: 'grid', gridTemplateColumns: '140px 1fr auto', gap: '0.6rem', alignItems: 'center' }}>
-                      <span style={{ color: '#e2e8f0', fontFamily: 'monospace', fontSize: '0.85rem' }}>{row.label}</span>
-                      <div style={{ height: '0.5rem', borderRadius: '999px', background: 'rgba(148,163,184,0.2)', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.max((row.count / insights.drillMax) * 100, 2)}%`, height: '100%', background: 'linear-gradient(90deg, rgba(245,158,11,0.74), rgba(251,191,36,0.92))' }} />
-                      </div>
-                      <span style={{ color: '#cbd5e1', fontWeight: 700, fontSize: '0.82rem' }}>{row.count}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="card" style={{ padding: '1rem 1.1rem' }}>
-                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Veroeffentlichte Szenen</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.65rem' }}>
-                  <div style={{ border: '1px solid rgba(45,212,191,0.32)', borderRadius: '0.55rem', padding: '0.75rem', background: 'rgba(20,184,166,0.10)' }}>
-                    <div style={{ color: '#99f6e4', fontSize: '0.82rem' }}>Veroeffentlicht</div>
-                    <div style={{ color: '#e2e8f0', fontSize: '1.55rem', fontWeight: 800 }}>{insights.publishedCount}</div>
-                  </div>
-                  <div style={{ border: '1px solid rgba(148,163,184,0.32)', borderRadius: '0.55rem', padding: '0.75rem', background: 'rgba(148,163,184,0.09)' }}>
-                    <div style={{ color: '#cbd5e1', fontSize: '0.82rem' }}>Nicht veroeffentlicht</div>
-                    <div style={{ color: '#e2e8f0', fontSize: '1.55rem', fontWeight: 800 }}>{insights.unpublishedCount}</div>
-                  </div>
-                </div>
-                <p style={{ margin: '0.55rem 0 0', color: '#94a3b8', fontSize: '0.78rem' }}>
-                  Veroeffentlicht basiert auf dem Szenenstatus Zugeordnet (Episode gesetzt).
-                </p>
-              </div>
-
-              <div className="card" style={{ padding: '1rem 1.1rem' }}>
-                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.03rem' }}>Team x Veroeffentlicht</h3>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
-                    <thead>
-                      <tr style={{ textAlign: 'left', borderBottom: '1px solid rgba(148,163,184,0.26)' }}>
-                        <th style={{ padding: '0.45rem 0.35rem' }}>Team</th>
-                        <th style={{ padding: '0.45rem 0.35rem' }}>Szenen</th>
-                        <th style={{ padding: '0.45rem 0.35rem' }}>Veroeffentlicht</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                  <Card className={styles.insightCard}>
+                    <h3 className={styles.insightTitle}>Team-Verteilung</h3>
+                    <div className={styles.barList}>
                       {insights.teamDistribution.map((row) => (
-                        <tr key={`table-${row.team}`} style={{ borderBottom: '1px solid rgba(148,163,184,0.12)' }}>
-                          <td style={{ padding: '0.45rem 0.35rem', color: '#e2e8f0' }}>{row.team}</td>
-                          <td style={{ padding: '0.45rem 0.35rem', color: '#cbd5e1', fontWeight: 700 }}>{row.scenes}</td>
-                          <td style={{ padding: '0.45rem 0.35rem', color: '#99f6e4', fontWeight: 700 }}>{row.published}</td>
-                        </tr>
+                        <div key={row.team} className={styles.barRow}>
+                          <span className={styles.barLabel}>{row.team}</span>
+                          <div className={styles.barTrack}>
+                            <div className={styles.barFillTeam} style={{ width: `${Math.max((row.scenes / insights.teamMax) * 100, 2)}%` }} />
+                          </div>
+                          <span className={styles.barCount}>{row.scenes}</span>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    </div>
+                  </Card>
 
-              {insights.showContentHint && insights.topTeam && (
-                <div className="card" style={{ padding: '1rem 1.1rem', border: '1px solid rgba(250,204,21,0.36)', background: 'linear-gradient(145deg, rgba(120,53,15,0.24), rgba(15,23,42,0.92))' }}>
-                  <h3 style={{ margin: '0 0 0.45rem', fontSize: '1.02rem' }}>Content-Hinweis</h3>
-                  <p style={{ margin: 0, color: '#fef3c7', fontSize: '0.87rem', lineHeight: 1.55 }}>
-                    {insights.topTeam.team} taucht aktuell besonders haeufig im Szenenpool auf ({insights.topTeam.scenes} Szenen, Durchschnitt {insights.teamAverage.toFixed(1)}).
-                  </p>
-                  <p style={{ margin: '0.45rem 0 0', color: '#fde68a', fontSize: '0.86rem', lineHeight: 1.55 }}>
-                    Fuer mehr Vielfalt koennte als naechstes ein anderes Team priorisiert werden.
-                  </p>
-                </div>
-              )}
+                  <details className={styles.morePanel}>
+                    <summary className={styles.moreSummary}>
+                      <span>Weitere Verteilungen & Details</span>
+                      <span className={styles.moreChevron} aria-hidden="true" />
+                    </summary>
+                    <div className={styles.moreBody}>
+                      <Card className={styles.insightCard}>
+                        <h3 className={styles.insightTitle}>Liga-Verteilung</h3>
+                        <div className={styles.barList}>
+                          {insights.leagueDistribution.map((row) => (
+                            <div key={row.label} className={styles.barRow}>
+                              <span className={styles.barLabel}>{row.label}</span>
+                              <div className={styles.barTrack}>
+                                <div className={styles.barFillLeague} style={{ width: `${Math.max((row.count / insights.leagueMax) * 100, 2)}%` }} />
+                              </div>
+                              <span className={styles.barCount}>{row.count}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+
+                      <Card className={styles.insightCard}>
+                        <h3 className={styles.insightTitle}>Drill-Verteilung</h3>
+                        <div className={styles.barList}>
+                          {insights.drillDistribution.map((row) => (
+                            <div key={row.label} className={styles.barRow}>
+                              <span className={`${styles.barLabel} ${styles.barLabelMono}`}>{row.label}</span>
+                              <div className={styles.barTrack}>
+                                <div className={styles.barFillDrill} style={{ width: `${Math.max((row.count / insights.drillMax) * 100, 2)}%` }} />
+                              </div>
+                              <span className={styles.barCount}>{row.count}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+
+                      <Card className={styles.insightCard}>
+                        <h3 className={styles.insightTitle}>Veröffentlichte Szenen</h3>
+                        <div className={styles.publishGrid}>
+                          <div className={styles.publishTile}>
+                            <div className={styles.publishLabel}>Veröffentlicht</div>
+                            <div className={styles.publishValue}>{insights.publishedCount}</div>
+                          </div>
+                          <div className={styles.publishTileMuted}>
+                            <div className={styles.publishLabelMuted}>Nicht veröffentlicht</div>
+                            <div className={styles.publishValue}>{insights.unpublishedCount}</div>
+                          </div>
+                        </div>
+                        <p className={styles.publishHint}>
+                          Veröffentlicht basiert auf dem Szenenstatus Zugeordnet (Episode gesetzt).
+                        </p>
+                      </Card>
+
+                      <Card className={styles.insightCard}>
+                        <h3 className={styles.insightTitle}>Team × Veröffentlicht</h3>
+                        <div className={styles.tableWrap}>
+                          <table className={styles.table}>
+                            <thead>
+                              <tr>
+                                <th>Team</th>
+                                <th>Szenen</th>
+                                <th>Veröffentlicht</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {insights.teamDistribution.map((row) => (
+                                <tr key={`table-${row.team}`}>
+                                  <td>{row.team}</td>
+                                  <td className={styles.tdStrong}>{row.scenes}</td>
+                                  <td className={styles.tdTeal}>{row.published}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
+                    </div>
+                  </details>
                 </>
               )}
             </div>
           )}
         </>
+      )}
+
+      {manualFormMode && (
+        <ManualSceneForm
+          mode={manualFormMode}
+          initialScene={manualFormScene}
+          onClose={handleManualFormClose}
+          onSaved={(scene, options) => {
+            handleManualFormSaved(scene, options)
+            if (!options?.continueEditing) {
+              handleManualFormClose()
+            }
+          }}
+        />
       )}
     </div>
   )
@@ -1349,6 +1564,34 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
           {gameLabel}
         </div>
         <div style={{ display: 'flex', gap: '0.3rem' }}>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await shareOrCopy({
+                  title: 'Rink Tank Szene',
+                  text: [
+                    gameLabel,
+                    `${scenePeriodLabel(scene.period)} · ${scene.game_time}`,
+                    observedTeam !== 'Beobachtetes Team nicht hinterlegt' ? `Beobachtet: ${observedTeam}` : '',
+                    scene.note || '',
+                  ].filter(Boolean).join('\n'),
+                })
+              } catch {
+                // cancelled
+              }
+            }}
+            title="Szene teilen"
+            style={{
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              color: '#475569', fontSize: '0.95rem', padding: '0 0.2rem', lineHeight: 1,
+              flexShrink: 0, fontWeight: 700,
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#7dd3fc')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
+          >
+            ↗
+          </button>
           <button
             type="button"
             onClick={() => onEdit(scene)}

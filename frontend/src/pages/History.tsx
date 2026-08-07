@@ -1,9 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../api'
 import type { Session } from '../api'
 import { useUser } from '../context/UserContext'
 import SessionCard from '../components/SessionCard'
+import Card from '../components/Card'
+import FilterSheet from '../components/FilterSheet'
+import { PageSkeleton } from '../components/Skeleton'
+import styles from './History.module.css'
+
+function isInProgressState(state: string): boolean {
+  const value = String(state || '').toUpperCase()
+  return value === 'IN_PROGRESS' || value === 'PRE' || value === 'P1' || value === 'P2' || value === 'P3' || value === 'POST'
+}
 
 export default function History() {
   const { user } = useUser()
@@ -51,8 +61,20 @@ export default function History() {
   const [filterCreator, setFilterCreator] = useState<string>('')
   const [filterYear, setFilterYear] = useState<string>('')
   const [filterMonth, setFilterMonth] = useState<string>('')
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
-  const filteredSessions = sessions?.filter(session => {
+  const sessionList = sessions || []
+
+  const overview = useMemo(() => {
+    const total = sessionList.length
+    const completed = sessionList.filter((s) => s.state === 'COMPLETED').length
+    const aborted = sessionList.filter((s) => s.state === 'ABORTED').length
+    const inProgress = sessionList.filter((s) => isInProgressState(s.state) && s.state !== 'ABORTED' && s.state !== 'COMPLETED').length
+    const scenes = scenesData?.scenes?.length || 0
+    return { total, completed, aborted, inProgress, scenes }
+  }, [sessionList, scenesData])
+
+  const filteredSessions = sessionList.filter(session => {
     if (filterYear) {
       const year = new Date(session.created_at).getFullYear().toString()
       if (year !== filterYear) return false
@@ -65,18 +87,17 @@ export default function History() {
     if (filterStatus && session.state !== filterStatus) return false
     if (filterCreator && session.created_by !== filterCreator) return false
     return true
-  }) || []
+  })
 
   // Nach Datum absteigend sortieren (neueste oben)
   const sortedSessions = [...filteredSessions].sort((a, b) => {
-    // created_at kann string oder Date sein
     const dateA = new Date(a.created_at).getTime();
     const dateB = new Date(b.created_at).getTime();
     return dateB - dateA;
   });
 
-  const uniqueModules = [...new Set(sessions?.map(s => s.module_id) || [])]
-  const uniqueCreators = [...new Set(sessions?.map(s => s.created_by).filter(Boolean) || [])]
+  const uniqueModules = [...new Set(sessionList.map(s => s.module_id) || [])]
+  const uniqueCreators = [...new Set(sessionList.map(s => s.created_by).filter(Boolean) || [])] as string[]
 
   const scenesBySession = useMemo(() => {
     const map = new Map<string, Array<{ id: string; game_time: string; period?: string; created_at: string }>>()
@@ -104,7 +125,7 @@ export default function History() {
     const yearsSet = new Set<string>()
     const monthsMap = new Map<string, Set<string>>()
 
-    ;(sessions || []).forEach(session => {
+    sessionList.forEach(session => {
       const date = new Date(session.created_at)
       if (Number.isNaN(date.getTime())) return
       const year = date.getFullYear().toString()
@@ -122,38 +143,40 @@ export default function History() {
     })
 
     return { uniqueYears, monthsByYear }
-  }, [sessions])
+  }, [sessionList])
+
+  const didInitDateFilter = useRef(false)
 
   useEffect(() => {
-    if (!sessions || sessions.length === 0) return
-    if (filterYear || filterMonth) return
+    if (didInitDateFilter.current) return
+    if (!sessionList.length) return
 
-    const latestSession = sessions.reduce((latest, session) => {
+    const latestSession = sessionList.reduce((latest, session) => {
       const currentDate = new Date(session.created_at).getTime()
       const latestDate = new Date(latest.created_at).getTime()
       return currentDate > latestDate ? session : latest
-    }, sessions[0])
+    }, sessionList[0])
 
     const latestDate = new Date(latestSession.created_at)
     if (Number.isNaN(latestDate.getTime())) return
+
+    didInitDateFilter.current = true
     setFilterYear(latestDate.getFullYear().toString())
     setFilterMonth((latestDate.getMonth() + 1).toString())
-  }, [sessions, filterYear, filterMonth])
+  }, [sessionList])
 
   useEffect(() => {
     if (!filterYear) {
       if (filterMonth) setFilterMonth('')
       return
     }
+    // Leerer Monat = "Alle" — nicht überschreiben
+    if (!filterMonth) return
     const months = monthsByYear.get(filterYear) || []
     if (!months.includes(filterMonth)) {
-      setFilterMonth(months[0] || '')
+      setFilterMonth('')
     }
   }, [filterYear, filterMonth, monthsByYear])
-
-  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deinen Session-Verlauf.</div>
-  if (isLoading) return <div className="card">Lade Verlauf...</div>
-  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
 
   const getMonthLabel = (monthValue: string) => {
     const monthNumber = Number(monthValue)
@@ -161,57 +184,273 @@ export default function History() {
     return new Date(2000, monthNumber - 1, 1).toLocaleString('de-DE', { month: 'long' })
   }
 
-  function resetFilters() {
-    setFilterYear(''); setFilterMonth(''); setFilterModule(''); setFilterCreator(''); setFilterStatus('');
+  const statusLabel = (value: string) => {
+    const labels: Record<string, string> = {
+      COMPLETED: 'Abgeschlossen',
+      ABORTED: 'Abgebrochen',
+      PRE: 'Vorbereitung',
+      P1: 'Nach 1. Drittel',
+      P2: 'Nach 2. Drittel',
+      P3: 'Nach 3. Drittel',
+      POST: 'Debrief',
+      IN_PROGRESS: 'In Bearbeitung',
+    }
+    return labels[value] || value
   }
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <h1>Session-Verlauf</h1>
+  function resetFilters() {
+    setFilterYear('')
+    setFilterMonth('')
+    setFilterModule('')
+    setFilterCreator('')
+    setFilterStatus('')
+  }
 
-      {/* Filter (Desktop + Mobile gleich) */}
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <h3 style={{ margin: 0 }}>Filter</h3>
-          <button className="filterReset" onClick={resetFilters}>Zurücksetzen</button>
+  const activeFilterChips = [
+    filterYear ? { key: 'year', label: `Jahr: ${filterYear}`, clear: () => { setFilterYear(''); setFilterMonth('') } } : null,
+    filterMonth ? { key: 'month', label: `Monat: ${getMonthLabel(filterMonth)}`, clear: () => setFilterMonth('') } : null,
+    filterCreator ? { key: 'creator', label: `Ersteller: ${filterCreator}`, clear: () => setFilterCreator('') } : null,
+    filterModule ? { key: 'module', label: `Modul: ${filterModule}`, clear: () => setFilterModule('') } : null,
+    filterStatus ? { key: 'status', label: `Status: ${statusLabel(filterStatus)}`, clear: () => setFilterStatus('') } : null,
+  ].filter(Boolean) as Array<{ key: string; label: string; clear: () => void }>
+
+  const hasActiveFilters = activeFilterChips.length > 0
+
+  if (!user) {
+    return (
+      <div className={styles.page}>
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>Session-Verlauf</h1>
+          <p className={styles.pageLead}>Melde dich an, um deine Sessions und Szenen zu sehen.</p>
+        </header>
+        <Card>Bitte oben anmelden, dann zeigen wir dir deinen Session-Verlauf.</Card>
+      </div>
+    )
+  }
+  if (isLoading) return <PageSkeleton />
+  if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>
+
+  return (
+    <div className={styles.page}>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Session-Verlauf</h1>
+        <p className={styles.pageLead}>
+          Alle Sessions im Überblick — filtern, öffnen und bei Bedarf Details nachschauen.
+        </p>
+      </header>
+
+      <div className={styles.kpiGrid}>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Sessions gesamt</div>
+          <div className={styles.kpiValue}>{overview.total}</div>
+          <div className={styles.kpiHint}>{overview.scenes} Szenen erfasst</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Abgeschlossen</div>
+          <div className={styles.kpiValue}>{overview.completed}</div>
+          <div className={styles.kpiHint}>fertig durchgespielt</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>In Bearbeitung</div>
+          <div className={styles.kpiValue}>{overview.inProgress}</div>
+          <div className={styles.kpiHint}>noch offen</div>
+        </Card>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiTitle}>Abgebrochen</div>
+          <div className={styles.kpiValue}>{overview.aborted}</div>
+          <div className={styles.kpiHint}>nicht beendet</div>
+        </Card>
+      </div>
+
+      <div className={styles.filterMobileBar}>
+        <button type="button" className={styles.filterOpenBtn} onClick={() => setFilterSheetOpen(true)}>
+          Filter{hasActiveFilters ? ` · ${activeFilterChips.length}` : ''}
+        </button>
+        {hasActiveFilters && (
+          <button type="button" className={styles.filterReset} onClick={resetFilters}>
+            Zurücksetzen
+          </button>
+        )}
+      </div>
+
+      <Card className={`${styles.filterCard} ${styles.filterDesktop}`}>
+        <div className={styles.filterHeader}>
+          <h2 className={styles.filterTitle}>Filter</h2>
+          <button type="button" className={styles.filterReset} onClick={resetFilters}>
+            Alle Filter zurücksetzen
+          </button>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'flex-end', rowGap: '1rem', columnGap: '1rem', justifyContent: 'flex-start', width: '100%', maxWidth: '100%', marginTop: '0.75rem' }}>
-          <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
-            <label>Jahr:</label>
-            <select className="appSelect" value={filterYear} onChange={e => setFilterYear(e.target.value)} style={{ marginTop: '0.35rem' }}>
-              <option value="">Alle</option>
-              {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
-            </select>
+
+        <div className={styles.filterGroups}>
+          <div className={styles.filterGroup}>
+            <div className={styles.filterGroupLabel}>Zeitraum</div>
+            <div className={styles.filterRow}>
+              <div className={styles.filterField}>
+                <label htmlFor="history-year">Jahr</label>
+                <select
+                  id="history-year"
+                  className="appSelect"
+                  value={filterYear}
+                  onChange={e => setFilterYear(e.target.value)}
+                >
+                  <option value="">Alle</option>
+                  {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
+                </select>
+              </div>
+              <div className={styles.filterField}>
+                <label htmlFor="history-month">Monat</label>
+                <select
+                  id="history-month"
+                  className="appSelect"
+                  value={filterMonth}
+                  onChange={e => setFilterMonth(e.target.value)}
+                  disabled={!filterYear}
+                >
+                  <option value="">Alle</option>
+                  {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (
+                    <option key={month} value={month}>{getMonthLabel(month)}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
-          <div style={{ minWidth: '120px', flex: '1 1 120px' }}>
-            <label>Monat:</label>
-            <select className="appSelect" value={filterMonth} onChange={e => setFilterMonth(e.target.value)} style={{ marginTop: '0.35rem' }} disabled={!filterYear}>
-              <option value="">Alle</option>
-              {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (
-                <option key={month} value={month}>{getMonthLabel(month)}</option>
-              ))}
-            </select>
+
+          <div className={styles.filterGroup}>
+            <div className={styles.filterGroupLabel}>Inhalt</div>
+            <div className={styles.filterRow}>
+              <div className={styles.filterField}>
+                <label htmlFor="history-creator">Ersteller</label>
+                <select
+                  id="history-creator"
+                  className="appSelect"
+                  value={filterCreator}
+                  onChange={e => setFilterCreator(e.target.value)}
+                >
+                  <option value="">Alle</option>
+                  {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+                </select>
+              </div>
+              <div className={styles.filterField}>
+                <label htmlFor="history-module">Modul</label>
+                <select
+                  id="history-module"
+                  className="appSelect"
+                  value={filterModule}
+                  onChange={e => setFilterModule(e.target.value)}
+                >
+                  <option value="">Alle</option>
+                  {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
+                </select>
+              </div>
+            </div>
           </div>
-          <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
-            <label>Ersteller:</label>
-            <select className="appSelect" value={filterCreator} onChange={e => setFilterCreator(e.target.value)} style={{ marginTop: '0.35rem' }}>
-              <option value="">Alle</option>
-              {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
-            </select>
+
+          <div className={styles.filterGroup}>
+            <div className={styles.filterGroupLabel}>Status</div>
+            <div className={styles.filterRow}>
+              <div className={styles.filterField}>
+                <label htmlFor="history-status">Status</label>
+                <select
+                  id="history-status"
+                  className="appSelect"
+                  value={filterStatus}
+                  onChange={e => setFilterStatus(e.target.value)}
+                >
+                  <option value="">Alle</option>
+                  <option value="COMPLETED">Abgeschlossen</option>
+                  <option value="ABORTED">Abgebrochen</option>
+                  <option value="IN_PROGRESS">In Bearbeitung</option>
+                  <option value="PRE">Vorbereitung</option>
+                  <option value="P1">Nach 1. Drittel</option>
+                  <option value="P2">Nach 2. Drittel</option>
+                  <option value="P3">Nach 3. Drittel</option>
+                  <option value="POST">Debrief</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
-            <label>Modul:</label>
-            <select className="appSelect" value={filterModule} onChange={e => setFilterModule(e.target.value)} style={{ marginTop: '0.35rem' }}>
-              <option value="">Alle</option>
-              {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
-            </select>
+        </div>
+
+        {hasActiveFilters && (
+          <div className={styles.activeFilters}>
+            {activeFilterChips.map((chip) => (
+              <span key={chip.key} className={styles.chip}>
+                {chip.label}
+                <button
+                  type="button"
+                  className={styles.chipClear}
+                  onClick={chip.clear}
+                  aria-label={`${chip.label} entfernen`}
+                  title="Filter entfernen"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
           </div>
-          <div style={{ minWidth: '140px', flex: '1 1 140px' }}>
-            <label>Status:</label>
-            <select className="appSelect" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ marginTop: '0.35rem' }}>
-              <option value="">Alle</option>
+        )}
+      </Card>
+
+      {hasActiveFilters && (
+        <div className={`${styles.activeFilters} ${styles.filterMobileChips}`}>
+          {activeFilterChips.map((chip) => (
+            <span key={chip.key} className={styles.chip}>
+              {chip.label}
+              <button
+                type="button"
+                className={styles.chipClear}
+                onClick={chip.clear}
+                aria-label={`${chip.label} entfernen`}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <FilterSheet
+        open={filterSheetOpen}
+        title="Session-Filter"
+        onClose={() => setFilterSheetOpen(false)}
+        onReset={resetFilters}
+      >
+        <div className="stack">
+          <div className="sheetSection">
+            <div className="sheetSectionTitle">Zeitraum</div>
+            <div className="grid2">
+              <select className="appSelect" value={filterYear} onChange={e => setFilterYear(e.target.value)} aria-label="Jahr">
+                <option value="">Jahr: Alle</option>
+                {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
+              </select>
+              <select className="appSelect" value={filterMonth} onChange={e => setFilterMonth(e.target.value)} disabled={!filterYear} aria-label="Monat">
+                <option value="">Monat: Alle</option>
+                {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (
+                  <option key={month} value={month}>{getMonthLabel(month)}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="sheetSection">
+            <div className="sheetSectionTitle">Inhalt</div>
+            <div className="stack">
+              <select className="appSelect" value={filterCreator} onChange={e => setFilterCreator(e.target.value)} aria-label="Ersteller">
+                <option value="">Ersteller: Alle</option>
+                {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+              </select>
+              <select className="appSelect" value={filterModule} onChange={e => setFilterModule(e.target.value)} aria-label="Modul">
+                <option value="">Modul: Alle</option>
+                {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
+              </select>
+            </div>
+          </div>
+          <div className="sheetSection">
+            <div className="sheetSectionTitle">Status</div>
+            <select className="appSelect" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} aria-label="Status">
+              <option value="">Status: Alle</option>
               <option value="COMPLETED">Abgeschlossen</option>
               <option value="ABORTED">Abgebrochen</option>
+              <option value="IN_PROGRESS">In Bearbeitung</option>
               <option value="PRE">Vorbereitung</option>
               <option value="P1">Nach 1. Drittel</option>
               <option value="P2">Nach 2. Drittel</option>
@@ -220,14 +459,39 @@ export default function History() {
             </select>
           </div>
         </div>
+      </FilterSheet>
+
+      <div className={styles.resultsBar}>
+        <h2 className={styles.resultsTitle}>
+          {sortedSessions.length === 1 ? '1 Session' : `${sortedSessions.length} Sessions`}
+        </h2>
+        <p className={styles.resultsMeta}>
+          {hasActiveFilters
+            ? `gefiltert aus ${overview.total} insgesamt`
+            : 'alle Sessions, neueste zuerst'}
+        </p>
       </div>
 
-      {/* Sessions Liste */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className={styles.sessionList}>
         {sortedSessions.length === 0 ? (
-          <div className="card">
-            <p>Keine Sessions gefunden.</p>
-          </div>
+          <Card className={styles.emptyCard}>
+            <h3 className={styles.emptyTitle}>Keine Sessions gefunden</h3>
+            <p className={styles.emptyText}>
+              {overview.total === 0
+                ? 'Noch keine Sessions vorhanden. Starte in der Akademie mit dem ersten Modul.'
+                : 'Mit den aktuellen Filtern gibt es keine Treffer. Setze die Filter zurück oder wähle einen anderen Zeitraum.'}
+            </p>
+            <div className={styles.emptyActions}>
+              {overview.total > 0 ? (
+                <button type="button" className={styles.emptyBtnSecondary} onClick={resetFilters}>
+                  Filter zurücksetzen
+                </button>
+              ) : null}
+              <Link to="/curriculum" className={styles.emptyBtn}>
+                Zur Akademie
+              </Link>
+            </div>
+          </Card>
         ) : (
           sortedSessions.map((session: Session) => (
             <SessionCard
