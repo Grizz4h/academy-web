@@ -7,6 +7,7 @@ import { useUser } from '../context/UserContext'
 import { formatPux, getAchievementProgressItems, useRewards } from '../features/rewards'
 import { computeTeamExposure, resolveDrillId } from '../stats/exposureStats'
 import { getObservationScopeLabel } from '../utils/observationScope'
+import { getAnalysisIntensity, getTealTileSurfaceStyle } from '../utils/tealIntensity'
 import {
   isSplitSeasonLeague,
   normalizeSeasonValue,
@@ -36,13 +37,6 @@ function popupVariantFromTier(tier: string): 'small' | 'popup' | 'hero' {
   if (tier === 'mastery') return 'hero'
   if (tier === 'gold') return 'popup'
   return 'small'
-}
-
-function getCategory(count: number): 'high' | 'medium' | 'low' | 'none' {
-  if (count >= 8) return 'high'
-  if (count >= 3) return 'medium'
-  if (count >= 1) return 'low'
-  return 'none'
 }
 
 function formatLastSeenLabel(value?: string): string {
@@ -281,7 +275,7 @@ export default function Progress() {
     const tier = item.achievement.reward.visualTier || item.achievement.tier
     enqueueReward({
       kind: 'achievement',
-      title: item.achievement.hidden ? 'Geheimes Achievement' : item.achievement.title,
+      title: item.achievement.hidden ? 'Geheimer Erfolg' : item.achievement.title,
       description: item.achievement.hidden ? 'Neuer versteckter Unlock.' : item.achievement.description,
       amountPux: item.achievement.reward.PUX,
       visualTier: tier,
@@ -310,7 +304,7 @@ export default function Progress() {
       </div>
 
       <div className="card">
-        <h2>Team Progress Grid</h2>
+        <h2>Team-Übersicht</h2>
         <div className={styles.teamGridControls}>
           <p className={styles.teamGridIntro}>Wie oft wurde jedes Team analysiert?</p>
           <div className={styles.teamFilterSelects}>
@@ -346,18 +340,20 @@ export default function Progress() {
 
         <div className={styles.teamGrid}>
           {teamData.map(team => {
-            const category = getCategory(team.count)
+            const intensity = getAnalysisIntensity(team.count)
+            const tealSurface = getTealTileSurfaceStyle(team.count)
             return (
               <button
                 key={team.name}
                 type="button"
                 className={styles.teamTile}
-                data-category={category}
+                data-intensity={intensity}
                 style={{
                   textAlign: 'left',
                   cursor: 'pointer',
                   outline: selectedTeam === team.name ? '2px solid rgba(94, 234, 212, 0.8)' : 'none',
-                  outlineOffset: selectedTeam === team.name ? '2px' : '0'
+                  outlineOffset: selectedTeam === team.name ? '2px' : '0',
+                  ...(tealSurface || {}),
                 }}
                 onClick={() => {
                   setSelectedTeam(team.name)
@@ -392,10 +388,10 @@ export default function Progress() {
           <p>zuletzt: {selectedTeamExposure.lastSeen ? new Date(selectedTeamExposure.lastSeen).toLocaleDateString('de-DE') : '-'}</p>
 
           <div style={{ marginTop: '1rem' }}>
-            <h3 style={{ marginBottom: '0.35rem' }}>Gegner / Matchups</h3>
+            <h3 style={{ marginBottom: '0.35rem' }}>Gegner / Paarungen</h3>
             <p className={styles.matchupIntro}>Welche Gegner wurden wie tief analysiert?</p>
             {selectedTeamExposure.matchups.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Keine Matchups für dieses Team in der gewählten Liga.</p>
+              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Keine Gegnerpaarungen für dieses Team in der gewählten Liga.</p>
             ) : (
               <div className={styles.matchupGrid}>
                 {selectedTeamExposure.matchups.map((matchup) => {
@@ -491,7 +487,7 @@ export default function Progress() {
                   const drillId = resolveDrillId(session) || '-'
                   const matchup = gameInfo?.team_home && gameInfo?.team_away
                     ? `${gameInfo.team_home} vs ${gameInfo.team_away}`
-                    : 'ohne Matchup'
+                    : 'ohne Gegnerpaarung'
                   return (
                     <li key={session.id}>
                       {new Date(session.created_at).toLocaleDateString('de-DE')} - {matchup} - {session.module_id} / {drillId} - {session.state}
@@ -508,8 +504,8 @@ export default function Progress() {
       <div className="card">
         <h2>Belohnungen</h2>
         <p><strong>PUX! Gesamt:</strong> {formatPux(rewardState.currency.PUX || 0)}</p>
-        <p><strong>Achievements:</strong> {unlockedAchievementsCount}/{totalAchievements}</p>
-        <p><strong>Mastery-Unlocks:</strong> {unlockedMasteriesCount}</p>
+        <p><strong>Erfolge:</strong> {unlockedAchievementsCount}/{totalAchievements}</p>
+        <p><strong>Meisterschaften:</strong> {unlockedMasteriesCount}</p>
 
         <div className={styles.achievementGroups}>
           {sortedCategories.map((cat) => {
@@ -562,10 +558,10 @@ export default function Progress() {
                                   type="button"
                                   className={styles.achievementReplayButton}
                                   onClick={() => replayAchievementAnimation(item)}
-                                  aria-label={`Achievement ${item.achievement.title} erneut abspielen`}
+                                  aria-label={`Erfolg ${item.achievement.title} erneut abspielen`}
                                   title="Animation erneut abspielen"
                                 >
-                                  Replay
+                                  Erneut
                                 </button>
                               </div>
                             )}
@@ -638,7 +634,7 @@ export default function Progress() {
 
       {moduleProgress.size === 0 && (
         <div className="card">
-          <p>Noch keine Sessions vorhanden. Starte mit dem Curriculum!</p>
+          <p>Noch keine Sessions vorhanden. Starte in der Akademie!</p>
         </div>
       )}
     </div>

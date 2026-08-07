@@ -35,7 +35,7 @@ export function buildRewardEvents(params: {
     events.push({
       id: `achievement:${achievement.id}`,
       kind: 'achievement',
-      title: achievement.hidden ? 'Geheimes Achievement' : achievement.title,
+      title: achievement.hidden ? 'Geheimer Erfolg' : achievement.title,
       description: achievement.hidden ? 'Neuer versteckter Unlock.' : achievement.description,
       amountPux: amountPux > 0 ? amountPux : undefined,
       visualTier: achievement.reward.visualTier || achievement.tier,

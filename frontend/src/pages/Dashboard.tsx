@@ -16,12 +16,13 @@ import { getActivePeriodsForScope } from '../utils/observationScope';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import styles from './Dashboard.module.css';
 
-const formatSessionState = (state: string): string =>
-  state
-    .toLowerCase()
-    .split('_')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+const formatSessionState = (state: string): string => {
+  const normalized = String(state || '').toUpperCase();
+  if (normalized === 'COMPLETED') return 'Abgeschlossen';
+  if (normalized === 'ABORTED') return 'Abgebrochen';
+  if (normalized === 'IN_PROGRESS') return 'In Bearbeitung';
+  return state;
+};
 
 export default function Dashboard() {
   const { user, setUser } = useUser();
@@ -40,7 +41,7 @@ export default function Dashboard() {
   const [signupSuccess, setSignupSuccess] = useState("");
   
   // Scope State für modulbasierte Filterung
-  const [currentScope, setCurrentScope] = useState<string>("Global");
+  const [currentScope, setCurrentScope] = useState<string>("Gesamt");
   const [scopeInitialized, setScopeInitialized] = useState(false);
 
   const { data: sessions, isLoading, error } = useQuery({
@@ -66,7 +67,7 @@ export default function Dashboard() {
 
   // Bei User-Wechsel Scope-Initialisierung zurücksetzen.
   useEffect(() => {
-    setCurrentScope("Global");
+    setCurrentScope("Gesamt");
     setScopeInitialized(false);
   }, [user]);
 
@@ -83,7 +84,7 @@ export default function Dashboard() {
       .map((s) => s.module_id)
       .find((moduleId) => validModuleIds.has(moduleId));
 
-    setCurrentScope(lastUsedModule ?? "Global");
+    setCurrentScope(lastUsedModule ?? "Gesamt");
     setScopeInitialized(true);
   }, [user, scopeInitialized, curriculum, sessions]);
 
@@ -95,7 +96,7 @@ export default function Dashboard() {
     }
     const result = await setUser(name, passwordInput);
     if (!result.ok) {
-      setLoginError(result.error || "Login fehlgeschlagen");
+      setLoginError(result.error || "Anmeldung fehlgeschlagen");
       setPasswordInput("");
       return;
     }
@@ -230,7 +231,7 @@ export default function Dashboard() {
     }));
     
     // Available Scopes generieren
-    const availableScopes = ["Global"];
+    const availableScopes = ["Gesamt"];
     if (curriculum) {
       for (const track of curriculum.tracks) {
         for (const module of track.modules) {
@@ -238,10 +239,10 @@ export default function Dashboard() {
         }
       }
     }
-    
+
     // Scope-basierte Filterung
-    const scopedCountsArray = currentScope === "Global" 
-      ? countsArray 
+    const scopedCountsArray = currentScope === "Gesamt" || currentScope === "Global"
+      ? countsArray
       : countsArray.filter(d => d.moduleId === currentScope);
     
     // Recommended Next (niedrigste Counts zuerst, bei Gleichstand alphabetisch)
@@ -378,9 +379,9 @@ export default function Dashboard() {
   if (!user)
     return (
       <div className={styles.dashboardPage}>
-        <h1>Dashboard</h1>
+        <h1>Übersicht</h1>
         <Card>
-          <h2>{signupMode ? "Account erstellen" : "Login"}</h2>
+          <h2>{signupMode ? "Account erstellen" : "Anmelden"}</h2>
           {!signupMode ? (
             <div className={styles.formColumn}>
               <input
@@ -416,7 +417,7 @@ export default function Dashboard() {
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-              <button type="button" onClick={handleLogin} className={styles.primaryBtn}>Login</button>
+              <button type="button" onClick={handleLogin} className={styles.primaryBtn}>Anmelden</button>
               <button type="button" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Account erstellen</button>
               {loginError && <span className={styles.errorMsg}>{loginError}</span>}
             </div>
@@ -457,8 +458,8 @@ export default function Dashboard() {
                 }}
                 className={styles.input}
               />
-              <button type="button" onClick={async () => { setSignupError(""); setSignupSuccess(""); const name = signupName.trim(); if (!name || !signupPassword || !signupPassword2) { setSignupError("Alle Felder erforderlich"); return; } if (signupPassword !== signupPassword2) { setSignupError("Passwörter stimmen nicht überein"); return; } try { await api.signup(name, signupPassword); setSignupSuccess("Account erstellt! Du wirst eingeloggt..."); setTimeout(async () => { await setUser(name, signupPassword); }, 800); } catch (e: any) { setSignupError(e.message || "Signup fehlgeschlagen"); } }} className={styles.primaryBtn}>Account erstellen</button>
-              <button type="button" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Zurück zum Login</button>
+              <button type="button" onClick={async () => { setSignupError(""); setSignupSuccess(""); const name = signupName.trim(); if (!name || !signupPassword || !signupPassword2) { setSignupError("Alle Felder erforderlich"); return; } if (signupPassword !== signupPassword2) { setSignupError("Passwörter stimmen nicht überein"); return; } try { await api.signup(name, signupPassword); setSignupSuccess("Account erstellt! Du wirst eingeloggt..."); setTimeout(async () => { await setUser(name, signupPassword); }, 800); } catch (e: any) { setSignupError(e.message || "Registrierung fehlgeschlagen"); } }} className={styles.primaryBtn}>Account erstellen</button>
+              <button type="button" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Zurück zur Anmeldung</button>
               {signupError && <span className={styles.errorMsg}>{signupError}</span>}
               {signupSuccess && <span className={styles.successMsg}>{signupSuccess}</span>}
             </div>
@@ -475,7 +476,7 @@ export default function Dashboard() {
 
   return (
     <div className={styles.dashboardPage}>
-      <h1>Dashboard</h1>
+      <h1>Übersicht</h1>
 
       {/* KPI Cards */}
       <div className={styles.kpiGrid}>
@@ -533,7 +534,7 @@ export default function Dashboard() {
                 <div className={styles.progressBarLabel}>Drill-Fortschritt: {derived.totalDrills ? Math.round((derived.completedDrills / derived.totalDrills) * 100) : 0}%</div>
                 {/* Fortschritt pro Track */}
                 <div className={styles.trackProgressWrap}>
-                  <div className={styles.trackProgressTitle}>Prozentualer Drill-Fortschritt pro Track:</div>
+                  <div className={styles.trackProgressTitle}>Drill-Fortschritt pro Track:</div>
                   {Object.values(derived.trackProgress).map((track: any) => (
                     <div key={track.title} className={styles.trackProgressItem}>
                       <span className={styles.trackTitle}>{track.title}:</span>
@@ -549,7 +550,7 @@ export default function Dashboard() {
           </div>
         </Card>
         <Card className={styles.flexCard}>
-          <h2 className={styles.sectionTitle}>Session Integrity</h2>
+          <h2 className={styles.sectionTitle}>Session-Qualität</h2>
           {derived.hygieneIssues.length === 0 ? (
             <div className={styles.integrityStatus}>
               <div className={styles.statusIndicator} data-status="clean" />
@@ -595,7 +596,7 @@ export default function Dashboard() {
           <div>
             <h3 className={styles.rewardColumnTitle}>Letzte 5 erreicht</h3>
             {recentUnlocked.length === 0 ? (
-              <div className={styles.rewardHint}>Noch keine Achievements erreicht.</div>
+              <div className={styles.rewardHint}>Noch keine Erfolge erreicht.</div>
             ) : (
               <ul className={styles.rewardList}>
                 {recentUnlocked.map((item) => (
@@ -624,7 +625,7 @@ export default function Dashboard() {
 
 
       <Card>
-        <h2 className={styles.sectionTitle}>Most Observed Teams</h2>
+        <h2 className={styles.sectionTitle}>Meist beobachtete Teams</h2>
         {derived.mostObservedTeams.length === 0 ? (
           <div className={styles.rewardHint}>Noch keine Team-Beobachtungen vorhanden.</div>
         ) : (
@@ -640,7 +641,7 @@ export default function Dashboard() {
               </ol>
             </div>
             <div>
-              <h3 className={styles.rewardColumnTitle}>Least Observed Teams</h3>
+              <h3 className={styles.rewardColumnTitle}>Wenigst beobachtete Teams</h3>
               <ol className={styles.teamExposureList}>
                 {derived.leastObservedTeams.map((team, index) => (
                   <li key={team.team} className={styles.teamExposureItem}>

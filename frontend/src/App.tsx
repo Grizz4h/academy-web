@@ -16,6 +16,7 @@ import RingAbout from './pages/RingAbout'
 import LabPage from './pages/Lab'
 import LabPredictSetup from './pages/LabPredictSetup'
 import LabPredictSession from './pages/LabPredictSession'
+import DevLab from './pages/DevLab'
 import TopNav from './components/TopNav'
 import { RewardHost, RewardProvider } from './features/rewards'
 
@@ -42,6 +43,7 @@ function App() {
             <Route path="/observation/run/:runId" element={<ObservationRun />} />
             <Route path="/observation/stats" element={<ObservationStats />} />
             <Route path="/ringabout" element={<RingAbout />} />
+            <Route path="/dev" element={<DevLab />} />
           </Routes>
         </main>
       </div>

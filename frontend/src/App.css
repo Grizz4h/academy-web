@@ -205,6 +205,11 @@ p {
   touch-action: none;
 }
 
+/* Paint SVG only: claim touch gestures for drawing. Does not affect mouse wheel. */
+.rink-paint-surface {
+  touch-action: none;
+}
+
 @media (max-width: 640px) {
   .primary-card {
     padding-inline: 0.75rem;

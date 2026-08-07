@@ -272,7 +272,7 @@ export default function LabPredictSession() {
         <p style={{ marginBottom: '0.4rem' }}>
           Aktives Drittel: <strong>{phaseLabel[currentPhase]}</strong>
         </p>
-        {academyDrillTitle && <p style={{ marginBottom: 0 }}>Passende Academy-Grundlage: {academyDrillTitle}</p>}
+        {academyDrillTitle && <p style={{ marginBottom: 0 }}>Passende Akademie-Grundlage: {academyDrillTitle}</p>}
       </div>
 
       {activePeriods.length > 1 && (

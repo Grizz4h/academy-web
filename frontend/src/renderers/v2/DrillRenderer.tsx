@@ -358,7 +358,8 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 }
 
 type PaintPoint = { x: number; y: number };
-type PaintAnnotation = { layerId: string; points: PaintPoint[] };
+type PaintStroke = PaintPoint[];
+type PaintAnnotation = { layerId: string; strokes: PaintStroke[] };
 type PaintLayer = { id: string; label: string; color: string };
 type RinkOverlays = {
 	zones: boolean;
@@ -493,6 +494,183 @@ function buildSvgPath(points: PaintPoint[], width: number, height: number): stri
 	return `${start} ${segments}`;
 }
 
+/** Minimum normalized distance before appending another point (filters micro-jitter). */
+const PAINT_POINT_MIN_DISTANCE = 0.004;
+
+function paintPointDistance(a: PaintPoint, b: PaintPoint): number {
+	const dx = a.x - b.x;
+	const dy = a.y - b.y;
+	return Math.hypot(dx, dy);
+}
+
+function isUsableStroke(stroke: PaintStroke | undefined): boolean {
+	return Array.isArray(stroke) && stroke.length >= 1;
+}
+
+function layerHasPaint(annotation: PaintAnnotation | undefined): boolean {
+	return !!annotation && Array.isArray(annotation.strokes) && annotation.strokes.some(isUsableStroke);
+}
+
+/** Accepts stroke-based annotations and legacy single `points` chains. */
+function normalizePaintAnnotations(raw: any): PaintAnnotation[] {
+	if (!Array.isArray(raw)) return [];
+	return raw
+		.map((item: any) => {
+			const layerId = String(item?.layerId || item?.layer_id || "");
+			if (!layerId) return null;
+
+			if (Array.isArray(item?.strokes)) {
+				const strokes = item.strokes
+					.map((stroke: any) => {
+						if (!Array.isArray(stroke)) return [];
+						return stroke
+							.map((point: any) => ({
+								x: clamp01(Number(point?.x)),
+								y: clamp01(Number(point?.y)),
+							}))
+							.filter((point: PaintPoint) => Number.isFinite(point.x) && Number.isFinite(point.y));
+					})
+					.filter(isUsableStroke);
+				return { layerId, strokes };
+			}
+
+			// Legacy: one flat point list was one continuous polyline.
+			if (Array.isArray(item?.points) && item.points.length > 0) {
+				const points = item.points
+					.map((point: any) => ({
+						x: clamp01(Number(point?.x)),
+						y: clamp01(Number(point?.y)),
+					}))
+					.filter((point: PaintPoint) => Number.isFinite(point.x) && Number.isFinite(point.y));
+				return points.length > 0 ? { layerId, strokes: [points] } : { layerId, strokes: [] };
+			}
+
+			return { layerId, strokes: [] };
+		})
+		.filter((item: PaintAnnotation | null): item is PaintAnnotation => !!item);
+}
+
+function ensureLayerAnnotation(annotations: PaintAnnotation[], layerId: string): PaintAnnotation[] {
+	if (annotations.some((item) => item.layerId === layerId)) return annotations;
+	return [...annotations, { layerId, strokes: [] }];
+}
+
+function startStrokeOnLayer(annotations: PaintAnnotation[], layerId: string, point: PaintPoint): PaintAnnotation[] {
+	const next = ensureLayerAnnotation(annotations, layerId).map((item) => ({
+		...item,
+		strokes: item.strokes.map((stroke) => [...stroke]),
+	}));
+	const idx = next.findIndex((item) => item.layerId === layerId);
+	next[idx] = {
+		...next[idx],
+		strokes: [...next[idx].strokes, [point]],
+	};
+	return next;
+}
+
+function appendPointToActiveStroke(annotations: PaintAnnotation[], layerId: string, point: PaintPoint): PaintAnnotation[] {
+	const idx = annotations.findIndex((item) => item.layerId === layerId);
+	if (idx === -1) return startStrokeOnLayer(annotations, layerId, point);
+
+	const strokes = annotations[idx].strokes;
+	if (strokes.length === 0) return startStrokeOnLayer(annotations, layerId, point);
+
+	const lastStroke = strokes[strokes.length - 1];
+	const lastPoint = lastStroke[lastStroke.length - 1];
+	if (lastPoint && paintPointDistance(lastPoint, point) < PAINT_POINT_MIN_DISTANCE) {
+		return annotations;
+	}
+
+	const next = annotations.map((item) => ({
+		...item,
+		strokes: item.strokes.map((stroke) => [...stroke]),
+	}));
+	const nextStrokes = [...next[idx].strokes];
+	nextStrokes[nextStrokes.length - 1] = [...nextStrokes[nextStrokes.length - 1], point];
+	next[idx] = { ...next[idx], strokes: nextStrokes };
+	return next;
+}
+
+function finalizeActiveStroke(annotations: PaintAnnotation[], layerId: string): PaintAnnotation[] {
+	const idx = annotations.findIndex((item) => item.layerId === layerId);
+	if (idx === -1) return annotations;
+
+	const strokes = annotations[idx].strokes;
+	if (strokes.length === 0) return annotations;
+
+	const lastStroke = strokes[strokes.length - 1];
+	// Drop empty strokes; keep single-point taps as dots.
+	if (!isUsableStroke(lastStroke)) {
+		const next = annotations.map((item) => ({
+			...item,
+			strokes: item.strokes.map((stroke) => [...stroke]),
+		}));
+		next[idx] = {
+			...next[idx],
+			strokes: next[idx].strokes.slice(0, -1),
+		};
+		return next.filter((item) => item.strokes.length > 0 || item.layerId === layerId);
+	}
+
+	return annotations;
+}
+
+function serializePaintAnnotations(annotations: PaintAnnotation[]): PaintAnnotation[] {
+	return annotations
+		.map((annotation) => ({
+			layerId: annotation.layerId,
+			strokes: (annotation.strokes || [])
+				.filter(isUsableStroke)
+				.map((stroke) =>
+					stroke.map((point) => ({
+						x: Number(point.x.toFixed(4)),
+						y: Number(point.y.toFixed(4)),
+					}))
+				),
+		}))
+		.filter((annotation) => annotation.strokes.length > 0);
+}
+
+function renderPaintStrokes(
+	annotation: PaintAnnotation | undefined,
+	color: string,
+	width: number,
+	height: number,
+	keyPrefix: string
+) {
+	if (!annotation || !Array.isArray(annotation.strokes)) return null;
+	return annotation.strokes.map((stroke, strokeIndex) => {
+		if (!isUsableStroke(stroke)) return null;
+		if (stroke.length === 1) {
+			const point = stroke[0];
+			return (
+				<circle
+					key={`${keyPrefix}-dot-${strokeIndex}`}
+					cx={Math.round(point.x * width)}
+					cy={Math.round(point.y * height)}
+					r={7}
+					fill={color}
+					opacity={0.85}
+				/>
+			);
+		}
+		const path = buildSvgPath(stroke, width, height);
+		if (!path) return null;
+		return (
+			<path
+				key={`${keyPrefix}-stroke-${strokeIndex}`}
+				d={path}
+				fill="none"
+				stroke={color}
+				strokeWidth={12}
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				opacity={0.78}
+			/>
+		);
+	});
+}
+
 /** Generic two-point connection overlay (arrow or line) in normalized rink space. */
 function DirectionalPathConnection({
 	start,
@@ -568,20 +746,6 @@ function DirectionalPathConnection({
 	);
 }
 
-function mergePointIntoLayer(annotations: PaintAnnotation[], layerId: string, point: PaintPoint): PaintAnnotation[] {
-	const next = [...annotations];
-	const idx = next.findIndex((item) => item.layerId === layerId);
-	if (idx === -1) {
-		next.push({ layerId, points: [point] });
-		return next;
-	}
-	next[idx] = {
-		...next[idx],
-		points: [...(next[idx].points || []), point],
-	};
-	return next;
-}
-
 function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const safeAnswers = answers || {};
 	const config = drill?.config || {};
@@ -604,7 +768,11 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const progressPct = observationCount > 0 ? Math.round((observations.length / observationCount) * 100) : 0;
 
 	const draft = safeAnswers.__paintable_rink_observation_draft || {};
-	const draftAnnotations: PaintAnnotation[] = Array.isArray(draft?.[annotationsKey]) ? draft[annotationsKey] : [];
+	const rawDraftAnnotations = draft?.[annotationsKey];
+	const draftAnnotations = useMemo(
+		() => normalizePaintAnnotations(rawDraftAnnotations),
+		[rawDraftAnnotations]
+	);
 	const selectedLayerId: string = draft?.[selectedLayerKey] || layers[0]?.id || "annotation";
 	const draftNote = draft?.[noteKey] || "";
 
@@ -614,7 +782,22 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const completionNoteKey = completionNote?.key || "pattern_reason";
 
 	const svgRef = useRef<SVGSVGElement | null>(null);
+	const isDrawingRef = useRef(false);
+	const activePointerIdRef = useRef<number | null>(null);
+	const activeLayerIdRef = useRef<string | null>(null);
+	const selectedLayerIdRef = useRef(selectedLayerId);
 	const [isDrawing, setIsDrawing] = useState(false);
+	// Local stroke buffer avoids dropped points from stale setAnswers closures during rapid moves.
+	const [localAnnotations, setLocalAnnotations] = useState<PaintAnnotation[]>(draftAnnotations);
+	const annotationsRef = useRef<PaintAnnotation[]>(draftAnnotations);
+
+	selectedLayerIdRef.current = selectedLayerId;
+
+	useEffect(() => {
+		if (isDrawingRef.current) return;
+		annotationsRef.current = draftAnnotations;
+		setLocalAnnotations(draftAnnotations);
+	}, [draftAnnotations]);
 
 	const currentMission = missions[observations.length] || {
 		title: `Mission ${Math.min(observations.length + 1, observationCount)} von ${observationCount}`,
@@ -632,7 +815,14 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 		});
 	};
 
-	const getPointFromEvent = (event: any): PaintPoint | null => {
+	const persistAnnotations = (nextAnnotations: PaintAnnotation[]) => {
+		const cleaned = serializePaintAnnotations(nextAnnotations);
+		annotationsRef.current = cleaned;
+		setLocalAnnotations(cleaned);
+		updateDraft({ [annotationsKey]: cleaned });
+	};
+
+	const getPointFromEvent = (event: { clientX: number; clientY: number }): PaintPoint | null => {
 		if (!svgRef.current) return null;
 		const rect = svgRef.current.getBoundingClientRect();
 		if (!rect.width || !rect.height) return null;
@@ -642,63 +832,106 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 		};
 	};
 
-	const appendPoint = (point: PaintPoint) => {
-		if (!selectedLayerId) return;
-		const nextAnnotations = mergePointIntoLayer(draftAnnotations, selectedLayerId, point);
-		updateDraft({ [annotationsKey]: nextAnnotations });
-	};
+	const isTouchLikePointer = (pointerType: string) =>
+		pointerType === "touch" || pointerType === "pen";
 
 	const onPointerDown = (event: any) => {
-		if (!selectedLayerId) return;
+		const layerId = selectedLayerIdRef.current;
+		if (!layerId) return;
+		// MVP: ignore additional fingers while a stroke is active
+		if (activePointerIdRef.current !== null) return;
 		const point = getPointFromEvent(event);
 		if (!point) return;
-		event.preventDefault();
-		event.currentTarget.setPointerCapture?.(event.pointerId);
+
+		if (isTouchLikePointer(event.pointerType)) {
+			event.preventDefault();
+		}
+
+		activePointerIdRef.current = event.pointerId;
+		activeLayerIdRef.current = layerId;
+		isDrawingRef.current = true;
 		setIsDrawing(true);
-		appendPoint(point);
+		event.currentTarget.setPointerCapture?.(event.pointerId);
+
+		// New gesture = new stroke (never continue the previous one).
+		const nextAnnotations = startStrokeOnLayer(annotationsRef.current, layerId, point);
+		annotationsRef.current = nextAnnotations;
+		setLocalAnnotations(nextAnnotations);
 	};
 
 	const onPointerMove = (event: any) => {
-		if (!isDrawing) return;
+		if (!isDrawingRef.current) return;
+		if (activePointerIdRef.current !== event.pointerId) return;
+		const layerId = activeLayerIdRef.current || selectedLayerIdRef.current;
+		if (!layerId) return;
 		const point = getPointFromEvent(event);
 		if (!point) return;
-		event.preventDefault();
-		appendPoint(point);
+		if (isTouchLikePointer(event.pointerType)) {
+			event.preventDefault();
+		}
+
+		const nextAnnotations = appendPointToActiveStroke(annotationsRef.current, layerId, point);
+		if (nextAnnotations === annotationsRef.current) return;
+		annotationsRef.current = nextAnnotations;
+		setLocalAnnotations(nextAnnotations);
 	};
 
 	const stopDrawing = (event?: any) => {
-		if (event?.currentTarget?.releasePointerCapture && event?.pointerId !== undefined) {
-			event.currentTarget.releasePointerCapture(event.pointerId);
+		if (
+			event?.pointerId !== undefined
+			&& activePointerIdRef.current !== null
+			&& event.pointerId !== activePointerIdRef.current
+		) {
+			return;
 		}
+
+		const pointerId = event?.pointerId ?? activePointerIdRef.current;
+		const target = event?.currentTarget;
+		if (target?.hasPointerCapture?.(pointerId)) {
+			target.releasePointerCapture(pointerId);
+		}
+
+		const wasDrawing = isDrawingRef.current;
+		const layerId = activeLayerIdRef.current;
+		activePointerIdRef.current = null;
+		activeLayerIdRef.current = null;
+		isDrawingRef.current = false;
 		setIsDrawing(false);
+
+		if (wasDrawing) {
+			const finalized = layerId
+				? finalizeActiveStroke(annotationsRef.current, layerId)
+				: annotationsRef.current;
+			persistAnnotations(finalized);
+		}
 	};
 
-	const paintedLayerIds = draftAnnotations
-		.filter((annotation) => Array.isArray(annotation.points) && annotation.points.length > 1)
+	const onPointerLeave = (event: any) => {
+		// With capture, keep the stroke alive until up/cancel (avoids edge-jitter cuts).
+		if (event?.currentTarget?.hasPointerCapture?.(event.pointerId)) return;
+		stopDrawing(event);
+	};
+
+	const paintedLayerIds = localAnnotations
+		.filter((annotation) => layerHasPaint(annotation))
 		.map((annotation) => annotation.layerId);
 	const paintedLayerCount = new Set(paintedLayerIds).size;
 	const canSave = paintedLayerCount >= minimumLayers && !isComplete;
 
 	const clearLayer = (layerId: string) => {
-		const nextAnnotations = draftAnnotations.filter((annotation) => annotation.layerId !== layerId);
-		updateDraft({ [annotationsKey]: nextAnnotations });
+		const nextAnnotations = annotationsRef.current.filter((annotation) => annotation.layerId !== layerId);
+		persistAnnotations(nextAnnotations);
 	};
 
 	const clearAll = () => {
+		annotationsRef.current = [];
+		setLocalAnnotations([]);
 		updateDraft({ [annotationsKey]: [], [noteKey]: "" });
 	};
 
 	const onSaveObservation = () => {
 		if (!canSave) return;
-		const cleanedAnnotations = draftAnnotations
-			.filter((annotation) => Array.isArray(annotation.points) && annotation.points.length > 1)
-			.map((annotation) => ({
-				layerId: annotation.layerId,
-				points: annotation.points.map((point) => ({
-					x: Number(point.x.toFixed(4)),
-					y: Number(point.y.toFixed(4)),
-				})),
-			}));
+		const cleanedAnnotations = serializePaintAnnotations(annotationsRef.current);
 
 		const nextObservation = {
 			[observationIndexKey]: observations.length + 1,
@@ -707,6 +940,8 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 			[createdAtKey]: new Date().toISOString(),
 		};
 
+		annotationsRef.current = [];
+		setLocalAnnotations([]);
 		setAnswers({
 			...safeAnswers,
 			[observationsKey]: [...observations, nextObservation],
@@ -823,45 +1058,56 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 								border: "1px solid rgba(81,145,162,0.45)",
 								overflow: "hidden",
 								background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
-								touchAction: isDrawing ? "none" : "manipulation",
 							}}
 						>
 							<svg
 								ref={svgRef}
+								className="rink-paint-surface"
 								viewBox="0 0 900 620"
 								onPointerDown={onPointerDown}
 								onPointerMove={onPointerMove}
 								onPointerUp={stopDrawing}
-								onPointerLeave={stopDrawing}
+								onPointerLeave={onPointerLeave}
 								onPointerCancel={stopDrawing}
+								onLostPointerCapture={stopDrawing}
 								role="img"
 								aria-label="Paintable Rink"
-								style={{ width: "100%", height: "100%", display: "block", cursor: isDrawing ? "crosshair" : "pointer" }}
+								style={{
+									width: "100%",
+									height: "100%",
+									display: "block",
+									cursor: isDrawing ? "crosshair" : "pointer",
+									touchAction: "none",
+								}}
 							>
-								<DetailedHockeyRinkLayers
-									overlays={overlays}
-									defensiveLabel={defensiveLabel}
-									offensiveLabel={offensiveLabel}
-								/>
+								{/* Visuals ignore hits so touch-action on the SVG always wins (not child paths). */}
+								<g pointerEvents="none">
+									<DetailedHockeyRinkLayers
+										overlays={overlays}
+										defensiveLabel={defensiveLabel}
+										offensiveLabel={offensiveLabel}
+									/>
 
-								{layers.map((layer) => {
-									const layerAnnotation = draftAnnotations.find((annotation) => annotation.layerId === layer.id);
-									if (!layerAnnotation || !Array.isArray(layerAnnotation.points) || layerAnnotation.points.length < 2) return null;
-									const path = buildSvgPath(layerAnnotation.points, 900, 620);
-									if (!path) return null;
-									return (
-										<path
-											key={layer.id}
-											d={path}
-											fill="none"
-											stroke={layer.color}
-											strokeWidth={12}
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											opacity={0.78}
-										/>
-									);
-								})}
+									{layers.map((layer) => {
+										const layerAnnotation = localAnnotations.find((annotation) => annotation.layerId === layer.id);
+										if (!layerHasPaint(layerAnnotation)) return null;
+										return (
+											<g key={layer.id}>
+												{renderPaintStrokes(layerAnnotation, layer.color, 900, 620, layer.id)}
+											</g>
+										);
+									})}
+								</g>
+								{/* Full-rink hit target: ensures touches hit an element with touch-action:none. */}
+								<rect
+									className="rink-paint-surface"
+									x={0}
+									y={0}
+									width={900}
+									height={620}
+									fill="transparent"
+									style={{ touchAction: "none" }}
+								/>
 							</svg>
 						</div>
 					</div>
@@ -949,7 +1195,7 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 				</div>
 				<div style={{ display: "grid", gap: "0.4rem" }}>
 					{observations.map((entry: any, idx: number) => {
-						const entryAnnotations: PaintAnnotation[] = Array.isArray(entry?.[annotationsKey]) ? entry[annotationsKey] : [];
+						const entryAnnotations = normalizePaintAnnotations(entry?.[annotationsKey]);
 						return (
 							<div key={idx} style={{ padding: "0.5rem 0.62rem", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", background: "rgba(255,255,255,0.03)" }}>
 								<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.55rem" }}>

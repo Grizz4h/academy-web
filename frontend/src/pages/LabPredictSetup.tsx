@@ -168,7 +168,7 @@ export default function LabPredictSetup() {
           <p>{selectedTemplate.description}</p>
           {selectedTemplate.relatedAcademyDrills?.length ? (
             <p style={{ marginBottom: 0 }}>
-              Passende Academy-Grundlage: {selectedTemplate.relatedAcademyDrills.join(', ')}
+              Passende Akademie-Grundlage: {selectedTemplate.relatedAcademyDrills.join(', ')}
             </p>
           ) : null}
         </div>

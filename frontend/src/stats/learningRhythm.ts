@@ -1,10 +1,16 @@
 import type { Session } from '../api';
 
+/** Peak weekly activity used for bar height; 10 ≈ high week. */
+export const MAX_WEEKLY_ACTIVITY_LEVEL = 10;
+
+export type ActivityLevel =
+  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
 export type WeeklyActivity = {
   weekStart: string;
   weekEnd: string;
   completedSessions: number;
-  activityLevel: 0 | 1 | 2 | 3 | 4;
+  activityLevel: ActivityLevel;
   isCurrentWeek: boolean;
   isoWeek: number;
 };
@@ -112,7 +118,7 @@ export function buildWeeklyActivity(
       weekStart: toLocalDateKey(weekStartDate),
       weekEnd: toLocalDateKey(weekEndDate),
       completedSessions,
-      activityLevel: Math.min(completedSessions, 4) as 0 | 1 | 2 | 3 | 4,
+      activityLevel: Math.min(completedSessions, MAX_WEEKLY_ACTIVITY_LEVEL) as ActivityLevel,
       isCurrentWeek: offset === weeks - 1,
       isoWeek: toIsoWeekNumber(weekStartDate),
     });

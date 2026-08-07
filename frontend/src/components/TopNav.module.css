@@ -113,6 +113,18 @@
   font-size: 0.86rem;
 }
 
+.devHint {
+  font-size: 0.78rem;
+  color: rgba(153, 246, 228, 0.9);
+  white-space: nowrap;
+}
+
+.devLink {
+  border-color: rgba(148, 163, 184, 0.35) !important;
+  color: rgba(186, 210, 230, 0.88) !important;
+  opacity: 0.85;
+}
+
 /* >>> wichtig: horizontal scroll container */
 .navTabsWrapper {
   overflow-x: auto;

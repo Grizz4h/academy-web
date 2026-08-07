@@ -455,7 +455,7 @@ export default function SessionSetup() {
 
       {!user && (
         <div className="card" style={{ border: '1px solid #ffc107' }}>
-          <strong>Login nötig:</strong> Bitte oben im Navbar deinen Namen speichern. Wir merken ihn im Browser, damit Sessions dir zugeordnet sind.
+          <strong>Anmeldung nötig:</strong> Bitte oben in der Navigation deinen Namen speichern. Wir merken ihn im Browser, damit Sessions dir zugeordnet sind.
         </div>
       )}
 
@@ -687,7 +687,7 @@ export default function SessionSetup() {
                   : 'linear-gradient(140deg, rgba(90, 210, 255, 0.12), rgba(8, 16, 35, 0.8))'
           }}
         >
-          <h2 style={{ marginBottom: '0.35rem' }}>Matchup Check</h2>
+          <h2 style={{ marginBottom: '0.35rem' }}>Paarungs-Check</h2>
           <div style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.85)' }}>
             {teamHome} vs {teamAway}
           </div>
@@ -704,7 +704,7 @@ export default function SessionSetup() {
               <div style={{ marginTop: '0.2rem', color: 'rgba(255,255,255,0.82)' }}>{matchupPanelData.sessionCount}x analysiert</div>
             </div>
             <div>
-              <div style={{ fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>Team-Historie:</div>
+              <div style={{ fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>Team-Verlauf:</div>
               <div style={{ display: 'grid', gap: '0.35rem', marginTop: '0.35rem' }}>
                 {matchupPanelData.teamHistory.map((row) => (
                   <div key={row.team} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', color: 'rgba(255,255,255,0.82)' }}>

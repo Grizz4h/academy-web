@@ -16,7 +16,7 @@ type CoverageMapProps = {
 export const CoverageMap: React.FC<CoverageMapProps> = ({ moduleCoverages }) => {
   return (
     <Card>
-      <h2 className={styles.sectionTitle}>Coverage Map</h2>
+      <h2 className={styles.sectionTitle}>Modul-Abdeckung</h2>
       <div className={styles.coverageGrid}>
         {moduleCoverages.map((module) => {
           const status = 

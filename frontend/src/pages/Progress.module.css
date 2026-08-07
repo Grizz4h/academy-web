@@ -56,30 +56,8 @@
   border-radius: 10px;
   padding: 0.7rem 0.75rem;
   background: rgba(120, 130, 150, 0.12);
-}
-
-.teamTile[data-category='high'] {
-  background: rgba(34, 197, 94, 0.2);
-  border-color: rgba(74, 222, 128, 0.8);
-  color: #dcfce7;
-}
-
-.teamTile[data-category='medium'] {
-  background: rgba(234, 179, 8, 0.2);
-  border-color: rgba(250, 204, 21, 0.8);
-  color: #fef9c3;
-}
-
-.teamTile[data-category='low'] {
-  background: rgba(107, 114, 128, 0.2);
-  border-color: rgba(156, 163, 175, 0.8);
   color: #e5e7eb;
-}
-
-.teamTile[data-category='none'] {
-  background: rgba(38, 38, 38, 0.75);
-  border-color: rgba(82, 82, 82, 0.9);
-  color: #a3a3a3;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
 .teamName {

@@ -151,8 +151,8 @@ export default function History() {
     }
   }, [filterYear, filterMonth, monthsByYear])
 
-  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deine Session-Historie.</div>
-  if (isLoading) return <div className="card">Lade Historie...</div>
+  if (!user) return <div className="card">Bitte oben im Login deinen Namen speichern, dann zeigen wir dir deinen Session-Verlauf.</div>
+  if (isLoading) return <div className="card">Lade Verlauf...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
 
   const getMonthLabel = (monthValue: string) => {
@@ -167,13 +167,13 @@ export default function History() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <h1>Session Historie</h1>
+      <h1>Session-Verlauf</h1>
 
       {/* Filter (Desktop + Mobile gleich) */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <h3 style={{ margin: 0 }}>Filter</h3>
-          <button className="filterReset" onClick={resetFilters}>Reset</button>
+          <button className="filterReset" onClick={resetFilters}>Zurücksetzen</button>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'flex-end', rowGap: '1rem', columnGap: '1rem', justifyContent: 'flex-start', width: '100%', maxWidth: '100%', marginTop: '0.75rem' }}>
           <div style={{ minWidth: '140px', flex: '1 1 140px' }}>

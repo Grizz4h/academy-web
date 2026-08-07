@@ -721,7 +721,7 @@ export default function SessionPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <h1>Live Session: {session.module_id}</h1>
+      <h1>Live-Session: {session.module_id}</h1>
 
       <div className="card">
         <h2>Spiel-Info</h2>
@@ -847,14 +847,14 @@ export default function SessionPage() {
         <div className="card">
           <details>
             <summary style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-              Check-in Historie (klicken zum Ausklappen)
+              Check-in-Verlauf (klicken zum Ausklappen)
             </summary>
             {session.checkins.map((checkin: any, i: number) => (
               <div key={i} style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '5px' }}>
                 <h4>{getPhaseTitle(checkin.phase)} - {new Date(checkin.timestamp).toLocaleString()}</h4>
                 <pre style={{ fontSize: '0.8rem' }}>{JSON.stringify(checkin.answers, null, 2)}</pre>
                 {checkin.feedback && <p><strong>Feedback:</strong> {checkin.feedback}</p>}
-                {checkin.next_task && <p><strong>Next Task:</strong> {checkin.next_task}</p>}
+                {checkin.next_task && <p><strong>Nächste Aufgabe:</strong> {checkin.next_task}</p>}
               </div>
             ))}
           </details>
@@ -865,7 +865,7 @@ export default function SessionPage() {
         <div className="card">
           <h2>Session abgeschlossen! 🎉</h2>
           <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
-          <a href="/dashboard" className="btn">Zurück zum Dashboard</a>
+          <a href="/" className="btn">Zurück zur Übersicht</a>
         </div>
       )}
 
@@ -875,7 +875,7 @@ export default function SessionPage() {
           <p><strong>Grund:</strong> {session.abort?.reason}</p>
           {session.abort?.note && <p><strong>Notiz:</strong> {session.abort.note}</p>}
           <p><strong>Abgebrochen am:</strong> {session.abort?.aborted_at ? new Date(session.abort.aborted_at).toLocaleString() : 'Unbekannt'}</p>
-          <a href="/dashboard" className="btn">Zurück zum Dashboard</a>
+          <a href="/" className="btn">Zurück zur Übersicht</a>
         </div>
       )}
 

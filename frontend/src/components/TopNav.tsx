@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
 import { api, type Session } from '../api';
@@ -8,19 +8,13 @@ import UserName from './UserName';
 import { useUser } from '../context/UserContext';
 import { formatPux, useRewards } from '../features/rewards';
 import { getSessionRoute } from '../features/lab/sessionRouting';
+import {
+  getHiddenNavTabs,
+  getPublicNavTabs,
+  isDevNavEnabled,
+  setDevNavEnabled,
+} from '../config/featureFlags';
 import styles from './TopNav.module.css';
-
-const navTabs = [
-  { to: '/', label: 'Start', exact: true },
-  { to: '/curriculum', label: 'Academy' },
-  { to: '/lab', label: 'Lab' },
-  { to: '/history', label: 'Verlauf' },
-  { to: '/progress', label: 'Stats' },
-  { to: '/observation/setup', label: 'Obs Setup' },
-  { to: '/observation/stats', label: 'Obs Stats' },
-  { to: '/ringabout', label: '🎬 Rink About It' },
-];
-
 
 const getSessionSortDate = (session: Session) => new Date(session.created_at).getTime() || 0;
 
@@ -42,6 +36,10 @@ const getSessionContext = (session: Session): string => {
 const TopNav: React.FC = () => {
   const { user } = useUser();
   const { rewardState } = useRewards();
+  const [devNav, setDevNav] = useState(() => isDevNavEnabled());
+  const [devHint, setDevHint] = useState('');
+  const logoClicksRef = useRef<{ count: number; timer: number | null }>({ count: 0, timer: null });
+
   const { data: activeSessions } = useQuery({
     queryKey: ['sessions', user, 'IN_PROGRESS'],
     queryFn: () => api.getSessions(user || undefined, 'IN_PROGRESS'),
@@ -55,17 +53,54 @@ const TopNav: React.FC = () => {
       .sort((a, b) => getSessionSortDate(b) - getSessionSortDate(a))[0]
     : undefined;
 
+  useEffect(() => {
+    return () => {
+      if (logoClicksRef.current.timer) window.clearTimeout(logoClicksRef.current.timer);
+    };
+  }, []);
+
+  const handleLogoClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    const state = logoClicksRef.current;
+    state.count += 1;
+
+    if (state.timer) window.clearTimeout(state.timer);
+    state.timer = window.setTimeout(() => {
+      state.count = 0;
+      state.timer = null;
+    }, 900);
+
+    if (state.count < 5) return;
+
+    event.preventDefault();
+    state.count = 0;
+    if (state.timer) {
+      window.clearTimeout(state.timer);
+      state.timer = null;
+    }
+
+    const next = !isDevNavEnabled();
+    setDevNavEnabled(next);
+    setDevNav(next);
+    setDevHint(next ? 'Dev-Nav an' : 'Dev-Nav aus');
+    window.setTimeout(() => setDevHint(''), 1600);
+  }, []);
+
+  const publicTabs = getPublicNavTabs();
+  const hiddenTabs = getHiddenNavTabs();
+  const navTabs = devNav ? [...publicTabs, ...hiddenTabs] : publicTabs;
+
   return (
     <nav className={styles.navbar} data-top-nav="true">
       <div className={styles.container}>
         <div className={styles.navInner}>
           {/* Row 1: Logo left, Logout right */}
           <div className={styles.brandRow}>
-            <NavLink to="/" className={styles.logoLink}>
+            <NavLink to="/" className={styles.logoLink} onClick={handleLogoClick}>
               <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
               <span className={styles.navbarBrand}></span>
             </NavLink>
             <div className={styles.userSection}>
+              {devHint && <span className={styles.devHint}>{devHint}</span>}
               {user && <Pill className={styles.rewardPill}>{formatPux(rewardState.currency.PUX || 0)}</Pill>}
               <LogoutButton />
             </div>
@@ -102,6 +137,18 @@ const TopNav: React.FC = () => {
                   </NavLink>
                 </React.Fragment>
               ))}
+              {devNav && (
+                <NavLink
+                  to="/dev"
+                  className={({ isActive }) =>
+                    isActive
+                      ? styles.navLink + " " + styles.navLinkActive + " " + styles.devLink
+                      : styles.navLink + " " + styles.devLink
+                  }
+                >
+                  Dev
+                </NavLink>
+              )}
             </div>
           </div>
           {/* Row 3: UserName under Tabs */}

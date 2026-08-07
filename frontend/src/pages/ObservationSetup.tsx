@@ -445,7 +445,7 @@ export default function ObservationSetup() {
 
                   {/* Observation-Stats */}
                   <div style={{ marginTop: '0.25rem', padding: '0.6rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '0.5rem', display: 'grid', gap: '0.35rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 600, opacity: 0.55, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Beobachtungs-Historie</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, opacity: 0.55, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Beobachtungs-Verlauf</div>
                     <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.9rem' }}>
                       <div>
                         <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{selectedKaderPlayer.observation_count ?? 0}</span>

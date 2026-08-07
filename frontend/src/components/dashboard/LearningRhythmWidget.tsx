@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { Session } from '../../api';
 import {
+  MAX_WEEKLY_ACTIVITY_LEVEL,
   buildWeeklyActivity,
   summarizeLearningRhythm,
   type WeeklyActivity,
@@ -16,7 +17,9 @@ export type LearningRhythmWidgetProps = {
 };
 
 function formatSessionsText(completedSessions: number): string {
-  if (completedSessions >= 4) return '4+ abgeschlossene Sessions';
+  if (completedSessions >= MAX_WEEKLY_ACTIVITY_LEVEL) {
+    return `${MAX_WEEKLY_ACTIVITY_LEVEL}+ abgeschlossene Sessions`;
+  }
   if (completedSessions === 1) return '1 abgeschlossene Session';
   return `${completedSessions} abgeschlossene Sessions`;
 }

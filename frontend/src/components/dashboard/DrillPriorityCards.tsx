@@ -1,5 +1,6 @@
 import React from 'react';
 import Card from '../Card';
+import { getDrillAccentLevel } from '../../utils/tealIntensity';
 import styles from './DrillPriorityCards.module.css';
 
 export type DrillWithCount = {
@@ -18,13 +19,6 @@ type DrillPriorityCardsProps = {
   onScopeChange: (scope: string) => void;
 };
 
-const getAccentLevel = (count: number): number => {
-  if (count === 0) return 0;
-  if (count === 1) return 1;
-  if (count >= 2 && count <= 3) return 2;
-  return 3;
-};
-
 export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
   recommendedNext,
   mostTrained,
@@ -38,7 +32,7 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
       <Card className={styles.scopeCard}>
         <div className={styles.scopeSelector}>
           <label htmlFor="scope-select" className={styles.scopeLabel}>
-            Scope:
+            Bereich:
           </label>
           <select
             id="scope-select"
@@ -57,13 +51,13 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
 
       <div className={styles.priorityContainer}>
         <Card className={styles.priorityCard}>
-        <h2 className={styles.sectionTitle}>Recommended Next</h2>
+        <h2 className={styles.sectionTitle}>Als Nächstes empfohlen</h2>
         {recommendedNext.length === 0 ? (
           <p className={styles.emptyState}>Keine Drills verfügbar.</p>
         ) : (
           <ul className={styles.drillList}>
             {recommendedNext.map((drill) => {
-              const accentLevel = getAccentLevel(drill.count);
+              const accentLevel = getDrillAccentLevel(drill.count);
               const displayTitle = drill.moduleId 
                 ? `${drill.moduleId} · ${drill.title}` 
                 : drill.title;
@@ -80,13 +74,13 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
       </Card>
 
       <Card className={styles.priorityCard}>
-        <h2 className={styles.sectionTitle}>Most Trained</h2>
+        <h2 className={styles.sectionTitle}>Am häufigsten trainiert</h2>
         {mostTrained.length === 0 ? (
           <p className={styles.emptyState}>Noch keine Drills absolviert.</p>
         ) : (
           <ul className={styles.drillList}>
             {mostTrained.map((drill) => {
-              const accentLevel = getAccentLevel(drill.count);
+              const accentLevel = getDrillAccentLevel(drill.count);
               const displayTitle = drill.moduleId 
                 ? `${drill.moduleId} · ${drill.title}` 
                 : drill.title;

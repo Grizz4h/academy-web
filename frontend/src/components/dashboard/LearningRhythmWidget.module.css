@@ -90,11 +90,17 @@
   transition: height 0.2s ease;
 }
 
-.level0 { height: 7%; }
-.level1 { height: 27%; }
-.level2 { height: 45%; }
-.level3 { height: 67%; }
-.level4 { height: 88%; }
+.level0 { height: 6%; }
+.level1 { height: 14%; }
+.level2 { height: 22%; }
+.level3 { height: 31%; }
+.level4 { height: 40%; }
+.level5 { height: 49%; }
+.level6 { height: 58%; }
+.level7 { height: 67%; }
+.level8 { height: 76%; }
+.level9 { height: 85%; }
+.level10 { height: 94%; }
 
 .currentWeek {
   border-color: color-mix(in srgb, var(--accent) 75%, white 25%);

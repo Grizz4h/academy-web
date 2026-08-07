@@ -1,0 +1,188 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.title {
+  margin: 0 0 0.35rem;
+}
+
+.hint {
+  margin: 0 0 0.5rem;
+  color: rgba(216, 225, 255, 0.72);
+  font-size: 0.9rem;
+}
+
+.track {
+  border-radius: 10px;
+  border: 1px solid rgba(140, 150, 180, 0.35);
+  background: rgba(18, 24, 38, 0.72);
+  overflow: hidden;
+}
+
+.trackCluster {
+  border-color: rgba(81, 145, 162, 0.35);
+  background: linear-gradient(180deg, rgba(10, 12, 26, 0.94) 0%, rgba(8, 16, 30, 0.96) 100%);
+}
+
+.trackSummary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trackSummary::-webkit-details-marker {
+  display: none;
+}
+
+.trackSummaryMain {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.clusterLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(129, 221, 245, 0.82);
+  margin-bottom: 0.2rem;
+}
+
+.trackTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  color: rgba(240, 248, 255, 0.96);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.trackMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 0 0 auto;
+  color: rgba(186, 210, 230, 0.78);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.chevron {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 2px solid rgba(148, 196, 214, 0.85);
+  border-bottom: 2px solid rgba(148, 196, 214, 0.85);
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+  margin-top: -0.15rem;
+}
+
+.track[open] .chevron {
+  transform: rotate(-135deg);
+  margin-top: 0.15rem;
+}
+
+.trackBody {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trackDescription {
+  margin: 0.85rem 0 0;
+  color: rgba(216, 225, 255, 0.82);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.moduleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 0.85rem;
+  margin-top: 0.9rem;
+}
+
+.moduleCard {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.moduleCardCluster {
+  border-color: rgba(81, 145, 162, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.moduleTitle {
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.moduleText {
+  margin: 0.45rem 0 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.moduleMuted {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.learningGoals {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.learningGoals ul {
+  margin-top: 0.25rem;
+  padding-left: 1rem;
+}
+
+.moduleStats {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.moduleActions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .page {
+    gap: 0.55rem;
+  }
+
+  .trackSummary {
+    padding: 0.8rem 0.85rem;
+  }
+
+  .trackTitle {
+    font-size: 0.98rem;
+  }
+
+  .trackBody {
+    padding: 0 0.85rem 0.85rem;
+  }
+
+  .moduleGrid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+}
