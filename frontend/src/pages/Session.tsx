@@ -451,8 +451,12 @@ export default function SessionPage() {
     ) {
       const observationsKey = drill?.config?.observations_key || 'observations'
       const requiredObservations = Number(drill?.config?.observation_count || 3)
-      const reflectionKey = drill?.config?.reflection?.key || drill?.config?.completion_reflection?.key || 'final_reflection'
-      const reflectionEnabled = drill?.config?.reflection_enabled !== false
+      const reflectionConfig = drill?.config?.reflection || drill?.config?.completion_reflection || null
+      const reflectionKey = reflectionConfig?.key || null
+      // Only require a classic reflection when one is actually configured in the drill.
+      // Defaulting to "final_reflection" blocked drills that use completion_question instead (e.g. C1_D1).
+      const reflectionEnabled = !!reflectionConfig && drill?.config?.reflection_enabled !== false
+      const completionQuestionKey = drill?.config?.completion_question?.key || null
       const observations = Array.isArray(answers?.[observationsKey]) ? answers[observationsKey] : []
 
       if (observations.length < requiredObservations) {
@@ -496,7 +500,11 @@ export default function SessionPage() {
         }
       }
 
-      if (reflectionEnabled && !answers?.[reflectionKey]) {
+      if (completionQuestionKey && !answers?.[completionQuestionKey]) {
+        return 'Bitte beantworte die Abschlussfrage, bevor du weitergehst.'
+      }
+
+      if (reflectionEnabled && reflectionKey && !answers?.[reflectionKey]) {
         return 'Bitte beantworte kurz die Abschluss-Reflexion, bevor du weitergehst.'
       }
     }

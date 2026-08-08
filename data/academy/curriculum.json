@@ -4091,30 +4091,33 @@
               "id": "C1_D1",
               "title": "Welche Räume schützt die Defensive?",
               "drill_type": "paintable_rink_observation",
-              "description": "Analysiere mehrere defensive Situationen und markiere, welche Räume das Team schützt, welche Räume besonders gefährlich wären und welche Räume bewusst zugelassen werden.",
+              "description": "Analysiere mehrere defensive Situationen und markiere, welche Räume das Team schützt, welche Räume besonders gefährlich wären und welche Räume bewusst zugelassen werden. Achte besonders auf Momente, in denen die Defensive in der Ordnung ist.",
               "didactics": {
-                "explanation": "Defensive Systeme beginnen nicht erst beim Zweikampf. Entscheidend ist, welche Räume ein Team priorisiert.\n\nEine gute Defensive schützt nicht jeden Bereich gleichzeitig. Sie entscheidet, welche Räume geschlossen werden müssen und welche Bereiche weniger gefährlich sind.\n\nBeobachte nicht den Erfolg einer einzelnen Aktion, sondern die wiederkehrende Raumpriorität des Teams.",
+                "explanation": "Defensive Systeme beginnen nicht erst beim Zweikampf. Entscheidend ist, welche Räume ein Team priorisiert.\n\nEine gute Defensive schützt nicht jeden Bereich gleichzeitig. Sie entscheidet, welche Räume geschlossen werden müssen und welche Bereiche weniger gefährlich sind.\n\nDer beste Beobachtungstrigger ist oft der Moment, in dem die Defensive in der Ordnung ist: Abstände stimmen, Rollen sind klar und die Formation wirkt verbunden. In genau diesen Situationen zeigt sich die Raumpriorität am deutlichsten.\n\nBeobachte nicht den Erfolg einer einzelnen Aktion, sondern die wiederkehrende Raumpriorität des Teams.",
                 "observation_guide": {
                   "what_to_watch": [
+                    "Ist die Defensive gerade in der Ordnung – verbunden, mit klaren Abständen und erkennbaren Rollen?",
                     "Welcher Raum wird vor dem Tor konsequent geschützt?",
                     "Welche Passwege oder Angriffswege werden geschlossen?",
                     "Welche Räume lässt die Defensive bewusst zu?",
                     "Welche Räume wären für den Gegner besonders gefährlich?"
                   ],
                   "how_to_decide": [
+                    "Warte auf Situationen, in denen die Defensive erkennbar geordnet steht",
                     "Sammle mehrere Situationen innerhalb deiner Session",
                     "Suche nach wiederkehrenden Raumprioritäten",
                     "Bewerte die Struktur vor dem Ergebnis",
                     "Markiere nicht den Ort des Pucks, sondern die Bedeutung des Raumes"
                   ],
                   "ignore": [
+                    "Chaotische Wechsel oder ungeordnete Scrambles",
                     "Einzelne Fehler oder Tore",
                     "Nur die Position eines einzelnen Verteidigers",
                     "Erfolg oder Misserfolg einer Aktion",
                     "Eine Szene ohne wiederkehrendes Muster"
                   ]
                 },
-                "learning_hint": "Defensive Systeme erkennst du zuerst daran, welche Räume eine Mannschaft besonders konsequent schützt."
+                "learning_hint": "Defensive Systeme erkennst du zuerst daran, welche Räume eine Mannschaft besonders konsequent schützt – am klarsten, wenn sie in der Ordnung ist."
               },
               "config": {
                 "mode": "zone_priority",
@@ -4155,17 +4158,17 @@
                 "missions": [
                   {
                     "title": "Mission 1 von 3",
-                    "prompt": "Finde eine geordnete Defensivszene und markiere die wichtigsten Raumprioritäten.",
-                    "hint": "Markiere mindestens zwei Ebenen, wenn mehrere Prioritäten gleichzeitig sichtbar sind."
+                    "prompt": "Finde eine Szene, in der die Defensive in der Ordnung ist, und markiere die wichtigsten Raumprioritäten.",
+                    "hint": "Starte erst, wenn Abstände und Rollen klar erkennbar sind. Markiere mindestens zwei Ebenen, wenn mehrere Prioritäten gleichzeitig sichtbar sind."
                   },
                   {
                     "title": "Mission 2 von 3",
-                    "prompt": "Finde eine weitere Szene und vergleiche die Raumverteilung.",
+                    "prompt": "Finde eine weitere geordnete Szene und vergleiche die Raumverteilung.",
                     "hint": "Achte darauf, welche Räume konstant geschützt oder bewusst freigegeben bleiben."
                   },
                   {
                     "title": "Mission 3 von 3",
-                    "prompt": "Finde eine dritte Szene und prüfe, ob sich ein wiederkehrendes Muster zeigt.",
+                    "prompt": "Finde eine dritte geordnete Szene und prüfe, ob sich ein wiederkehrendes Muster zeigt.",
                     "hint": "Markiere Struktur, nicht Einzelaktion."
                   }
                 ],

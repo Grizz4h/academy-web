@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 880
+    "PUX": 900
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -328,6 +328,18 @@
         "averageAccuracy": null,
         "perfectRuns": 0
       }
+    },
+    "C1_D1:bronze": {
+      "key": "C1_D1:bronze",
+      "drillId": "C1_D1",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-08T12:02:06.969683",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
     }
   },
   "processedSessions": {
@@ -500,7 +512,12 @@
       "sessionId": "Christoph_1786033172",
       "grantedAt": "2026-08-06T21:49:58.847982",
       "pux": 20
+    },
+    "Christoph_1786179938": {
+      "sessionId": "Christoph_1786179938",
+      "grantedAt": "2026-08-08T12:02:06.969683",
+      "pux": 20
     }
   },
-  "lastUpdatedAt": "2026-08-06T21:49:58.847982"
+  "lastUpdatedAt": "2026-08-08T12:02:06.969683"
 }

@@ -11,14 +11,14 @@
   },
   "customEmblemId": null,
   "customEmblems": [],
-  "profileTitle": "rink_rat",
-  "jerseyNumber": null,
-  "favoriteLeague": null,
-  "favoriteTeamName": null,
+  "profileTitle": "tape_to_tape",
+  "jerseyNumber": 17,
+  "favoriteLeague": "DEL",
+  "favoriteTeamName": "ERC Ingolstadt",
   "profileTagline": null,
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-08T06:17:43.400711"
+  "updatedAt": "2026-08-08T08:59:48.545916"
 }

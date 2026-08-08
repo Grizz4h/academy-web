@@ -13006,3 +13006,9 @@ INFO:     141.78.160.207:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS
 [microfeedback] session=Martin_1768501247 phase=P3 trace_id=ea59bd7e-164b-421b-b249-f8d6ff7e0d1f trace_action=submitMicrofeedback text_len=3
 [checkin:6c8893b0] session=Martin_1768501247 phase_raw='POST' phase_norm='POST' action=append trace_id=1c6fb541-b2da-448b-a4bd-57bbc07901cf trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
 [checkin:6c8893b0] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[scene] created scene_id=scene_1786182846_e4e237 scene_code=SC035 user=Christoph source=drill game_time=18:35
+[scene] updated scene_id=scene_1786182846_e4e237 user=christoph
+[checkin:2e0bf014] session=Christoph_1786179938 phase_raw='P1' phase_norm='P1' action=append trace_id=3ff7ea3c-936c-48e8-9d72-bccafa9c75f2 trace_action=saveCheckin counts_before={}
+[checkin:2e0bf014] session=Christoph_1786179938 counts_after={'P1': 1}
+[checkin:bbc7057a] session=Christoph_1786179938 phase_raw='POST' phase_norm='POST' action=append trace_id=3581685e-0b30-4379-8d30-d9ee38277e29 trace_action=saveCheckin counts_before={'P1': 1}
+[checkin:bbc7057a] session=Christoph_1786179938 counts_after={'P1': 1, 'POST': 1}
