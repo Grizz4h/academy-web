@@ -1,0 +1,24 @@
+{
+  "displayName": "Christoph",
+  "avatar": {
+    "type": "catalog",
+    "avatarId": "avatar_puck_01"
+  },
+  "bannerId": "banner_neutral_01",
+  "emblem": {
+    "type": "catalog",
+    "emblemId": "emblem_puck_01"
+  },
+  "customEmblemId": null,
+  "customEmblems": [],
+  "profileTitle": "blue_line_student",
+  "jerseyNumber": 16,
+  "favoriteLeague": "DEL",
+  "favoriteTeamName": "ERC Ingolstadt",
+  "profileTagline": null,
+  "academyHelpLevel": "guided",
+  "terminologyMode": "direct",
+  "preferredAttackDirection": "auto",
+  "dashboardPreferences": {},
+  "updatedAt": "2026-08-08T06:16:21.586247"
+}

@@ -38,9 +38,11 @@
 }
 
 .kpiTitle {
-  font-size: 0.92rem;
-  color: #6ec1d4;
-  margin-bottom: 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(143, 211, 223, 0.78);
+  margin-bottom: 0.4rem;
   font-weight: 650;
 }
 
@@ -55,7 +57,7 @@
 .kpiHint {
   margin-top: 0.35rem;
   font-size: 0.84rem;
-  color: rgba(198, 214, 232, 0.78);
+  color: rgba(198, 214, 232, 0.72);
   line-height: 1.35;
 }
 
@@ -66,9 +68,10 @@
   justify-content: space-between;
   gap: 1.1rem;
   flex-wrap: wrap;
-  border-color: rgba(81, 145, 162, 0.38) !important;
+  border-color: rgba(81, 145, 162, 0.42) !important;
   background:
     linear-gradient(135deg, rgba(81, 145, 162, 0.16), rgba(255, 255, 255, 0.03) 55%) !important;
+  box-shadow: var(--elev-featured-shadow) !important;
 }
 
 .nextStepCopy {

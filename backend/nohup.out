@@ -47174,3 +47174,478 @@ INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
 INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.133.240:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     Started server process [922945]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+/opt/academy-web/backend/main.py:2560: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  profile["updatedAt"] = datetime.utcnow().isoformat()
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "POST /api/me/avatar HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+/opt/academy-web/backend/main.py:2483: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
+[AUTH] login attempt user=martin pw_len=9
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=martin
+INFO:     141.78.133.235:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] login attempt user=martin pw_len=9
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=martin
+INFO:     141.78.133.235:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+[checkin:6a40089c] session=Martin_1769107094 phase_raw='P3' phase_norm='P3' action=append trace_id=f01388d0-10e2-47ff-82aa-e661c2c42225 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:6a40089c] session=Martin_1769107094 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1769107094/checkins HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+[microfeedback] session=Martin_1769107094 phase=P3 trace_id=097f2135-7a13-40ec-a621-894bc8e15f02 trace_action=submitMicrofeedback text_len=3
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1769107094/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1769107094/phase HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+[checkin:57c1e69f] session=Martin_1769107094 phase_raw='POST' phase_norm='POST' action=append trace_id=5dd5873b-4efd-4adb-870a-7ce7b81c2559 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:57c1e69f] session=Martin_1769107094 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1769107094/checkins HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1769107094/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1769107094/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1769107094/post HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "POST /api/rewards/apply HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1769107094 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1768501247/drafts HTTP/1.0" 200 OK
+[checkin:fa97d6e9] session=Martin_1768501247 phase_raw='P2' phase_norm='P2' action=append trace_id=bf9c9d0a-dd50-4f86-a153-cc6e60fabf07 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:fa97d6e9] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1768501247/checkins HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+[microfeedback] session=Martin_1768501247 phase=P2 trace_id=1cdec39a-d6ee-4b01-8bb5-77f50d801c24 trace_action=submitMicrofeedback text_len=3
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1768501247/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1768501247/phase HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+[checkin:ebc9a7f7] session=Martin_1768501247 phase_raw='P3' phase_norm='P3' action=append trace_id=42844216-14c6-4d13-a5ae-2ebcb98ea9fc trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:ebc9a7f7] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1768501247/checkins HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1768501247/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[microfeedback] session=Martin_1768501247 phase=P3 trace_id=ea59bd7e-164b-421b-b249-f8d6ff7e0d1f trace_action=submitMicrofeedback text_len=3
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1768501247/microfeedback HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1768501247/phase HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+[checkin:6c8893b0] session=Martin_1768501247 phase_raw='POST' phase_norm='POST' action=append trace_id=1c6fb541-b2da-448b-a4bd-57bbc07901cf trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:6c8893b0] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1768501247/checkins HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1768501247/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Martin_1768501247/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "POST /api/sessions/Martin_1768501247/post HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "POST /api/rewards/apply HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Martin_1768501247 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Martin HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] login attempt user=tobi pw_len=7
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=tobi
+INFO:     141.78.133.235:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Tobi&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Tobi HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Tobi HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PATCH /api/me/profile HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Tobi HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] login attempt user=christoph pw_len=12
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=christoph
+INFO:     141.78.133.235:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.133.235:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.133.235:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Christoph_1786170787 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/teams?league=DEL HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.133.235:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions/Christoph_1786170842 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "PUT /api/sessions/Christoph_1786170842/drafts HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/lab/content HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "DELETE /api/sessions/Christoph_1786170787 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "DELETE /api/sessions/Christoph_1786170842 HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK

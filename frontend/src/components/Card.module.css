@@ -3,13 +3,16 @@
 .card {
   background: rgba(10, 14, 28, 0.55);
   border: 1px solid var(--surface-border, rgba(255,255,255,0.10));
-  box-shadow: var(--surface-shadow, 0 18px 60px rgba(0,0,0,0.55)), inset 0 1px 0 rgba(255,255,255,0.08);
-  border-radius: 18px;
+  box-shadow: var(--elev-default-shadow, 0 14px 40px rgba(0,0,0,0.42)), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1rem;
   word-break: break-word;
   overflow-wrap: anywhere;
-  transition: box-shadow 0.18s, border-color 0.18s, background 0.18s;
+  transition:
+    box-shadow var(--motion-fast, 140ms) var(--motion-ease, ease),
+    border-color var(--motion-fast, 140ms) var(--motion-ease, ease),
+    background var(--motion-fast, 140ms) var(--motion-ease, ease);
   position: relative;
 }
 
@@ -31,31 +34,23 @@
     opacity: 0.8;
   }
 }
+
 /* Card bleibt ruhig – keine Auswahl-Optik */
 .card:hover,
 .card:active,
 .card:focus,
 .card:focus-within {
   transform: none;
-  box-shadow: none;
-  border-color: rgba(255, 255, 255, 0.10); /* normaler Rahmen */
   outline: none;
 }
 
-/* Falls ihr eine Active-Klasse habt: neutralisieren */
-.active,
-.cardActive,
-[data-active="true"] {
-  box-shadow: none !important;
-  border-color: rgba(255, 255, 255, 0.10) !important;
-}
 /* Glassy card effect */
 .card {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 55%, rgba(0,0,0,0.18) 100%);
   border: 1px solid rgba(255,255,255,0.10);
   box-shadow:
-    0 18px 60px rgba(0,0,0,0.55),
+    var(--elev-default-shadow, 0 14px 40px rgba(0,0,0,0.42)),
     inset 0 1px 0 rgba(255,255,255,0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -64,7 +59,6 @@
   margin-bottom: 1rem;
   word-break: break-word;
   overflow-wrap: anywhere;
-  transition: box-shadow 0.18s, border-color 0.18s, background 0.18s;
   position: relative;
 }
 
@@ -78,3 +72,36 @@
   opacity: 0.65;
 }
 
+/* Elevation ladder — opt-in via Card elevation prop */
+.quiet {
+  box-shadow: var(--elev-quiet-shadow, 0 8px 24px rgba(0,0,0,0.28)), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%) !important;
+}
+
+.featured {
+  border-color: rgba(81, 145, 162, 0.42) !important;
+  box-shadow: var(--elev-featured-shadow) !important;
+  background:
+    linear-gradient(135deg, rgba(81, 145, 162, 0.12), rgba(255, 255, 255, 0.03) 52%) !important;
+  padding-left: 1.35rem !important;
+}
+
+.featured::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(143, 211, 223, 0.85), rgba(81, 145, 162, 0.35));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

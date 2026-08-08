@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 25
+    "PUX": 100
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -10,9 +10,53 @@
     "prime-time-scout": {
       "id": "prime-time-scout",
       "unlockedAt": "2026-01-23T22:46:08.385399"
+    },
+    "three-completed-in-a-row": {
+      "id": "three-completed-in-a-row",
+      "unlockedAt": "2026-08-08T08:18:25.192164"
+    },
+    "mobile-scout": {
+      "id": "mobile-scout",
+      "unlockedAt": "2026-08-08T08:18:25.192164"
     }
   },
-  "unlockedMasteries": {},
-  "processedSessions": {},
-  "lastUpdatedAt": "2026-03-16T20:48:39.333576+00:00"
+  "unlockedMasteries": {
+    "A1_D1:bronze": {
+      "key": "A1_D1:bronze",
+      "drillId": "A1_D1",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-08T08:18:25.192164",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 3,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "A1_D1:silver": {
+      "key": "A1_D1:silver",
+      "drillId": "A1_D1",
+      "tier": "silver",
+      "unlockedAt": "2026-08-08T08:18:25.192164",
+      "rewardPux": 15,
+      "statsSnapshot": {
+        "runs": 3,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    }
+  },
+  "processedSessions": {
+    "Martin_1769107094": {
+      "sessionId": "Martin_1769107094",
+      "grantedAt": "2026-08-08T08:18:25.192164",
+      "pux": 65
+    },
+    "Martin_1768501247": {
+      "sessionId": "Martin_1768501247",
+      "grantedAt": "2026-08-08T08:18:51.772634",
+      "pux": 10
+    }
+  },
+  "lastUpdatedAt": "2026-08-08T08:18:51.772634"
 }

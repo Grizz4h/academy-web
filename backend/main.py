@@ -2485,6 +2485,279 @@ async def login(payload: dict):
     print(f"[AUTH] login ok user={username}")
     return {"token": token, "username": username}
 
+
+# ---- Account / RINK ID profile ----
+from fastapi.staticfiles import StaticFiles
+
+PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
+UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
+AVATAR_UPLOADS_DIR = os.path.join(UPLOADS_DIR, "avatars")
+os.makedirs(PROFILES_DIR, exist_ok=True)
+os.makedirs(AVATAR_UPLOADS_DIR, exist_ok=True)
+
+ALLOWED_AVATAR_CONTENT_TYPES = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+    "image/gif": ".gif",
+}
+MAX_AVATAR_BYTES = 2 * 1024 * 1024
+
+
+def _profile_path(user: str) -> str:
+    return os.path.join(PROFILES_DIR, f"{_normalize_user_key(user)}.json")
+
+
+def _default_user_profile(username: str) -> dict:
+    display = (username or "Spieler").strip()
+    if display:
+        display = display[0].upper() + display[1:]
+    return {
+        "displayName": display or "Spieler",
+        "avatar": {"type": "catalog", "avatarId": "avatar_ice_01"},
+        "bannerId": "banner_neutral_01",
+        "emblem": {"type": "catalog", "emblemId": "emblem_puck_01"},
+        "customEmblemId": None,
+        "customEmblems": [],
+        "profileTitle": "rink_rat",
+        "jerseyNumber": None,
+        "favoriteLeague": None,
+        "favoriteTeamName": None,
+        "profileTagline": None,
+        "academyHelpLevel": "guided",
+        "terminologyMode": "direct",
+        "preferredAttackDirection": "auto",
+        "dashboardPreferences": {},
+        "updatedAt": None,
+    }
+
+
+def _load_user_profile(user: str) -> dict:
+    path = _profile_path(user)
+    base = _default_user_profile(user)
+    if not os.path.exists(path):
+        return base
+    try:
+        stored = load_json(path) or {}
+    except Exception:
+        return base
+    merged = {**base, **stored}
+    # Keep nested defaults stable for older profile files.
+    if not isinstance(merged.get("avatar"), dict):
+        merged["avatar"] = base["avatar"]
+    if merged.get("emblem") is not None and not isinstance(merged.get("emblem"), dict):
+        merged["emblem"] = base["emblem"]
+    if not isinstance(merged.get("customEmblems"), list):
+        merged["customEmblems"] = []
+    if not isinstance(merged.get("dashboardPreferences"), dict):
+        merged["dashboardPreferences"] = {}
+    return merged
+
+
+def _save_user_profile(user: str, profile: dict) -> dict:
+    path = _profile_path(user)
+    profile = dict(profile or {})
+    profile["updatedAt"] = datetime.utcnow().isoformat()
+    save_json(path, profile)
+    return profile
+
+
+def _find_user_record(user: str) -> Optional[dict]:
+    users = load_users()
+    key = _normalize_user_key(user)
+    return next((u for u in users.get("users", []) if u.get("username", "").strip().lower() == key), None)
+
+
+class ProfileUpdatePayload(BaseModel):
+    displayName: Optional[str] = None
+    avatar: Optional[dict] = None
+    bannerId: Optional[str] = None
+    emblem: Optional[dict] = None
+    customEmblemId: Optional[str] = None
+    customEmblems: Optional[list] = None
+    profileTitle: Optional[str] = None
+    jerseyNumber: Optional[int] = None
+    favoriteLeague: Optional[str] = None
+    favoriteTeamName: Optional[str] = None
+    profileTagline: Optional[str] = None
+    academyHelpLevel: Optional[str] = None
+    terminologyMode: Optional[str] = None
+    preferredAttackDirection: Optional[str] = None
+    dashboardPreferences: Optional[dict] = None
+
+
+@app.get("/api/me")
+async def get_me(current_user: str = Depends(get_current_user)):
+    record = _find_user_record(current_user)
+    profile = _load_user_profile(current_user)
+    return {
+        "username": _resolve_user_cased(current_user),
+        "createdAt": (record or {}).get("created_at"),
+        "role": (record or {}).get("role"),
+        "profile": profile,
+    }
+
+
+@app.get("/api/me/profile")
+async def get_my_profile(current_user: str = Depends(get_current_user)):
+    return _load_user_profile(current_user)
+
+
+@app.patch("/api/me/profile")
+async def patch_my_profile(payload: ProfileUpdatePayload, current_user: str = Depends(get_current_user)):
+    profile = _load_user_profile(current_user)
+    data = payload.model_dump(exclude_unset=True) if hasattr(payload, "model_dump") else payload.dict(exclude_unset=True)
+
+    if "displayName" in data and data["displayName"] is not None:
+        name = str(data["displayName"]).strip()
+        if not name:
+            raise HTTPException(status_code=400, detail="Anzeigename darf nicht leer sein.")
+        if len(name) > 40:
+            raise HTTPException(status_code=400, detail="Anzeigename ist zu lang (max. 40 Zeichen).")
+        profile["displayName"] = name
+
+    if "avatar" in data and data["avatar"] is not None:
+        avatar = data["avatar"]
+        if not isinstance(avatar, dict) or avatar.get("type") not in ("catalog", "upload"):
+            raise HTTPException(status_code=400, detail="Ungültige Avatar-Auswahl.")
+        if avatar.get("type") == "catalog" and not avatar.get("avatarId"):
+            raise HTTPException(status_code=400, detail="Avatar-ID fehlt.")
+        if avatar.get("type") == "upload" and not avatar.get("uploadUrl"):
+            raise HTTPException(status_code=400, detail="Upload-URL fehlt.")
+        profile["avatar"] = {
+            "type": avatar["type"],
+            **({"avatarId": avatar.get("avatarId")} if avatar.get("type") == "catalog" else {}),
+            **({"uploadUrl": avatar.get("uploadUrl")} if avatar.get("type") == "upload" else {}),
+        }
+
+    if "bannerId" in data:
+        profile["bannerId"] = data["bannerId"]
+
+    if "emblem" in data:
+        emblem = data["emblem"]
+        if emblem is None:
+            profile["emblem"] = None
+        else:
+            if not isinstance(emblem, dict) or emblem.get("type") not in ("catalog", "custom"):
+                raise HTTPException(status_code=400, detail="Ungültige Emblem-Auswahl.")
+            if emblem.get("type") == "catalog" and not emblem.get("emblemId"):
+                raise HTTPException(status_code=400, detail="Emblem-ID fehlt.")
+            if emblem.get("type") == "custom" and not emblem.get("customEmblemId"):
+                raise HTTPException(status_code=400, detail="Custom-Emblem-ID fehlt.")
+            profile["emblem"] = emblem
+
+    if "customEmblemId" in data:
+        profile["customEmblemId"] = data["customEmblemId"]
+
+    if "customEmblems" in data and data["customEmblems"] is not None:
+        if not isinstance(data["customEmblems"], list):
+            raise HTTPException(status_code=400, detail="customEmblems muss eine Liste sein.")
+        # Persist structure for a future editor; no runtime rendering required yet.
+        profile["customEmblems"] = data["customEmblems"]
+
+    if "profileTitle" in data:
+        profile["profileTitle"] = data["profileTitle"]
+
+    if "jerseyNumber" in data:
+        jersey = data["jerseyNumber"]
+        if jersey is None:
+            profile["jerseyNumber"] = None
+        else:
+            try:
+                jersey_int = int(jersey)
+            except (TypeError, ValueError):
+                raise HTTPException(status_code=400, detail="Jersey-Nummer ungültig.")
+            if jersey_int < 0 or jersey_int > 99:
+                raise HTTPException(status_code=400, detail="Jersey-Nummer muss zwischen 00 und 99 liegen.")
+            profile["jerseyNumber"] = jersey_int
+
+    if "favoriteLeague" in data:
+        profile["favoriteLeague"] = (str(data["favoriteLeague"]).strip() or None) if data["favoriteLeague"] is not None else None
+    if "favoriteTeamName" in data:
+        profile["favoriteTeamName"] = (str(data["favoriteTeamName"]).strip() or None) if data["favoriteTeamName"] is not None else None
+
+    if "profileTagline" in data:
+        tagline = data["profileTagline"]
+        if tagline is None:
+            profile["profileTagline"] = None
+        else:
+            text = str(tagline).strip()
+            if len(text) > 120:
+                raise HTTPException(status_code=400, detail="Tagline ist zu lang (max. 120 Zeichen).")
+            profile["profileTagline"] = text or None
+
+    if "academyHelpLevel" in data and data["academyHelpLevel"] is not None:
+        if data["academyHelpLevel"] not in ("discover", "guided", "learning"):
+            raise HTTPException(status_code=400, detail="Ungültige Hilfestufe.")
+        profile["academyHelpLevel"] = data["academyHelpLevel"]
+
+    if "terminologyMode" in data and data["terminologyMode"] is not None:
+        if data["terminologyMode"] not in ("direct", "explained"):
+            raise HTTPException(status_code=400, detail="Ungültiger Fachbegriff-Modus.")
+        profile["terminologyMode"] = data["terminologyMode"]
+
+    if "preferredAttackDirection" in data and data["preferredAttackDirection"] is not None:
+        if data["preferredAttackDirection"] not in ("left", "right", "auto"):
+            raise HTTPException(status_code=400, detail="Ungültige Rink-Ausrichtung.")
+        profile["preferredAttackDirection"] = data["preferredAttackDirection"]
+
+    if "dashboardPreferences" in data and data["dashboardPreferences"] is not None:
+        if not isinstance(data["dashboardPreferences"], dict):
+            raise HTTPException(status_code=400, detail="dashboardPreferences muss ein Objekt sein.")
+        profile["dashboardPreferences"] = data["dashboardPreferences"]
+
+    enforce_max_text_length(profile.get("displayName"), "profile.displayName")
+    enforce_max_text_length(profile.get("profileTagline"), "profile.profileTagline")
+    return _save_user_profile(current_user, profile)
+
+
+class AvatarUploadPayload(BaseModel):
+    filename: Optional[str] = None
+    content_type: str
+    data_base64: str
+
+
+@app.post("/api/me/avatar")
+async def upload_my_avatar(
+    payload: AvatarUploadPayload,
+    current_user: str = Depends(get_current_user),
+):
+    content_type = (payload.content_type or "").split(";")[0].strip().lower()
+    extension = ALLOWED_AVATAR_CONTENT_TYPES.get(content_type)
+    if not extension:
+        raise HTTPException(status_code=400, detail="Nur JPEG, PNG, WebP oder GIF sind erlaubt.")
+
+    import base64
+    raw_b64 = (payload.data_base64 or "").strip()
+    if "," in raw_b64 and raw_b64.lower().startswith("data:"):
+        raw_b64 = raw_b64.split(",", 1)[1]
+    try:
+        raw = base64.b64decode(raw_b64, validate=True)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Ungültige Bilddaten.")
+
+    if not raw:
+        raise HTTPException(status_code=400, detail="Leere Datei.")
+    if len(raw) > MAX_AVATAR_BYTES:
+        raise HTTPException(status_code=400, detail="Datei ist zu groß (max. 2 MB).")
+
+    user_key = _normalize_user_key(current_user)
+    filename = f"{user_key}_{uuid4().hex[:8]}{extension}"
+    destination = os.path.join(AVATAR_UPLOADS_DIR, filename)
+    with open(destination, "wb") as handle:
+        handle.write(raw)
+
+    upload_url = f"/uploads/avatars/{filename}"
+    profile = _load_user_profile(current_user)
+    profile["avatar"] = {"type": "upload", "uploadUrl": upload_url}
+    saved = _save_user_profile(current_user, profile)
+    return {"uploadUrl": upload_url, "profile": saved}
+
+
+# Serve uploaded avatars (account assets; filename includes random suffix).
+app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

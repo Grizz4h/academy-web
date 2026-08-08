@@ -1,14 +1,49 @@
 :root {
   --text: #f7f7ff;
+  --text-muted: rgba(210, 224, 240, 0.78);
+  --text-subtle: rgba(198, 214, 232, 0.62);
+  --text-accent: #8fd3df;
 
   /* Brand */
   --accent: #5191a2;
- 
+  --accent-soft: rgba(81, 145, 162, 0.18);
+  --accent-strong: rgba(45, 212, 191, 0.72);
 
   /* Glass tokens */
   --surface-border: rgba(255, 255, 255, 0.10);
+  --surface-border-strong: rgba(81, 145, 162, 0.42);
   --surface-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
   --surface-blur: blur(10px);
+
+  /* Elevation ladder (quiet → default → featured) */
+  --elev-quiet-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --elev-default-shadow: 0 14px 40px rgba(0, 0, 0, 0.42);
+  --elev-featured-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(81, 145, 162, 0.22);
+
+  /* Work surfaces (rink / selectors): slightly recessed */
+  --work-surface-bg: linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(10, 18, 32, 0.88) 100%);
+  --work-surface-border: rgba(81, 145, 162, 0.38);
+  --work-surface-inset:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -10px 24px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+
+  /* Selection */
+  --selected-border: rgba(45, 212, 191, 0.78);
+  --selected-bg: rgba(20, 184, 166, 0.12);
+  --selected-glow: 0 0 0 1px rgba(45, 212, 191, 0.28);
+
+  /* Motion */
+  --motion-fast: 140ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Type scale helpers */
+  --type-eyebrow: 0.72rem;
+  --type-title: clamp(1.15rem, 2vw, 1.35rem);
+  --type-body: 0.92rem;
+  --type-stat: clamp(1.5rem, 2.4vw, 2rem);
 }
 
 * { box-sizing: border-box; }
@@ -181,5 +216,71 @@ main {
     padding: 0 40px 0 12px;
     font-size: 0.95rem;
     background-position: right 12px center;
+  }
+}
+
+/* ---- Visual Polish utilities (low-risk, opt-in) ---- */
+
+.ui-eyebrow {
+  margin: 0;
+  font-size: var(--type-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 650;
+  color: var(--text-subtle);
+}
+
+.ui-title {
+  margin: 0;
+  font-size: var(--type-title);
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.ui-body {
+  margin: 0;
+  font-size: var(--type-body);
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.ui-stat {
+  margin: 0;
+  font-size: var(--type-stat);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.option-choice {
+  display: block;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    background var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
+}
+
+.option-choice:hover {
+  border-color: rgba(143, 211, 223, 0.35);
+}
+
+.option-choice.is-selected {
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
+  box-shadow: var(--selected-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option-choice,
+  .appSelect {
+    transition: none !important;
   }
 }

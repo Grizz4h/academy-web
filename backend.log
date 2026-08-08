@@ -749,3 +749,8 @@ INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.161.7:0 - "GET /api/teams HTTP/1.0" 200 OK
 INFO:     141.78.161.7:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 [scene] updated scene_id=scene_1782134210_9581b5 user=Christoph
+Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+

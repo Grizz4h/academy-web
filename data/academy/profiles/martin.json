@@ -1,0 +1,24 @@
+{
+  "displayName": "Martin",
+  "avatar": {
+    "type": "catalog",
+    "avatarId": "avatar_chalk_01"
+  },
+  "bannerId": "banner_neutral_01",
+  "emblem": {
+    "type": "catalog",
+    "emblemId": "emblem_rink_01"
+  },
+  "customEmblemId": null,
+  "customEmblems": [],
+  "profileTitle": "rink_rat",
+  "jerseyNumber": null,
+  "favoriteLeague": null,
+  "favoriteTeamName": null,
+  "profileTagline": null,
+  "academyHelpLevel": "guided",
+  "terminologyMode": "direct",
+  "preferredAttackDirection": "auto",
+  "dashboardPreferences": {},
+  "updatedAt": "2026-08-08T06:17:43.400711"
+}

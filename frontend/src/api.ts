@@ -39,6 +39,7 @@ export async function login(username: string, password: string): Promise<{ token
 }
 
 import { labModules, predictionTemplates } from './features/lab/config'
+import type { UserAccountPayload, UserProfileCustomization } from './data/profile/types'
 
 
 // ==== Type Definitions ====
@@ -1253,4 +1254,71 @@ export const api = {
     if (!res.ok) throw new Error('Failed to fetch importable teams')
     return res.json()
   },
+
+  getMe: async (): Promise<UserAccountPayload> => {
+    const res = await fetch(buildUrl('/me'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Profil konnte nicht geladen werden')
+    return res.json()
+  },
+
+  getMyProfile: async (): Promise<UserProfileCustomization> => {
+    const res = await fetch(buildUrl('/me/profile'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Profil konnte nicht geladen werden')
+    return res.json()
+  },
+
+  updateMyProfile: async (patch: Partial<UserProfileCustomization>): Promise<UserProfileCustomization> => {
+    const res = await fetch(buildUrl('/me/profile'), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(patch),
+    })
+    if (!res.ok) throw await readApiError(res, 'Profil konnte nicht gespeichert werden')
+    return res.json()
+  },
+
+  uploadMyAvatar: async (file: File): Promise<{ uploadUrl: string; profile: UserProfileCustomization }> => {
+    const dataBase64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result || ''))
+      reader.onerror = () => reject(new Error('Datei konnte nicht gelesen werden'))
+      reader.readAsDataURL(file)
+    })
+    const res = await fetch(buildUrl('/me/avatar'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({
+        filename: file.name,
+        content_type: file.type || 'image/png',
+        data_base64: dataBase64,
+      }),
+    })
+    if (!res.ok) throw await readApiError(res, 'Avatar-Upload fehlgeschlagen')
+    return res.json()
+  },
+}
+
+/** Resolve uploaded asset paths against the API host (dev proxy or absolute API). */
+export function resolveUploadUrl(path: string | null | undefined): string | null {
+  if (!path) return null
+  if (/^https?:\/\//i.test(path) || path.startsWith('blob:') || path.startsWith('data:')) return path
+  if (path.startsWith('/uploads/')) {
+    const envBase = import.meta.env.VITE_API_BASE as string | undefined
+    if (envBase) {
+      const origin = envBase.replace(/\/api\/?$/, '')
+      return `${origin}${path}`
+    }
+    if (typeof window !== 'undefined') {
+      const { hostname, origin } = window.location
+      if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return `http://localhost:8000${path}`
+      }
+      return `${origin}${path}`
+    }
+  }
+  return path
 }

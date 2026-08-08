@@ -29,7 +29,7 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
   return (
     <div className={styles.priorityWrapper}>
       {/* Scope Selector */}
-      <Card className={styles.scopeCard}>
+      <Card className={styles.scopeCard} elevation="quiet">
         <div className={styles.scopeSelector}>
           <label htmlFor="scope-select" className={styles.scopeLabel}>
             Bereich:
@@ -50,7 +50,8 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
       </Card>
 
       <div className={styles.priorityContainer}>
-        <Card className={styles.priorityCard}>
+        <Card className={styles.priorityCard} elevation="featured">
+        <p className={styles.sectionEyebrow}>Fokus</p>
         <h2 className={styles.sectionTitle}>Als Nächstes empfohlen</h2>
         {recommendedNext.length === 0 ? (
           <p className={styles.emptyState}>Keine Drills verfügbar.</p>
@@ -73,7 +74,8 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
         )}
       </Card>
 
-      <Card className={styles.priorityCard}>
+      <Card className={styles.priorityCard} elevation="quiet">
+        <p className={styles.sectionEyebrow}>Historie</p>
         <h2 className={styles.sectionTitle}>Am häufigsten trainiert</h2>
         {mostTrained.length === 0 ? (
           <p className={styles.emptyState}>Noch keine Drills absolviert.</p>

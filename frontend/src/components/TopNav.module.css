@@ -272,6 +272,32 @@
   font-weight: 600;
 }
 
+.userLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+  border-radius: 999px;
+  padding: 0.15rem 0.35rem 0.15rem 0.15rem;
+}
+
+.userLink:hover .userLine,
+.userLink:focus-visible .userLine {
+  color: rgba(247, 247, 255, 0.9);
+}
+
+.userAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(143, 211, 223, 0.45);
+  background: #0f172a;
+  flex: 0 0 auto;
+}
+
 /* Desktop: Tabs nicht scrollen lassen, sondern normal */
 @media (min-width: 900px) {
   .navTabsWrapper {

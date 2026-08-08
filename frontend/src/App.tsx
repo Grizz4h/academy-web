@@ -17,6 +17,7 @@ import LabPage from './pages/Lab'
 import LabPredictSetup from './pages/LabPredictSetup'
 import LabPredictSession from './pages/LabPredictSession'
 import DevLab from './pages/DevLab'
+import AccountPage from './pages/Account'
 import TopNav from './components/TopNav'
 import { RewardHost, RewardProvider } from './features/rewards'
 
@@ -28,6 +29,7 @@ function App() {
         <main className="container">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/account" element={<AccountPage />} />
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/lab" element={<LabPage />} />
             <Route path="/lab/predict/setup" element={<LabPredictSetup />} />

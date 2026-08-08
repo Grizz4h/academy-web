@@ -12993,3 +12993,16 @@ INFO:     141.78.160.207:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS
 [checkin:dda20aa1] session=Christoph_1786033172 phase_raw='POST' phase_norm='POST' action=append trace_id=92397672-04d4-4ce1-b924-6842587578a4 trace_action=saveCheckin counts_before={'P1': 1}
 [checkin:dda20aa1] session=Christoph_1786033172 counts_after={'P1': 1, 'POST': 1}
 [scene] updated scene_id=scene_1786045757_9b6502 user=christoph
+[checkin:6a40089c] session=Martin_1769107094 phase_raw='P3' phase_norm='P3' action=append trace_id=f01388d0-10e2-47ff-82aa-e661c2c42225 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:6a40089c] session=Martin_1769107094 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Martin_1769107094 phase=P3 trace_id=097f2135-7a13-40ec-a621-894bc8e15f02 trace_action=submitMicrofeedback text_len=3
+[checkin:57c1e69f] session=Martin_1769107094 phase_raw='POST' phase_norm='POST' action=append trace_id=5dd5873b-4efd-4adb-870a-7ce7b81c2559 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:57c1e69f] session=Martin_1769107094 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}
+[checkin:fa97d6e9] session=Martin_1768501247 phase_raw='P2' phase_norm='P2' action=append trace_id=bf9c9d0a-dd50-4f86-a153-cc6e60fabf07 trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1}
+[checkin:fa97d6e9] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1}
+[microfeedback] session=Martin_1768501247 phase=P2 trace_id=1cdec39a-d6ee-4b01-8bb5-77f50d801c24 trace_action=submitMicrofeedback text_len=3
+[checkin:ebc9a7f7] session=Martin_1768501247 phase_raw='P3' phase_norm='P3' action=append trace_id=42844216-14c6-4d13-a5ae-2ebcb98ea9fc trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1}
+[checkin:ebc9a7f7] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[microfeedback] session=Martin_1768501247 phase=P3 trace_id=ea59bd7e-164b-421b-b249-f8d6ff7e0d1f trace_action=submitMicrofeedback text_len=3
+[checkin:6c8893b0] session=Martin_1768501247 phase_raw='POST' phase_norm='POST' action=append trace_id=1c6fb541-b2da-448b-a4bd-57bbc07901cf trace_action=saveCheckin counts_before={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1}
+[checkin:6c8893b0] session=Martin_1768501247 counts_after={'PRE': 1, 'P1': 1, 'P2': 1, 'P3': 1, 'POST': 1}

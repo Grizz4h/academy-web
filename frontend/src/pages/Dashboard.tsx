@@ -502,29 +502,29 @@ export default function Dashboard() {
       </header>
 
       <div className={styles.kpiGrid}>
-        <Card className={styles.kpiCard}>
+        <Card className={styles.kpiCard} elevation="quiet">
           <div className={styles.kpiTitle}>Streak</div>
           <div className={styles.kpiValue}>{derived.streak}</div>
           <div className={styles.kpiHint}>Tage in Folge</div>
         </Card>
-        <Card className={styles.kpiCard}>
+        <Card className={styles.kpiCard} elevation="quiet">
           <div className={styles.kpiTitle}>Diese Woche</div>
           <div className={styles.kpiValue}>{derived.sessionsThisWeek}</div>
           <div className={styles.kpiHint}>Sessions</div>
         </Card>
-        <Card className={styles.kpiCard}>
+        <Card className={styles.kpiCard} elevation="quiet">
           <div className={styles.kpiTitle}>Sessions gesamt</div>
           <div className={styles.kpiValue}>{derived.total}</div>
           <div className={styles.kpiHint}>{derived.completed} abgeschlossen</div>
         </Card>
-        <Card className={styles.kpiCard}>
+        <Card className={styles.kpiCard} elevation="quiet">
           <div className={styles.kpiTitle}>Fortschritt</div>
           <div className={styles.kpiValue}>{drillProgressPct}%</div>
           <div className={styles.kpiHint}>{derived.completedDrills}/{derived.totalDrills} Drills</div>
         </Card>
       </div>
 
-      <Card className={styles.nextStepCard}>
+      <Card className={styles.nextStepCard} elevation="featured">
         <div className={styles.nextStepCopy}>
           <h2 className={styles.sectionTitle}>
             {resumeSession ? 'Weiter geht’s' : 'Nächster Schritt'}

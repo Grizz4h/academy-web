@@ -8,8 +8,8 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P3",
+  "state": "COMPLETED",
+  "current_phase": "POST",
   "created_at": "2026-01-22T19:38:14.424616",
   "drills": [
     {
@@ -135,10 +135,26 @@
         "center_mostly": "middle"
       },
       "timestamp": "2026-01-22T20:59:36.703454"
+    },
+    {
+      "phase": "P3",
+      "answers": {},
+      "timestamp": "2026-08-08T08:18:20.293804"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-08-08T08:18:25.065686"
     }
   ],
   "drafts": {},
-  "post": null,
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-08-08T08:18:25.192164"
+  },
   "game_info": {
     "league": "DEL",
     "team_home": "Adler Mannheim",
@@ -160,8 +176,9 @@
       "ts": "2026-01-22T20:59:58.864035"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Aaa",
+      "ts": "2026-08-08T08:18:23.687897"
     }
   }
 }

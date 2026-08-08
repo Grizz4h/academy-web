@@ -8,8 +8,8 @@
   "focus": null,
   "session_method": "live_watch",
   "drill_id": "A1_D1",
-  "state": "IN_PROGRESS",
-  "current_phase": "P2",
+  "state": "COMPLETED",
+  "current_phase": "POST",
   "created_at": "2026-01-15T19:20:47.359061",
   "drills": [
     {
@@ -126,10 +126,44 @@
         "note": "Center 93 hat ein Tor geschossen "
       },
       "timestamp": "2026-01-15T20:11:37.689818"
+    },
+    {
+      "phase": "P2",
+      "answers": {
+        "structure_feeling": "geordnet"
+      },
+      "timestamp": "2026-08-08T08:18:42.758663"
+    },
+    {
+      "phase": "P3",
+      "answers": {
+        "center_mostly": "low",
+        "structure_feeling": "geordnet"
+      },
+      "timestamp": "2026-08-08T08:18:48.244015"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-08-08T08:18:51.664904"
     }
   ],
-  "drafts": {},
-  "post": null,
+  "drafts": {
+    "P2": {
+      "structure_feeling": "geordnet"
+    },
+    "P3": {
+      "center_mostly": "low",
+      "structure_feeling": "geordnet"
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-08-08T08:18:51.772634"
+  },
   "game_info": {
     "league": "DEL",
     "team_home": "Schwenninger Wild Wings",
@@ -146,12 +180,14 @@
       "ts": "2026-01-15T20:12:54.627652"
     },
     "P2": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Aaa",
+      "ts": "2026-08-08T08:18:45.393684"
     },
     "P3": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "Aaa",
+      "ts": "2026-08-08T08:18:50.253286"
     }
   }
 }

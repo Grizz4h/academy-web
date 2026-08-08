@@ -5332,14 +5332,7 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 									return (
 										<label
 											key={opt.value}
-											style={{
-												display: "block",
-												padding: "0.55rem 0.65rem",
-												borderRadius: "6px",
-												border: checked ? "1px solid rgba(45,212,191,0.7)" : "1px solid rgba(255,255,255,0.15)",
-												background: checked ? "rgba(20,184,166,0.12)" : "rgba(255,255,255,0.02)",
-												cursor: "pointer",
-											}}
+											className={`option-choice${checked ? ' is-selected' : ''}`}
 										>
 											<span style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
 												<input
