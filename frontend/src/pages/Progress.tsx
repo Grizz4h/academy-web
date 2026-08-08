@@ -17,6 +17,7 @@ import {
   SEASON_OPTIONS,
   TOURNAMENT_YEAR_OPTIONS,
 } from '../stats/seasonNormalization'
+import { getRealSessions } from '../utils/sessionEligibility'
 import styles from './Progress.module.css'
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -136,7 +137,7 @@ export default function Progress() {
     queryFn: () => api.getCurriculum()
   })
 
-  const sessionList = sessions || []
+  const sessionList = getRealSessions(sessions || [])
 
   // Berechne Fortschritt pro Modul
   const moduleProgress = new Map<string, {

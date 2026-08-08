@@ -1,5 +1,6 @@
 import { MASTERY_THRESHOLDS } from '../data/mastery'
 import type { DrillMasteryProgress, RewardEvaluationInput, RewardFacts } from '../types'
+import { isProgressionEligibleSession } from '../../../utils/sessionEligibility'
 
 function meetsThreshold(runs: number, averageAccuracy: number | null | undefined, minRuns: number, minAccuracy?: number): boolean {
   if (runs < minRuns) return false
@@ -9,6 +10,10 @@ function meetsThreshold(runs: number, averageAccuracy: number | null | undefined
 }
 
 export function evaluateMastery(input: RewardEvaluationInput, facts: RewardFacts): DrillMasteryProgress[] {
+  if (!isProgressionEligibleSession(input.currentSession)) {
+    return []
+  }
+
   const unlocked: DrillMasteryProgress[] = []
   const uniqueDrills = new Map((input.currentSession.drills || []).map((drill) => [drill.id, drill]))
 

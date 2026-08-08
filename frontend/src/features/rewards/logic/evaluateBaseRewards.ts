@@ -1,6 +1,11 @@
 import type { BaseRewardGrant, RewardEvaluationInput, RewardFacts } from '../types'
+import { isProgressionEligibleSession } from '../../../utils/sessionEligibility'
 
 export function evaluateBaseRewards(input: RewardEvaluationInput, facts: RewardFacts): BaseRewardGrant[] {
+  if (!isProgressionEligibleSession(input.currentSession)) {
+    return []
+  }
+
   if (input.rewardState.processedSessions[input.currentSession.id]) {
     return []
   }

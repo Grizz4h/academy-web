@@ -1,4 +1,5 @@
 import type { Session } from '../api';
+import { getRealSessions } from '../utils/sessionEligibility';
 
 /** Peak weekly activity used for bar height; 10 ≈ high week. */
 export const MAX_WEEKLY_ACTIVITY_LEVEL = 10;
@@ -92,12 +93,13 @@ export function buildWeeklyActivity(
   const weeks = Math.max(1, options.weeks ?? 8);
   const weekStartsOn = options.weekStartsOn ?? 1;
   const now = options.now ?? new Date();
+  const realSessions = getRealSessions(sessions);
 
   const currentWeekStart = startOfWeekLocal(now, weekStartsOn);
   const firstWeekStart = addDays(currentWeekStart, -(weeks - 1) * 7);
 
   const countsByWeekStart = new Map<string, number>();
-  for (const session of sessions) {
+  for (const session of realSessions) {
     if (!isCompletedSession(session)) continue;
     const sessionDate = getSessionActivityDate(session);
     if (!sessionDate) continue;

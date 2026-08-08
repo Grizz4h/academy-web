@@ -16,6 +16,7 @@ import { computeObservedTeamStats } from '../stats/exposureStats';
 import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
 import { getSessionRoute } from '../features/lab/sessionRouting';
+import { getRealSessions } from '../utils/sessionEligibility';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string => {
@@ -106,7 +107,7 @@ export default function Dashboard() {
 
   // ✅ WICHTIG: useMemo läuft IMMER (auch wenn user null ist). Das verhindert React #310.
   const derived = useMemo(() => {
-    const list = sessions ?? [];
+    const list = getRealSessions(sessions ?? []);
     const sessionsThisWeek = buildWeeklyActivity(list, { weeks: 1, weekStartsOn: 1 })[0]?.completedSessions ?? 0;
 
     // --- Drill-Fortschritt pro Track berechnen ---
@@ -482,7 +483,7 @@ export default function Dashboard() {
   if (isLoading) return <PageSkeleton />;
   if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>;
 
-  const nearAchievements = getTopNearAchievements(sessions || [], rewardState, 5);
+  const nearAchievements = getTopNearAchievements(getRealSessions(sessions || []), rewardState, 5);
   const recentUnlocked = getRecentUnlockedAchievements(rewardState, 5);
   const nextDrill = derived.recommendedNext[0] as DrillWithCount | undefined;
   const nextDrillTitle = nextDrill
@@ -606,7 +607,7 @@ export default function Dashboard() {
 
       <Card>
         <LearningRhythmWidget
-          sessions={sessions ?? []}
+          sessions={getRealSessions(sessions ?? [])}
           weeks={8}
           showAverage
           showStatus

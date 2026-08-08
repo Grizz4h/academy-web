@@ -19,6 +19,7 @@ import type {
   UserProfileCustomization,
 } from '../data/profile/types'
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
+import { getRealSessions } from '../utils/sessionEligibility'
 import styles from './Account.module.css'
 
 function formatMemberSince(iso: string | null | undefined): string | null {
@@ -82,11 +83,12 @@ export default function AccountPage() {
   }, [account, user])
 
   const identityStats = useMemo(() => {
-    const completed = sessions.filter((session) => session.state === 'COMPLETED').length
+    const realSessions = getRealSessions(sessions)
+    const completed = realSessions.filter((session) => session.state === 'COMPLETED').length
     return {
       drillsCompleted: completed,
       scenesCount: Array.isArray(scenesPayload?.scenes) ? scenesPayload.scenes.length : 0,
-      topTrack: deriveTopTrack(sessions),
+      topTrack: deriveTopTrack(realSessions),
       memberSince: formatMemberSince(account?.createdAt),
       pux: Number(rewardState?.currency?.PUX || 0),
     }

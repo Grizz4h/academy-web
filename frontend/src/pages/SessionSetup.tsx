@@ -16,6 +16,9 @@ import {
   SEASON_OPTIONS,
   TOURNAMENT_YEAR_OPTIONS,
 } from '../stats/seasonNormalization'
+import { isDevNavEnabled } from '../config/featureFlags'
+import { createDummySessionForDrill } from '../dev/createDummySession'
+import { getRealSessions } from '../utils/sessionEligibility'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
@@ -78,11 +81,23 @@ export default function SessionSetup() {
   const [competitionPhase, setCompetitionPhase] = useState<string>('')
   const [competitionValue, setCompetitionValue] = useState<string>('')
   const [observationScope, setObservationScope] = useState<ObservationScope>('FULL_GAME')
+  const [devMode, setDevMode] = useState(() => isDevNavEnabled())
+  const [dummyError, setDummyError] = useState('')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
   const useSplitSeason = isSplitSeasonLeague(league)
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
   const competitionConfig = getCompetitionConfig(league)
   const selectedCompetitionPhase = competitionConfig?.phases.find((phase) => phase.id === competitionPhase) || competitionConfig?.phases[0]
+
+  useEffect(() => {
+    const syncDevMode = () => setDevMode(isDevNavEnabled())
+    window.addEventListener('academy-dev-nav', syncDevMode)
+    window.addEventListener('storage', syncDevMode)
+    return () => {
+      window.removeEventListener('academy-dev-nav', syncDevMode)
+      window.removeEventListener('storage', syncDevMode)
+    }
+  }, [])
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -187,9 +202,34 @@ export default function SessionSetup() {
   // Finde aktuelles Modul
   const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
 
+  const dummySessionMutation = useMutation({
+    mutationFn: async () => {
+      if (!user?.trim()) throw new Error('Bitte zuerst anmelden.')
+      const drillId = selectedDrill || currentModule?.drills?.[0]?.id
+      if (!drillId) throw new Error('Bitte zuerst einen Drill auswählen.')
+      return createDummySessionForDrill({
+        user: user.trim(),
+        drillId,
+        moduleId: moduleId || undefined,
+        curriculum,
+      })
+    },
+    onSuccess: (session) => {
+      queryClient.invalidateQueries({ queryKey: ['sessions', user] })
+      if (draftKey) localStorage.removeItem(draftKey)
+      setDummyError('')
+      navigate(`/session/${session.id}`)
+    },
+    onError: (error: any) => {
+      setDummyError(String(error?.message || 'Dummy-Session konnte nicht gestartet werden.'))
+    },
+  })
+
+  const realSessions = useMemo(() => getRealSessions(sessions || []), [sessions])
+
   const drillHistoryById = useMemo(() => {
     const history: Record<string, { count: number; lastSeen?: string }> = {}
-    for (const session of sessions || []) {
+    for (const session of realSessions) {
       if (session.state !== 'COMPLETED') continue
       const drillId = resolveDrillId(session)
       if (!drillId) continue
@@ -202,7 +242,7 @@ export default function SessionSetup() {
       history[drillId] = existing
     }
     return history
-  }, [sessions])
+  }, [realSessions])
 
   const selectedDrillHistory = selectedDrill ? drillHistoryById[selectedDrill] : undefined
   const selectedDrillConfig = selectedDrill ? currentModule?.drills.find((drill) => drill.id === selectedDrill) : undefined
@@ -212,7 +252,7 @@ export default function SessionSetup() {
     if (!league || !teamHome || !teamAway) return null
 
     const seasonFilter = normalizeSeasonValue(season, league) || ''
-    const allSessions = sessions || []
+    const allSessions = realSessions
     const matchupSessions = allSessions.filter((session) => {
       const gameInfo = session.game_info
       if (!gameInfo) return false
@@ -285,7 +325,7 @@ export default function SessionSetup() {
       seasonFilter,
       teamHistory
     }
-  }, [currentModule, league, season, teamHome, teamAway, sessions, selectedDrill])
+  }, [currentModule, league, season, teamHome, teamAway, realSessions, selectedDrill])
 
   // Debug-Ausgaben: immer ganz oben, niemals nach einem return!
   useEffect(() => {
@@ -1031,6 +1071,62 @@ export default function SessionSetup() {
       >
         {createSessionMutation.isPending ? 'Erstelle Session...' : 'Session starten'}
       </button>
+
+      {devMode && (
+        <div
+          className="card"
+          style={{
+            marginTop: '0.75rem',
+            border: '1px dashed rgba(245, 158, 11, 0.55)',
+            background: 'rgba(245, 158, 11, 0.08)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem' }}>
+            <span style={{ fontWeight: 700 }}>🛠 DEV TOOLS</span>
+            <span
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                padding: '0.15rem 0.4rem',
+                borderRadius: '4px',
+                border: '1px solid rgba(245, 158, 11, 0.5)',
+                color: 'rgba(253, 186, 116, 1)',
+              }}
+            >
+              DEV
+            </span>
+          </div>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              setDummyError('')
+              dummySessionMutation.mutate()
+            }}
+            disabled={!selectedDrill || dummySessionMutation.isPending || createSessionMutation.isPending}
+            style={{
+              width: '100%',
+              padding: '0.85rem 1rem',
+              fontSize: '1rem',
+              backgroundColor: 'rgba(245, 158, 11, 0.25)',
+              border: '1px solid rgba(245, 158, 11, 0.55)',
+              color: '#fff7ed',
+              opacity: !selectedDrill || dummySessionMutation.isPending ? 0.55 : 1,
+            }}
+          >
+            {dummySessionMutation.isPending ? 'Starte Dummy-Session…' : '⚡ Dummy-Session starten'}
+          </button>
+          <p style={{ margin: '0.55rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.72)' }}>
+            Startet diesen Drill sofort mit Testdaten. Zählt nicht in Stats oder Fortschritt.
+          </p>
+          {dummyError && (
+            <div style={{ marginTop: '0.65rem', color: '#ff8e8e', fontSize: '0.9rem', whiteSpace: 'pre-wrap' }}>
+              {dummyError}
+            </div>
+          )}
+        </div>
+      )}
 
       {createError && (
         <div className="card" style={{ border: '1px solid #dc3545', background: 'rgba(220,53,69,0.08)' }}>

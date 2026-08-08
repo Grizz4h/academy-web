@@ -1,5 +1,6 @@
 import type { Session } from '../../../api'
 import type { RewardEvaluationInput, RewardFacts } from '../types'
+import { getRealSessions, isDummySession } from '../../../utils/sessionEligibility'
 
 function toDayKey(dateValue: string | undefined): string | null {
   if (!dateValue) return null
@@ -11,11 +12,14 @@ function toDayKey(dateValue: string | undefined): string | null {
 function mergeSessions(currentSession: Session, sessions: Session[]): Session[] {
   const sessionMap = new Map<string, Session>()
 
-  for (const session of sessions) {
+  for (const session of getRealSessions(sessions)) {
     sessionMap.set(session.id, session)
   }
 
-  sessionMap.set(currentSession.id, currentSession)
+  // Only include current session in reward facts if it is progression-eligible.
+  if (!isDummySession(currentSession)) {
+    sessionMap.set(currentSession.id, currentSession)
+  }
   return Array.from(sessionMap.values())
 }
 

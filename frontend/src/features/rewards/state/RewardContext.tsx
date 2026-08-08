@@ -193,6 +193,17 @@ export function RewardProvider({ children }: { children: ReactNode }) {
   )
 
   const grantRewardResult = useCallback(async (result: RewardEvaluationResult) => {
+    const hasAnythingToApply =
+      (result.grantedPux || 0) > 0 ||
+      (result.unlockedAchievements || []).length > 0 ||
+      (result.unlockedMasteries || []).length > 0 ||
+      (result.rewardEvents || []).length > 0
+
+    // Empty results (e.g. dummy sessions) must not mark sessions as processed.
+    if (!hasAnythingToApply) {
+      return
+    }
+
     try {
       const response = await api.applyRewardResult({
         session_id: result.sessionId,

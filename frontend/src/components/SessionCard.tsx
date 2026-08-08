@@ -5,6 +5,7 @@ import { useState } from 'react'
 import styles from './SessionCard.module.css'
 import { getObservationScopeLabel } from '../utils/observationScope'
 import { getSessionRoute } from '../features/lab/sessionRouting'
+import { isDummySession } from '../utils/sessionEligibility'
 
 interface SessionCardProps {
   session: Session
@@ -126,6 +127,7 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
   }
 
   const statusBadge = getStatusBadge(session.state)
+  const isDummy = isDummySession(session)
   const isLabPredict = session.learning_area === 'lab' && session.lab_mode === 'predict'
 
   const gameDate = session.game_info?.date
@@ -267,6 +269,25 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
 
         {/* Right side */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+          {isDummy && (
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '0.375rem 0.65rem',
+                borderRadius: '6px',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                border: '1px solid rgba(245, 158, 11, 0.45)',
+                color: 'rgba(253, 186, 116, 1)',
+              }}
+              title="Dev Dummy-Session — zählt nicht in Stats"
+            >
+              DEV · DUMMY
+            </div>
+          )}
           <div
             style={{
               display: 'inline-flex',

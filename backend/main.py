@@ -59,7 +59,7 @@ import logging
 import re
 from threading import Lock
 from typing import Any, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoices
 from datetime import datetime
 logging.basicConfig(
     level=logging.INFO,
@@ -150,6 +150,14 @@ class SessionCreate(BaseModel):
     learning_area: Optional[str] = None
     lab_mode: Optional[str] = None
     lab_template_id: Optional[str] = None
+    is_dummy: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("is_dummy", "isDummy"),
+    )
+    dev_seed_version: Optional[int] = Field(
+        default=None,
+        validation_alias=AliasChoices("dev_seed_version", "devSeedVersion"),
+    )
 
 class MicroFeedbackData(BaseModel):
     phase: str  # P1, P2, P3
@@ -1399,8 +1407,15 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
             "P1": {"done": False, "text": ""},
             "P2": {"done": False, "text": ""},
             "P3": {"done": False, "text": ""}
-        }
+        },
+        # Persist explicitly so list/delete eligibility never depends on missing keys.
+        "is_dummy": bool(session.is_dummy),
     }
+
+    if session.dev_seed_version is not None:
+        session_data["dev_seed_version"] = int(session.dev_seed_version)
+    elif session.is_dummy:
+        session_data["dev_seed_version"] = 1
 
     if session_data.get("learning_area") == "lab" and session_data.get("lab_mode") == "predict":
         session_data["prediction_entries"] = []
@@ -1601,13 +1616,46 @@ async def delete_checkin(session_id: str, checkin_index: int):
     save_json(session_path, session)
     return session
 
+def _scene_session_id(scene: dict) -> Optional[str]:
+    if not isinstance(scene, dict):
+        return None
+    top = scene.get("session_id")
+    if isinstance(top, str) and top.strip():
+        return top.strip()
+    source = scene.get("source") or {}
+    if isinstance(source, dict):
+        nested = source.get("session_id")
+        if isinstance(nested, str) and nested.strip():
+            return nested.strip()
+    return None
+
+
+def _delete_scenes_linked_to_session(session_id: str) -> int:
+    """Remove scenes that clearly belong to this session (top-level or source.session_id)."""
+    deleted = 0
+    for path in list(_iter_json_files(SCENES_DIR) or []):
+        try:
+            scene = load_json(path)
+        except Exception:
+            continue
+        if _scene_session_id(scene) != session_id:
+            continue
+        try:
+            os.remove(path)
+            deleted += 1
+        except Exception:
+            continue
+    return deleted
+
+
 @app.delete("/api/sessions/{session_id}")
 async def delete_session(session_id: str):
-    """Session löschen"""
+    """Session löschen inkl. klar verknüpfter Szenen."""
     session_path = get_session_path_or_404(session_id)
     try:
+        deleted_scenes = _delete_scenes_linked_to_session(session_id)
         os.remove(session_path)
-        return {"status": "deleted", "id": session_id}
+        return {"status": "deleted", "id": session_id, "deleted_scenes": deleted_scenes}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")
 
@@ -1789,6 +1837,22 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
     enforce_max_text_length(data.reward_events, "reward_events")
     enforce_max_text_length(data.unlocked_achievements, "unlocked_achievements")
     enforce_max_text_length(data.unlocked_masteries, "unlocked_masteries")
+
+    # Hard stop: dummy/dev sessions must never mutate reward state.
+    session_path = find_session_file(data.session_id)
+    if session_path:
+        try:
+            session_doc = load_json(session_path)
+        except Exception:
+            session_doc = None
+        if isinstance(session_doc, dict) and session_doc.get("is_dummy") is True:
+            return {
+                "state": state,
+                "applied": False,
+                "granted_pux": 0,
+                "reward_events": [],
+                "reason": "dummy_session",
+            }
 
     processed_sessions = state.get("processedSessions") or {}
     if data.session_id in processed_sessions:

@@ -200,6 +200,10 @@ export interface Session {
   prediction_entries?: PredictionEntry[]
   open_prediction_id?: string
   prediction_summary?: PredictionSessionSummary
+  /** Dev/test sessions created via Dummy-Session. Missing/false = real session. */
+  is_dummy?: boolean
+  isDummy?: boolean
+  dev_seed_version?: number
 }
 
 export interface GameInfo {
@@ -781,7 +785,7 @@ export const api = {
     return res.json()
   },
 
-  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string }): Promise<Session> => {
+  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string; is_dummy?: boolean; isDummy?: boolean; dev_seed_version?: number }): Promise<Session> => {
     const res = await fetch(buildUrl('/sessions'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },

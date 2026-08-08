@@ -1,5 +1,6 @@
 import { ACHIEVEMENTS } from '../data/achievements'
 import type { AchievementCondition, AchievementDefinition, RewardEvaluationInput, RewardFacts } from '../types'
+import { isProgressionEligibleSession } from '../../../utils/sessionEligibility'
 
 function matchesHourWindow(hour: number, start: number, end: number): boolean {
   if (start <= end) {
@@ -40,6 +41,10 @@ export function evaluateAchievements(
   input: RewardEvaluationInput,
   facts: RewardFacts,
 ): AchievementDefinition[] {
+  if (!isProgressionEligibleSession(input.currentSession)) {
+    return []
+  }
+
   return ACHIEVEMENTS.filter((achievement) => {
     if (input.rewardState.unlockedAchievements[achievement.id]) {
       return false

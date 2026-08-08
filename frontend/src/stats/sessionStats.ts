@@ -1,3 +1,5 @@
+import { getRealSessions } from '../utils/sessionEligibility'
+
 // Aggregates session statistics for the dashboard
 // You can expand this logic as needed
 export interface SessionStats {
@@ -6,11 +8,14 @@ export interface SessionStats {
   active: number;
 }
 
-export function aggregateSessionStats(sessions: Array<{ state: string }>): SessionStats {
-  const completed = sessions.filter(s => s.state === "COMPLETED").length;
-  const active = sessions.filter(s => s.state !== "COMPLETED").length;
+export function aggregateSessionStats(
+  sessions: Array<{ state: string; is_dummy?: boolean; isDummy?: boolean }>,
+): SessionStats {
+  const real = getRealSessions(sessions)
+  const completed = real.filter(s => s.state === "COMPLETED").length;
+  const active = real.filter(s => s.state !== "COMPLETED").length;
   return {
-    total: sessions.length,
+    total: real.length,
     completed,
     active
   };

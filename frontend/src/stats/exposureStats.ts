@@ -1,4 +1,5 @@
 import type { Session } from '../api'
+import { getRealSessions } from '../utils/sessionEligibility'
 import { normalizeSeasonValue } from './seasonNormalization'
 
 export type SessionLikeGameInfo = {
@@ -107,7 +108,7 @@ function resolveObservedTeams(session: Session): string[] {
 export function computeObservedTeamStats(sessions: Session[]): ObservedTeamStat[] {
   const byTeam = new Map<string, ObservedTeamStat>()
 
-  for (const session of sessions || []) {
+  for (const session of getRealSessions(sessions)) {
     for (const team of resolveObservedTeams(session)) {
       const existing = byTeam.get(team) || {
         team,
@@ -134,7 +135,7 @@ export function computeObservedTeamStats(sessions: Session[]): ObservedTeamStat[
 export function computeMatchupExposure(sessions: Session[]): MatchupExposure[] {
   const byKey = new Map<string, MatchupExposure>()
 
-  for (const session of sessions || []) {
+  for (const session of getRealSessions(sessions)) {
     const matchupKey = makeMatchupKey(session)
     const gameInfo = session.game_info
     if (!matchupKey || !gameInfo?.team_home || !gameInfo?.team_away) continue
@@ -200,7 +201,7 @@ export function computeTeamExposure(sessions: Session[]): TeamExposure[] {
     return created
   }
 
-  for (const session of sessions || []) {
+  for (const session of getRealSessions(sessions)) {
     const gameInfo = session.game_info
     const observedTeam = gameInfo?.observed_team || session.observed_team
     const teamsInGame = [gameInfo?.team_home, gameInfo?.team_away].filter((name): name is string => Boolean(name))

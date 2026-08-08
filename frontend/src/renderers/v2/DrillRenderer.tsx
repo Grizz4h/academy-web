@@ -28,7 +28,16 @@ const PERSPECTIVE_ROLE_SWAP: Record<string, string> = {
 	C: "C",
 };
 
+/** Neutral 4-marker layout (e.g. 4v5 PK). Labels are non-positional. */
+const DEFAULT_4_PLAYER_BASE_STATE_RIGHT = [
+	{ value: "P1", label: "P1", start_x: 0.70, start_y: 0.30 },
+	{ value: "P2", label: "P2", start_x: 0.70, start_y: 0.70 },
+	{ value: "P3", label: "P3", start_x: 0.82, start_y: 0.38 },
+	{ value: "P4", label: "P4", start_x: 0.82, start_y: 0.62 },
+];
+
 function getFormationPreset(preset: string) {
+	if (preset === "4_player_default" || preset === "4v5_pk_default") return DEFAULT_4_PLAYER_BASE_STATE_RIGHT;
 	if (preset === "5v5_default") return DEFAULT_5V5_BASE_FORMATION_RIGHT;
 	return DEFAULT_5V5_BASE_FORMATION_RIGHT;
 }
@@ -317,7 +326,7 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 	switch (drill.drill_type) {
 		case "rink_corridor_observation":
 		case "rink_segmented_zone_observation":
-			return <RinkSegmentedZoneObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <RinkSegmentedZoneObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "rink_zone_priority_observation":
 			return <RinkZonePriorityObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "paintable_rink_observation":
@@ -450,6 +459,24 @@ function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 		},
 		detailed: { ...DETAILED_HOCKEY_RINK_PRESET },
 		segmented_zone_selection: {
+			zones: true,
+			goals: true,
+			crease: true,
+			faceoffDots: true,
+			labels: false,
+			defendingSide: "left",
+			showDefendingHint: false,
+		},
+		semantic_zone_selection: {
+			zones: true,
+			goals: true,
+			crease: true,
+			faceoffDots: true,
+			labels: false,
+			defendingSide: "left",
+			showDefendingHint: false,
+		},
+		multi_zone_observation: {
 			zones: true,
 			goals: true,
 			crease: true,
@@ -1271,9 +1298,84 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 type ConfigurableSegmentZone = {
 	id: string;
 	label: string;
+	description?: string;
+	/** Lateral bias relative to attack direction; used when mirroring halfwalls. */
+	lateral?: "left" | "right" | "none";
 	path?: string;
 	geometry?: { x0?: number; y0?: number; x1?: number; y1?: number; x?: number; y?: number; width?: number; height?: number };
 };
+
+function isMultiSelectionGroup(group: any): boolean {
+	const mode = String(group?.selection_mode || group?.selectionMode || "single").toLowerCase();
+	return mode === "multi" || mode === "multiple" || mode === "multi_select";
+}
+
+function normalizeSelectionValues(raw: any): string[] {
+	if (Array.isArray(raw)) return raw.map(String).filter(Boolean);
+	if (raw === undefined || raw === null || raw === "") return [];
+	return [String(raw)];
+}
+
+function selectionGroupExclusiveValues(group: any): string[] {
+	const source = group?.exclusive_values || group?.exclusiveValues || ["unclear"];
+	return Array.isArray(source) ? source.map(String) : ["unclear"];
+}
+
+function flipNormalizedX(geometry: NonNullable<ConfigurableSegmentZone["geometry"]>) {
+	const next = { ...geometry };
+	if (Number.isFinite(next.x0) && Number.isFinite(next.x1)) {
+		const x0 = Number(next.x0);
+		const x1 = Number(next.x1);
+		next.x0 = 1 - x1;
+		next.x1 = 1 - x0;
+	} else if (Number.isFinite(next.x) && Number.isFinite(next.width)) {
+		next.x = 1 - (Number(next.x) + Number(next.width));
+	} else if (Number.isFinite(next.x)) {
+		next.x = 1 - Number(next.x);
+	}
+	return next;
+}
+
+function flipNormalizedY(geometry: NonNullable<ConfigurableSegmentZone["geometry"]>) {
+	const next = { ...geometry };
+	if (Number.isFinite(next.y0) && Number.isFinite(next.y1)) {
+		const y0 = Number(next.y0);
+		const y1 = Number(next.y1);
+		next.y0 = 1 - y1;
+		next.y1 = 1 - y0;
+	} else if (Number.isFinite(next.y) && Number.isFinite(next.height)) {
+		next.y = 1 - (Number(next.y) + Number(next.height));
+	} else if (Number.isFinite(next.y)) {
+		next.y = 1 - Number(next.y);
+	}
+	return next;
+}
+
+function zoneHasLateralBias(zone: ConfigurableSegmentZone): boolean {
+	if (zone.lateral === "left" || zone.lateral === "right") return true;
+	if (zone.lateral === "none") return false;
+	const id = String(zone.id || "").toLowerCase();
+	return id.includes("left_") || id.includes("right_") || id.endsWith("_left") || id.endsWith("_right");
+}
+
+/** Zones are authored for `authoredOffensiveEnd`; flip into the live attack direction. */
+function applyAttackDirectionToSegmentZone(
+	zone: ConfigurableSegmentZone,
+	attackDirection: "left" | "right",
+	authoredOffensiveEnd: "left" | "right",
+): ConfigurableSegmentZone {
+	if (attackDirection === authoredOffensiveEnd) return zone;
+	if (typeof zone.path === "string" && zone.path.trim() && !zone.geometry) {
+		// Raw SVG paths without geometry cannot be mirrored safely; keep as authored.
+		return zone;
+	}
+	if (!zone.geometry) return zone;
+	let geometry = flipNormalizedX(zone.geometry);
+	if (zoneHasLateralBias(zone)) {
+		geometry = flipNormalizedY(geometry);
+	}
+	return { ...zone, geometry, path: undefined };
+}
 
 const DETAILED_RINK_VIEWBOX = { width: 900, height: 620 };
 
@@ -1434,7 +1536,7 @@ function buildSegmentZonePath(zone: ConfigurableSegmentZone): string {
 	return `M${left} ${top} L${right} ${top} L${right} ${bottom} L${left} ${bottom} Z`;
 }
 
-function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) {
+function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session, phase }: any) {
 	const safeAnswers = answers || {};
 	const config = drill?.config || {};
 	const mode = String(config?.mode || "segmented_zone_selection");
@@ -1447,7 +1549,58 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 	const activeGroupKey = config?.active_selection_group_key || "activeSelectionGroup";
 	const draftKey = config?.draft_key || "__rink_segmented_zone_observation_draft";
 
-	const zoneDefinitions: ConfigurableSegmentZone[] = Array.isArray(config?.zones) ? config.zones : [];
+	const attackDirectionKey = config?.attack_direction_key || "attackDirection";
+	const attackDirectionOverrideKey = config?.attack_direction_override_key || attackDirectionKey;
+	const attackDirectionDefault = config?.attack_direction_default === "left" ? "left" : "right";
+	const homeAttackDirectionP1 = config?.home_attack_direction_p1 === "left" ? "left" : "right";
+	const authoredOffensiveEnd = config?.authored_offensive_end === "left" ? "left" : "right";
+	const mirrorZonesWithAttackDirection = config?.mirror_zones_with_attack_direction === true
+		|| config?.mirror_zones_with_attack_direction === "true";
+	const showAttackDirectionControl = config?.show_attack_direction_control === true
+		|| (mirrorZonesWithAttackDirection && config?.show_attack_direction_control !== false);
+	const manualAttackDirection = safeAnswers[attackDirectionOverrideKey] || "";
+	const preservePageScroll = config?.preserve_page_scroll !== false;
+	const summaryZoneFrequency = config?.summary_zone_frequency === true;
+	const summaryZoneFrequencyTitle = config?.summary_zone_frequency_title || "Häufig besetzte Räume in dieser Session";
+	const summaryZoneFrequencyKey = config?.summary_zone_frequency_key
+		|| (Array.isArray(config?.selection_groups) && config.selection_groups[0]
+			? String(config.selection_groups[0].key || config.selection_groups[0].id || "occupiedZones")
+			: "occupiedZones");
+
+	const normalizeTeam = (value: any) => String(value || "").trim().toLowerCase();
+	const inferPeriodNumber = () => {
+		const fromPhase = String(phase || session?.current_phase || "").toUpperCase();
+		if (fromPhase.startsWith("P")) {
+			const n = Number(fromPhase.replace("P", ""));
+			if (Number.isFinite(n) && n >= 1) return n;
+		}
+		return 1;
+	};
+	const inferAutoAttackDirection = (): "left" | "right" => {
+		const period = inferPeriodNumber();
+		const homeDirection = period % 2 === 1
+			? homeAttackDirectionP1
+			: (homeAttackDirectionP1 === "right" ? "left" : "right");
+		const observedTeam = normalizeTeam(session?.game_info?.observed_team || session?.observed_team);
+		const homeTeam = normalizeTeam(session?.game_info?.team_home);
+		const awayTeam = normalizeTeam(session?.game_info?.team_away);
+		if (observedTeam && homeTeam && observedTeam === homeTeam) {
+			return homeDirection === "left" ? "left" : "right";
+		}
+		if (observedTeam && awayTeam && observedTeam === awayTeam) {
+			return homeDirection === "left" ? "right" : "left";
+		}
+		return attackDirectionDefault;
+	};
+	const autoAttackDirection = inferAutoAttackDirection();
+	const attackDirection: "left" | "right" = manualAttackDirection === "left" || manualAttackDirection === "right"
+		? manualAttackDirection
+		: autoAttackDirection;
+
+	const zoneDefinitionsRaw: ConfigurableSegmentZone[] = Array.isArray(config?.zones) ? config.zones : [];
+	const zoneDefinitions = mirrorZonesWithAttackDirection
+		? zoneDefinitionsRaw.map((zone) => applyAttackDirectionToSegmentZone(zone, attackDirection, authoredOffensiveEnd))
+		: zoneDefinitionsRaw;
 	const zoneMap = Object.fromEntries(
 		zoneDefinitions
 			.map((zone) => [String(zone.id), { ...zone, path: buildSegmentZonePath(zone) }])
@@ -1462,6 +1615,7 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 	const observationNotePlaceholder = observationNoteConfig?.placeholder || "Optional";
 	const observationNoteMaxChars = Number(observationNoteConfig?.max_chars || 600);
 	const conflictHint = String(config?.conflict_hint || "Du hast denselben Weg als primär geschlossen und als am ehesten verfügbar ausgewählt. Prüfe, ob das deine Beobachtung korrekt beschreibt.");
+	const conflictHintEnabled = config?.conflict_hint_enabled !== false && !!config?.conflict_hint;
 
 	const missions = Array.isArray(config?.missions) ? config.missions : [];
 	const observations = Array.isArray(safeAnswers[observationsKey]) ? safeAnswers[observationsKey] : [];
@@ -1470,22 +1624,41 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 	const progressPct = observationCount > 0 ? Math.round((observations.length / observationCount) * 100) : 0;
 	const currentMission = missions[currentIndex] || {
 		title: `Mission ${currentIndex + 1} von ${observationCount}`,
-		prompt: "Beobachte einen kontrollierten gegnerischen Aufbau durch die Neutral Zone.",
-		hint: "Wähle zuerst den geschlossenen und danach den verbleibenden Weg.",
+		prompt: "Beobachte eine stabile offensive Struktur in der Angriffszone.",
+		hint: "Markiere die Räume, die die Offensive sichtbar hält.",
 	};
 
 	const draft = safeAnswers[draftKey] || {};
 	const activeGroupId = draft[activeGroupKey] || selectionGroups[0]?.id || "";
 	const activeGroup = selectionGroups.find((group: any) => group.id === activeGroupId) || selectionGroups[0];
 	const activeSelectionKey = String(activeGroup?.key || activeGroup?.id || "");
-	const activeSelectionValue = activeSelectionKey ? (draft[activeSelectionKey] || "") : "";
+	const activeIsMulti = isMultiSelectionGroup(activeGroup);
+	const activeSelectionValues = activeSelectionKey ? normalizeSelectionValues(draft[activeSelectionKey]) : [];
+
+	const isObservationFieldMulti = (field: any) =>
+		String(field?.type || "").toLowerCase() === "multi_select" || isMultiSelectionGroup(field);
 
 	const draftObservationFieldValues = Object.fromEntries(
-		observationFields.map((field: any) => [String(field?.key || ""), draft[String(field?.key || "")] || ""]),
+		observationFields.map((field: any) => {
+			const key = String(field?.key || "");
+			if (isObservationFieldMulti(field)) {
+				return [key, normalizeSelectionValues(draft[key])];
+			}
+			return [key, draft[key] || ""];
+		}),
 	);
 	const draftObservationNote = draft[observationNoteKey] || "";
 	const emptyObservationFieldDraft = Object.fromEntries(
-		observationFields.map((field: any) => [String(field?.key || ""), ""]),
+		observationFields.map((field: any) => [
+			String(field?.key || ""),
+			isObservationFieldMulti(field) ? [] : "",
+		]),
+	);
+	const emptySelectionDraft = Object.fromEntries(
+		selectionGroups.map((group: any) => {
+			const key = String(group?.key || group?.id || "");
+			return [key, isMultiSelectionGroup(group) ? [] : ""];
+		}),
 	);
 
 	const [isInteracting, setIsInteracting] = useState(false);
@@ -1522,23 +1695,91 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 		return typeof found === "string" ? found : String(found?.label || found?.value || value);
 	};
 
-	const requiredSelectionKeys = selectionGroups
-		.filter((group: any) => group?.required !== false)
-		.map((group: any) => String(group?.key || group?.id || ""))
-		.filter(Boolean);
+	const formatSelectionSummary = (group: any, raw: any) => {
+		const values = normalizeSelectionValues(raw);
+		if (values.length === 0) return "";
+		const options = [
+			...getGroupOffRinkOptions(group),
+			...getGroupZoneIds(group).map((id: string) => ({ value: id, label: zoneMap[id]?.label || id })),
+		];
+		return values.map((value) => getOptionLabel(options, value)).join(" · ");
+	};
+
+	const applySelectionValue = (group: any, value: string) => {
+		const key = String(group?.key || group?.id || "");
+		if (!key) return;
+		if (!isMultiSelectionGroup(group)) {
+			updateDraft({ [key]: value });
+			return;
+		}
+		const exclusiveValues = selectionGroupExclusiveValues(group);
+		const current = normalizeSelectionValues(draft[key]);
+		if (exclusiveValues.includes(value)) {
+			updateDraft({ [key]: current.includes(value) && current.length === 1 ? [] : [value] });
+			return;
+		}
+		let next = current.filter((entry) => !exclusiveValues.includes(entry));
+		if (next.includes(value)) next = next.filter((entry) => entry !== value);
+		else next = [...next, value];
+		updateDraft({ [key]: next });
+	};
+
 	const requiredObservationFieldsFilled = observationFields
 		.filter((field: any) => field?.required !== false)
 		.every((field: any) => {
 			const key = String(field?.key || "");
-			return !!key && !!draftObservationFieldValues[key];
+			if (!key) return false;
+			if (isObservationFieldMulti(field)) {
+				return normalizeSelectionValues(draftObservationFieldValues[key]).length > 0;
+			}
+			return !!draftObservationFieldValues[key];
 		});
-	const requiredSelectionsFilled = requiredSelectionKeys.every((key: string) => !!draft[key]);
+	const requiredSelectionsFilled = selectionGroups
+		.filter((group: any) => group?.required !== false)
+		.every((group: any) => {
+			const key = String(group?.key || group?.id || "");
+			if (!key) return false;
+			const values = normalizeSelectionValues(draft[key]);
+			return values.length > 0;
+		});
 	const canSave = requiredSelectionsFilled && requiredObservationFieldsFilled && !isComplete;
+
+	const applyObservationFieldValue = (field: any, value: string) => {
+		const key = String(field?.key || "");
+		if (!key) return;
+		if (!isObservationFieldMulti(field)) {
+			updateDraft({ [key]: value });
+			return;
+		}
+		const exclusiveValues = selectionGroupExclusiveValues(field);
+		const current = normalizeSelectionValues(draft[key]);
+		if (exclusiveValues.includes(value)) {
+			updateDraft({ [key]: current.includes(value) && current.length === 1 ? [] : [value] });
+			return;
+		}
+		let next = current.filter((entry) => !exclusiveValues.includes(entry));
+		if (next.includes(value)) next = next.filter((entry) => entry !== value);
+		else next = [...next, value];
+		updateDraft({ [key]: next });
+	};
+
+	const formatObservationFieldSummary = (field: any, raw: any) => {
+		if (raw === undefined || raw === null || raw === "") return "";
+		const options = Array.isArray(field?.options) ? field.options : [];
+		if (isObservationFieldMulti(field)) {
+			const values = normalizeSelectionValues(raw);
+			if (values.length === 0) return "";
+			const joiner = typeof field?.summary_joiner === "string" ? field.summary_joiner : " · ";
+			return values.map((value) => getOptionLabel(options, value)).join(joiner);
+		}
+		return getOptionLabel(options, String(raw));
+	};
 
 	const closedLaneKey = selectionGroups[0]?.key || "closedLane";
 	const availableRouteKey = selectionGroups[1]?.key || "availableRoute";
 	const laneIds = new Set(getGroupZoneIds(selectionGroups[0] || {}));
-	const showConflictHint = laneIds.has(String(draft[closedLaneKey]))
+	const showConflictHint = conflictHintEnabled
+		&& laneIds.has(String(draft[closedLaneKey]))
 		&& String(draft[closedLaneKey]) === String(draft[availableRouteKey])
 		&& !!draft[closedLaneKey];
 
@@ -1549,15 +1790,26 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 			[observationNoteKey]: draftObservationNote.trim() || "",
 			[createdAtKey]: new Date().toISOString(),
 		};
+		if (mirrorZonesWithAttackDirection) {
+			nextObservation[attackDirectionKey] = attackDirection;
+		}
 		selectionGroups.forEach((group: any) => {
 			const key = String(group?.key || group?.id || "");
 			if (!key) return;
-			nextObservation[key] = draft[key] || "";
+			if (isMultiSelectionGroup(group)) {
+				nextObservation[key] = normalizeSelectionValues(draft[key]);
+			} else {
+				nextObservation[key] = draft[key] || "";
+			}
 		});
 		observationFields.forEach((field: any) => {
 			const key = String(field?.key || "");
 			if (!key) return;
-			nextObservation[key] = draftObservationFieldValues[key] || "";
+			if (isObservationFieldMulti(field)) {
+				nextObservation[key] = normalizeSelectionValues(draftObservationFieldValues[key]);
+			} else {
+				nextObservation[key] = draftObservationFieldValues[key] || "";
+			}
 		});
 
 		setAnswers({
@@ -1565,7 +1817,7 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 			[observationsKey]: [...observations, nextObservation],
 			[draftKey]: {
 				[activeGroupKey]: selectionGroups[0]?.id || "",
-				...Object.fromEntries(selectionGroups.map((group: any) => [String(group?.key || group?.id || ""), ""])),
+				...emptySelectionDraft,
 				...emptyObservationFieldDraft,
 				[observationNoteKey]: "",
 			},
@@ -1583,6 +1835,35 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 
 	const activeGroupZoneIds = activeGroup ? getGroupZoneIds(activeGroup) : [];
 	const activeGroupOffRinkOptions = activeGroup ? getGroupOffRinkOptions(activeGroup) : [];
+
+	const zoneFrequencyRows = (() => {
+		if (!summaryZoneFrequency || !isComplete) return [];
+		const frequencyGroup = selectionGroups.find((group: any) => String(group?.key || group?.id || "") === summaryZoneFrequencyKey)
+			|| selectionGroups[0];
+		const exclusiveValues = frequencyGroup ? selectionGroupExclusiveValues(frequencyGroup) : ["unclear"];
+		const counts: Record<string, number> = {};
+		for (const entry of observations) {
+			for (const value of normalizeSelectionValues(entry?.[summaryZoneFrequencyKey])) {
+				if (!value || exclusiveValues.includes(value)) continue;
+				counts[value] = (counts[value] || 0) + 1;
+			}
+		}
+		return Object.entries(counts)
+			.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+			.map(([value, count]) => {
+				const offRink = getGroupOffRinkOptions(frequencyGroup || {});
+				const zoneIds = getGroupZoneIds(frequencyGroup || {});
+				const options = [
+					...offRink,
+					...zoneIds.map((id: string) => ({ value: id, label: zoneMap[id]?.label || id })),
+				];
+				return {
+					value,
+					count,
+					label: getOptionLabel(options, value),
+				};
+			});
+	})();
 
 	return (
 		<div className="card primary-card">
@@ -1620,6 +1901,48 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 						</div>
 					</div>
 
+					{showAttackDirectionControl && (
+						<div style={{ marginBottom: "0.55rem", display: "flex", flexWrap: "wrap", gap: "0.4rem", alignItems: "center" }}>
+							<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.72)" }}>Angriffsrichtung:</span>
+							{[
+								{ value: "auto", label: `Auto (${autoAttackDirection === "left" ? "links" : "rechts"})` },
+								{ value: "right", label: "Rechts" },
+								{ value: "left", label: "Links" },
+							].map((option) => {
+								const selected = option.value === "auto"
+									? !(manualAttackDirection === "left" || manualAttackDirection === "right")
+									: manualAttackDirection === option.value;
+								return (
+									<button
+										key={option.value}
+										type="button"
+										onClick={() => {
+											if (option.value === "auto") {
+												const next = { ...safeAnswers };
+												delete next[attackDirectionOverrideKey];
+												setAnswers(next);
+												return;
+											}
+											setAnswers({ ...safeAnswers, [attackDirectionOverrideKey]: option.value });
+										}}
+										style={{
+											padding: "0.28rem 0.65rem",
+											borderRadius: "6px",
+											border: selected ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
+											background: selected ? "rgba(20,184,166,0.24)" : "rgba(255,255,255,0.04)",
+											color: "#f7f7ff",
+											fontSize: "0.82rem",
+											fontWeight: 600,
+											cursor: "pointer",
+										}}
+									>
+										{option.label}
+									</button>
+								);
+							})}
+						</div>
+					)}
+
 					{selectionGroups.length > 1 && (
 						<div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.55rem", flexWrap: "wrap" }}>
 							{selectionGroups.map((group: any) => {
@@ -1652,13 +1975,19 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 						<div style={{ marginBottom: "0.45rem" }}>
 							<strong>{activeGroup?.question || activeGroup?.label}</strong>
 							{activeGroup?.hint && <p style={{ margin: "0.22rem 0 0", fontSize: "0.8rem", color: "rgba(255,255,255,0.62)" }}>{activeGroup.hint}</p>}
+							{activeIsMulti && (
+								<p style={{ margin: "0.18rem 0 0", fontSize: "0.78rem", color: "rgba(255,255,255,0.55)" }}>
+									Mehrfachauswahl möglich.
+								</p>
+							)}
 						</div>
 					)}
 
 					<div className="interaction-surface">
 						<div
-							className={`rink-wrapper rink-interaction-surface${isInteracting ? " is-interacting" : ""}`}
+							className={`rink-wrapper rink-interaction-surface${(!preservePageScroll && isInteracting) ? " is-interacting" : ""}`}
 							onPointerDown={(event) => {
+								if (preservePageScroll) return;
 								if (event.pointerType === "touch" || event.pointerType === "pen") setIsInteracting(true);
 							}}
 							onPointerUp={() => setIsInteracting(false)}
@@ -1673,28 +2002,28 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 								overflow: "hidden",
 								background: "linear-gradient(180deg, #0d1d2e 0%, #12243b 100%)",
 								marginBottom: "0.55rem",
-								touchAction: isInteracting ? "none" : "manipulation",
-								overscrollBehavior: isInteracting ? "contain" : "auto",
+								touchAction: preservePageScroll ? "manipulation" : (isInteracting ? "none" : "manipulation"),
+								overscrollBehavior: (!preservePageScroll && isInteracting) ? "contain" : "auto",
 							}}
 						>
-							<svg viewBox="0 0 900 620" role="img" aria-label="Neutral Zone mit auswählbaren Korridoren" style={{ width: "100%", height: "100%", display: "block" }}>
+							<svg viewBox="0 0 900 620" role="img" aria-label="Rink mit auswählbaren Zonen" style={{ width: "100%", height: "100%", display: "block" }}>
 								<DetailedHockeyRinkLayers overlays={overlays} />
 
 								{activeGroupZoneIds.map((zoneId: string) => {
 									const zone = zoneMap[zoneId];
 									if (!zone) return null;
-									const selected = activeSelectionValue === zoneId;
+									const selected = activeSelectionValues.includes(zoneId);
 									return (
 										<path
 											key={zoneId}
 											d={zone.path}
-											fill={selected ? "rgba(45,212,191,0.28)" : "rgba(255,255,255,0.03)"}
-											stroke={selected ? "rgba(153,246,228,0.95)" : "rgba(255,255,255,0.18)"}
-											strokeWidth={selected ? 3 : 2}
-											onClick={() => activeSelectionKey && updateDraft({ [activeSelectionKey]: zoneId })}
+											fill={selected ? "rgba(45,212,191,0.26)" : "rgba(255,255,255,0.035)"}
+											stroke={selected ? "rgba(153,246,228,0.92)" : "rgba(255,255,255,0.16)"}
+											strokeWidth={selected ? 3 : 1.5}
+											onClick={() => activeGroup && applySelectionValue(activeGroup, zoneId)}
 											style={{ cursor: "pointer" }}
 										>
-											<title>{zone.label}</title>
+											<title>{zone.description ? `${zone.label}: ${zone.description}` : zone.label}</title>
 										</path>
 									);
 								})}
@@ -1707,12 +2036,12 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 							{activeGroupZoneIds.map((zoneId: string) => {
 								const zone = zoneMap[zoneId];
 								if (!zone) return null;
-								const selected = activeSelectionValue === zoneId;
+								const selected = activeSelectionValues.includes(zoneId);
 								return (
 									<button
 										key={zoneId}
 										type="button"
-										onClick={() => activeSelectionKey && updateDraft({ [activeSelectionKey]: zoneId })}
+										onClick={() => activeGroup && applySelectionValue(activeGroup, zoneId)}
 										style={{
 											minHeight: "44px",
 											padding: "0.42rem 0.55rem",
@@ -1725,7 +2054,12 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 											cursor: "pointer",
 										}}
 									>
-										{zone.label}
+										<span style={{ display: "block", fontWeight: 600 }}>{zone.label}</span>
+										{zone.description && (
+											<span style={{ display: "block", marginTop: "0.12rem", fontSize: "0.74rem", color: "rgba(255,255,255,0.58)", lineHeight: 1.3 }}>
+												{zone.description}
+											</span>
+										)}
 									</button>
 								);
 							})}
@@ -1739,14 +2073,16 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 									const value = typeof opt === "string" ? opt : String(opt?.value || `option_${idx}`);
 									const label = typeof opt === "string" ? opt : String(opt?.label || value);
 									const description = typeof opt === "string" ? "" : String(opt?.description || "");
+									const selected = activeSelectionValues.includes(value);
+									const inputType = activeIsMulti ? "checkbox" : "radio";
 									return (
 										<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
 											<input
-												type="radio"
-												name={`segment_group_${activeSelectionKey}`}
+												type={inputType}
+												name={activeIsMulti ? undefined : `segment_group_${activeSelectionKey}`}
 												value={value}
-												checked={activeSelectionValue === value}
-												onChange={() => activeSelectionKey && updateDraft({ [activeSelectionKey]: value })}
+												checked={selected}
+												onChange={() => activeGroup && applySelectionValue(activeGroup, value)}
 											/>
 											<span>
 												<span>{label}</span>
@@ -1768,24 +2104,35 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 					{observationFields.map((field: any, fieldIdx: number) => {
 						const fieldKey = String(field?.key || `field_${fieldIdx}`);
 						const fieldLabel = String(field?.label || fieldKey);
+						const fieldHelp = String(field?.help || field?.helper_text || "");
 						const fieldOptions = Array.isArray(field?.options) ? field.options : [];
+						const isMulti = isObservationFieldMulti(field);
 						if (fieldOptions.length === 0) return null;
+						const selectedValues = isMulti
+							? normalizeSelectionValues(draftObservationFieldValues[fieldKey])
+							: [];
 						return (
 							<div key={fieldKey} style={{ marginBottom: "0.55rem" }}>
-								<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{fieldLabel}</label>
+								<label style={{ display: "block", marginBottom: fieldHelp ? "0.18rem" : "0.28rem", fontWeight: 600 }}>{fieldLabel}</label>
+								{fieldHelp && (
+									<p style={{ margin: "0 0 0.28rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.62)", lineHeight: 1.35 }}>{fieldHelp}</p>
+								)}
 								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
 									{fieldOptions.map((opt: any, idx: number) => {
 										const value = typeof opt === "string" ? opt : String(opt?.value || `${fieldKey}_${idx}`);
 										const label = typeof opt === "string" ? opt : String(opt?.label || value);
 										const description = typeof opt === "string" ? "" : String(opt?.description || "");
+										const checked = isMulti
+											? selectedValues.includes(value)
+											: draftObservationFieldValues[fieldKey] === value;
 										return (
 											<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
 												<input
-													type="radio"
-													name={`segment_field_${fieldKey}`}
+													type={isMulti ? "checkbox" : "radio"}
+													name={isMulti ? undefined : `segment_field_${fieldKey}`}
 													value={value}
-													checked={draftObservationFieldValues[fieldKey] === value}
-													onChange={() => updateDraft({ [fieldKey]: value })}
+													checked={checked}
+													onChange={() => applyObservationFieldValue(field, value)}
 												/>
 												<span>
 													<span>{label}</span>
@@ -1860,20 +2207,33 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers }: any) 
 							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
 								{selectionGroups.map((group: any) => {
 									const key = String(group?.key || group?.id || "");
-									const value = entry?.[key];
-									if (!key || !value) return null;
-									const label = getOptionLabel([...(getGroupOffRinkOptions(group)), ...getGroupZoneIds(group).map((id: string) => ({ value: id, label: zoneMap[id]?.label || id }))], value);
-									return `${group?.label || key}: ${label}`;
+									const summary = formatSelectionSummary(group, entry?.[key]);
+									if (!key || !summary) return null;
+									return `${group?.label || key}: ${summary}`;
 								}).filter(Boolean).join(" · ")}
 								{observationFields.map((field: any) => {
 									const key = String(field?.key || "");
-									if (!key || !entry?.[key]) return "";
-									return ` · ${getOptionLabel(field?.options || [], entry[key])}`;
+									const summary = formatObservationFieldSummary(field, entry?.[key]);
+									if (!key || !summary) return "";
+									const summaryLabel = String(field?.summary_label || field?.summaryLabel || field?.label || key);
+									return ` · ${summaryLabel}: ${summary}`;
 								}).join("")}
+								{entry?.[observationNoteKey] ? ` · Notiz: ${entry[observationNoteKey]}` : ""}
 							</div>
 						</div>
 					))}
 				</div>
+
+				{isComplete && zoneFrequencyRows.length > 0 && (
+					<section style={{ marginTop: "0.7rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.14)", background: "rgba(255,255,255,0.04)" }}>
+						<h4 style={{ marginTop: 0, marginBottom: "0.35rem" }}>{summaryZoneFrequencyTitle}</h4>
+						<div style={{ display: "grid", gap: "0.25rem", fontSize: "0.84rem", color: "rgba(255,255,255,0.78)" }}>
+							{zoneFrequencyRows.map((row) => (
+								<div key={row.value}>{row.label}: {row.count}</div>
+							))}
+						</div>
+					</section>
+				)}
 
 				{isComplete && (
 					<section style={{ marginTop: "0.7rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
@@ -2406,25 +2766,31 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const structureRatingConfig = config?.structure_rating || {};
 	const structureRatingKey = structureRatingConfig?.key || "structureRating";
 	const structureRatingLabel = structureRatingConfig?.label || "Wie wirkt die defensive Struktur?";
+	const structureRatingSummaryLabel = structureRatingConfig?.summary_label || "Struktur";
 	const structureRatingOptions = Array.isArray(structureRatingConfig?.options) ? structureRatingConfig.options : [];
 	const structuralFunctionConfig = config?.structural_function || {};
 	const structuralFunctionKey = structuralFunctionConfig?.key || "structuralFunction";
 	const structuralFunctionLabel = structuralFunctionConfig?.label || "Welche Funktion erfüllt diese Struktur hauptsächlich?";
+	const structuralFunctionSummaryLabel = structuralFunctionConfig?.summary_label || "Wirkung";
 	const structuralFunctionOptions = Array.isArray(structuralFunctionConfig?.options) ? structuralFunctionConfig.options : [];
 	const keyStructureElementConfig = config?.key_structure_element || {};
 	const keyStructureElementKey = keyStructureElementConfig?.key || "keyStructureElement";
 	const keyStructureElementLabel = keyStructureElementConfig?.label || "Welcher Teil der Struktur war entscheidend?";
+	const keyStructureElementSummaryLabel = keyStructureElementConfig?.summary_label || "Kern";
 	const keyStructureElementOptions = Array.isArray(keyStructureElementConfig?.options) ? keyStructureElementConfig.options : [];
 	const keyStructureElementRequired = keyStructureElementConfig?.required === true;
-	const completionQuestionConfig = config?.completion_question || {};
+	const completionQuestionConfig = config?.completion_question || null;
+	const completionQuestionEnabled = !!completionQuestionConfig && typeof completionQuestionConfig === "object";
 	const completionQuestionKey = completionQuestionConfig?.key || "defensiveStructureSummary";
 	const completionQuestionLabel = completionQuestionConfig?.label || "Welche Struktur zeigte die Defensive?";
 	const completionQuestionOptions = Array.isArray(completionQuestionConfig?.options) ? completionQuestionConfig.options : [];
-	const completionNoteConfig = config?.completion_note || {};
+	const completionNoteConfig = config?.completion_note || null;
+	const completionNoteEnabled = !!completionNoteConfig && typeof completionNoteConfig === "object";
 	const completionNoteKey = completionNoteConfig?.key || "defensiveStructureReason";
 	const completionNoteLabel = completionNoteConfig?.label || "Woran hast du diese Struktur erkannt?";
 	const completionNotePlaceholder = completionNoteConfig?.placeholder || "Optional";
 	const completionNoteMaxChars = Number(completionNoteConfig?.max_chars || 600);
+	const showAttackDirectionControl = config?.show_attack_direction_control === true;
 	const formationStatesKey = config?.formation_states_key || "formationStates";
 	const beforeStateKey = config?.before_state_key || "before";
 	const afterStateKey = config?.after_state_key || "after";
@@ -2571,11 +2937,20 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const draftObservationFieldValues = Object.fromEntries(
 		observationFields.map((field: any) => {
 			const key = String(field?.key || "");
-			return [key, key ? (draft[key] || "") : ""];
+			if (!key) return ["", ""];
+			const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+				|| isMultiSelectionGroup(field);
+			if (isMulti) return [key, normalizeSelectionValues(draft[key])];
+			return [key, draft[key] || ""];
 		}),
-	) as Record<string, string>;
+	) as Record<string, string | string[]>;
 	const emptyObservationFieldDraft = Object.fromEntries(
-		observationFields.map((field: any) => [String(field?.key || ""), ""]),
+		observationFields.map((field: any) => {
+			const key = String(field?.key || "");
+			const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+				|| isMultiSelectionGroup(field);
+			return [key, isMulti ? [] : ""];
+		}),
 	);
 
 	const rinkRef = useRef<HTMLDivElement | null>(null);
@@ -2740,6 +3115,27 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				...nextDraft,
 			},
 		});
+	};
+
+	const applyObservationFieldValue = (field: any, value: string) => {
+		const key = String(field?.key || "");
+		if (!key) return;
+		const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+			|| isMultiSelectionGroup(field);
+		if (!isMulti) {
+			updateDraft({ [key]: value });
+			return;
+		}
+		const exclusiveValues = selectionGroupExclusiveValues(field);
+		const current = normalizeSelectionValues(draft[key]);
+		if (exclusiveValues.includes(value)) {
+			updateDraft({ [key]: current.includes(value) && current.length === 1 ? [] : [value] });
+			return;
+		}
+		let next = current.filter((entry) => !exclusiveValues.includes(entry));
+		if (next.includes(value)) next = next.filter((entry) => entry !== value);
+		else next = [...next, value];
+		updateDraft({ [key]: next });
 	};
 
 	const clearDraft = () => {
@@ -3031,7 +3427,12 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		.filter((field: any) => field?.required !== false)
 		.every((field: any) => {
 			const key = String(field?.key || "");
-			return !!key && !!draftObservationFieldValues[key];
+			if (!key) return false;
+			const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+				|| isMultiSelectionGroup(field);
+			const value = draftObservationFieldValues[key];
+			if (isMulti) return Array.isArray(value) ? value.length > 0 : normalizeSelectionValues(value).length > 0;
+			return !!value;
 		});
 	const markerLocationEffective = draggingPosition === markerId && dragPoint
 		? dragPoint
@@ -3056,9 +3457,10 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		? canSaveFormationShift
 		: isDefensiveStructureMode
 		? (allPlayersPositioned
-			&& !!draftStructureRating
-			&& !!draftStructuralFunction
-			&& (!keyStructureElementRequired || !!draftKeyStructureElement))
+			&& (structureRatingOptions.length === 0 || !!draftStructureRating)
+			&& (structuralFunctionOptions.length === 0 || !!draftStructuralFunction)
+			&& (!keyStructureElementRequired || keyStructureElementOptions.length === 0 || !!draftKeyStructureElement)
+			&& requiredObservationFieldsFilled)
 		: isSingleMarkerMode
 		? canSaveSingleMarker
 		: isDirectionalPathMode
@@ -3193,19 +3595,31 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		}
 
 		if (isDefensiveStructureMode) {
-			const nextObservation = {
+			const nextObservation: Record<string, any> = {
 				[observationIndexKey]: currentIndex + 1,
 				[playerPositionsKey]: positionedPlayers.map((entry: { position: string; location?: { x: number; y: number } }) => ({
 					position: entry.position,
 					x: Number(entry.location!.x.toFixed(4)),
 					y: Number(entry.location!.y.toFixed(4)),
 				})),
-				[structureRatingKey]: draftStructureRating,
-				[structuralFunctionKey]: draftStructuralFunction,
+				[structureRatingKey]: draftStructureRating || undefined,
+				[structuralFunctionKey]: draftStructuralFunction || undefined,
 				[keyStructureElementKey]: draftKeyStructureElement || undefined,
 				[noteKey]: draftNote.trim() || undefined,
 				[createdAtKey]: new Date().toISOString(),
 			};
+			if (mirrorBubblesWithDirection || showAttackDirectionControl) {
+				nextObservation[attackDirectionKey] = attackDirection;
+			}
+			observationFields.forEach((field: any) => {
+				const key = String(field?.key || "");
+				if (!key) return;
+				const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+					|| isMultiSelectionGroup(field);
+				nextObservation[key] = isMulti
+					? normalizeSelectionValues(draftObservationFieldValues[key])
+					: (draftObservationFieldValues[key] || "");
+			});
 
 			setAnswers({
 				...safeAnswers,
@@ -3216,6 +3630,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					[structuralFunctionKey]: "",
 					[keyStructureElementKey]: "",
 					[noteKey]: "",
+					...emptyObservationFieldDraft,
 				},
 			});
 			setLocalPlayerPositions({});
@@ -3328,7 +3743,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{observeHint}</p>
 
-					{!(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode) && (
+					{(showAttackDirectionControl || !(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode)) && (
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem", alignItems: "center", marginBottom: "0.45rem" }}>
 						<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.76)" }}>
 							Angriffsrichtung: <strong>{attackDirection === "right" ? "nach rechts" : "nach links"}</strong> {isDirectionOverrideActive ? "(manuell)" : "(auto aus Session)"}
@@ -3722,27 +4137,40 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						</div>
 					)}
 
-					{(isSingleMarkerMode || isDirectionalPathMode) && observationFields.map((field: any, fieldIdx: number) => {
+					{(isSingleMarkerMode || isDirectionalPathMode || isDefensiveStructureMode) && observationFields.map((field: any, fieldIdx: number) => {
 						const fieldKey = String(field?.key || `field_${fieldIdx}`);
 						const fieldLabel = String(field?.label || fieldKey);
 						const fieldOptions = Array.isArray(field?.options) ? field.options : [];
+						const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+							|| isMultiSelectionGroup(field);
+						const selectedValues = isMulti
+							? normalizeSelectionValues(draftObservationFieldValues[fieldKey])
+							: [];
 						if (fieldOptions.length === 0) return null;
 						return (
 							<div key={fieldKey} style={{ marginBottom: "0.55rem" }}>
 								<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{fieldLabel}</label>
+								{isMulti && (
+									<p style={{ margin: "0 0 0.28rem", fontSize: "0.78rem", color: "rgba(255,255,255,0.55)" }}>
+										Mehrfachauswahl möglich.
+									</p>
+								)}
 								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
 									{fieldOptions.map((opt: any, idx: number) => {
 										const value = typeof opt === "string" ? opt : String(opt?.value || `${fieldKey}_${idx}`);
 										const label = typeof opt === "string" ? opt : String(opt?.label || value);
 										const description = typeof opt === "string" ? "" : String(opt?.description || "");
+										const selected = isMulti
+											? selectedValues.includes(value)
+											: draftObservationFieldValues[fieldKey] === value;
 										return (
 											<label key={value} style={{ display: "flex", alignItems: "flex-start", gap: "0.42rem", fontSize: "0.88rem" }}>
 												<input
-													type="radio"
-													name={`${isDirectionalPathMode ? "directional_path" : "single_marker"}_field_${fieldKey}`}
+													type={isMulti ? "checkbox" : "radio"}
+													name={isMulti ? undefined : `${isDirectionalPathMode ? "directional_path" : isSingleMarkerMode ? "single_marker" : "defensive_structure"}_field_${fieldKey}`}
 													value={value}
-													checked={draftObservationFieldValues[fieldKey] === value}
-													onChange={() => updateDraft({ [fieldKey]: value })}
+													checked={selected}
+													onChange={() => applyObservationFieldValue(field, value)}
 												/>
 												<span>
 													<span>{label}</span>
@@ -4012,23 +4440,64 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 							</div>
 							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
 								{isDefensiveStructureMode
-									? `Spieler platziert: ${Array.isArray(entry?.[playerPositionsKey]) ? entry[playerPositionsKey].length : 0}/${positionBubbles.length} - Struktur: ${getOptionLabel(structureRatingOptions, entry?.[structureRatingKey] || "-")} - Wirkung: ${getOptionLabel(structuralFunctionOptions, entry?.[structuralFunctionKey] || "-")}${entry?.[keyStructureElementKey] ? ` - Kern: ${getOptionLabel(keyStructureElementOptions, entry[keyStructureElementKey])}` : ""}`
+									? (() => {
+										const parts: string[] = [
+											`Spieler platziert: ${Array.isArray(entry?.[playerPositionsKey]) ? entry[playerPositionsKey].length : 0}/${positionBubbles.length}`,
+										];
+										if (structureRatingOptions.length > 0) {
+											parts.push(`${structureRatingSummaryLabel}: ${getOptionLabel(structureRatingOptions, entry?.[structureRatingKey] || "-")}`);
+										}
+										if (structuralFunctionOptions.length > 0) {
+											parts.push(`${structuralFunctionSummaryLabel}: ${getOptionLabel(structuralFunctionOptions, entry?.[structuralFunctionKey] || "-")}`);
+										}
+										if (entry?.[keyStructureElementKey] && keyStructureElementOptions.length > 0) {
+											parts.push(`${keyStructureElementSummaryLabel}: ${getOptionLabel(keyStructureElementOptions, entry[keyStructureElementKey])}`);
+										}
+										observationFields.forEach((field: any) => {
+											const key = String(field?.key || "");
+											if (!key || entry?.[key] == null || entry?.[key] === "") return;
+											const options = Array.isArray(field?.options) ? field.options : [];
+											const summaryLabel = String(field?.summary_label || field?.summaryLabel || field?.label || key);
+											const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
+												|| isMultiSelectionGroup(field);
+											if (isMulti) {
+												const values = normalizeSelectionValues(entry[key]);
+												if (values.length === 0) return;
+												parts.push(`${summaryLabel}: ${values.map((value) => getOptionLabel(options, value)).join(" · ")}`);
+												return;
+											}
+											parts.push(`${summaryLabel}: ${getOptionLabel(options, entry[key])}`);
+										});
+										if (entry?.[noteKey]) parts.push(`Notiz: ${entry[noteKey]}`);
+										return parts.join(" · ");
+									})()
 									: isFormationShiftMode
 										? `Vorher: ${Array.isArray(entry?.[formationStatesKey]?.[beforeStateKey]) ? entry[formationStatesKey][beforeStateKey].length : 0}/${positionBubbles.length} - Nachher: ${Array.isArray(entry?.[formationStatesKey]?.[afterStateKey]) ? entry[formationStatesKey][afterStateKey].length : 0}/${positionBubbles.length} - Reaktion: ${getOptionLabel(reactionTypeOptions, entry?.[reactionTypeKey] || "-")} - Wirkung: ${getOptionLabel(structuralOutcomeOptions, entry?.[structuralOutcomeKey] || "-")} - Auslöser: ${getOptionLabel(movementTriggerOptions, entry?.[movementTriggerKey] || "-")}`
 									: isSingleMarkerMode
-										? `${markerLabel}: ${entry?.[locationKey] ? "gesetzt" : "fehlt"}${observationFields.map((field: any) => {
-											const key = String(field?.key || "");
-											if (!key) return "";
-											const options = Array.isArray(field?.options) ? field.options : [];
-											return ` - ${getOptionLabel(options, entry?.[key] || "-")}`;
-										}).join("")}`
+										? (() => {
+											const parts: string[] = [
+												`${markerLabel}: ${entry?.[locationKey] ? "gesetzt" : "fehlt"}`,
+											];
+											observationFields.forEach((field: any) => {
+												const key = String(field?.key || "");
+												if (!key || entry?.[key] == null || entry?.[key] === "") return;
+												const options = Array.isArray(field?.options) ? field.options : [];
+												const summaryLabel = String(field?.summary_label || field?.summaryLabel || "");
+												const optionText = getOptionLabel(options, entry[key]);
+												parts.push(summaryLabel ? `${summaryLabel}: ${optionText}` : optionText);
+											});
+											if (entry?.[observationNoteKey]) parts.push(`Notiz: ${entry[observationNoteKey]}`);
+											return parts.join(" · ");
+										})()
 									: isDirectionalPathMode
 										? `Pfad: ${entry?.[pathKey]?.[pathStartId] && entry?.[pathKey]?.[pathEndId] ? "gesetzt" : "unvollständig"}${observationFields.map((field: any) => {
 											const key = String(field?.key || "");
-											if (!key) return "";
+											if (!key || !entry?.[key]) return "";
 											const options = Array.isArray(field?.options) ? field.options : [];
-											return ` - ${getOptionLabel(options, entry?.[key] || "-")}`;
-										}).join("")}`
+											const summaryLabel = String(field?.summary_label || field?.summaryLabel || "");
+											const prefix = summaryLabel ? `${summaryLabel}: ` : "";
+											return ` · ${prefix}${getOptionLabel(options, entry[key])}`;
+										}).join("")}${entry?.[observationNoteKey] ? ` · Notiz: ${entry[observationNoteKey]}` : ""}`
 									: `${findMarkerLabel(entry?.[initiatorKey])} - ${zoneDisplay(entry?.[zoneKey] || "neutral")}`}
 							</div>
 						</div>
@@ -4039,7 +4508,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					<div style={{ marginTop: "0.7rem" }}>
 						{isDefensiveStructureMode ? (
 							<>
-								{completionQuestionOptions.length > 0 && (
+								{completionQuestionEnabled && completionQuestionOptions.length > 0 && (
 									<>
 										<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
 											{completionQuestionLabel}
@@ -4065,29 +4534,33 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									</>
 								)}
 
-								<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
-									{completionNoteLabel}
-								</label>
-								<textarea
-									value={completionNoteValue}
-									onChange={(e) => setAnswers({ ...safeAnswers, [completionNoteKey]: e.target.value })}
-									maxLength={completionNoteMaxChars}
-									placeholder={completionNotePlaceholder}
-									style={{
-										width: "100%",
-										minHeight: "64px",
-										marginTop: "0.1rem",
-										padding: "0.45rem",
-										backgroundColor: "#050712",
-										color: "#f7f7ff",
-										border: "1px solid rgba(81,145,162,0.5)",
-										borderRadius: "4px",
-										fontFamily: "inherit",
-										fontSize: "0.9rem",
-									}}
-								/>
+								{completionNoteEnabled && (
+									<>
+										<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
+											{completionNoteLabel}
+										</label>
+										<textarea
+											value={completionNoteValue}
+											onChange={(e) => setAnswers({ ...safeAnswers, [completionNoteKey]: e.target.value })}
+											maxLength={completionNoteMaxChars}
+											placeholder={completionNotePlaceholder}
+											style={{
+												width: "100%",
+												minHeight: "64px",
+												marginTop: "0.1rem",
+												padding: "0.45rem",
+												backgroundColor: "#050712",
+												color: "#f7f7ff",
+												border: "1px solid rgba(81,145,162,0.5)",
+												borderRadius: "4px",
+												fontFamily: "inherit",
+												fontSize: "0.9rem",
+											}}
+										/>
+									</>
+								)}
 
-								{completionQuestionValue && (
+								{(!completionQuestionEnabled || completionQuestionOptions.length === 0 || !!completionQuestionValue) && (
 									<section style={{ marginTop: "0.45rem", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
 										<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {activeFocusTitle}</h4>
 										<p style={{ margin: 0, color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>{activeFocusText}</p>
@@ -4745,9 +5218,12 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const safeAnswers = answers || {};
 	const sampleFields = normalizeSampleFields(drill);
 	const sampleKey = drill?.config?.sample_key || "pressure_samples";
+	const sampleLabel = drill?.config?.sample_label || "Situation";
+	const sampleAddLabel = drill?.config?.sample_add_label || `+ ${sampleLabel}`;
+	const sampleSaveLabel = drill?.config?.sample_save_label || `${sampleLabel} speichern`;
 	const checkinConfig = drill?.config?.checkin || {};
 	const checkinKey = checkinConfig?.key || "dominant_source";
-	const requiresCheckin = drill?.config?.enable_checkin !== false && drill?.config?.mode !== "decision_cause_diagnosis";
+	const requiresCheckin = drill?.config?.enable_checkin !== false && drill?.config?.mode !== "decision_cause_diagnosis" && drill?.config?.mode !== "transition_followup_assessment";
 	const aggregateBy = drill?.config?.aggregate_by;
 	const reflectionAlignmentKey = drill?.config?.reflection_alignment_key || "reflection_alignment";
 	const totalsKey = drill?.config?.aggregation_totals_key || "pressure_totals";
@@ -4780,12 +5256,29 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 
 	const checkinOptions = Array.isArray(checkinConfig?.options) && checkinConfig.options.length > 0
 		? checkinConfig.options
-		: sampleFields.map((field: any) => ({ value: field.key, label: field.label }));
+		: (() => {
+			if (aggregateBy) {
+				const aggregateField = sampleFields.find((field: any) => field.key === aggregateBy);
+				if (Array.isArray(aggregateField?.options) && aggregateField.options.length > 0) {
+					return aggregateField.options.map((opt: any) => ({
+						value: optionValue(opt),
+						label: optionLabel(opt),
+					}));
+				}
+			}
+			return sampleFields.map((field: any) => ({ value: field.key, label: field.label }));
+		})();
 	const aggregation = computeSampleAggregation(samples, sampleFields, checkinOptions, aggregateBy);
+	const optionLabelsByValue = Object.fromEntries(
+		checkinOptions.map((opt: any) => [optionValue(opt), optionLabel(opt)]),
+	);
 	const observationMirror = Object.entries(aggregation.totals)
 		.filter(([, count]) => Number(count) > 0)
 		.sort((a, b) => Number(b[1]) - Number(a[1]) || String(a[0]).localeCompare(String(b[0])))
-		.map(([key, count]) => ({ label: pressureLabels[key] || key, count: Number(count) }));
+		.map(([key, count]) => ({
+			label: optionLabelsByValue[key] || pressureLabels[key] || key,
+			count: Number(count),
+		}));
 	const checkinSelection = safeAnswers[checkinKey] || "";
 	const selectedCheckinOption = checkinOptions.find((opt: any) => opt?.value === checkinSelection);
 	const selectedCheckinLabel = selectedCheckinOption?.label || "";
@@ -4914,7 +5407,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 							cursor: canAddMore ? "pointer" : "not-allowed",
 						}}
 					>
-						+ Situation
+						{sampleAddLabel}
 					</button>
 					<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.62)" }}>
 						{samples.length}/{requiredSamples} erfasst
@@ -4994,7 +5487,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 								cursor: isSampleComplete ? "pointer" : "not-allowed",
 							}}
 						>
-							Situation speichern
+							{sampleSaveLabel}
 						</button>
 					</div>
 				)}
@@ -5003,7 +5496,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 					{samples.map((sample, idx) => (
 						<div key={idx} style={{ padding: "0.65rem 0.75rem", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", background: "rgba(255,255,255,0.03)" }}>
 							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem" }}>
-								<strong>Situation {idx + 1}</strong>
+								<strong>{sampleLabel} {idx + 1}</strong>
 								<button
 									type="button"
 									onClick={() => removeSample(idx)}
@@ -5024,7 +5517,8 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 									const selected = sample[field.key];
 									const selectedOption = field.options?.find((opt: any) => optionValue(opt) === selected);
 									return `${field.label}: ${selectedOption ? optionLabel(selectedOption) : selected || "-"}`;
-								}).join(" | ")}
+								}).join(" · ")}
+								{sample[noteKey] ? ` · Notiz: ${sample[noteKey]}` : ""}
 							</div>
 						</div>
 					))}
@@ -5196,7 +5690,8 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 
 		if (q.type === "multi_select") {
 			if (!Array.isArray(rawValue) || rawValue.length === 0) return null;
-			return rawValue.map((v: string) => optionMap.get(v) || formatOptionText(String(v))).join(", ");
+			const joiner = typeof q.summary_joiner === "string" ? q.summary_joiner : ", ";
+			return rawValue.map((v: string) => optionMap.get(v) || formatOptionText(String(v))).join(joiner);
 		}
 
 		if (typeof rawValue === "string") {
@@ -5296,7 +5791,7 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 					{reflectionPhase?.text && <p style={{ marginTop: 0, marginBottom: 0, color: "rgba(255,255,255,0.72)", fontSize: "0.88rem", whiteSpace: "pre-line" }}>{reflectionPhase.text}</p>}
 				</section>
 			) : null}
-			{questions.map((q: any) => {
+			{questions.map((q: any, questionIndex: number) => {
 				const controllerKey = q.conditional_options ? Object.keys(q.conditional_options)[0] : null;
 				const controllerValue = controllerKey ? safeAnswers?.[controllerKey] : undefined;
 				const effectiveOptionsRaw = q.conditional_options && controllerKey
@@ -5306,6 +5801,11 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 				const hasConditionalOptions = !!q.conditional_options;
 				const shouldRenderQuestion = !hasConditionalOptions || effectiveOptions.length > 0;
 				const questionHelp = q.help || q.desc || q.helper_text || "";
+				const sectionLabel = String(q.section || q.section_title || q.sectionTitle || "").trim();
+				const previousSection = questionIndex > 0
+					? String(questions[questionIndex - 1]?.section || questions[questionIndex - 1]?.section_title || questions[questionIndex - 1]?.sectionTitle || "").trim()
+					: "";
+				const showSectionHeading = !!sectionLabel && sectionLabel !== previousSection;
 
 				if (!shouldRenderQuestion) {
 					return null;
@@ -5313,6 +5813,9 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 
 				return (
 				<div key={q.key} className="mobile-flatten-card" style={{ marginBottom: "1rem" }}>
+					{showSectionHeading && (
+						<h4 style={{ margin: "0 0 0.55rem", color: "#89c8da", fontSize: "0.95rem" }}>{sectionLabel}</h4>
+					)}
 					<label style={{ display: "block", marginBottom: questionHelp ? "0.25rem" : "0.5rem", fontWeight: "bold" }}>{q.label}</label>
 					{questionHelp && (
 						<p style={{ marginTop: 0, marginBottom: "0.5rem", fontSize: "0.84rem", color: "rgba(255,255,255,0.68)", lineHeight: 1.4 }}>{questionHelp}</p>
@@ -5395,30 +5898,72 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 						</select>
 					)}
 					{q.type === "multi_select" && Array.isArray(effectiveOptions) && (
-						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+						<div style={{ display: "flex", flexDirection: "column", gap: useOptionCards ? "0.45rem" : "0.25rem" }}>
 							{effectiveOptions.map((opt: any) => {
 								const currentValues = Array.isArray(safeAnswers[q.key]) ? safeAnswers[q.key] : [];
 								const checked = currentValues.includes(opt.value);
+								const exclusiveValues = Array.isArray(q.exclusive_values)
+									? q.exclusive_values.map(String)
+									: Array.isArray(q.exclusiveValues)
+										? q.exclusiveValues.map(String)
+										: [];
+								const toggleValue = (nextChecked: boolean) => {
+									let nextValues: string[];
+									if (nextChecked) {
+										if (exclusiveValues.includes(opt.value)) {
+											nextValues = [opt.value];
+										} else {
+											nextValues = [...currentValues.filter((v: string) => !exclusiveValues.includes(v)), opt.value];
+										}
+									} else {
+										nextValues = currentValues.filter((v: string) => v !== opt.value);
+									}
+									const nextAnswers = { ...safeAnswers };
+									if (nextValues.length > 0) nextAnswers[q.key] = nextValues;
+									else delete nextAnswers[q.key];
+									setAnswers(nextAnswers);
+								};
+								const rawLabel = String(opt.label ?? opt.value ?? "");
+								const explanation = typeof opt.description === "string" ? opt.description : undefined;
+								if (useOptionCards) {
+									return (
+										<label
+											key={opt.value}
+											className={`option-choice${checked ? " is-selected" : ""}`}
+										>
+											<span style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+												<input
+													type="checkbox"
+													checked={checked}
+													onChange={(e) => toggleValue(e.target.checked)}
+													style={{ marginTop: "0.2rem" }}
+												/>
+												<span>
+													<span style={{ display: "block", fontWeight: 600, color: "#f7f7ff" }}>
+														{highlightGlossaryTerms(rawLabel, glossary)}
+													</span>
+													{explanation && (
+														<span style={{ display: "block", marginTop: "0.2rem", fontSize: "0.84rem", color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+															{explanation}
+														</span>
+													)}
+												</span>
+											</span>
+										</label>
+									);
+								}
 								return (
 									<label key={opt.value} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
 										<span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-										<input
-											type="checkbox"
-											checked={checked}
-											onChange={(e) => {
-												const nextValues = e.target.checked
-														? [...currentValues, opt.value]
-														: currentValues.filter((v: string) => v !== opt.value);
-												const nextAnswers = { ...safeAnswers };
-												if (nextValues.length > 0) nextAnswers[q.key] = nextValues;
-												else delete nextAnswers[q.key];
-												setAnswers(nextAnswers);
-											}}
-										/>
-											<span>{highlightGlossaryTerms(String(opt.label ?? opt.value ?? ""), glossary)}</span>
+											<input
+												type="checkbox"
+												checked={checked}
+												onChange={(e) => toggleValue(e.target.checked)}
+											/>
+											<span>{highlightGlossaryTerms(rawLabel, glossary)}</span>
 										</span>
-										{opt.description && (
-											<span style={{ fontSize: "0.85em", color: "#aaa", marginLeft: 24 }}>{opt.description}</span>
+										{explanation && (
+											<span style={{ fontSize: "0.85em", color: "#aaa", marginLeft: 24 }}>{explanation}</span>
 										)}
 									</label>
 								);
@@ -6334,3 +6879,4 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		</div>
 	);
 }
+

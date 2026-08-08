@@ -5,6 +5,7 @@ import type {
   RewardState,
 } from '../types'
 import type { Session } from '../../../api'
+import { getRealSessions } from '../../../utils/sessionEligibility'
 
 export type AchievementProgressItem = {
   achievement: AchievementDefinition
@@ -63,7 +64,8 @@ function matchesHourWindow(hour: number, start: number, end: number): boolean {
 }
 
 function deriveStats(sessions: Session[]): DerivedStats {
-  const completedSessions = sessions.filter(isCompleted)
+  const realSessions = getRealSessions(sessions)
+  const completedSessions = realSessions.filter(isCompleted)
   const completedDrills = completedSessions.flatMap((session) => session.drills || [])
   const dayKeys = completedSessions
     .map((session) => toDayKey(session.post?.completed_at || session.created_at))
@@ -96,7 +98,7 @@ function deriveStats(sessions: Session[]): DerivedStats {
     completedDrillsCount: completedDrills.length,
     distinctDrillsCount: new Set(completedDrills.map((drill) => drill.id)).size,
     activeDaysCount: new Set(dayKeys).size,
-    completedSessionStreak: buildCompletedSessionStreak(sessions),
+    completedSessionStreak: buildCompletedSessionStreak(realSessions),
     maxDrillsInOneSession,
     maxNoteLength,
     minCompletedDurationSeconds,

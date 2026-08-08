@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
+import { isProgressionEligibleSession } from '../utils/sessionEligibility'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
@@ -320,15 +321,27 @@ export default function SessionPage() {
       : (samples.length > 0 ? samples.length - 1 : -1)
     const selectedSample = selectedIdx >= 0 && selectedIdx < samples.length ? samples[selectedIdx] : null
 
+    const observationsKey = (drill as any)?.config?.observations_key
+    const observations = observationsKey && Array.isArray(answers?.[observationsKey])
+      ? answers[observationsKey]
+      : []
+    const lastObservation = observations.length > 0 ? observations[observations.length - 1] : null
+
     const resolveWhenValue = (key: string): any => {
       if (key.startsWith('sample.') && selectedSample) {
         return selectedSample[key.slice('sample.'.length)]
+      }
+      if (key.startsWith('observation.') && lastObservation) {
+        return lastObservation[key.slice('observation.'.length)]
       }
       if (answers?.[key] !== undefined) {
         return answers[key]
       }
       if (selectedSample && (selectedSample as any)[key] !== undefined) {
         return (selectedSample as any)[key]
+      }
+      if (lastObservation && (lastObservation as any)[key] !== undefined) {
+        return (lastObservation as any)[key]
       }
       return undefined
     }
@@ -420,7 +433,10 @@ export default function SessionPage() {
                 }
               })
 
-              await grantRewardResult(rewardResult)
+              // Dummy/dev sessions must never touch PUX, achievements, or mastery.
+              if (isProgressionEligibleSession(completedSession)) {
+                await grantRewardResult(rewardResult)
+              }
             } catch (rewardError) {
               console.error('Reward evaluation failed', rewardError)
             }

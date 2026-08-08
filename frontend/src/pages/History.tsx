@@ -8,6 +8,9 @@ import SessionCard from '../components/SessionCard'
 import Card from '../components/Card'
 import FilterSheet from '../components/FilterSheet'
 import { PageSkeleton } from '../components/Skeleton'
+import { isDevNavEnabled } from '../config/featureFlags'
+import { deleteAllDummySessions } from '../dev/createDummySession'
+import { countDummySessions } from '../utils/sessionEligibility'
 import styles from './History.module.css'
 
 function isInProgressState(state: string): boolean {
@@ -56,6 +59,8 @@ export default function History() {
     }
   })
 
+  const [devMode, setDevMode] = useState(() => isDevNavEnabled())
+  const [deleteFeedback, setDeleteFeedback] = useState('')
   const [filterModule, setFilterModule] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
   const [filterCreator, setFilterCreator] = useState<string>('')
@@ -64,6 +69,33 @@ export default function History() {
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
   const sessionList = sessions || []
+  const dummyCount = countDummySessions(sessionList)
+
+  useEffect(() => {
+    const syncDevMode = () => setDevMode(isDevNavEnabled())
+    window.addEventListener('academy-dev-nav', syncDevMode)
+    window.addEventListener('storage', syncDevMode)
+    return () => {
+      window.removeEventListener('academy-dev-nav', syncDevMode)
+      window.removeEventListener('storage', syncDevMode)
+    }
+  }, [])
+
+  const deleteAllDummiesMutation = useMutation({
+    mutationFn: () => deleteAllDummySessions(sessionList),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['sessions', user] })
+      queryClient.invalidateQueries({ queryKey: ['scenes'] })
+      setDeleteFeedback(
+        result.deletedSessions > 0
+          ? `${result.deletedSessions} Dummy-Session${result.deletedSessions === 1 ? '' : 's'} gelöscht`
+          : 'Keine Dummy-Sessions gefunden',
+      )
+    },
+    onError: (err: any) => {
+      alert(`Dummy-Cleanup fehlgeschlagen: ${err?.message || err}`)
+    },
+  })
 
   const overview = useMemo(() => {
     const total = sessionList.length
@@ -238,6 +270,64 @@ export default function History() {
           Alle Sessions im Überblick — filtern, öffnen und bei Bedarf Details nachschauen.
         </p>
       </header>
+
+      {devMode && (
+        <div
+          style={{
+            border: '1px dashed rgba(245, 158, 11, 0.55)',
+            background: 'rgba(245, 158, 11, 0.08)',
+            marginBottom: '1rem',
+            borderRadius: '8px',
+            padding: '1rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 700 }}>🛠 DEV TOOLS</span>
+            <span
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                padding: '0.15rem 0.4rem',
+                borderRadius: '4px',
+                border: '1px solid rgba(245, 158, 11, 0.5)',
+                color: 'rgba(253, 186, 116, 1)',
+              }}
+            >
+              DEV
+            </span>
+          </div>
+          <button
+            type="button"
+            className="btn"
+            disabled={dummyCount === 0 || deleteAllDummiesMutation.isPending}
+            onClick={() => {
+              const count = dummyCount
+              const ok = window.confirm(
+                `${count} Dummy-Session${count === 1 ? '' : 's'} löschen?\n\nZugehörige Testdaten und Szenen werden ebenfalls entfernt. Echte Sessions bleiben erhalten.`,
+              )
+              if (!ok) return
+              setDeleteFeedback('')
+              deleteAllDummiesMutation.mutate()
+            }}
+            style={{
+              backgroundColor: 'rgba(239, 68, 68, 0.2)',
+              border: '1px solid rgba(239, 68, 68, 0.45)',
+              color: '#fecaca',
+              opacity: dummyCount === 0 || deleteAllDummiesMutation.isPending ? 0.55 : 1,
+            }}
+          >
+            {deleteAllDummiesMutation.isPending
+              ? 'Lösche Dummies…'
+              : `Alle Dummies löschen (${dummyCount})`}
+          </button>
+          {deleteFeedback && (
+            <p style={{ margin: '0.55rem 0 0', fontSize: '0.9rem', color: 'rgba(134, 239, 172, 1)' }}>
+              {deleteFeedback}
+            </p>
+          )}
+        </div>
+      )}
 
       <div className={styles.kpiGrid}>
         <Card className={styles.kpiCard}>
