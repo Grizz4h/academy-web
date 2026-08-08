@@ -2,23 +2,23 @@
   "displayName": "Tobi",
   "avatar": {
     "type": "catalog",
-    "avatarId": "avatar_crest_01"
+    "avatarId": "avatar_puck_01"
   },
-  "bannerId": "banner_neutral_01",
+  "bannerId": "banner_crease_01",
   "emblem": {
     "type": "catalog",
-    "emblemId": "emblem_puck_01"
+    "emblemId": "emblem_rink_01"
   },
   "customEmblemId": null,
   "customEmblems": [],
   "profileTitle": "rink_rat",
   "jerseyNumber": null,
-  "favoriteLeague": null,
-  "favoriteTeamName": null,
+  "favoriteLeague": "U20_DNL",
+  "favoriteTeamName": "EV Landshut",
   "profileTagline": null,
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-08T06:19:32.113045"
+  "updatedAt": "2026-08-08T18:00:23.757808"
 }
