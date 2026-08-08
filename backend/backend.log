@@ -11,3 +11,4 @@ INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
