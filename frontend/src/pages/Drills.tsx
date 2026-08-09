@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { GlossaryTerm, renderWithGlossary } from '../components/GlossaryTerm'
+import { MechanicGlyph } from '../components/visuals'
 
 export default function Drills() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -38,7 +39,12 @@ export default function Drills() {
       <div style={{ display: 'grid', gap: '1rem' }}>
         {currentModule.drills.map((drill) => (
           <div key={drill.id} className="card">
-            <h3>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <MechanicGlyph
+                drillType={drill.drill_type}
+                mode={drill.config?.mode}
+                showLabel
+              />
               <GlossaryTerm term={drill.title.toLowerCase()}>{drill.title}</GlossaryTerm>
             </h3>
             <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '0.5rem' }}>

@@ -143,6 +143,19 @@
   overflow-wrap: break-word;
 }
 
+.moduleProgress {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.moduleMechanics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+}
+
 .learningGoals {
   margin-top: 0.5rem;
   font-size: 0.85rem;

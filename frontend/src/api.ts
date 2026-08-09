@@ -68,6 +68,11 @@ export interface Module {
   learningGoals?: string[]
   recommendedSessionMethod?: string
   defaultFocus?: string
+  /** When false, module is hidden from active curriculum navigation. */
+  active?: boolean
+  deprecated?: boolean
+  deprecation_note?: string
+  sidequest_category?: string
   evaluation?: {
     metrics: string[]
     reportType: string
@@ -504,26 +509,56 @@ export interface RewardServerState {
   currency: {
     PUX: number
   }
-  unlockedAchievements: Record<string, { id: string; unlockedAt: string }>
+  unlockedAchievements: Record<string, { id: string; unlockedAt: string; sourceEventId?: string }>
   unlockedMasteries: Record<string, any>
   processedSessions: Record<string, { sessionId: string; grantedAt: string; pux: number }>
+  xp?: number
+  processedEvents?: Record<string, { eventId: string; processedAt: string; grantedXp: number; grantedPux: number }>
+  unlockedCosmetics?: Record<string, any>
+  activityLog?: Array<Record<string, any>>
+  unlockHistory?: Array<Record<string, any>>
+  bootstrapCompletedAt?: string | null
   lastUpdatedAt?: string | null
+  favoriteCosmeticIds?: string[]
+  puxTransactions?: Array<Record<string, any>>
+  completedCollections?: Record<string, any>
+  masteryMilestoneUnlocks?: Record<string, any>
+  featuredAchievementId?: string | null
+  featuredMasteryCoinId?: string | null
+  progressionPuxGranted?: number
 }
 
 export interface RewardApplyRequest {
-  session_id: string
+  session_id?: string | null
+  event_id?: string | null
   evaluated_at: string
   granted_pux: number
+  granted_xp?: number
   reward_events: Array<Record<string, any>>
-  unlocked_achievements: Array<{ id: string; unlockedAt: string }>
+  unlocked_achievements: Array<{ id: string; unlockedAt: string; sourceEventId?: string }>
   unlocked_masteries: Array<Record<string, any>>
+  unlocked_cosmetics?: Array<Record<string, any>>
+  unlock_history?: Array<Record<string, any>>
+  activity_events?: Array<Record<string, any>>
+  bootstrap_completed_at?: string | null
+  replace_derived?: boolean
+  favorite_cosmetic_ids?: string[] | null
+  mark_cosmetics_seen?: string[]
+  pux_transactions?: Array<Record<string, any>>
+  completed_collections?: Array<Record<string, any>>
+  mastery_milestone_unlocks?: Array<Record<string, any>>
+  progression_pux_granted?: number | null
+  skip_idempotency?: boolean
+  processed_event_ids?: string[]
 }
 
 export interface RewardApplyResponse {
   state: RewardServerState
   applied: boolean
   granted_pux: number
+  granted_xp?: number
   reward_events: Array<Record<string, any>>
+  reason?: string
 }
 
 export interface SceneSource {

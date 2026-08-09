@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
-import { isProgressionEligibleSession } from '../utils/sessionEligibility'
+import { buildEventsFromCompletedSession, buildTrackCompletionEvents } from '../features/progression'
+import { isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
@@ -30,7 +31,7 @@ export default function SessionPage() {
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
   const { user } = useUser()
-  const { grantRewardResult, rewardState } = useRewards()
+  const { grantRewardResult, rewardState, ingestActivityEvents, evaluateLockerMetaProgress } = useRewards()
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
   type PeriodPhase = 'P1' | 'P2' | 'P3'
@@ -436,6 +437,54 @@ export default function SessionPage() {
               // Dummy/dev sessions must never touch PUX, achievements, or mastery.
               if (isProgressionEligibleSession(completedSession)) {
                 await grantRewardResult(rewardResult)
+
+                const priorDrillIds = new Set(
+                  getRealSessions(freshSessions)
+                    .filter((session) => session.id !== completedSession.id && session.state === 'COMPLETED')
+                    .map((session) => String(session.drill_id || session.module_id || '').trim())
+                    .filter(Boolean),
+                )
+                const progressionEvents = buildEventsFromCompletedSession(completedSession, {
+                  priorCompletedDrillIds: priorDrillIds,
+                })
+
+                let trackDrills: Record<string, string[]> = {}
+                try {
+                  const curriculum = await queryClient.fetchQuery({
+                    queryKey: ['curriculum'],
+                    queryFn: () => api.getCurriculum(),
+                  })
+                  for (const track of curriculum.tracks || []) {
+                    const ids: string[] = []
+                    for (const module of track.modules || []) {
+                      if (module.active === false) continue
+                      for (const drill of module.drills || []) {
+                        if (drill.id) ids.push(drill.id)
+                      }
+                      if (module.id) ids.push(module.id)
+                    }
+                    trackDrills[track.id] = Array.from(new Set(ids))
+                  }
+                  progressionEvents.push(
+                    ...buildTrackCompletionEvents(
+                      getRealSessions(freshSessions).filter((session) => session.state === 'COMPLETED'),
+                      trackDrills,
+                    ),
+                  )
+                } catch {
+                  // Track completion is optional if curriculum cannot be loaded.
+                }
+
+                await ingestActivityEvents(progressionEvents)
+
+                try {
+                  await evaluateLockerMetaProgress({
+                    sessions: getRealSessions(freshSessions).filter((session) => session.state === 'COMPLETED'),
+                    trackDrills,
+                  })
+                } catch (metaError) {
+                  console.error('Locker mastery/collection evaluation failed', metaError)
+                }
               }
             } catch (rewardError) {
               console.error('Reward evaluation failed', rewardError)

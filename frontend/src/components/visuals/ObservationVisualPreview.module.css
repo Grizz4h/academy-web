@@ -1,0 +1,25 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: flex-start;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.65rem;
+  color: rgba(198, 214, 232, 0.72);
+  line-height: 1.2;
+  max-width: 108px;
+}
+
+.empty {
+  font-size: 0.78rem;
+  color: rgba(198, 214, 232, 0.55);
+}

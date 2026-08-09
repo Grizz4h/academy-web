@@ -1,8 +1,11 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
-import type { CurriculumTrack, CurriculumModule } from '../api'
+import type { CurriculumTrack, CurriculumModule, Session } from '../api'
 import theoryData from '../data/theoryData.json'
+import { getRealSessions } from '../utils/sessionEligibility'
+import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import styles from './Curriculum.module.css'
 
 const cluster2Tracks = [
@@ -33,12 +36,33 @@ function moduleCountLabel(count: number): string {
   return count === 1 ? '1 Modul' : `${count} Module`
 }
 
+function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> {
+  const completed = new Set<string>()
+  for (const session of getRealSessions(sessions || [])) {
+    if (String(session.state || '').toUpperCase() !== 'COMPLETED') continue
+    for (const drill of session.drills || []) {
+      if (drill?.id) completed.add(drill.id)
+    }
+    // Fallback: module-level completion marks first drill when drills[] missing
+    if ((!session.drills || session.drills.length === 0) && session.module_id) {
+      completed.add(session.module_id)
+    }
+  }
+  return completed
+}
+
 export default function Curriculum() {
   const navigate = useNavigate()
   const { data: curriculum, isLoading, error } = useQuery({
     queryKey: ['curriculum'],
     queryFn: () => api.getCurriculum()
   })
+  const { data: sessions } = useQuery({
+    queryKey: ['sessions'],
+    queryFn: () => api.getSessions(),
+  })
+
+  const completedDrillIds = useMemo(() => collectCompletedDrillIds(sessions), [sessions])
 
   if (isLoading) return <div className="card">Lade Lehrplan...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
@@ -48,14 +72,17 @@ export default function Curriculum() {
       <h1 className={styles.title}>Lehrplan</h1>
       <p className={styles.hint}>Tracks antippen, um Module und Details auszuklappen.</p>
 
-      {curriculum?.tracks.map((track: CurriculumTrack) => (
+      {curriculum?.tracks.map((track: CurriculumTrack) => {
+        const activeModules = (track.modules || []).filter((module: CurriculumModule) => module.active !== false)
+        if (activeModules.length === 0) return null
+        return (
         <details key={track.id} className={styles.track}>
           <summary className={styles.trackSummary}>
             <div className={styles.trackSummaryMain}>
               <h2 className={styles.trackTitle}>{track.title}</h2>
             </div>
             <div className={styles.trackMeta}>
-              <span>{moduleCountLabel(track.modules.length)}</span>
+              <span>{moduleCountLabel(activeModules.length)}</span>
               <span className={styles.chevron} aria-hidden="true" />
             </div>
           </summary>
@@ -66,12 +93,32 @@ export default function Curriculum() {
             )}
 
             <div className={styles.moduleGrid}>
-              {track.modules.map((module: CurriculumModule) => (
+              {activeModules.map((module: CurriculumModule) => {
+                const drills = module.drills || []
+                const progressNodes = buildDrillProgressNodes(
+                  drills.map((d) => ({ id: d.id, title: d.title })),
+                  { completedIds: completedDrillIds },
+                )
+                return (
                 <div key={module.id} className={styles.moduleCard}>
                   <h3 className={styles.moduleTitle}>{module.title}</h3>
                   <p className={styles.moduleText}>{module.summary}</p>
                   {module.description && (
                     <p className={styles.moduleMuted}>{module.description}</p>
+                  )}
+                  {progressNodes.length > 0 && (
+                    <div className={styles.moduleProgress}>
+                      <TrackProgressMap nodes={progressNodes} compact />
+                      <div className={styles.moduleMechanics}>
+                        {drills.slice(0, 5).map((drill) => (
+                          <MechanicGlyph
+                            key={drill.id}
+                            drillType={drill.drill_type}
+                            mode={drill.config?.mode}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   )}
                   {module.learningGoals && module.learningGoals.length > 0 && (
                     <div className={styles.learningGoals}>
@@ -103,11 +150,13 @@ export default function Curriculum() {
                     )}
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </details>
-      ))}
+        )
+      })}
 
       {cluster2Tracks.map((track) => (
         <details key={track.id} className={`${styles.track} ${styles.trackCluster}`}>

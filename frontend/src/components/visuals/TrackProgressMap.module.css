@@ -1,0 +1,111 @@
+.map {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.connector {
+  width: 14px;
+  height: 2px;
+  margin: 0 2px;
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 1px;
+}
+
+.item[data-status='completed'] + .item .connector,
+.item[data-status='completed'] .connector {
+  background: rgba(45, 212, 191, 0.55);
+}
+
+.node {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 23, 42, 0.45);
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: border-color var(--motion-fast, 140ms) var(--motion-ease, ease), background var(--motion-fast, 140ms) var(--motion-ease, ease);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.item[data-status='completed'] .node {
+  border-color: rgba(45, 212, 191, 0.45);
+  background: rgba(22, 163, 74, 0.14);
+  color: #99f6e4;
+}
+
+.item[data-status='completed'] .dot {
+  background: #2dd4bf;
+}
+
+.item[data-status='current'] .node {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+
+.item[data-status='current'] .dot {
+  background: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
+}
+
+.item[data-status='available'] .dot {
+  background: rgba(148, 163, 184, 0.45);
+  box-shadow: inset 0 0 0 1.5px rgba(226, 232, 240, 0.55);
+  background: transparent;
+}
+
+.item[data-status='locked'] .node {
+  opacity: 0.45;
+}
+
+.item[data-status='locked'] .dot {
+  background: rgba(100, 116, 139, 0.5);
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.compact .node {
+  padding: 0.1rem 0.28rem;
+  font-size: 0.68rem;
+}
+
+.compact .connector {
+  width: 10px;
+}
+
+@media (max-width: 420px) {
+  .connector {
+    width: 8px;
+  }
+
+  .label {
+    max-width: 3.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

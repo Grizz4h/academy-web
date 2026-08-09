@@ -12,6 +12,8 @@ export type RinkIdentityStats = {
   topTrack?: string | null
   memberSince?: string | null
   pux?: number | null
+  level?: number | null
+  xpLabel?: string | null
 }
 
 type RinkIdentityCardProps = {
@@ -53,6 +55,8 @@ export default function RinkIdentityCard({ profile, stats, className = '' }: Rin
   ].filter(Boolean)
 
   const activityBits = [
+    typeof stats?.level === 'number' ? `Level ${stats.level}` : null,
+    stats?.xpLabel ? stats.xpLabel : null,
     typeof stats?.drillsCompleted === 'number' ? `Drills ${stats.drillsCompleted}` : null,
     typeof stats?.scenesCount === 'number' ? `Szenen ${stats.scenesCount}` : null,
     stats?.topTrack ? `Top Track ${stats.topTrack}` : null,

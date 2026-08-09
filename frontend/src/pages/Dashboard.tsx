@@ -10,8 +10,10 @@ import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
 import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
 import { CoverageMap } from '../components/dashboard/CoverageMap';
 import { LearningRhythmWidget } from '../components/dashboard/LearningRhythmWidget';
+import { DrillActivityHeatmap } from '../components/dashboard/DrillActivityHeatmap';
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
 import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
+import { selectLevelProgress } from '../features/progression';
 import { computeObservedTeamStats } from '../stats/exposureStats';
 import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
@@ -79,7 +81,9 @@ export default function Dashboard() {
     if (!user || scopeInitialized || !curriculum || !sessions) return;
 
     const validModuleIds = new Set(
-      curriculum.tracks.flatMap((track) => track.modules.map((module) => module.id))
+      curriculum.tracks.flatMap((track) =>
+        track.modules.filter((module) => module.active !== false).map((module) => module.id)
+      )
     );
 
     const lastUsedModule = [...sessions]
@@ -117,6 +121,7 @@ export default function Dashboard() {
       for (const track of curriculum.tracks) {
         let total = 0;
         for (const module of track.modules) {
+          if (module.active === false) continue;
           total += module.drills.length;
         }
         trackProgress[track.id] = { total, completed: 0, title: track.title };
@@ -133,6 +138,7 @@ export default function Dashboard() {
       for (const track of curriculum.tracks) {
         let completed = 0;
         for (const module of track.modules) {
+          if (module.active === false) continue;
           for (const drill of module.drills) {
             if (completedDrillIds.has(drill.id)) completed++;
           }
@@ -175,7 +181,9 @@ export default function Dashboard() {
     // 1. Alle Drills aus Curriculum extrahieren
     let allDrills: Drill[] = [];
     if (curriculum) {
-      allDrills = curriculum.tracks.flatMap((t) => t.modules.flatMap((m) => m.drills));
+      allDrills = curriculum.tracks.flatMap((t) =>
+        t.modules.filter((m) => m.active !== false).flatMap((m) => m.drills)
+      );
     }
     // 2. Alle abgeschlossenen Drills aus allen Sessions
     const completedDrillIds = new Set<string>();
@@ -202,6 +210,7 @@ export default function Dashboard() {
     if (curriculum) {
       for (const track of curriculum.tracks) {
         for (const module of track.modules) {
+          if (module.active === false) continue;
           for (const drill of module.drills) {
             drillToModuleMap.set(drill.id, module.id);
           }
@@ -238,6 +247,7 @@ export default function Dashboard() {
     if (curriculum) {
       for (const track of curriculum.tracks) {
         for (const module of track.modules) {
+          if (module.active === false) continue;
           availableScopes.push(module.id);
         }
       }
@@ -485,6 +495,7 @@ export default function Dashboard() {
 
   const nearAchievements = getTopNearAchievements(getRealSessions(sessions || []), rewardState, 5);
   const recentUnlocked = getRecentUnlockedAchievements(rewardState, 5);
+  const levelProgress = selectLevelProgress(rewardState);
   const nextDrill = derived.recommendedNext[0] as DrillWithCount | undefined;
   const nextDrillTitle = nextDrill
     ? (nextDrill.moduleId ? `${nextDrill.moduleId} · ${nextDrill.title}` : nextDrill.title)
@@ -519,9 +530,11 @@ export default function Dashboard() {
           <div className={styles.kpiHint}>{derived.completed} abgeschlossen</div>
         </Card>
         <Card className={styles.kpiCard} elevation="quiet">
-          <div className={styles.kpiTitle}>Fortschritt</div>
-          <div className={styles.kpiValue}>{drillProgressPct}%</div>
-          <div className={styles.kpiHint}>{derived.completedDrills}/{derived.totalDrills} Drills</div>
+          <div className={styles.kpiTitle}>Level</div>
+          <div className={styles.kpiValue}>{levelProgress.level}</div>
+          <div className={styles.kpiHint}>
+            {levelProgress.xpIntoLevel.toLocaleString('de-DE')} / {levelProgress.xpForNextLevel.toLocaleString('de-DE')} XP
+          </div>
         </Card>
       </div>
 
@@ -615,6 +628,10 @@ export default function Dashboard() {
         />
       </Card>
 
+      {derived.drillAttempts.length > 0 && (
+        <DrillActivityHeatmap attempts={derived.drillAttempts} days={56} />
+      )}
+
       <Card className={styles.recentCard}>
         <h2 className={styles.sectionTitle}>Zuletzt</h2>
         {derived.recentSessions.length === 0 ? (
@@ -698,6 +715,11 @@ export default function Dashboard() {
         <div className={styles.moreBody}>
           <Card>
             <div className={styles.rewardHeaderRow}>
+              <div className={styles.rewardHeaderItem}>
+                <strong>Level {levelProgress.level}</strong>
+                {' · '}
+                {levelProgress.xpIntoLevel.toLocaleString('de-DE')} / {levelProgress.xpForNextLevel.toLocaleString('de-DE')} XP
+              </div>
               <div className={styles.rewardHeaderItem}><strong>PUX!:</strong> {formatPux(rewardState.currency.PUX || 0)}</div>
               <div className={styles.rewardHeaderItem}><strong>Freigeschaltet:</strong> {Object.keys(rewardState.unlockedAchievements || {}).length}</div>
             </div>

@@ -1,11 +1,21 @@
 import type { Session, Checkin } from '../api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import styles from './SessionCard.module.css'
 import { getObservationScopeLabel } from '../utils/observationScope'
 import { getSessionRoute } from '../features/lab/sessionRouting'
 import { isDummySession } from '../utils/sessionEligibility'
+import {
+  formatSidequestLabel,
+  readSidequests,
+  type SessionSidequest,
+} from '../utils/sessionSidequests'
+import {
+  extractSpatialSnapshots,
+  ObservationVisualPreview,
+  type SpatialSnapshot,
+} from './visuals'
 
 interface SessionCardProps {
   session: Session
@@ -142,6 +152,15 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
     ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
     : session.module_id
 
+  const sessionSpatialSnapshots = useMemo(() => {
+    const snaps: SpatialSnapshot[] = []
+    for (const checkin of session.checkins || []) {
+      snaps.push(...extractSpatialSnapshots(checkin.answers, 4))
+      if (snaps.length >= 4) break
+    }
+    return snaps.slice(0, 4)
+  }, [session.checkins])
+
   const availablePhaseDownloads = ['P1', 'P2', 'P3'].filter(phase =>
     session.checkins?.some(checkin => (checkin.phase || '').toUpperCase() === phase)
   )
@@ -222,7 +241,12 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
             Lab · Predict
           </div>
         )}
-         
+
+        {sessionSpatialSnapshots.length > 0 && (
+          <div style={{ marginTop: '0.65rem' }} onClick={(e) => e.stopPropagation()}>
+            <ObservationVisualPreview snapshots={sessionSpatialSnapshots} max={3} size="sm" />
+          </div>
+        )}
 
           {/* Meta Grid */}
           <div className={styles.metaGrid}>
@@ -691,25 +715,82 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
 
                       {isPhaseExpanded && (
                         <div style={{ padding: '0.875rem 1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                          {(() => {
+                            const sidequests = readSidequests(checkin.answers)
+                            if (sidequests.length === 0) return null
+                            return (
+                              <div style={{ marginBottom: '0.75rem' }}>
+                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>
+                                  Special Teams Sidequests
+                                </div>
+                                <div style={{ display: 'grid', gap: '0.4rem' }}>
+                                  {sidequests.map((entry: SessionSidequest) => (
+                                    <details
+                                      key={entry.id}
+                                      style={{
+                                        border: '1px solid rgba(251,191,36,0.25)',
+                                        borderRadius: 8,
+                                        background: 'rgba(251,191,36,0.06)',
+                                        padding: '0.45rem 0.6rem',
+                                      }}
+                                    >
+                                      <summary style={{ cursor: 'pointer', color: '#fde68a', fontSize: '0.84rem', fontWeight: 600 }}>
+                                        {entry.gameTime ? `${entry.gameTime} · ` : ''}
+                                        {checkin.phase || entry.phase} · {formatSidequestLabel(entry)}
+                                        {entry.type === 'numerical_situation_sidequest' ? ` · ${entry.perspective}` : ''}
+                                      </summary>
+                                      <pre
+                                        style={{
+                                          margin: '0.45rem 0 0',
+                                          whiteSpace: 'pre-wrap',
+                                          fontSize: '0.78rem',
+                                          color: 'rgba(255,255,255,0.8)',
+                                        }}
+                                      >
+                                        {JSON.stringify(entry.answers, null, 2)}
+                                      </pre>
+                                    </details>
+                                  ))}
+                                </div>
+                              </div>
+                            )
+                          })()}
                           {checkin.answers && Object.keys(checkin.answers).length > 0 && (
                             <div style={{ marginBottom: '0.75rem' }}>
                               <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>
-                                Antworten
+                                Beobachtungen
                               </div>
-                              <pre
-                                style={{
-                                  margin: 0,
-                                  whiteSpace: 'pre-wrap',
-                                  fontSize: '0.8rem',
-                                  color: 'rgba(255,255,255,0.85)',
-                                  background: 'rgba(0,0,0,0.2)',
-                                  border: '1px solid rgba(255,255,255,0.08)',
-                                  borderRadius: 8,
-                                  padding: 10
-                                }}
-                              >
-                                {JSON.stringify(checkin.answers, null, 2)}
-                              </pre>
+                              <ObservationVisualPreview
+                                answers={checkin.answers}
+                                max={4}
+                                size="md"
+                                showLabels
+                              />
+                              <details style={{ marginTop: '0.55rem' }}>
+                                <summary
+                                  style={{
+                                    cursor: 'pointer',
+                                    fontSize: '0.75rem',
+                                    color: 'rgba(255,255,255,0.55)',
+                                  }}
+                                >
+                                  Rohdaten anzeigen
+                                </summary>
+                                <pre
+                                  style={{
+                                    margin: '0.45rem 0 0',
+                                    whiteSpace: 'pre-wrap',
+                                    fontSize: '0.8rem',
+                                    color: 'rgba(255,255,255,0.85)',
+                                    background: 'rgba(0,0,0,0.2)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: 8,
+                                    padding: 10
+                                  }}
+                                >
+                                  {JSON.stringify(checkin.answers, null, 2)}
+                                </pre>
+                              </details>
                             </div>
                           )}
                           {/* Mini-Feedback entfernt, nur noch microfeedback aus session.microfeedback anzeigen */}

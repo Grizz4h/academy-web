@@ -7,6 +7,8 @@ import RinkIdentityCard from '../components/profile/RinkIdentityCard'
 import ProfileAssetSelector from '../components/profile/ProfileAssetSelector'
 import { useUser } from '../context/UserContext'
 import { useRewards } from '../features/rewards'
+import { isCosmeticOwned, selectLevelProgress, selectTaglineOptions } from '../features/progression'
+import AccountProgressionPanel from '../components/progression/AccountProgressionPanel'
 import { avatarCatalog, DEFAULT_AVATAR_ID } from '../data/profile/avatarCatalog'
 import { bannerCatalog, DEFAULT_BANNER_ID } from '../data/profile/bannerCatalog'
 import { emblemCatalog, DEFAULT_EMBLEM_ID } from '../data/profile/emblemCatalog'
@@ -85,14 +87,51 @@ export default function AccountPage() {
   const identityStats = useMemo(() => {
     const realSessions = getRealSessions(sessions)
     const completed = realSessions.filter((session) => session.state === 'COMPLETED').length
+    const level = selectLevelProgress(rewardState)
     return {
       drillsCompleted: completed,
       scenesCount: Array.isArray(scenesPayload?.scenes) ? scenesPayload.scenes.length : 0,
       topTrack: deriveTopTrack(realSessions),
       memberSince: formatMemberSince(account?.createdAt),
       pux: Number(rewardState?.currency?.PUX || 0),
+      level: level.level,
+      xpLabel: `${level.xpIntoLevel.toLocaleString('de-DE')} / ${level.xpForNextLevel.toLocaleString('de-DE')} XP`,
     }
   }, [sessions, scenesPayload, account?.createdAt, rewardState])
+
+  const avatarItems = useMemo(
+    () => avatarCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
+    [rewardState],
+  )
+  const bannerItems = useMemo(
+    () => bannerCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
+    [rewardState],
+  )
+  const emblemItems = useMemo(
+    () => emblemCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
+    [rewardState],
+  )
+  const ownedTitleIds = useMemo(() => {
+    return new Set(
+      profileTitleCatalog
+        .filter((title) => {
+          const starterId = `title_catalog_${title.id}`
+          return (
+            isCosmeticOwned(rewardState, starterId) ||
+            isCosmeticOwned(rewardState, `title_${title.id}`) ||
+            // Map achievement titles that reuse profileTitleId metadata
+            Object.values(rewardState.unlockedCosmetics || {}).some((unlock) => {
+              const fromCatalog = unlock.cosmeticId
+              return fromCatalog.includes(title.id)
+            }) ||
+            title.id === 'rink_rat' ||
+            title.id === 'hockey_observer'
+          )
+        })
+        .map((title) => title.id),
+    )
+  }, [rewardState])
+  const taglineOptions = selectTaglineOptions(rewardState)
 
   const favoriteTeams = draft?.favoriteLeague
     ? teamsByLeague[draft.favoriteLeague] || []
@@ -196,6 +235,14 @@ export default function AccountPage() {
       </section>
 
       <Card className={styles.sectionCard}>
+        <h2 className={styles.sectionTitle}>Progression & Achievements</h2>
+        <p className={styles.sectionLead}>
+          XP, Level und Freischaltungen entstehen aus echten Academy-Aktivitäten – nicht aus Dummy-Sessions.
+        </p>
+        <AccountProgressionPanel />
+      </Card>
+
+      <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Profil</h2>
 
         <label className={styles.field}>
@@ -224,7 +271,7 @@ export default function AccountPage() {
           <span className={styles.label}>Avatar aus Pool</span>
           <ProfileAssetSelector
             type="avatar"
-            items={avatarCatalog}
+            items={avatarItems}
             selectedId={selectedAvatarId || (draft.avatar?.type === 'upload' ? null : DEFAULT_AVATAR_ID)}
             onSelect={(id) => updateDraft({ avatar: { type: 'catalog', avatarId: id } })}
           />
@@ -301,15 +348,32 @@ export default function AccountPage() {
               value={draft.profileTitle || DEFAULT_PROFILE_TITLE_ID}
               onChange={(e) => updateDraft({ profileTitle: e.target.value || null })}
             >
-              {profileTitleCatalog.map((title) => (
-                <option key={title.id} value={title.id}>{title.label}</option>
-              ))}
+              {profileTitleCatalog
+                .filter((title) => ownedTitleIds.has(title.id) || title.id === (draft.profileTitle || DEFAULT_PROFILE_TITLE_ID))
+                .map((title) => (
+                  <option key={title.id} value={title.id}>{title.label}</option>
+                ))}
             </select>
           </label>
         </div>
 
         <label className={styles.field}>
           <span className={styles.label}>Profil-Tagline</span>
+          {taglineOptions.length > 0 && (
+            <select
+              className="appSelect"
+              value={taglineOptions.find((item) => item.label === draft.profileTagline)?.id || ''}
+              onChange={(e) => {
+                const selected = taglineOptions.find((item) => item.id === e.target.value)
+                if (selected) updateDraft({ profileTagline: selected.label })
+              }}
+            >
+              <option value="">Freie Tagline / keine Vorlage</option>
+              {taglineOptions.map((item) => (
+                <option key={item.id} value={item.id}>{item.label}</option>
+              ))}
+            </select>
+          )}
           <input
             className={styles.input}
             maxLength={120}
@@ -324,7 +388,7 @@ export default function AccountPage() {
           <span className={styles.label}>Banner</span>
           <ProfileAssetSelector
             type="banner"
-            items={bannerCatalog}
+            items={bannerItems}
             selectedId={draft.bannerId || DEFAULT_BANNER_ID}
             onSelect={(id) => updateDraft({ bannerId: id })}
           />
@@ -334,7 +398,7 @@ export default function AccountPage() {
           <span className={styles.label}>Emblem</span>
           <ProfileAssetSelector
             type="emblem"
-            items={emblemCatalog}
+            items={emblemItems}
             selectedId={draft.emblem?.type === 'catalog' ? draft.emblem.emblemId : DEFAULT_EMBLEM_ID}
             onSelect={(id) => updateDraft({ emblem: { type: 'catalog', emblemId: id } })}
           />
@@ -425,6 +489,14 @@ export default function AccountPage() {
           <div>
             <div className={styles.statusLabel}>Top Track</div>
             <div className={styles.statusValue}>{identityStats.topTrack || '—'}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>Level</div>
+            <div className={styles.statusValue}>{identityStats.level}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>XP</div>
+            <div className={styles.statusValue}>{identityStats.xpLabel}</div>
           </div>
           <div>
             <div className={styles.statusLabel}>PUX</div>

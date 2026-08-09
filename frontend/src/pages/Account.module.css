@@ -207,3 +207,170 @@
   color: #fca5a5;
   font-size: 0.86rem;
 }
+
+.progressionWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.levelCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(24, 48, 72, 0.9), rgba(18, 28, 42, 0.95));
+  border: 1px solid rgba(120, 170, 210, 0.22);
+}
+
+.levelHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.levelValue {
+  font-size: 1.55rem;
+  font-weight: 750;
+  color: #f7f7ff;
+}
+
+.levelXpMeta {
+  text-align: right;
+  color: rgba(210, 224, 240, 0.88);
+  font-size: 0.9rem;
+}
+
+.xpBar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.xpBarFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5eead4, #38bdf8);
+}
+
+.subSectionTitle {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+  color: rgba(247, 247, 255, 0.95);
+}
+
+.unlockList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.unlockItem {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  padding: 0.45rem 0.55rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.unlockIcon {
+  width: 1.4rem;
+  text-align: center;
+}
+
+.achievementGroup {
+  margin-bottom: 0.9rem;
+}
+
+.achievementGroupTitle {
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(180, 205, 230, 0.78);
+}
+
+.achievementGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.65rem;
+}
+
+.achievementCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 18, 28, 0.55);
+}
+
+.achievementUnlocked {
+  border-color: rgba(94, 234, 212, 0.35);
+  background: rgba(16, 40, 42, 0.55);
+}
+
+.achievementSecret {
+  opacity: 0.72;
+}
+
+.achievementTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.achievementName {
+  font-weight: 700;
+  color: #f7f7ff;
+}
+
+.achievementDesc {
+  margin: 0;
+  font-size: 0.86rem;
+  color: rgba(210, 224, 240, 0.82);
+  line-height: 1.35;
+}
+
+.achievementProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.achievementRewards {
+  font-size: 0.8rem;
+  color: rgba(186, 230, 253, 0.9);
+}
+
+.rarityPill {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.devRebuildButton {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  border: 1px dashed rgba(250, 204, 21, 0.45);
+  background: rgba(250, 204, 21, 0.08);
+  color: #fde68a;
+  border-radius: 10px;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}

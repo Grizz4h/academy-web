@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { api, type Session, type Drill } from '../api'
+import { buildSceneCreatedEvent } from '../features/progression'
+import { useRewards } from '../features/rewards'
+import { isDummySession } from '../utils/sessionEligibility'
 import { formatGameTimeInput } from '../utils/sceneHelpers'
 
 interface SceneMarkerExtension {
@@ -16,6 +19,7 @@ interface SceneMarkerButtonProps {
 }
 
 export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneMarkerButtonProps) {
+  const { ingestActivityEvents } = useRewards()
   const [showModal, setShowModal] = useState(false)
   const [gameTime, setGameTime] = useState('')
   const [note, setNote] = useState('')
@@ -107,6 +111,18 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
       setShowModal(false)
       setSavedMsg("🎬 " + (scene.scene_code || trimmed) + " gespeichert")
       setTimeout(() => setSavedMsg(null), 2500)
+      if (!isDummySession(session)) {
+        void ingestActivityEvents([
+          buildSceneCreatedEvent({
+            sceneId: scene.id,
+            occurredAt: scene.created_at,
+            sessionId: session.id,
+            drillId: activeDrill?.id,
+            trackId: session.module_id,
+            isDummy: false,
+          }),
+        ])
+      }
     } catch {
       setError('Fehler beim Speichern. Bitte nochmal versuchen.')
     } finally {

@@ -11590,368 +11590,1914 @@
           "drills": [
             {
               "id": "D3_D1",
-              "title": "Entry-Typ erkennen",
-              "drill_type": "period_checkin",
-              "description": "Erkenne, wie Teams die Zone betreten: getragen, gedumpt oder erzwungen.",
+              "title": "Welche Entry-Option ist verfügbar?",
+              "drill_type": "rink_corridor_observation",
+              "description": "Lies die defensive Situation an der offensiven Blue Line und erkenne, welche Entry-Option realistisch verfügbar ist – noch bevor Carry oder Dump bewertet wird.",
               "didactics": {
-                "explanation": "Der Zonen-Eintritt bestimmt, ob ein Team Kontrolle aufbauen kann oder sofort in einen Kampf gerät. Entscheidend ist nicht der Erfolg, sondern die gewählte Option unter den gegebenen Umständen.",
+                "explanation": "Ein Zone Entry beginnt nicht mit der Entscheidung „Carry oder Dump“. Zuerst musst du erkennen, welchen Raum die Defensive überhaupt anbietet.\n\nBeobachte die Blue Line: Ist die Mitte offen? Gibt es Raum außen? Wie eng stehen die Verteidiger? Gibt es Platz hinter ihnen oder Unterstützung neben dem Puckführer?\n\nEntscheide danach, welche Entry-Lösung unter diesen Bedingungen realistisch verfügbar ist.\n\nDu bewertest Verfügbarkeit, nicht Ergebnis. Ein Dump oder Chip kann die beste Lösung sein, wenn die Defense eng steht und Raum hinter ihr existiert. Ein Carry ist nicht automatisch gut, nur weil er gelingt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wie wird die Blue Line überquert?",
-                    "Gibt es Kontrolle beim Eintritt?",
-                    "Ist Unterstützung in Pucknähe vorhanden?"
+                    "Abstand der Verteidiger zur Blue Line",
+                    "Raum zwischen den Verteidigern",
+                    "Raum entlang der Bande",
+                    "Geschwindigkeit des Puckführers",
+                    "Support neben und hinter dem Puck",
+                    "Spieler, die Tiefe attackieren",
+                    "Raum hinter der Defense",
+                    "ob ein kontrollierter Entry überhaupt möglich ist"
                   ],
                   "how_to_decide": [
-                    "Beobachte nur den Moment an der Blue Line",
-                    "Bewerte die Entscheidung, nicht den Ausgang",
-                    "Frage dich: War Kontrolle realistisch möglich?"
+                    "Wenn du den Puckführer für eine Sekunde einfrierst: Welcher Weg über die Blue Line ist gerade wirklich spielbar?",
+                    "Welche Entry-Lösung passt zu genau diesem Raum?",
+                    "Bewerte nur die Situation an der Blue Line, nicht den späteren Ausgang",
+                    "Nutze „Unklar“, „mehrere Optionen“ oder „keine kontrollierte Option“, wenn das die ehrlichste Lesart ist"
                   ],
                   "ignore": [
-                    "Ob danach ein Schuss entsteht",
-                    "Ob der Puck sofort verloren geht"
+                    "Ob später ein Schuss entsteht",
+                    "Ob der Puck verloren geht",
+                    "Ob das Team ein Tor erzielt",
+                    "Ob der Dump erfolgreich recovered wird",
+                    "Systemnamen oder feste Entry-Labels",
+                    "Carry = gut / Dump = schlecht"
                   ]
                 },
-                "learning_hint": "Ein Dump ist nicht schlecht – wenn er bewusst gewählt ist."
+                "learning_hint": "Entry-Entscheidungen entstehen aus Raum, Druck und Support – nicht aus dem Wunsch nach Kontrolle."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "entry_type": "carry"
-                    },
                     "questions": [
-                      "Warum war ein getragener Entry hier möglich?",
-                      "Gab es genügend Unterstützung und Tempo?",
-                      "Wirkte die Entscheidung kontrolliert oder erzwungen?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "entry_type": "dump"
-                    },
-                    "questions": [
-                      "War der Dump bewusst oder aus Mangel an Optionen?",
-                      "Gab es realistische Forecheck-Unterstützung?",
-                      "Wurde Raum hinter der Defense genutzt?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "entry_type": "erzwungen"
-                    },
-                    "questions": [
-                      "Woran hast du erkannt, dass die Entscheidung erzwungen war?",
-                      "Welche Option fehlte?",
-                      "Was hätte ein Reset ermöglicht?"
+                      "Welches Detail an der Defense hat deine Entry-Entscheidung am stärksten verändert?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "blue_line_entry_observation",
+                "rink_preset": "detailed",
+                "observation_count": 3,
+                "observations_key": "entry_option_observations",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "active_selection_group_key": "activeSelectionGroup",
+                "draft_key": "__d3_d1_entry_option_draft",
+                "reflection_enabled": false,
+                "mirror_zones_with_attack_direction": true,
+                "authored_offensive_end": "right",
+                "attack_direction_default": "right",
+                "show_attack_direction_control": true,
+                "preserve_page_scroll": true,
+                "summary_layout": "stacked",
+                "conflict_hint_enabled": false,
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false
+                },
+                "zones": [
                   {
-                    "key": "entry_type",
-                    "type": "radio",
-                    "label": "Entry-Typ",
+                    "id": "left_lane",
+                    "label": "Links außen",
+                    "description": "Außenspur entlang der Bande an der offensiven Blue Line.",
+                    "lateral": "left",
+                    "geometry": {
+                      "x0": 0.58,
+                      "y0": 0.071,
+                      "x1": 0.74,
+                      "y1": 0.357
+                    }
+                  },
+                  {
+                    "id": "middle_lane",
+                    "label": "Mitte",
+                    "description": "Zentraler Weg über die Blue Line.",
+                    "geometry": {
+                      "x0": 0.58,
+                      "y0": 0.357,
+                      "x1": 0.74,
+                      "y1": 0.643
+                    }
+                  },
+                  {
+                    "id": "right_lane",
+                    "label": "Rechts außen",
+                    "description": "Außenspur entlang der Bande an der offensiven Blue Line.",
+                    "lateral": "right",
+                    "geometry": {
+                      "x0": 0.58,
+                      "y0": 0.643,
+                      "x1": 0.74,
+                      "y1": 0.929
+                    }
+                  }
+                ],
+                "selection_groups": [
+                  {
+                    "id": "available_lane",
+                    "key": "availableLane",
+                    "label": "Verfügbarer Weg",
+                    "question": "Welcher Weg über die Blue Line ist am ehesten verfügbar?",
+                    "hint": "Markiere den Korridor mit dem meisten nutzbaren Raum. Das ist eine Raumbeobachtung, keine Systembewertung.",
+                    "zone_ids": [
+                      "left_lane",
+                      "middle_lane",
+                      "right_lane"
+                    ],
+                    "off_rink_options": [
+                      {
+                        "value": "multiple_lanes",
+                        "label": "Mehrere Wege",
+                        "description": "Mehrere Korridore sind ähnlich nutzbar."
+                      },
+                      {
+                        "value": "no_clear_lane",
+                        "label": "Kein klarer Weg",
+                        "description": "Kein Korridor wirkt wirklich spielbar."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die Raumlage an der Blue Line war nicht eindeutig erkennbar."
+                      }
+                    ]
+                  }
+                ],
+                "observation_fields": [
+                  {
+                    "key": "defensiveGap",
+                    "label": "Wie verteidigt die Gegenseite die Blue Line?",
+                    "summary_label": "Defense",
+                    "required": true,
                     "options": [
-                      "carry",
-                      "dump",
-                      "erzwungen"
+                      {
+                        "value": "tight_gap",
+                        "label": "Enger Gap",
+                        "description": "Die Verteidiger stehen nah am Puckführer bzw. an der Blue Line."
+                      },
+                      {
+                        "value": "moderate_gap",
+                        "label": "Mittlerer Gap",
+                        "description": "Etwas Raum ist vorhanden, aber direkter Druck bleibt möglich."
+                      },
+                      {
+                        "value": "deep_gap",
+                        "label": "Tiefer Gap",
+                        "description": "Die Defense zieht sich deutlich zurück und gibt vor der Linie Raum."
+                      },
+                      {
+                        "value": "middle_closed",
+                        "label": "Mitte geschlossen",
+                        "description": "Der zentrale Entry-Weg wird klar priorisiert verteidigt."
+                      },
+                      {
+                        "value": "outside_closed",
+                        "label": "Außen geschlossen",
+                        "description": "Die Bande / Außenspur wird stark kontrolliert."
+                      },
+                      {
+                        "value": "staggered",
+                        "label": "Gestaffelt",
+                        "description": "Die Verteidiger stehen nicht auf einer Linie, sondern unterschiedlich tief."
+                      },
+                      {
+                        "value": "changing",
+                        "label": "Wechselnd",
+                        "description": "Die Gap-Situation verändert sich während der Szene spürbar."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die Verteidigung der Blue Line war nicht klar lesbar."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "key": "entryOption",
+                    "label": "Welche Entry-Lösung bietet sich hier am ehesten an?",
+                    "summary_label": "Realistische Entry-Lösung",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "carry_middle",
+                        "label": "Carry durch die Mitte",
+                        "description": "Der Puckführer kann zentral mit Kontrolle über die Linie kommen."
+                      },
+                      {
+                        "value": "carry_outside",
+                        "label": "Carry außen",
+                        "description": "Der Entry ist entlang der Außenspur realistisch."
+                      },
+                      {
+                        "value": "pass_entry",
+                        "label": "Pass Entry",
+                        "description": "Ein Mitspieler kann über einen Pass kontrolliert über die Linie kommen."
+                      },
+                      {
+                        "value": "chip_behind_defense",
+                        "label": "Chip hinter die Defense",
+                        "description": "Der Puck wird gezielt hinter die Verteidiger gelegt und erlaufen."
+                      },
+                      {
+                        "value": "controlled_dump",
+                        "label": "Kontrollierter Dump",
+                        "description": "Der Puck wird bewusst tief gespielt, sodass ein Forecheck vorbereitet werden kann."
+                      },
+                      {
+                        "value": "hard_dump",
+                        "label": "Hard Dump",
+                        "description": "Der Puck wird ohne unmittelbare kontrollierte Anschlussoption tief gebracht."
+                      },
+                      {
+                        "value": "reset",
+                        "label": "Reset",
+                        "description": "Die Offensive bricht den Versuch ab und baut neu auf."
+                      },
+                      {
+                        "value": "multiple_options",
+                        "label": "Mehrere Optionen",
+                        "description": "Mehrere Entry-Wege sind realistisch."
+                      },
+                      {
+                        "value": "no_controlled_option",
+                        "label": "Keine kontrollierte Option",
+                        "description": "Der Druck nimmt kontrollierte Entries weitgehend weg."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Keine ausreichend klare Entry-Lösung erkennbar."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "enablingFactor",
+                    "label": "Warum ist diese Entry-Option möglich?",
+                    "summary_label": "Möglich durch",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "open_middle",
+                        "label": "Mitte offen",
+                        "description": "Zentraler Raum ist verfügbar."
+                      },
+                      {
+                        "value": "outside_space",
+                        "label": "Außenraum frei",
+                        "description": "Die Verteidigung lässt Platz entlang der Bande."
+                      },
+                      {
+                        "value": "defense_backing_off",
+                        "label": "Defense weicht zurück",
+                        "description": "Die Verteidiger schützen Tiefe stärker als die Blue Line."
+                      },
+                      {
+                        "value": "support_parallel",
+                        "label": "Parallele Unterstützung",
+                        "description": "Ein Mitspieler bleibt als direkte Passoption neben dem Puckführer."
+                      },
+                      {
+                        "value": "depth_runner",
+                        "label": "Tiefenlauf",
+                        "description": "Ein Angreifer attackiert Raum hinter der Defense."
+                      },
+                      {
+                        "value": "weak_side_available",
+                        "label": "Weak Side verfügbar",
+                        "description": "Die Gegenseite bleibt als Entry-Option offen."
+                      },
+                      {
+                        "value": "space_behind_defense",
+                        "label": "Raum hinter der Defense",
+                        "description": "Chip oder Dump kann gezielt hinter die Verteidiger gespielt werden."
+                      },
+                      {
+                        "value": "puck_carrier_speed",
+                        "label": "Tempo des Puckführers",
+                        "description": "Geschwindigkeit zwingt die Defense zurück."
+                      },
+                      {
+                        "value": "defense_overcommitted",
+                        "label": "Defense überlädt eine Seite",
+                        "description": "Ein anderer Korridor wird dadurch frei."
+                      },
+                      {
+                        "value": "no_clear_reason",
+                        "label": "Kein klarer Grund",
+                        "description": "Die Option wirkt möglich, ohne dass ein klarer Faktor heraussticht."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Der Ermöglichungsfaktor war nicht eindeutig."
+                      }
+                    ]
                   }
-                ]
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Welche zweite Option wäre ebenfalls realistisch gewesen?",
+                  "placeholder": "Optional – denke in Alternativen",
+                  "max_chars": 600
+                },
+                "required_observation_fields": [
+                  "availableLane",
+                  "defensiveGap",
+                  "entryOption",
+                  "enablingFactor"
+                ],
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Entry-Situation an der offensiven Blue Line und markiere den verfügbaren Weg.",
+                    "hint": "Friere den Moment kurz ein: Welcher Korridor ist wirklich spielbar?"
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine zweite Entry-Situation und vergleiche Gap und verfügbare Lösung.",
+                    "hint": "Achte auf Druck, Support und Raum hinter der Defense."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene und prüfe, ob Carry, Chip, Dump oder Reset realistischer ist.",
+                    "hint": "Bewerte Verfügbarkeit – nicht den späteren Ausgang."
+                  }
+                ],
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Lies weiter Entries an der Blue Line: Welchen Raum bietet die Defense an – und welche Entry-Option folgt daraus?"
               },
-              "sceneSlug": "Entry-Type"
+              "sceneSlug": "Entry-Option"
             },
             {
               "id": "D3_D2",
-              "title": "Clear-Qualität unter Druck",
-              "drill_type": "period_checkin",
-              "description": "Unterscheide bewusste Clears von reiner Entlastung unter Gegnerdruck.",
+              "title": "Wie wird der Entry unterstützt?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Positioniere Puckführer und relevante Support-Spieler und erkenne, welche Bewegungen ohne Puck den Zone Entry spielbar machen.",
               "didactics": {
-                "explanation": "Ein Clear ist nicht automatisch gut, nur weil der Puck die Zone verlässt. Entscheidend ist, ob Zeit gewonnen, Struktur hergestellt oder nur panisch entlastet wird.",
+                "explanation": "Ein Zone Entry ist selten nur die Entscheidung des Puckführers. Mitspieler öffnen Passwege, attackieren Tiefe, sichern den Puck nach hinten ab oder bereiten nach einem Chip oder Dump den Forecheck vor.\n\nBeobachte deshalb diesmal vor allem die Spieler ohne Puck. Welche Unterstützung sorgt dafür, dass der Puckführer mehr als nur eine einzige Lösung hat?\n\nJe mehr sinnvolle Optionen gleichzeitig bestehen, desto schwerer kann die Defense den Entry auf eine Lösung festlegen.\n\nSupport gilt nicht nur für Carry-Entries: Bei Chip oder Dump kann Unterstützung besonders wichtig sein – wer gewinnt das Race, wer nimmt Inside Position, wer ist zweite Welle?\n\nDu bewertest die vorhandene Unterstützung im Moment des Entries, nicht den späteren Ausgang.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Art des Clears (kontrolliert vs. blind)",
-                    "Drucksituation beim Ausspielen",
-                    "Positionierung der Mitspieler vor dem Clear"
+                    "Spieler auf gleicher Höhe wie der Puckführer",
+                    "Läufe hinter die Defense",
+                    "nachrückender Trailer",
+                    "Rückpassoption",
+                    "Weak-Side-Spieler",
+                    "zentraler Support",
+                    "wer nach Chip/Dump zuerst am Puck sein könnte",
+                    "Abstände zwischen den Angreifern"
                   ],
                   "how_to_decide": [
-                    "Bewerte nur den Moment des Clears",
-                    "Frage dich: Wird Zeit gewonnen oder nur Luft geholt?",
-                    "Achte auf Vorbereitung und Blick vor dem Ausspielen"
+                    "Wenn der Puckführer jetzt seinen ursprünglichen Plan abbrechen müsste: Welche zweite Option hat er sofort?",
+                    "Welche Bewegung eines Mitspielers erzeugt diese Option?",
+                    "Positioniere nur die Spieler, die den Entry unmittelbar unterstützen – exaktes Tracking ist nicht nötig",
+                    "Bewerte Support bei Carry, Chip und Dump gleichermaßen",
+                    "Nutze „Unklar“ oder „wenig Support“, wenn das die ehrlichste Lesart ist"
                   ],
                   "ignore": [
-                    "Ob der Clear sofort zurückkommt",
-                    "Was im nächsten Angriff passiert"
+                    "Ob der Entry tatsächlich gelingt",
+                    "Ob der Pass ankommt",
+                    "Wer den Dump gewinnt",
+                    "Ob danach ein Schuss entsteht",
+                    "Systemnamen oder feste Entry-Labels",
+                    "bereits lange etablierte Offensive Zone",
+                    "reinen Forecheck mehrere Sekunden nach dem Dump"
                   ]
                 },
                 "inline_explanations": {
-                  "kontrolliert": {
-                    "meaning": "Der Clear ist vorbereitet, gezielt und verschafft dem Team Zeit oder Ordnung."
+                  "parallel_support": {
+                    "meaning": "Mitspieler bewegt sich auf ähnlicher Höhe und bleibt als kurze Passoption verfügbar."
                   },
-                  "unter_druck": {
-                    "meaning": "Der Clear erfolgt unter starkem Druck, aber mit bewusster Entscheidung (z. B. über Bande, hoch raus)."
+                  "depth_run": {
+                    "meaning": "Ein Angreifer attackiert Raum hinter der letzten defensiven Linie."
                   },
-                  "panik": {
-                    "meaning": "Der Puck wird ohne Blick, Vorbereitung oder Struktur einfach weggeschlagen."
+                  "trailer": {
+                    "meaning": "Später nachrückende Option hinter dem ersten Angriff."
+                  },
+                  "support_behind_puck": {
+                    "meaning": "Rückwärtige Unterstützung für Reset, Drop oder Absicherung."
+                  },
+                  "multiple_layers": {
+                    "meaning": "Mehrere Angreifer besetzen unterschiedliche Tiefenstufen und erzeugen dadurch verschiedene Lösungen gleichzeitig."
                   }
                 },
-                "learning_hint": "Nicht jeder kontrollierte Clear bleibt im Besitz – aber jeder gute Clear kauft Zeit."
+                "learning_hint": "Nicht nur „Was macht der Puckführer?“ – sondern „Was machen die anderen, damit der Entry funktioniert?“"
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "clear_type": "kontrolliert"
-                    },
                     "questions": [
-                      "Woran hast du erkannt, dass der Clear bewusst gewählt war?",
-                      "Wurde Zeit für einen Wechsel oder Neuaufbau gewonnen?",
-                      "Wirkte das Team danach geordneter?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "clear_type": "unter Druck"
-                    },
-                    "questions": [
-                      "Was machte den Clear trotz Druck sinnvoll?",
-                      "Gab es eine bessere Option oder war das Maximum erreicht?",
-                      "Wie knapp war das Zeitfenster?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "clear_type": "panik"
-                    },
-                    "questions": [
-                      "Woran hast du die Panik erkannt?",
-                      "Welche minimale Vorbereitung hätte geholfen?",
-                      "War der Druck wirklich so hoch oder nur gefühlt?"
+                      "Welche zweite Option hätte der Puckführer ohne den Support nicht gehabt?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "defensive_structure",
+                "rink_preset": "detailed",
+                "observation_count": 3,
+                "observations_key": "entry_support_observations",
+                "player_positions_key": "playerPositions",
+                "note_key": "observationNote",
+                "note_label": "Welche Support-Bewegung wäre dir entgangen, wenn du nur den Puck beobachtet hättest?",
+                "note_placeholder": "Optional",
+                "note_max_chars": 600,
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "reflection_enabled": false,
+                "show_attack_direction_control": true,
+                "attack_direction_default": "right",
+                "mirror_bubbles_with_attack_direction": true,
+                "summary_layout": "stacked",
+                "hide_positions_in_summary": true,
+                "selection_label": "Wo befinden sich die wichtigsten Unterstützer des Puckführers?",
+                "location_label": "Positioniere den Puckführer (Puck) und drei relevante Support-Spieler (S1–S3). Exaktes Tracking ist nicht nötig – nur die Spieler, die den Entry unmittelbar unterstützen.",
+                "observe_hint": "Geeignet sind Situationen unmittelbar vor und während des Überquerens der offensiven Blue Line – inklusive Chip/Dump mit erkennbarem Support.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false
+                },
+                "position_bubbles": [
                   {
-                    "key": "clear_type",
-                    "type": "radio",
-                    "label": "Clear-Typ",
+                    "value": "P",
+                    "label": "Puck",
+                    "role": "puck_carrier",
+                    "emphasis": "carrier",
+                    "start_x": 0.58,
+                    "start_y": 0.5
+                  },
+                  {
+                    "value": "S1",
+                    "label": "S1",
+                    "role": "support",
+                    "start_x": 0.58,
+                    "start_y": 0.28
+                  },
+                  {
+                    "value": "S2",
+                    "label": "S2",
+                    "role": "support",
+                    "start_x": 0.58,
+                    "start_y": 0.72
+                  },
+                  {
+                    "value": "S3",
+                    "label": "S3",
+                    "role": "support",
+                    "start_x": 0.48,
+                    "start_y": 0.5
+                  }
+                ],
+                "observation_fields": [
+                  {
+                    "key": "primarySupport",
+                    "label": "Welche Unterstützung macht den Entry hauptsächlich spielbar?",
+                    "summary_label": "Hauptsupport",
+                    "required": true,
                     "options": [
-                      "kontrolliert",
-                      "unter Druck",
-                      "panik"
+                      {
+                        "value": "parallel_support",
+                        "label": "Parallele Unterstützung",
+                        "description": "Ein Mitspieler bleibt auf ähnlicher Höhe als direkte Passoption verfügbar."
+                      },
+                      {
+                        "value": "depth_run",
+                        "label": "Tiefenlauf",
+                        "description": "Ein Angreifer attackiert Raum hinter der Defense."
+                      },
+                      {
+                        "value": "trailer",
+                        "label": "Trailer",
+                        "description": "Ein später nachrückender Spieler bietet eine zweite Angriffswelle."
+                      },
+                      {
+                        "value": "support_behind_puck",
+                        "label": "Support hinter dem Puck",
+                        "description": "Eine sichere Rückpass- oder Reset-Option bleibt vorhanden."
+                      },
+                      {
+                        "value": "weak_side_option",
+                        "label": "Weak-Side-Option",
+                        "description": "Die puckferne Seite bleibt als alternative Entry-Lösung spielbar."
+                      },
+                      {
+                        "value": "middle_lane_support",
+                        "label": "Unterstützung durch die Mitte",
+                        "description": "Ein Spieler hält den zentralen Lane als direkte Option offen."
+                      },
+                      {
+                        "value": "forecheck_support",
+                        "label": "Forecheck-Support",
+                        "description": "Bei Chip oder Dump positionieren sich Mitspieler so, dass der Puck sofort attackiert werden kann."
+                      },
+                      {
+                        "value": "multiple_supports",
+                        "label": "Mehrere Support-Arten",
+                        "description": "Mehrere Funktionen sind gleichzeitig relevant."
+                      },
+                      {
+                        "value": "little_support",
+                        "label": "Wenig Support",
+                        "description": "Der Puckführer ist weitgehend isoliert."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die Unterstützung war nicht eindeutig erkennbar."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "key": "supportShape",
+                    "label": "Wie ist der Support um den Puckführer gestaffelt?",
+                    "summary_label": "Staffelung",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "same_layer",
+                        "label": "Gleiche Ebene",
+                        "description": "Mehrere Spieler bewegen sich ungefähr auf gleicher Höhe."
+                      },
+                      {
+                        "value": "ahead_of_puck",
+                        "label": "Vor dem Puck",
+                        "description": "Support attackiert hauptsächlich Raum hinter der Defense."
+                      },
+                      {
+                        "value": "behind_puck",
+                        "label": "Hinter dem Puck",
+                        "description": "Absicherung und Reset stehen im Vordergrund."
+                      },
+                      {
+                        "value": "multiple_layers",
+                        "label": "Mehrere Ebenen",
+                        "description": "Vor, neben und hinter dem Puck existieren gleichzeitig Optionen."
+                      },
+                      {
+                        "value": "wide_support",
+                        "label": "Breiter Support",
+                        "description": "Die Offensive nutzt mehrere horizontale Korridore."
+                      },
+                      {
+                        "value": "central_support",
+                        "label": "Zentraler Support",
+                        "description": "Mehrere Optionen konzentrieren sich rund um die Mitte."
+                      },
+                      {
+                        "value": "scattered",
+                        "label": "Verstreut",
+                        "description": "Die Angreifer sind nur schlecht miteinander verbunden."
+                      },
+                      {
+                        "value": "changing",
+                        "label": "Wechselnd",
+                        "description": "Die Staffelung verändert sich während der Szene spürbar."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Keine stabile Staffelung erkennbar."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "createdOption",
+                    "label": "Welche zusätzliche Entscheidung erhält der Puckführer durch den Support?",
+                    "summary_label": "Erzeugte Option",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "short_pass",
+                        "label": "Kurzer Pass",
+                        "description": "Direkte sichere Anschlussoption."
+                      },
+                      {
+                        "value": "pass_to_depth",
+                        "label": "Pass in die Tiefe",
+                        "description": "Ein Mitspieler kann hinter oder zwischen die Verteidiger angespielt werden."
+                      },
+                      {
+                        "value": "weak_side_pass",
+                        "label": "Pass auf die Weak Side",
+                        "description": "Die Gegenseite wird als Entry-Option verfügbar."
+                      },
+                      {
+                        "value": "drop_or_reset",
+                        "label": "Drop / Reset",
+                        "description": "Der Puck kann kontrolliert zurückgelegt werden."
+                      },
+                      {
+                        "value": "chip_with_recovery",
+                        "label": "Chip mit Recovery",
+                        "description": "Ein Mitspieler kann einen bewusst hinter die Defense gelegten Puck erlaufen."
+                      },
+                      {
+                        "value": "dump_with_forecheck",
+                        "label": "Dump mit vorbereitetem Forecheck",
+                        "description": "Mehrere Spieler können unmittelbar Druck auf den tief gespielten Puck ausüben."
+                      },
+                      {
+                        "value": "carry_with_support",
+                        "label": "Carry mit Support",
+                        "description": "Der Puckführer kann weitertragen, ohne komplett isoliert zu sein."
+                      },
+                      {
+                        "value": "multiple_options",
+                        "label": "Mehrere Optionen",
+                        "description": "Mehrere Anschlusswege entstehen gleichzeitig."
+                      },
+                      {
+                        "value": "no_clear_option",
+                        "label": "Keine klare Anschlussoption",
+                        "description": "Trotz Bewegung bleibt dem Puckführer kaum eine zweite Lösung."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die erzeugte Option war nicht eindeutig."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "isolationLevel",
+                    "label": "Wie abhängig ist der Entry vom Puckführer allein?",
+                    "summary_label": "Isolation",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "well_supported",
+                        "label": "Sehr gut unterstützt",
+                        "description": "Mehrere sinnvolle Anschlussoptionen sind gleichzeitig vorhanden."
+                      },
+                      {
+                        "value": "mostly_supported",
+                        "label": "Überwiegend unterstützt",
+                        "description": "Support ist klar vorhanden, einzelne Lücken bleiben."
+                      },
+                      {
+                        "value": "partly_isolated",
+                        "label": "Teilweise isoliert",
+                        "description": "Der Puckführer hat nur eingeschränkte Hilfe."
+                      },
+                      {
+                        "value": "strongly_isolated",
+                        "label": "Stark isoliert",
+                        "description": "Der Entry hängt weitgehend am Einzelspieler."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Isolation vs. Support war nicht klar lesbar."
+                      }
+                    ]
                   }
-                ]
+                ],
+                "required_observation_fields": [
+                  "primarySupport",
+                  "supportShape",
+                  "createdOption",
+                  "isolationLevel"
+                ],
+                "required_position_groups": [
+                  {
+                    "key": "playerPositions",
+                    "count": 4
+                  }
+                ],
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde einen Entry-Versuch und positioniere Puckführer plus relevante Support-Spieler.",
+                    "hint": "Frage dich: Welche zweite Option hat der Puckführer sofort, wenn der Plan scheitert?"
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Finde eine zweite Entry-Situation und vergleiche Staffelung und Isolation.",
+                    "hint": "Achte auch auf Chip/Dump mit vorbereitetem Forecheck-Support."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene und prüfe, welche Support-Bewegung die entscheidende Option erzeugt.",
+                    "hint": "Bewerte vorhandene Unterstützung – nicht den späteren Ausgang."
+                  }
+                ],
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Schau weiter auf die Spieler ohne Puck: Welche Unterstützung macht den Entry spielbar und hält Alternativen offen?"
               },
-              "sceneSlug": "Clear-Quality"
+              "sceneSlug": "Entry-Support"
             },
             {
               "id": "D3_D3",
-              "title": "Entry-Entscheidung: Carry oder Dump",
+              "title": "Was entsteht unmittelbar nach der Blue Line?",
               "drill_type": "period_checkin",
-              "description": "Beurteile, ob ein Entry bewusst gewählt oder erzwungen ist.",
+              "description": "Bewerte nicht, ob der Entry „drin“ war – sondern welche spielbare Anschluss-Situation in den ersten Sekunden danach entsteht.",
               "didactics": {
-                "explanation": "Ein Entry ist keine Stilfrage, sondern eine Entscheidungsfrage. Carry und Dump können beide richtig sein – abhängig von Tempo, Abstand und Unterstützung.",
+                "explanation": "Über die Blue Line zu kommen ist nur der erste Schritt. Entscheidend ist, was unmittelbar danach entsteht.\n\nBeobachte deshalb die ersten Sekunden nach dem Entry: Bleibt der Puck kontrolliert? Muss erst ein Battle gewonnen werden? Entsteht ein Forecheck oder sogar direkt eine gefährliche Aktion?\n\nBewerte nicht nur, ob der Entry „geklappt“ hat. Frage dich, welche nächste spielbare Situation er erzeugt.\n\nEin Entry kann sinnvoll sein, obwohl kein Shot entsteht oder zunächst ein Battle folgt – wenn daraus ein organisierter Forecheck oder stabile Zone Presence entsteht. Umgekehrt kann ein spektakulärer Carry sofort in Isolation und Turnover enden.\n\nDu beschreibst, was aus der Entscheidung entsteht – nicht, ob sie objektiv richtig war. Und du bleibst im kurzen Fenster direkt nach dem Entry, nicht in der späteren OZ-Struktur.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Tempo des Puckführers beim Erreichen der Blue Line",
-                    "Abstand und Geschwindigkeit der Mitspieler",
-                    "Positionierung der gegnerischen Verteidiger"
+                    "erster Kontakt nach der Blue Line",
+                    "Abstand der Support-Spieler",
+                    "erste Passoption",
+                    "Tempo nach dem Entry",
+                    "Reaktion der Verteidiger",
+                    "ob die Defense den Gap wiederherstellt",
+                    "Tiefe hinter der Defense",
+                    "Forecheck nach Chip / Dump",
+                    "ob der Puckführer isoliert wird"
                   ],
                   "how_to_decide": [
-                    "Beurteile die Entscheidung vor der Blue Line",
-                    "Frage dich: Gab es eine echte Wahl?",
-                    "Bewerte Vorbereitung, nicht Mut"
+                    "Wenn du zwei Sekunden nach der Blue Line stoppst: Wer kontrolliert die Situation – und welche nächste Aktion ist realistisch verfügbar?",
+                    "Bewerte Carry, Pass, Chip und Dump gleichermaßen",
+                    "Forecheck nach Dump ist eine valide Entry-Folge",
+                    "Shot bedeutet nicht automatisch guten Entry; Turnover nicht automatisch falsche Entscheidung",
+                    "Sobald sich das Team stabil in der OZ aufgebaut hat, ist dieses Beobachtungsfenster vorbei"
                   ],
                   "ignore": [
-                    "Ob der Puckbesitz danach gehalten wird",
-                    "Ob daraus eine Torchance entsteht"
+                    "20 Sekunden OZ-Possession später",
+                    "Tor oder mehrere Folgeabschlüsse",
+                    "komplette Forecheck-Sequenz",
+                    "gesamtes Shift-Ergebnis",
+                    "bereits länger etablierte OZ-Struktur",
+                    "Exit-/Clear-Entscheidungen",
+                    "Systemnamen",
+                    "Carry = gut / Dump = schlecht"
                   ]
                 },
-                "inline_explanations": {
-                  "carry": {
-                    "meaning": "Der Puck wird kontrolliert über die Blue Line geführt, mit Anschluss- oder Schutzoption."
-                  },
-                  "dump": {
-                    "meaning": "Der Puck wird bewusst tief gespielt, um Raum, Wechsel oder Zugriff zu erzwingen."
-                  },
-                  "erzwungen": {
-                    "meaning": "Die Entscheidung entsteht aus Zeit- oder Raumverlust, nicht aus Planung."
-                  }
-                },
-                "learning_hint": "Gute Entries entstehen aus Vorbereitung – nicht aus Hoffnung."
+                "learning_hint": "Über die Blue Line zu kommen ist noch kein erfolgreicher Entry – entscheidend ist die spielbare nächste Situation."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "entry_type": "carry"
-                    },
                     "questions": [
-                      "Wodurch war der Carry vorbereitet?",
-                      "Gab es Tempo- und Anschlussoptionen?",
-                      "Wirkte die Entscheidung stabil oder riskant?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "entry_type": "dump"
-                    },
-                    "questions": [
-                      "Warum war der Dump hier sinnvoll?",
-                      "Sollte Raum gewonnen oder Druck vermieden werden?",
-                      "War der Dump geplant oder reaktiv?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "entry_type": "erzwungen"
-                    },
-                    "questions": [
-                      "Was ging vor der Blue Line verloren?",
-                      "Welche Information fehlte für eine saubere Entscheidung?",
-                      "Hätte ein früherer Reset geholfen?"
+                      "Woran hast du am frühesten erkannt, ob aus dem Entry echte Kontrolle entstehen würde?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "decision_cause_diagnosis",
+                "sample_key": "entry_followup_observations",
+                "sample_label": "Beobachtung",
+                "sample_add_label": "+ Beobachtung",
+                "sample_save_label": "Beobachtung speichern",
+                "required_samples": 3,
+                "max_samples_per_phase": 3,
+                "enable_checkin": false,
+                "phase1_title": "Anschluss nach der Blue Line",
+                "phase1_description": "Erfasse drei unabhängige Entry-Sequenzen und bewerte nur die ersten 2–4 Sekunden danach: Zustand, Grund, erste Anschlussoption und Stabilität.",
+                "observation_focus": "Nutze die verbleibende Zeit, um weitere Entries im kurzen Anschlussfenster zu lesen: Kontrolle, Forecheck, direkter Angriff oder Turnover?",
+                "aggregate_by": "immediateState",
+                "aggregation_totals_key": "immediate_state_totals",
+                "observed_dominant_key": "dominant_immediate_state_observed",
+                "aggregation_label": "Häufig beobachtete Zustände",
+                "summary_layout": "stacked",
+                "sample_note_key": "note",
+                "sample_note_label": "Was war der erste Moment, an dem klar wurde, ob der Entry wirklich Kontrolle erzeugt?",
+                "sample_note_max_chars": 600,
+                "missions": [
                   {
-                    "key": "entry_type",
-                    "type": "radio",
-                    "label": "Entry-Entscheidung",
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde einen Zone Entry und erfasse, was in den ersten Sekunden danach entsteht.",
+                    "hint": "Stoppe gedanklich zwei Sekunden nach der Blue Line: Wer kontrolliert – und welche nächste Aktion ist spielbar?"
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Erfasse eine zweite unabhängige Entry-Folge – auch wenn daraus ein Forecheck oder Turnover wird.",
+                    "hint": "Carry, Chip und Dump sind gleichermaßen valide. Bewerte den Nutzen, nicht den Stil."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene und achte besonders auf Stabilität der Zone Presence.",
+                    "hint": "Bleibe im kurzen Fenster – nicht in der späteren OZ-Struktur."
+                  }
+                ],
+                "sample_fields": [
+                  {
+                    "key": "immediateState",
+                    "label": "Direkt nach Entry",
+                    "question": "Was entsteht in den ersten Sekunden nach der Blue Line?",
                     "options": [
-                      "carry",
-                      "dump",
-                      "erzwungen"
+                      {
+                        "value": "immediate_control",
+                        "label": "Direkte Kontrolle",
+                        "description": "Das Team behält den Puck und kann sofort weiterspielen."
+                      },
+                      {
+                        "value": "control_after_battle",
+                        "label": "Kontrolle nach kurzem Kampf",
+                        "description": "Der Puck ist zunächst umkämpft, wird aber anschließend kontrolliert."
+                      },
+                      {
+                        "value": "forecheck_established",
+                        "label": "Forecheck hergestellt",
+                        "description": "Der Entry führt bewusst in eine tiefe Puckjagd mit klarer Unterstützung."
+                      },
+                      {
+                        "value": "direct_attack",
+                        "label": "Direkter Angriff",
+                        "description": "Der Entry erzeugt unmittelbar Shot-, Drive- oder gefährliche Passoption."
+                      },
+                      {
+                        "value": "temporary_zone_presence",
+                        "label": "Nur kurzfristige Zone Presence",
+                        "description": "Das Team ist zwar in der Zone, aber ohne stabile Anschlusskontrolle."
+                      },
+                      {
+                        "value": "immediate_turnover",
+                        "label": "Sofortiger Turnover",
+                        "description": "Die Defense gewinnt den Puck direkt zurück."
+                      },
+                      {
+                        "value": "offside_or_reset",
+                        "label": "Offside / Reset",
+                        "description": "Der Angriff muss neu aufbauen."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Der unmittelbare Zustand war nicht eindeutig."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "key": "primaryReason",
+                    "label": "Grund",
+                    "question": "Was ist der wichtigste Grund dafür?",
+                    "options": [
+                      {
+                        "value": "support_close",
+                        "label": "Support ist nah",
+                        "description": "Mehrere Anschlussoptionen sind sofort erreichbar."
+                      },
+                      {
+                        "value": "speed_advantage",
+                        "label": "Tempovorteil",
+                        "description": "Die Offensive kommt mit Geschwindigkeit in die Zone."
+                      },
+                      {
+                        "value": "defense_backed_off",
+                        "label": "Defense wurde zurückgedrängt",
+                        "description": "Die Verteidiger müssen weiter Richtung eigenes Tor weichen."
+                      },
+                      {
+                        "value": "good_first_pass",
+                        "label": "Guter erster Pass",
+                        "description": "Der erste Pass nach dem Entry verbindet die Offensive sofort weiter."
+                      },
+                      {
+                        "value": "good_puck_protection",
+                        "label": "Gute Pucksicherung",
+                        "description": "Der Puckführer hält den Puck trotz Druck kontrolliert."
+                      },
+                      {
+                        "value": "depth_support",
+                        "label": "Tiefensupport",
+                        "description": "Ein Mitspieler ist sofort hinter der Defense oder tief in der Zone verfügbar."
+                      },
+                      {
+                        "value": "forecheck_support",
+                        "label": "Forecheck-Support",
+                        "description": "Mehrere Spieler können einen tiefen Puck unmittelbar attackieren."
+                      },
+                      {
+                        "value": "poor_puck_control",
+                        "label": "Schlechte Puckkontrolle",
+                        "description": "Der Entry wird durch Handling-/Annahmeprobleme instabil."
+                      },
+                      {
+                        "value": "carrier_isolated",
+                        "label": "Puckführer isoliert",
+                        "description": "Zu wenig direkte Unterstützung."
+                      },
+                      {
+                        "value": "defense_gap_recovers",
+                        "label": "Defense stellt den Gap wieder her",
+                        "description": "Die Verteidigung gewinnt unmittelbar wieder Zugriff."
+                      },
+                      {
+                        "value": "poor_support",
+                        "label": "Support fehlt",
+                        "description": "Die übrigen Angreifer sind zu weit entfernt oder schlecht gestaffelt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Der Hauptgrund war nicht klar erkennbar."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "firstOption",
+                    "label": "Erste Anschlussoption",
+                    "question": "Welche nächste Aktion wird durch den Entry möglich?",
+                    "options": [
+                      {
+                        "value": "short_pass",
+                        "label": "Kurzer Pass",
+                        "description": "Eine nahe sichere Anschlussoption ist vorhanden."
+                      },
+                      {
+                        "value": "pass_to_middle",
+                        "label": "Pass in die Mitte",
+                        "description": "Zentraler Raum wird direkt spielbar."
+                      },
+                      {
+                        "value": "pass_to_weak_side",
+                        "label": "Pass auf die Weak Side",
+                        "description": "Die Gegenseite kann genutzt werden."
+                      },
+                      {
+                        "value": "shot",
+                        "label": "Abschluss",
+                        "description": "Ein Shot entsteht unmittelbar."
+                      },
+                      {
+                        "value": "drive_to_net",
+                        "label": "Drive zum Tor",
+                        "description": "Der Puckführer oder ein Mitspieler kann direkt Richtung Net Front attackieren."
+                      },
+                      {
+                        "value": "cycle_or_low_play",
+                        "label": "Cycle / Low Play",
+                        "description": "Die Offensive kann die Situation tief weiterführen."
+                      },
+                      {
+                        "value": "protect_and_wait",
+                        "label": "Puck sichern und warten",
+                        "description": "Besitz wird gehalten, bis neue Optionen entstehen."
+                      },
+                      {
+                        "value": "forecheck_pressure",
+                        "label": "Forecheck-Druck",
+                        "description": "Die nächste Aktion ist aktiver Zugriff auf einen tiefen Puck."
+                      },
+                      {
+                        "value": "reset",
+                        "label": "Reset",
+                        "description": "Der Angriff muss Struktur neu aufbauen."
+                      },
+                      {
+                        "value": "no_clear_option",
+                        "label": "Keine klare Option",
+                        "description": "Es entsteht keine klar spielbare nächste Aktion."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die erste Anschlussoption war nicht eindeutig."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "controlStability",
+                    "label": "Stabilität",
+                    "question": "Wie stabil ist die Zone Presence nach dem Entry?",
+                    "options": [
+                      {
+                        "value": "stable_control",
+                        "label": "Stabile Kontrolle",
+                        "description": "Die entstandene Zone Presence wirkt belastbar."
+                      },
+                      {
+                        "value": "mostly_stable",
+                        "label": "Überwiegend stabil",
+                        "description": "Kontrolle ist vorhanden, aber noch unter Druck."
+                      },
+                      {
+                        "value": "fragile",
+                        "label": "Fragil",
+                        "description": "Die Situation kippt leicht wieder zugunsten der Defense."
+                      },
+                      {
+                        "value": "only_momentary",
+                        "label": "Nur kurzzeitig",
+                        "description": "Zone Presence entsteht nur für einen Moment."
+                      },
+                      {
+                        "value": "no_control",
+                        "label": "Keine Kontrolle",
+                        "description": "Es entsteht keine belastbare Zone Presence."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die Stabilität war nicht klar lesbar."
+                      }
+                    ]
                   }
                 ]
               },
-              "sceneSlug": "Carry-or-Dump"
+              "sceneSlug": "After-Blue-Line"
             },
             {
               "id": "D3_D4",
-              "title": "Retrieval & zweiter Zugriff",
-              "drill_type": "period_checkin",
-              "description": "Beurteile, ob nach einem Dump echter Zugriff entsteht oder der Puck sofort verloren geht.",
+              "title": "Wie befreit sich ein Team unter Druck?",
+              "drill_type": "clickable_rink_observation",
+              "description": "Markiere Start und Ziel der Exit-/Clear-Lösung und erkenne, wie stark ein Team unter Druck bewusst vereinfacht – ohne Clear automatisch als Fehler zu werten.",
               "didactics": {
-                "explanation": "Ein Dump ist nur dann sinnvoll, wenn er einen zweiten Zugriff ermöglicht. Ohne Staffelung, Timing und Laufwege wird aus Raumgewinn sofortiger Kontrollverlust.",
+                "explanation": "Unter Druck ist ein kontrollierter Breakout nicht immer realistisch. Gute Teams erkennen, wann sie weiter kombinieren können – und wann sie bewusst vereinfachen müssen.\n\nBeobachte, welche Exit- oder Clear-Lösung gewählt wird und warum. Entscheidend ist nicht, ob der Puck besonders schön aus der Zone kommt, sondern wie viel Risiko und Kontrolle in der Situation überhaupt möglich waren.\n\nEin einfacher Clear kann unter hohem Druck die richtige Lösung sein. Ebenso kann Icing ein bewusster Trade-off sein, wenn die unmittelbare Gefahr höher bewertet wird als der Nachteil eines Faceoffs.\n\nDu beschreibst die Entscheidungslogik unter Druck – nicht, ob der Exit später „erfolgreich“ war.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wer ist erster Spieler am Puck?",
-                    "Abstände und Laufwege der nachrückenden Spieler",
-                    "Positionierung der Verteidiger beim Retrieval"
+                    "Zeit des Puckführers",
+                    "Forecheck-Druck",
+                    "kurze Support-Optionen",
+                    "Mitte offen / geschlossen",
+                    "Bande offen / geschlossen",
+                    "Spieler hinter dem ersten Druck",
+                    "Erschöpfung / möglicher Wechsel",
+                    "gefährlicher Puckraum",
+                    "ob der Puck bewusst oder nur panisch gespielt wird"
                   ],
                   "how_to_decide": [
-                    "Beobachte nur den Moment des Puckgewinns oder -verlusts",
-                    "Bewerte Timing und Staffelung, nicht Härte",
-                    "Frage dich: Entsteht sofort neue Kontrolle?"
+                    "Welche kontrollierte Option wäre theoretisch verfügbar gewesen – und warum war sie hier realistisch oder unrealistisch?",
+                    "Wie stark musste das Team vereinfachen, um die Gefahr zu lösen?",
+                    "Markiere grob Start und Ziel der Lösung – der Pfeil ersetzt keine semantische Einordnung",
+                    "Unterscheide kontrollierten Exit, Chip, Board Clear, hohen Clear und reine Befreiung",
+                    "Bewerte Prozess und verfügbare Optionen – nicht nur den späteren Besitz"
                   ],
                   "ignore": [
-                    "Ob später eine Torchance entsteht",
-                    "Einzelaktionen nach dem Retrieval"
+                    "völlig freier Breakout ohne Druck",
+                    "neutraler Zone Exit ohne Forecheck",
+                    "langer Offensivaufbau",
+                    "zufälliger Puck ohne klaren Besitz",
+                    "bereits erfolgter Clear ohne Entscheidungsfenster",
+                    "Clear = Fehler",
+                    "erfolgreicher Exit = automatisch gute Entscheidung",
+                    "Icing = automatisch schlechte Entscheidung",
+                    "Systemnamen"
                   ]
                 },
-                "inline_explanations": {
-                  "sauber": {
-                    "meaning": "Der Puck wird kontrolliert gewonnen oder gesichert, Anschluss ist sofort vorhanden."
-                  },
-                  "chaotisch": {
-                    "meaning": "Der Zugriff ist unkoordiniert, Abstände stimmen nicht, Kontrolle entsteht nur zufällig."
-                  },
-                  "kein_zugriff": {
-                    "meaning": "Der Puck geht direkt verloren oder wird ohne Druck geklärt."
-                  }
-                },
-                "learning_hint": "Der zweite Zugriff entscheidet, ob ein Dump Angriff oder Geschenk ist."
+                "learning_hint": "Nicht jede Situation erlaubt einen sauberen Breakout. Unter Druck kann bewusste Vereinfachung die richtige Entscheidung sein."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "retrieval": "sauber"
-                    },
                     "questions": [
-                      "Wodurch war der Zugriff gut vorbereitet?",
-                      "Welche Laufwege oder Abstände waren entscheidend?",
-                      "Wirkte das Timing abgestimmt?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "retrieval": "chaotisch"
-                    },
-                    "questions": [
-                      "Was hat die Kontrolle instabil gemacht?",
-                      "Lag es an Timing, Abstand oder Rollen?",
-                      "War der Zugriff planlos oder nur schlecht ausgeführt?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "retrieval": "kein_zugriff"
-                    },
-                    "questions": [
-                      "Warum kam kein echter Zugriff zustande?",
-                      "War der Dump an sich schon problematisch?",
-                      "Welche minimale Anpassung hätte Zugriff ermöglicht?"
+                      "Woran hast du erkannt, dass Vereinfachung hier sinnvoller war als ein weiterer kontrollierter Pass?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mode": "directional_path_observation",
+                "observation_count": 3,
+                "observations_key": "pressure_exit_observations",
+                "path_key": "path",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "allow_reposition": true,
+                "coordinate_system": "normalized",
+                "rink_preset": "detailed",
+                "reflection_enabled": false,
+                "show_attack_direction_control": true,
+                "attack_direction_default": "right",
+                "summary_layout": "stacked",
+                "hide_path_in_summary": true,
+                "connection": {
+                  "type": "arrow"
+                },
+                "points": [
                   {
-                    "key": "retrieval",
-                    "type": "radio",
-                    "label": "Retrieval",
+                    "id": "start",
+                    "label": "Start",
+                    "required": true
+                  },
+                  {
+                    "id": "end",
+                    "label": "Ziel",
+                    "required": true
+                  }
+                ],
+                "path_step_labels": {
+                  "set_start": "1/2 Start der Exit-/Clear-Lösung setzen",
+                  "set_end": "2/2 Ziel der Lösung setzen",
+                  "complete": "Pfad gesetzt"
+                },
+                "reset_path_label": "Pfad zurücksetzen",
+                "selection_label": "Wo beginnt die Exit-/Clear-Lösung – und wohin wird der Puck gespielt?",
+                "location_label": "Setze zuerst den Startpunkt der Lösung und danach das Ziel. Der Pfeil beschreibt nur die grobe Richtung – die Semantik kommt aus den Fragen.",
+                "observe_hint": "Beobachte Situationen, in denen kontrollierter Aufbau unter Forecheck-Druck erschwert ist und eine Exit-/Clear-Entscheidung ansteht.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false
+                },
+                "observation_fields": [
+                  {
+                    "key": "solution",
+                    "label": "Wie löst das Team den Druck?",
+                    "summary_label": "Lösung",
+                    "required": true,
                     "options": [
-                      "sauber",
-                      "chaotisch",
-                      "kein_zugriff"
+                      {
+                        "value": "controlled_exit",
+                        "label": "Kontrollierter Exit",
+                        "description": "Der Puck wird mit klarer Anschlussoption aus der Zone geführt oder gepasst."
+                      },
+                      {
+                        "value": "short_support_pass",
+                        "label": "Kurzer Support-Pass",
+                        "description": "Ein naher Mitspieler wird genutzt, um Druck kontrolliert zu lösen."
+                      },
+                      {
+                        "value": "chip_over_pressure",
+                        "label": "Chip über den Druck",
+                        "description": "Der Puck wird bewusst hinter die erste Forecheck-Linie gelegt."
+                      },
+                      {
+                        "value": "board_clear",
+                        "label": "Clear entlang der Bande",
+                        "description": "Der Puck wird über die sichere Außenspur aus der Zone gebracht."
+                      },
+                      {
+                        "value": "high_clear",
+                        "label": "Hoher Clear",
+                        "description": "Der Puck wird deutlich angehoben bzw. über die Druckstruktur hinweg gespielt."
+                      },
+                      {
+                        "value": "intentional_icing",
+                        "label": "Icing bewusst in Kauf genommen",
+                        "description": "Entlastung erhält Vorrang vor Puckbesitz oder Wechselmöglichkeit."
+                      },
+                      {
+                        "value": "remove_from_danger",
+                        "label": "Puck nur aus Gefahr entfernen",
+                        "description": "Der unmittelbare gefährliche Raum wird geräumt, ohne klare Anschlusskontrolle."
+                      },
+                      {
+                        "value": "reverse_or_reset",
+                        "label": "Reverse / Reset",
+                        "description": "Der Puck wird zurück oder auf die andere Seite gespielt, um neu aufzubauen."
+                      },
+                      {
+                        "value": "no_exit",
+                        "label": "Kein Exit möglich",
+                        "description": "Das Team bleibt unter Druck in der Zone."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die gewählte Lösung war nicht eindeutig erkennbar."
+                      }
                     ]
                   },
                   {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Begründung",
-                    "max_chars": 1500
+                    "key": "pressureReason",
+                    "label": "Warum ist ein sauberer Aufbau hier schwierig?",
+                    "summary_label": "Warum vereinfacht?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "heavy_forecheck",
+                        "label": "Hoher Forecheck-Druck",
+                        "description": "Mehrere Gegner schließen schnell."
+                      },
+                      {
+                        "value": "no_short_option",
+                        "label": "Keine kurze Option",
+                        "description": "Kein sicherer Mitspieler ist unmittelbar erreichbar."
+                      },
+                      {
+                        "value": "carrier_under_immediate_pressure",
+                        "label": "Puckführer sofort unter Druck",
+                        "description": "Zeit für Scan und kontrollierte Entscheidung fehlt."
+                      },
+                      {
+                        "value": "middle_closed",
+                        "label": "Mitte geschlossen",
+                        "description": "Zentraler Exit ist nicht verfügbar."
+                      },
+                      {
+                        "value": "wall_closed",
+                        "label": "Bande geschlossen",
+                        "description": "Auch die sichere Außenspur wird stark attackiert."
+                      },
+                      {
+                        "value": "support_late",
+                        "label": "Support kommt zu spät",
+                        "description": "Mitspieler schaffen keine rechtzeitige Anschlussoption."
+                      },
+                      {
+                        "value": "team_tired",
+                        "label": "Team erschöpft",
+                        "description": "Die Priorität liegt sichtbar auf Entlastung und Wechsel."
+                      },
+                      {
+                        "value": "dangerous_zone",
+                        "label": "Gefährlicher Raum",
+                        "description": "Der Puck befindet sich in einer Zone, in der Risiko schnell bestraft werden kann."
+                      },
+                      {
+                        "value": "numerical_disadvantage",
+                        "label": "Numerischer Nachteil",
+                        "description": "Unterzahl oder kurzfristige zahlenmäßige Unterlegenheit begrenzt Optionen."
+                      },
+                      {
+                        "value": "bad_puck_control",
+                        "label": "Schlechte Puckkontrolle",
+                        "description": "Die Situation wird durch unsauberen Besitz instabil."
+                      },
+                      {
+                        "value": "no_clear_reason",
+                        "label": "Kein klarer Grund",
+                        "description": "Die Vereinfachung wirkt möglich, ohne dass ein klarer Faktor heraussticht."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Der Grund für die Vereinfachung war nicht lesbar."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "controlLevel",
+                    "label": "Wie viel Kontrolle behält das Team bei der Lösung?",
+                    "summary_label": "Kontrollgrad",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "full_control",
+                        "label": "Volle Kontrolle",
+                        "description": "Der Exit führt direkt in eigenen kontrollierten Besitz."
+                      },
+                      {
+                        "value": "controlled_with_pressure",
+                        "label": "Kontrolliert trotz Druck",
+                        "description": "Die Lösung ist bewusst und anschlussfähig, obwohl Druck vorhanden bleibt."
+                      },
+                      {
+                        "value": "partial_control",
+                        "label": "Teilweise Kontrolle",
+                        "description": "Der Puck verlässt die unmittelbare Gefahr, aber Besitz ist nicht sicher."
+                      },
+                      {
+                        "value": "temporary_relief",
+                        "label": "Kurzfristige Entlastung",
+                        "description": "Das Team gewinnt Zeit, ohne Kontrolle herzustellen."
+                      },
+                      {
+                        "value": "pure_clearance",
+                        "label": "Reine Befreiung",
+                        "description": "Nur Gefahr raus, keine Anschlusskontrolle."
+                      },
+                      {
+                        "value": "no_relief",
+                        "label": "Keine Entlastung",
+                        "description": "Der Druck bleibt unmittelbar bestehen."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Der Kontrollgrad war nicht klar erkennbar."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "immediateFollowup",
+                    "label": "Welche direkte Folge hat die Lösung?",
+                    "summary_label": "Danach",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "clean_exit",
+                        "label": "Sauberer Zone Exit",
+                        "description": "Das Team verlässt die Zone kontrolliert."
+                      },
+                      {
+                        "value": "neutral_zone_battle",
+                        "label": "Puckkampf in der Neutral Zone",
+                        "description": "Der Puck wird in der Neutral Zone umkämpft."
+                      },
+                      {
+                        "value": "teammate_recovers",
+                        "label": "Eigener Mitspieler gewinnt den Puck",
+                        "description": "Ein Teamkollege stellt Besitz nach der Lösung wieder her."
+                      },
+                      {
+                        "value": "opponent_recovers",
+                        "label": "Gegner gewinnt den Puck",
+                        "description": "Die Gegenseite sichert den Puck nach der Lösung."
+                      },
+                      {
+                        "value": "icing",
+                        "label": "Icing",
+                        "description": "Die Sequenz endet mit Icing."
+                      },
+                      {
+                        "value": "line_change_possible",
+                        "label": "Wechsel wird möglich",
+                        "description": "Die Entlastung erlaubt einen Wechsel."
+                      },
+                      {
+                        "value": "pressure_continues",
+                        "label": "Druck bleibt bestehen",
+                        "description": "Die unmittelbare Bedrohung bleibt erhalten."
+                      },
+                      {
+                        "value": "new_breakout_possible",
+                        "label": "Neuer Breakout wird möglich",
+                        "description": "Nach der Lösung kann kontrolliert neu aufgebaut werden."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die direkte Folge war nicht eindeutig."
+                      }
+                    ]
+                  }
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Welche kontrolliertere Lösung wäre theoretisch möglich gewesen – und warum wurde sie nicht gewählt?",
+                  "placeholder": "Optional – Alternativen mitdenken",
+                  "max_chars": 600
+                },
+                "required_observation_fields": [
+                  "solution",
+                  "pressureReason",
+                  "controlLevel",
+                  "immediateFollowup"
+                ],
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Exit-/Clear-Situation unter Druck und markiere Start sowie Ziel der Lösung.",
+                    "hint": "Frage dich: Welche kontrollierte Option wäre theoretisch noch möglich gewesen?"
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Erfasse eine zweite Vereinfachung – auch wenn sie nur kurzfristige Entlastung erzeugt.",
+                    "hint": "Board Clear, Chip, Icing und Reverse sind valide Lösungen."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Erfasse eine dritte Szene und vergleiche Kontrollgrad und unmittelbare Folge.",
+                    "hint": "Bewerte Risikomanagement – nicht, ob der Exit später „schön“ aussieht."
+                  }
+                ],
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Achte weiter darauf, wann Teams bewusst vereinfachen und wie viel Kontrolle sie dabei noch behalten."
+              },
+              "sceneSlug": "Pressure-Exit"
+            },
+            {
+              "id": "D3_D5",
+              "title": "Wie löst dieses Team Zonenübergänge unter Druck?",
+              "drill_type": "period_checkin",
+              "description": "Beobachte mehrere Entry- und Exit-Situationen über ein längeres Segment und leite daraus ein deskriptives Übergangsprofil an den Blue Lines ab – ohne Systemnamen und ohne automatische Qualitätsnote.",
+              "didactics": {
+                "explanation": "Zonenübergänge sind Entscheidungen unter begrenztem Raum und Zeitdruck.\n\nIn den vorherigen Drills hast du beobachtet, welche Entry-Optionen verfügbar sind, wie Mitspieler unterstützen, was nach dem Entry entsteht und wann ein Team in der eigenen Zone bewusst vereinfacht.\n\nFühre diese Beobachtungen jetzt zu einem Profil zusammen. Suche nach wiederkehrenden Entscheidungen an beiden Blue Lines, nicht nach einzelnen spektakulären Aktionen.\n\nKontrolle vs. Sicherheit ist keine Gut-/Schlecht-Skala. Ein Team kann bei Entries aggressiv und bei Exits konservativ sein – oder genau andersherum. Beschreibe das Entscheidungsverhalten im beobachteten Segment, nicht nur das Ergebnis.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Gap der Defense beim Entry",
+                    "genutzte Korridore (Mitte / außen)",
+                    "Carry / Pass / Chip / Dump",
+                    "Support neben, vor und hinter dem Puck",
+                    "Kontrolle direkt nach der Blue Line",
+                    "Forecheckdruck in der eigenen Zone",
+                    "verfügbare kurze Exit-Optionen",
+                    "kontrollierter Exit vs. Clear",
+                    "Zeitpunkt der Vereinfachung",
+                    "wie viel Kontrolle nach dem Exit bleibt"
+                  ],
+                  "how_to_decide": [
+                    "Wann versucht das Team Kontrolle zu behalten – und wann entscheidet es, dass Sicherheit oder Raumgewinn wichtiger ist?",
+                    "Wähle pro Dimension das Muster, das im beobachteten Segment am häufigsten oder deutlichsten erkennbar war",
+                    "Nutze „Zu wenige … beobachtet“, wenn Entry- oder Exit-Samples fehlen – erfinde keine Aussage",
+                    "Beschreibe sichtbare Eigenschaften ohne Systemnamen",
+                    "Bewerte Entscheidungsmuster, nicht Entry Percentage, Icing oder Tore"
+                  ],
+                  "ignore": [
+                    "Entry Percentage",
+                    "Turnover-Quote",
+                    "Schüsse und Tore",
+                    "Icing als automatische Qualitätsnote",
+                    "Puckbesitz-Statistiken",
+                    "Daten aus früheren D3-Sessions anderer Spiele",
+                    "Breakout-Systemnamen",
+                    "etablierte OZ-Struktur oder Forecheck-Systeme",
+                    "einzelne spektakuläre Highlights ohne wiederkehrendes Muster"
+                  ]
+                },
+                "learning_hint": "D3_D5 schließt den Track ab: Formuliere ein deskriptives Entries-&-Clears-Profil aus wiederkehrenden Entscheidungen an beiden Blue Lines."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "questions": [
+                      "Wo war der Unterschied zwischen „Kontrolle behalten“ und „bewusst vereinfachen“ für dich am deutlichsten sichtbar?"
+                    ]
                   }
                 ]
               },
-              "sceneSlug": "Retrieval-Second-Touch"
+              "config": {
+                "observation_scope": "period",
+                "option_layout": "cards",
+                "validate_answers": true,
+                "summary_when_complete": true,
+                "summary_title": "Entries-&-Clears-Profil",
+                "summary_disclaimer": "Profil des beobachteten Segments. Diese Zusammenfassung zeigt ausschließlich deine beobachteten Dimensionen und deine eigene Formulierung. Sie vergibt keinen Systemnamen und keine Qualitätsnote.",
+                "observation_phase": {
+                  "title": "Beobachtungsphase",
+                  "text": "Beobachte mehrere Entry- und Exit-Situationen über ein längeres Segment – idealerweise ein Drittel oder genug Spielzeit, um Muster an beiden Blue Lines zu erkennen.",
+                  "hint": "Suche wiederkehrende Entscheidungen unter Druck. Einzelne Highlights oder Zufalls-Clears reichen nicht."
+                },
+                "analysis_phase": {
+                  "title": "Profildimensionen",
+                  "text": "Wähle pro Dimension das Muster, das im beobachteten Segment am häufigsten oder deutlichsten erkennbar war. Trenne offensive und eigene Blue Line bewusst."
+                },
+                "reflection_phase": {
+                  "title": "Profilformulierung",
+                  "text": "Fasse deine Beobachtungen in 1–3 Sätzen zusammen – ohne einen Systemnamen zu verwenden."
+                },
+                "sentence_helpers": {
+                  "label": "Optionale Satzhilfe",
+                  "starter": "Im beobachteten Segment löst dieses Team Zonenübergänge unter Druck, indem es …"
+                },
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Prüfe im weiteren Spiel, ob die gewählten Entry- und Exit-Muster stabil bleiben oder sich mit Druckhöhe und Spielstand verändern.",
+                "questions": [
+                  {
+                    "key": "entryPreference",
+                    "type": "radio",
+                    "required": true,
+                    "section": "Offensive Blue Line",
+                    "summary_label": "Entry-Präferenz",
+                    "label": "Welche Entry-Lösung nutzt das Team im beobachteten Segment bevorzugt?",
+                    "options": [
+                      {
+                        "value": "carry_middle",
+                        "label": "Carry durch die Mitte",
+                        "description": "Kontrollierte zentrale Entries treten häufig auf.",
+                        "phrase": "… Entries häufig zentral mit Kontrolle sucht."
+                      },
+                      {
+                        "value": "carry_outside",
+                        "label": "Carry außen",
+                        "description": "Der Puck wird bevorzugt über die Außenspur getragen.",
+                        "phrase": "… Entries bevorzugt über die Außenspur trägt."
+                      },
+                      {
+                        "value": "pass_entry",
+                        "label": "Pass Entry",
+                        "description": "Kontrollierte Entries entstehen oft über Mitspieler.",
+                        "phrase": "… Entries oft über Passlösungen aufbaut."
+                      },
+                      {
+                        "value": "chip_entry",
+                        "label": "Chip Entry",
+                        "description": "Raum hinter der Defense wird gezielt genutzt.",
+                        "phrase": "… Raum hinter der Defense gezielt mit Chips nutzt."
+                      },
+                      {
+                        "value": "controlled_dump",
+                        "label": "Kontrollierter Dump",
+                        "description": "Tiefe Pucks werden mit vorbereitetem Forecheck gespielt.",
+                        "phrase": "… kontrollierte Dumps mit vorbereitetem Forecheck spielt."
+                      },
+                      {
+                        "value": "hard_dump",
+                        "label": "Hard Dump",
+                        "description": "Tiefe Entlastungs-/Raumgewinne ohne unmittelbare Kontrolle treten häufig auf.",
+                        "phrase": "… häufig Hard Dumps ohne unmittelbare Kontrolle spielt."
+                      },
+                      {
+                        "value": "reset_often",
+                        "label": "Häufiger Reset",
+                        "description": "Das Team bricht Entry-Versuche lieber ab, als ungünstige Lösungen zu erzwingen.",
+                        "phrase": "… Entry-Versuche häufig resetet statt zu erzwingen."
+                      },
+                      {
+                        "value": "situational",
+                        "label": "Situativ variabel",
+                        "description": "Die Entry-Wahl passt sich sichtbar an die defensive Situation an.",
+                        "phrase": "… Entry-Lösungen sichtbar an Gap und Druck anpasst."
+                      },
+                      {
+                        "value": "too_few_entries",
+                        "label": "Zu wenige Entries beobachtet",
+                        "description": "Im Segment waren zu wenige klare Entry-Situationen für eine stabile Aussage.",
+                        "phrase": "… zu wenige klare Entries für eine stabile Präferenz zeigt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Über das beobachtete Segment war keine stabile Entry-Präferenz erkennbar.",
+                        "phrase": "… keine stabile Entry-Präferenz zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "entrySupport",
+                    "type": "radio",
+                    "required": true,
+                    "section": "Offensive Blue Line",
+                    "summary_label": "Entry-Support",
+                    "label": "Wie unterstützt das Team seine Zone Entries typischerweise?",
+                    "options": [
+                      {
+                        "value": "close_support",
+                        "label": "Enger Support",
+                        "description": "Mehrere kurze Anschlussoptionen bleiben nahe am Puck.",
+                        "phrase": "… Entries mit engem Support nahe am Puck stützt."
+                      },
+                      {
+                        "value": "parallel_support",
+                        "label": "Parallel",
+                        "description": "Mitspieler bleiben auf ähnlicher Höhe anspielbar.",
+                        "phrase": "… parallele Support-Optionen auf ähnlicher Höhe hält."
+                      },
+                      {
+                        "value": "depth_runs",
+                        "label": "Tiefenläufe",
+                        "description": "Spieler attackieren regelmäßig Raum hinter der Defense.",
+                        "phrase": "… regelmäßig Tiefenläufe hinter die Defense schickt."
+                      },
+                      {
+                        "value": "trailer_support",
+                        "label": "Trailer",
+                        "description": "Eine spätere zweite Welle unterstützt den Entry.",
+                        "phrase": "… Entries oft mit Trailer-Support absichert."
+                      },
+                      {
+                        "value": "support_behind_puck",
+                        "label": "Support hinter dem Puck",
+                        "description": "Reset und Absicherung bleiben häufig verfügbar.",
+                        "phrase": "… Absicherung hinter dem Puck häufig verfügbar hält."
+                      },
+                      {
+                        "value": "weak_side_support",
+                        "label": "Weak Side",
+                        "description": "Die Gegenseite wird aktiv als alternative Lösung eingebunden.",
+                        "phrase": "… die Weak Side aktiv als Entry-Option einbindet."
+                      },
+                      {
+                        "value": "multiple_layers",
+                        "label": "Mehrere Ebenen",
+                        "description": "Vor, neben und hinter dem Puck bestehen gleichzeitig Optionen.",
+                        "phrase": "… Entries mit mehreren Support-Ebenen aufbaut."
+                      },
+                      {
+                        "value": "forecheck_support",
+                        "label": "Forecheck-Support",
+                        "description": "Chip/Dump wird durch vorbereitete Puckjagd unterstützt.",
+                        "phrase": "… Chip/Dump durch vorbereiteten Forecheck-Support stützt."
+                      },
+                      {
+                        "value": "little_support",
+                        "label": "Wenig Support",
+                        "description": "Entry-Versuche hängen stark vom Puckführer ab.",
+                        "phrase": "… Entries stark vom isolierten Puckführer abhängig macht."
+                      },
+                      {
+                        "value": "situational",
+                        "label": "Situativ variabel",
+                        "description": "Die Support-Art verändert sich sichtbar mit der Situation.",
+                        "phrase": "… Entry-Support situativ anpasst."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Über das beobachtete Segment war kein stabiles Support-Muster erkennbar.",
+                        "phrase": "… kein klares Entry-Support-Muster zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "postEntryControl",
+                    "type": "radio",
+                    "required": true,
+                    "section": "Offensive Blue Line",
+                    "summary_label": "Nach Entry",
+                    "label": "Was entsteht nach erfolgreichen Blue-Line-Überquerungen meistens?",
+                    "options": [
+                      {
+                        "value": "immediate_control",
+                        "label": "Direkte Kontrolle",
+                        "description": "Das Team kann nach Entry sofort weiterspielen.",
+                        "phrase": "… nach Entries meist direkte Kontrolle erzeugt."
+                      },
+                      {
+                        "value": "control_after_battle",
+                        "label": "Kontrolle nach Battle",
+                        "description": "Kontrolle entsteht häufig erst über einen kurzen Puckkampf.",
+                        "phrase": "… Kontrolle nach Entry oft erst über Battles herstellt."
+                      },
+                      {
+                        "value": "forecheck_control",
+                        "label": "Kontrolle über Forecheck",
+                        "description": "Tiefe Entries werden oft über Puckjagd stabilisiert.",
+                        "phrase": "… tiefe Entries oft über Forecheck stabilisiert."
+                      },
+                      {
+                        "value": "direct_attack",
+                        "label": "Direkter Angriff",
+                        "description": "Entries führen häufig unmittelbar zu gefährlichen Aktionen.",
+                        "phrase": "… Entries häufig direkt in gefährliche Aktionen überführt."
+                      },
+                      {
+                        "value": "fragile_control",
+                        "label": "Fragile Kontrolle",
+                        "description": "Zone Presence entsteht, ist aber oft instabil.",
+                        "phrase": "… nach Entry oft nur fragile Zone Presence hält."
+                      },
+                      {
+                        "value": "frequent_turnovers",
+                        "label": "Häufige Turnover",
+                        "description": "Viele Entries enden unmittelbar im Puckverlust.",
+                        "phrase": "… Entries häufig sofort in Turnover enden lässt."
+                      },
+                      {
+                        "value": "frequent_resets",
+                        "label": "Häufige Resets",
+                        "description": "Die Offensive muss nach Entry häufig neu ordnen.",
+                        "phrase": "… nach Entry häufig neu ordnen oder reseten muss."
+                      },
+                      {
+                        "value": "mixed",
+                        "label": "Gemischt",
+                        "description": "Mehrere Anschlusszustände treten ähnlich häufig auf.",
+                        "phrase": "… nach Entry gemischte Anschlusszustände zeigt."
+                      },
+                      {
+                        "value": "too_few_entries",
+                        "label": "Zu wenige Entries beobachtet",
+                        "description": "Zu wenige klare Entries für eine stabile Aussage über den Anschluss.",
+                        "phrase": "… zu wenige Entries für ein Anschluss-Muster zeigt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Über das beobachtete Segment war kein stabiles Anschlussmuster erkennbar.",
+                        "phrase": "… kein klares Muster nach dem Entry zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "pressuredExitBehavior",
+                    "type": "radio",
+                    "required": true,
+                    "section": "Eigene Blue Line",
+                    "summary_label": "Exit unter Druck",
+                    "label": "Wie löst das Team Druck in der eigenen Zone meistens?",
+                    "options": [
+                      {
+                        "value": "controlled_exit",
+                        "label": "Kontrollierter Exit",
+                        "description": "Eigener Besitz und Anschluss bleiben häufig erhalten.",
+                        "phrase": "… Druck in der eigenen Zone oft mit kontrolliertem Exit löst."
+                      },
+                      {
+                        "value": "short_support_solution",
+                        "label": "Kurze Support-Lösung",
+                        "description": "Das Team löst Druck über nahe Passoptionen.",
+                        "phrase": "… Druck häufig über kurze Support-Pässe löst."
+                      },
+                      {
+                        "value": "chip_over_pressure",
+                        "label": "Chip über den Druck",
+                        "description": "Die erste Forecheck-Linie wird regelmäßig überspielt.",
+                        "phrase": "… die erste Forecheck-Linie regelmäßig mit Chips überspielt."
+                      },
+                      {
+                        "value": "board_clear",
+                        "label": "Clear entlang der Bande",
+                        "description": "Die sichere Außenspur wird bevorzugt.",
+                        "phrase": "… unter Druck bevorzugt über die Bande cleart."
+                      },
+                      {
+                        "value": "quick_clear",
+                        "label": "Schneller Clear",
+                        "description": "Entlastung erhält unter Druck früh Priorität.",
+                        "phrase": "… unter Druck früh und schnell cleart."
+                      },
+                      {
+                        "value": "reverse_or_reset",
+                        "label": "Reverse / Reset",
+                        "description": "Das Team verlagert lieber neu, bevor es den Exit erzwingt.",
+                        "phrase": "… vor dem Exit häufig reverse/reset spielt."
+                      },
+                      {
+                        "value": "remove_from_danger",
+                        "label": "Gefahr zuerst entfernen",
+                        "description": "Der Puck wird häufig ohne klare Anschlusskontrolle aus dem gefährlichen Raum gebracht.",
+                        "phrase": "… den Puck oft zuerst aus Gefahr entfernt."
+                      },
+                      {
+                        "value": "accept_icing",
+                        "label": "Icing wird akzeptiert",
+                        "description": "Maximale Entlastung erhält situativ Vorrang.",
+                        "phrase": "… Icing situativ als Entlastung akzeptiert."
+                      },
+                      {
+                        "value": "mixed",
+                        "label": "Gemischt",
+                        "description": "Mehrere Exit-/Clear-Lösungen treten ähnlich häufig auf.",
+                        "phrase": "… Exit-Lösungen unter Druck gemischt einsetzt."
+                      },
+                      {
+                        "value": "too_few_exits",
+                        "label": "Zu wenige Exits beobachtet",
+                        "description": "Im Segment waren zu wenige klare Exit-/Clear-Situationen für eine stabile Aussage.",
+                        "phrase": "… zu wenige klare Exits für ein Exit-Muster zeigt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Über das beobachtete Segment war kein stabiles Exit-Muster erkennbar.",
+                        "phrase": "… kein klares Exit-Muster unter Druck zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "simplificationTrigger",
+                    "type": "radio",
+                    "required": true,
+                    "section": "Eigene Blue Line",
+                    "summary_label": "Vereinfachungs-Trigger",
+                    "label": "Was bringt das Team typischerweise dazu, Kontrolle aufzugeben und zu vereinfachen?",
+                    "options": [
+                      {
+                        "value": "heavy_forecheck",
+                        "label": "Hoher Forecheck-Druck",
+                        "description": "Starker Zugriff erzwingt Vereinfachung.",
+                        "phrase": "… bei hohem Forecheckdruck vereinfacht."
+                      },
+                      {
+                        "value": "no_short_option",
+                        "label": "Keine kurze Option",
+                        "description": "Fehlender Support führt zum Clear.",
+                        "phrase": "… ohne kurze Option schnell vereinfacht."
+                      },
+                      {
+                        "value": "middle_closed",
+                        "label": "Mitte geschlossen",
+                        "description": "Kontrollierter zentraler Exit ist nicht verfügbar.",
+                        "phrase": "… bei geschlossener Mitte vereinfacht."
+                      },
+                      {
+                        "value": "carrier_under_pressure",
+                        "label": "Puckführer sofort unter Druck",
+                        "description": "Entscheidungszeit fehlt.",
+                        "phrase": "… vereinfacht, sobald der Puckführer unter Druck ist."
+                      },
+                      {
+                        "value": "support_late",
+                        "label": "Support kommt zu spät",
+                        "description": "Mitspieler schaffen keine rechtzeitige Anschlussoption.",
+                        "phrase": "… bei zu spätem Support vereinfacht."
+                      },
+                      {
+                        "value": "team_tired",
+                        "label": "Team erschöpft",
+                        "description": "Entlastung und Wechsel werden sichtbar priorisiert.",
+                        "phrase": "… bei Erschöpfung Entlastung und Wechsel priorisiert."
+                      },
+                      {
+                        "value": "dangerous_puck_location",
+                        "label": "Gefährliche Puckposition",
+                        "description": "Risiko im eigenen Slot-/Low-Bereich wird schnell reduziert.",
+                        "phrase": "… bei gefährlicher Puckposition schnell vereinfacht."
+                      },
+                      {
+                        "value": "numerical_disadvantage",
+                        "label": "Numerischer Nachteil",
+                        "description": "Unterzahl oder kurzfristige zahlenmäßige Unterlegenheit begrenzt Optionen.",
+                        "phrase": "… bei numerischem Nachteil vereinfacht."
+                      },
+                      {
+                        "value": "simplifies_early",
+                        "label": "Vereinfacht früh",
+                        "description": "Das Team geht relativ schnell auf sichere Lösungen.",
+                        "phrase": "… relativ früh auf sichere Lösungen geht."
+                      },
+                      {
+                        "value": "holds_control_long",
+                        "label": "Hält lange an Kontrolle fest",
+                        "description": "Auch unter Druck werden kontrollierte Lösungen lange gesucht.",
+                        "phrase": "… lange an kontrollierten Lösungen festhält."
+                      },
+                      {
+                        "value": "multiple_triggers",
+                        "label": "Mehrere Trigger",
+                        "description": "Mehrere Faktoren lösen Vereinfachung ähnlich häufig aus.",
+                        "phrase": "… aus mehreren Triggern heraus vereinfacht."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Über das beobachtete Segment war kein klarer Vereinfachungs-Trigger erkennbar.",
+                        "phrase": "… keinen klaren Vereinfachungs-Trigger zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "riskProfile",
+                    "type": "radio",
+                    "required": true,
+                    "section": "Gesamtprofil",
+                    "summary_label": "Risikoprofil",
+                    "label": "Wie wirkt das Blue-Line- und Übergangs-Risikoprofil insgesamt?",
+                    "options": [
+                      {
+                        "value": "control_first",
+                        "label": "Kontrolle zuerst",
+                        "description": "Besitz und Anschluss werden an beiden Blue Lines stark priorisiert.",
+                        "phrase": "… Besitz und Anschluss an beiden Blue Lines priorisiert."
+                      },
+                      {
+                        "value": "patient",
+                        "label": "Geduldig",
+                        "description": "Resets und neue Versuche werden eher akzeptiert als forcierte Lösungen.",
+                        "phrase": "… geduldig resetet statt Lösungen zu erzwingen."
+                      },
+                      {
+                        "value": "balanced",
+                        "label": "Ausgewogen",
+                        "description": "Kontrolle und Vereinfachung werden situationsabhängig kombiniert.",
+                        "phrase": "… Kontrolle und Vereinfachung situationsabhängig kombiniert."
+                      },
+                      {
+                        "value": "direct",
+                        "label": "Direkt",
+                        "description": "Raumgewinn und schnelles Vorankommen stehen häufig im Vordergrund.",
+                        "phrase": "… Raumgewinn und Tempo an den Übergängen priorisiert."
+                      },
+                      {
+                        "value": "flexible",
+                        "label": "Flexibel",
+                        "description": "Das Team passt seine Lösung sichtbar an Gap, Druck und Support an.",
+                        "phrase": "… Lösungen flexibel an Gap, Druck und Support anpasst."
+                      },
+                      {
+                        "value": "aggressive_entry",
+                        "label": "Aggressiv beim Entry",
+                        "description": "Offensive Blue Line wird häufig mit Tempo und direkter Attacke gespielt.",
+                        "phrase": "… Entries aggressiv mit Tempo und direkter Attacke spielt."
+                      },
+                      {
+                        "value": "simplify_under_pressure",
+                        "label": "Vereinfacht unter Druck",
+                        "description": "In der eigenen Zone wird Sicherheit schnell priorisiert.",
+                        "phrase": "… in der eigenen Zone Sicherheit schnell priorisiert."
+                      },
+                      {
+                        "value": "high_risk",
+                        "label": "Hohes Risiko",
+                        "description": "Kontrollierte Lösungen werden auch unter schwierigen Bedingungen häufig erzwungen.",
+                        "phrase": "… auch unter Druck häufig riskante kontrollierte Lösungen erzwingt."
+                      },
+                      {
+                        "value": "changing",
+                        "label": "Wechselnd",
+                        "description": "Das Risikoprofil verändert sich deutlich zwischen Sequenzen.",
+                        "phrase": "… ein wechselhaftes Übergangs-Risikoprofil zeigt."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Über das beobachtete Segment war kein stabiles Risikoprofil erkennbar.",
+                        "phrase": "… kein klares Übergangs-Risikoprofil zeigt."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "profileSummary",
+                    "type": "text",
+                    "required": true,
+                    "section": "Gesamtprofil",
+                    "use_sentence_helpers": true,
+                    "summary_label": "Dein Profil",
+                    "label": "Beschreibe das Übergangsprofil dieses Teams im beobachteten Segment in 1–3 Sätzen.",
+                    "help": "Formuliere wiederkehrende Muster zu Entry-Präferenz, Support, Kontrolle nach Entry, Exit unter Druck, Vereinfachung und Risikoprofil. Beschreibe nur das beobachtete Segment – ohne Systemnamen und ohne Outcome-Bias.",
+                    "placeholder": "Das Team sucht Entries häufig über die Außenspur und unterstützt den Puckführer mit mehreren Tiefenebenen. Nach dem Entry entsteht meist direkte Kontrolle; unter starkem Forecheckdruck in der eigenen Zone wird dagegen relativ früh über die Bande vereinfacht.",
+                    "min_chars": 20,
+                    "max_chars": 800
+                  }
+                ]
+              },
+              "sceneSlug": "Entries-Clears-Profile"
             }
           ]
         },
@@ -11959,7 +13505,11 @@
           "id": "D4",
           "title": "D4 – 6-gegen-5",
           "summary": "Struktur, Risiko und Entscheidungsqualität mit Extra-Angreifer",
-          "description": "6-gegen-5 ist kein Chaos-Modus, sondern ein strukturiertes Risikospiel. In diesem Track lernst du, ob Teams mit Extra-Angreifer Ordnung halten, sinnvolle Entscheidungen treffen und wie stabil ihre Struktur unter maximalem Druck bleibt.",
+          "description": "6-gegen-5 und verwandte numerische Sondersituationen werden nicht mehr als regulärer Track geführt. Erfasse sie opportunistisch über ⚡ Special Teams → Numerical Situation, wenn sie im Spiel auftreten.",
+          "active": false,
+          "deprecated": true,
+          "deprecation_note": "Seltene numerische Situationen (6v5, 5v3, Empty Net, …) werden als Special-Teams-Sidequest erfasst – nicht als eigener 5-Drill-Track.",
+          "sidequest_category": "numerical_situation",
           "learningGoals": [
             "Erkenne stabile vs. chaotische 6-gegen-5-Strukturen",
             "Bewerte Entscheidungen unabhängig vom Torerfolg",

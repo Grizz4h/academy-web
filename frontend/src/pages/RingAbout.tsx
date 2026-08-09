@@ -19,6 +19,8 @@ import {
   copyTextToClipboard,
   generateSceneAssetNameFromScene,
 } from '../utils/sceneAssetName'
+import { buildSceneRatedEvent } from '../features/progression'
+import { useRewards } from '../features/rewards'
 import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
@@ -119,6 +121,7 @@ function compareSceneContext(a: SceneMarker, b: SceneMarker) {
 
 export default function RingAbout() {
   const queryClient = useQueryClient()
+  const { ingestActivityEvents } = useRewards()
   const [searchParams, setSearchParams] = useSearchParams()
   const { data, isLoading, error } = useQuery({
     queryKey: ['scenes'],
@@ -199,6 +202,16 @@ export default function RingAbout() {
         payload: { rating: nextRating },
       },
       {
+        onSuccess: () => {
+          if (typeof nextRating === 'number' && nextRating >= 1) {
+            void ingestActivityEvents([
+              buildSceneRatedEvent({
+                sceneId: scene.id,
+                rating: nextRating,
+              }),
+            ])
+          }
+        },
         onError: () => {
           if (previousScenes) queryClient.setQueryData(['scenes'], previousScenes)
         },

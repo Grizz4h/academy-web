@@ -19,6 +19,7 @@ import {
 import { isDevNavEnabled } from '../config/featureFlags'
 import { createDummySessionForDrill } from '../dev/createDummySession'
 import { getRealSessions } from '../utils/sessionEligibility'
+import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
@@ -202,6 +203,9 @@ export default function SessionSetup() {
 
   // Finde aktuelles Modul
   const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
+  const moduleInactive = currentModule?.active === false
+  const moduleDeprecationNote = currentModule?.deprecation_note
+    || 'Dieses Modul ist nicht mehr als regulärer Track aktiv.'
 
   const dummySessionMutation = useMutation({
     mutationFn: async () => {
@@ -401,6 +405,24 @@ export default function SessionSetup() {
 
   if (!currentModule) {
     return <div className="card">Modul nicht gefunden</div>
+  }
+
+  if (moduleInactive) {
+    return (
+      <div className="card" style={{ maxWidth: 640 }}>
+        <h2 style={{ marginTop: 0 }}>{currentModule.title}</h2>
+        <p style={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.45 }}>
+          {moduleDeprecationNote}
+        </p>
+        <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.45 }}>
+          Starte einen normalen Track-Drill und nutze während der Session{' '}
+          <strong>⚡ Special Teams → Numerical Situation</strong>, wenn die Sondersituation im Spiel auftaucht.
+        </p>
+        <button type="button" className="btn" onClick={() => navigate('/curriculum')}>
+          Zurück zum Lehrplan
+        </button>
+      </div>
+    )
   }
 
   const handleCreateSession = () => {
@@ -779,24 +801,15 @@ export default function SessionSetup() {
 
           <div style={{ marginTop: '0.95rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
             <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{currentModule.id}-Fortschritt für diese Paarung</div>
-            <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
-              {matchupPanelData.moduleDrillProgress.map((drill) => (
-                <span
-                  key={drill.id}
-                  title={drill.title}
-                  style={{
-                    borderRadius: '999px',
-                    border: drill.used ? '1px solid rgba(94, 234, 212, 0.7)' : '1px solid rgba(255,255,255,0.25)',
-                    color: drill.used ? '#8ef4d7' : 'rgba(255,255,255,0.82)',
-                    background: drill.used ? 'rgba(22, 163, 74, 0.18)' : 'rgba(15, 23, 42, 0.5)',
-                    padding: '0.25rem 0.6rem',
-                    fontSize: '0.82rem'
-                  }}
-                >
-                  {drill.used ? '✓' : '○'} {drill.id}
-                </span>
-              ))}
-            </div>
+            <TrackProgressMap
+              nodes={buildDrillProgressNodes(
+                matchupPanelData.moduleDrillProgress.map((drill) => ({ id: drill.id, title: drill.title })),
+                {
+                  completedIds: matchupPanelData.moduleDrillProgress.filter((d) => d.used).map((d) => d.id),
+                  currentId: selectedDrill || null,
+                },
+              )}
+            />
             <p style={{ marginTop: '0.6rem', color: 'rgba(255,255,255,0.8)' }}>
               Bereits {matchupPanelData.moduleSessionsCount} Sessions in diesem Modul.
             </p>
@@ -858,6 +871,11 @@ export default function SessionSetup() {
                 />
                 <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <MechanicGlyph
+                      drillType={drill.drill_type}
+                      mode={drill.config?.mode}
+                      showLabel
+                    />
                     <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>
                     <span
                       title={drillHistory.lastSeen ? `Zuletzt ${new Date(drillHistory.lastSeen).toLocaleDateString('de-DE')}` : 'Noch nicht durchgeführt'}

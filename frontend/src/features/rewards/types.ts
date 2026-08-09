@@ -106,10 +106,25 @@ export interface RewardEvent {
 
 export interface RewardState {
   currency: Record<CurrencyCode, number>
-  unlockedAchievements: Record<string, { id: string; unlockedAt: string }>
+  unlockedAchievements: Record<string, { id: string; unlockedAt: string; sourceEventId?: string }>
   unlockedMasteries: Record<string, DrillMasteryProgress>
   processedSessions: Record<string, { sessionId: string; grantedAt: string; pux: number }>
+  /** Phase-1 progression foundation */
+  xp: number
+  processedEvents: Record<string, { eventId: string; processedAt: string; grantedXp: number; grantedPux: number }>
+  unlockedCosmetics: Record<string, import('../progression/types').CosmeticUnlock>
+  activityLog: import('../progression/types').RinkActivityEvent[]
+  unlockHistory: import('../progression/types').UnlockHistoryEntry[]
+  bootstrapCompletedAt?: string
   lastUpdatedAt?: string
+  /** Phase-2 locker / economy */
+  favoriteCosmeticIds?: string[]
+  puxTransactions?: import('../progression/types').PuxTransaction[]
+  completedCollections?: Record<string, { collectionId: string; completedAt: string }>
+  masteryMilestoneUnlocks?: Record<string, import('../progression/types').MasteryProgressUnlock>
+  featuredAchievementId?: string | null
+  featuredMasteryCoinId?: string | null
+  progressionPuxGranted?: number
 }
 
 export interface RewardFacts {
@@ -149,6 +164,16 @@ export interface RewardEvaluationResult {
   unlockedMasteries: DrillMasteryProgress[]
   rewardEvents: RewardEvent[]
   evaluatedAt: string
+  progression?: {
+    eventId: string
+    grantedXp: number
+    grantedPux: number
+    unlockedAchievements: Array<{ id: string; unlockedAt: string; sourceEventId?: string }>
+    unlockedCosmetics: import('../progression/types').CosmeticUnlock[]
+    unlockHistory: import('../progression/types').UnlockHistoryEntry[]
+    activityEvents: import('../progression/types').RinkActivityEvent[]
+    bootstrapCompletedAt?: string
+  }
 }
 
 export function createEmptyRewardState(): RewardState {
@@ -157,6 +182,15 @@ export function createEmptyRewardState(): RewardState {
     unlockedAchievements: {},
     unlockedMasteries: {},
     processedSessions: {},
+    xp: 0,
+    processedEvents: {},
+    unlockedCosmetics: {},
+    activityLog: [],
+    unlockHistory: [],
+    favoriteCosmeticIds: [],
+    puxTransactions: [],
+    completedCollections: {},
+    masteryMilestoneUnlocks: {},
   }
 }
 

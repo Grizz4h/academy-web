@@ -1,0 +1,156 @@
+{
+  "currency": {
+    "PUX": 0
+  },
+  "unlockedAchievements": {},
+  "unlockedMasteries": {},
+  "processedSessions": {},
+  "xp": 0,
+  "processedEvents": {
+    "bootstrap:v1": {
+      "eventId": "bootstrap:v1",
+      "processedAt": "2026-08-09T18:13:35.908Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    }
+  },
+  "unlockedCosmetics": {
+    "avatar_ice_01": {
+      "cosmeticId": "avatar_ice_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "avatar_puck_01": {
+      "cosmeticId": "avatar_puck_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "avatar_crest_01": {
+      "cosmeticId": "avatar_crest_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "avatar_chalk_01": {
+      "cosmeticId": "avatar_chalk_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "avatar_net_01": {
+      "cosmeticId": "avatar_net_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "banner_neutral_01": {
+      "cosmeticId": "banner_neutral_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "banner_blue_line_01": {
+      "cosmeticId": "banner_blue_line_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "banner_chalk_01": {
+      "cosmeticId": "banner_chalk_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "banner_crease_01": {
+      "cosmeticId": "banner_crease_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "emblem_puck_01": {
+      "cosmeticId": "emblem_puck_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "emblem_blue_line_01": {
+      "cosmeticId": "emblem_blue_line_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "emblem_arrow_01": {
+      "cosmeticId": "emblem_arrow_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "emblem_rink_01": {
+      "cosmeticId": "emblem_rink_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "emblem_crease_01": {
+      "cosmeticId": "emblem_crease_01",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_rink_rat": {
+      "cosmeticId": "title_catalog_rink_rat",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_slot_watcher": {
+      "cosmeticId": "title_catalog_slot_watcher",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_puck_detective": {
+      "cosmeticId": "title_catalog_puck_detective",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_tape_to_tape": {
+      "cosmeticId": "title_catalog_tape_to_tape",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_blue_line_student": {
+      "cosmeticId": "title_catalog_blue_line_student",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_five_man_unit": {
+      "cosmeticId": "title_catalog_five_man_unit",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_neutral_zone_tourist": {
+      "cosmeticId": "title_catalog_neutral_zone_tourist",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_hockey_observer": {
+      "cosmeticId": "title_catalog_hockey_observer",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "tagline_watch_the_center": {
+      "cosmeticId": "tagline_watch_the_center",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    },
+    "tagline_starter": {
+      "cosmeticId": "tagline_starter",
+      "unlockedAt": "2026-08-09T18:13:35.908Z",
+      "sourceType": "starter"
+    }
+  },
+  "activityLog": [],
+  "unlockHistory": [
+    {
+      "id": "bootstrap:2026-08-09T18:13:35.908Z",
+      "kind": "bootstrap",
+      "title": "Dein RINK-Fortschritt wurde ausgewertet",
+      "description": "0 Achievements freigeschaltet · Level 1 erreicht · 0 Cosmetics erhalten · +0 XP",
+      "occurredAt": "2026-08-09T18:13:35.908Z",
+      "sourceEventId": "bootstrap:v1",
+      "amountXp": 0,
+      "amountPux": 0,
+      "level": 1
+    }
+  ],
+  "bootstrapCompletedAt": "2026-08-09T18:13:35.908Z",
+  "progressionPuxGranted": 0,
+  "lastUpdatedAt": "2026-08-09T18:13:35.908Z"
+}

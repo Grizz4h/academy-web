@@ -4,14 +4,14 @@
     "type": "catalog",
     "avatarId": "avatar_puck_01"
   },
-  "bannerId": "banner_neutral_01",
+  "bannerId": "banner_blue_line_01",
   "emblem": {
     "type": "catalog",
     "emblemId": "emblem_arrow_01"
   },
   "customEmblemId": null,
   "customEmblems": [],
-  "profileTitle": "blue_line_student",
+  "profileTitle": "neutral_zone_tourist",
   "jerseyNumber": 16,
   "favoriteLeague": "DEL",
   "favoriteTeamName": "ERC Ingolstadt",
@@ -20,5 +20,5 @@
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-08T18:14:55.159312"
+  "updatedAt": "2026-08-09T18:43:41.642926"
 }

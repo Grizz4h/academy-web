@@ -17,6 +17,8 @@ import {
   isValidGameTime,
   SCENE_PERIOD_OPTIONS,
 } from '../utils/sceneHelpers'
+import { buildSceneCreatedEvent, buildSceneRatedEvent } from '../features/progression'
+import { useRewards } from '../features/rewards'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
@@ -43,6 +45,7 @@ export function ManualSceneForm({
   onClose,
   onSaved,
 }: ManualSceneFormProps) {
+  const { ingestActivityEvents } = useRewards()
   const gameTimeRef = useRef<HTMLInputElement>(null)
   const [gameTime, setGameTime] = useState(initialScene?.game_time || '')
   const [period, setPeriod] = useState(initialScene?.period || 'P1')
@@ -168,6 +171,24 @@ export function ManualSceneForm({
     setError(null)
     try {
       const scene = await api.createScene(buildPayload(metadataStatus))
+      void ingestActivityEvents([
+        buildSceneCreatedEvent({
+          sceneId: scene.id,
+          occurredAt: scene.created_at,
+          sessionId: scene.session_id || undefined,
+          drillId: scene.drill_id || undefined,
+          trackId: scene.track_id || scene.module_id || undefined,
+        }),
+      ])
+      if (typeof rating === 'number' && rating >= 1) {
+        void ingestActivityEvents([
+          buildSceneRatedEvent({
+            sceneId: scene.id,
+            rating,
+            occurredAt: scene.created_at,
+          }),
+        ])
+      }
       if (continueEditing) {
         setPostQuickSaveScene(scene)
         setShowDetails(true)
@@ -210,6 +231,14 @@ export function ManualSceneForm({
         ...competition,
       }
       const scene = await api.updateScene(targetId, payload)
+      if (typeof rating === 'number' && rating >= 1) {
+        void ingestActivityEvents([
+          buildSceneRatedEvent({
+            sceneId: scene.id,
+            rating,
+          }),
+        ])
+      }
       onSaved(scene)
       onClose()
     } catch {

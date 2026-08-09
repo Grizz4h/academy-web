@@ -1,0 +1,366 @@
+{
+  "id": "numerical_situation",
+  "title": "Numerical Situation",
+  "category": "numerical_situation",
+  "description": "Seltene numerische Sondersituationen opportunistisch erfassen.",
+  "situation_types": [
+    {
+      "id": "5v3",
+      "label": "5 gegen 3",
+      "hint": "Doppelte Überzahl / doppelte Unterzahl",
+      "perspectives": ["advantaged", "disadvantaged"]
+    },
+    {
+      "id": "6v4",
+      "label": "6 gegen 4",
+      "hint": "Extra Angreifer bei doppelter Überzahl",
+      "perspectives": ["advantaged", "disadvantaged"]
+    },
+    {
+      "id": "6v5",
+      "label": "6 gegen 5",
+      "hint": "Zusätzlicher Angreifer bei Equal Strength Defense",
+      "perspectives": ["advantaged", "disadvantaged"]
+    },
+    {
+      "id": "4v3",
+      "label": "4 gegen 3",
+      "hint": "Mehr Raum als im klassischen 5v4",
+      "perspectives": ["advantaged", "disadvantaged"]
+    },
+    {
+      "id": "delayed_penalty_extra_attacker",
+      "label": "Delayed Penalty / Extra Attacker",
+      "hint": "Extra Angreifer während verzögerter Strafe",
+      "perspectives": ["advantaged"]
+    },
+    {
+      "id": "empty_net_offense",
+      "label": "Empty Net – Angriff",
+      "hint": "Angriff gegen leeres Tor",
+      "perspectives": ["advantaged"]
+    },
+    {
+      "id": "empty_net_defense",
+      "label": "Empty Net – Verteidigung",
+      "hint": "Verteidigung trotz leerem eigenen Tor",
+      "perspectives": ["disadvantaged"]
+    },
+    {
+      "id": "other",
+      "label": "Andere Sondersituation",
+      "hint": "Seltene numerische Lage außerhalb der Standardliste",
+      "perspectives": ["advantaged", "disadvantaged"]
+    }
+  ],
+  "templates": [
+    {
+      "id": "double_overage_attack",
+      "title": "Wo entsteht die doppelte Überzahl?",
+      "description": "Welche Räume und defensiven Aufgaben werden durch die zusätzliche Überzahl unhaltbar?",
+      "applicableSituations": ["5v3", "6v4"],
+      "perspectives": ["advantaged"],
+      "drill_type": "period_checkin",
+      "didactics": {
+        "explanation": "Was verändert die zusätzliche oder fehlende Person an Raum, Rollen und defensiven Prioritäten? Nicht: Welches System ist das?"
+      },
+      "config": {
+        "option_layout": "cards",
+        "validate_answers": true,
+        "compact_ui": true,
+        "questions": [
+          {
+            "key": "hardToDefendSpace",
+            "type": "radio",
+            "required": true,
+            "label": "Welcher Raum wird durch die zusätzliche Überzahl besonders schwer zu verteidigen?",
+            "options": [
+              { "value": "net_front", "label": "Net Front" },
+              { "value": "bumper_middle", "label": "Bumper / Mitte" },
+              { "value": "seam", "label": "Seam" },
+              { "value": "weak_side", "label": "Weak Side" },
+              { "value": "high_point", "label": "High / Point" },
+              { "value": "goal_line", "label": "Goal Line" },
+              { "value": "multiple", "label": "Mehrere gleichzeitig" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "impossibleTask",
+            "type": "radio",
+            "required": true,
+            "label": "Welche defensive Aufgabe kann ein Unterzahlspieler nicht mehr gleichzeitig lösen?",
+            "options": [
+              { "value": "puck_and_middle", "label": "Puckdruck + Mitte" },
+              { "value": "seam_and_shotlane", "label": "Seam + Schussbahn" },
+              { "value": "netfront_and_bumper", "label": "Net Front + Bumper" },
+              { "value": "weakside_and_middle", "label": "Weak Side + Mitte" },
+              { "value": "high_and_low", "label": "High + Low" },
+              { "value": "two_pass_options", "label": "Zwei Passoptionen gleichzeitig" },
+              { "value": "multiple_tasks", "label": "Mehrere Aufgaben" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "attackMethod",
+            "type": "radio",
+            "required": true,
+            "label": "Wie greift die Überzahl diesen Vorteil an?",
+            "options": [
+              { "value": "extra_pass", "label": "Extra Pass" },
+              { "value": "seam_pass", "label": "Seam Pass" },
+              { "value": "bumper_play", "label": "Bumper Play" },
+              { "value": "one_timer", "label": "One-Timer" },
+              { "value": "net_front_play", "label": "Net-Front Play" },
+              { "value": "goal_line_play", "label": "Goal-Line Play" },
+              { "value": "quick_circulation", "label": "Schnelle Puckzirkulation" },
+              { "value": "no_direct_attack", "label": "Noch keine direkte Attacke" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "optional": true,
+            "label": "Was bleibt defensiv bewusst offen?",
+            "placeholder": "Optional",
+            "max_chars": 400
+          }
+        ]
+      }
+    },
+    {
+      "id": "extra_attacker_offense",
+      "title": "Was verändert der zusätzliche Angreifer?",
+      "description": "Welche zusätzliche Funktion entsteht – und welchen Raum kann die Defense dadurch schlechter kontrollieren?",
+      "applicableSituations": ["6v5", "delayed_penalty_extra_attacker", "empty_net_offense", "other"],
+      "perspectives": ["advantaged"],
+      "drill_type": "period_checkin",
+      "didactics": {
+        "explanation": "Was verändert die zusätzliche Person an Raum, Rollen und defensiven Prioritäten?"
+      },
+      "config": {
+        "option_layout": "cards",
+        "validate_answers": true,
+        "compact_ui": true,
+        "questions": [
+          {
+            "key": "extraAttackerEmbedded",
+            "type": "radio",
+            "required": false,
+            "optional": true,
+            "show_for_situations": ["delayed_penalty_extra_attacker"],
+            "label": "Ist der zusätzliche Spieler bereits strukturell eingebunden oder kommt er erst in die Sequenz?",
+            "options": [
+              { "value": "already_embedded", "label": "Bereits eingebunden" },
+              { "value": "joining_now", "label": "Kommt gerade dazu" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "extraFunction",
+            "type": "radio",
+            "required": true,
+            "label": "Welche zusätzliche offensive Funktion entsteht?",
+            "options": [
+              { "value": "extra_net_front", "label": "Zusätzliche Net-Front-Präsenz" },
+              { "value": "extra_high", "label": "Zusätzlicher Spieler High" },
+              { "value": "extra_halfwall", "label": "Zusätzliche Halfwall-Option" },
+              { "value": "extra_weak_side", "label": "Zusätzliche Weak-Side-Option" },
+              { "value": "extra_bumper", "label": "Zusätzlicher Bumper / Middle" },
+              { "value": "extra_goal_line", "label": "Zusätzliche Goal-Line-Option" },
+              { "value": "flexible_rotation", "label": "Flexible Rotation" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "defensiveGap",
+            "type": "radio",
+            "required": true,
+            "label": "Welchen Raum kann die Defensive dadurch schlechter kontrollieren?",
+            "options": [
+              { "value": "net_front", "label": "Net Front" },
+              { "value": "slot", "label": "Slot" },
+              { "value": "seam", "label": "Seam" },
+              { "value": "weak_side", "label": "Weak Side" },
+              { "value": "high", "label": "High" },
+              { "value": "goal_line", "label": "Goal Line" },
+              { "value": "multiple", "label": "Mehrere gleichzeitig" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "usage",
+            "type": "radio",
+            "required": true,
+            "label": "Wie nutzt die Offensive den zusätzlichen Spieler?",
+            "options": [
+              { "value": "overload", "label": "Überladung" },
+              { "value": "extra_pass", "label": "Extra Pass" },
+              { "value": "shot_with_screen", "label": "Shot mit Screen" },
+              { "value": "cross_seam", "label": "Cross-Seam" },
+              { "value": "rotation", "label": "Rotation" },
+              { "value": "secure_possession", "label": "Puckbesitz sichern" },
+              { "value": "second_puck_chance", "label": "Zweite Puckchance" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "optional": true,
+            "label": "Kurze Notiz",
+            "placeholder": "Optional",
+            "max_chars": 400
+          }
+        ]
+      }
+    },
+    {
+      "id": "numerical_underload_defense",
+      "title": "Was schützt die Defensive trotz Unterzahl zuerst?",
+      "description": "Welche Gefahr wird priorisiert – und was wird dafür eher aufgegeben?",
+      "applicableSituations": ["5v3", "6v4", "6v5", "4v3", "empty_net_defense", "other"],
+      "perspectives": ["disadvantaged"],
+      "drill_type": "period_checkin",
+      "didactics": {
+        "explanation": "Was verändert die fehlende Person an Raum, Rollen und defensiven Prioritäten?"
+      },
+      "config": {
+        "option_layout": "cards",
+        "validate_answers": true,
+        "compact_ui": true,
+        "questions": [
+          {
+            "key": "priorityThreat",
+            "type": "radio",
+            "required": true,
+            "label": "Welche Gefahr wird am stärksten priorisiert?",
+            "options": [
+              { "value": "net_front", "label": "Net Front" },
+              { "value": "middle", "label": "Mitte" },
+              { "value": "seam", "label": "Seam" },
+              { "value": "shot_lane", "label": "Direkte Schussbahn" },
+              { "value": "weak_side", "label": "Weak Side" },
+              { "value": "puck_side", "label": "Puckseite" },
+              { "value": "multiple", "label": "Mehrere gleichzeitig" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "concededSpace",
+            "type": "radio",
+            "required": true,
+            "label": "Was wird dafür eher aufgegeben?",
+            "options": [
+              { "value": "outside", "label": "Außenraum" },
+              { "value": "high", "label": "High" },
+              { "value": "weak_side", "label": "Weak Side" },
+              { "value": "time_on_puck", "label": "Zeit am Puck" },
+              { "value": "goal_line", "label": "Goal Line" },
+              { "value": "distance_shot", "label": "Distanzschuss" },
+              { "value": "nothing_clear", "label": "Nichts klar erkennbar" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "resolution",
+            "type": "radio",
+            "required": true,
+            "label": "Wie versucht die Defensive die Sequenz zu lösen?",
+            "options": [
+              { "value": "stay_compact", "label": "Kompakt bleiben" },
+              { "value": "active_pressure", "label": "Aktiver Puckdruck" },
+              { "value": "shot_block", "label": "Shot Block" },
+              { "value": "close_pass_lane", "label": "Passlinie schließen" },
+              { "value": "clear", "label": "Clear" },
+              { "value": "puck_win_control", "label": "Puckgewinn + Kontrolle" },
+              { "value": "goalie_last_block", "label": "Goalie / letzter Block" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "optional": true,
+            "label": "Kurze Notiz",
+            "placeholder": "Optional",
+            "max_chars": 400
+          }
+        ]
+      }
+    },
+    {
+      "id": "four_on_three_attack",
+      "title": "Welcher Raum wird im 4v3 besonders groß?",
+      "description": "4v3 ist strukturell ähnlich wie PP, aber mit deutlich mehr Raum.",
+      "applicableSituations": ["4v3"],
+      "perspectives": ["advantaged"],
+      "drill_type": "period_checkin",
+      "didactics": {
+        "explanation": "Welcher Raum wird durch die numerische Lage besonders groß – und wie wird er attackiert?"
+      },
+      "config": {
+        "option_layout": "cards",
+        "validate_answers": true,
+        "compact_ui": true,
+        "questions": [
+          {
+            "key": "largestSpace",
+            "type": "radio",
+            "required": true,
+            "label": "Wo entsteht der größte Raumvorteil?",
+            "options": [
+              { "value": "middle", "label": "Mitte" },
+              { "value": "halfwall", "label": "Halfwall" },
+              { "value": "weak_side", "label": "Weak Side" },
+              { "value": "high", "label": "High" },
+              { "value": "goal_line", "label": "Goal Line" },
+              { "value": "net_front", "label": "Net Front" },
+              { "value": "multiple", "label": "Mehrere gleichzeitig" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "defenderShape",
+            "type": "radio",
+            "required": true,
+            "label": "Wie verteilen sich die drei Defender?",
+            "options": [
+              { "value": "very_compact", "label": "Stark kompakt" },
+              { "value": "one_high", "label": "Ein Spieler hoch" },
+              { "value": "two_low_one_high", "label": "Zwei tief / einer hoch" },
+              { "value": "strong_puckside", "label": "Stark puckseitig" },
+              { "value": "changing", "label": "Wechselnd" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "attackMethod",
+            "type": "radio",
+            "required": true,
+            "label": "Wie wird der zusätzliche Raum attackiert?",
+            "options": [
+              { "value": "quick_shot", "label": "Schneller Shot" },
+              { "value": "extra_pass", "label": "Extra Pass" },
+              { "value": "seam", "label": "Seam" },
+              { "value": "drive", "label": "Drive" },
+              { "value": "net_front", "label": "Net Front" },
+              { "value": "rotation", "label": "Rotation" },
+              { "value": "patience", "label": "Geduld / weiter zirkulieren" },
+              { "value": "unclear", "label": "Unklar" }
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "optional": true,
+            "label": "Kurze Notiz",
+            "placeholder": "Optional",
+            "max_chars": 400
+          }
+        ]
+      }
+    }
+  ]
+}

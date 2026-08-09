@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from '../Card';
 import { getDrillAccentLevel } from '../../utils/tealIntensity';
+import { MechanicGlyph } from '../visuals';
 import styles from './DrillPriorityCards.module.css';
 
 export type DrillWithCount = {
@@ -65,6 +66,7 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
               return (
                 <li key={drill.id} className={styles.drillItem}>
                   <div className={styles.itemAccent} data-level={accentLevel} data-type="recommended" />
+                  <MechanicGlyph drillType={drill.drill_type} />
                   <span className={styles.drillTitle}>{displayTitle}</span>
                   <span className={styles.itemCount}>{drill.count}×</span>
                 </li>
@@ -89,6 +91,7 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
               return (
                 <li key={drill.id} className={styles.drillItem}>
                   <div className={styles.itemAccent} data-level={accentLevel} data-type="trained" />
+                  <MechanicGlyph drillType={drill.drill_type} />
                   <span className={styles.drillTitle}>{displayTitle}</span>
                   <span className={styles.itemCount}>{drill.count}×</span>
                 </li>

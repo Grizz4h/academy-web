@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 900
+    "PUX": 1820
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -50,6 +50,66 @@
     "fifty-drills-complete": {
       "id": "fifty-drills-complete",
       "unlockedAt": "2026-05-30T22:25:48.456243"
+    },
+    "first_shift": {
+      "id": "first_shift",
+      "unlockedAt": "2026-01-13T23:27:18.384325",
+      "sourceEventId": "session_completed:christoph_1768336950"
+    },
+    "scouting_around": {
+      "id": "scouting_around",
+      "unlockedAt": "2026-01-30T19:05:16.530663",
+      "sourceEventId": "session_completed:Christoph_1769790235"
+    },
+    "league_hopper": {
+      "id": "league_hopper",
+      "unlockedAt": "2026-02-20T21:03:58.761030",
+      "sourceEventId": "session_completed:Christoph_1771445003"
+    },
+    "getting_warm": {
+      "id": "getting_warm",
+      "unlockedAt": "2026-02-20T23:31:41.965075",
+      "sourceEventId": "session_completed:Christoph_1771618366"
+    },
+    "neutral_zone_tourist": {
+      "id": "neutral_zone_tourist",
+      "unlockedAt": "2026-03-04T16:06:15.105244",
+      "sourceEventId": "session_completed:Christoph_1772535850"
+    },
+    "track_record": {
+      "id": "track_record",
+      "unlockedAt": "2026-05-20T22:48:56.855374",
+      "sourceEventId": "track_completed:A:v1"
+    },
+    "first_clip": {
+      "id": "first_clip",
+      "unlockedAt": "2026-06-22T14:31:59.853113",
+      "sourceEventId": "scene_created:scene_1782131519_e7af9f"
+    },
+    "rink_rat": {
+      "id": "rink_rat",
+      "unlockedAt": "2026-06-22T16:25:25.307179",
+      "sourceEventId": "session_completed:Christoph_1782131281"
+    },
+    "slot_squatter": {
+      "id": "slot_squatter",
+      "unlockedAt": "2026-06-22T16:25:25.307179",
+      "sourceEventId": "session_completed:Christoph_1782131281"
+    },
+    "thats_going_in": {
+      "id": "thats_going_in",
+      "unlockedAt": "2026-07-05T00:48:55.398898",
+      "sourceEventId": "scene_rated:scene_1782133588_6982b1:5"
+    },
+    "specialist": {
+      "id": "specialist",
+      "unlockedAt": "2026-08-05T19:35:46.338Z",
+      "sourceEventId": "sidequest_completed:b39739d3-bba1-482c-9f3f-682271fbd7d8"
+    },
+    "clip_goblin": {
+      "id": "clip_goblin",
+      "unlockedAt": "2026-08-06T21:44:08.459670",
+      "sourceEventId": "scene_created:scene_1786045448_79e3c2"
     }
   },
   "unlockedMasteries": {
@@ -519,5 +579,2752 @@
       "pux": 20
     }
   },
-  "lastUpdatedAt": "2026-08-08T12:02:06.969683"
+  "xp": 9650,
+  "processedEvents": {
+    "session_completed:christoph_1768336950": {
+      "eventId": "session_completed:christoph_1768336950",
+      "processedAt": "2026-01-13T23:27:18.384325",
+      "grantedXp": 175,
+      "grantedPux": 25
+    },
+    "session_completed:christoph_1768742300": {
+      "eventId": "session_completed:christoph_1768742300",
+      "processedAt": "2026-01-18T22:32:10.286396",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:christoph_1769106228": {
+      "eventId": "session_completed:christoph_1769106228",
+      "processedAt": "2026-01-23T07:09:41.272887",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:christoph_1769537070": {
+      "eventId": "session_completed:christoph_1769537070",
+      "processedAt": "2026-01-28T01:05:10.018057",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:christoph_1769638791": {
+      "eventId": "session_completed:christoph_1769638791",
+      "processedAt": "2026-01-29T22:33:18.328471",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:christoph_1769755684": {
+      "eventId": "session_completed:christoph_1769755684",
+      "processedAt": "2026-01-30T15:09:09.886806",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1769790235": {
+      "eventId": "session_completed:Christoph_1769790235",
+      "processedAt": "2026-01-30T19:05:16.530663",
+      "grantedXp": 250,
+      "grantedPux": 60
+    },
+    "session_completed:christoph_1769202987": {
+      "eventId": "session_completed:christoph_1769202987",
+      "processedAt": "2026-01-30T19:06:11.681403",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1771445003": {
+      "eventId": "session_completed:Christoph_1771445003",
+      "processedAt": "2026-02-20T21:03:58.761030",
+      "grantedXp": 275,
+      "grantedPux": 60
+    },
+    "session_completed:Christoph_1771618366": {
+      "eventId": "session_completed:Christoph_1771618366",
+      "processedAt": "2026-02-20T23:31:41.965075",
+      "grantedXp": 250,
+      "grantedPux": 100
+    },
+    "session_completed:Christoph_1771702907": {
+      "eventId": "session_completed:Christoph_1771702907",
+      "processedAt": "2026-02-21T23:04:49.687773",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1771689314": {
+      "eventId": "session_completed:Christoph_1771689314",
+      "processedAt": "2026-02-22T11:04:47.000213",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1771765449": {
+      "eventId": "session_completed:Christoph_1771765449",
+      "processedAt": "2026-02-22T16:32:14.793311",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1771822892": {
+      "eventId": "session_completed:Christoph_1771822892",
+      "processedAt": "2026-02-25T15:46:38.409154",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1772129257": {
+      "eventId": "session_completed:Christoph_1772129257",
+      "processedAt": "2026-02-27T06:35:00.382216",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1772218350": {
+      "eventId": "session_completed:Christoph_1772218350",
+      "processedAt": "2026-02-27T22:49:58.600071",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1772369969": {
+      "eventId": "session_completed:Christoph_1772369969",
+      "processedAt": "2026-03-01T16:19:18.434874",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1772378824": {
+      "eventId": "session_completed:Christoph_1772378824",
+      "processedAt": "2026-03-01T18:50:47.803439",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1772561232": {
+      "eventId": "session_completed:Christoph_1772561232",
+      "processedAt": "2026-03-03T21:24:47.256608",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1772535850": {
+      "eventId": "session_completed:Christoph_1772535850",
+      "processedAt": "2026-03-04T16:06:15.105244",
+      "grantedXp": 280,
+      "grantedPux": 70
+    },
+    "session_completed:Christoph_1772897423": {
+      "eventId": "session_completed:Christoph_1772897423",
+      "processedAt": "2026-03-07T18:59:27.316612",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1773257309": {
+      "eventId": "session_completed:Christoph_1773257309",
+      "processedAt": "2026-03-11T21:48:30.207497",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1773311269": {
+      "eventId": "session_completed:Christoph_1773311269",
+      "processedAt": "2026-03-12T23:17:44.057895",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1773474665": {
+      "eventId": "session_completed:Christoph_1773474665",
+      "processedAt": "2026-03-14T10:45:56.527512",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1773590454": {
+      "eventId": "session_completed:Christoph_1773590454",
+      "processedAt": "2026-03-15T19:29:39.183393",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1773772274": {
+      "eventId": "session_completed:Christoph_1773772274",
+      "processedAt": "2026-03-17T21:29:02.514206",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1774033766": {
+      "eventId": "session_completed:Christoph_1774033766",
+      "processedAt": "2026-03-20T21:37:09.695617",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1774461573": {
+      "eventId": "session_completed:Christoph_1774461573",
+      "processedAt": "2026-03-25T21:32:39.944524",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1774713737": {
+      "eventId": "session_completed:Christoph_1774713737",
+      "processedAt": "2026-03-28T18:03:41.939301",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1774793611": {
+      "eventId": "session_completed:Christoph_1774793611",
+      "processedAt": "2026-03-29T17:28:35.979443",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1775048627": {
+      "eventId": "session_completed:Christoph_1775048627",
+      "processedAt": "2026-04-01T17:31:50.206122",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1775670682": {
+      "eventId": "session_completed:Christoph_1775670682",
+      "processedAt": "2026-04-10T21:32:02.885070",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1775842403": {
+      "eventId": "session_completed:Christoph_1775842403",
+      "processedAt": "2026-04-10T21:35:13.259914",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1775888581": {
+      "eventId": "session_completed:Christoph_1775888581",
+      "processedAt": "2026-04-11T09:50:50.243337",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1776188037": {
+      "eventId": "session_completed:Christoph_1776188037",
+      "processedAt": "2026-04-14T21:45:33.837039",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1776274636": {
+      "eventId": "session_completed:Christoph_1776274636",
+      "processedAt": "2026-04-17T19:34:18.613505",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1776447280": {
+      "eventId": "session_completed:Christoph_1776447280",
+      "processedAt": "2026-04-19T16:17:45.531372",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1776611008": {
+      "eventId": "session_completed:Christoph_1776611008",
+      "processedAt": "2026-04-20T21:17:21.176473",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1776706323": {
+      "eventId": "session_completed:Christoph_1776706323",
+      "processedAt": "2026-04-20T21:48:45.599850",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1776792933": {
+      "eventId": "session_completed:Christoph_1776792933",
+      "processedAt": "2026-04-21T21:47:42.259792",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1777212211": {
+      "eventId": "session_completed:Christoph_1777212211",
+      "processedAt": "2026-04-26T18:28:24.901032",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1778853069": {
+      "eventId": "session_completed:Christoph_1778853069",
+      "processedAt": "2026-05-15T18:27:58.485735",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1779128690": {
+      "eventId": "session_completed:Christoph_1779128690",
+      "processedAt": "2026-05-18T21:59:14.829930",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1779201820": {
+      "eventId": "session_completed:Christoph_1779201820",
+      "processedAt": "2026-05-19T21:42:08.557199",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1779294752": {
+      "eventId": "session_completed:Christoph_1779294752",
+      "processedAt": "2026-05-20T22:48:56.855374",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "track_completed:A:v1": {
+      "eventId": "track_completed:A:v1",
+      "processedAt": "2026-05-20T22:48:56.855374",
+      "grantedXp": 700,
+      "grantedPux": 75
+    },
+    "session_completed:Christoph_1779730654": {
+      "eventId": "session_completed:Christoph_1779730654",
+      "processedAt": "2026-05-25T22:01:53.310181",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1779805176": {
+      "eventId": "session_completed:Christoph_1779805176",
+      "processedAt": "2026-05-26T18:36:59.712918",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1779819910": {
+      "eventId": "session_completed:Christoph_1779819910",
+      "processedAt": "2026-05-26T22:32:08.839500",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1780164386": {
+      "eventId": "session_completed:Christoph_1780164386",
+      "processedAt": "2026-05-30T22:25:48.456243",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782131519_e7af9f": {
+      "eventId": "scene_created:scene_1782131519_e7af9f",
+      "processedAt": "2026-06-22T14:31:59.853113",
+      "grantedXp": 60,
+      "grantedPux": 20
+    },
+    "scene_created:scene_1782132638_e0bd84": {
+      "eventId": "scene_created:scene_1782132638_e0bd84",
+      "processedAt": "2026-06-22T14:50:38.558187",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782133395_230b58": {
+      "eventId": "scene_created:scene_1782133395_230b58",
+      "processedAt": "2026-06-22T15:03:15.964883",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782133588_6982b1": {
+      "eventId": "scene_created:scene_1782133588_6982b1",
+      "processedAt": "2026-06-22T15:06:28.442930",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782134210_9581b5": {
+      "eventId": "scene_created:scene_1782134210_9581b5",
+      "processedAt": "2026-06-22T15:16:50.742641",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782134290_0e94df": {
+      "eventId": "scene_created:scene_1782134290_0e94df",
+      "processedAt": "2026-06-22T15:18:10.591812",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1782131281": {
+      "eventId": "session_completed:Christoph_1782131281",
+      "processedAt": "2026-06-22T16:25:25.307179",
+      "grantedXp": 705,
+      "grantedPux": 220
+    },
+    "scene_created:scene_1782650372_0c0621": {
+      "eventId": "scene_created:scene_1782650372_0c0621",
+      "processedAt": "2026-06-28T14:39:32.406969",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782650514_6d429a": {
+      "eventId": "scene_created:scene_1782650514_6d429a",
+      "processedAt": "2026-06-28T14:41:54.313559",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782650644_bc413f": {
+      "eventId": "scene_created:scene_1782650644_bc413f",
+      "processedAt": "2026-06-28T14:44:04.937798",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782651027_0d2613": {
+      "eventId": "scene_created:scene_1782651027_0d2613",
+      "processedAt": "2026-06-28T14:50:27.852198",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1782651164_af827e": {
+      "eventId": "scene_created:scene_1782651164_af827e",
+      "processedAt": "2026-06-28T14:52:44.222470",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1782649917": {
+      "eventId": "session_completed:Christoph_1782649917",
+      "processedAt": "2026-06-28T20:27:05.134596",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1782132638_e0bd84:1": {
+      "eventId": "scene_rated:scene_1782132638_e0bd84:1",
+      "processedAt": "2026-06-30T22:32:51.492991",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1782651027_0d2613:3": {
+      "eventId": "scene_rated:scene_1782651027_0d2613:3",
+      "processedAt": "2026-07-01T19:03:35.043511",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1782133588_6982b1:5": {
+      "eventId": "scene_rated:scene_1782133588_6982b1:5",
+      "processedAt": "2026-07-05T00:48:55.398898",
+      "grantedXp": 85,
+      "grantedPux": 40
+    },
+    "scene_created:scene_1785592704_bc2104": {
+      "eventId": "scene_created:scene_1785592704_bc2104",
+      "processedAt": "2026-08-01T15:58:24.381155",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785594157_2f981d": {
+      "eventId": "scene_created:scene_1785594157_2f981d",
+      "processedAt": "2026-08-01T16:22:37.985917",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785592704_bc2104:4": {
+      "eventId": "scene_rated:scene_1785592704_bc2104:4",
+      "processedAt": "2026-08-01T16:23:10.248172",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785594157_2f981d:2": {
+      "eventId": "scene_rated:scene_1785594157_2f981d:2",
+      "processedAt": "2026-08-01T16:23:32.515112",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1785592381": {
+      "eventId": "session_completed:Christoph_1785592381",
+      "processedAt": "2026-08-01T17:06:59.127587",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785687829_39a023": {
+      "eventId": "scene_created:scene_1785687829_39a023",
+      "processedAt": "2026-08-02T18:23:49.874261",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1785685792": {
+      "eventId": "session_completed:Christoph_1785685792",
+      "processedAt": "2026-08-02T18:55:43.941274",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785690365_f7a346": {
+      "eventId": "scene_created:scene_1785690365_f7a346",
+      "processedAt": "2026-08-02T19:06:05.601840",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785690365_f7a346:3": {
+      "eventId": "scene_rated:scene_1785690365_f7a346:3",
+      "processedAt": "2026-08-02T19:06:11.601190",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785690893_96a608": {
+      "eventId": "scene_created:scene_1785690893_96a608",
+      "processedAt": "2026-08-02T19:14:53.336166",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1785690282": {
+      "eventId": "session_completed:Christoph_1785690282",
+      "processedAt": "2026-08-02T19:32:03.700372",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785764455_610f66": {
+      "eventId": "scene_created:scene_1785764455_610f66",
+      "processedAt": "2026-08-03T15:40:55.170254",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785764455_610f66:2": {
+      "eventId": "scene_rated:scene_1785764455_610f66:2",
+      "processedAt": "2026-08-03T15:41:01.964066",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785764729_925bf7": {
+      "eventId": "scene_created:scene_1785764729_925bf7",
+      "processedAt": "2026-08-03T15:45:29.896874",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1785763689": {
+      "eventId": "session_completed:Christoph_1785763689",
+      "processedAt": "2026-08-03T16:09:14.426276",
+      "grantedXp": 125,
+      "grantedPux": 100
+    },
+    "sidequest_completed:b39739d3-bba1-482c-9f3f-682271fbd7d8": {
+      "eventId": "sidequest_completed:b39739d3-bba1-482c-9f3f-682271fbd7d8",
+      "processedAt": "2026-08-05T19:35:46.338Z",
+      "grantedXp": 125,
+      "grantedPux": 50
+    },
+    "scene_created:scene_1785958884_e705f1": {
+      "eventId": "scene_created:scene_1785958884_e705f1",
+      "processedAt": "2026-08-05T21:41:24.158274",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785958884_e705f1:2": {
+      "eventId": "scene_rated:scene_1785958884_e705f1:2",
+      "processedAt": "2026-08-05T21:41:33.729894",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785958972_64957d": {
+      "eventId": "scene_created:scene_1785958972_64957d",
+      "processedAt": "2026-08-05T21:42:52.068785",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785958972_64957d:2": {
+      "eventId": "scene_rated:scene_1785958972_64957d:2",
+      "processedAt": "2026-08-05T21:42:54.927112",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785959047_fb5835": {
+      "eventId": "scene_created:scene_1785959047_fb5835",
+      "processedAt": "2026-08-05T21:44:07.910843",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785959047_fb5835:2": {
+      "eventId": "scene_rated:scene_1785959047_fb5835:2",
+      "processedAt": "2026-08-05T21:44:11.050741",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1785959676_132b9d": {
+      "eventId": "scene_created:scene_1785959676_132b9d",
+      "processedAt": "2026-08-05T21:54:36.495106",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785959676_132b9d:3": {
+      "eventId": "scene_rated:scene_1785959676_132b9d:3",
+      "processedAt": "2026-08-05T21:55:30.463048",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1785957207": {
+      "eventId": "session_completed:Christoph_1785957207",
+      "processedAt": "2026-08-05T21:56:21.193118",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "sidequest_completed:dc74294b-d18a-4b20-ad3c-bfe11841c321": {
+      "eventId": "sidequest_completed:dc74294b-d18a-4b20-ad3c-bfe11841c321",
+      "processedAt": "2026-08-06T15:49:17.505Z",
+      "grantedXp": 25,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786032537_be2f9f": {
+      "eventId": "scene_created:scene_1786032537_be2f9f",
+      "processedAt": "2026-08-06T18:08:57.483452",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786030749": {
+      "eventId": "session_completed:Christoph_1786030749",
+      "processedAt": "2026-08-06T18:10:25.517334",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "sidequest_completed:9489aef1-4ca3-49de-a552-bd8d66bd701e": {
+      "eventId": "sidequest_completed:9489aef1-4ca3-49de-a552-bd8d66bd701e",
+      "processedAt": "2026-08-06T19:40:29.848Z",
+      "grantedXp": 25,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786038233_3735d7": {
+      "eventId": "scene_created:scene_1786038233_3735d7",
+      "processedAt": "2026-08-06T19:43:53.639713",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786038233_3735d7:3": {
+      "eventId": "scene_rated:scene_1786038233_3735d7:3",
+      "processedAt": "2026-08-06T19:44:47.636460",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786045448_79e3c2": {
+      "eventId": "scene_created:scene_1786045448_79e3c2",
+      "processedAt": "2026-08-06T21:44:08.459670",
+      "grantedXp": 270,
+      "grantedPux": 100
+    },
+    "scene_rated:scene_1786045448_79e3c2:3": {
+      "eventId": "scene_rated:scene_1786045448_79e3c2:3",
+      "processedAt": "2026-08-06T21:44:28.236306",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786045757_9b6502": {
+      "eventId": "scene_created:scene_1786045757_9b6502",
+      "processedAt": "2026-08-06T21:49:17.011018",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786033172": {
+      "eventId": "session_completed:Christoph_1786033172",
+      "processedAt": "2026-08-06T21:49:58.847982",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "sidequest_completed:ef40f008-1198-4c39-8144-79bb971aa8d4": {
+      "eventId": "sidequest_completed:ef40f008-1198-4c39-8144-79bb971aa8d4",
+      "processedAt": "2026-08-08T09:39:17.888Z",
+      "grantedXp": 25,
+      "grantedPux": 0
+    },
+    "sidequest_completed:34b5e231-56b4-435e-8724-9cc44d48442a": {
+      "eventId": "sidequest_completed:34b5e231-56b4-435e-8724-9cc44d48442a",
+      "processedAt": "2026-08-08T09:41:31.589Z",
+      "grantedXp": 25,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786182846_e4e237": {
+      "eventId": "scene_created:scene_1786182846_e4e237",
+      "processedAt": "2026-08-08T11:54:06.950020",
+      "grantedXp": 20,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786179938": {
+      "eventId": "session_completed:Christoph_1786179938",
+      "processedAt": "2026-08-08T12:02:06.969683",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786045757_9b6502:3": {
+      "eventId": "scene_rated:scene_1786045757_9b6502:3",
+      "processedAt": "2026-08-09T10:03:37.578072",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786182846_e4e237:4": {
+      "eventId": "scene_rated:scene_1786182846_e4e237:4",
+      "processedAt": "2026-08-09T10:03:45.517589",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785687829_39a023:4": {
+      "eventId": "scene_rated:scene_1785687829_39a023:4",
+      "processedAt": "2026-08-09T10:03:54.681871",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786032537_be2f9f:3": {
+      "eventId": "scene_rated:scene_1786032537_be2f9f:3",
+      "processedAt": "2026-08-09T10:09:54.322493",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785764729_925bf7:3": {
+      "eventId": "scene_rated:scene_1785764729_925bf7:3",
+      "processedAt": "2026-08-09T10:16:01.681756",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1785690893_96a608:3": {
+      "eventId": "scene_rated:scene_1785690893_96a608:3",
+      "processedAt": "2026-08-09T10:22:04.931341",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "bootstrap:v1": {
+      "eventId": "bootstrap:v1",
+      "processedAt": "2026-08-09T18:13:35.861Z",
+      "grantedXp": 9650,
+      "grantedPux": 920
+    },
+    "mastery_milestone:drill_mastery:B1_D5:1": {
+      "eventId": "mastery_milestone:drill_mastery:B1_D5:1",
+      "processedAt": "2026-08-09T18:30:11.309Z",
+      "grantedXp": 1925,
+      "grantedPux": 1140
+    },
+    "mastery_milestone:drill_mastery:B1:1": {
+      "eventId": "mastery_milestone:drill_mastery:B1:1",
+      "processedAt": "2026-08-09T18:30:29.439Z",
+      "grantedXp": 1900,
+      "grantedPux": 1140
+    },
+    "mastery_milestone:drill_mastery:B1:3": {
+      "eventId": "mastery_milestone:drill_mastery:B1:3",
+      "processedAt": "2026-08-09T18:30:50.899Z",
+      "grantedXp": 1875,
+      "grantedPux": 1140
+    },
+    "mastery_milestone:drill_mastery:B1:5": {
+      "eventId": "mastery_milestone:drill_mastery:B1:5",
+      "processedAt": "2026-08-09T18:31:40.346Z",
+      "grantedXp": 1875,
+      "grantedPux": 1100
+    },
+    "mastery_milestone:drill_mastery:B1_D3:1": {
+      "eventId": "mastery_milestone:drill_mastery:B1_D3:1",
+      "processedAt": "2026-08-09T18:32:37.079Z",
+      "grantedXp": 1775,
+      "grantedPux": 1040
+    },
+    "mastery_milestone:drill_mastery:A2_D1:1": {
+      "eventId": "mastery_milestone:drill_mastery:A2_D1:1",
+      "processedAt": "2026-08-09T18:34:04.166Z",
+      "grantedXp": 1750,
+      "grantedPux": 1040
+    },
+    "mastery_milestone:drill_mastery:A2_D1:3": {
+      "eventId": "mastery_milestone:drill_mastery:A2_D1:3",
+      "processedAt": "2026-08-09T18:34:16.714Z",
+      "grantedXp": 1725,
+      "grantedPux": 1040
+    },
+    "locker:seen:2026-08-09T18:37:17.176Z": {
+      "eventId": "locker:seen:2026-08-09T18:37:17.176Z",
+      "processedAt": "2026-08-09T18:37:17.176Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:seen:2026-08-09T18:39:11.159Z": {
+      "eventId": "locker:seen:2026-08-09T18:39:11.159Z",
+      "processedAt": "2026-08-09T18:39:11.159Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:seen:2026-08-09T19:03:20.105Z": {
+      "eventId": "locker:seen:2026-08-09T19:03:20.105Z",
+      "processedAt": "2026-08-09T19:03:20.105Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    }
+  },
+  "unlockedCosmetics": {
+    "avatar_ice_01": {
+      "cosmeticId": "avatar_ice_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "avatar_puck_01": {
+      "cosmeticId": "avatar_puck_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "avatar_crest_01": {
+      "cosmeticId": "avatar_crest_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "avatar_chalk_01": {
+      "cosmeticId": "avatar_chalk_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "avatar_net_01": {
+      "cosmeticId": "avatar_net_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "banner_neutral_01": {
+      "cosmeticId": "banner_neutral_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "banner_blue_line_01": {
+      "cosmeticId": "banner_blue_line_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "banner_chalk_01": {
+      "cosmeticId": "banner_chalk_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "banner_crease_01": {
+      "cosmeticId": "banner_crease_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "emblem_puck_01": {
+      "cosmeticId": "emblem_puck_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "emblem_blue_line_01": {
+      "cosmeticId": "emblem_blue_line_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "emblem_arrow_01": {
+      "cosmeticId": "emblem_arrow_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "emblem_rink_01": {
+      "cosmeticId": "emblem_rink_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "emblem_crease_01": {
+      "cosmeticId": "emblem_crease_01",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_rink_rat": {
+      "cosmeticId": "title_catalog_rink_rat",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_slot_watcher": {
+      "cosmeticId": "title_catalog_slot_watcher",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_puck_detective": {
+      "cosmeticId": "title_catalog_puck_detective",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_tape_to_tape": {
+      "cosmeticId": "title_catalog_tape_to_tape",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_blue_line_student": {
+      "cosmeticId": "title_catalog_blue_line_student",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_five_man_unit": {
+      "cosmeticId": "title_catalog_five_man_unit",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_neutral_zone_tourist": {
+      "cosmeticId": "title_catalog_neutral_zone_tourist",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_catalog_hockey_observer": {
+      "cosmeticId": "title_catalog_hockey_observer",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "tagline_watch_the_center": {
+      "cosmeticId": "tagline_watch_the_center",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "tagline_starter": {
+      "cosmeticId": "tagline_starter",
+      "unlockedAt": "2026-08-09T18:13:35.861Z",
+      "sourceType": "starter"
+    },
+    "title_first_shift": {
+      "cosmeticId": "title_first_shift",
+      "unlockedAt": "2026-01-13T23:27:18.384325",
+      "sourceType": "achievement",
+      "sourceId": "first_shift"
+    },
+    "title_puck_detective": {
+      "cosmeticId": "title_puck_detective",
+      "unlockedAt": "2026-01-30T19:05:16.530663",
+      "sourceType": "achievement",
+      "sourceId": "scouting_around"
+    },
+    "title_level_5_observer": {
+      "cosmeticId": "title_level_5_observer",
+      "unlockedAt": "2026-02-20T23:31:41.965075",
+      "sourceType": "level",
+      "sourceId": "5"
+    },
+    "title_neutral_zone_tourist": {
+      "cosmeticId": "title_neutral_zone_tourist",
+      "unlockedAt": "2026-03-04T16:06:15.105244",
+      "sourceType": "achievement",
+      "sourceId": "neutral_zone_tourist",
+      "seenAt": "2026-08-09T18:39:11.159Z"
+    },
+    "title_blue_line_student": {
+      "cosmeticId": "title_blue_line_student",
+      "unlockedAt": "2026-05-20T22:48:56.855374",
+      "sourceType": "achievement",
+      "sourceId": "track_record"
+    },
+    "title_rink_rat": {
+      "cosmeticId": "title_rink_rat",
+      "unlockedAt": "2026-06-22T16:25:25.307179",
+      "sourceType": "achievement",
+      "sourceId": "rink_rat"
+    },
+    "tagline_no_slot": {
+      "cosmeticId": "tagline_no_slot",
+      "unlockedAt": "2026-06-22T16:25:25.307179",
+      "sourceType": "achievement",
+      "sourceId": "slot_squatter"
+    },
+    "banner_level_10": {
+      "cosmeticId": "banner_level_10",
+      "unlockedAt": "2026-08-03T16:09:14.426276",
+      "sourceType": "level",
+      "sourceId": "10",
+      "seenAt": "2026-08-09T18:37:17.176Z"
+    },
+    "title_clip_goblin": {
+      "cosmeticId": "title_clip_goblin",
+      "unlockedAt": "2026-08-06T21:44:08.459670",
+      "sourceType": "achievement",
+      "sourceId": "clip_goblin"
+    },
+    "title_drill_obsessed": {
+      "cosmeticId": "title_drill_obsessed",
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceType": "drill_mastery",
+      "sourceId": "drill_mastery:A2",
+      "seenAt": "2026-08-09T19:03:20.105Z",
+      "earnKind": "derived"
+    }
+  },
+  "activityLog": [
+    {
+      "id": "session_completed:christoph_1768336950",
+      "type": "session_completed",
+      "occurredAt": "2026-01-13T23:27:18.384325",
+      "sessionId": "christoph_1768336950",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:christoph_1768742300",
+      "type": "session_completed",
+      "occurredAt": "2026-01-18T22:32:10.286396",
+      "sessionId": "christoph_1768742300",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:christoph_1769106228",
+      "type": "session_completed",
+      "occurredAt": "2026-01-23T07:09:41.272887",
+      "sessionId": "christoph_1769106228",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "observedTeamId": "Adler Mannheim",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:christoph_1769537070",
+      "type": "session_completed",
+      "occurredAt": "2026-01-28T01:05:10.018057",
+      "sessionId": "christoph_1769537070",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:christoph_1769638791",
+      "type": "session_completed",
+      "occurredAt": "2026-01-29T22:33:18.328471",
+      "sessionId": "christoph_1769638791",
+      "drillId": "A1_D3",
+      "trackId": "A1",
+      "observedTeamId": "Seattle Kraken",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "triangle_spotting"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:christoph_1769755684",
+      "type": "session_completed",
+      "occurredAt": "2026-01-30T15:09:09.886806",
+      "sessionId": "christoph_1769755684",
+      "drillId": "A1_D4",
+      "trackId": "A1",
+      "observedTeamId": "Ottawa Senators",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "role_identification"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1769790235",
+      "type": "session_completed",
+      "occurredAt": "2026-01-30T19:05:16.530663",
+      "sessionId": "Christoph_1769790235",
+      "drillId": "A1_D3",
+      "trackId": "A1",
+      "observedTeamId": "Edmonton Oilers",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "triangle_spotting"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:christoph_1769202987",
+      "type": "session_completed",
+      "occurredAt": "2026-01-30T19:06:11.681403",
+      "sessionId": "christoph_1769202987",
+      "drillId": "A1_D2",
+      "trackId": "A1",
+      "observedTeamId": "Ottawa Senators",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "shift_tracker"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1771445003",
+      "type": "session_completed",
+      "occurredAt": "2026-02-20T21:03:58.761030",
+      "sessionId": "Christoph_1771445003",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "USA",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1771618366",
+      "type": "session_completed",
+      "occurredAt": "2026-02-20T23:31:41.965075",
+      "sessionId": "Christoph_1771618366",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "USA",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1771702907",
+      "type": "session_completed",
+      "occurredAt": "2026-02-21T23:04:49.687773",
+      "sessionId": "Christoph_1771702907",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "Finnland",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1771689314",
+      "type": "session_completed",
+      "occurredAt": "2026-02-22T11:04:47.000213",
+      "sessionId": "Christoph_1771689314",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "Adler Mannheim",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1771765449",
+      "type": "session_completed",
+      "occurredAt": "2026-02-22T16:32:14.793311",
+      "sessionId": "Christoph_1771765449",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "Kanada",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1771822892",
+      "type": "session_completed",
+      "occurredAt": "2026-02-25T15:46:38.409154",
+      "sessionId": "Christoph_1771822892",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "Kölner Haie",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1772129257",
+      "type": "session_completed",
+      "occurredAt": "2026-02-27T06:35:00.382216",
+      "sessionId": "Christoph_1772129257",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "Edmonton Oilers",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1772218350",
+      "type": "session_completed",
+      "occurredAt": "2026-02-27T22:49:58.600071",
+      "sessionId": "Christoph_1772218350",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1772369969",
+      "type": "session_completed",
+      "occurredAt": "2026-03-01T16:19:18.434874",
+      "sessionId": "Christoph_1772369969",
+      "drillId": "A2_D1",
+      "trackId": "A2",
+      "observedTeamId": "Eisbären Berlin",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1772378824",
+      "type": "session_completed",
+      "occurredAt": "2026-03-01T18:50:47.803439",
+      "sessionId": "Christoph_1772378824",
+      "drillId": "A2_D2",
+      "trackId": "A2",
+      "observedTeamId": "EHC Red Bull München",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1772561232",
+      "type": "session_completed",
+      "occurredAt": "2026-03-03T21:24:47.256608",
+      "sessionId": "Christoph_1772561232",
+      "drillId": "A2_D3",
+      "trackId": "A2",
+      "observedTeamId": "Frölunda Gothenburg",
+      "leagueId": "CHL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1772535850",
+      "type": "session_completed",
+      "occurredAt": "2026-03-04T16:06:15.105244",
+      "sessionId": "Christoph_1772535850",
+      "drillId": "A2_D3",
+      "trackId": "A2",
+      "observedTeamId": "Ottawa Senators",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1772897423",
+      "type": "session_completed",
+      "occurredAt": "2026-03-07T18:59:27.316612",
+      "sessionId": "Christoph_1772897423",
+      "drillId": "A2_D4",
+      "trackId": "A2",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "U20_DNL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1773257309",
+      "type": "session_completed",
+      "occurredAt": "2026-03-11T21:48:30.207497",
+      "sessionId": "Christoph_1773257309",
+      "drillId": "A2_D5",
+      "trackId": "A2",
+      "observedTeamId": "EV Landshut",
+      "leagueId": "DEL2",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1773311269",
+      "type": "session_completed",
+      "occurredAt": "2026-03-12T23:17:44.057895",
+      "sessionId": "Christoph_1773311269",
+      "drillId": "A2_D5",
+      "trackId": "A2",
+      "observedTeamId": "Ottawa Senators",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1773474665",
+      "type": "session_completed",
+      "occurredAt": "2026-03-14T10:45:56.527512",
+      "sessionId": "Christoph_1773474665",
+      "drillId": "A2_D5",
+      "trackId": "A2",
+      "observedTeamId": "Adler Mannheim",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1773590454",
+      "type": "session_completed",
+      "occurredAt": "2026-03-15T19:29:39.183393",
+      "sessionId": "Christoph_1773590454",
+      "drillId": "A2_D4",
+      "trackId": "A2",
+      "observedTeamId": "EHC Freiburg",
+      "leagueId": "DEL2",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1773772274",
+      "type": "session_completed",
+      "occurredAt": "2026-03-17T21:29:02.514206",
+      "sessionId": "Christoph_1773772274",
+      "drillId": "A2_D2",
+      "trackId": "A2",
+      "observedTeamId": "Fischtown Pinguins Bremerhaven",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1774033766",
+      "type": "session_completed",
+      "occurredAt": "2026-03-20T21:37:09.695617",
+      "sessionId": "Christoph_1774033766",
+      "drillId": "A3_D1",
+      "trackId": "A3",
+      "observedTeamId": "Fischtown Pinguins Bremerhaven",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1774461573",
+      "type": "session_completed",
+      "occurredAt": "2026-03-25T21:32:39.944524",
+      "sessionId": "Christoph_1774461573",
+      "drillId": "A3_D1",
+      "trackId": "A3",
+      "observedTeamId": "Schwenninger Wild Wings",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1774713737",
+      "type": "session_completed",
+      "occurredAt": "2026-03-28T18:03:41.939301",
+      "sessionId": "Christoph_1774713737",
+      "drillId": "A3_D2",
+      "trackId": "A3",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "U20_DNL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1774793611",
+      "type": "session_completed",
+      "occurredAt": "2026-03-29T17:28:35.979443",
+      "sessionId": "Christoph_1774793611",
+      "drillId": "A3_D3",
+      "trackId": "A3",
+      "observedTeamId": "Schwenninger Wild Wings",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1775048627",
+      "type": "session_completed",
+      "occurredAt": "2026-04-01T17:31:50.206122",
+      "sessionId": "Christoph_1775048627",
+      "drillId": "A3_D2",
+      "trackId": "A3",
+      "observedTeamId": "Eisbären Berlin",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1775670682",
+      "type": "session_completed",
+      "occurredAt": "2026-04-10T21:32:02.885070",
+      "sessionId": "Christoph_1775670682",
+      "drillId": "A3_D3",
+      "trackId": "A3",
+      "observedTeamId": "Kölner Haie",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1775842403",
+      "type": "session_completed",
+      "occurredAt": "2026-04-10T21:35:13.259914",
+      "sessionId": "Christoph_1775842403",
+      "drillId": "A3_D3",
+      "trackId": "A3",
+      "observedTeamId": "Eisbären Berlin",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1775888581",
+      "type": "session_completed",
+      "occurredAt": "2026-04-11T09:50:50.243337",
+      "sessionId": "Christoph_1775888581",
+      "drillId": "A3_D1",
+      "trackId": "A3",
+      "observedTeamId": "Ottawa Senators",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1776188037",
+      "type": "session_completed",
+      "occurredAt": "2026-04-14T21:45:33.837039",
+      "sessionId": "Christoph_1776188037",
+      "drillId": "A3_D5",
+      "trackId": "A3",
+      "observedTeamId": "Adler Mannheim",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1776274636",
+      "type": "session_completed",
+      "occurredAt": "2026-04-17T19:34:18.613505",
+      "sessionId": "Christoph_1776274636",
+      "drillId": "A3_D5",
+      "trackId": "A3",
+      "observedTeamId": "Kölner Haie",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1776447280",
+      "type": "session_completed",
+      "occurredAt": "2026-04-19T16:17:45.531372",
+      "sessionId": "Christoph_1776447280",
+      "drillId": "A3_D5",
+      "trackId": "A3",
+      "observedTeamId": "Eisbären Berlin",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1776611008",
+      "type": "session_completed",
+      "occurredAt": "2026-04-20T21:17:21.176473",
+      "sessionId": "Christoph_1776611008",
+      "drillId": "A3_D4",
+      "trackId": "A3",
+      "observedTeamId": "Krefeld Pinguine",
+      "leagueId": "DEL2",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1776706323",
+      "type": "session_completed",
+      "occurredAt": "2026-04-20T21:48:45.599850",
+      "sessionId": "Christoph_1776706323",
+      "drillId": "A3_D4",
+      "trackId": "A3",
+      "observedTeamId": "Kölner Haie",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1776792933",
+      "type": "session_completed",
+      "occurredAt": "2026-04-21T21:47:42.259792",
+      "sessionId": "Christoph_1776792933",
+      "drillId": "A3_D4",
+      "trackId": "A3",
+      "observedTeamId": "Krefeld Pinguine",
+      "leagueId": "DEL2",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1777212211",
+      "type": "session_completed",
+      "occurredAt": "2026-04-26T18:28:24.901032",
+      "sessionId": "Christoph_1777212211",
+      "drillId": "A3_D4",
+      "trackId": "A3",
+      "observedTeamId": "Eisbären Berlin",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1778853069",
+      "type": "session_completed",
+      "occurredAt": "2026-05-15T18:27:58.485735",
+      "sessionId": "Christoph_1778853069",
+      "drillId": "A3_D1",
+      "trackId": "A3",
+      "observedTeamId": "Deutschland",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1779128690",
+      "type": "session_completed",
+      "occurredAt": "2026-05-18T21:59:14.829930",
+      "sessionId": "Christoph_1779128690",
+      "drillId": "A3_D2",
+      "trackId": "A3",
+      "observedTeamId": "Deutschland",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1779201820",
+      "type": "session_completed",
+      "occurredAt": "2026-05-19T21:42:08.557199",
+      "sessionId": "Christoph_1779201820",
+      "drillId": "A3_D2",
+      "trackId": "A3",
+      "observedTeamId": "Österreich",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1779294752",
+      "type": "session_completed",
+      "occurredAt": "2026-05-20T22:48:56.855374",
+      "sessionId": "Christoph_1779294752",
+      "drillId": "A3_D4",
+      "trackId": "A3",
+      "observedTeamId": "Deutschland",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "event_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "track_completed:A:v1",
+      "type": "track_completed",
+      "occurredAt": "2026-05-20T22:48:56.855374",
+      "trackId": "A",
+      "completionVersion": "v1"
+    },
+    {
+      "id": "session_completed:Christoph_1779730654",
+      "type": "session_completed",
+      "occurredAt": "2026-05-25T22:01:53.310181",
+      "sessionId": "Christoph_1779730654",
+      "drillId": "B1_D1",
+      "trackId": "B1",
+      "observedTeamId": "Deutschland",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1779805176",
+      "type": "session_completed",
+      "occurredAt": "2026-05-26T18:36:59.712918",
+      "sessionId": "Christoph_1779805176",
+      "drillId": "B1_D1",
+      "trackId": "B1",
+      "observedTeamId": "USA",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1779819910",
+      "type": "session_completed",
+      "occurredAt": "2026-05-26T22:32:08.839500",
+      "sessionId": "Christoph_1779819910",
+      "drillId": "B1_D2",
+      "trackId": "B1",
+      "observedTeamId": "Schweiz",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "session_completed:Christoph_1780164386",
+      "type": "session_completed",
+      "occurredAt": "2026-05-30T22:25:48.456243",
+      "sessionId": "Christoph_1780164386",
+      "drillId": "B1_D4",
+      "trackId": "B1",
+      "observedTeamId": "Kanada",
+      "leagueId": "Nationalmannschaften",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_created:scene_1782131519_e7af9f",
+      "type": "scene_created",
+      "occurredAt": "2026-06-22T14:31:59.853113",
+      "sceneId": "scene_1782131519_e7af9f",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782132638_e0bd84",
+      "type": "scene_created",
+      "occurredAt": "2026-06-22T14:50:38.558187",
+      "sceneId": "scene_1782132638_e0bd84",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782133395_230b58",
+      "type": "scene_created",
+      "occurredAt": "2026-06-22T15:03:15.964883",
+      "sceneId": "scene_1782133395_230b58",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782133588_6982b1",
+      "type": "scene_created",
+      "occurredAt": "2026-06-22T15:06:28.442930",
+      "sceneId": "scene_1782133588_6982b1",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782134210_9581b5",
+      "type": "scene_created",
+      "occurredAt": "2026-06-22T15:16:50.742641",
+      "sceneId": "scene_1782134210_9581b5",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782134290_0e94df",
+      "type": "scene_created",
+      "occurredAt": "2026-06-22T15:18:10.591812",
+      "sceneId": "scene_1782134290_0e94df",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1782131281",
+      "type": "session_completed",
+      "occurredAt": "2026-06-22T16:25:25.307179",
+      "sessionId": "Christoph_1782131281",
+      "drillId": "B1_D3",
+      "trackId": "B1",
+      "observedTeamId": "Adler Mannheim",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_created:scene_1782650372_0c0621",
+      "type": "scene_created",
+      "occurredAt": "2026-06-28T14:39:32.406969",
+      "sceneId": "scene_1782650372_0c0621",
+      "sessionId": "Christoph_1782649917",
+      "drillId": "B1_D5",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782650514_6d429a",
+      "type": "scene_created",
+      "occurredAt": "2026-06-28T14:41:54.313559",
+      "sceneId": "scene_1782650514_6d429a",
+      "sessionId": "Christoph_1782649917",
+      "drillId": "B1_D5",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782650644_bc413f",
+      "type": "scene_created",
+      "occurredAt": "2026-06-28T14:44:04.937798",
+      "sceneId": "scene_1782650644_bc413f",
+      "sessionId": "Christoph_1782649917",
+      "drillId": "B1_D5",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782651027_0d2613",
+      "type": "scene_created",
+      "occurredAt": "2026-06-28T14:50:27.852198",
+      "sceneId": "scene_1782651027_0d2613",
+      "sessionId": "Christoph_1782649917",
+      "drillId": "B1_D5",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1782651164_af827e",
+      "type": "scene_created",
+      "occurredAt": "2026-06-28T14:52:44.222470",
+      "sceneId": "scene_1782651164_af827e",
+      "sessionId": "Christoph_1782649917",
+      "drillId": "B1_D5",
+      "trackId": "B1",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1782649917",
+      "type": "session_completed",
+      "occurredAt": "2026-06-28T20:27:05.134596",
+      "sessionId": "Christoph_1782649917",
+      "drillId": "B1_D5",
+      "trackId": "B1",
+      "observedTeamId": "Edmonton Oilers",
+      "leagueId": "NHL",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_rated:scene_1782132638_e0bd84:1",
+      "type": "scene_rated",
+      "occurredAt": "2026-06-30T22:32:51.492991",
+      "sceneId": "scene_1782132638_e0bd84",
+      "rating": 1,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1782651027_0d2613:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-07-01T19:03:35.043511",
+      "sceneId": "scene_1782651027_0d2613",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1782133588_6982b1:5",
+      "type": "scene_rated",
+      "occurredAt": "2026-07-05T00:48:55.398898",
+      "sceneId": "scene_1782133588_6982b1",
+      "rating": 5,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785592704_bc2104",
+      "type": "scene_created",
+      "occurredAt": "2026-08-01T15:58:24.381155",
+      "sceneId": "scene_1785592704_bc2104",
+      "sessionId": "Christoph_1785592381",
+      "drillId": "B2_D1",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785594157_2f981d",
+      "type": "scene_created",
+      "occurredAt": "2026-08-01T16:22:37.985917",
+      "sceneId": "scene_1785594157_2f981d",
+      "sessionId": "Christoph_1785592381",
+      "drillId": "B2_D1",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785592704_bc2104:4",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-01T16:23:10.248172",
+      "sceneId": "scene_1785592704_bc2104",
+      "rating": 4,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785594157_2f981d:2",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-01T16:23:32.515112",
+      "sceneId": "scene_1785594157_2f981d",
+      "rating": 2,
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1785592381",
+      "type": "session_completed",
+      "occurredAt": "2026-08-01T17:06:59.127587",
+      "sessionId": "Christoph_1785592381",
+      "drillId": "B2_D1",
+      "trackId": "B2",
+      "observedTeamId": "Augsburger Panther",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_created:scene_1785687829_39a023",
+      "type": "scene_created",
+      "occurredAt": "2026-08-02T18:23:49.874261",
+      "sceneId": "scene_1785687829_39a023",
+      "sessionId": "Christoph_1785685792",
+      "drillId": "B2_D2",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1785685792",
+      "type": "session_completed",
+      "occurredAt": "2026-08-02T18:55:43.941274",
+      "sessionId": "Christoph_1785685792",
+      "drillId": "B2_D2",
+      "trackId": "B2",
+      "observedTeamId": "Schwenninger Wild Wings",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_created:scene_1785690365_f7a346",
+      "type": "scene_created",
+      "occurredAt": "2026-08-02T19:06:05.601840",
+      "sceneId": "scene_1785690365_f7a346",
+      "sessionId": "Christoph_1785690282",
+      "drillId": "B2_D2",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785690365_f7a346:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-02T19:06:11.601190",
+      "sceneId": "scene_1785690365_f7a346",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785690893_96a608",
+      "type": "scene_created",
+      "occurredAt": "2026-08-02T19:14:53.336166",
+      "sceneId": "scene_1785690893_96a608",
+      "sessionId": "Christoph_1785690282",
+      "drillId": "B2_D2",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1785690282",
+      "type": "session_completed",
+      "occurredAt": "2026-08-02T19:32:03.700372",
+      "sessionId": "Christoph_1785690282",
+      "drillId": "B2_D2",
+      "trackId": "B2",
+      "observedTeamId": "Iserlohn Roosters",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "scene_created:scene_1785764455_610f66",
+      "type": "scene_created",
+      "occurredAt": "2026-08-03T15:40:55.170254",
+      "sceneId": "scene_1785764455_610f66",
+      "sessionId": "Christoph_1785763689",
+      "drillId": "B2_D3",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785764455_610f66:2",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-03T15:41:01.964066",
+      "sceneId": "scene_1785764455_610f66",
+      "rating": 2,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785764729_925bf7",
+      "type": "scene_created",
+      "occurredAt": "2026-08-03T15:45:29.896874",
+      "sceneId": "scene_1785764729_925bf7",
+      "sessionId": "Christoph_1785763689",
+      "drillId": "B2_D3",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1785763689",
+      "type": "session_completed",
+      "occurredAt": "2026-08-03T16:09:14.426276",
+      "sessionId": "Christoph_1785763689",
+      "drillId": "B2_D3",
+      "trackId": "B2",
+      "observedTeamId": "Löwen Frankfurt",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "sidequest_completed:b39739d3-bba1-482c-9f3f-682271fbd7d8",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-05T19:35:46.338Z",
+      "sidequestId": "b39739d3-bba1-482c-9f3f-682271fbd7d8",
+      "category": "special_teams",
+      "sessionId": "Christoph_1785957207",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785958884_e705f1",
+      "type": "scene_created",
+      "occurredAt": "2026-08-05T21:41:24.158274",
+      "sceneId": "scene_1785958884_e705f1",
+      "sessionId": "Christoph_1785957207",
+      "drillId": "B2_D4",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785958884_e705f1:2",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-05T21:41:33.729894",
+      "sceneId": "scene_1785958884_e705f1",
+      "rating": 2,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785958972_64957d",
+      "type": "scene_created",
+      "occurredAt": "2026-08-05T21:42:52.068785",
+      "sceneId": "scene_1785958972_64957d",
+      "sessionId": "Christoph_1785957207",
+      "drillId": "B2_D4",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785958972_64957d:2",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-05T21:42:54.927112",
+      "sceneId": "scene_1785958972_64957d",
+      "rating": 2,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785959047_fb5835",
+      "type": "scene_created",
+      "occurredAt": "2026-08-05T21:44:07.910843",
+      "sceneId": "scene_1785959047_fb5835",
+      "sessionId": "Christoph_1785957207",
+      "drillId": "B2_D4",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785959047_fb5835:2",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-05T21:44:11.050741",
+      "sceneId": "scene_1785959047_fb5835",
+      "rating": 2,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1785959676_132b9d",
+      "type": "scene_created",
+      "occurredAt": "2026-08-05T21:54:36.495106",
+      "sceneId": "scene_1785959676_132b9d",
+      "sessionId": "Christoph_1785957207",
+      "drillId": "B2_D4",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785959676_132b9d:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-05T21:55:30.463048",
+      "sceneId": "scene_1785959676_132b9d",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1785957207",
+      "type": "session_completed",
+      "occurredAt": "2026-08-05T21:56:21.193118",
+      "sessionId": "Christoph_1785957207",
+      "drillId": "B2_D4",
+      "trackId": "B2",
+      "observedTeamId": "Augsburger Panther",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "sidequest_completed:dc74294b-d18a-4b20-ad3c-bfe11841c321",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-06T15:49:17.505Z",
+      "sidequestId": "dc74294b-d18a-4b20-ad3c-bfe11841c321",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786030749",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786032537_be2f9f",
+      "type": "scene_created",
+      "occurredAt": "2026-08-06T18:08:57.483452",
+      "sceneId": "scene_1786032537_be2f9f",
+      "sessionId": "Christoph_1786030749",
+      "drillId": "B2_D5",
+      "trackId": "B2",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1786030749",
+      "type": "session_completed",
+      "occurredAt": "2026-08-06T18:10:25.517334",
+      "sessionId": "Christoph_1786030749",
+      "drillId": "B2_D5",
+      "trackId": "B2",
+      "observedTeamId": "Straubing Tigers",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "sidequest_completed:9489aef1-4ca3-49de-a552-bd8d66bd701e",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-06T19:40:29.848Z",
+      "sidequestId": "9489aef1-4ca3-49de-a552-bd8d66bd701e",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786033172",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786038233_3735d7",
+      "type": "scene_created",
+      "occurredAt": "2026-08-06T19:43:53.639713",
+      "sceneId": "scene_1786038233_3735d7",
+      "sessionId": "Christoph_1786033172",
+      "drillId": "B3_D1",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786038233_3735d7:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-06T19:44:47.636460",
+      "sceneId": "scene_1786038233_3735d7",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786045448_79e3c2",
+      "type": "scene_created",
+      "occurredAt": "2026-08-06T21:44:08.459670",
+      "sceneId": "scene_1786045448_79e3c2",
+      "sessionId": "Christoph_1786033172",
+      "drillId": "B3_D1",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786045448_79e3c2:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-06T21:44:28.236306",
+      "sceneId": "scene_1786045448_79e3c2",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786045757_9b6502",
+      "type": "scene_created",
+      "occurredAt": "2026-08-06T21:49:17.011018",
+      "sceneId": "scene_1786045757_9b6502",
+      "sessionId": "Christoph_1786033172",
+      "drillId": "B3_D1",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1786033172",
+      "type": "session_completed",
+      "occurredAt": "2026-08-06T21:49:58.847982",
+      "sessionId": "Christoph_1786033172",
+      "drillId": "B3_D1",
+      "trackId": "B3",
+      "observedTeamId": "Grizzlys Wolfsburg",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "draggable_rink_observation"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "sidequest_completed:ef40f008-1198-4c39-8144-79bb971aa8d4",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-08T09:39:17.888Z",
+      "sidequestId": "ef40f008-1198-4c39-8144-79bb971aa8d4",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786179938",
+      "isDummy": false
+    },
+    {
+      "id": "sidequest_completed:34b5e231-56b4-435e-8724-9cc44d48442a",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-08T09:41:31.589Z",
+      "sidequestId": "34b5e231-56b4-435e-8724-9cc44d48442a",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786179938",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786182846_e4e237",
+      "type": "scene_created",
+      "occurredAt": "2026-08-08T11:54:06.950020",
+      "sceneId": "scene_1786182846_e4e237",
+      "sessionId": "Christoph_1786179938",
+      "drillId": "C1_D1",
+      "trackId": "C1",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1786179938",
+      "type": "session_completed",
+      "occurredAt": "2026-08-08T12:02:06.969683",
+      "sessionId": "Christoph_1786179938",
+      "drillId": "C1_D1",
+      "trackId": "C1",
+      "observedTeamId": "Straubing Tigers",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "paintable_rink_observation"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_rated:scene_1786045757_9b6502:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-09T10:03:37.578072",
+      "sceneId": "scene_1786045757_9b6502",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786182846_e4e237:4",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-09T10:03:45.517589",
+      "sceneId": "scene_1786182846_e4e237",
+      "rating": 4,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785687829_39a023:4",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-09T10:03:54.681871",
+      "sceneId": "scene_1785687829_39a023",
+      "rating": 4,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786032537_be2f9f:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-09T10:09:54.322493",
+      "sceneId": "scene_1786032537_be2f9f",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785764729_925bf7:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-09T10:16:01.681756",
+      "sceneId": "scene_1785764729_925bf7",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1785690893_96a608:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-09T10:22:04.931341",
+      "sceneId": "scene_1785690893_96a608",
+      "rating": 3,
+      "isDummy": false
+    }
+  ],
+  "unlockHistory": [
+    {
+      "id": "bootstrap:2026-08-09T18:13:35.861Z",
+      "kind": "bootstrap",
+      "title": "Dein RINK-Fortschritt wurde ausgewertet",
+      "description": "12 Achievements freigeschaltet · Level 10 erreicht · 9 Cosmetics erhalten · +9650 XP",
+      "occurredAt": "2026-08-09T18:13:35.861Z",
+      "sourceEventId": "bootstrap:v1",
+      "amountXp": 9650,
+      "amountPux": 920,
+      "level": 10
+    }
+  ],
+  "bootstrapCompletedAt": "2026-08-09T18:13:35.905Z",
+  "lastUpdatedAt": "2026-08-09T19:03:20.105Z",
+  "favoriteCosmeticIds": [],
+  "puxTransactions": [],
+  "completedCollections": {},
+  "masteryMilestoneUnlocks": {
+    "drill_mastery:B1_D5:1": {
+      "masteryId": "drill_mastery:B1_D5",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1_D5:1"
+    },
+    "drill_mastery:B1:1": {
+      "masteryId": "drill_mastery:B1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1:1"
+    },
+    "drill_mastery:B1:3": {
+      "masteryId": "drill_mastery:B1",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1:3"
+    },
+    "drill_mastery:B1:5": {
+      "masteryId": "drill_mastery:B1",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1:5"
+    },
+    "drill_mastery:B1_D3:1": {
+      "masteryId": "drill_mastery:B1_D3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1_D3:1"
+    },
+    "drill_mastery:A2_D1:1": {
+      "masteryId": "drill_mastery:A2_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D1:1"
+    },
+    "drill_mastery:A2_D1:3": {
+      "masteryId": "drill_mastery:A2_D1",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D1:3"
+    },
+    "drill_mastery:A2_D1:5": {
+      "masteryId": "drill_mastery:A2_D1",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D1:5"
+    },
+    "drill_mastery:A2:1": {
+      "masteryId": "drill_mastery:A2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2:1"
+    },
+    "drill_mastery:A2:3": {
+      "masteryId": "drill_mastery:A2",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2:3"
+    },
+    "drill_mastery:A2:5": {
+      "masteryId": "drill_mastery:A2",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2:5"
+    },
+    "drill_mastery:A2:10": {
+      "masteryId": "drill_mastery:A2",
+      "milestoneThreshold": 10,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2:10"
+    },
+    "drill_mastery:A1_D1:1": {
+      "masteryId": "drill_mastery:A1_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1_D1:1"
+    },
+    "drill_mastery:A1_D1:3": {
+      "masteryId": "drill_mastery:A1_D1",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1_D1:3"
+    },
+    "drill_mastery:A1:1": {
+      "masteryId": "drill_mastery:A1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1:1"
+    },
+    "drill_mastery:A1:3": {
+      "masteryId": "drill_mastery:A1",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1:3"
+    },
+    "drill_mastery:A1:5": {
+      "masteryId": "drill_mastery:A1",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1:5"
+    },
+    "drill_mastery:A1_D3:1": {
+      "masteryId": "drill_mastery:A1_D3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1_D3:1"
+    },
+    "drill_mastery:A1_D2:1": {
+      "masteryId": "drill_mastery:A1_D2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1_D2:1"
+    },
+    "drill_mastery:A1_D4:1": {
+      "masteryId": "drill_mastery:A1_D4",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A1_D4:1"
+    },
+    "drill_mastery:A3_D2:1": {
+      "masteryId": "drill_mastery:A3_D2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D2:1"
+    },
+    "drill_mastery:A3_D2:3": {
+      "masteryId": "drill_mastery:A3_D2",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D2:3"
+    },
+    "drill_mastery:A3:1": {
+      "masteryId": "drill_mastery:A3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3:1"
+    },
+    "drill_mastery:A3:3": {
+      "masteryId": "drill_mastery:A3",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3:3"
+    },
+    "drill_mastery:A3:5": {
+      "masteryId": "drill_mastery:A3",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3:5"
+    },
+    "drill_mastery:A3:10": {
+      "masteryId": "drill_mastery:A3",
+      "milestoneThreshold": 10,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3:10"
+    },
+    "drill_mastery:B1_D2:1": {
+      "masteryId": "drill_mastery:B1_D2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1_D2:1"
+    },
+    "drill_mastery:A3_D1:1": {
+      "masteryId": "drill_mastery:A3_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D1:1"
+    },
+    "drill_mastery:A3_D1:3": {
+      "masteryId": "drill_mastery:A3_D1",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D1:3"
+    },
+    "drill_mastery:B1_D4:1": {
+      "masteryId": "drill_mastery:B1_D4",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1_D4:1"
+    },
+    "drill_mastery:A3_D4:1": {
+      "masteryId": "drill_mastery:A3_D4",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D4:1"
+    },
+    "drill_mastery:A3_D4:3": {
+      "masteryId": "drill_mastery:A3_D4",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D4:3"
+    },
+    "drill_mastery:A3_D4:5": {
+      "masteryId": "drill_mastery:A3_D4",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D4:5"
+    },
+    "drill_mastery:B1_D1:1": {
+      "masteryId": "drill_mastery:B1_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B1_D1:1"
+    },
+    "drill_mastery:A3_D3:1": {
+      "masteryId": "drill_mastery:A3_D3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D3:1"
+    },
+    "drill_mastery:A3_D3:3": {
+      "masteryId": "drill_mastery:A3_D3",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D3:3"
+    },
+    "drill_mastery:A3_D5:1": {
+      "masteryId": "drill_mastery:A3_D5",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D5:1"
+    },
+    "drill_mastery:A3_D5:3": {
+      "masteryId": "drill_mastery:A3_D5",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A3_D5:3"
+    },
+    "drill_mastery:A2_D5:1": {
+      "masteryId": "drill_mastery:A2_D5",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D5:1"
+    },
+    "drill_mastery:A2_D5:3": {
+      "masteryId": "drill_mastery:A2_D5",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D5:3"
+    },
+    "drill_mastery:A2_D4:1": {
+      "masteryId": "drill_mastery:A2_D4",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D4:1"
+    },
+    "drill_mastery:A2_D2:1": {
+      "masteryId": "drill_mastery:A2_D2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D2:1"
+    },
+    "drill_mastery:A2_D3:1": {
+      "masteryId": "drill_mastery:A2_D3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:A2_D3:1"
+    },
+    "drill_mastery:B3_D1:1": {
+      "masteryId": "drill_mastery:B3_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B3_D1:1"
+    },
+    "drill_mastery:B3:1": {
+      "masteryId": "drill_mastery:B3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B3:1"
+    },
+    "drill_mastery:B2_D1:1": {
+      "masteryId": "drill_mastery:B2_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2_D1:1"
+    },
+    "drill_mastery:B2:1": {
+      "masteryId": "drill_mastery:B2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2:1"
+    },
+    "drill_mastery:B2:3": {
+      "masteryId": "drill_mastery:B2",
+      "milestoneThreshold": 3,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2:3"
+    },
+    "drill_mastery:B2:5": {
+      "masteryId": "drill_mastery:B2",
+      "milestoneThreshold": 5,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2:5"
+    },
+    "drill_mastery:B2_D3:1": {
+      "masteryId": "drill_mastery:B2_D3",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2_D3:1"
+    },
+    "drill_mastery:B2_D2:1": {
+      "masteryId": "drill_mastery:B2_D2",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2_D2:1"
+    },
+    "drill_mastery:B2_D5:1": {
+      "masteryId": "drill_mastery:B2_D5",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2_D5:1"
+    },
+    "drill_mastery:C1_D1:1": {
+      "masteryId": "drill_mastery:C1_D1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:C1_D1:1"
+    },
+    "drill_mastery:C1:1": {
+      "masteryId": "drill_mastery:C1",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:C1:1"
+    },
+    "drill_mastery:B2_D4:1": {
+      "masteryId": "drill_mastery:B2_D4",
+      "milestoneThreshold": 1,
+      "unlockedAt": "2026-08-09T18:30:11.309Z",
+      "sourceEventId": "mastery_milestone:drill_mastery:B2_D4:1"
+    }
+  },
+  "featuredAchievementId": null,
+  "featuredMasteryCoinId": null,
+  "progressionPuxGranted": 920
 }

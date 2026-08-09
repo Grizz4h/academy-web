@@ -44,6 +44,7 @@ export const NAV_FEATURES: NavFeature[] = [
     note: 'Spielerbeobachtung Stats – intern, noch nicht Demo-ready.',
   },
   { to: '/ringabout', label: 'Rink About It!', navVisible: true, group: 'core' },
+  { to: '/locker', label: 'Locker', navVisible: true, group: 'core' },
 ]
 
 export const DEV_MODE_STORAGE_KEY = 'academy.devNav'

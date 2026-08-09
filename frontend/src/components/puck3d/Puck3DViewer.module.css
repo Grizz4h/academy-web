@@ -1,0 +1,165 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  min-height: 220px;
+  max-height: 420px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(81, 145, 162, 0.38);
+  background:
+    radial-gradient(900px 420px at 50% 18%, rgba(110, 170, 200, 0.22), transparent 55%),
+    linear-gradient(180deg, rgba(22, 32, 48, 0.98) 0%, rgba(12, 18, 30, 0.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 14px 36px rgba(0, 0, 0, 0.28);
+}
+
+.canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  touch-action: none;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.skinBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.55);
+  color: rgba(226, 232, 240, 0.9);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast, 140ms) var(--motion-ease, ease),
+    background var(--motion-fast, 140ms) var(--motion-ease, ease);
+}
+
+.skinBtn:hover,
+.skinBtn:focus-visible {
+  border-color: rgba(125, 211, 252, 0.55);
+  outline: none;
+}
+
+.skinBtnActive {
+  border-color: rgba(45, 212, 191, 0.65);
+  background: rgba(20, 184, 166, 0.14);
+  color: #99f6e4;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.swatch[data-skin='classic'] {
+  background: #1a1a1a;
+}
+
+.swatch[data-skin='frozen'] {
+  background: linear-gradient(135deg, #1a2c36, #6ec1d4);
+}
+
+.swatch[data-skin='gold'] {
+  background: linear-gradient(135deg, #8a6a1e, #e6c35c);
+}
+
+.swatch[data-stick='composite'] {
+  background: linear-gradient(135deg, #1c222c, #5ec4d4);
+}
+
+.swatch[data-stick='black_ice'] {
+  background: linear-gradient(135deg, #15232e, #7dd3fc);
+}
+
+.swatch[data-stick='gold'] {
+  background: linear-gradient(135deg, #8a6a1e, #e6c35c);
+}
+
+.stageStick {
+  aspect-ratio: 16 / 12;
+  min-height: 260px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(198, 214, 232, 0.62);
+}
+
+.fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 220px;
+  padding: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  text-align: center;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.fallback p {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.85rem;
+  color: rgba(198, 214, 232, 0.72);
+  line-height: 1.45;
+}
+
+.fallbackPuck {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin-top: 0.35rem;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.12);
+}
+
+.fallbackPuck[data-skin='classic'] {
+  background: radial-gradient(circle at 35% 30%, #333, #111 70%);
+}
+
+.fallbackPuck[data-skin='frozen'] {
+  background: radial-gradient(circle at 35% 30%, #4a7a8c, #15222a 70%);
+}
+
+.fallbackPuck[data-skin='gold'] {
+  background: radial-gradient(circle at 35% 30%, #e0c25a, #7a5a18 70%);
+}
+
+.fallbackLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(143, 211, 223, 0.9);
+}
+
+@media (max-width: 520px) {
+  .stage {
+    aspect-ratio: 5 / 4;
+    max-height: 340px;
+  }
+}

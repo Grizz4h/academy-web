@@ -435,6 +435,53 @@ function wantsDetailedHockeyRink(mode: string, config: any): boolean {
 		|| mode === "directional_path_observation";
 }
 
+/** Config-driven bubble look (carrier vs support); no drillId branching. */
+function resolvePositionBubbleStyle(bubble: any, opts: { isActive: boolean; isMuted: boolean }) {
+	const emphasis = String(bubble?.emphasis || bubble?.variant || "").toLowerCase();
+	const role = String(bubble?.role || "").toLowerCase();
+	const isCarrier = emphasis === "carrier"
+		|| emphasis === "puck_carrier"
+		|| role === "puck_carrier"
+		|| role === "carrier";
+	const customColor = typeof bubble?.color === "string" ? bubble.color.trim() : "";
+	const size = Number(bubble?.size);
+	const diameter = Number.isFinite(size) && size >= 36 ? size : (isCarrier ? 48 : 44);
+
+	if (customColor) {
+		return {
+			minWidth: `${diameter}px`,
+			height: `${diameter}px`,
+			border: opts.isActive ? `2px solid ${customColor}` : `1px solid ${customColor}`,
+			background: opts.isActive ? customColor : "rgba(13,29,46,0.84)",
+			opacity: opts.isMuted ? 0.45 : 1,
+			boxShadow: isCarrier ? `0 0 0 3px ${customColor}33` : undefined,
+			fontSize: isCarrier ? "0.78rem" : "0.82rem",
+		};
+	}
+
+	if (isCarrier) {
+		return {
+			minWidth: `${diameter}px`,
+			height: `${diameter}px`,
+			border: opts.isActive ? "2px solid #fcd34d" : "2px solid rgba(251,191,36,0.85)",
+			background: opts.isActive ? "rgba(245,158,11,0.9)" : "rgba(146,64,14,0.88)",
+			opacity: opts.isMuted ? 0.45 : 1,
+			boxShadow: "0 0 0 3px rgba(251,191,36,0.22)",
+			fontSize: "0.78rem",
+		};
+	}
+
+	return {
+		minWidth: `${diameter}px`,
+		height: `${diameter}px`,
+		border: opts.isActive ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.45)",
+		background: opts.isActive ? "rgba(20,184,166,0.88)" : "rgba(13,29,46,0.84)",
+		opacity: opts.isMuted ? 0.45 : 1,
+		boxShadow: undefined,
+		fontSize: "0.82rem",
+	};
+}
+
 function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 	const source = config?.rinkOverlays || config?.rink_overlays || {};
 	const presetName = String(config?.rink_preset || config?.rinkPreset || "");
@@ -486,6 +533,16 @@ function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 			showDefendingHint: false,
 		},
 		corridor_selection: {
+			zones: true,
+			goals: true,
+			crease: true,
+			faceoffDots: true,
+			labels: false,
+			defendingSide: "left",
+			showDefendingHint: false,
+		},
+		// Blue-line entry corridors reuse the same detailed rink overlays as corridor selection.
+		blue_line_entry_observation: {
 			zones: true,
 			goals: true,
 			crease: true,
@@ -1566,6 +1623,7 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 		|| (Array.isArray(config?.selection_groups) && config.selection_groups[0]
 			? String(config.selection_groups[0].key || config.selection_groups[0].id || "occupiedZones")
 			: "occupiedZones");
+	const summaryLayoutStacked = String(config?.summary_layout || "").toLowerCase() === "stacked";
 
 	const normalizeTeam = (value: any) => String(value || "").trim().toLowerCase();
 	const inferPeriodNumber = () => {
@@ -2205,20 +2263,56 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 								</button>
 							</div>
 							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
-								{selectionGroups.map((group: any) => {
-									const key = String(group?.key || group?.id || "");
-									const summary = formatSelectionSummary(group, entry?.[key]);
-									if (!key || !summary) return null;
-									return `${group?.label || key}: ${summary}`;
-								}).filter(Boolean).join(" · ")}
-								{observationFields.map((field: any) => {
-									const key = String(field?.key || "");
-									const summary = formatObservationFieldSummary(field, entry?.[key]);
-									if (!key || !summary) return "";
-									const summaryLabel = String(field?.summary_label || field?.summaryLabel || field?.label || key);
-									return ` · ${summaryLabel}: ${summary}`;
-								}).join("")}
-								{entry?.[observationNoteKey] ? ` · Notiz: ${entry[observationNoteKey]}` : ""}
+								{summaryLayoutStacked ? (
+									<div style={{ display: "grid", gap: "0.28rem" }}>
+										{selectionGroups.map((group: any) => {
+											const key = String(group?.key || group?.id || "");
+											const summary = formatSelectionSummary(group, entry?.[key]);
+											if (!key || !summary) return null;
+											return (
+												<div key={key}>
+													<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>{group?.label || key}</strong>
+													<span>{summary}</span>
+												</div>
+											);
+										})}
+										{observationFields.map((field: any) => {
+											const key = String(field?.key || "");
+											const summary = formatObservationFieldSummary(field, entry?.[key]);
+											if (!key || !summary) return null;
+											const summaryLabel = String(field?.summary_label || field?.summaryLabel || field?.label || key);
+											return (
+												<div key={key}>
+													<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>{summaryLabel}</strong>
+													<span>{summary}</span>
+												</div>
+											);
+										})}
+										{entry?.[observationNoteKey] ? (
+											<div>
+												<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>Notiz</strong>
+												<span>{entry[observationNoteKey]}</span>
+											</div>
+										) : null}
+									</div>
+								) : (
+									<>
+										{selectionGroups.map((group: any) => {
+											const key = String(group?.key || group?.id || "");
+											const summary = formatSelectionSummary(group, entry?.[key]);
+											if (!key || !summary) return null;
+											return `${group?.label || key}: ${summary}`;
+										}).filter(Boolean).join(" · ")}
+										{observationFields.map((field: any) => {
+											const key = String(field?.key || "");
+											const summary = formatObservationFieldSummary(field, entry?.[key]);
+											if (!key || !summary) return "";
+											const summaryLabel = String(field?.summary_label || field?.summaryLabel || field?.label || key);
+											return ` · ${summaryLabel}: ${summary}`;
+										}).join("")}
+										{entry?.[observationNoteKey] ? ` · Notiz: ${entry[observationNoteKey]}` : ""}
+									</>
+								)}
 							</div>
 						</div>
 					))}
@@ -2898,6 +2992,11 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 	const activeFocusTitle = config?.active_focus_title || "Active Focus";
 	const activeFocusText = config?.active_focus_text || "Halte weiterhin Ausschau nach erstem defensivem Druck und markiere interessante Szenen im Live-Spiel.";
+	const summaryLayoutStacked = String(config?.summary_layout || "").toLowerCase() === "stacked";
+	const positionsSummaryLabel = config?.positions_summary_label || "Spieler platziert";
+	const hidePositionsInSummary = config?.hide_positions_in_summary === true;
+	const hidePathInSummary = config?.hide_path_in_summary === true;
+	const pathSummaryLabel = config?.path_summary_label || "Pfad";
 
 	const observations = Array.isArray(safeAnswers[observationsKey]) ? safeAnswers[observationsKey] : [];
 	const currentIndex = observations.length;
@@ -3490,6 +3589,9 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 				[observationNoteKey]: draftObservationNote.trim() || "",
 				[createdAtKey]: new Date().toISOString(),
 			};
+			if (showAttackDirectionControl || mirrorBubblesWithDirection) {
+				nextObservation[attackDirectionKey] = attackDirection;
+			}
 			observationFields.forEach((field: any) => {
 				const key = String(field?.key || "");
 				if (!key) return;
@@ -3595,13 +3697,21 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		}
 
 		if (isDefensiveStructureMode) {
+			const bubbleByValue = Object.fromEntries(
+				positionBubbles.map((bubble: any) => [String(bubble?.value || ""), bubble]),
+			);
 			const nextObservation: Record<string, any> = {
 				[observationIndexKey]: currentIndex + 1,
-				[playerPositionsKey]: positionedPlayers.map((entry: { position: string; location?: { x: number; y: number } }) => ({
-					position: entry.position,
-					x: Number(entry.location!.x.toFixed(4)),
-					y: Number(entry.location!.y.toFixed(4)),
-				})),
+				[playerPositionsKey]: positionedPlayers.map((entry: { position: string; location?: { x: number; y: number } }) => {
+					const bubble = bubbleByValue[entry.position] || {};
+					const role = bubble?.role ? String(bubble.role) : undefined;
+					return {
+						position: entry.position,
+						...(role ? { role } : {}),
+						x: Number(entry.location!.x.toFixed(4)),
+						y: Number(entry.location!.y.toFixed(4)),
+					};
+				}),
 				[structureRatingKey]: draftStructureRating || undefined,
 				[structuralFunctionKey]: draftStructuralFunction || undefined,
 				[keyStructureElementKey]: draftKeyStructureElement || undefined,
@@ -4055,31 +4165,28 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								: (isActive && effectiveLocation
 									? effectiveLocation
 									: mirroredStart);
+							const bubbleVisual = resolvePositionBubbleStyle(bubble, { isActive, isMuted });
 							return (
 								<button
 									key={bubble.value}
 									type="button"
 									onPointerDown={(e) => startDrag(bubble.value, e)}
 									draggable={false}
+									aria-label={bubble.label || bubble.value}
 									style={{
 										position: "absolute",
 										left: `${Number(renderedLocation.x) * 100}%`,
 										top: `${Number(renderedLocation.y) * 100}%`,
 										transform: "translate(-50%, -50%)",
-										minWidth: "42px",
-										height: "42px",
 										padding: "0 0.55rem",
 										borderRadius: "999px",
-										border: isActive ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.45)",
-										background: isActive ? "rgba(20,184,166,0.88)" : "rgba(13,29,46,0.84)",
-										opacity: isMuted ? 0.45 : 1,
 										color: "#f7f7ff",
 										fontWeight: 700,
-										fontSize: "0.82rem",
 										cursor: draggingPosition && isActive ? "grabbing" : "grab",
 										touchAction: "none",
 										userSelect: "none",
 										WebkitUserSelect: "none",
+										...bubbleVisual,
 									}}
 								>
 									{bubble.label}
@@ -4441,17 +4548,30 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 							<div style={{ marginTop: "0.22rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.74)", lineHeight: 1.34 }}>
 								{isDefensiveStructureMode
 									? (() => {
-										const parts: string[] = [
-											`Spieler platziert: ${Array.isArray(entry?.[playerPositionsKey]) ? entry[playerPositionsKey].length : 0}/${positionBubbles.length}`,
-										];
+										const rows: { label: string; value: string }[] = [];
+										if (!hidePositionsInSummary) {
+											rows.push({
+												label: positionsSummaryLabel,
+												value: `${Array.isArray(entry?.[playerPositionsKey]) ? entry[playerPositionsKey].length : 0}/${positionBubbles.length}`,
+											});
+										}
 										if (structureRatingOptions.length > 0) {
-											parts.push(`${structureRatingSummaryLabel}: ${getOptionLabel(structureRatingOptions, entry?.[structureRatingKey] || "-")}`);
+											rows.push({
+												label: structureRatingSummaryLabel,
+												value: getOptionLabel(structureRatingOptions, entry?.[structureRatingKey] || "-"),
+											});
 										}
 										if (structuralFunctionOptions.length > 0) {
-											parts.push(`${structuralFunctionSummaryLabel}: ${getOptionLabel(structuralFunctionOptions, entry?.[structuralFunctionKey] || "-")}`);
+											rows.push({
+												label: structuralFunctionSummaryLabel,
+												value: getOptionLabel(structuralFunctionOptions, entry?.[structuralFunctionKey] || "-"),
+											});
 										}
 										if (entry?.[keyStructureElementKey] && keyStructureElementOptions.length > 0) {
-											parts.push(`${keyStructureElementSummaryLabel}: ${getOptionLabel(keyStructureElementOptions, entry[keyStructureElementKey])}`);
+											rows.push({
+												label: keyStructureElementSummaryLabel,
+												value: getOptionLabel(keyStructureElementOptions, entry[keyStructureElementKey]),
+											});
 										}
 										observationFields.forEach((field: any) => {
 											const key = String(field?.key || "");
@@ -4463,13 +4583,33 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 											if (isMulti) {
 												const values = normalizeSelectionValues(entry[key]);
 												if (values.length === 0) return;
-												parts.push(`${summaryLabel}: ${values.map((value) => getOptionLabel(options, value)).join(" · ")}`);
+												rows.push({
+													label: summaryLabel,
+													value: values.map((value) => getOptionLabel(options, value)).join(" · "),
+												});
 												return;
 											}
-											parts.push(`${summaryLabel}: ${getOptionLabel(options, entry[key])}`);
+											rows.push({
+												label: summaryLabel,
+												value: getOptionLabel(options, entry[key]),
+											});
 										});
-										if (entry?.[noteKey]) parts.push(`Notiz: ${entry[noteKey]}`);
-										return parts.join(" · ");
+										if (entry?.[noteKey]) {
+											rows.push({ label: "Notiz", value: String(entry[noteKey]) });
+										}
+										if (summaryLayoutStacked) {
+											return (
+												<div style={{ display: "grid", gap: "0.28rem" }}>
+													{rows.map((row) => (
+														<div key={`${row.label}:${row.value}`}>
+															<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>{row.label}</strong>
+															<span>{row.value}</span>
+														</div>
+													))}
+												</div>
+											);
+										}
+										return rows.map((row) => `${row.label}: ${row.value}`).join(" · ");
 									})()
 									: isFormationShiftMode
 										? `Vorher: ${Array.isArray(entry?.[formationStatesKey]?.[beforeStateKey]) ? entry[formationStatesKey][beforeStateKey].length : 0}/${positionBubbles.length} - Nachher: ${Array.isArray(entry?.[formationStatesKey]?.[afterStateKey]) ? entry[formationStatesKey][afterStateKey].length : 0}/${positionBubbles.length} - Reaktion: ${getOptionLabel(reactionTypeOptions, entry?.[reactionTypeKey] || "-")} - Wirkung: ${getOptionLabel(structuralOutcomeOptions, entry?.[structuralOutcomeKey] || "-")} - Auslöser: ${getOptionLabel(movementTriggerOptions, entry?.[movementTriggerKey] || "-")}`
@@ -4490,14 +4630,54 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 											return parts.join(" · ");
 										})()
 									: isDirectionalPathMode
-										? `Pfad: ${entry?.[pathKey]?.[pathStartId] && entry?.[pathKey]?.[pathEndId] ? "gesetzt" : "unvollständig"}${observationFields.map((field: any) => {
-											const key = String(field?.key || "");
-											if (!key || !entry?.[key]) return "";
-											const options = Array.isArray(field?.options) ? field.options : [];
-											const summaryLabel = String(field?.summary_label || field?.summaryLabel || "");
-											const prefix = summaryLabel ? `${summaryLabel}: ` : "";
-											return ` · ${prefix}${getOptionLabel(options, entry[key])}`;
-										}).join("")}${entry?.[observationNoteKey] ? ` · Notiz: ${entry[observationNoteKey]}` : ""}`
+										? (() => {
+											const pathSet = !!(entry?.[pathKey]?.[pathStartId] && entry?.[pathKey]?.[pathEndId]);
+											if (summaryLayoutStacked) {
+												const rows: { label: string; value: string }[] = [];
+												if (!hidePathInSummary) {
+													rows.push({
+														label: pathSummaryLabel,
+														value: pathSet ? "gesetzt" : "unvollständig",
+													});
+												}
+												observationFields.forEach((field: any) => {
+													const key = String(field?.key || "");
+													if (!key || !entry?.[key]) return;
+													const options = Array.isArray(field?.options) ? field.options : [];
+													const summaryLabel = String(field?.summary_label || field?.summaryLabel || field?.label || key);
+													rows.push({
+														label: summaryLabel,
+														value: getOptionLabel(options, entry[key]),
+													});
+												});
+												if (entry?.[observationNoteKey]) {
+													rows.push({ label: "Notiz", value: String(entry[observationNoteKey]) });
+												}
+												return (
+													<div style={{ display: "grid", gap: "0.28rem" }}>
+														{rows.map((row) => (
+															<div key={`${row.label}:${row.value}`}>
+																<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>{row.label}</strong>
+																<span>{row.value}</span>
+															</div>
+														))}
+													</div>
+												);
+											}
+											const parts: string[] = hidePathInSummary
+												? []
+												: [`${pathSummaryLabel}: ${pathSet ? "gesetzt" : "unvollständig"}`];
+											observationFields.forEach((field: any) => {
+												const key = String(field?.key || "");
+												if (!key || !entry?.[key]) return;
+												const options = Array.isArray(field?.options) ? field.options : [];
+												const summaryLabel = String(field?.summary_label || field?.summaryLabel || "");
+												const optionText = getOptionLabel(options, entry[key]);
+												parts.push(summaryLabel ? `${summaryLabel}: ${optionText}` : optionText);
+											});
+											if (entry?.[observationNoteKey]) parts.push(`Notiz: ${entry[observationNoteKey]}`);
+											return parts.join(" · ");
+										})()
 									: `${findMarkerLabel(entry?.[initiatorKey])} - ${zoneDisplay(entry?.[zoneKey] || "neutral")}`}
 							</div>
 						</div>
@@ -5239,6 +5419,7 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 	const phaseOneDescription = drill?.config?.phase1_description || `Erfasse genau ${requiredSamples} Situationen aus dem Drittel. Erst danach folgt die Verdichtung.`;
 	const aggregationLabel = drill?.config?.aggregation_label || "Interne Aggregation";
 	const missions = Array.isArray(drill?.config?.missions) ? drill.config.missions : [];
+	const summaryLayoutStacked = String(drill?.config?.summary_layout || "").toLowerCase() === "stacked";
 
 	const samples: any[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
 	const pressureLabels = Object.fromEntries(sampleFields.map((field: any) => [field.key, field.label]));
@@ -5513,12 +5694,36 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 								</button>
 							</div>
 							<div style={{ marginTop: "0.35rem", fontSize: "0.83rem", color: "rgba(255,255,255,0.73)", lineHeight: 1.5 }}>
-								{sampleFields.map((field: any) => {
-									const selected = sample[field.key];
-									const selectedOption = field.options?.find((opt: any) => optionValue(opt) === selected);
-									return `${field.label}: ${selectedOption ? optionLabel(selectedOption) : selected || "-"}`;
-								}).join(" · ")}
-								{sample[noteKey] ? ` · Notiz: ${sample[noteKey]}` : ""}
+								{summaryLayoutStacked ? (
+									<div style={{ display: "grid", gap: "0.28rem" }}>
+										{sampleFields.map((field: any) => {
+											const selected = sample[field.key];
+											const selectedOption = field.options?.find((opt: any) => optionValue(opt) === selected);
+											const value = selectedOption ? optionLabel(selectedOption) : (selected || "-");
+											return (
+												<div key={field.key}>
+													<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>{field.label}</strong>
+													<span>{value}</span>
+												</div>
+											);
+										})}
+										{sample[noteKey] ? (
+											<div>
+												<strong style={{ display: "block", color: "rgba(255,255,255,0.88)" }}>Notiz</strong>
+												<span>{sample[noteKey]}</span>
+											</div>
+										) : null}
+									</div>
+								) : (
+									<>
+										{sampleFields.map((field: any) => {
+											const selected = sample[field.key];
+											const selectedOption = field.options?.find((opt: any) => optionValue(opt) === selected);
+											return `${field.label}: ${selectedOption ? optionLabel(selectedOption) : selected || "-"}`;
+										}).join(" · ")}
+										{sample[noteKey] ? ` · Notiz: ${sample[noteKey]}` : ""}
+									</>
+								)}
 							</div>
 						</div>
 					))}

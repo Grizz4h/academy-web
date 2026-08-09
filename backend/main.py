@@ -205,12 +205,28 @@ def _normalize_scene_rating(value):
 
 
 class RewardApplyData(BaseModel):
-    session_id: str
+    session_id: Optional[str] = None
+    event_id: Optional[str] = None
     evaluated_at: str
     granted_pux: int = 0
+    granted_xp: int = 0
     reward_events: List[dict] = Field(default_factory=list)
     unlocked_achievements: List[dict] = Field(default_factory=list)
     unlocked_masteries: List[dict] = Field(default_factory=list)
+    unlocked_cosmetics: List[dict] = Field(default_factory=list)
+    unlock_history: List[dict] = Field(default_factory=list)
+    activity_events: List[dict] = Field(default_factory=list)
+    bootstrap_completed_at: Optional[str] = None
+    replace_derived: bool = False
+    # Phase 2
+    favorite_cosmetic_ids: Optional[List[str]] = None
+    mark_cosmetics_seen: List[str] = Field(default_factory=list)
+    pux_transactions: List[dict] = Field(default_factory=list)
+    completed_collections: List[dict] = Field(default_factory=list)
+    mastery_milestone_unlocks: List[dict] = Field(default_factory=list)
+    progression_pux_granted: Optional[int] = None
+    skip_idempotency: bool = False  # for favorites/seen-only patches with synthetic event ids
+    processed_event_ids: List[str] = Field(default_factory=list)  # mark many idempotency keys in one apply
 
 
 class SceneSourcePayload(BaseModel):
@@ -439,7 +455,20 @@ def _create_default_reward_state() -> dict:
         "unlockedAchievements": {},
         "unlockedMasteries": {},
         "processedSessions": {},
+        "xp": 0,
+        "processedEvents": {},
+        "unlockedCosmetics": {},
+        "activityLog": [],
+        "unlockHistory": [],
+        "bootstrapCompletedAt": None,
         "lastUpdatedAt": None,
+        "favoriteCosmeticIds": [],
+        "puxTransactions": [],
+        "completedCollections": {},
+        "masteryMilestoneUnlocks": {},
+        "featuredAchievementId": None,
+        "featuredMasteryCoinId": None,
+        "progressionPuxGranted": 0,
     }
 
 
@@ -457,6 +486,19 @@ def _load_reward_state(user: str) -> dict:
         "unlockedAchievements": state.get("unlockedAchievements") or {},
         "unlockedMasteries": state.get("unlockedMasteries") or {},
         "processedSessions": state.get("processedSessions") or {},
+        "xp": int(state.get("xp") or 0),
+        "processedEvents": state.get("processedEvents") or {},
+        "unlockedCosmetics": state.get("unlockedCosmetics") or {},
+        "activityLog": state.get("activityLog") or [],
+        "unlockHistory": state.get("unlockHistory") or [],
+        "bootstrapCompletedAt": state.get("bootstrapCompletedAt"),
+        "favoriteCosmeticIds": state.get("favoriteCosmeticIds") or [],
+        "puxTransactions": state.get("puxTransactions") or [],
+        "completedCollections": state.get("completedCollections") or {},
+        "masteryMilestoneUnlocks": state.get("masteryMilestoneUnlocks") or {},
+        "featuredAchievementId": state.get("featuredAchievementId"),
+        "featuredMasteryCoinId": state.get("featuredMasteryCoinId"),
+        "progressionPuxGranted": int(state.get("progressionPuxGranted") or 0),
     }
     return merged
 
@@ -1886,51 +1928,139 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
     enforce_max_text_length(data.reward_events, "reward_events")
     enforce_max_text_length(data.unlocked_achievements, "unlocked_achievements")
     enforce_max_text_length(data.unlocked_masteries, "unlocked_masteries")
+    enforce_max_text_length(data.unlocked_cosmetics, "unlocked_cosmetics")
+    enforce_max_text_length(data.unlock_history, "unlock_history")
+    enforce_max_text_length(data.activity_events, "activity_events")
+
+    event_id = (data.event_id or "").strip() or None
+    session_id = (data.session_id or "").strip() or None
 
     # Hard stop: dummy/dev sessions must never mutate reward state.
-    session_path = find_session_file(data.session_id)
-    if session_path:
-        try:
-            session_doc = load_json(session_path)
-        except Exception:
-            session_doc = None
-        if isinstance(session_doc, dict) and session_doc.get("is_dummy") is True:
-            return {
-                "state": state,
-                "applied": False,
-                "granted_pux": 0,
-                "reward_events": [],
-                "reason": "dummy_session",
-            }
+    if session_id:
+        session_path = find_session_file(session_id)
+        if session_path:
+            try:
+                session_doc = load_json(session_path)
+            except Exception:
+                session_doc = None
+            if isinstance(session_doc, dict) and session_doc.get("is_dummy") is True:
+                return {
+                    "state": state,
+                    "applied": False,
+                    "granted_pux": 0,
+                    "granted_xp": 0,
+                    "reward_events": [],
+                    "reason": "dummy_session",
+                }
 
+    processed_events = state.get("processedEvents") or {}
     processed_sessions = state.get("processedSessions") or {}
-    if data.session_id in processed_sessions:
+
+    if event_id and event_id in processed_events and not data.replace_derived and not data.skip_idempotency:
         return {
             "state": state,
             "applied": False,
             "granted_pux": 0,
+            "granted_xp": 0,
             "reward_events": [],
+            "reason": "event_already_processed",
         }
 
-    state["currency"]["PUX"] = int(state["currency"].get("PUX", 0)) + int(data.granted_pux or 0)
-    state["processedSessions"][data.session_id] = {
-        "sessionId": data.session_id,
-        "grantedAt": data.evaluated_at,
-        "pux": int(data.granted_pux or 0),
-    }
+    if session_id and session_id in processed_sessions and not event_id and not data.replace_derived:
+        return {
+            "state": state,
+            "applied": False,
+            "granted_pux": 0,
+            "granted_xp": 0,
+            "reward_events": [],
+            "reason": "session_already_processed",
+        }
+
+    if data.replace_derived:
+        # Dev rebuild: replace derived progression; keep purchased cosmetics + shop ledger events.
+        preserved_cosmetics = {}
+        for cosmetic_id, entry in (state.get("unlockedCosmetics") or {}).items():
+            if isinstance(entry, dict) and (
+                entry.get("earnKind") == "purchased" or entry.get("sourceType") == "pux_shop"
+            ):
+                preserved_cosmetics[cosmetic_id] = entry
+        preserved_shop_events = {
+            eid: rec
+            for eid, rec in (state.get("processedEvents") or {}).items()
+            if str(eid).startswith("pux_shop_purchase:")
+        }
+        preserved_txs = [
+            tx
+            for tx in (state.get("puxTransactions") or [])
+            if isinstance(tx, dict) and tx.get("sourceType") == "pux_shop"
+        ]
+        state["xp"] = 0
+        state["processedEvents"] = {**preserved_shop_events}
+        state["unlockedCosmetics"] = preserved_cosmetics
+        state["activityLog"] = []
+        state["unlockHistory"] = []
+        state["bootstrapCompletedAt"] = None
+        state["completedCollections"] = {}
+        state["masteryMilestoneUnlocks"] = {}
+        state["puxTransactions"] = preserved_txs
+        processed_events = state["processedEvents"]
+
+    next_pux = int(state["currency"].get("PUX", 0)) + int(data.granted_pux or 0)
+    if next_pux < 0:
+        return {
+            "state": state,
+            "applied": False,
+            "granted_pux": 0,
+            "granted_xp": 0,
+            "reward_events": [],
+            "reason": "insufficient_pux",
+        }
+    state["currency"]["PUX"] = next_pux
+    state["xp"] = int(state.get("xp") or 0) + int(data.granted_xp or 0)
+
+    if session_id and session_id not in processed_sessions:
+        state["processedSessions"][session_id] = {
+            "sessionId": session_id,
+            "grantedAt": data.evaluated_at,
+            "pux": int(data.granted_pux or 0),
+        }
+
+    if event_id:
+        state["processedEvents"][event_id] = {
+            "eventId": event_id,
+            "processedAt": data.evaluated_at,
+            "grantedXp": int(data.granted_xp or 0),
+            "grantedPux": int(data.granted_pux or 0),
+        }
+
+    for extra_event_id in data.processed_event_ids or []:
+        eid = str(extra_event_id or "").strip()
+        if not eid:
+            continue
+        if eid in state["processedEvents"]:
+            continue
+        state["processedEvents"][eid] = {
+            "eventId": eid,
+            "processedAt": data.evaluated_at,
+            "grantedXp": 0,
+            "grantedPux": 0,
+        }
 
     for achievement in data.unlocked_achievements:
         achievement_id = (achievement.get("id") or "").strip()
         if not achievement_id:
             continue
-        if achievement_id in state["unlockedAchievements"]:
+        if achievement_id in state["unlockedAchievements"] and not data.replace_derived:
             continue
 
         unlocked_at = achievement.get("unlockedAt") or data.evaluated_at
-        state["unlockedAchievements"][achievement_id] = {
+        entry = {
             "id": achievement_id,
             "unlockedAt": unlocked_at,
         }
+        if achievement.get("sourceEventId"):
+            entry["sourceEventId"] = achievement.get("sourceEventId")
+        state["unlockedAchievements"][achievement_id] = entry
 
     for mastery in data.unlocked_masteries:
         mastery_key = (mastery.get("key") or "").strip()
@@ -1941,6 +2071,143 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
 
         state["unlockedMasteries"][mastery_key] = mastery
 
+    if "unlockedCosmetics" not in state or not isinstance(state["unlockedCosmetics"], dict):
+        state["unlockedCosmetics"] = {}
+    for cosmetic in data.unlocked_cosmetics:
+        cosmetic_id = (cosmetic.get("cosmeticId") or cosmetic.get("id") or "").strip()
+        if not cosmetic_id:
+            continue
+        if cosmetic_id in state["unlockedCosmetics"] and not data.replace_derived:
+            # Allow seenAt / metadata refresh on existing unlocks.
+            existing = state["unlockedCosmetics"][cosmetic_id]
+            if isinstance(existing, dict):
+                if cosmetic.get("seenAt"):
+                    existing["seenAt"] = cosmetic.get("seenAt")
+                if cosmetic.get("earnKind"):
+                    existing["earnKind"] = cosmetic.get("earnKind")
+            continue
+        state["unlockedCosmetics"][cosmetic_id] = {
+            "cosmeticId": cosmetic_id,
+            "unlockedAt": cosmetic.get("unlockedAt") or data.evaluated_at,
+            "sourceType": cosmetic.get("sourceType") or "reward",
+            "sourceId": cosmetic.get("sourceId"),
+            "seenAt": cosmetic.get("seenAt"),
+            "earnKind": cosmetic.get("earnKind"),
+        }
+
+    for cosmetic_id in data.mark_cosmetics_seen or []:
+        cid = str(cosmetic_id or "").strip()
+        if not cid:
+            continue
+        entry = (state.get("unlockedCosmetics") or {}).get(cid)
+        if isinstance(entry, dict) and not entry.get("seenAt"):
+            entry["seenAt"] = data.evaluated_at
+
+    if data.favorite_cosmetic_ids is not None:
+        state["favoriteCosmeticIds"] = [
+            str(item).strip() for item in data.favorite_cosmetic_ids if str(item).strip()
+        ]
+
+    if data.pux_transactions:
+        txs = list(state.get("puxTransactions") or [])
+        existing_tx = {str(item.get("id")) for item in txs if isinstance(item, dict) and item.get("id")}
+        for tx in data.pux_transactions:
+            if not isinstance(tx, dict):
+                continue
+            tid = str(tx.get("id") or "").strip()
+            if tid and tid in existing_tx:
+                continue
+            txs.append(tx)
+            if tid:
+                existing_tx.add(tid)
+        state["puxTransactions"] = txs[-500:]
+
+    if data.completed_collections:
+        if "completedCollections" not in state or not isinstance(state["completedCollections"], dict):
+            state["completedCollections"] = {}
+        for entry in data.completed_collections:
+            if not isinstance(entry, dict):
+                continue
+            cid = str(entry.get("collectionId") or entry.get("id") or "").strip()
+            if not cid or cid in state["completedCollections"]:
+                continue
+            state["completedCollections"][cid] = {
+                "collectionId": cid,
+                "completedAt": entry.get("completedAt") or data.evaluated_at,
+            }
+
+    if data.mastery_milestone_unlocks:
+        if "masteryMilestoneUnlocks" not in state or not isinstance(state["masteryMilestoneUnlocks"], dict):
+            state["masteryMilestoneUnlocks"] = {}
+        for entry in data.mastery_milestone_unlocks:
+            if not isinstance(entry, dict):
+                continue
+            mid = str(entry.get("masteryId") or "").strip()
+            threshold = entry.get("milestoneThreshold")
+            if not mid or threshold is None:
+                continue
+            key = f"{mid}:{threshold}"
+            if key in state["masteryMilestoneUnlocks"]:
+                continue
+            state["masteryMilestoneUnlocks"][key] = entry
+
+    if data.progression_pux_granted is not None:
+        state["progressionPuxGranted"] = int(data.progression_pux_granted)
+
+    if data.activity_events:
+        existing_ids = {
+            str(item.get("id"))
+            for item in (state.get("activityLog") or [])
+            if isinstance(item, dict) and item.get("id")
+        }
+        activity_log = list(state.get("activityLog") or [])
+        for event in data.activity_events:
+            if not isinstance(event, dict):
+                continue
+            eid = str(event.get("id") or "").strip()
+            if not eid or eid in existing_ids:
+                # Still ensure processedEvents knows about historical events from bootstrap.
+                if eid and eid not in state["processedEvents"]:
+                    state["processedEvents"][eid] = {
+                        "eventId": eid,
+                        "processedAt": data.evaluated_at,
+                        "grantedXp": 0,
+                        "grantedPux": 0,
+                    }
+                continue
+            activity_log.append(event)
+            existing_ids.add(eid)
+            if eid not in state["processedEvents"]:
+                state["processedEvents"][eid] = {
+                    "eventId": eid,
+                    "processedAt": data.evaluated_at,
+                    "grantedXp": 0,
+                    "grantedPux": 0,
+                }
+        # Keep a bounded log for storage; evaluation prefers full rebuild from sources when needed.
+        state["activityLog"] = activity_log[-2000:]
+
+    if data.unlock_history:
+        history = list(state.get("unlockHistory") or [])
+        existing_history_ids = {
+            str(item.get("id"))
+            for item in history
+            if isinstance(item, dict) and item.get("id")
+        }
+        for entry in data.unlock_history:
+            if not isinstance(entry, dict):
+                continue
+            hid = str(entry.get("id") or "").strip()
+            if hid and hid in existing_history_ids:
+                continue
+            history.append(entry)
+            if hid:
+                existing_history_ids.add(hid)
+        state["unlockHistory"] = history[-100:]
+
+    if data.bootstrap_completed_at:
+        state["bootstrapCompletedAt"] = data.bootstrap_completed_at
+
     state["lastUpdatedAt"] = data.evaluated_at
     _save_reward_state(current_user, state)
 
@@ -1948,6 +2215,7 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
         "state": state,
         "applied": True,
         "granted_pux": int(data.granted_pux or 0),
+        "granted_xp": int(data.granted_xp or 0),
         "reward_events": data.reward_events,
     }
 
