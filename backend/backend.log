@@ -520,3 +520,11 @@ INFO:     185.250.223.163:0 - "GET /api/scenes HTTP/1.0" 200 OK
 INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     185.250.223.163:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     185.250.223.163:0 - "GET /api/scenes HTTP/1.0" 200 OK
+INFO:     185.250.223.163:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
