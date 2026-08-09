@@ -6,7 +6,7 @@ import { useUser } from '../context/UserContext'
 import { makeGlossaryRenderer } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
-import { teamsByLeague, LEAGUES } from '../data/teamsByLeague'
+import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
 import { OBSERVATION_SCOPE_OPTIONS, getObservationScopeLabel, type ObservationScope } from '../utils/observationScope'
@@ -41,6 +41,7 @@ const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
   { name: 'Pittsburgh Penguins', division: 'Metropolitan', short: 'PIT' },
   { name: 'Washington Capitals', division: 'Metropolitan', short: 'WSH' },
   // Central Division
+  { name: 'Utah Mammoth', division: 'Central', short: 'UTA' },
   { name: 'Arizona Coyotes', division: 'Central', short: 'ARI' },
   { name: 'Chicago Blackhawks', division: 'Central', short: 'CHI' },
   { name: 'Colorado Avalanche', division: 'Central', short: 'COL' },
@@ -161,8 +162,8 @@ export default function SessionSetup() {
   })
 
   const { data: teamsResp } = useQuery({
-    queryKey: ['teams', league],
-    queryFn: () => api.getTeams(league),
+    queryKey: ['teams', league, season],
+    queryFn: () => api.getTeams(league, season || undefined),
     enabled: Boolean(league),
     staleTime: 0,
     gcTime: 0
@@ -347,15 +348,9 @@ export default function SessionSetup() {
 
   const availableTeams = (() => {
     if (!league) return []
-
-    // Für DEL: API-Teams als Fallback, sonst teamsByLeague
-    if (league === 'DEL') {
-      const apiTeams = teamsResp?.teams?.map(t => t.name) || []
-      if (apiTeams.length > 0) return apiTeams
-    }
-
-    // Alle anderen Leagues (CHL, NHL, Nationalmannschaften, etc.) aus teamsByLeague
-    return teamsByLeague[league] ?? []
+    const apiTeams = teamsResp?.teams?.map(t => t.name) || []
+    if (apiTeams.length > 0) return apiTeams
+    return getTeamNamesForLeague(league, season || undefined)
   })()
 
   // Reset Teams wenn sie bei League-Wechsel nicht mehr in der Liste sind
@@ -371,7 +366,7 @@ export default function SessionSetup() {
     if (observedTeam && !availableTeams.includes(observedTeam)) {
       setObservedTeam('')
     }
-  }, [league, availableTeams, teamHome, teamAway, observedTeam])
+  }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
 
   useEffect(() => {
     if (competitionConfig && !competitionPhase) {

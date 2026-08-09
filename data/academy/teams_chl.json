@@ -1,0 +1,298 @@
+{
+  "league": "CHL",
+  "default_season": "2025/26",
+  "seasons": {
+    "2025/26": [
+      {
+        "id": "zsc_lions_zurich",
+        "name": "ZSC Lions Zurich",
+        "short": "ZSC",
+        "country": "SUI"
+      },
+      {
+        "id": "lausanne_hc",
+        "name": "Lausanne HC",
+        "short": "LHC",
+        "country": "SUI"
+      },
+      {
+        "id": "sc_bern",
+        "name": "SC Bern",
+        "short": "SCB",
+        "country": "SUI"
+      },
+      {
+        "id": "ev_zug",
+        "name": "EV Zug",
+        "short": "EVZ",
+        "country": "SUI"
+      },
+      {
+        "id": "red_bull_salzburg",
+        "name": "Red Bull Salzburg",
+        "short": "RBS",
+        "country": "AUT"
+      },
+      {
+        "id": "kac_klagenfurt",
+        "name": "KAC Klagenfurt",
+        "short": "KAC",
+        "country": "AUT"
+      },
+      {
+        "id": "hc_bolzano",
+        "name": "HC Bolzano",
+        "short": "BOL",
+        "country": "ITA"
+      },
+      {
+        "id": "kometa_brno",
+        "name": "Kometa Brno",
+        "short": "KOM",
+        "country": "CZE"
+      },
+      {
+        "id": "sparta_prague",
+        "name": "Sparta Prague",
+        "short": "SPA",
+        "country": "CZE"
+      },
+      {
+        "id": "mountfield_hk",
+        "name": "Mountfield HK",
+        "short": "MHK",
+        "country": "CZE"
+      },
+      {
+        "id": "kalpa_kuopio",
+        "name": "KalPa Kuopio",
+        "short": "KAL",
+        "country": "FIN"
+      },
+      {
+        "id": "lukko_rauma",
+        "name": "Lukko Rauma",
+        "short": "LUK",
+        "country": "FIN"
+      },
+      {
+        "id": "ilves_tampere",
+        "name": "Ilves Tampere",
+        "short": "ILV",
+        "country": "FIN"
+      },
+      {
+        "id": "eisbaren_berlin",
+        "name": "Eisbären Berlin",
+        "short": "EBB",
+        "country": "GER"
+      },
+      {
+        "id": "erc_ingolstadt",
+        "name": "ERC Ingolstadt",
+        "short": "ING",
+        "country": "GER"
+      },
+      {
+        "id": "pinguins_bremerhaven",
+        "name": "Pinguins Bremerhaven",
+        "short": "BRE",
+        "country": "GER"
+      },
+      {
+        "id": "lulea_hockey",
+        "name": "Luleå Hockey",
+        "short": "LUL",
+        "country": "SWE"
+      },
+      {
+        "id": "brynas_if",
+        "name": "Brynäs IF",
+        "short": "BRY",
+        "country": "SWE"
+      },
+      {
+        "id": "frolunda_gothenburg",
+        "name": "Frölunda Gothenburg",
+        "short": "FRO",
+        "country": "SWE"
+      },
+      {
+        "id": "odense_bulldogs",
+        "name": "Odense Bulldogs",
+        "short": "ODE",
+        "country": "DEN"
+      },
+      {
+        "id": "grenoble",
+        "name": "Grenoble",
+        "short": "GRE",
+        "country": "FRA"
+      },
+      {
+        "id": "storhamar_hamar",
+        "name": "Storhamar Hamar",
+        "short": "STO",
+        "country": "NOR"
+      },
+      {
+        "id": "gks_tychy",
+        "name": "GKS Tychy",
+        "short": "TYC",
+        "country": "POL"
+      },
+      {
+        "id": "belfast_giants",
+        "name": "Belfast Giants",
+        "short": "BEL",
+        "country": "GBR"
+      }
+    ],
+    "2026/27": [
+      {
+        "id": "zsc_lions_zurich",
+        "name": "ZSC Lions Zurich",
+        "short": "ZSC",
+        "country": "SUI"
+      },
+      {
+        "id": "lausanne_hc",
+        "name": "Lausanne HC",
+        "short": "LHC",
+        "country": "SUI"
+      },
+      {
+        "id": "sc_bern",
+        "name": "SC Bern",
+        "short": "SCB",
+        "country": "SUI"
+      },
+      {
+        "id": "ev_zug",
+        "name": "EV Zug",
+        "short": "EVZ",
+        "country": "SUI"
+      },
+      {
+        "id": "red_bull_salzburg",
+        "name": "Red Bull Salzburg",
+        "short": "RBS",
+        "country": "AUT"
+      },
+      {
+        "id": "kac_klagenfurt",
+        "name": "KAC Klagenfurt",
+        "short": "KAC",
+        "country": "AUT"
+      },
+      {
+        "id": "hc_bolzano",
+        "name": "HC Bolzano",
+        "short": "BOL",
+        "country": "ITA"
+      },
+      {
+        "id": "kometa_brno",
+        "name": "Kometa Brno",
+        "short": "KOM",
+        "country": "CZE"
+      },
+      {
+        "id": "sparta_prague",
+        "name": "Sparta Prague",
+        "short": "SPA",
+        "country": "CZE"
+      },
+      {
+        "id": "mountfield_hk",
+        "name": "Mountfield HK",
+        "short": "MHK",
+        "country": "CZE"
+      },
+      {
+        "id": "kalpa_kuopio",
+        "name": "KalPa Kuopio",
+        "short": "KAL",
+        "country": "FIN"
+      },
+      {
+        "id": "lukko_rauma",
+        "name": "Lukko Rauma",
+        "short": "LUK",
+        "country": "FIN"
+      },
+      {
+        "id": "ilves_tampere",
+        "name": "Ilves Tampere",
+        "short": "ILV",
+        "country": "FIN"
+      },
+      {
+        "id": "eisbaren_berlin",
+        "name": "Eisbären Berlin",
+        "short": "EBB",
+        "country": "GER"
+      },
+      {
+        "id": "erc_ingolstadt",
+        "name": "ERC Ingolstadt",
+        "short": "ING",
+        "country": "GER"
+      },
+      {
+        "id": "pinguins_bremerhaven",
+        "name": "Pinguins Bremerhaven",
+        "short": "BRE",
+        "country": "GER"
+      },
+      {
+        "id": "lulea_hockey",
+        "name": "Luleå Hockey",
+        "short": "LUL",
+        "country": "SWE"
+      },
+      {
+        "id": "brynas_if",
+        "name": "Brynäs IF",
+        "short": "BRY",
+        "country": "SWE"
+      },
+      {
+        "id": "frolunda_gothenburg",
+        "name": "Frölunda Gothenburg",
+        "short": "FRO",
+        "country": "SWE"
+      },
+      {
+        "id": "odense_bulldogs",
+        "name": "Odense Bulldogs",
+        "short": "ODE",
+        "country": "DEN"
+      },
+      {
+        "id": "grenoble",
+        "name": "Grenoble",
+        "short": "GRE",
+        "country": "FRA"
+      },
+      {
+        "id": "storhamar_hamar",
+        "name": "Storhamar Hamar",
+        "short": "STO",
+        "country": "NOR"
+      },
+      {
+        "id": "gks_tychy",
+        "name": "GKS Tychy",
+        "short": "TYC",
+        "country": "POL"
+      },
+      {
+        "id": "belfast_giants",
+        "name": "Belfast Giants",
+        "short": "BEL",
+        "country": "GBR"
+      }
+    ]
+  }
+}

@@ -173,6 +173,19 @@
   box-shadow: 0 0 24px rgba(20, 184, 166, 0.2);
 }
 
+.quickChipPipeline {
+  border-color: rgba(251, 191, 36, 0.38);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.12));
+  color: #fde68a;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.1);
+}
+
+.quickChipPipelineActive {
+  border-color: rgba(252, 211, 77, 0.62);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.32), rgba(251, 191, 36, 0.2));
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.18);
+}
+
 .filterCard {
   margin-bottom: 0 !important;
 }

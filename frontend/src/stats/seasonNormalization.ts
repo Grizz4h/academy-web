@@ -1,4 +1,4 @@
-const SPLIT_SEASON_LEAGUES = new Set(['DEL', 'DEL2', 'NHL'])
+const SPLIT_SEASON_LEAGUES = new Set(['DEL', 'DEL2', 'NHL', 'CHL', 'U20_DNL'])
 const TOURNAMENT_YEAR_LEAGUES = new Set(['WM', 'OLYMPIA', 'NATIONALMANNSCHAFTEN'])
 
 export const SEASON_OPTIONS = ['2025/26', '2026/27', '2027/28']

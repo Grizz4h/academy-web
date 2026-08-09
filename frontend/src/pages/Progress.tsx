@@ -5,7 +5,7 @@ import type { Session } from '../api'
 import Card from '../components/Card'
 import FilterSheet from '../components/FilterSheet'
 import { PageSkeleton } from '../components/Skeleton'
-import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
+import { LEAGUES, getAllTeamNamesForLeague, getTeamNamesForLeague } from '../data/teamsByLeague'
 import { useUser } from '../context/UserContext'
 import { formatPux, getAchievementProgressItems, useRewards } from '../features/rewards'
 import { computeTeamExposure, resolveDrillId } from '../stats/exposureStats'
@@ -199,7 +199,9 @@ export default function Progress() {
     return acc
   }, {})
 
-  const allTeamsForLeague = teamsByLeague[selectedLeague] || []
+  const allTeamsForLeague = selectedSeason
+    ? getTeamNamesForLeague(selectedLeague, selectedSeason)
+    : getAllTeamNamesForLeague(selectedLeague)
   const extraTeams = Object.keys(teamStats).filter((team) => !allTeamsForLeague.includes(team))
 
   const teamData = [...allTeamsForLeague, ...extraTeams]

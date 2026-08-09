@@ -187,7 +187,9 @@ OBSERVATION_SCOPE_LABELS = {
 }
 
 SCENE_STATUS_NEW = "NEW"
+SCENE_STATUS_PIPELINE = "PIPELINE"
 SCENE_STATUS_ASSIGNED = "ASSIGNED"
+SCENE_STATUSES = {SCENE_STATUS_NEW, SCENE_STATUS_PIPELINE, SCENE_STATUS_ASSIGNED}
 SCENE_CODE_PREFIX = "SC"
 SCENE_CODE_WIDTH = 3
 SCENE_CODE_LEGACY_FLOOR = 16
@@ -882,20 +884,67 @@ async def get_lab_content():
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Lab content not found")
 
+def _normalize_team_season_key(raw: Optional[str]) -> Optional[str]:
+    if not raw:
+        return None
+    value = str(raw).strip()
+    if not value:
+        return None
+    # 2025/2026 -> 2025/26
+    range_match = re.match(r'^(\d{4})\s*[\/\-]\s*(\d{2,4})$', value)
+    if range_match:
+        start = range_match.group(1)
+        end = range_match.group(2)
+        if len(end) == 4:
+            end = end[-2:]
+        return f"{start}/{end.zfill(2)}"
+    return value
+
+
+def _teams_payload_for_season(data: dict, season: Optional[str] = None) -> dict:
+    """Support season-keyed catalogs while keeping a flat {league, season, teams} response."""
+    seasons = data.get("seasons")
+    if not isinstance(seasons, dict) or not seasons:
+        return {
+            "league": data.get("league"),
+            "season": data.get("season") or data.get("default_season"),
+            "teams": data.get("teams") or [],
+        }
+
+    requested = _normalize_team_season_key(season)
+    default_season = data.get("default_season") or next(iter(seasons.keys()), None)
+    season_key = requested if requested in seasons else default_season
+    if season_key not in seasons:
+        season_key = next(iter(seasons.keys()))
+    return {
+        "league": data.get("league"),
+        "season": season_key,
+        "default_season": default_season,
+        "available_seasons": list(seasons.keys()),
+        "teams": seasons.get(season_key) or [],
+    }
+
+
 @app.get("/api/teams")
-async def get_teams(league: Optional[str] = None):
-    """Teams laden basierend auf Liga"""
+async def get_teams(league: Optional[str] = None, season: Optional[str] = None):
+    """Teams laden basierend auf Liga und optional Saison."""
     try:
         # Standardmäßig DEL Teams
         if not league or league == "DEL":
-            return load_json(os.path.join(DATA_DIR, "teams.json"))
+            data = load_json(os.path.join(DATA_DIR, "teams.json"))
         elif league == "Nationalmannschaften":
-            return load_json(os.path.join(DATA_DIR, "teams_national.json"))
-        elif league in ["NHL", "CHL", "U20_DNL"]:
-            # Diese Leagues haben keine Backend-Teams, Frontend nutzt teamsByLeague
-            return {"teams": []}
+            data = load_json(os.path.join(DATA_DIR, "teams_national.json"))
+        elif league == "NHL":
+            data = load_json(os.path.join(DATA_DIR, "teams_nhl.json"))
+        elif league == "DEL2":
+            data = load_json(os.path.join(DATA_DIR, "teams_del2.json"))
+        elif league == "CHL":
+            data = load_json(os.path.join(DATA_DIR, "teams_chl.json"))
+        elif league == "U20_DNL":
+            data = load_json(os.path.join(DATA_DIR, "teams_u20_dnl.json"))
         else:
             raise HTTPException(status_code=400, detail=f"Unknown league: {league}")
+        return _teams_payload_for_season(data, season)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Teams not found")
 
@@ -1936,9 +1985,31 @@ def _initial_phase_for_scope(scope: Optional[str]) -> str:
 
 def _normalize_scene_status(status: Optional[str]) -> str:
     value = (status or "").strip().upper()
-    if value == SCENE_STATUS_ASSIGNED:
-        return SCENE_STATUS_ASSIGNED
+    if value in SCENE_STATUSES:
+        return value
     return SCENE_STATUS_NEW
+
+
+def _resolve_scene_status(
+    *,
+    explicit_status: Optional[str],
+    episode_season: Optional[str],
+    episode_number: Optional[str],
+    previous_status: Optional[str] = None,
+    episode_fields_touched: bool = False,
+) -> str:
+    """Episode assignment always wins; clearing an episode drops ASSIGNED to PIPELINE."""
+    if episode_season and episode_number:
+        return SCENE_STATUS_ASSIGNED
+    if explicit_status is not None:
+        return _normalize_scene_status(explicit_status)
+    current = _normalize_scene_status(previous_status)
+    if episode_fields_touched and current == SCENE_STATUS_ASSIGNED:
+        return SCENE_STATUS_PIPELINE
+    if current == SCENE_STATUS_ASSIGNED:
+        # Episode codes missing but status was ASSIGNED (legacy / partial data)
+        return SCENE_STATUS_PIPELINE
+    return current
 
 
 def _normalize_scene_metadata_status(status: Optional[str]) -> Optional[str]:
@@ -2262,7 +2333,11 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         "drill_title": payload.drill_title if source["type"] == "drill" else None,
         "track_id": track_id,
         "source": source,
-        "status": _normalize_scene_status(payload.status),
+        "status": _resolve_scene_status(
+            explicit_status=payload.status,
+            episode_season=episode_season,
+            episode_number=episode_number,
+        ),
         "league": payload.league,
         "season": payload.season,
         "competition_phase": payload.competition_phase,
@@ -2402,8 +2477,8 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
         enforce_max_text_length(payload.note, "scene.note")
         scene["note"] = payload.note.strip()
 
-    if payload.status is not None:
-        scene["status"] = _normalize_scene_status(payload.status)
+    previous_status = scene.get("status")
+    status_explicitly_set = payload.status is not None
 
     optional_text_fields = (
         "period",
@@ -2457,10 +2532,13 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
         scene["episode_code"] = episode_number
         episode_fields_touched = True
 
-    if episode_season and episode_number:
-        scene["status"] = SCENE_STATUS_ASSIGNED
-    elif episode_fields_touched and payload.status is None:
-        scene["status"] = SCENE_STATUS_NEW
+    scene["status"] = _resolve_scene_status(
+        explicit_status=payload.status if status_explicitly_set else None,
+        episode_season=episode_season,
+        episode_number=episode_number,
+        previous_status=previous_status,
+        episode_fields_touched=episode_fields_touched,
+    )
 
     if episode_fields_touched and episode_season and episode_number:
         conflict = _find_episode_conflict(episode_season, episode_number, current_user, exclude_scene_id=scene_id)

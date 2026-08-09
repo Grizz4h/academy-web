@@ -6880,3 +6880,9 @@ function EventLog({ drill, answers, setAnswers }: any) {
 	);
 }
 
+
+
+
+
+
+

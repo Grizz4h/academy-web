@@ -13,7 +13,7 @@
     "drill_id": "B3_D1",
     "observation_id": null
   },
-  "status": "NEW",
+  "status": "PIPELINE",
   "league": "DEL",
   "season": "2025/26",
   "competition_phase": "regular_season",
@@ -40,5 +40,5 @@
   "extension_labels": {},
   "created_at": "2026-08-06T21:49:17.011018",
   "metadata_status": "complete",
-  "updated_at": "2026-08-06T21:58:06.776255"
+  "updated_at": "2026-08-09T10:03:37.578072"
 }

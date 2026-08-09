@@ -7,7 +7,7 @@
   "drill_id": "B2_D2",
   "drill_title": "Wie löst der Puckführer den Druck?",
   "track_id": "B2",
-  "status": "NEW",
+  "status": "PIPELINE",
   "league": "DEL",
   "season": "2025/26",
   "competition_phase": "regular_season",
@@ -30,5 +30,12 @@
   "extensions": {},
   "extension_labels": {},
   "created_at": "2026-08-02T18:23:49.874261",
-  "updated_at": "2026-08-02T18:23:56.989846"
+  "updated_at": "2026-08-09T10:03:54.681871",
+  "metadata_status": "incomplete",
+  "source": {
+    "type": "drill",
+    "session_id": "Christoph_1785685792",
+    "drill_id": "B2_D2",
+    "observation_id": null
+  }
 }

@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
-import { teamsByLeague, LEAGUES } from '../data/teamsByLeague'
+import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { normalizeSeasonValue, isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
 import { OBSERVATION_SCOPE_OPTIONS, getObservationScopeLabel, type ObservationScope } from '../utils/observationScope'
@@ -37,8 +37,8 @@ export default function LabPredictSetup() {
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
 
   const { data: teamsResp } = useQuery({
-    queryKey: ['teams', league],
-    queryFn: () => api.getTeams(league),
+    queryKey: ['teams', league, season],
+    queryFn: () => api.getTeams(league, season || undefined),
     enabled: Boolean(league),
     staleTime: 0,
     gcTime: 0,
@@ -46,9 +46,16 @@ export default function LabPredictSetup() {
 
   const availableTeams = useMemo(() => {
     const apiTeams = teamsResp?.teams?.map((team: any) => team.name) || []
-    if (league === 'DEL' && apiTeams.length > 0) return apiTeams
-    return teamsByLeague[league] || []
-  }, [league, teamsResp])
+    if (apiTeams.length > 0) return apiTeams
+    return getTeamNamesForLeague(league, season || undefined)
+  }, [league, season, teamsResp])
+
+  useEffect(() => {
+    if (!availableTeams.length) return
+    if (teamHome && !availableTeams.includes(teamHome)) setTeamHome('')
+    if (teamAway && !availableTeams.includes(teamAway)) setTeamAway('')
+    if (observedTeam && !availableTeams.includes(observedTeam)) setObservedTeam('')
+  }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
 
   const createSessionMutation = useMutation({
     mutationFn: (payload: Parameters<typeof api.createSession>[0]) => api.createSession(payload),

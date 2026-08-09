@@ -6,7 +6,7 @@ import {
   type SceneMarkerUpdate,
 } from '../api'
 import { formatCompetitionContext, getCompetitionConfig, getCompetitionPhase } from '../data/competitionConfig'
-import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
+import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
 import {
   isSplitSeasonLeague,
   SEASON_OPTIONS,
@@ -69,7 +69,7 @@ export function ManualSceneForm({
     [league, competitionPhase, competitionConfig],
   )
   const seasonOptions = isSplitSeasonLeague(league) ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
-  const availableTeams = league ? (teamsByLeague[league] || []) : []
+  const availableTeams = league ? getTeamNamesForLeague(league, season || undefined) : []
 
   useEffect(() => {
     if (mode === 'create') {
@@ -87,6 +87,13 @@ export function ManualSceneForm({
       setCompetitionValue('')
     }
   }, [competitionConfig, competitionPhase])
+
+  useEffect(() => {
+    if (!availableTeams.length) return
+    if (teamHome && !availableTeams.includes(teamHome)) setTeamHome('')
+    if (teamAway && !availableTeams.includes(teamAway)) setTeamAway('')
+    if (observedTeam && !availableTeams.includes(observedTeam)) setObservedTeam('')
+  }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
 
   const validateCore = (): string | null => {
     const trimmedTime = gameTime.trim()

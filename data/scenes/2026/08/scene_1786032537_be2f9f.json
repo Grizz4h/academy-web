@@ -7,7 +7,7 @@
   "drill_id": "B2_D5",
   "drill_title": "Wie entscheidet das Team heute?",
   "track_id": "B2",
-  "status": "NEW",
+  "status": "PIPELINE",
   "league": "DEL",
   "season": "2025/26",
   "competition_phase": "regular_season",
@@ -32,5 +32,12 @@
   "extensions": {},
   "extension_labels": {},
   "created_at": "2026-08-06T18:08:57.483452",
-  "updated_at": "2026-08-06T18:09:03.329343"
+  "updated_at": "2026-08-09T10:09:54.322493",
+  "metadata_status": "complete",
+  "source": {
+    "type": "drill",
+    "session_id": "Christoph_1786030749",
+    "drill_id": "B2_D5",
+    "observation_id": null
+  }
 }

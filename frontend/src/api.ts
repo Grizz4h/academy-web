@@ -79,6 +79,8 @@ export type CurriculumModule = Module
 export interface Drill {
   id: string
   title: string
+  /** Stable short slug for scene asset / folder naming. */
+  sceneSlug?: string
   drill_type: string
   description?: string
   config: any
@@ -251,6 +253,8 @@ export interface Team {
 export interface TeamsResponse {
   league: string
   season?: string
+  default_season?: string
+  available_seasons?: string[]
   teams: Team[]
 }
 
@@ -530,6 +534,7 @@ export interface SceneSource {
 }
 
 export type SceneMetadataStatus = 'incomplete' | 'complete'
+export type SceneWorkflowStatus = 'NEW' | 'PIPELINE' | 'ASSIGNED'
 
 export interface SceneMarker {
   id: string
@@ -543,7 +548,7 @@ export interface SceneMarker {
   track_id?: string | null
   source?: SceneSource
   metadata_status?: SceneMetadataStatus
-  status?: string
+  status?: SceneWorkflowStatus | string
   league?: string
   season?: string
   competition_phase?: string
@@ -580,7 +585,7 @@ export interface SceneMarkerCreate {
   track_id?: string | null
   source?: SceneSource
   metadata_status?: SceneMetadataStatus
-  status?: string
+  status?: SceneWorkflowStatus | string
   overwrite_episode?: boolean
   league?: string
   season?: string
@@ -612,7 +617,7 @@ export interface SceneMarkerUpdate {
   game_time?: string
   note?: string
   rating?: 1 | 2 | 3 | 4 | 5 | null
-  status?: string
+  status?: SceneWorkflowStatus | string
   metadata_status?: SceneMetadataStatus
   period?: string
   league?: string
@@ -705,6 +710,8 @@ export interface Team {
 export interface TeamsResponse {
   league: string
   season?: string
+  default_season?: string
+  available_seasons?: string[]
   teams: Team[]
 }
 
@@ -926,8 +933,11 @@ export const api = {
   },
 
   // Teams
-  getTeams: async (league?: string): Promise<TeamsResponse> => {
-    const query = league ? `?league=${encodeURIComponent(league)}` : ''
+  getTeams: async (league?: string, season?: string): Promise<TeamsResponse> => {
+    const params = new URLSearchParams()
+    if (league) params.set('league', league)
+    if (season) params.set('season', season)
+    const query = params.toString() ? `?${params.toString()}` : ''
     const res = await fetch(buildUrl(`/teams${query}`), {
       headers: { ...authHeaders() }
     })

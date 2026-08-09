@@ -1,0 +1,178 @@
+{
+  "league": "DEL2",
+  "default_season": "2025/26",
+  "seasons": {
+    "2025/26": [
+      {
+        "id": "krefeld_pinguine",
+        "name": "Krefeld Pinguine",
+        "city": "Krefeld",
+        "short": "KEV"
+      },
+      {
+        "id": "ec_kassel_huskies",
+        "name": "EC Kassel Huskies",
+        "city": "Kassel",
+        "short": "KAS"
+      },
+      {
+        "id": "starbulls_rosenheim",
+        "name": "Starbulls Rosenheim",
+        "city": "Rosenheim",
+        "short": "ROS"
+      },
+      {
+        "id": "ravensburg_towerstars",
+        "name": "Ravensburg Towerstars",
+        "city": "Ravensburg",
+        "short": "RAV"
+      },
+      {
+        "id": "bietigheim_steelers",
+        "name": "Bietigheim Steelers",
+        "city": "Bietigheim",
+        "short": "BIE"
+      },
+      {
+        "id": "eisbaren_regensburg",
+        "name": "Eisbären Regensburg",
+        "city": "Regensburg",
+        "short": "REG"
+      },
+      {
+        "id": "lausitzer_fuchse",
+        "name": "Lausitzer Füchse",
+        "city": "Weißwasser",
+        "short": "WEI"
+      },
+      {
+        "id": "ev_landshut",
+        "name": "EV Landshut",
+        "city": "Landshut",
+        "short": "EVL"
+      },
+      {
+        "id": "dusseldorfer_eg",
+        "name": "Düsseldorfer EG",
+        "city": "Düsseldorf",
+        "short": "DEG"
+      },
+      {
+        "id": "eispiraten_crimmitschau",
+        "name": "Eispiraten Crimmitschau",
+        "city": "Crimmitschau",
+        "short": "CRI"
+      },
+      {
+        "id": "ehc_freiburg",
+        "name": "EHC Freiburg",
+        "city": "Freiburg",
+        "short": "FRB"
+      },
+      {
+        "id": "blue_devils_weiden",
+        "name": "Blue Devils Weiden",
+        "city": "Weiden",
+        "short": "WDN"
+      },
+      {
+        "id": "ec_bad_nauheim",
+        "name": "EC Bad Nauheim",
+        "city": "Bad Nauheim",
+        "short": "NAU"
+      },
+      {
+        "id": "esv_kaufbeuren",
+        "name": "ESV Kaufbeuren",
+        "city": "Kaufbeuren",
+        "short": "KAU"
+      }
+    ],
+    "2026/27": [
+      {
+        "id": "eislowen_dresden",
+        "name": "Dresdner Eislöwen",
+        "city": "Dresden",
+        "short": "DRE"
+      },
+      {
+        "id": "ec_kassel_huskies",
+        "name": "EC Kassel Huskies",
+        "city": "Kassel",
+        "short": "KAS"
+      },
+      {
+        "id": "starbulls_rosenheim",
+        "name": "Starbulls Rosenheim",
+        "city": "Rosenheim",
+        "short": "ROS"
+      },
+      {
+        "id": "ravensburg_towerstars",
+        "name": "Ravensburg Towerstars",
+        "city": "Ravensburg",
+        "short": "RAV"
+      },
+      {
+        "id": "bietigheim_steelers",
+        "name": "Bietigheim Steelers",
+        "city": "Bietigheim",
+        "short": "BIE"
+      },
+      {
+        "id": "eisbaren_regensburg",
+        "name": "Eisbären Regensburg",
+        "city": "Regensburg",
+        "short": "REG"
+      },
+      {
+        "id": "lausitzer_fuchse",
+        "name": "Lausitzer Füchse",
+        "city": "Weißwasser",
+        "short": "WEI"
+      },
+      {
+        "id": "ev_landshut",
+        "name": "EV Landshut",
+        "city": "Landshut",
+        "short": "EVL"
+      },
+      {
+        "id": "dusseldorfer_eg",
+        "name": "Düsseldorfer EG",
+        "city": "Düsseldorf",
+        "short": "DEG"
+      },
+      {
+        "id": "eispiraten_crimmitschau",
+        "name": "Eispiraten Crimmitschau",
+        "city": "Crimmitschau",
+        "short": "CRI"
+      },
+      {
+        "id": "ehc_freiburg",
+        "name": "EHC Freiburg",
+        "city": "Freiburg",
+        "short": "FRB"
+      },
+      {
+        "id": "blue_devils_weiden",
+        "name": "Blue Devils Weiden",
+        "city": "Weiden",
+        "short": "WDN"
+      },
+      {
+        "id": "ec_bad_nauheim",
+        "name": "EC Bad Nauheim",
+        "city": "Bad Nauheim",
+        "short": "NAU"
+      },
+      {
+        "id": "esv_kaufbeuren",
+        "name": "ESV Kaufbeuren",
+        "city": "Kaufbeuren",
+        "short": "KAU"
+      }
+    ]
+  }
+}

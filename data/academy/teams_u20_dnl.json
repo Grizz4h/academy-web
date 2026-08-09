@@ -1,0 +1,170 @@
+{
+  "league": "U20_DNL",
+  "default_season": "2025/26",
+  "seasons": {
+    "2025/26": [
+      {
+        "id": "jungadler_mannheim",
+        "name": "Jungadler Mannheim",
+        "short": "JAM"
+      },
+      {
+        "id": "erc_ingolstadt",
+        "name": "ERC Ingolstadt",
+        "short": "ING"
+      },
+      {
+        "id": "krefelder_ev_81",
+        "name": "Krefelder EV 81",
+        "short": "KEV"
+      },
+      {
+        "id": "kolner_junghaie",
+        "name": "Kölner Junghaie",
+        "short": "KJH"
+      },
+      {
+        "id": "eisbaren_juniors_berlin",
+        "name": "Eisbären Juniors Berlin",
+        "short": "EJB"
+      },
+      {
+        "id": "ev_landshut",
+        "name": "EV Landshut",
+        "short": "EVL"
+      },
+      {
+        "id": "esc_dresden",
+        "name": "ESC Dresden",
+        "short": "ESD"
+      },
+      {
+        "id": "iserlohner_ec",
+        "name": "Iserlohner EC",
+        "short": "IEC"
+      },
+      {
+        "id": "dusseldorfer_eg",
+        "name": "Düsseldorfer EG",
+        "short": "DEG"
+      },
+      {
+        "id": "sc_bietigheim_bissingen",
+        "name": "SC Bietigheim-Bissingen",
+        "short": "BIE"
+      },
+      {
+        "id": "esv_kaufbeuren",
+        "name": "ESV Kaufbeuren",
+        "short": "KAU"
+      },
+      {
+        "id": "ec_bad_tolz",
+        "name": "EC Bad Tölz",
+        "short": "TOL"
+      },
+      {
+        "id": "augsburger_ev",
+        "name": "Augsburger EV",
+        "short": "AEV"
+      },
+      {
+        "id": "starbulls_rosenheim",
+        "name": "Starbulls Rosenheim",
+        "short": "ROS"
+      },
+      {
+        "id": "schwenninger_erc",
+        "name": "Schwenninger ERC",
+        "short": "SER"
+      },
+      {
+        "id": "jung_eisbaren_regensburg",
+        "name": "Jung-Eisbären Regensburg",
+        "short": "JER"
+      }
+    ],
+    "2026/27": [
+      {
+        "id": "jungadler_mannheim",
+        "name": "Jungadler Mannheim",
+        "short": "JAM"
+      },
+      {
+        "id": "erc_ingolstadt",
+        "name": "ERC Ingolstadt",
+        "short": "ING"
+      },
+      {
+        "id": "krefelder_ev_81",
+        "name": "Krefelder EV 81",
+        "short": "KEV"
+      },
+      {
+        "id": "kolner_junghaie",
+        "name": "Kölner Junghaie",
+        "short": "KJH"
+      },
+      {
+        "id": "eisbaren_juniors_berlin",
+        "name": "Eisbären Juniors Berlin",
+        "short": "EJB"
+      },
+      {
+        "id": "ev_landshut",
+        "name": "EV Landshut",
+        "short": "EVL"
+      },
+      {
+        "id": "esc_dresden",
+        "name": "ESC Dresden",
+        "short": "ESD"
+      },
+      {
+        "id": "iserlohner_ec",
+        "name": "Iserlohner EC",
+        "short": "IEC"
+      },
+      {
+        "id": "dusseldorfer_eg",
+        "name": "Düsseldorfer EG",
+        "short": "DEG"
+      },
+      {
+        "id": "sc_bietigheim_bissingen",
+        "name": "SC Bietigheim-Bissingen",
+        "short": "BIE"
+      },
+      {
+        "id": "esv_kaufbeuren",
+        "name": "ESV Kaufbeuren",
+        "short": "KAU"
+      },
+      {
+        "id": "ec_bad_tolz",
+        "name": "EC Bad Tölz",
+        "short": "TOL"
+      },
+      {
+        "id": "augsburger_ev",
+        "name": "Augsburger EV",
+        "short": "AEV"
+      },
+      {
+        "id": "starbulls_rosenheim",
+        "name": "Starbulls Rosenheim",
+        "short": "ROS"
+      },
+      {
+        "id": "schwenninger_erc",
+        "name": "Schwenninger ERC",
+        "short": "SER"
+      },
+      {
+        "id": "jung_eisbaren_regensburg",
+        "name": "Jung-Eisbären Regensburg",
+        "short": "JER"
+      }
+    ]
+  }
+}

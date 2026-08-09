@@ -15,6 +15,10 @@ import {
   scenePeriodLabel,
 } from '../utils/sceneHelpers'
 import { shareOrCopy } from '../utils/share'
+import {
+  copyTextToClipboard,
+  generateSceneAssetNameFromScene,
+} from '../utils/sceneAssetName'
 import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
@@ -24,16 +28,24 @@ function unique<T>(arr: T[]): T[] {
 }
 
 function isScenePublished(scene: SceneMarker): boolean {
-  return (scene.status || 'NEW') === 'ASSIGNED'
+  return getSceneStatus(scene) === 'ASSIGNED'
+}
+
+function getSceneStatus(scene: Pick<SceneMarker, 'status'> | { status?: string }): 'NEW' | 'PIPELINE' | 'ASSIGNED' {
+  const value = (scene.status || 'NEW').toUpperCase()
+  if (value === 'ASSIGNED' || value === 'PIPELINE') return value
+  return 'NEW'
+}
+
+function sceneStatusLabel(status?: string) {
+  const normalized = getSceneStatus({ status })
+  if (normalized === 'ASSIGNED') return 'Zugeordnet'
+  if (normalized === 'PIPELINE') return 'Pipeline'
+  return 'Neu'
 }
 
 function getSceneTrack(scene: SceneMarker) {
   return scene.track_id || scene.module_id?.split('_')[0] || ''
-}
-
-function sceneStatusLabel(status?: string) {
-  if (status === 'ASSIGNED') return 'Zugeordnet'
-  return 'Neu'
 }
 
 function normalizeObservedTeamValue(value?: string | null): string {
@@ -113,6 +125,25 @@ export default function RingAbout() {
     queryFn: () => api.getScenes(),
   })
 
+  const { data: curriculum } = useQuery({
+    queryKey: ['curriculum'],
+    queryFn: () => api.getCurriculum(),
+  })
+
+  const drillSceneSlugById = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const track of curriculum?.tracks || []) {
+      for (const module of track.modules || []) {
+        for (const drill of module.drills || []) {
+          if (drill.id && drill.sceneSlug) {
+            map.set(drill.id, drill.sceneSlug)
+          }
+        }
+      }
+    }
+    return map
+  }, [curriculum])
+
   const sessionFilter = (searchParams.get('session_id') || '').trim()
 
   const { data: sessionsData } = useQuery({
@@ -166,6 +197,35 @@ export default function RingAbout() {
       {
         sceneId: scene.id,
         payload: { rating: nextRating },
+      },
+      {
+        onError: () => {
+          if (previousScenes) queryClient.setQueryData(['scenes'], previousScenes)
+        },
+      }
+    )
+  }
+
+  const handlePipelineToggle = (scene: SceneMarker) => {
+    const current = getSceneStatus(scene)
+    if (current === 'ASSIGNED') return
+    const nextStatus = current === 'PIPELINE' ? 'NEW' : 'PIPELINE'
+    const previousScenes = queryClient.getQueryData<{ scenes: SceneMarker[] }>(['scenes'])
+
+    queryClient.setQueryData<{ scenes: SceneMarker[] }>(['scenes'], (currentData) => {
+      if (!currentData?.scenes) return currentData
+      return {
+        ...currentData,
+        scenes: currentData.scenes.map((item) => (
+          item.id === scene.id ? { ...item, status: nextStatus } : item
+        )),
+      }
+    })
+
+    updateMutation.mutate(
+      {
+        sceneId: scene.id,
+        payload: { status: nextStatus },
       },
       {
         onError: () => {
@@ -436,11 +496,16 @@ export default function RingAbout() {
   }, [selectedCompetitionPhase, competitionUnits, filterCompetitionUnitValue])
 
   const sceneStats = useMemo(() => {
-    const assigned = scenes.filter((scene) => isScenePublished(scene)).length
-    return {
-      assigned,
-      new: Math.max(scenes.length - assigned, 0),
+    let assigned = 0
+    let pipeline = 0
+    let neu = 0
+    for (const scene of scenes) {
+      const status = getSceneStatus(scene)
+      if (status === 'ASSIGNED') assigned += 1
+      else if (status === 'PIPELINE') pipeline += 1
+      else neu += 1
     }
+    return { assigned, pipeline, new: neu }
   }, [scenes])
 
   const matchesNonCompetitionFilters = (s: SceneMarker) => {
@@ -449,7 +514,7 @@ export default function RingAbout() {
     if (filterSource === 'drill' && isManualScene(s)) return false
     if (filterLeague && s.league !== filterLeague) return false
     if (filterSeason && s.season !== filterSeason) return false
-    if (filterStatus && (s.status || 'NEW') !== filterStatus) return false
+    if (filterStatus && getSceneStatus(s) !== filterStatus) return false
     if (filterMinRating && (s.rating || 0) < Number(filterMinRating)) return false
     if (filterTeam) {
       const t = filterTeam.toLowerCase()
@@ -623,7 +688,7 @@ export default function RingAbout() {
       setFilterCompetitionUnitValue('')
     } } : null,
     filterSeason ? { key: 'season', label: `Saison: ${filterSeason}`, clear: () => setFilterSeason('') } : null,
-    filterStatus ? { key: 'status', label: `Status: ${filterStatus === 'ASSIGNED' ? 'Zugeordnet' : 'Neu'}`, clear: () => setFilterStatus('') } : null,
+    filterStatus ? { key: 'status', label: `Status: ${sceneStatusLabel(filterStatus)}`, clear: () => setFilterStatus('') } : null,
     filterMinRating ? { key: 'rating', label: `Bewertung: ${filterMinRating}★+`, clear: () => setFilterMinRating('') } : null,
     sortMode !== 'created' ? { key: 'sort', label: 'Sortierung: Bewertung', clear: () => setSortMode('created') } : null,
     filterTeam ? { key: 'team', label: `Team: ${filterTeam}`, clear: () => setFilterTeam('') } : null,
@@ -713,17 +778,17 @@ export default function RingAbout() {
               <Card className={styles.kpiCard}>
                 <div className={styles.kpiTitle}>Neu</div>
                 <div className={styles.kpiValue}>{sceneStats.new}</div>
-                <div className={styles.kpiHint}>noch nicht zugeordnet</div>
+                <div className={styles.kpiHint}>noch nicht in Pipeline</div>
+              </Card>
+              <Card className={styles.kpiCard}>
+                <div className={styles.kpiTitle}>Pipeline</div>
+                <div className={styles.kpiValue}>{sceneStats.pipeline}</div>
+                <div className={styles.kpiHint}>in Produktion aufgenommen</div>
               </Card>
               <Card className={styles.kpiCard}>
                 <div className={styles.kpiTitle}>Zugeordnet</div>
                 <div className={styles.kpiValue}>{sceneStats.assigned}</div>
                 <div className={styles.kpiHint}>für Episoden gesetzt</div>
-              </Card>
-              <Card className={styles.kpiCard}>
-                <div className={styles.kpiTitle}>Angezeigt</div>
-                <div className={styles.kpiValue}>{filtered.length}</div>
-                <div className={styles.kpiHint}>nach aktuellen Filtern</div>
               </Card>
             </div>
           )}
@@ -737,6 +802,14 @@ export default function RingAbout() {
                 className={`${styles.quickChip}${filterStatus === 'NEW' ? ` ${styles.quickChipActive}` : ''}`}
               >
                 Neu: {sceneStats.new}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterStatus(filterStatus === 'PIPELINE' ? '' : 'PIPELINE')}
+                aria-pressed={filterStatus === 'PIPELINE'}
+                className={`${styles.quickChip} ${styles.quickChipPipeline}${filterStatus === 'PIPELINE' ? ` ${styles.quickChipPipelineActive}` : ''}`}
+              >
+                Pipeline: {sceneStats.pipeline}
               </button>
               <button
                 type="button"
@@ -817,6 +890,7 @@ export default function RingAbout() {
                 <select id="scene-status" className="appSelect" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
                   <option value="">Alle</option>
                   <option value="NEW">Neu</option>
+                  <option value="PIPELINE">Pipeline</option>
                   <option value="ASSIGNED">Zugeordnet</option>
                 </select>
               </div>
@@ -1117,10 +1191,12 @@ export default function RingAbout() {
                     key={scene.id}
                     scene={scene}
                     observedTeam={getObservedTeamForScene(scene) || 'Beobachtetes Team nicht hinterlegt'}
+                    drillSceneSlugById={drillSceneSlugById}
                     onDelete={handleDelete}
                     onEdit={handleEditOpen}
                     onEnrich={handleEnrichOpen}
                     onRatingChange={handleRatingChange}
+                    onPipelineToggle={handlePipelineToggle}
                     celebrate={celebratedSceneId === scene.id}
                   />
                 ))}
@@ -1498,15 +1574,18 @@ function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onC
   )
 }
 
-function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingChange, celebrate = false }: {
+function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false }: {
   scene: SceneMarker
   observedTeam: string
+  drillSceneSlugById: Map<string, string>
   onDelete: (id: string) => void
   onEdit: (scene: SceneMarker) => void
   onEnrich: (scene: SceneMarker) => void
   onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void
+  onPipelineToggle: (scene: SceneMarker) => void
   celebrate?: boolean
 }) {
+  const [copyFeedback, setCopyFeedback] = useState<string>('')
   const gameLabel = scene.team_home && scene.team_away
     ? `${scene.team_home} vs ${scene.team_away}`
     : scene.team_home || scene.team_away || '–'
@@ -1515,6 +1594,13 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
   const source = getSceneSource(scene)
   const manual = source.type === 'manual'
   const metadataStatus = getSceneMetadataStatus(scene)
+  const drillId = source.drill_id || scene.drill_id || null
+  const drillSceneSlug = drillId ? drillSceneSlugById.get(drillId) : undefined
+  const assetNameResult = generateSceneAssetNameFromScene(scene, {
+    sceneSlug: drillSceneSlug || null,
+  })
+  const canCopyAssetName = assetNameResult.ok
+  const missingAssetFields = assetNameResult.ok ? [] : assetNameResult.missing
 
   // Extract drill number suffix, e.g. "B1_D4" -> "D4", "A1_D1" -> "D1"
   const drillSuffix = scene.drill_id
@@ -1525,8 +1611,17 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
   const episodeLabel = seasonCode && episodeCode
     ? `Staffel ${seasonCode} · Episode ${episodeCode}`
     : null
-  const isAssigned = (scene.status || 'NEW') === 'ASSIGNED'
+  const sceneStatus = getSceneStatus(scene)
+  const isAssigned = sceneStatus === 'ASSIGNED'
+  const isPipeline = sceneStatus === 'PIPELINE'
   const sceneCode = scene.scene_code || scene.internal_scene_id || scene.id
+
+  const borderColor = isAssigned ? '#2dd4bf' : isPipeline ? '#fbbf24' : '#4fc3f7'
+  const cardBackground = isAssigned
+    ? 'linear-gradient(145deg, rgba(8,47,73,0.74) 0%, rgba(6,78,59,0.38) 48%, rgba(15,23,42,0.92) 100%)'
+    : isPipeline
+      ? 'linear-gradient(145deg, rgba(69,26,3,0.45) 0%, rgba(15,23,42,0.92) 55%)'
+      : undefined
 
   return (
     <div
@@ -1534,14 +1629,14 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
       className="card"
       style={{
         padding: '1rem 1.1rem',
-        borderLeft: isAssigned ? '3px solid #2dd4bf' : '3px solid #4fc3f7',
-        borderColor: isAssigned ? 'rgba(45,212,191,0.36)' : undefined,
-        background: isAssigned
-          ? 'linear-gradient(145deg, rgba(8,47,73,0.74) 0%, rgba(6,78,59,0.38) 48%, rgba(15,23,42,0.92) 100%)'
-          : undefined,
+        borderLeft: `3px solid ${borderColor}`,
+        borderColor: isAssigned ? 'rgba(45,212,191,0.36)' : isPipeline ? 'rgba(251,191,36,0.28)' : undefined,
+        background: cardBackground,
         boxShadow: isAssigned
           ? '0 0 0 1px rgba(45,212,191,0.22), 0 18px 42px rgba(6,78,59,0.16)'
-          : undefined,
+          : isPipeline
+            ? '0 0 0 1px rgba(251,191,36,0.16)'
+            : undefined,
         position: 'relative', overflow: 'hidden',
         animation: celebrate ? 'ringAboutAssignedGlow 720ms cubic-bezier(0.18, 0.9, 0.28, 1)' : undefined,
         display: 'flex', flexDirection: 'column', gap: '0.6rem',
@@ -1563,7 +1658,54 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
         <div style={{ fontWeight: 700, fontSize: '1rem', color: '#e2e8f0', lineHeight: 1.3 }}>
           {gameLabel}
         </div>
-        <div style={{ display: 'flex', gap: '0.3rem' }}>
+        <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            disabled={!canCopyAssetName}
+            onClick={async () => {
+              if (!assetNameResult.ok) {
+                setCopyFeedback(`Für den Namen fehlen noch: ${missingAssetFields.join(', ')}`)
+                window.setTimeout(() => setCopyFeedback(''), 2800)
+                return
+              }
+              try {
+                const ok = await copyTextToClipboard(assetNameResult.name)
+                setCopyFeedback(ok ? `✓ ${assetNameResult.name} kopiert` : 'Kopieren fehlgeschlagen')
+              } catch {
+                setCopyFeedback('Kopieren fehlgeschlagen')
+              }
+              window.setTimeout(() => setCopyFeedback(''), 3200)
+            }}
+            title={
+              canCopyAssetName
+                ? 'Ordner-/Dateinamen in Zwischenablage kopieren'
+                : `Für den Namen fehlen noch: ${missingAssetFields.join(', ') || 'Metadaten'}`
+            }
+            style={{
+              background: canCopyAssetName ? 'rgba(125,211,252,0.10)' : 'transparent',
+              border: canCopyAssetName ? '1px solid rgba(125,211,252,0.28)' : '1px solid transparent',
+              borderRadius: '0.35rem',
+              cursor: canCopyAssetName ? 'pointer' : 'not-allowed',
+              color: canCopyAssetName ? '#bae6fd' : '#64748b',
+              fontSize: '0.72rem',
+              padding: '0.2rem 0.45rem',
+              lineHeight: 1.2,
+              flexShrink: 0,
+              fontWeight: 700,
+              opacity: canCopyAssetName ? 1 : 0.65,
+            }}
+            onMouseEnter={(e) => {
+              if (!canCopyAssetName) return
+              e.currentTarget.style.color = '#e0f2fe'
+              e.currentTarget.style.borderColor = 'rgba(125,211,252,0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = canCopyAssetName ? '#bae6fd' : '#64748b'
+              e.currentTarget.style.borderColor = canCopyAssetName ? 'rgba(125,211,252,0.28)' : 'transparent'
+            }}
+          >
+            Namen kopieren
+          </button>
           <button
             type="button"
             onClick={async () => {
@@ -1622,6 +1764,18 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
           </button>
         </div>
       </div>
+
+      {copyFeedback && (
+        <div style={{
+          fontSize: '0.78rem',
+          color: copyFeedback.startsWith('✓') ? '#86efac' : '#fde68a',
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          wordBreak: 'break-all',
+          lineHeight: 1.35,
+        }}>
+          {copyFeedback}
+        </div>
+      )}
 
       {/* Drittel + Spielzeit – prominent zum Wiederfinden */}
       <div style={{
@@ -1688,21 +1842,48 @@ function SceneCard({ scene, observedTeam, onDelete, onEdit, onEnrich, onRatingCh
         }} title="Interne Szenen-ID">
           {sceneCode}
         </span>
-        <span style={{
-          background: isAssigned
-            ? 'linear-gradient(135deg, rgba(34,197,94,0.34), rgba(20,184,166,0.24))'
-            : 'rgba(255,255,255,0.08)',
-          color: isAssigned ? '#d1fae5' : '#cbd5e1',
-          border: isAssigned ? '1px solid rgba(134,239,172,0.52)' : '1px solid rgba(255,255,255,0.14)',
-          borderRadius: '0.32rem',
-          padding: isAssigned ? '0.18rem 0.58rem' : '0.12rem 0.45rem',
-          fontSize: isAssigned ? '0.76rem' : '0.72rem',
-          fontWeight: 850,
-          boxShadow: isAssigned ? '0 0 16px rgba(34,197,94,0.18)' : undefined,
-          animation: celebrate ? 'ringAboutBadgeIn 280ms ease-out both' : undefined,
-        }}>
-          {isAssigned ? '✓ Zugeordnet' : sceneStatusLabel(scene.status)}
-        </span>
+        <button
+          type="button"
+          onClick={() => {
+            if (!isAssigned) onPipelineToggle(scene)
+          }}
+          disabled={isAssigned}
+          title={
+            isAssigned
+              ? 'Bereits einer Episode zugeordnet'
+              : isPipeline
+                ? 'Aus Pipeline entfernen (zurück auf Neu)'
+                : 'In Produktions-Pipeline aufnehmen'
+          }
+          aria-pressed={isPipeline || isAssigned}
+          style={{
+            background: isAssigned
+              ? 'linear-gradient(135deg, rgba(34,197,94,0.34), rgba(20,184,166,0.24))'
+              : isPipeline
+                ? 'linear-gradient(135deg, rgba(245,158,11,0.34), rgba(251,191,36,0.22))'
+                : 'rgba(255,255,255,0.08)',
+            color: isAssigned ? '#d1fae5' : isPipeline ? '#fef3c7' : '#cbd5e1',
+            border: isAssigned
+              ? '1px solid rgba(134,239,172,0.52)'
+              : isPipeline
+                ? '1px solid rgba(252,211,77,0.55)'
+                : '1px solid rgba(255,255,255,0.14)',
+            borderRadius: '0.32rem',
+            padding: isAssigned || isPipeline ? '0.18rem 0.58rem' : '0.12rem 0.45rem',
+            fontSize: isAssigned || isPipeline ? '0.76rem' : '0.72rem',
+            fontWeight: 850,
+            boxShadow: isAssigned
+              ? '0 0 16px rgba(34,197,94,0.18)'
+              : isPipeline
+                ? '0 0 14px rgba(245,158,11,0.16)'
+                : undefined,
+            animation: celebrate ? 'ringAboutBadgeIn 280ms ease-out both' : undefined,
+            cursor: isAssigned ? 'default' : 'pointer',
+            opacity: isAssigned ? 1 : undefined,
+          }}
+        >
+          {isAssigned ? '✓ Zugeordnet' : isPipeline ? '✓ Pipeline' : '○ Pipeline'}
+        </button>
         {episodeLabel && (
           <span style={{
             background: isAssigned

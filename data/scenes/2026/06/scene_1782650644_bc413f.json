@@ -26,7 +26,14 @@
   "episode_season": null,
   "episode_number": null,
   "status": "NEW",
-  "updated_at": "2026-07-02T09:34:32.343918",
+  "updated_at": "2026-08-09T10:34:09.000209",
   "scene_code": "SC009",
-  "rating": null
+  "rating": null,
+  "metadata_status": "incomplete",
+  "source": {
+    "type": "drill",
+    "session_id": "Christoph_1782649917",
+    "drill_id": "B1_D5",
+    "observation_id": null
+  }
 }
