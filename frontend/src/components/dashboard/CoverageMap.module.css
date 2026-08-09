@@ -1,13 +1,13 @@
 .sectionTitle {
   font-size: 1.12rem;
-  color: #6ec1d4;
+  color: var(--text-accent);
   margin-bottom: 0.85rem;
   font-weight: 700;
 }
 
 .emptyHint {
   margin: 0 0 0.75rem;
-  color: rgba(198, 214, 232, 0.8);
+  color: var(--text-subtle);
   line-height: 1.4;
 }
 

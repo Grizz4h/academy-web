@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { api } from '../api'
 import type { Session } from '../api'
 import { useUser } from '../context/UserContext'
@@ -11,6 +10,7 @@ import { PageSkeleton } from '../components/Skeleton'
 import { isDevNavEnabled } from '../config/featureFlags'
 import { deleteAllDummySessions } from '../dev/createDummySession'
 import { countDummySessions } from '../utils/sessionEligibility'
+import { UiButton, UiButtonLink } from '../components/ui'
 import styles from './History.module.css'
 
 function isInProgressState(state: string): boolean {
@@ -353,22 +353,22 @@ export default function History() {
       </div>
 
       <div className={styles.filterMobileBar}>
-        <button type="button" className={styles.filterOpenBtn} onClick={() => setFilterSheetOpen(true)}>
+        <UiButton type="button" variant="secondary" size="sm" onClick={() => setFilterSheetOpen(true)}>
           Filter{hasActiveFilters ? ` · ${activeFilterChips.length}` : ''}
-        </button>
+        </UiButton>
         {hasActiveFilters && (
-          <button type="button" className={styles.filterReset} onClick={resetFilters}>
+          <UiButton type="button" variant="ghost" size="sm" onClick={resetFilters}>
             Zurücksetzen
-          </button>
+          </UiButton>
         )}
       </div>
 
       <Card className={`${styles.filterCard} ${styles.filterDesktop}`}>
         <div className={styles.filterHeader}>
           <h2 className={styles.filterTitle}>Filter</h2>
-          <button type="button" className={styles.filterReset} onClick={resetFilters}>
+          <UiButton type="button" variant="ghost" size="sm" onClick={resetFilters}>
             Alle Filter zurücksetzen
-          </button>
+          </UiButton>
         </div>
 
         <div className={styles.filterGroups}>
@@ -573,13 +573,11 @@ export default function History() {
             </p>
             <div className={styles.emptyActions}>
               {overview.total > 0 ? (
-                <button type="button" className={styles.emptyBtnSecondary} onClick={resetFilters}>
+                <UiButton type="button" variant="secondary" onClick={resetFilters}>
                   Filter zurücksetzen
-                </button>
+                </UiButton>
               ) : null}
-              <Link to="/curriculum" className={styles.emptyBtn}>
-                Zur Akademie
-              </Link>
+              <UiButtonLink to="/curriculum">Zur Akademie</UiButtonLink>
             </div>
           </Card>
         ) : (

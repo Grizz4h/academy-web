@@ -1,0 +1,426 @@
+/**
+ * RINK Tank UI Kit — global interactive primitives.
+ *
+ * Prefer these classes (or the React wrappers in components/ui)
+ * instead of inventing new pill/button/progress styles per page.
+ *
+ * Catalog
+ * -------
+ * Buttons:  .ui-btn  .ui-btn--primary | --secondary | --ghost | --danger | --dev | --sm | --block
+ * Chips:    .ui-chip  .ui-chip.is-active | --sm | --static
+ * Tabs:     .ui-tablist  .ui-tab  .ui-tab.is-active
+ * Pills:    .ui-pill  .ui-pill--accent | --ok | --warn | --danger | --neutral | --new
+ * Progress: .ui-progress  .ui-progress__fill  .ui-progress--lg | --sm
+ * Switch:   .ui-switch  (input[type=checkbox].ui-switch)
+ * Segment:  .ui-seg  .ui-seg__item  .ui-seg__item.is-active
+ */
+
+/* ---- Buttons ---- */
+
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 0.55rem 1.1rem;
+  min-height: 42px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    filter var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease);
+}
+
+.ui-btn:disabled,
+.ui-btn[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+  box-shadow: none;
+}
+
+.ui-btn--sm {
+  min-height: 34px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.ui-btn--block {
+  width: 100%;
+}
+
+.ui-btn--primary {
+  background: linear-gradient(135deg, #6ec1d4, var(--accent));
+  border-color: rgba(129, 221, 245, 0.45);
+  color: #041018;
+  box-shadow: 0 8px 20px rgba(81, 145, 162, 0.28);
+}
+
+.ui-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.ui-btn--secondary {
+  background: var(--chip-bg);
+  border-color: var(--chip-border);
+  color: var(--chip-text);
+}
+
+.ui-btn--secondary:hover:not(:disabled) {
+  border-color: rgba(143, 211, 223, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ui-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-accent);
+}
+
+.ui-btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ui-btn--danger {
+  background: rgba(248, 113, 113, 0.14);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fecaca;
+}
+
+.ui-btn--danger:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.22);
+}
+
+.ui-btn--dev {
+  background: rgba(250, 204, 21, 0.08);
+  border-style: dashed;
+  border-color: var(--dev-border);
+  color: var(--dev-text);
+}
+
+.ui-btn--dev:hover:not(:disabled) {
+  background: rgba(250, 204, 21, 0.14);
+}
+
+/* Legacy App.css alias */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #6ec1d4, var(--accent, #5191a2));
+  color: #041018;
+  border: 1px solid rgba(129, 221, 245, 0.45);
+  padding: 0.55rem 1.1rem;
+  min-height: 42px;
+  border-radius: var(--radius-pill, 999px);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(81, 145, 162, 0.28);
+  transition: filter var(--motion-fast, 140ms) var(--motion-ease, ease);
+}
+
+.btn:hover {
+  filter: brightness(1.06);
+}
+
+.btn-secondary,
+.btn.btn-secondary {
+  background: var(--chip-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--chip-border, rgba(255, 255, 255, 0.12));
+  color: var(--chip-text, rgba(236, 244, 252, 0.92));
+  box-shadow: none;
+}
+
+.btn-secondary:hover,
+.btn.btn-secondary:hover {
+  filter: none;
+  border-color: rgba(143, 211, 223, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---- Chips (filter / toggle pills) ---- */
+
+.ui-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.75rem;
+  min-height: 34px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    background var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
+}
+
+.ui-chip--sm {
+  min-height: 28px;
+  padding: 0.22rem 0.55rem;
+  font-size: 0.75rem;
+}
+
+.ui-chip--static {
+  cursor: default;
+}
+
+.ui-chip:hover:not(:disabled):not(.ui-chip--static),
+.ui-chip:focus-visible {
+  border-color: rgba(143, 211, 223, 0.4);
+  outline: none;
+}
+
+.ui-chip.is-active,
+.ui-chip[aria-selected='true'],
+.ui-chip[aria-pressed='true'],
+.ui-chip[data-active='true'] {
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
+  box-shadow: var(--selected-glow);
+  color: #99f6e4;
+}
+
+.ui-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Tabs (same family as chips, slightly larger) ---- */
+
+.ui-tablist {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  padding-bottom: 0.1rem;
+}
+
+.ui-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  border-radius: var(--radius-pill);
+  padding: 0.42rem 0.85rem;
+  min-height: 36px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    background var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
+}
+
+.ui-tab.is-active,
+.ui-tab[aria-selected='true'] {
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
+  box-shadow: var(--selected-glow);
+  color: #99f6e4;
+}
+
+/* ---- Status / label pills (non-interactive by default) ---- */
+
+.ui-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.ui-pill--accent {
+  background: var(--accent-soft);
+  border-color: rgba(81, 145, 162, 0.35);
+  color: var(--text-accent);
+}
+
+.ui-pill--ok {
+  background: rgba(94, 234, 212, 0.12);
+  border-color: rgba(94, 234, 212, 0.4);
+  color: var(--ok);
+}
+
+.ui-pill--warn {
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.45);
+  color: var(--warn);
+}
+
+.ui-pill--danger {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fecaca;
+}
+
+.ui-pill--neutral {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: rgba(203, 213, 225, 0.92);
+}
+
+.ui-pill--new {
+  background: var(--warn);
+  border-color: transparent;
+  color: #1f1400;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+}
+
+/* ---- Progress ---- */
+
+.ui-progress {
+  width: 100%;
+  height: var(--progress-height);
+  border-radius: var(--radius-pill);
+  background: var(--progress-track-bg);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.ui-progress--sm {
+  height: 5px;
+}
+
+.ui-progress--lg {
+  height: 10px;
+}
+
+.ui-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--progress-fill);
+  transition: width var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
+}
+
+.ui-progress.is-complete .ui-progress__fill {
+  box-shadow: 0 0 8px rgba(82, 229, 255, 0.35);
+}
+
+/* ---- Switch ---- */
+
+.ui-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 42px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--chip-border);
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
+}
+
+.ui-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(247, 247, 255, 0.92);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+
+.ui-switch:checked {
+  background: var(--selected-bg);
+  border-color: var(--selected-border);
+}
+
+.ui-switch:checked::after {
+  transform: translateX(18px);
+  background: #99f6e4;
+}
+
+.ui-switch:focus-visible {
+  outline: none;
+  box-shadow: var(--selected-glow);
+}
+
+/* ---- Segmented control ---- */
+
+.ui-seg {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--chip-border);
+  background: rgba(8, 14, 26, 0.55);
+}
+
+.ui-seg__item {
+  border: none;
+  background: transparent;
+  color: var(--text-subtle);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ui-seg__item.is-active,
+.ui-seg__item[aria-pressed='true'] {
+  background: var(--selected-bg);
+  color: #99f6e4;
+  box-shadow: var(--selected-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-btn,
+  .ui-chip,
+  .ui-tab,
+  .ui-progress__fill,
+  .ui-switch,
+  .ui-switch::after {
+    transition: none !important;
+  }
+}

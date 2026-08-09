@@ -1,15 +1,16 @@
-import React from 'react';
-import styles from './Pill.module.css';
+import type { ReactNode } from 'react'
+import { UiPill } from './ui'
 
 interface PillProps {
-  children: React.ReactNode;
-  className?: string;
+  children: ReactNode
+  className?: string
 }
 
-const Pill: React.FC<PillProps> = ({ children, className = '' }) => (
-  <span className={`${styles.pill} ${className}`}>
+/** Legacy alias → UiPill (accent). Prefer importing UiPill directly in new code. */
+const Pill = ({ children, className = '' }: PillProps) => (
+  <UiPill tone="accent" className={className}>
     {children}
-  </span>
-);
+  </UiPill>
+)
 
-export default Pill;
+export default Pill

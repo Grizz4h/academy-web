@@ -70,12 +70,12 @@ export function Puck3DLab() {
         </div>
       </div>
 
-      <div className={styles.gearTabs} role="tablist" aria-label="3D Gear">
+      <div className="ui-tablist" role="tablist" aria-label="3D Gear">
         <button
           type="button"
           role="tab"
           aria-selected={gear === 'puck'}
-          className={`${styles.gearTab} ${gear === 'puck' ? styles.gearTabActive : ''}`}
+          className={`ui-tab ${gear === 'puck' ? 'is-active' : ''}`}
           onClick={() => setGear('puck')}
         >
           Puck
@@ -84,7 +84,7 @@ export function Puck3DLab() {
           type="button"
           role="tab"
           aria-selected={gear === 'stick'}
-          className={`${styles.gearTab} ${gear === 'stick' ? styles.gearTabActive : ''}`}
+          className={`ui-tab ${gear === 'stick' ? 'is-active' : ''}`}
           onClick={() => setGear('stick')}
         >
           Stick

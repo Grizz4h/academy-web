@@ -23,6 +23,7 @@ import {
 import { useRewards } from '../features/rewards'
 import { isStarterCosmetic } from '../features/progression/cosmetics/cosmeticCatalog'
 import { Puck3DLab } from '../components/puck3d'
+import { UiButton, UiChip, UiPill, UiProgress } from '../components/ui'
 import styles from './Locker.module.css'
 
 type LockerTab = 'home' | 'cosmetics' | 'collections' | 'shop' | 'mastery' | 'achievements'
@@ -196,7 +197,7 @@ export default function LockerPage() {
         <div>{stats.newUnlocks} neu</div>
       </section>
 
-      <nav className={styles.tabs} aria-label="Locker Bereiche">
+      <nav className="ui-tablist" aria-label="Locker Bereiche">
         {([
           ['home', 'Start'],
           ['cosmetics', 'Cosmetics'],
@@ -208,7 +209,9 @@ export default function LockerPage() {
           <button
             key={id}
             type="button"
-            className={`${styles.tab} ${tab === id ? styles.tabActive : ''}`}
+            role="tab"
+            className={`ui-tab ${tab === id ? 'is-active' : ''}`}
+            aria-selected={tab === id}
             onClick={() => setTab(id)}
           >
             {label}
@@ -228,7 +231,7 @@ export default function LockerPage() {
               <div className={styles.grid}>
                 {newItems.map((item) => (
                   <button key={item.definition.id} type="button" className={`${styles.tile} ${styles[`rarity_${item.definition.rarity}`]}`} onClick={() => openDetail(item)}>
-                    <span className={styles.badgeNew}>NEU</span>
+                    <UiPill tone="new" className={styles.badgeNew}>NEU</UiPill>
                     <div className={styles.tileArt}>{item.artworkUrl ? <img src={item.artworkUrl} alt="" /> : <span className={styles.tileGlyph}>{item.definition.type.slice(0, 2).toUpperCase()}</span>}</div>
                     <div className={styles.tileName}>{item.displayName}</div>
                     <div className={styles.tileMeta}>{RARITY_LABELS[item.definition.rarity]}</div>
@@ -244,7 +247,7 @@ export default function LockerPage() {
               {collections.map((entry) => (
                 <button key={entry.collection.id} type="button" className={styles.collectionCard} onClick={() => setTab('collections')}>
                   <strong>{entry.collection.name}</strong>
-                  <div className={styles.progressTrack}><div className={styles.progressFill} style={{ width: `${Math.round(entry.ratio * 100)}%` }} /></div>
+                  <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
                   <span className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Complete' : ''}</span>
                 </button>
               ))}
@@ -269,16 +272,16 @@ export default function LockerPage() {
               }
               return items.some((item) => item.definition.type === chip.id)
             }).map((chip) => (
-              <button key={chip.id} type="button" className={`${styles.chip} ${typeFilter === chip.id ? styles.chipActive : ''}`} onClick={() => setTypeFilter(chip.id)}>
+              <UiChip key={chip.id} active={typeFilter === chip.id} onClick={() => setTypeFilter(chip.id)}>
                 {chip.label}
-              </button>
+              </UiChip>
             ))}
           </div>
           <div className={styles.chipRow}>
             {(['all', 'unlocked', 'locked', 'new', 'favorites'] as const).map((id) => (
-              <button key={id} type="button" className={`${styles.chip} ${ownership === id ? styles.chipActive : ''}`} onClick={() => setOwnership(id)}>
+              <UiChip key={id} active={ownership === id} onClick={() => setOwnership(id)}>
                 {id === 'all' ? 'Alle' : id === 'unlocked' ? 'Unlocked' : id === 'locked' ? 'Locked' : id === 'new' ? 'Neu' : 'Favoriten'}
-              </button>
+              </UiChip>
             ))}
           </div>
           <div className={styles.grid}>
@@ -289,7 +292,7 @@ export default function LockerPage() {
                 className={`${styles.tile} ${styles[`rarity_${item.definition.rarity}`]} ${!item.owned ? styles.tileLocked : ''} ${item.silhouette ? styles.tileSilhouette : ''}`}
                 onClick={() => openDetail(item)}
               >
-                {item.isNew && <span className={styles.badgeNew}>NEU</span>}
+                {item.isNew && <UiPill tone="new" className={styles.badgeNew}>NEU</UiPill>}
                 <div className={styles.tileArt}>
                   {item.artworkUrl ? <img src={item.artworkUrl} alt="" /> : <span className={styles.tileGlyph}>{item.silhouette || !item.owned ? '?' : item.definition.type.slice(0, 2).toUpperCase()}</span>}
                 </div>
@@ -308,7 +311,7 @@ export default function LockerPage() {
               <header>
                 <h2 className={styles.sectionTitle}>{entry.collection.name}</h2>
                 <p className={styles.muted}>{entry.collection.description}</p>
-                <div className={styles.progressTrack}><div className={styles.progressFill} style={{ width: `${Math.round(entry.ratio * 100)}%` }} /></div>
+                <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
                 <div className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Collection Complete' : ''}</div>
               </header>
               <div className={styles.grid}>
@@ -349,14 +352,14 @@ export default function LockerPage() {
                   <div className={styles.tileName}>{def?.name || listing.cosmeticId}</div>
                   <div className={styles.tileMeta}>{listing.category} · {def ? RARITY_LABELS[def.rarity] : ''}</div>
                   <div className={styles.price}>{listing.pricePux} Pux</div>
-                  <button
+                  <UiButton
                     type="button"
-                    className={styles.buyButton}
+                    size="sm"
                     disabled={owned || shopBusy === listing.id}
                     onClick={() => handleBuy(listing.id)}
                   >
                     {owned ? 'Besitzt' : shopBusy === listing.id ? 'Kauft…' : `Kaufen · ${listing.pricePux}`}
-                  </button>
+                  </UiButton>
                 </article>
               )
             })}
@@ -377,7 +380,7 @@ export default function LockerPage() {
                     ? `Nächstes Ziel · Mastery ${view.nextThreshold}× · ${Math.round(view.nextRatio * 100)}%`
                     : '—'}
               </div>
-              <div className={styles.progressTrack}><div className={styles.progressFill} style={{ width: `${Math.round(view.nextRatio * 100)}%` }} /></div>
+              <UiProgress value={Math.round(view.nextRatio * 100)} label={view.name} />
               <div className={styles.tileMeta}>Freigeschaltet: {view.unlockedThresholds.join(', ') || '—'}</div>
             </article>
           ))}
@@ -396,7 +399,7 @@ export default function LockerPage() {
                     {!item.secretHidden && (
                       <>
                         <p className={styles.muted}>{item.definition.description}</p>
-                        <div className={styles.progressTrack}><div className={styles.progressFill} style={{ width: `${Math.round(item.ratio * 100)}%` }} /></div>
+                        <UiProgress value={item.current} max={item.target || 1} label={item.definition.name} />
                         <div className={styles.tileMeta}>{item.unlocked ? 'Freigeschaltet' : `${item.current} / ${item.target}`}</div>
                       </>
                     )}
@@ -411,7 +414,9 @@ export default function LockerPage() {
       {selected && (
         <div className={styles.sheetScrim} onClick={() => setSelected(null)} role="presentation">
           <div className={styles.sheet} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <button type="button" className={styles.sheetClose} onClick={() => setSelected(null)}>Schließen</button>
+            <UiButton type="button" variant="ghost" size="sm" className={styles.sheetClose} onClick={() => setSelected(null)}>
+              Schließen
+            </UiButton>
             <div className={`${styles.sheetArt} ${styles[`rarity_${selected.definition.rarity}`]}`}>
               {selected.artworkUrl ? <img src={selected.artworkUrl} alt="" /> : <span className={styles.tileGlyph}>{selected.displayName.slice(0, 1)}</span>}
             </div>
@@ -425,11 +430,11 @@ export default function LockerPage() {
             )}
             {selected.unlockHint && <p className={styles.muted}>{selected.unlockHint}</p>}
             <div className={styles.sheetActions}>
-              <button type="button" className={styles.chip} onClick={() => toggleFavoriteCosmetic(selected.definition.id)}>
+              <UiChip active={selected.isFavorite} onClick={() => toggleFavoriteCosmetic(selected.definition.id)}>
                 {selected.isFavorite ? '★ Favorit' : '☆ Favorit'}
-              </button>
+              </UiChip>
               {selected.owned && isEquipableCosmetic(selected.definition) && (
-                <button type="button" className={styles.buyButton} onClick={() => handleEquip(selected)}>Ausrüsten</button>
+                <UiButton type="button" size="sm" onClick={() => handleEquip(selected)}>Ausrüsten</UiButton>
               )}
             </div>
             {equipMsg && <p className={styles.muted}>{equipMsg}</p>}
@@ -438,16 +443,16 @@ export default function LockerPage() {
       )}
 
       {isDev && (
-        <button
+        <UiButton
           type="button"
-          className={styles.devButton}
+          variant="dev"
           onClick={async () => {
             const scenes = await api.getScenes()
             await rebuildProgression({ sessions, scenes: scenes.scenes || [], trackDrills })
           }}
         >
           ⚡ DEV · Progression neu berechnen
-        </button>
+        </UiButton>
       )}
     </div>
   )

@@ -7,6 +7,7 @@ import {
   type StickSkinDefinition,
 } from '../../features/progression/cosmetics/stickSkins'
 import { ProceduralStick } from './ProceduralStick'
+import { UiChip } from '../ui'
 import styles from './Puck3DViewer.module.css'
 
 type Stick3DViewerProps = {
@@ -114,14 +115,9 @@ export function Stick3DViewer({
         {showSkinPicker && (
           <div className={styles.picker} role="group" aria-label="Stick Skin">
             {STICK_SKINS.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                className={`${styles.skinBtn} ${entry.id === skin.id ? styles.skinBtnActive : ''}`}
-                onClick={() => selectSkin(entry.id)}
-              >
+              <UiChip key={entry.id} active={entry.id === skin.id} onClick={() => selectSkin(entry.id)}>
                 {entry.name}
-              </button>
+              </UiChip>
             ))}
           </div>
         )}
@@ -160,15 +156,10 @@ export function Stick3DViewer({
       {showSkinPicker && (
         <div className={styles.picker} role="group" aria-label="Stick Skin">
           {STICK_SKINS.map((entry) => (
-            <button
-              key={entry.id}
-              type="button"
-              className={`${styles.skinBtn} ${entry.id === skin.id ? styles.skinBtnActive : ''}`}
-              onClick={() => selectSkin(entry.id)}
-            >
+            <UiChip key={entry.id} active={entry.id === skin.id} onClick={() => selectSkin(entry.id)}>
               <span className={styles.swatch} data-stick={entry.id} aria-hidden="true" />
               {entry.name}
-            </button>
+            </UiChip>
           ))}
         </div>
       )}

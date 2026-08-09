@@ -7,6 +7,7 @@ import {
   type PuckSkinDefinition,
 } from '../../features/progression/cosmetics/puckSkins'
 import { ProceduralPuck } from './ProceduralPuck'
+import { UiChip } from '../ui'
 import styles from './Puck3DViewer.module.css'
 
 type Puck3DViewerProps = {
@@ -125,14 +126,9 @@ export function Puck3DViewer({
         {showSkinPicker && (
           <div className={styles.picker} role="group" aria-label="Puck Skin">
             {PUCK_SKINS.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                className={`${styles.skinBtn} ${entry.id === skin.id ? styles.skinBtnActive : ''}`}
-                onClick={() => selectSkin(entry.id)}
-              >
+              <UiChip key={entry.id} active={entry.id === skin.id} onClick={() => selectSkin(entry.id)}>
                 {entry.name}
-              </button>
+              </UiChip>
             ))}
           </div>
         )}
@@ -172,15 +168,10 @@ export function Puck3DViewer({
       {showSkinPicker && (
         <div className={styles.picker} role="group" aria-label="Puck Skin">
           {PUCK_SKINS.map((entry) => (
-            <button
-              key={entry.id}
-              type="button"
-              className={`${styles.skinBtn} ${entry.id === skin.id ? styles.skinBtnActive : ''}`}
-              onClick={() => selectSkin(entry.id)}
-            >
+            <UiChip key={entry.id} active={entry.id === skin.id} onClick={() => selectSkin(entry.id)}>
               <span className={styles.swatch} data-skin={entry.id} aria-hidden="true" />
               {entry.name}
-            </button>
+            </UiChip>
           ))}
         </div>
       )}

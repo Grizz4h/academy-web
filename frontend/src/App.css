@@ -35,37 +35,30 @@
 }
 
 .card {
-  background: rgba(10, 12, 26, 0.9);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 55%, rgba(0,0,0,0.18) 100%);
+  border-radius: var(--radius-card, 16px);
+  border: 1px solid var(--surface-border, rgba(255, 255, 255, 0.10));
+  box-shadow:
+    var(--elev-quiet-shadow, 0 8px 24px rgba(0,0,0,0.28)),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 1.5rem;
   margin-bottom: 1rem;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
 
-.btn {
-  background-color: #5191a2;
-  color: #050712;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.btn:hover {
-  background-color: #80e0fa;
-}
+/* .btn / .btn-secondary live in styles/ui-kit.css */
 
 h1, h2, h3 {
-  color: #f7f7ff;
+  color: var(--text, #f7f7ff);
   word-break: break-word;
 }
 
 p {
-  color: #d8e1ff;
+  color: var(--text-muted, #d8e1ff);
   word-break: break-word;
 }
 

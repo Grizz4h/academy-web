@@ -13,14 +13,14 @@
 .pageTitle {
   margin: 0;
   font-size: clamp(1.6rem, 2.4vw, 2rem);
-  color: rgba(247, 247, 255, 0.98);
+  color: var(--text);
   letter-spacing: 0.01em;
 }
 
 .pageLead {
   margin: 0;
   max-width: 42rem;
-  color: rgba(210, 224, 240, 0.82);
+  color: var(--text-muted);
   font-size: 1.02rem;
   line-height: 1.5;
 }
@@ -38,7 +38,7 @@
 
 .kpiTitle {
   font-size: 0.9rem;
-  color: #6ec1d4;
+  color: var(--text-accent);
   font-weight: 650;
   margin-bottom: 0.3rem;
 }
@@ -74,23 +74,8 @@
 .filterTitle {
   margin: 0;
   font-size: 1.12rem;
-  color: #6ec1d4;
+  color: var(--text-accent);
   font-weight: 700;
-}
-
-.filterReset {
-  padding: 0.42rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 178, 198, 0.35);
-  background: rgba(12, 20, 34, 0.55);
-  color: rgba(220, 236, 246, 0.92);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.filterReset:hover {
-  border-color: rgba(129, 196, 214, 0.5);
-  background: rgba(20, 34, 52, 0.7);
 }
 
 .filterGroups {
@@ -220,33 +205,6 @@
   margin-top: 0.9rem;
 }
 
-.emptyBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(129, 221, 245, 0.55);
-  background: linear-gradient(180deg, rgba(95, 210, 230, 0.95), rgba(81, 145, 162, 0.95));
-  color: #041018;
-  font-weight: 750;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.emptyBtnSecondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 178, 198, 0.35);
-  background: rgba(12, 20, 34, 0.55);
-  color: rgba(220, 236, 246, 0.92);
-  font-weight: 600;
-  cursor: pointer;
-}
-
 @media (max-width: 960px) {
   .filterGroups {
     grid-template-columns: 1fr;
@@ -263,18 +221,6 @@
 
 .filterMobileChips {
   display: none;
-}
-
-.filterOpenBtn {
-  flex: 1;
-  min-height: 44px;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(129, 196, 214, 0.45);
-  background: rgba(14, 165, 233, 0.14);
-  color: #e0f2fe;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 @media (max-width: 768px) {

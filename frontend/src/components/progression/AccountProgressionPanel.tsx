@@ -7,6 +7,7 @@ import {
 } from '../../features/progression'
 import { useRewards } from '../../features/rewards'
 import type { ReactNode } from 'react'
+import { UiButton, UiPill, UiProgress } from '../ui'
 import styles from '../../pages/Account.module.css'
 
 function formatUnlockDate(iso?: string): string {
@@ -42,9 +43,7 @@ export default function AccountProgressionPanel() {
             <div className={styles.hint}>Gesamt {level.totalXp.toLocaleString('de-DE')} XP · {Number(rewardState.currency?.PUX || 0)} PUX</div>
           </div>
         </div>
-        <div className={styles.xpBar} aria-hidden>
-          <div className={styles.xpBarFill} style={{ width: `${Math.round(level.progress01 * 100)}%` }} />
-        </div>
+        <UiProgress value={Math.round(level.progress01 * 100)} label="Account-Level XP" size="lg" />
         {bootstrapStatus === 'running' && (
           <p className={styles.hint}>Historischer Fortschritt wird ausgewertet …</p>
         )}
@@ -93,13 +92,16 @@ export default function AccountProgressionPanel() {
                   >
                     <div className={styles.achievementTop}>
                       <div className={styles.achievementName}>{item.definition.name}</div>
-                      {rarity && <span className={styles.rarityPill}>{rarity}</span>}
+                      {rarity && <UiPill tone="neutral" className={styles.rarityPill}>{rarity}</UiPill>}
                     </div>
                     <p className={styles.achievementDesc}>{item.definition.description}</p>
                     <div className={styles.achievementProgress}>
-                      <div className={styles.xpBar} aria-hidden>
-                        <div className={styles.xpBarFill} style={{ width: `${Math.round(item.ratio * 100)}%` }} />
-                      </div>
+                      <UiProgress
+                        value={item.current}
+                        max={item.target || 1}
+                        label={item.definition.name}
+                        size="sm"
+                      />
                       <span className={styles.hint}>
                         {item.unlocked
                           ? `✓ Freigeschaltet am ${formatUnlockDate(item.unlockedAt)}`
@@ -134,9 +136,9 @@ export default function AccountProgressionPanel() {
       )}
 
       {isDev && (
-        <button
+        <UiButton
           type="button"
-          className={styles.devRebuildButton}
+          variant="dev"
           onClick={async () => {
             const sessions = await (await import('../../api')).api.getSessions()
             const scenes = await (await import('../../api')).api.getScenes()
@@ -161,7 +163,7 @@ export default function AccountProgressionPanel() {
           }}
         >
           ⚡ Progression neu berechnen
-        </button>
+        </UiButton>
       )}
     </div>
   )

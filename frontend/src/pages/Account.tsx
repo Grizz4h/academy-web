@@ -22,6 +22,7 @@ import type {
 } from '../data/profile/types'
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { getRealSessions } from '../utils/sessionEligibility'
+import { UiButton } from '../components/ui'
 import styles from './Account.module.css'
 
 function formatMemberSince(iso: string | null | undefined): string | null {
@@ -511,9 +512,9 @@ export default function AccountPage() {
       </Card>
 
       <div className={styles.saveBar}>
-        <button type="button" className={styles.saveButton} onClick={handleSave} disabled={saveState === 'saving'}>
+        <UiButton type="button" onClick={handleSave} disabled={saveState === 'saving'}>
           {saveState === 'saving' ? 'Speichert …' : 'Änderungen speichern'}
-        </button>
+        </UiButton>
         {saveState === 'saved' && <span className={styles.saveOk}>Gespeichert</span>}
         {saveState === 'error' && <span className={styles.error}>{saveError}</span>}
       </div>

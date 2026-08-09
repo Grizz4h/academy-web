@@ -18,6 +18,7 @@ import {
   TOURNAMENT_YEAR_OPTIONS,
 } from '../stats/seasonNormalization'
 import { getRealSessions } from '../utils/sessionEligibility'
+import { UiProgress } from '../components/ui'
 import styles from './Progress.module.css'
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -720,14 +721,11 @@ export default function Progress() {
                       <span>Fortschritt</span>
                       <span className={styles.completionCount}>{progress.completed}/{progress.total}</span>
                     </div>
-                    <div className={styles.progressTrack}>
-                      <div
-                        className={`${styles.progressFill} ${progress.total > 0 && progress.completed === progress.total ? styles.progressFillComplete : ''}`}
-                        style={{
-                          width: `${progress.total ? (progress.completed / progress.total) * 100 : 0}%`
-                        }}
-                      />
-                    </div>
+                    <UiProgress
+                      value={progress.completed}
+                      max={progress.total || 1}
+                      label={`Fortschritt ${getModuleTitle(moduleId)}`}
+                    />
                   </div>
 
                   <p className={styles.moduleMeta}><strong>Abgebrochen:</strong> {progress.aborted}</p>

@@ -11,13 +11,13 @@
 
 .hint {
   margin: 0 0 0.5rem;
-  color: rgba(210, 224, 240, 0.82);
+  color: var(--text-muted);
   font-size: 0.98rem;
   line-height: 1.45;
 }
 
 .track {
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(140, 150, 180, 0.35);
   background: rgba(18, 24, 38, 0.72);
   overflow: hidden;

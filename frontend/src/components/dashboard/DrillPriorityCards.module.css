@@ -26,7 +26,7 @@
 
 .scopeLabel {
   font-size: 1rem;
-  color: #6ec1d4;
+  color: var(--text-accent);
   font-weight: 650;
   flex: 0 0 auto;
 }
@@ -59,8 +59,8 @@
 }
 
 .sectionTitle {
-  font-size: 1.12rem;
-  color: #8fd3df;
+  font-size: var(--type-section);
+  color: var(--text-accent);
   margin: 0 0 0.85rem;
   font-weight: 750;
   letter-spacing: 0.01em;

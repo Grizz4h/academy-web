@@ -19,6 +19,7 @@ import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
+import { UiButton, UiButtonLink, UiProgress } from '../components/ui';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string => {
@@ -343,11 +344,24 @@ export default function Dashboard() {
         if (count > 1) hygieneIssues.push(`Session ${s.id}: Phase ${phase} doppelt (${count}x)`);
       }
 
-      // Scope-aware: Nur aktive Drittel der Session auf Microfeedback prüfen.
+      // Nur abgeschlossene Sessions — laufende Sessions dürfen offenes Microfeedback haben.
+      if (String(s.state || '').toUpperCase() !== 'COMPLETED') continue;
+
+      const matchup = s.game_info?.team_home && s.game_info?.team_away
+        ? `${s.game_info.team_home} vs ${s.game_info.team_away}`
+        : s.id;
+
+      // Scope-aware: Nur aktive Drittel mit Checkin auf Microfeedback prüfen.
+      const checkedPhases = new Set(
+        (s.checkins || [])
+          .map((c: any) => String(c.phase || '').toUpperCase())
+          .filter((phase: string) => phase === 'P1' || phase === 'P2' || phase === 'P3'),
+      );
       getActivePeriodsForScope(s.observation_scope).forEach((phase) => {
+        if (!checkedPhases.has(phase)) return;
         const mf = s.microfeedback?.[phase];
         if (!mf || !mf.done) {
-          hygieneIssues.push(`Session ${s.id}: Microfeedback fehlt in ${phase}`);
+          hygieneIssues.push(`${matchup}: Microfeedback fehlt in ${phase}`);
         }
       });
     }
@@ -439,8 +453,8 @@ export default function Dashboard() {
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-              <button type="button" onClick={handleLogin} className={styles.primaryBtn}>Anmelden</button>
-              <button type="button" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Account erstellen</button>
+              <UiButton type="button" onClick={handleLogin}>Anmelden</UiButton>
+              <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
               {loginError && <span className={styles.errorMsg}>{loginError}</span>}
             </div>
           ) : (
@@ -480,8 +494,8 @@ export default function Dashboard() {
                 }}
                 className={styles.input}
               />
-              <button type="button" onClick={async () => { setSignupError(""); setSignupSuccess(""); const name = signupName.trim(); if (!name || !signupPassword || !signupPassword2) { setSignupError("Alle Felder erforderlich"); return; } if (signupPassword !== signupPassword2) { setSignupError("Passwörter stimmen nicht überein"); return; } try { await api.signup(name, signupPassword); setSignupSuccess("Account erstellt! Du wirst eingeloggt..."); setTimeout(async () => { await setUser(name, signupPassword); }, 800); } catch (e: any) { setSignupError(e.message || "Registrierung fehlgeschlagen"); } }} className={styles.primaryBtn}>Account erstellen</button>
-              <button type="button" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); }} className={styles.secondaryBtn}>Zurück zur Anmeldung</button>
+              <UiButton type="button" onClick={async () => { setSignupError(""); setSignupSuccess(""); const name = signupName.trim(); if (!name || !signupPassword || !signupPassword2) { setSignupError("Alle Felder erforderlich"); return; } if (signupPassword !== signupPassword2) { setSignupError("Passwörter stimmen nicht überein"); return; } try { await api.signup(name, signupPassword); setSignupSuccess("Account erstellt! Du wirst eingeloggt..."); setTimeout(async () => { await setUser(name, signupPassword); }, 800); } catch (e: any) { setSignupError(e.message || "Registrierung fehlgeschlagen"); } }}>Account erstellen</UiButton>
+              <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); }}>Zurück zur Anmeldung</UiButton>
               {signupError && <span className={styles.errorMsg}>{signupError}</span>}
               {signupSuccess && <span className={styles.successMsg}>{signupSuccess}</span>}
             </div>
@@ -580,32 +594,32 @@ export default function Dashboard() {
         <div className={styles.nextStepActions}>
           {resumeSession ? (
             <>
-              <Link to={getSessionRoute(resumeSession)} className={styles.ctaBtn}>
+              <UiButtonLink to={getSessionRoute(resumeSession)}>
                 Session fortsetzen
-              </Link>
+              </UiButtonLink>
               {nextDrill?.moduleId ? (
-                <Link to={`/setup/${nextDrill.moduleId}`} className={styles.ctaSecondary}>
+                <UiButtonLink to={`/setup/${nextDrill.moduleId}`} variant="secondary">
                   Neue Session
-                </Link>
+                </UiButtonLink>
               ) : (
-                <Link to="/curriculum" className={styles.ctaSecondary}>
+                <UiButtonLink to="/curriculum" variant="secondary">
                   Akademie öffnen
-                </Link>
+                </UiButtonLink>
               )}
             </>
           ) : nextDrill?.moduleId ? (
             <>
-              <Link to={`/setup/${nextDrill.moduleId}`} className={styles.ctaBtn}>
+              <UiButtonLink to={`/setup/${nextDrill.moduleId}`}>
                 Session starten
-              </Link>
-              <Link to="/curriculum" className={styles.ctaSecondary}>
+              </UiButtonLink>
+              <UiButtonLink to="/curriculum" variant="secondary">
                 Akademie öffnen
-              </Link>
+              </UiButtonLink>
             </>
           ) : (
-            <Link to="/curriculum" className={styles.ctaBtn}>
+            <UiButtonLink to="/curriculum">
               Zur Akademie
-            </Link>
+            </UiButtonLink>
           )}
         </div>
       </Card>
@@ -668,18 +682,18 @@ export default function Dashboard() {
                   <div className={styles.progressItem}>In Bearbeitung: <strong>{derived.inProgress}</strong></div>
 
                   <div className={styles.progressBarWrap}>
-                    <div className={styles.progressBarBg}>
-                      <div className={styles.progressBarFill} style={{ width: `${drillProgressPct}%` }} />
-                    </div>
+                    <UiProgress value={drillProgressPct} label="Drill-Fortschritt" size="lg" />
                     <div className={styles.progressBarLabel}>Drill-Fortschritt: {drillProgressPct}%</div>
                     <div className={styles.trackProgressWrap}>
                       <div className={styles.trackProgressTitle}>Pro Track</div>
                       {Object.values(derived.trackProgress).map((track: any) => (
                         <div key={track.title} className={styles.trackProgressItem}>
                           <span className={styles.trackTitle}>{track.title}</span>
-                          <div className={styles.trackBarBg}>
-                            <div className={styles.trackBarFill} style={{ width: `${track.total ? (track.completed / track.total) * 100 : 0}%` }} />
-                          </div>
+                          <UiProgress
+                            value={track.completed}
+                            max={track.total || 1}
+                            label={`${track.title} Fortschritt`}
+                          />
                           <span className={styles.trackBarLabel}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
                         </div>
                       ))}

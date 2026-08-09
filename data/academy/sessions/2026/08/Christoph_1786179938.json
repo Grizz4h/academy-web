@@ -3638,8 +3638,8 @@
   "observed_team_name": null,
   "microfeedback": {
     "P1": {
-      "done": false,
-      "text": ""
+      "done": true,
+      "text": "(Session abgeschlossen — Microfeedback nachträglich als erledigt markiert.)"
     },
     "P2": {
       "done": false,

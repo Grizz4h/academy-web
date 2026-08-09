@@ -36,35 +36,6 @@
   gap: 0.45rem;
 }
 
-.skinBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: rgba(15, 23, 42, 0.55);
-  color: rgba(226, 232, 240, 0.9);
-  padding: 0.4rem 0.75rem;
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    border-color var(--motion-fast, 140ms) var(--motion-ease, ease),
-    background var(--motion-fast, 140ms) var(--motion-ease, ease);
-}
-
-.skinBtn:hover,
-.skinBtn:focus-visible {
-  border-color: rgba(125, 211, 252, 0.55);
-  outline: none;
-}
-
-.skinBtnActive {
-  border-color: rgba(45, 212, 191, 0.65);
-  background: rgba(20, 184, 166, 0.14);
-  color: #99f6e4;
-}
-
 .swatch {
   width: 12px;
   height: 12px;

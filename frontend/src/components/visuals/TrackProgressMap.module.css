@@ -51,23 +51,23 @@
 }
 
 .item[data-status='completed'] .node {
-  border-color: rgba(45, 212, 191, 0.45);
-  background: rgba(22, 163, 74, 0.14);
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
   color: #99f6e4;
 }
 
 .item[data-status='completed'] .dot {
-  background: #2dd4bf;
+  background: var(--ok);
 }
 
 .item[data-status='current'] .node {
   border-color: rgba(251, 191, 36, 0.55);
   background: rgba(251, 191, 36, 0.12);
-  color: #fde68a;
+  color: var(--dev-text);
 }
 
 .item[data-status='current'] .dot {
-  background: #fbbf24;
+  background: var(--warn);
   box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
 }
 
