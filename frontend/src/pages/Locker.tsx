@@ -171,18 +171,20 @@ export default function LockerPage() {
   if (!user) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>Locker</h1>
-        <p className={styles.lead}>Bitte melde dich an, um deinen Locker zu öffnen.</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Locker</h1>
+          <p className="ui-page-lead">Bitte melde dich an, um deinen Locker zu öffnen.</p>
+        </header>
       </div>
     )
   }
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
+      <header className="ui-page-header ui-page-header--row">
         <div>
-          <h1 className={styles.title}>Locker</h1>
-          <p className={styles.lead}>Sammeln · Browsen · Freischalten · Ausrüsten</p>
+          <h1 className="ui-page-title">Locker</h1>
+          <p className="ui-page-lead">Sammeln · Browsen · Freischalten · Ausrüsten</p>
         </div>
         <Link className={styles.accountLink} to="/account">
           Profil bearbeiten →
@@ -224,7 +226,7 @@ export default function LockerPage() {
           <Puck3DLab />
 
           <section>
-            <h2 className={styles.sectionTitle}>Neue Unlocks</h2>
+            <h2 className="ui-section-title">Neue Unlocks</h2>
             {newItems.length === 0 ? (
               <p className={styles.muted}>Keine neuen Items.</p>
             ) : (
@@ -242,7 +244,7 @@ export default function LockerPage() {
           </section>
 
           <section>
-            <h2 className={styles.sectionTitle}>Collections</h2>
+            <h2 className="ui-section-title">Collections</h2>
             <div className={styles.collectionRow}>
               {collections.map((entry) => (
                 <button key={entry.collection.id} type="button" className={styles.collectionCard} onClick={() => setTab('collections')}>
@@ -309,7 +311,7 @@ export default function LockerPage() {
           {collections.map((entry) => (
             <article key={entry.collection.id} className={styles.collectionDetail}>
               <header>
-                <h2 className={styles.sectionTitle}>{entry.collection.name}</h2>
+                <h2 className="ui-section-title-content">{entry.collection.name}</h2>
                 <p className={styles.muted}>{entry.collection.description}</p>
                 <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
                 <div className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Collection Complete' : ''}</div>
@@ -371,7 +373,7 @@ export default function LockerPage() {
         <div className={styles.stack}>
           {masteryViews.map((view) => (
             <article key={view.masteryId} className={styles.masteryCard}>
-              <h2 className={styles.sectionTitle}>{view.name}</h2>
+              <h2 className="ui-section-title-content">{view.name}</h2>
               {view.description && <p className={styles.muted}>{view.description}</p>}
               <div className={styles.muted}>
                 {view.complete
@@ -391,7 +393,7 @@ export default function LockerPage() {
         <div className={styles.stack}>
           {achievementGroups.map((group) => (
             <section key={group.category}>
-              <h2 className={styles.sectionTitle}>{group.label}</h2>
+              <h2 className="ui-section-title">{group.label}</h2>
               <div className={styles.grid}>
                 {group.items.map((item) => (
                   <article key={item.definition.id} className={`${styles.shopCard} ${item.unlocked ? styles.tile : styles.tileLocked}`}>

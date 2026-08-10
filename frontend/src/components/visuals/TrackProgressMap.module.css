@@ -14,6 +14,11 @@
   min-width: 0;
 }
 
+.wrap {
+  position: relative;
+  display: inline-flex;
+}
+
 .connector {
   width: 14px;
   height: 2px;
@@ -36,10 +41,18 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(15, 23, 42, 0.45);
   color: rgba(226, 232, 240, 0.82);
+  font: inherit;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+  cursor: pointer;
   transition: border-color var(--motion-fast, 140ms) var(--motion-ease, ease), background var(--motion-fast, 140ms) var(--motion-ease, ease);
+}
+
+.node:hover,
+.node:focus-visible {
+  border-color: rgba(125, 211, 252, 0.45);
+  outline: none;
 }
 
 .dot {
@@ -72,7 +85,6 @@
 }
 
 .item[data-status='available'] .dot {
-  background: rgba(148, 163, 184, 0.45);
   box-shadow: inset 0 0 0 1.5px rgba(226, 232, 240, 0.55);
   background: transparent;
 }
@@ -96,6 +108,87 @@
 
 .compact .connector {
   width: 10px;
+}
+
+.popup {
+  /* Positioned via AnchoredPopover portal (fixed). */
+  padding: 0;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.popupBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6rem;
+  padding: 0.12rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(81, 145, 162, 0.32);
+  background: rgba(81, 145, 162, 0.12);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-accent);
+}
+
+.popupBadge[data-status='completed'] {
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
+  color: #99f6e4;
+}
+
+.popupBadge[data-status='current'] {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.12);
+  color: var(--dev-text);
+}
+
+.popupTitle {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  color: rgba(247, 247, 255, 0.95);
+  line-height: 1.25;
+}
+
+.popupClose {
+  border: none;
+  background: transparent;
+  color: rgba(198, 214, 232, 0.7);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+  border-radius: 4px;
+}
+
+.popupClose:hover,
+.popupClose:focus-visible {
+  color: rgba(247, 247, 255, 0.95);
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+.popupSummary {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(143, 211, 223, 0.95);
+}
+
+.popupDetail {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(198, 214, 232, 0.82);
 }
 
 @media (max-width: 420px) {

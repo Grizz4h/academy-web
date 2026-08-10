@@ -4,28 +4,6 @@
   gap: 1.25rem;
 }
 
-.pageHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-bottom: 0.25rem;
-}
-
-.pageTitle {
-  margin: 0;
-  font-size: clamp(1.6rem, 2.4vw, 2rem);
-  letter-spacing: 0.01em;
-  color: var(--text);
-}
-
-.pageLead {
-  margin: 0;
-  max-width: 40rem;
-  color: var(--text-muted);
-  font-size: 1.02rem;
-  line-height: 1.5;
-}
-
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -38,6 +16,7 @@
 }
 
 .kpiTitle {
+  font-family: var(--font-body);
   font-size: var(--type-eyebrow);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -47,9 +26,11 @@
 }
 
 .kpiValue {
+  font-family: var(--font-body);
   font-size: clamp(1.7rem, 2.5vw, 2.15rem);
   font-weight: 750;
   line-height: 1.1;
+  letter-spacing: 0;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
@@ -68,26 +49,57 @@
   justify-content: space-between;
   gap: 1.1rem;
   flex-wrap: wrap;
-  border-color: rgba(81, 145, 162, 0.42) !important;
-  background:
-    linear-gradient(135deg, rgba(81, 145, 162, 0.16), rgba(255, 255, 255, 0.03) 55%) !important;
-  box-shadow: var(--elev-featured-shadow) !important;
+  position: relative;
+  overflow: hidden;
+  border-color: var(--work-surface-border) !important;
+  background: var(--work-surface-bg) !important;
+  box-shadow:
+    var(--work-surface-inset),
+    var(--elev-featured-shadow) !important;
+}
+
+.nextStepCard::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, #bae6fd, var(--accent) 55%, transparent);
 }
 
 .nextStepCopy {
   min-width: 0;
   flex: 1 1 280px;
+  padding-left: 0.35rem;
+}
+
+.nextStepTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text);
 }
 
 .nextStepText {
-  margin: 0.15rem 0 0;
+  margin: 0.25rem 0 0;
+  font-family: var(--font-body);
   color: rgba(232, 242, 250, 0.92);
-  font-size: 1.02rem;
+  font-size: 1rem;
   line-height: 1.45;
+}
+
+.nextStepDrillName {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0;
+  color: rgba(247, 247, 255, 0.96);
 }
 
 .nextStepMeta {
   margin: 0.45rem 0 0;
+  font-family: var(--font-body);
   color: rgba(186, 208, 228, 0.78);
   font-size: 0.88rem;
   line-height: 1.4;
@@ -110,13 +122,6 @@
   flex: 1;
   min-width: 260px;
   margin-bottom: 0 !important;
-}
-
-.sectionTitle {
-  font-size: var(--type-section);
-  color: var(--text-accent);
-  margin: 0 0 0.55rem;
-  font-weight: 700;
 }
 
 .progressRow {
@@ -150,6 +155,7 @@
 }
 
 .trackProgressTitle {
+  font-family: var(--font-body);
   font-weight: 650;
   margin-bottom: 0.4rem;
   color: rgba(220, 236, 246, 0.9);
@@ -160,29 +166,20 @@
 }
 
 .trackTitle {
+  font-family: var(--font-body);
   color: var(--text-accent);
   font-weight: 550;
   font-size: 0.92rem;
-}
-
-.trackBarBg {
-  background: var(--progress-track-bg);
-  border-radius: var(--radius-pill);
-  height: var(--progress-height);
-  width: 100%;
-  margin: 0.25rem 0;
-  overflow: hidden;
-}
-
-.trackBarFill {
-  background: var(--progress-fill);
-  height: 100%;
-  transition: width 0.3s;
+  line-height: 1.35;
 }
 
 .trackBarLabel {
   font-size: 0.84rem;
   color: rgba(186, 208, 228, 0.78);
+}
+
+.trackMoreBtn {
+  margin-top: 0.25rem;
 }
 
 .integrityStatus {
@@ -269,20 +266,7 @@
 }
 
 .openBtn {
-  font-size: 0.88rem;
-  padding: 0.28rem 0.75rem;
-  background: rgba(81, 145, 162, 0.92);
-  color: #041018;
-  border-radius: 999px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  transition: filter 0.14s ease;
-}
-
-.openBtn:hover {
-  filter: brightness(1.08);
+  flex: 0 0 auto;
 }
 
 .emptyState {
@@ -307,6 +291,7 @@
   padding: 0.95rem 1.1rem;
   cursor: pointer;
   user-select: none;
+  font-family: var(--font-body);
   color: rgba(230, 242, 250, 0.95);
   font-weight: 650;
   font-size: 1rem;
@@ -384,8 +369,10 @@
 }
 
 .rewardName {
+  font-family: var(--font-body);
   color: rgba(247, 247, 255, 0.96);
   font-weight: 650;
+  line-height: 1.35;
 }
 
 .rewardMeta {

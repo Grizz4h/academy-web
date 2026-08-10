@@ -334,7 +334,7 @@
   height: 100%;
   border-radius: inherit;
   background: var(--progress-fill);
-  transition: width var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
+  transition: width var(--motion-med) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
 }
 
 .ui-progress.is-complete .ui-progress__fill {

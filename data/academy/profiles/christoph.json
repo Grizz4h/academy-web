@@ -7,18 +7,18 @@
   "bannerId": "banner_blue_line_01",
   "emblem": {
     "type": "catalog",
-    "emblemId": "emblem_arrow_01"
+    "emblemId": "emblem_puck_01"
   },
   "customEmblemId": null,
   "customEmblems": [],
-  "profileTitle": "neutral_zone_tourist",
+  "profileTitle": "blue_line_student",
   "jerseyNumber": 16,
   "favoriteLeague": "DEL",
   "favoriteTeamName": "ERC Ingolstadt",
-  "profileTagline": "Ma gucken 👀",
+  "profileTagline": "Ich bringe mir gerade Hockey bei.",
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-09T18:43:41.642926"
+  "updatedAt": "2026-08-10T08:15:34.908509"
 }

@@ -1,5 +1,4 @@
 import { useMemo, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
@@ -20,6 +19,7 @@ import { getActivePeriodsForScope } from '../utils/observationScope';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
 import { UiButton, UiButtonLink, UiProgress } from '../components/ui';
+import { KpiRevealCard } from '../components/dashboard/KpiRevealCard';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string => {
@@ -49,6 +49,7 @@ export default function Dashboard() {
   // Scope State für modulbasierte Filterung
   const [currentScope, setCurrentScope] = useState<string>("Gesamt");
   const [scopeInitialized, setScopeInitialized] = useState(false);
+  const [showAllTracks, setShowAllTracks] = useState(false);
 
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ["sessions", user],
@@ -412,12 +413,12 @@ export default function Dashboard() {
   if (!user)
     return (
       <div className={styles.dashboardPage}>
-        <header className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Übersicht</h1>
-          <p className={styles.pageLead}>Melde dich an, um deinen Lernstand und die nächste Session zu sehen.</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Übersicht</h1>
+          <p className="ui-page-lead">Melde dich an, um deinen Lernstand und die nächste Session zu sehen.</p>
         </header>
         <Card>
-          <h2 className={styles.sectionTitle}>{signupMode ? "Account erstellen" : "Anmelden"}</h2>
+          <h2 className="ui-section-title">{signupMode ? "Account erstellen" : "Anmelden"}</h2>
           {!signupMode ? (
             <div className={styles.formColumn}>
               <input
@@ -510,6 +511,23 @@ export default function Dashboard() {
   const nearAchievements = getTopNearAchievements(getRealSessions(sessions || []), rewardState, 5);
   const recentUnlocked = getRecentUnlockedAchievements(rewardState, 5);
   const levelProgress = selectLevelProgress(rewardState);
+  const weekActivityDays = (() => {
+    const list = getRealSessions(sessions ?? []);
+    const now = new Date();
+    const day = now.getDay();
+    const diff = day === 0 ? 6 : day - 1;
+    const weekStart = new Date(now);
+    weekStart.setHours(0, 0, 0, 0);
+    weekStart.setDate(now.getDate() - diff);
+    const days = new Set<string>();
+    for (const session of list) {
+      const created = new Date(session.created_at);
+      if (created >= weekStart) {
+        days.add(created.toDateString());
+      }
+    }
+    return days.size;
+  })();
   const nextDrill = derived.recommendedNext[0] as DrillWithCount | undefined;
   const nextDrillTitle = nextDrill
     ? (nextDrill.moduleId ? `${nextDrill.moduleId} · ${nextDrill.title}` : nextDrill.title)
@@ -517,44 +535,141 @@ export default function Dashboard() {
   const drillProgressPct = derived.totalDrills
     ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
     : 0;
+  const TRACK_PREVIEW = 3;
+  const trackProgressList = Object.values(derived.trackProgress)
+    .map((track) => {
+      const total = track.total || 0;
+      const completed = track.completed || 0;
+      const pct = total ? completed / total : 0;
+      return { ...track, pct };
+    })
+    .sort((a, b) => a.pct - b.pct || String(a.title).localeCompare(String(b.title), 'de'));
+  const visibleTracks = showAllTracks ? trackProgressList : trackProgressList.slice(0, TRACK_PREVIEW);
+  const hiddenTrackCount = Math.max(0, trackProgressList.length - TRACK_PREVIEW);
 
   return (
     <div className={styles.dashboardPage}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Übersicht</h1>
-        <p className={styles.pageLead}>
-          Dein aktueller Stand auf einen Blick — und der nächste sinnvolle Schritt.
-        </p>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Übersicht</h1>
+        <p className="ui-page-lead">Stand und nächster Schritt.</p>
       </header>
 
       <div className={styles.kpiGrid}>
-        <Card className={styles.kpiCard} elevation="quiet">
-          <div className={styles.kpiTitle}>Streak</div>
-          <div className={styles.kpiValue}>{derived.streak}</div>
-          <div className={styles.kpiHint}>Tage in Folge</div>
-        </Card>
-        <Card className={styles.kpiCard} elevation="quiet">
-          <div className={styles.kpiTitle}>Diese Woche</div>
-          <div className={styles.kpiValue}>{derived.sessionsThisWeek}</div>
-          <div className={styles.kpiHint}>Sessions</div>
-        </Card>
-        <Card className={styles.kpiCard} elevation="quiet">
-          <div className={styles.kpiTitle}>Sessions gesamt</div>
-          <div className={styles.kpiValue}>{derived.total}</div>
-          <div className={styles.kpiHint}>{derived.completed} abgeschlossen</div>
-        </Card>
-        <Card className={styles.kpiCard} elevation="quiet">
-          <div className={styles.kpiTitle}>Level</div>
-          <div className={styles.kpiValue}>{levelProgress.level}</div>
-          <div className={styles.kpiHint}>
-            {levelProgress.xpIntoLevel.toLocaleString('de-DE')} / {levelProgress.xpForNextLevel.toLocaleString('de-DE')} XP
-          </div>
-        </Card>
+        <KpiRevealCard
+          title="Streak"
+          value={derived.streak}
+          hint="Tage in Folge"
+          panelTitle="Lern-Streak"
+          panel={
+            <>
+              <p>
+                Zählt aufeinanderfolgende Kalendertage mit mindestens einer Session — rückwärts ab heute.
+              </p>
+              <div className="ui-tap-reveal-stat">
+                <span>Aktuell</span>
+                <strong>{derived.streak} Tage</strong>
+              </div>
+              {derived.lastSession && (
+                <div className="ui-tap-reveal-stat">
+                  <span>Letzte Session</span>
+                  <strong>{new Date(derived.lastSession.created_at).toLocaleDateString('de-DE')}</strong>
+                </div>
+              )}
+              <div className="ui-tap-reveal-actions">
+                <UiButtonLink to="/history" variant="primary" size="sm">
+                  Session-Verlauf
+                </UiButtonLink>
+              </div>
+            </>
+          }
+        />
+        <KpiRevealCard
+          title="Diese Woche"
+          value={derived.sessionsThisWeek}
+          hint="Sessions"
+          panelTitle="Wochenrhythmus"
+          panel={
+            <>
+              <p>Abgeschlossene Sessions in der laufenden Kalenderwoche (Mo–So).</p>
+              <div className="ui-tap-reveal-stat">
+                <span>Sessions</span>
+                <strong>{derived.sessionsThisWeek}</strong>
+              </div>
+              <div className="ui-tap-reveal-stat">
+                <span>Aktive Tage</span>
+                <strong>{weekActivityDays}</strong>
+              </div>
+              <div className="ui-tap-reveal-actions">
+                <UiButtonLink to="/history" variant="primary" size="sm">
+                  Verlauf ansehen
+                </UiButtonLink>
+              </div>
+            </>
+          }
+        />
+        <KpiRevealCard
+          title="Sessions gesamt"
+          value={derived.total}
+          hint={`${derived.completed} abgeschlossen`}
+          panelTitle="Session-Übersicht"
+          align="right"
+          panel={
+            <>
+              <p>Alle echten Academy-Sessions — ohne Dev/Dummy-Einträge.</p>
+              <div className="ui-tap-reveal-stat">
+                <span>Abgeschlossen</span>
+                <strong>{derived.completed}</strong>
+              </div>
+              <div className="ui-tap-reveal-stat">
+                <span>In Bearbeitung</span>
+                <strong>{derived.inProgress}</strong>
+              </div>
+              <div className="ui-tap-reveal-stat">
+                <span>Abgebrochen</span>
+                <strong>{derived.aborted}</strong>
+              </div>
+              <div className="ui-tap-reveal-actions">
+                <UiButtonLink to="/history" variant="primary" size="sm">
+                  Alle Sessions
+                </UiButtonLink>
+              </div>
+            </>
+          }
+        />
+        <KpiRevealCard
+          title="Level"
+          value={levelProgress.level}
+          hint={`${levelProgress.xpIntoLevel.toLocaleString('de-DE')} / ${levelProgress.xpForNextLevel.toLocaleString('de-DE')} XP`}
+          panelTitle={`Level ${levelProgress.level}`}
+          align="right"
+          panel={
+            <>
+              <p>XP sammelst du durch Sessions, Achievements und Meisterschaften.</p>
+              <UiProgress
+                value={levelProgress.xpIntoLevel}
+                max={levelProgress.xpForNextLevel || 1}
+                label="XP bis zum nächsten Level"
+              />
+              <div className="ui-tap-reveal-stat">
+                <span>Gesamt-XP</span>
+                <strong>{levelProgress.totalXp.toLocaleString('de-DE')}</strong>
+              </div>
+              <div className="ui-tap-reveal-actions">
+                <UiButtonLink to="/progress" variant="primary" size="sm">
+                  Belohnungen
+                </UiButtonLink>
+                <UiButtonLink to="/account" variant="secondary" size="sm">
+                  Profil
+                </UiButtonLink>
+              </div>
+            </>
+          }
+        />
       </div>
 
       <Card className={styles.nextStepCard} elevation="featured">
         <div className={styles.nextStepCopy}>
-          <h2 className={styles.sectionTitle}>
+          <h2 className={styles.nextStepTitle}>
             {resumeSession ? 'Weiter geht’s' : 'Nächster Schritt'}
           </h2>
           {resumeSession ? (
@@ -566,7 +681,8 @@ export default function Dashboard() {
           ) : nextDrillTitle ? (
             <p className={styles.nextStepText}>
               {derived.streak > 0 ? `Streak ${derived.streak} · ` : ''}
-              Als Nächstes empfohlen: <strong>{nextDrillTitle}</strong>
+              Als Nächstes empfohlen:{' '}
+              <strong className={styles.nextStepDrillName}>{nextDrillTitle}</strong>
             </p>
           ) : (
             <p className={styles.nextStepText}>
@@ -647,7 +763,7 @@ export default function Dashboard() {
       )}
 
       <Card className={styles.recentCard}>
-        <h2 className={styles.sectionTitle}>Zuletzt</h2>
+        <h2 className="ui-section-title">Zuletzt</h2>
         {derived.recentSessions.length === 0 ? (
           <p className={styles.emptyState}>
             Noch keine Sessions vorhanden. Starte in der Akademie mit dem ersten Modul.
@@ -659,7 +775,9 @@ export default function Dashboard() {
                 <span className={styles.recentDate}>{new Date(s.created_at).toLocaleDateString('de-DE')}</span>
                 <span className={styles.recentModule}>{s.module_id}</span>
                 <span className={styles.statusBadge}>{formatSessionState(s.state)}</span>
-                <Link to={getSessionRoute(s)} className={styles.openBtn}>Öffnen</Link>
+                <UiButtonLink to={getSessionRoute(s)} size="sm" variant="secondary" className={styles.openBtn}>
+                  Öffnen
+                </UiButtonLink>
               </li>
             ))}
           </ul>
@@ -674,7 +792,7 @@ export default function Dashboard() {
         <div className={styles.moreBody}>
           <div className={styles.flexWrapRow}>
             <Card className={styles.flexCard}>
-              <h2 className={styles.sectionTitle}>Fortschritt</h2>
+              <h2 className="ui-section-title">Fortschritt</h2>
               <div className={styles.progressRow}>
                 <div className={styles.progressCol}>
                   <div className={styles.progressItem}>Abgeschlossen: <strong>{derived.completed}</strong></div>
@@ -686,7 +804,7 @@ export default function Dashboard() {
                     <div className={styles.progressBarLabel}>Drill-Fortschritt: {drillProgressPct}%</div>
                     <div className={styles.trackProgressWrap}>
                       <div className={styles.trackProgressTitle}>Pro Track</div>
-                      {Object.values(derived.trackProgress).map((track: any) => (
+                      {visibleTracks.map((track) => (
                         <div key={track.title} className={styles.trackProgressItem}>
                           <span className={styles.trackTitle}>{track.title}</span>
                           <UiProgress
@@ -694,16 +812,29 @@ export default function Dashboard() {
                             max={track.total || 1}
                             label={`${track.title} Fortschritt`}
                           />
-                          <span className={styles.trackBarLabel}>{track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})</span>
+                          <span className={styles.trackBarLabel}>
+                            {track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})
+                          </span>
                         </div>
                       ))}
+                      {hiddenTrackCount > 0 && (
+                        <UiButton
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className={styles.trackMoreBtn}
+                          onClick={() => setShowAllTracks((value) => !value)}
+                        >
+                          {showAllTracks ? 'Weniger anzeigen' : `${hiddenTrackCount} weitere Tracks`}
+                        </UiButton>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </Card>
             <Card className={styles.flexCard}>
-              <h2 className={styles.sectionTitle}>Session-Qualität</h2>
+              <h2 className="ui-section-title">Session-Qualität</h2>
               {derived.hygieneIssues.length === 0 ? (
                 <div className={styles.integrityStatus}>
                   <div className={styles.statusIndicator} data-status="clean" />
@@ -788,7 +919,7 @@ export default function Dashboard() {
         </summary>
         <div className={styles.moreBody}>
           <Card>
-            <h2 className={styles.sectionTitle}>Meist beobachtete Teams</h2>
+            <h2 className="ui-section-title">Meist beobachtete Teams</h2>
             {derived.mostObservedTeams.length === 0 ? (
               <div className={styles.rewardHint}>Noch keine Team-Beobachtungen vorhanden.</div>
             ) : (

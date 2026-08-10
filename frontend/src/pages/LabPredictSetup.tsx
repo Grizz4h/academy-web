@@ -151,7 +151,10 @@ export default function LabPredictSetup() {
 
   return (
     <div style={{ display: 'grid', gap: '1rem', maxWidth: '760px', margin: '0 auto' }}>
-      <h1>Lab · Predict Setup</h1>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Lab · Predict Setup</h1>
+        <p className="ui-page-lead">Vorhersage-Übung konfigurieren.</p>
+      </header>
 
       {isLabContentLoading && <div className="card">Lade Lab-Inhalte...</div>}
 

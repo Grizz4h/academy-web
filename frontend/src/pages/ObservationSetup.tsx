@@ -244,6 +244,10 @@ export default function ObservationSetup() {
 
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Observation Setup</h1>
+        <p className="ui-page-lead">Beobachtungslauf konfigurieren und starten.</p>
+      </header>
 
       {/* ── Admin: Kaderimport (einklappbar) ── */}
       <div className="card" style={{ padding: '0' }}>
@@ -301,7 +305,7 @@ export default function ObservationSetup() {
 
         {/* ─ Linke Spalte: Auswahl-Form ─ */}
         <div className="card" style={{ display: 'grid', gap: '0.85rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1rem' }}>Beobachtung starten</h2>
+          <h2 className="ui-section-title">Beobachtung starten</h2>
 
           <label style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem' }}>
             Liga / Saison

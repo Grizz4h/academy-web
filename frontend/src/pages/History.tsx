@@ -10,13 +10,10 @@ import { PageSkeleton } from '../components/Skeleton'
 import { isDevNavEnabled } from '../config/featureFlags'
 import { deleteAllDummySessions } from '../dev/createDummySession'
 import { countDummySessions } from '../utils/sessionEligibility'
+import { computeSessionOverview } from '../stats/sessionOverview'
+import { SessionOverviewKpis } from '../components/dashboard/SessionOverviewKpis'
 import { UiButton, UiButtonLink } from '../components/ui'
 import styles from './History.module.css'
-
-function isInProgressState(state: string): boolean {
-  const value = String(state || '').toUpperCase()
-  return value === 'IN_PROGRESS' || value === 'PRE' || value === 'P1' || value === 'P2' || value === 'P3' || value === 'POST'
-}
 
 export default function History() {
   const { user } = useUser()
@@ -97,14 +94,10 @@ export default function History() {
     },
   })
 
-  const overview = useMemo(() => {
-    const total = sessionList.length
-    const completed = sessionList.filter((s) => s.state === 'COMPLETED').length
-    const aborted = sessionList.filter((s) => s.state === 'ABORTED').length
-    const inProgress = sessionList.filter((s) => isInProgressState(s.state) && s.state !== 'ABORTED' && s.state !== 'COMPLETED').length
-    const scenes = scenesData?.scenes?.length || 0
-    return { total, completed, aborted, inProgress, scenes }
-  }, [sessionList, scenesData])
+  const overview = useMemo(
+    () => computeSessionOverview(sessionList, { sceneCount: scenesData?.scenes?.length || 0 }),
+    [sessionList, scenesData],
+  )
 
   const filteredSessions = sessionList.filter(session => {
     if (filterYear) {
@@ -251,9 +244,9 @@ export default function History() {
   if (!user) {
     return (
       <div className={styles.page}>
-        <header className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Session-Verlauf</h1>
-          <p className={styles.pageLead}>Melde dich an, um deine Sessions und Szenen zu sehen.</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Session-Verlauf</h1>
+          <p className="ui-page-lead">Melde dich an, um deine Sessions und Szenen zu sehen.</p>
         </header>
         <Card>Bitte oben anmelden, dann zeigen wir dir deinen Session-Verlauf.</Card>
       </div>
@@ -264,9 +257,9 @@ export default function History() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Session-Verlauf</h1>
-        <p className={styles.pageLead}>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Session-Verlauf</h1>
+        <p className="ui-page-lead">
           Alle Sessions im Überblick — filtern, öffnen und bei Bedarf Details nachschauen.
         </p>
       </header>
@@ -329,28 +322,11 @@ export default function History() {
         </div>
       )}
 
-      <div className={styles.kpiGrid}>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>Sessions gesamt</div>
-          <div className={styles.kpiValue}>{overview.total}</div>
-          <div className={styles.kpiHint}>{overview.scenes} Szenen erfasst</div>
-        </Card>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>Abgeschlossen</div>
-          <div className={styles.kpiValue}>{overview.completed}</div>
-          <div className={styles.kpiHint}>fertig durchgespielt</div>
-        </Card>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>In Bearbeitung</div>
-          <div className={styles.kpiValue}>{overview.inProgress}</div>
-          <div className={styles.kpiHint}>noch offen</div>
-        </Card>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>Abgebrochen</div>
-          <div className={styles.kpiValue}>{overview.aborted}</div>
-          <div className={styles.kpiHint}>nicht beendet</div>
-        </Card>
-      </div>
+      <SessionOverviewKpis
+        overview={overview}
+        className={styles.kpiGrid}
+        showSceneCount
+      />
 
       <div className={styles.filterMobileBar}>
         <UiButton type="button" variant="secondary" size="sm" onClick={() => setFilterSheetOpen(true)}>

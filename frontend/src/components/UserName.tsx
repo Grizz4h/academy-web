@@ -27,11 +27,13 @@ export default function UserName() {
   }
 
   return (
-    <NavLink to="/account" className={styles.userLink} title="Account öffnen">
+    <NavLink
+      to="/account"
+      className={styles.userLink}
+      title={`Account · ${displayName}`}
+      aria-label={`Account öffnen · ${displayName}`}
+    >
       <img className={styles.userAvatar} src={avatarSrc} alt="" />
-      <span className={styles.userLine}>
-        Angemeldet: <strong>{displayName}</strong>
-      </span>
     </NavLink>
   )
 }

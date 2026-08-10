@@ -69,11 +69,14 @@ export default function ObservationRun() {
 
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
-      <div className="card">
-        <h1>Observation Run</h1>
-        <p>
-          {run.player_name} #{run.player_number ?? '-'} - {run.team_name} ({run.player_position})
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Observation Run</h1>
+        <p className="ui-page-lead">
+          {run.player_name} #{run.player_number ?? '-'} · {run.team_name} ({run.player_position})
         </p>
+      </header>
+
+      <div className="card" style={{ marginBottom: 0 }}>
         <p style={{ marginBottom: 0 }}>
           Liga: {run.league} | Saison: {run.season}
         </p>

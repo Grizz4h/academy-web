@@ -48,7 +48,7 @@ export function LearningRhythmWidget({
 
   return (
     <div className={`${styles.widget} ${compact ? styles.compact : ''}`}>
-      <h2 className={styles.title}>Lernrhythmus</h2>
+      <h2 className="ui-section-title">Lernrhythmus</h2>
 
       {hasAnyActivity ? (
         <p className={styles.activeWeeks}>{summary.activeWeeksLast4} von 4 Wochen aktiv</p>

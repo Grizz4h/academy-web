@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { AnchoredPopover } from '../ui/AnchoredPopover'
 import styles from './MechanicGlyph.module.css'
 
 export type MechanicKind =
@@ -215,7 +216,8 @@ export function MechanicGlyph({
   const resolved = kind || resolveMechanicKind(drillType, mode)
   const info = MECHANIC_INFO[resolved]
   const [open, setOpen] = useState(false)
-  const rootRef = useRef<HTMLSpanElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
 
   useEffect(() => {
@@ -223,9 +225,9 @@ export function MechanicGlyph({
 
     const onPointerDown = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node | null
-      if (rootRef.current && target && !rootRef.current.contains(target)) {
-        setOpen(false)
-      }
+      if (triggerRef.current?.contains(target)) return
+      if (popoverRef.current?.contains(target)) return
+      setOpen(false)
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false)
@@ -256,8 +258,9 @@ export function MechanicGlyph({
   }
 
   return (
-    <span ref={rootRef} className={styles.wrap}>
+    <span className={styles.wrap}>
       <button
+        ref={triggerRef}
         type="button"
         className={[styles.glyph, styles.clickable, styles[size], className].filter(Boolean).join(' ')}
         data-kind={resolved}
@@ -275,10 +278,12 @@ export function MechanicGlyph({
       </button>
 
       {open && (
-        <div
+        <AnchoredPopover
+          ref={popoverRef}
+          open={open}
+          anchorRef={triggerRef}
           id={panelId}
-          role="dialog"
-          aria-label={info.label}
+          ariaLabel={info.label}
           className={styles.popup}
           onClick={(event) => event.stopPropagation()}
         >
@@ -302,7 +307,7 @@ export function MechanicGlyph({
           </div>
           <p className={styles.popupSummary}>{info.summary}</p>
           <p className={styles.popupDetail}>{info.detail}</p>
-        </div>
+        </AnchoredPopover>
       )}
     </span>
   )

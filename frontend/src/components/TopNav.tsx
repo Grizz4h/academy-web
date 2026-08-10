@@ -3,10 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
 import { api, type Session } from '../api';
 import LogoutButton from './LogoutButton';
-import Pill from './Pill';
 import UserName from './UserName';
+import PuxWalletButton from './rewards/PuxWalletButton';
 import { useUser } from '../context/UserContext';
-import { formatPux, useRewards } from '../features/rewards';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import {
   getHiddenNavTabs,
@@ -35,7 +34,6 @@ const getSessionContext = (session: Session): string => {
 
 const TopNav: React.FC = () => {
   const { user } = useUser();
-  const { rewardState } = useRewards();
   const [devNav, setDevNav] = useState(() => isDevNavEnabled());
   const [devHint, setDevHint] = useState('');
   const logoClicksRef = useRef<{ count: number; timer: number | null }>({ count: 0, timer: null });
@@ -91,68 +89,69 @@ const TopNav: React.FC = () => {
 
   return (
     <nav className={styles.navbar} data-top-nav="true">
+      <div className={styles.glassBar} aria-hidden="true" />
       <div className={styles.container}>
         <div className={styles.navInner}>
-          {/* Row 1: Logo left, Logout right */}
           <div className={styles.brandRow}>
             <NavLink to="/" className={styles.logoLink} onClick={handleLogoClick}>
               <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
-              <span className={styles.navbarBrand}></span>
             </NavLink>
+
+            <div className={styles.navTabsWrapper}>
+              <div className={styles.navTabs}>
+                {navTabs.map(tab => (
+                  <React.Fragment key={tab.to}>
+                    {tab.to === '/history' && activeSession && (
+                      <NavLink
+                        to={getSessionRoute(activeSession)}
+                        className={({ isActive }) =>
+                          [
+                            styles.navLink,
+                            styles.activeSessionLink,
+                            isActive ? styles.navLinkActive : '',
+                          ].filter(Boolean).join(' ')
+                        }
+                      >
+                        <span className={styles.activeSessionPulse} aria-hidden="true" />
+                        <span className={styles.activeSessionText}>
+                          <span>Aktive Session</span>
+                          <span>{getSessionContext(activeSession)} läuft</span>
+                        </span>
+                      </NavLink>
+                    )}
+                    <NavLink
+                      to={tab.to}
+                      className={({ isActive }) =>
+                        isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
+                      }
+                      end={tab.exact}
+                    >
+                      {tab.label}
+                    </NavLink>
+                  </React.Fragment>
+                ))}
+                {devNav && (
+                  <NavLink
+                    to="/dev"
+                    className={({ isActive }) =>
+                      isActive
+                        ? `${styles.navLink} ${styles.navLinkActive} ${styles.devLink}`
+                        : `${styles.navLink} ${styles.devLink}`
+                    }
+                  >
+                    Dev
+                  </NavLink>
+                )}
+              </div>
+            </div>
+
             <div className={styles.userSection}>
               {devHint && <span className={styles.devHint}>{devHint}</span>}
-              {user && <Pill className={styles.rewardPill}>{formatPux(rewardState.currency.PUX || 0)}</Pill>}
+              {user && <PuxWalletButton />}
+              <UserName />
               <LogoutButton />
             </div>
           </div>
-          {/* Row 2: Tabs */}
-          <div className={styles.navTabsWrapper}>
-            <div className={styles.navTabs}>
-              {navTabs.map(tab => (
-                <React.Fragment key={tab.to}>
-                  {tab.to === "/history" && activeSession && (
-                    <NavLink
-                      to={getSessionRoute(activeSession)}
-                      className={({ isActive }) =>
-                        isActive
-                          ? styles.navLink + " " + styles.navLinkActive + " " + styles.activeSessionLink
-                          : styles.navLink + " " + styles.activeSessionLink
-                      }
-                    >
-                      <span className={styles.activeSessionPulse} aria-hidden="true" />
-                      <span className={styles.activeSessionText}>
-                        <span>Aktive Session</span>
-                        <span>{getSessionContext(activeSession)} läuft</span>
-                      </span>
-                    </NavLink>
-                  )}
-                  <NavLink
-                    to={tab.to}
-                    className={({ isActive }) =>
-                      isActive ? styles.navLink + " " + styles.navLinkActive : styles.navLink
-                    }
-                    end={tab.exact}
-                  >
-                    {tab.label}
-                  </NavLink>
-                </React.Fragment>
-              ))}
-              {devNav && (
-                <NavLink
-                  to="/dev"
-                  className={({ isActive }) =>
-                    isActive
-                      ? styles.navLink + " " + styles.navLinkActive + " " + styles.devLink
-                      : styles.navLink + " " + styles.devLink
-                  }
-                >
-                  Dev
-                </NavLink>
-              )}
-            </div>
-          </div>
-          {/* Row 3: UserName under Tabs */}
-          <UserName />
         </div>
       </div>
     </nav>

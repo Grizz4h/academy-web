@@ -1,80 +1,36 @@
-/* Brand-Zeile: Logo + Text sauber nebeneinander */
-.brandRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0; /* wichtig für Text-Overflow */
-  width: 100%;
-  /* justify-content entfernt, damit margin-left: auto in .userSection wirkt */
-}
+/* Liquid-Glass TopNav — Brand · Tabs · Identity */
 
-/* Klickfläche: nix wrappt komisch */
-.logoLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  min-width: 0;
-}
-
-/* Logo: fix, nicht riesig */
-.logo {
-  height: 60px;     /* Desktop */
-  width: auto;
-  display: block;
-  flex: 0 0 auto;
-  margin-left: -4px;
-}
-
-/* Brand-Text: nicht umbrechen, notfalls ellipsis */
-.navbarBrand {
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1;
-}
-
-/* Mobile: Logo kleiner */
-@media (max-width: 520px) {
-  .logo {
-    height: 44px;
-    margin-left: -2px;
-  }
-  .navbarBrand { font-size: 18px; }
-}
 .navbar {
   position: sticky;
   top: 0;
   z-index: 50;
   padding-top: env(safe-area-inset-top, 0px);
-
-  background: transparent;
-  border-bottom: 1px solid rgba(255,255,255,0.10);
-
   isolation: isolate;
+  border-bottom: 1px solid rgba(186, 230, 253, 0.1);
 }
 
-.navbar::before {
-  content: "";
+.glassBar {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-
-  /* dunkle Basis */
-  background: rgba(10, 14, 28, 0.78);
-
-  /* DER eigentliche Blur */
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
-
-  /* Safari zum Erzwingen eines eigenen Layers */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.02) 28%,
+      rgba(10, 14, 28, 0.55) 100%
+    ),
+    rgba(8, 12, 24, 0.42);
+  -webkit-backdrop-filter: blur(28px) saturate(1.35);
+  backdrop-filter: blur(28px) saturate(1.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(81, 145, 162, 0.12);
   transform: translateZ(0);
 }
 
-.navbar > * {
+.navbar > .container {
   position: relative;
   z-index: 1;
 }
@@ -82,113 +38,195 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 14px 16px;
+  padding: 10px 16px;
 }
-  .navTabsWrapper {
-    box-sizing: border-box;
-    margin-top: 38px;
-    margin-left: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 10px;
-    z-index: 20;
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-  }
 
-.userSection {
+.navInner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.brandRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-left: auto;
+  gap: 12px;
+  min-width: 0;
+  width: 100%;
 }
 
-.rewardPill {
-  background: rgba(81, 145, 162, 0.22);
-  color: rgba(225, 247, 255, 0.96);
-  border-color: rgba(81, 145, 162, 0.32);
-  padding: 0.18em 0.65em;
-  font-size: 0.86rem;
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  transition:
+    transform 180ms var(--motion-ease, ease),
+    filter 180ms var(--motion-ease, ease);
 }
 
-.devHint {
-  font-size: 0.78rem;
-  color: rgba(153, 246, 228, 0.9);
-  white-space: nowrap;
+.logoLink:hover,
+.logoLink:focus-visible {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  outline: none;
 }
 
-.devLink {
-  border-color: rgba(148, 163, 184, 0.35) !important;
-  color: rgba(186, 210, 230, 0.88) !important;
-  opacity: 0.85;
+.logo {
+  height: 52px;
+  width: auto;
+  display: block;
+  flex: 0 0 auto;
+  margin-left: -2px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
 }
 
-/* >>> wichtig: horizontal scroll container */
+/* Tabs */
+
 .navTabsWrapper {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  margin-top: 10px;
-  width: 100%;
-  max-width: 100%;
-  padding-bottom: 10px;
+  /* Fade into identity cluster — never paint under profile */
+  mask-image: linear-gradient(90deg, #000 0%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 88%, transparent 100%);
 }
+
 .navTabsWrapper::-webkit-scrollbar {
   display: none;
 }
 
 .navTabs {
   display: inline-flex;
-  gap: 10px;
-  padding-bottom: 2px;
+  align-items: center;
+  gap: 6px;
   width: max-content;
   min-width: 0;
-  overflow: visible;
-  white-space: nowrap;
+  padding: 2px 0;
 }
 
 .navLink {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
-  padding: 0 16px;
+  height: 36px;
+  padding: 0 14px;
   line-height: 1;
-  border-radius: 14px;
+  border-radius: 999px;
   text-decoration: none;
   white-space: nowrap;
   color: rgba(247, 247, 255, 0.72);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, color 120ms ease;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    transform 160ms var(--motion-ease, ease),
+    background 160ms var(--motion-ease, ease),
+    border-color 160ms var(--motion-ease, ease),
+    color 160ms var(--motion-ease, ease),
+    box-shadow 160ms var(--motion-ease, ease);
   position: relative;
-  overflow: hidden;
 }
 
 .navLink:hover {
-  color: rgba(255, 255, 255, 0.92);
-  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(186, 230, 253, 0.28);
+  transform: translateY(-1px);
 }
+
+.navLinkActive {
+  color: rgba(247, 247, 255, 0.98);
+  background:
+    linear-gradient(180deg, rgba(125, 211, 252, 0.22) 0%, rgba(81, 145, 162, 0.18) 100%);
+  border-color: rgba(125, 211, 252, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 0 1px rgba(81, 145, 162, 0.16),
+    0 6px 18px rgba(14, 165, 233, 0.12);
+}
+
+.navLinkActive::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(186, 230, 253, 0.95), transparent);
+  opacity: 0.9;
+  animation: tabAccentIn 180ms var(--motion-ease, ease) both;
+}
+
+@keyframes tabAccentIn {
+  from {
+    opacity: 0;
+    transform: scaleX(0.55);
+  }
+  to {
+    opacity: 0.9;
+    transform: scaleX(1);
+  }
+}
+
+/* Active session chip */
 
 .activeSessionLink {
   gap: 8px;
-  min-width: 176px;
-  height: 44px;
-  padding: 0 14px;
+  min-width: 168px;
+  height: 40px;
+  padding: 0 12px;
   color: rgba(226, 255, 251, 0.98);
-  background: rgba(20, 184, 166, 0.14);
-  border-color: rgba(45, 212, 191, 0.52);
-  box-shadow: 0 0 18px rgba(20, 184, 166, 0.22);
+  background:
+    linear-gradient(180deg, rgba(45, 212, 191, 0.2) 0%, rgba(20, 184, 166, 0.12) 100%);
+  border-color: rgba(45, 212, 191, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 16px rgba(20, 184, 166, 0.2);
+  animation: sessionChipIn 220ms var(--motion-ease, ease) both;
+}
+
+/* No active-tab underline — two-line text collides with it */
+.activeSessionLink::after,
+.activeSessionLink.navLinkActive::after {
+  content: none;
+  display: none;
+  animation: none;
+}
+
+.activeSessionLink.navLinkActive {
+  background:
+    linear-gradient(180deg, rgba(45, 212, 191, 0.26) 0%, rgba(20, 184, 166, 0.16) 100%);
+  border-color: rgba(94, 234, 212, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 20px rgba(20, 184, 166, 0.26);
 }
 
 .activeSessionLink:hover {
   color: #ffffff;
-  background: rgba(20, 184, 166, 0.2);
+  background: rgba(20, 184, 166, 0.24);
   border-color: rgba(94, 234, 212, 0.72);
+}
+
+@keyframes sessionChipIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .activeSessionPulse {
@@ -198,6 +236,19 @@
   border-radius: 999px;
   background: #5eead4;
   box-shadow: 0 0 10px rgba(94, 234, 212, 0.95);
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.88);
+  }
 }
 
 .activeSessionText {
@@ -210,145 +261,197 @@
 }
 
 .activeSessionText span:first-child {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
 .activeSessionText span:last-child {
-  max-width: 132px;
+  max-width: 128px;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   color: rgba(226, 255, 251, 0.78);
 }
 
+/* Identity cluster */
 
-.navLinkActive {
-  color: rgba(247, 247, 255, 0.98);
-  background: rgba(81, 145, 162, 0.13);
-  border-color: #5191a2;
-  box-shadow: 0 0 0 1px rgba(81, 145, 162, 0.18);
+.userSection {
   position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  padding: 4px 6px 4px 8px;
+  border-radius: 999px;
+  background: rgba(12, 18, 32, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
-.navLinkActive::after {
-  content: "";
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 6px;
-  height: 2px;
-  border-radius: 2px;
-  background: rgba(81,145,162,0.9);
-  opacity: 0.9;
+.devHint {
+  font-size: 0.72rem;
+  color: rgba(153, 246, 228, 0.9);
+  white-space: nowrap;
+  padding: 0 0.2rem;
 }
 
-/* Logout Button Styles */
-.logoutBtn {
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(247, 247, 255, 0.9);
-  cursor: pointer;
-}
-.logoutBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(189, 92, 169, 0.28);
-}
-.logoutBtn:active {
-  transform: scale(0.98);
-}
-
-/* UserLine under Tabs */
-.userLine {
-  margin-top: 2px;
-  font-size: 14px;
-  color: rgba(247, 247, 255, 0.65);
-}
-.userLine strong {
-  color: rgba(247, 247, 255, 0.9);
-  font-weight: 600;
+.devLink {
+  border-color: rgba(148, 163, 184, 0.35) !important;
+  color: rgba(186, 210, 230, 0.88) !important;
+  opacity: 0.85;
 }
 
 .userLink {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
   text-decoration: none;
   color: inherit;
-  min-width: 0;
   border-radius: 999px;
-  padding: 0.15rem 0.35rem 0.15rem 0.15rem;
+  padding: 1px;
+  transition:
+    transform 160ms var(--motion-ease, ease),
+    box-shadow 160ms var(--motion-ease, ease);
 }
 
-.userLink:hover .userLine,
-.userLink:focus-visible .userLine {
-  color: rgba(247, 247, 255, 0.9);
+.userLink:hover,
+.userLink:focus-visible {
+  transform: translateY(-1px);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(125, 211, 252, 0.35);
 }
 
 .userAvatar {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   object-fit: cover;
-  border: 1px solid rgba(143, 211, 223, 0.45);
+  border: 1px solid rgba(143, 211, 223, 0.5);
   background: #0f172a;
   flex: 0 0 auto;
+  display: block;
 }
 
-/* Desktop: Tabs nicht scrollen lassen, sondern normal */
+.logoutBtn {
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(247, 247, 255, 0.88);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 140ms var(--motion-ease, ease),
+    border-color 140ms var(--motion-ease, ease),
+    transform 140ms var(--motion-ease, ease);
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(186, 230, 253, 0.32);
+}
+
+.logoutBtn:active {
+  transform: scale(0.97);
+}
+
+/* Desktop: single row — tabs scroll/clip, identity stays fixed */
 @media (min-width: 900px) {
   .navTabsWrapper {
-    overflow: visible;
-  }
-  .navTabs {
-    min-width: 0;
-  }
-}
-@media (max-width: 900px) {
-    .userLine {
-      margin-top: 4px;
-      margin-bottom: 0;
-    }
-  .navInner {
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-  }
-  .navTabsWrapper {
-    box-sizing: border-box;
-    margin-top: 16px;
-    margin-left: 0;
     overflow-x: auto;
     overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 10px;
-    z-index: 20;
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-  }
-  .navTabs {
-    display: inline-flex;
-    gap: 8px;
-    padding-bottom: 2px;
-    width: max-content;
-    min-width: 0;
-    overflow: visible;
-    white-space: nowrap;
-    z-index: 21;
-    position: relative;
-  }
-  .navTabsWrapper::-webkit-scrollbar {
-    display: none;
   }
 
-  /* Fix accent line cutoff on mobile */
-  /* Accent line is now always inside, no override needed */
-  .navTabs::-webkit-scrollbar {
-    display: none;
+  .navTabs {
+    justify-content: flex-start;
+  }
+
+  .logo {
+    height: 56px;
+  }
+
+  .userSection {
+    margin-left: 4px;
+  }
+}
+
+/* Mobile: brand + identity, then tabs */
+@media (max-width: 899px) {
+  .container {
+    padding: 10px 12px 8px;
+  }
+
+  .brandRow {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .logo {
+    height: 46px;
+  }
+
+  .navTabsWrapper {
+    order: 3;
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    padding-bottom: 2px;
+  }
+
+  .navTabs {
+    gap: 6px;
+  }
+
+  .navLink {
+    height: 38px;
+    padding: 0 13px;
+  }
+
+  .userSection {
+    gap: 6px;
+    padding: 3px 5px 3px 6px;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo {
+    height: 42px;
+  }
+
+  .logoutBtn {
+    padding: 0 9px;
+    font-size: 0.74rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logoLink,
+  .navLink,
+  .userLink,
+  .logoutBtn,
+  .activeSessionLink,
+  .activeSessionPulse {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .navLinkActive::after {
+    animation: none !important;
+  }
+
+  .logoLink:hover,
+  .logoLink:focus-visible,
+  .navLink:hover,
+  .userLink:hover,
+  .userLink:focus-visible {
+    transform: none;
   }
 }

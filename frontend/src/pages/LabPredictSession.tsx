@@ -261,10 +261,12 @@ export default function LabPredictSession() {
 
   return (
     <div style={{ display: 'grid', gap: '1rem', maxWidth: '820px', margin: '0 auto' }}>
-      <h1>Lab · Predict</h1>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Lab · Predict</h1>
+        <p className="ui-section-title-content" style={{ margin: 0 }}>{template.title}</p>
+      </header>
 
       <div className="card" style={{ marginBottom: 0 }}>
-        <h2 style={{ marginTop: 0 }}>{template.title}</h2>
         <p>{template.description}</p>
         <p style={{ marginBottom: '0.4rem' }}>
           Beobachtetes Team: <strong>{session.game_info?.observed_team || session.observed_team || 'Unbekannt'}</strong>

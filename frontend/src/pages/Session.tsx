@@ -819,10 +819,13 @@ export default function SessionPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <h1>Live-Session: {session.module_id}</h1>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Live-Session</h1>
+        <p className="ui-section-title-content" style={{ margin: 0 }}>{session.module_id}</p>
+      </header>
 
       <div className="card">
-        <h2>Spiel-Info</h2>
+        <h2 className="ui-section-title">Spiel-Info</h2>
         {session.game_info ? (
           <>
             <p><strong>Teams:</strong> {session.game_info.team_home} vs {session.game_info.team_away}</p>

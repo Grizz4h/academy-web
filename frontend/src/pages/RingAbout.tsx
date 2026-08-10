@@ -21,6 +21,9 @@ import {
 } from '../utils/sceneAssetName'
 import { buildSceneRatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
+import { computeScenePoolOverview } from '../stats/sceneOverview'
+import { ScenePoolOverviewKpis } from '../components/dashboard/ScenePoolOverviewKpis'
+import { SceneInsightsOverviewKpis } from '../components/dashboard/SceneInsightsOverviewKpis'
 import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
@@ -117,6 +120,59 @@ function compareSceneContext(a: SceneMarker, b: SceneMarker) {
     || left.phase - right.phase
     || left.unit - right.unit
     || left.createdAt - right.createdAt
+}
+
+/** Compact chip label, e.g. "DEL · ST 34" or "NHL · G72". */
+function compactCompetitionContext(scene: SceneMarker): string {
+  const league = scene.league || ''
+  const unitLabel = (scene.competition_unit_label || '').toLowerCase()
+  const unitValue = String(scene.competition_unit_value || '').trim()
+  let unitShort = unitValue
+  if (unitLabel.includes('spieltag')) unitShort = `ST ${unitValue}`
+  else if (unitLabel.includes('game')) unitShort = `G${unitValue}`
+  else if (scene.competition_unit_label && unitValue) {
+    unitShort = `${scene.competition_unit_label} ${unitValue}`
+  }
+  return [league, unitShort].filter(Boolean).join(' · ')
+}
+
+type LatestRoundChip = {
+  contextKey: string
+  league: string
+  label: string
+  shortLabel: string
+  sceneCount: number
+}
+
+function buildLatestRoundChips(scenes: SceneMarker[], leagueFilter?: string): LatestRoundChip[] {
+  const latestByLeague = new Map<string, SceneMarker>()
+  for (const scene of scenes) {
+    const contextKey = sceneCompetitionContextKey(scene)
+    if (!contextKey) continue
+    const league = scene.league || ''
+    if (!league) continue
+    if (leagueFilter && league !== leagueFilter) continue
+    const current = latestByLeague.get(league)
+    if (!current || compareSceneContext(scene, current) > 0) {
+      latestByLeague.set(league, scene)
+    }
+  }
+
+  const chips: LatestRoundChip[] = []
+  for (const scene of latestByLeague.values()) {
+    const contextKey = sceneCompetitionContextKey(scene)
+    if (!contextKey) continue
+    const sceneCount = scenes.filter((item) => sceneCompetitionContextKey(item) === contextKey).length
+    chips.push({
+      contextKey,
+      league: scene.league || '',
+      label: formatCompetitionContext(scene),
+      shortLabel: compactCompetitionContext(scene),
+      sceneCount,
+    })
+  }
+
+  return chips.sort((a, b) => a.league.localeCompare(b.league, 'de'))
 }
 
 export default function RingAbout() {
@@ -460,8 +516,8 @@ export default function RingAbout() {
   const [filterCompetitionUnitType, setFilterCompetitionUnitType] = useState('')
   const [filterCompetitionUnitValue, setFilterCompetitionUnitValue] = useState('')
   const [filterEpisodeSeason, setFilterEpisodeSeason] = useState('')
-  const [filterCurrentContext, setFilterCurrentContext] = useState(false)
-  const [insightsLeagueFilter, setInsightsLeagueFilter] = useState('')
+  const [filterContextKey, setFilterContextKey] = useState('')
+  const [insightsLeagueFilter, setInsightsLeagueFilter] = useState('DEL')
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
   const tracks = useMemo(() => unique(scenes.map(s => getSceneTrack(s)).filter(Boolean)).sort(), [scenes])
@@ -508,18 +564,7 @@ export default function RingAbout() {
     }
   }, [selectedCompetitionPhase, competitionUnits, filterCompetitionUnitValue])
 
-  const sceneStats = useMemo(() => {
-    let assigned = 0
-    let pipeline = 0
-    let neu = 0
-    for (const scene of scenes) {
-      const status = getSceneStatus(scene)
-      if (status === 'ASSIGNED') assigned += 1
-      else if (status === 'PIPELINE') pipeline += 1
-      else neu += 1
-    }
-    return { assigned, pipeline, new: neu }
-  }, [scenes])
+  const sceneOverview = useMemo(() => computeScenePoolOverview(scenes), [scenes])
 
   const matchesNonCompetitionFilters = (s: SceneMarker) => {
     if (sessionFilter && s.session_id !== sessionFilter) return false
@@ -542,38 +587,27 @@ export default function RingAbout() {
     return true
   }
 
-  const currentContextKeys = useMemo(() => {
-    if (!filterCurrentContext) return new Set<string>()
-    const latestByLeague = new Map<string, SceneMarker>()
-    for (const scene of scenes) {
-      if (!matchesNonCompetitionFilters(scene)) continue
-      if (!sceneCompetitionContextKey(scene)) continue
-      const league = scene.league || ''
-      if (!league) continue
-      const current = latestByLeague.get(league)
-      if (!current || compareSceneContext(scene, current) > 0) {
-        latestByLeague.set(league, scene)
-      }
-    }
-    return new Set(Array.from(latestByLeague.values()).map(sceneCompetitionContextKey).filter(Boolean))
-  }, [scenes, filterCurrentContext, sessionFilter, filterSource, filterLeague, filterSeason, filterStatus, filterMinRating, filterTeam, filterTrack, filterDrill, filterEpisodeSeason])
+  const latestRoundChips = useMemo(
+    () => buildLatestRoundChips(scenes, filterLeague || undefined),
+    [scenes, filterLeague],
+  )
 
-  const currentContextLabel = useMemo(() => {
-    if (!filterCurrentContext || currentContextKeys.size === 0) return 'Aktuell'
-    const labels = scenes
-      .filter((scene) => currentContextKeys.has(sceneCompetitionContextKey(scene)))
-      .map((scene) => formatCompetitionContext(scene))
-      .filter(Boolean)
-    const uniqueLabels = unique(labels)
-    if (uniqueLabels.length === 1) return `Aktuell: ${uniqueLabels[0]}`
-    return `Aktuell: ${uniqueLabels.length} Ligen`
-  }, [filterCurrentContext, currentContextKeys, scenes])
+  const activeContextChip = useMemo(
+    () => latestRoundChips.find((chip) => chip.contextKey === filterContextKey) || null,
+    [latestRoundChips, filterContextKey],
+  )
+
+  useEffect(() => {
+    if (filterContextKey && !latestRoundChips.some((chip) => chip.contextKey === filterContextKey)) {
+      setFilterContextKey('')
+    }
+  }, [filterContextKey, latestRoundChips])
 
   const filtered = useMemo(() => {
     const result = scenes.filter(s => {
       if (!matchesNonCompetitionFilters(s)) return false
-      if (filterCurrentContext) {
-        if (!currentContextKeys.has(sceneCompetitionContextKey(s))) return false
+      if (filterContextKey) {
+        if (sceneCompetitionContextKey(s) !== filterContextKey) return false
       } else {
         if (filterCompetitionPhase && s.competition_phase !== filterCompetitionPhase) return false
         if (filterCompetitionUnitType && s.competition_unit_type !== filterCompetitionUnitType) return false
@@ -589,9 +623,9 @@ export default function RingAbout() {
       })
     }
     return result
-  }, [scenes, sessionFilter, filterSource, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterCurrentContext, currentContextKeys, sortMode])
+  }, [scenes, sessionFilter, filterSource, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterContextKey, sortMode])
 
-  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || filterStatus || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterCurrentContext
+  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || filterStatus || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterContextKey
 
   const resetFilters = () => {
     setFilterLeague('')
@@ -607,7 +641,7 @@ export default function RingAbout() {
     setFilterCompetitionUnitType('')
     setFilterCompetitionUnitValue('')
     setFilterEpisodeSeason('')
-    setFilterCurrentContext(false)
+    setFilterContextKey('')
     if (sessionFilter) {
       setSearchParams({})
     }
@@ -619,11 +653,18 @@ export default function RingAbout() {
     const nextParams = new URLSearchParams(searchParams)
     if (tab === 'insights') {
       nextParams.set('tab', 'insights')
+      setInsightsLeagueFilter('DEL')
     } else {
       nextParams.delete('tab')
     }
     setSearchParams(nextParams)
   }
+
+  useEffect(() => {
+    if (activeTab === 'insights') {
+      setInsightsLeagueFilter('DEL')
+    }
+  }, [activeTab])
 
   const insightsScenes = useMemo(() => {
     if (!insightsLeagueFilter) return scenes
@@ -714,7 +755,7 @@ export default function RingAbout() {
     } } : null,
     filterCompetitionUnitValue ? { key: 'unit', label: `${selectedCompetitionPhase?.unit.label || 'Einheit'}: ${filterCompetitionUnitValue}`, clear: () => setFilterCompetitionUnitValue('') } : null,
     filterEpisodeSeason ? { key: 'episodeSeason', label: `Staffel: ${filterEpisodeSeason}`, clear: () => setFilterEpisodeSeason('') } : null,
-    filterCurrentContext ? { key: 'current', label: currentContextLabel, clear: () => setFilterCurrentContext(false) } : null,
+    activeContextChip ? { key: 'context', label: activeContextChip.label, clear: () => setFilterContextKey('') } : null,
   ].filter(Boolean) as Array<{ key: string; label: string; clear: () => void }>
 
   const advancedFilterCount = [
@@ -742,9 +783,9 @@ export default function RingAbout() {
         }
       `}</style>
 
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Rink About It!</h1>
-        <p className={styles.pageLead}>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Rink About It!</h1>
+        <p className="ui-page-lead">
           Szenenpool und redaktionelle Insights — filtern, bewerten und für die nächste Episode vorbereiten.
         </p>
         <div className={styles.headerRow}>
@@ -782,28 +823,11 @@ export default function RingAbout() {
       {activeTab === 'pool' && (
         <>
           {scenes.length > 0 && (
-            <div className={styles.kpiGrid}>
-              <Card className={styles.kpiCard}>
-                <div className={styles.kpiTitle}>Szenen gesamt</div>
-                <div className={styles.kpiValue}>{scenes.length}</div>
-                <div className={styles.kpiHint}>im Pool gespeichert</div>
-              </Card>
-              <Card className={styles.kpiCard}>
-                <div className={styles.kpiTitle}>Neu</div>
-                <div className={styles.kpiValue}>{sceneStats.new}</div>
-                <div className={styles.kpiHint}>noch nicht in Pipeline</div>
-              </Card>
-              <Card className={styles.kpiCard}>
-                <div className={styles.kpiTitle}>Pipeline</div>
-                <div className={styles.kpiValue}>{sceneStats.pipeline}</div>
-                <div className={styles.kpiHint}>in Produktion aufgenommen</div>
-              </Card>
-              <Card className={styles.kpiCard}>
-                <div className={styles.kpiTitle}>Zugeordnet</div>
-                <div className={styles.kpiValue}>{sceneStats.assigned}</div>
-                <div className={styles.kpiHint}>für Episoden gesetzt</div>
-              </Card>
-            </div>
+            <ScenePoolOverviewKpis
+              overview={sceneOverview}
+              className={styles.kpiGrid}
+              onApplyStatusFilter={(status) => setFilterStatus(status)}
+            />
           )}
 
           {scenes.length > 0 && (
@@ -814,7 +838,7 @@ export default function RingAbout() {
                 aria-pressed={filterStatus === 'NEW'}
                 className={`${styles.quickChip}${filterStatus === 'NEW' ? ` ${styles.quickChipActive}` : ''}`}
               >
-                Neu: {sceneStats.new}
+                Neu: {sceneOverview.new}
               </button>
               <button
                 type="button"
@@ -822,33 +846,35 @@ export default function RingAbout() {
                 aria-pressed={filterStatus === 'PIPELINE'}
                 className={`${styles.quickChip} ${styles.quickChipPipeline}${filterStatus === 'PIPELINE' ? ` ${styles.quickChipPipelineActive}` : ''}`}
               >
-                Pipeline: {sceneStats.pipeline}
+                Pipeline: {sceneOverview.pipeline}
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const next = !filterCurrentContext
-                  setFilterCurrentContext(next)
-                  if (next) {
-                    setFilterCompetitionPhase('')
-                    setFilterCompetitionUnitType('')
-                    setFilterCompetitionUnitValue('')
-                  }
-                }}
-                aria-pressed={filterCurrentContext}
-                disabled={scenes.length === 0}
-                title={filterCurrentContext && currentContextKeys.size === 0 ? 'Kein aktueller Spielkontext für die aktiven Filter gefunden' : 'Neueste Spielkontexte anzeigen'}
-                className={`${styles.quickChip} ${styles.quickChipCurrent}${filterCurrentContext ? ` ${styles.quickChipCurrentActive}` : ''}`}
-              >
-                {currentContextLabel}
-              </button>
+              {latestRoundChips.map((chip) => (
+                <button
+                  key={chip.contextKey}
+                  type="button"
+                  onClick={() => {
+                    const nextKey = filterContextKey === chip.contextKey ? '' : chip.contextKey
+                    setFilterContextKey(nextKey)
+                    if (nextKey) {
+                      setFilterCompetitionPhase('')
+                      setFilterCompetitionUnitType('')
+                      setFilterCompetitionUnitValue('')
+                    }
+                  }}
+                  aria-pressed={filterContextKey === chip.contextKey}
+                  title={`Neuester Spieltag in ${chip.league}: ${chip.label}`}
+                  className={`${styles.quickChip} ${styles.quickChipCurrent}${filterContextKey === chip.contextKey ? ` ${styles.quickChipCurrentActive}` : ''}`}
+                >
+                  {chip.shortLabel} · {chip.sceneCount}
+                </button>
+              ))}
               <button
                 type="button"
                 onClick={() => setFilterStatus(filterStatus === 'ASSIGNED' ? '' : 'ASSIGNED')}
                 aria-pressed={filterStatus === 'ASSIGNED'}
                 className={`${styles.quickChip} ${styles.quickChipAssigned}${filterStatus === 'ASSIGNED' ? ` ${styles.quickChipAssignedActive}` : ''}`}
               >
-                Zugeordnet: {sceneStats.assigned}
+                Zugeordnet: {sceneOverview.assigned}
               </button>
             </div>
           )}
@@ -988,7 +1014,7 @@ export default function RingAbout() {
                               className="appSelect"
                               value={filterCompetitionPhase}
                               onChange={e => {
-                                setFilterCurrentContext(false)
+                                setFilterContextKey('')
                                 setFilterCompetitionPhase(e.target.value)
                                 const nextPhase = competitionPhases.find((phase) => phase.id === e.target.value)
                                 setFilterCompetitionUnitType(nextPhase?.unit.type || '')
@@ -1008,7 +1034,7 @@ export default function RingAbout() {
                               className="appSelect"
                               value={filterCompetitionUnitValue}
                               onChange={e => {
-                                setFilterCurrentContext(false)
+                                setFilterContextKey('')
                                 setFilterCompetitionUnitType(selectedCompetitionPhase.unit.type)
                                 setFilterCompetitionUnitValue(e.target.value)
                               }}
@@ -1101,7 +1127,7 @@ export default function RingAbout() {
                           className="appSelect"
                           value={filterCompetitionPhase}
                           onChange={e => {
-                            setFilterCurrentContext(false)
+                            setFilterContextKey('')
                             setFilterCompetitionPhase(e.target.value)
                             const nextPhase = competitionPhases.find((phase) => phase.id === e.target.value)
                             setFilterCompetitionUnitType(nextPhase?.unit.type || '')
@@ -1118,7 +1144,7 @@ export default function RingAbout() {
                           className="appSelect"
                           value={filterCompetitionUnitValue}
                           onChange={e => {
-                            setFilterCurrentContext(false)
+                            setFilterContextKey('')
                             setFilterCompetitionUnitType(selectedCompetitionPhase.unit.type)
                             setFilterCompetitionUnitValue(e.target.value)
                           }}
@@ -1181,7 +1207,11 @@ export default function RingAbout() {
           {!isLoading && !error && scenes.length > 0 && filtered.length === 0 && (
             <Card className={styles.emptyCard}>
               <h2 className={styles.emptyTitle}>Keine Szenen für die gewählten Filter</h2>
-              <p className={styles.emptyText}>Passe die Filter an oder setze sie zurück, um wieder Szenen zu sehen.</p>
+              <p className={styles.emptyText}>
+                {filterContextKey
+                  ? 'Kein Treffer für diesen Spieltag — evtl. blockieren andere Filter (Status, Team …) die Auswahl.'
+                  : 'Passe die Filter an oder setze sie zurück, um wieder Szenen zu sehen.'}
+              </p>
               <div className={styles.emptyActions}>
                 <button type="button" className={styles.filterReset} onClick={resetFilters}>
                   Filter zurücksetzen
@@ -1366,28 +1396,16 @@ export default function RingAbout() {
 
           {!isLoading && !error && scenes.length > 0 && (
             <div className={styles.insightsStack}>
-              <div className={styles.kpiGrid}>
-                <Card className={styles.kpiCard}>
-                  <div className={styles.kpiTitle}>Szenen</div>
-                  <div className={styles.kpiValue}>{insightsScenes.length}</div>
-                  <div className={styles.kpiHint}>{insightsLeagueFilter ? `Liga ${insightsLeagueFilter}` : 'alle Ligen'}</div>
-                </Card>
-                <Card className={styles.kpiCard}>
-                  <div className={styles.kpiTitle}>Veröffentlicht</div>
-                  <div className={styles.kpiValue}>{insights.publishedCount}</div>
-                  <div className={styles.kpiHint}>Status Zugeordnet</div>
-                </Card>
-                <Card className={styles.kpiCard}>
-                  <div className={styles.kpiTitle}>Offen</div>
-                  <div className={styles.kpiValue}>{insights.unpublishedCount}</div>
-                  <div className={styles.kpiHint}>noch nicht zugeordnet</div>
-                </Card>
-                <Card className={styles.kpiCard}>
-                  <div className={styles.kpiTitle}>Teams</div>
-                  <div className={styles.kpiValue}>{insights.teamDistribution.length}</div>
-                  <div className={styles.kpiHint}>mit beobachteten Szenen</div>
-                </Card>
-              </div>
+              <SceneInsightsOverviewKpis
+                className={styles.kpiGrid}
+                overview={{
+                  total: insightsScenes.length,
+                  published: insights.publishedCount,
+                  unpublished: insights.unpublishedCount,
+                  teamCount: insights.teamDistribution.length,
+                  leagueFilter: insightsLeagueFilter || undefined,
+                }}
+              />
 
               {leagues.length > 0 && (
                 <Card className={styles.filterCard}>

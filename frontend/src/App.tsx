@@ -17,10 +17,11 @@ import LabPage from './pages/Lab'
 import LabPredictSetup from './pages/LabPredictSetup'
 import LabPredictSession from './pages/LabPredictSession'
 import DevLab from './pages/DevLab'
+import DevUiKit from './pages/DevUiKit'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
 import TopNav from './components/TopNav'
-import { RewardHost, RewardProvider } from './features/rewards'
+import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 
 function App() {
   return (
@@ -48,10 +49,12 @@ function App() {
             <Route path="/observation/stats" element={<ObservationStats />} />
             <Route path="/ringabout" element={<RingAbout />} />
             <Route path="/dev" element={<DevLab />} />
+            <Route path="/dev/ui" element={<DevUiKit />} />
           </Routes>
         </main>
       </div>
       <RewardHost />
+      <RewardDevTools />
     </RewardProvider>
   )
 }

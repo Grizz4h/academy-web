@@ -197,8 +197,10 @@ export default function AccountPage() {
   if (!user) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.pageTitle}>Account</h1>
-        <p className={styles.pageLead}>Bitte melde dich an, um dein RINK-Profil zu bearbeiten.</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Account</h1>
+          <p className="ui-page-lead">Bitte melde dich an, um dein RINK-Profil zu bearbeiten.</p>
+        </header>
       </div>
     )
   }
@@ -206,8 +208,10 @@ export default function AccountPage() {
   if (isLoading || !draft) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.pageTitle}>Account</h1>
-        <p className={styles.pageLead}>Profil wird geladen …</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Account</h1>
+          <p className="ui-page-lead">Profil wird geladen …</p>
+        </header>
       </div>
     )
   }
@@ -215,28 +219,30 @@ export default function AccountPage() {
   if (error) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.pageTitle}>Account</h1>
-        <p className={styles.pageLead}>Profil konnte nicht geladen werden.</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Account</h1>
+          <p className="ui-page-lead">Profil konnte nicht geladen werden.</p>
+        </header>
       </div>
     )
   }
 
   return (
     <div className={styles.page}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Account</h1>
-        <p className={styles.pageLead}>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Account</h1>
+        <p className="ui-page-lead">
           Baue deine RINK ID und speichere persönliche Präferenzen. Keine zweite Stats-Seite – nur Profil und Identität.
         </p>
       </header>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>RINK ID</h2>
+        <h2 className="ui-section-title">RINK ID</h2>
         <RinkIdentityCard profile={draft} stats={identityStats} />
       </section>
 
       <Card className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Progression & Achievements</h2>
+        <h2 className="ui-section-title">Progression & Achievements</h2>
         <p className={styles.sectionLead}>
           XP, Level und Freischaltungen entstehen aus echten Academy-Aktivitäten – nicht aus Dummy-Sessions.
         </p>
@@ -244,7 +250,7 @@ export default function AccountPage() {
       </Card>
 
       <Card className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Profil</h2>
+        <h2 className="ui-section-title">Profil</h2>
 
         <label className={styles.field}>
           <span className={styles.label}>Anzeigename</span>
@@ -280,7 +286,7 @@ export default function AccountPage() {
       </Card>
 
       <Card className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Hockey-Personalisierung</h2>
+        <h2 className="ui-section-title">Hockey-Personalisierung</h2>
 
         <div className={styles.row2}>
           <label className={styles.field}>
@@ -410,7 +416,7 @@ export default function AccountPage() {
       </Card>
 
       <Card className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Academy-Personalisierung</h2>
+        <h2 className="ui-section-title">Academy-Personalisierung</h2>
         <p className={styles.sectionLead}>
           Präferenzen werden gespeichert. Die Academy nutzt sie später, ohne bestehende Drills jetzt umzubauen.
         </p>
@@ -477,7 +483,7 @@ export default function AccountPage() {
       </Card>
 
       <Card className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Account-Status</h2>
+        <h2 className="ui-section-title">Account-Status</h2>
         <div className={styles.statusGrid}>
           <div>
             <div className={styles.statusLabel}>Sessions abgeschlossen</div>

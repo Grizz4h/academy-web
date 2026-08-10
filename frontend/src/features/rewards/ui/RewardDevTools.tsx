@@ -1,16 +1,21 @@
 import { useRewards } from '../state/RewardContext'
 import { useUser } from '../../../context/UserContext'
+import {
+  isFloatingRewardDevToolsEnabled,
+  REWARD_PREVIEW_BRONZE,
+  REWARD_PREVIEW_GOLD,
+  REWARD_PREVIEW_MASTERY,
+  REWARD_PREVIEW_QUEUE,
+  REWARD_PREVIEW_SILVER,
+} from '../../../dev/rewardPreviewActions'
 
 export default function RewardDevTools() {
   const { user } = useUser()
   const { enqueueReward, enqueueRewards } = useRewards()
 
-  const forceEnabled =
-    typeof window !== 'undefined' &&
-    (new URLSearchParams(window.location.search).get('rewardsDebug') === '1' ||
-      localStorage.getItem('academy.devRewards') === '1')
-
+  const forceEnabled = isFloatingRewardDevToolsEnabled()
   if (!user && !forceEnabled) return null
+  if (!forceEnabled) return null
 
   return (
     <div
@@ -25,120 +30,24 @@ export default function RewardDevTools() {
         maxWidth: 'calc(100vw - 32px)',
       }}
     >
-      {/* ── Bronze ── */}
-      <button
-        className="btn"
-        style={{ minWidth: 110, fontSize: '0.82rem' }}
-        onClick={() =>
-          enqueueReward({
-            kind: 'achievement',
-            title: 'Bronze Unlock',
-            description: 'Kleiner Fortschritt freigeschaltet.',
-            amountPux: 10,
-            visualTier: 'bronze',
-            icon: '1',
-            variant: 'popup',
-          })
-        }
-      >
-        🥉 Bronze
+      <button className="btn" style={{ minWidth: 110, fontSize: '0.82rem' }} onClick={() => enqueueReward(REWARD_PREVIEW_BRONZE)}>
+        Bronze
       </button>
-
-      {/* ── Silver ── */}
-      <button
-        className="btn"
-        style={{ minWidth: 110, fontSize: '0.82rem' }}
-        onClick={() =>
-          enqueueReward({
-            kind: 'achievement',
-            title: 'Silver Unlock',
-            description: 'Stärkerer Reward freigeschaltet.',
-            amountPux: 25,
-            visualTier: 'silver',
-            icon: '10',
-            variant: 'popup',
-          })
-        }
-      >
-        🥈 Silver
+      <button className="btn" style={{ minWidth: 110, fontSize: '0.82rem' }} onClick={() => enqueueReward(REWARD_PREVIEW_SILVER)}>
+        Silver
       </button>
-
-      {/* ── Gold ── */}
-      <button
-        className="btn"
-        style={{ minWidth: 110, fontSize: '0.82rem' }}
-        onClick={() =>
-          enqueueReward({
-            kind: 'achievement',
-            title: 'Gold Unlock',
-            description: 'Besonderes Achievement freigeschaltet.',
-            amountPux: 50,
-            visualTier: 'gold',
-            icon: '50',
-            variant: 'popup',
-          })
-        }
-      >
-        🥇 Gold
+      <button className="btn" style={{ minWidth: 110, fontSize: '0.82rem' }} onClick={() => enqueueReward(REWARD_PREVIEW_GOLD)}>
+        Gold
       </button>
-
-      {/* ── Mastery ── */}
-      <button
-        className="btn"
-        style={{ minWidth: 110, fontSize: '0.82rem' }}
-        onClick={() =>
-          enqueueReward({
-            kind: 'mastery',
-            title: 'Mastery Unlock',
-            description: 'Höchste Stufe. Seltene Auszeichnung.',
-            amountPux: 100,
-            visualTier: 'mastery',
-            icon: 'M',
-            variant: 'hero',
-            mastery: 'mastery',
-          })
-        }
-      >
-        👑 Mastery
+      <button className="btn" style={{ minWidth: 110, fontSize: '0.82rem' }} onClick={() => enqueueReward(REWARD_PREVIEW_MASTERY)}>
+        Mastery
       </button>
-
-      {/* ── Full queue: Bronze → Silver → Gold ── */}
       <button
         className="btn"
         style={{ minWidth: 130, fontSize: '0.82rem' }}
-        onClick={() =>
-          enqueueRewards([
-            {
-              kind: 'achievement',
-              title: 'Bronze Unlock',
-              description: 'Kleiner Fortschritt freigeschaltet.',
-              amountPux: 10,
-              visualTier: 'bronze',
-              icon: '1',
-              variant: 'popup',
-            },
-            {
-              kind: 'achievement',
-              title: 'Silver Unlock',
-              description: 'Stärkerer Reward freigeschaltet.',
-              amountPux: 25,
-              visualTier: 'silver',
-              icon: '10',
-              variant: 'popup',
-            },
-            {
-              kind: 'achievement',
-              title: 'Gold Unlock',
-              description: 'Besonderes Achievement freigeschaltet.',
-              amountPux: 50,
-              visualTier: 'gold',
-              icon: '50',
-              variant: 'popup',
-            },
-          ])
-        }
+        onClick={() => enqueueRewards([...REWARD_PREVIEW_QUEUE])}
       >
-        ▶ Queue B→S→G
+        Queue B→S→G
       </button>
     </div>
   )

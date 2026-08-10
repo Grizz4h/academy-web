@@ -508,7 +508,10 @@ export default function SessionSetup() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <h1>Session Setup: {currentModule.title}</h1>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Session Setup</h1>
+        <p className="ui-section-title-content" style={{ margin: 0 }}>{currentModule.title}</p>
+      </header>
 
       {!user && (
         <div className="card" style={{ border: '1px solid #ffc107' }}>
@@ -517,7 +520,7 @@ export default function SessionSetup() {
       )}
 
       <div className="card">
-        <h2>Modul Info</h2>
+        <h2 className="ui-section-title">Modul Info</h2>
         <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{rwg(currentModule.description ?? '')}</p>
         <div style={{ marginTop: '1rem' }}>
           <strong>Lernziele:</strong>

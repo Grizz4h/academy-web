@@ -10,8 +10,10 @@
 
 .title {
   margin: 0;
-  color: var(--accent);
-  font-size: 1.1rem;
+  font-family: var(--font-body);
+  color: var(--text-accent);
+  font-size: var(--type-section);
+  font-weight: 700;
 }
 
 .activeWeeks {

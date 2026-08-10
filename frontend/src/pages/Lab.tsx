@@ -36,7 +36,10 @@ export default function LabPage() {
 
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
-      <h1>Lab</h1>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Lab</h1>
+        <p className="ui-page-lead">Experimentelle Module und Prototypen.</p>
+      </header>
 
       {!labContent && (
         <div className="card" style={{ marginBottom: 0 }}>

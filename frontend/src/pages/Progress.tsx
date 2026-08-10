@@ -18,7 +18,11 @@ import {
   TOURNAMENT_YEAR_OPTIONS,
 } from '../stats/seasonNormalization'
 import { getRealSessions } from '../utils/sessionEligibility'
+import { computeSessionOverview } from '../stats/sessionOverview'
+import { SessionOverviewKpis } from '../components/dashboard/SessionOverviewKpis'
+import { RewardOverviewKpis } from '../components/dashboard/RewardOverviewKpis'
 import { UiProgress } from '../components/ui'
+import { AchievementRevealItem } from '../components/progression/AchievementRevealItem'
 import styles from './Progress.module.css'
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -279,13 +283,10 @@ export default function Progress() {
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }))
   const unlockedMasteriesCount = Object.keys(rewardState.unlockedMasteries || {}).length
 
-  const overview = useMemo(() => {
-    const total = sessionList.length
-    const completed = sessionList.filter((s) => s.state === 'COMPLETED').length
-    const aborted = sessionList.filter((s) => s.state === 'ABORTED').length
-    const active = sessionList.filter((s) => s.state !== 'COMPLETED' && s.state !== 'ABORTED').length
-    return { total, completed, aborted, active }
-  }, [sessionList])
+  const overview = useMemo(
+    () => computeSessionOverview(sessionList),
+    [sessionList],
+  )
 
   const analyzedTeamCount = teamData.filter((team) => team.count > 0).length
 
@@ -308,9 +309,9 @@ export default function Progress() {
   if (!user) {
     return (
       <div className={styles.page}>
-        <header className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Stats</h1>
-          <p className={styles.pageLead}>Melde dich an, um Fortschritt, Teams und Belohnungen zu sehen.</p>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Stats</h1>
+          <p className="ui-page-lead">Melde dich an, um Fortschritt, Teams und Belohnungen zu sehen.</p>
         </header>
         <Card>Bitte oben anmelden, dann zeigen wir dir deine Stats.</Card>
       </div>
@@ -321,40 +322,28 @@ export default function Progress() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Stats</h1>
-        <p className={styles.pageLead}>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Stats</h1>
+        <p className="ui-page-lead">
           Sessions, Team-Abdeckung und Belohnungen — zuerst der Überblick, Details bei Bedarf.
         </p>
       </header>
 
-      <div className={styles.kpiGrid}>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>Sessions gesamt</div>
-          <div className={styles.kpiValue}>{overview.total}</div>
-          <div className={styles.kpiHint}>{overview.active} aktiv</div>
-        </Card>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>Abgeschlossen</div>
-          <div className={styles.kpiValue}>{overview.completed}</div>
-          <div className={styles.kpiHint}>{overview.aborted} abgebrochen</div>
-        </Card>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>Erfolge</div>
-          <div className={styles.kpiValue}>{unlockedAchievementsCount}/{totalAchievements}</div>
-          <div className={styles.kpiHint}>{unlockedMasteriesCount} Meisterschaften</div>
-        </Card>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiTitle}>PUX!</div>
-          <div className={styles.kpiValue}>{formatPux(rewardState.currency.PUX || 0)}</div>
-          <div className={styles.kpiHint}>{analyzedTeamCount} Teams analysiert</div>
-        </Card>
-      </div>
+      <SessionOverviewKpis overview={overview} className={styles.kpiGrid} />
+
+      <RewardOverviewKpis
+        className={styles.kpiGridSecondary}
+        unlockedAchievementsCount={unlockedAchievementsCount}
+        totalAchievements={totalAchievements}
+        unlockedMasteriesCount={unlockedMasteriesCount}
+        puxBalance={rewardState.currency.PUX || 0}
+        analyzedTeamCount={analyzedTeamCount}
+      />
 
       <Card className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
           <div>
-            <h2 className={styles.sectionTitle}>Team-Übersicht</h2>
+            <h2 className="ui-section-title">Team-Übersicht</h2>
             <p className={styles.sectionLead}>Wie oft wurde jedes Team analysiert?</p>
           </div>
           <div className={styles.teamFilterSelectsDesktop}>
@@ -462,7 +451,7 @@ export default function Progress() {
           <div ref={detailRef} className={styles.detailAnchor}>
             <div className={styles.sectionHeader}>
               <div>
-                <h2 className={styles.sectionTitle}>Team-Detail: {selectedTeamExposure.team}</h2>
+                <h2 className="ui-section-title">Team-Detail: {selectedTeamExposure.team}</h2>
                 <p className={styles.sectionLead}>
                   <strong>{selectedTeamExposure.sessionCount} Analysen</strong>
                   {' '}({selectedTeamExposure.completedCount} abgeschlossen)
@@ -643,51 +632,13 @@ export default function Progress() {
                       {items.map((item) => {
                         const unlocked = rewardState.unlockedAchievements[item.achievement.id]
                         return (
-                          <li
-                            key={item.achievement.id}
-                            className={`${styles.achievementItem} ${item.isUnlocked ? styles.achievementItemUnlocked : ''}`}
-                          >
-                            <span
-                              className={styles.achievementTierDot}
-                              style={{ background: TIER_COLORS[item.achievement.tier] ?? '#888' }}
-                              title={item.achievement.tier}
+                          <li key={item.achievement.id}>
+                            <AchievementRevealItem
+                              item={item}
+                              tierColor={TIER_COLORS[item.achievement.tier] ?? '#888'}
+                              unlockedAt={unlocked?.unlockedAt}
+                              onReplay={item.isUnlocked ? () => replayAchievementAnimation(item) : undefined}
                             />
-                            <div className={styles.achievementItemContent}>
-                              <div className={styles.achievementItemTitle}>
-                                {item.achievement.title}
-                                <span className={styles.achievementPux}>+{item.achievement.reward.PUX} PUX</span>
-                              </div>
-                              <div className={styles.achievementItemDesc}>{item.achievement.description}</div>
-                              {item.isUnlocked && unlocked && (
-                                <div className={styles.achievementMetaRow}>
-                                  <div className={styles.achievementUnlockedAt}>
-                                    ✓ {new Date(unlocked.unlockedAt).toLocaleDateString('de-DE')}
-                                  </div>
-                                  <button
-                                    type="button"
-                                    className={styles.achievementReplayButton}
-                                    onClick={() => replayAchievementAnimation(item)}
-                                    aria-label={`Erfolg ${item.achievement.title} erneut abspielen`}
-                                    title="Animation erneut abspielen"
-                                  >
-                                    Erneut
-                                  </button>
-                                </div>
-                              )}
-                              {!item.isUnlocked && item.progress > 0 && (
-                                <div className={styles.achievementProgressWrap}>
-                                  <div className={styles.achievementProgressTrack}>
-                                    <div
-                                      className={styles.achievementProgressFill}
-                                      style={{ width: `${Math.round(item.progress * 100)}%` }}
-                                    />
-                                  </div>
-                                  <span className={styles.achievementProgressLabel}>
-                                    {item.current}/{item.target}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
                           </li>
                         )
                       })}

@@ -132,10 +132,10 @@ export default function ObservationStats() {
 
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
-      <div className="card">
-        <h1>Observation Stats</h1>
-        <p>Filtere nach Liga, Team und Spieler. Die Player Card basiert auf den gespeicherten Raw Observations.</p>
-      </div>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Observation Stats</h1>
+        <p className="ui-page-lead">Filtere nach Liga, Team und Spieler. Die Player Card basiert auf den gespeicherten Raw Observations.</p>
+      </header>
 
       <div className="card" style={{ display: 'grid', gap: '0.75rem' }}>
         <label>

@@ -51,9 +51,9 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
       </Card>
 
       <div className={styles.priorityContainer}>
-        <Card className={styles.priorityCard} elevation="featured">
+        <Card className={styles.priorityCard} elevation="quiet">
         <p className={styles.sectionEyebrow}>Fokus</p>
-        <h2 className={styles.sectionTitle}>Als Nächstes empfohlen</h2>
+        <h2 className="ui-section-title-content">Als Nächstes empfohlen</h2>
         {recommendedNext.length === 0 ? (
           <p className={styles.emptyState}>Keine Drills verfügbar.</p>
         ) : (
@@ -76,9 +76,9 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
         )}
       </Card>
 
-      <Card className={styles.priorityCard} elevation="quiet">
+        <Card className={styles.priorityCard} elevation="quiet">
         <p className={styles.sectionEyebrow}>Historie</p>
-        <h2 className={styles.sectionTitle}>Am häufigsten trainiert</h2>
+        <h2 className="ui-section-title-content">Am häufigsten trainiert</h2>
         {mostTrained.length === 0 ? (
           <p className={styles.emptyState}>Noch keine Drills absolviert.</p>
         ) : (

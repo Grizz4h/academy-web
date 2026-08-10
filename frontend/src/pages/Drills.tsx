@@ -24,6 +24,10 @@ export default function Drills() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Drills</h1>
+        <p className="ui-section-title-content" style={{ margin: 0 }}>{currentModule.title}</p>
+      </header>
       <div>
         <button
           className="btn btn-secondary"
@@ -32,7 +36,6 @@ export default function Drills() {
         >
           ← Zurück zur Theorie
         </button>
-        <h1>Drills: {currentModule.title}</h1>
         <p>{currentModule.description || currentModule.summary}</p>
       </div>
 

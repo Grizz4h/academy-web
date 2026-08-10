@@ -6,6 +6,7 @@ import type { CurriculumTrack, CurriculumModule, Session } from '../api'
 import theoryData from '../data/theoryData.json'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
+import { UiButton } from '../components/ui'
 import styles from './Curriculum.module.css'
 
 const cluster2Tracks = [
@@ -69,8 +70,10 @@ export default function Curriculum() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Lehrplan</h1>
-      <p className={styles.hint}>Tracks antippen, um Module und Details auszuklappen.</p>
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Lehrplan</h1>
+        <p className="ui-page-lead">Tracks antippen, um Module und Details auszuklappen.</p>
+      </header>
 
       {curriculum?.tracks.map((track: CurriculumTrack) => {
         const activeModules = (track.modules || []).filter((module: CurriculumModule) => module.active !== false)
@@ -101,7 +104,19 @@ export default function Curriculum() {
                 )
                 return (
                 <div key={module.id} className={styles.moduleCard}>
-                  <h3 className={styles.moduleTitle}>{module.title}</h3>
+                  <div className={styles.moduleTop}>
+                    <h3 className={styles.moduleTitle}>{module.title}</h3>
+                    <div className={styles.moduleActions}>
+                      <UiButton type="button" size="sm" onClick={() => navigate(`/setup/${module.id}`)}>
+                        Starten
+                      </UiButton>
+                      {module.id in theoryData && (
+                        <UiButton type="button" size="sm" variant="ghost" onClick={() => navigate(`/theory/${module.id}`)}>
+                          Theorie lesen
+                        </UiButton>
+                      )}
+                    </div>
+                  </div>
                   <p className={styles.moduleText}>{module.summary}</p>
                   {module.description && (
                     <p className={styles.moduleMuted}>{module.description}</p>
@@ -133,22 +148,6 @@ export default function Curriculum() {
                   <div className={styles.moduleStats}>
                     Schwierigkeit: {module.difficulty || 1} | Dauer: {module.duration || 45} Min
                   </div>
-                  <div className={styles.moduleActions}>
-                    <button
-                      className="btn"
-                      onClick={() => navigate(`/setup/${module.id}`)}
-                    >
-                      Starten
-                    </button>
-                    {module.id in theoryData && (
-                      <button
-                        className="btn"
-                        onClick={() => navigate(`/theory/${module.id}`)}
-                      >
-                        Theorie
-                      </button>
-                    )}
-                  </div>
                 </div>
                 )
               })}
@@ -177,7 +176,14 @@ export default function Curriculum() {
             <div className={styles.moduleGrid}>
               {track.modules.map((module) => (
                 <div key={module.id} className={`${styles.moduleCard} ${styles.moduleCardCluster}`}>
-                  <h3 className={styles.moduleTitle}>{module.title}</h3>
+                  <div className={styles.moduleTop}>
+                    <h3 className={styles.moduleTitle}>{module.title}</h3>
+                    <div className={styles.moduleActions}>
+                      <UiButton type="button" size="sm" onClick={() => navigate('/cluster2/f')}>
+                        Starten
+                      </UiButton>
+                    </div>
+                  </div>
                   <p className={styles.moduleText}>{module.summary}</p>
                   {module.description && (
                     <p className={styles.moduleMuted}>{module.description}</p>
@@ -194,14 +200,6 @@ export default function Curriculum() {
                   )}
                   <div className={styles.moduleStats}>
                     Schwierigkeit: {module.difficulty || 1} | Dauer: {module.duration || 20} Min
-                  </div>
-                  <div className={styles.moduleActions}>
-                    <button
-                      className="btn"
-                      onClick={() => navigate('/cluster2/f')}
-                    >
-                      Starten
-                    </button>
                   </div>
                 </div>
               ))}
