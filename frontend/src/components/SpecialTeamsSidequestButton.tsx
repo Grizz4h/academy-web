@@ -305,7 +305,16 @@ export function SpecialTeamsSidequestButton({
             cursor: 'pointer',
             letterSpacing: '0.02em',
             boxShadow: '0 0 16px rgba(251, 191, 36, 0.22)',
+            transition: 'box-shadow 0.15s, transform 0.1s',
             minWidth: 220,
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 28px rgba(251, 191, 36, 0.5)'
+            ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 16px rgba(251, 191, 36, 0.22)'
+            ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
           }}
         >
           ⚡ Special Teams

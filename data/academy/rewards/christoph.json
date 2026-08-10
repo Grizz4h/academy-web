@@ -1297,6 +1297,30 @@
       "processedAt": "2026-08-10T19:05:37.149Z",
       "grantedXp": 0,
       "grantedPux": 0
+    },
+    "locker:seen:2026-08-10T19:46:59.963Z": {
+      "eventId": "locker:seen:2026-08-10T19:46:59.963Z",
+      "processedAt": "2026-08-10T19:46:59.963Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:seen:2026-08-10T19:47:07.360Z": {
+      "eventId": "locker:seen:2026-08-10T19:47:07.360Z",
+      "processedAt": "2026-08-10T19:47:07.360Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:seen:2026-08-10T19:48:44.348Z": {
+      "eventId": "locker:seen:2026-08-10T19:48:44.348Z",
+      "processedAt": "2026-08-10T19:48:44.348Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:seen:2026-08-10T21:03:25.881Z": {
+      "eventId": "locker:seen:2026-08-10T21:03:25.881Z",
+      "processedAt": "2026-08-10T21:03:25.881Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -1625,7 +1649,7 @@
       "unlockedAt": "2026-03-15T19:29:39.183393",
       "sourceType": "achievement",
       "sourceId": "getting_serious",
-      "seenAt": null,
+      "seenAt": "2026-08-10T19:48:44.348Z",
       "earnKind": null
     },
     "emblem_goblin": {
@@ -1633,7 +1657,7 @@
       "unlockedAt": "2026-03-29T17:28:35.979443",
       "sourceType": "achievement",
       "sourceId": "nz_deep_dive",
-      "seenAt": null,
+      "seenAt": "2026-08-10T21:03:25.881Z",
       "earnKind": null
     },
     "coin_penalty_kill": {
@@ -1641,7 +1665,7 @@
       "unlockedAt": "2026-08-06T19:40:29.848Z",
       "sourceType": "achievement",
       "sourceId": "pk_regular",
-      "seenAt": null,
+      "seenAt": "2026-08-10T19:46:59.963Z",
       "earnKind": null
     },
     "coin_powerplay": {
@@ -1649,7 +1673,7 @@
       "unlockedAt": "2026-08-08T09:41:31.589Z",
       "sourceType": "achievement",
       "sourceId": "powerplay_regular",
-      "seenAt": null,
+      "seenAt": "2026-08-10T19:47:07.360Z",
       "earnKind": null
     }
   },
@@ -3141,7 +3165,7 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-10T19:05:37.149Z",
-  "lastUpdatedAt": "2026-08-10T19:05:37.149Z",
+  "lastUpdatedAt": "2026-08-10T21:03:25.881Z",
   "favoriteCosmeticIds": [],
   "puxTransactions": [],
   "completedCollections": {},

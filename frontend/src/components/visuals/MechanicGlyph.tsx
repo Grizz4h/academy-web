@@ -53,8 +53,8 @@ const MECHANIC_INFO: Record<MechanicKind, MechanicInfo> = {
   },
   profile: {
     label: 'Profil',
-    summary: 'Muster reflektieren.',
-    detail: 'Du ordnest Beobachtungen in ein Profil oder eine Reflexion ein — weniger Zeichnen, mehr Einordnung.',
+    summary: 'Muster einordnen und bündeln.',
+    detail: 'Du ordnest Beobachtungen vorsichtig ein oder fasst sie zu einem Tendenzprofil zusammen — weniger Zeichnen, mehr Synthese.',
   },
   log: {
     label: 'Log',
@@ -106,8 +106,16 @@ export function resolveMechanicKind(drillType?: string | null, mode?: string | n
   ) {
     return 'choice'
   }
-  if (type.includes('pattern_reflection') || type.includes('meta_scan')) return 'profile'
-  if (type.includes('event_log') || type.includes('sample_log') || type.includes('shift_tracker')) return 'log'
+  if (
+    type.includes('pattern_reflection')
+    || type.includes('meta_scan')
+    || type.includes('pattern_attribution')
+    || type.includes('tendency_profile')
+  ) {
+    return 'profile'
+  }
+  if (type.includes('pattern_log') || type.includes('multi_observation_pattern') || type.includes('pattern_condition') || type.includes('pattern_invariant')) return 'log'
+  if (type.includes('event_log') || type.includes('sample_log') || type.includes('shift_tracker') || type.includes('observation_log')) return 'log'
   if (type.includes('sidequest')) return 'sidequest'
   if (type.includes('rink') || type.includes('clickable') || type.includes('draggable')) return 'marker'
   return 'generic'

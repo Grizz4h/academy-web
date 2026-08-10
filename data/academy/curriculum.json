@@ -13733,249 +13733,326 @@
           "drills": [
             {
               "id": "E1_D1",
-              "title": "Tendenz oder Einzelfall?",
-              "drill_type": "period_checkin",
-              "description": "Unterscheide nach einem Drittel: Handelt es sich um ein wiederkehrendes Muster oder um einen isolierten Einzelfall?",
+              "title": "Wiederholt sich wirklich etwas?",
+              "drill_type": "pattern_log",
+              "description": "Sammle 3–5 ähnliche Situationen in derselben Session und prüfe, ob sich ein echtes wiederkehrendes Verhalten zeigt – oder nur mehrere ähnliche Einzelfälle.",
               "didactics": {
-                "explanation": "Analyse beginnt nicht mit Lösungen, sondern mit Einordnung. In diesem Drill lernst du, einzelne Ereignisse von echten Tendenzen zu trennen. Eine Tendenz entsteht nur durch Wiederholung unter ähnlichen Bedingungen.",
+                "explanation": "Ein einzelner Spielzug kann Zufall sein. Auch mehrere ähnliche Ergebnisse müssen noch kein taktisches Muster bilden.\n\nSuche deshalb nach einem Verhalten, das mehrfach unter ähnlichen Bedingungen auftritt. Achte darauf, was wirklich gleich bleibt: Zone, Trigger, Teamreaktion und Ablauf.\n\nSammle mindestens drei Situationen und entscheide danach, wie stark der Hinweis auf eine echte Tendenz ist.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wiederholt sich eine ähnliche Situation mehrfach?",
-                    "Tritt sie unter ähnlichen Bedingungen auf?",
-                    "Passiert sie in derselben Zone oder nach demselben Trigger?"
+                    "gleiche Spielsituation",
+                    "gleiche Zone",
+                    "ähnlicher Trigger",
+                    "ähnliche Positionierung",
+                    "ähnliche Teamreaktion",
+                    "ähnliche Entscheidung",
+                    "gleiche oder unterschiedliche Seite",
+                    "ob nur das Ergebnis gleich ist"
                   ],
                   "how_to_decide": [
-                    "Suche mindestens zwei ähnliche Situationen",
-                    "Ignoriere Highlight-Plays und Einzelaktionen",
-                    "Bewerte Struktur, nicht Ergebnis",
-                    "Formuliere neutral, ohne Schuldzuweisung"
+                    "Wenn nur das Ergebnis ähnlich ist, aber der Weg dorthin unterschiedlich war, behandle es noch nicht als Muster.",
+                    "Vergleiche Zone, Trigger, Teamreaktion und Ablauf getrennt.",
+                    "Beschreibe sichtbares Verhalten – keine Systemnamen."
                   ],
                   "ignore": [
-                    "Ein einzelnes Tor oder eine Einzelchance",
-                    "Emotionale Spielsituationen",
-                    "Statistiken ohne Kontext"
+                    "taktische Systemlabels (1-2-2, overload, box+1, …)",
+                    "Score State und Line Matchups",
+                    "Gegnerstruktur und personelle Ursachen",
+                    "automatische „Richtigkeit“ der Einschätzung"
                   ]
                 },
-                "inline_explanations": {
-                  "tendenz": {
-                    "meaning": "Ein wiederkehrendes Muster, das unter ähnlichen Bedingungen mehrfach auftritt und eine strukturelle Ursache hat."
-                  },
-                  "einzelfall": {
-                    "meaning": "Ein isoliertes Ereignis ohne Wiederholung oder strukturelle Erklärung."
-                  }
-                },
-                "learning_hint": "Was sich wiederholt, ist analysierbar. Was isoliert bleibt, ist oft Zufall."
+                "learning_hint": "Wiederholung allein ist noch kein taktisches Muster. Belastbar wird es erst, wenn ähnliche Bedingungen und ähnliche Reaktionen zusammenkommen."
               },
-              "config": {
-                "questions": [
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "key": "classification",
-                    "type": "radio",
-                    "label": "Deine Einordnung",
-                    "options": [
-                      "tendenz",
-                      "einzelfall"
-                    ]
-                  },
-                  {
-                    "key": "repeat_zone",
-                    "type": "radio",
-                    "label": "Wo tritt es hauptsächlich auf?",
-                    "options": [
-                      "D-Zone",
-                      "Neutral Zone",
-                      "O-Zone",
-                      "wechselnd"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurzbeschreibung des Musters (oder warum kein Muster)",
-                    "max_chars": 1500
+                    "when": {},
+                    "questions": [
+                      "Welches wiederkehrende Merkmal hat dich am stärksten überzeugt, dass hier mehr als Zufall dahintersteckt?"
+                    ],
+                    "hint": "Zone · Trigger · Teamreaktion · Positionierung · Ablauf · anderes"
                   }
                 ]
               },
-              "sceneSlug": "Tendency-or-Case"
+              "config": {
+                "mechanic": "pattern_log",
+                "logs_key": "pattern_observations",
+                "minObservations": 3,
+                "maxObservations": 5,
+                "assessment_key": "pattern_assessment",
+                "summary_key": "pattern_summary",
+                "label_key": "pattern_label",
+                "enable_side": true,
+                "enable_context_tags": true,
+                "enable_mid_label": true,
+                "submit_label": "Beobachtung speichern",
+                "add_more_label": "+ Weitere Beobachtung",
+                "observe_hint": "Finde eine erste mögliche Pattern-Situation und speichere sie als Kandidaten.",
+                "search_next_hint": "Suche jetzt nach einer weiteren Situation, die diesem Verhalten ähnelt.",
+                "decision_rule": "Wenn nur das Ergebnis ähnlich ist, aber der Weg dorthin unterschiedlich war, behandle es noch nicht als Muster.",
+                "outcome_similarity_hint": "Ein ähnliches Ergebnis bedeutet noch nicht automatisch, dass dasselbe Muster dahintersteckt.",
+                "summary_title": "Mögliches Muster",
+                "fingerprint_title": "Pattern Fingerprint",
+                "summary_dimensions": ["zone", "trigger", "reaction", "side", "sequence"]
+              },
+              "sceneSlug": "Pattern-Repeat-Check"
             },
             {
               "id": "E1_D2",
-              "title": "Wiederholung oder Ausreißer?",
-              "drill_type": "period_checkin",
-              "description": "Bewerte, ob eine beobachtete Situation Teil einer Tendenz ist oder ein isolierter Ausreißer.",
+              "title": "Unter welchen Bedingungen tritt es auf?",
+              "drill_type": "pattern_condition",
+              "description": "Prüfe ein mögliches Muster auf seine Begleitbedingungen: Was bleibt gleich – und unter welchen ähnlichen Bedingungen tritt das Verhalten gerade nicht auf?",
               "didactics": {
-                "explanation": "Nicht jede auffällige Szene ist relevant. Analyse wird erst dann belastbar, wenn sich eine Situation unter ähnlichen Bedingungen wiederholt. In diesem Drill trainierst du, Wiederholung von Zufall zu trennen – ohne zu interpretieren oder zu lösen.",
+                "explanation": "Ein Muster wird interessanter, wenn du nicht nur erkennst, dass es sich wiederholt, sondern auch wann.\n\nVergleiche mehrere Situationen und suche nach Bedingungen, die regelmäßig gemeinsam auftreten: Zone, Trigger, Druck, Puckkontrolle oder Support.\n\nBesonders wertvoll sind Gegenfälle: ähnliche Ausgangslage, aber eine andere Teamreaktion. Sie helfen dir zu erkennen, welche Merkmale wirklich relevant sein könnten.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Tritt die Situation mehrfach auf?",
-                    "Sind Bedingungen vergleichbar (Zone, Druck, Spielerrollen)?",
-                    "Passiert es unabhängig vom Spielstand?"
+                    "Welche Bedingungen vor den Wiederholungen ähnlich sind",
+                    "ob Merkmale notwendig oder nur beiläufig wirken",
+                    "ähnliche Ausgangslagen, in denen das Verhalten nicht auftritt",
+                    "Unterschiede zwischen Musterfall und Gegenfall"
                   ],
                   "how_to_decide": [
-                    "Suche mindestens zwei ähnliche Situationen",
-                    "Achte auf gleiche Auslöser (z. B. Transition, Entry, langer Shift)",
-                    "Bewerte nur Häufigkeit und Kontext – nicht die Wirkung"
+                    "Eine Bedingung ist interessanter, wenn sie bei mehreren Musterfällen gleich bleibt – und bei einem Gegenfall gerade nicht.",
+                    "Formuliere beobachtend: „tritt häufig auf, wenn …“ – nicht „verursacht“.",
+                    "Kein Gegenfall ist okay, stärkt das Muster aber nicht automatisch."
                   ],
                   "ignore": [
-                    "Ob daraus ein Gegentor entsteht",
-                    "Emotionale Spielsituationen",
-                    "Einzelne Highlights oder Fehler"
+                    "Ursachen-Labels (strukturell / gegnerbedingt / personell)",
+                    "Score State und Line Matchups",
+                    "Systemnamen wie 1-2-2 oder overload",
+                    "automatische Kausalität"
                   ]
                 },
-                "learning_hint": "Analyse beginnt mit Wiederholung. Ohne Wiederholung gibt es keine Tendenz – nur ein Ereignis."
+                "learning_hint": "D1 fragt: Wiederholt sich etwas? D2 fragt: Unter welchen Bedingungen – und wann eben nicht?"
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "classification": "tendenz"
-                    },
+                    "when": {},
                     "questions": [
-                      "Welche Gemeinsamkeit verbindet die Situationen?",
-                      "Unter welchen Bedingungen tritt das Muster zuverlässig auf?",
-                      "Woran würdest du erkennen, dass es sich fortsetzt?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "classification": "ausreisser"
-                    },
-                    "questions": [
-                      "Was macht diese Situation einzigartig?",
-                      "Welche Bedingung fehlt für eine Wiederholung?",
-                      "Worauf würdest du achten, um eine Tendenz auszuschließen?"
-                    ]
+                      "Welche Bedingung scheint dir am stärksten mit dem Muster zusammenzuhängen – und warum?"
+                    ],
+                    "hint": "Zone · Trigger · Druck · Puckkontrolle · Support · Gegenfall-Unterschied · anderes"
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "classification",
-                    "type": "radio",
-                    "label": "Deine Einordnung",
-                    "options": [
-                      "tendenz",
-                      "ausreisser"
-                    ]
-                  },
-                  {
-                    "key": "context",
-                    "type": "radio",
-                    "label": "Hauptkontext",
-                    "options": [
-                      "D-Zone",
-                      "Neutral Zone",
-                      "O-Zone"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Begründung (ein Satz)",
-                    "max_chars": 1500
-                  }
-                ]
+                "mechanic": "pattern_condition",
+                "mode": "condition_matrix",
+                "logs_key": "pattern_condition_cases",
+                "candidate_key": "pattern_candidate",
+                "minPatternCases": 3,
+                "maxObservations": 5,
+                "maxCounterCases": 2,
+                "enable_side": true,
+                "enable_pressure": true,
+                "enable_possession": true,
+                "enable_support": true,
+                "enable_counter_cases": true,
+                "require_candidate_first": true,
+                "submit_label": "Fall speichern",
+                "add_more_label": "+ Weiteren Fall",
+                "decision_rule": "Eine Bedingung ist interessanter, wenn sie bei mehreren Musterfällen gleich bleibt – und bei einem Gegenfall gerade nicht.",
+                "summary_title": "Geprüftes Muster",
+                "fingerprint_title": "Condition Fingerprint"
               },
-              "sceneSlug": "Repeat-or-Outlier"
+              "sceneSlug": "Condition-Matrix"
             },
             {
               "id": "E1_D3",
-              "title": "Trigger & Bedingungen erkennen",
-              "drill_type": "period_checkin",
-              "description": "Identifiziere die Bedingungen, unter denen eine Tendenz entsteht – nicht was danach passiert.",
+              "title": "Was bleibt konstant, was variiert?",
+              "drill_type": "pattern_invariant",
+              "description": "Zerlege ein wiederkehrendes Verhalten in Merkmale und trenne den funktionalen Kern von wechselnden Ausprägungen.",
               "didactics": {
-                "explanation": "Tendenzen entstehen nicht zufällig. Sie werden durch bestimmte Auslöser und Rahmenbedingungen begünstigt. In diesem Drill trainierst du, diese Trigger sauber zu benennen, ohne bereits Lösungen oder Anpassungen abzuleiten.",
+                "explanation": "Taktische Muster sehen selten jedes Mal exakt gleich aus.\n\nSpieler können Rollen tauschen, Seiten wechseln oder unterschiedliche Wege nutzen und trotzdem dieselbe taktische Funktion erfüllen.\n\nZerlege mehrere ähnliche Situationen deshalb in einzelne Merkmale und frage dich: Was muss gleich bleiben, damit ich weiterhin vom selben Muster spreche?",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Was passiert unmittelbar vor der Situation?",
-                    "Welche Spielerrollen sind beteiligt?",
-                    "In welcher Phase des Spiels tritt es auf?"
+                    "stabile Zone und Trigger",
+                    "zentrale Aktion / Funktion",
+                    "beeinflusster Raum oder Option",
+                    "wer die Aktion ausführt",
+                    "ob Seite und Ablauf wechseln dürfen"
                   ],
                   "how_to_decide": [
-                    "Formuliere den Trigger als Startpunkt (nicht als Folge)",
-                    "Achte auf gleiche Auslöser bei mehreren Szenen",
-                    "Trenne Bedingung (wann/wo) von Wirkung (was passiert)"
+                    "Suche nicht nach identischen Bildern. Suche nach einem stabilen funktionalen Kern.",
+                    "Gleiche Funktion bei anderer Ausführung kann trotzdem dasselbe Muster sein.",
+                    "Markiere Merkmale bewusst als Kern, häufig oder variabel."
                   ],
                   "ignore": [
-                    "Gegentor oder Abschluss",
-                    "Emotionale Reaktionen",
-                    "Spätere Korrekturen im Spielzug"
+                    "Ursachen-Labels (strukturell / gegnerbedingt / personell)",
+                    "Score State und Line Matchups",
+                    "exakte Spielernummern statt Rollenfunktion",
+                    "automatische Freitext-Interpretation"
                   ]
                 },
-                "learning_hint": "Wer Trigger erkennt, kann Entwicklungen vorhersagen – wer nur Folgen sieht, reagiert zu spät."
+                "learning_hint": "D2 fragt nach äußeren Bedingungen. D3 fragt: Was am Muster selbst bleibt – und was darf variieren?"
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "trigger_type": "strukturell"
-                    },
+                    "when": {},
                     "questions": [
-                      "Warum ist dieser Trigger systembedingt?",
-                      "Tritt er auch bei anderen Reihen oder Gegnern auf?",
-                      "Was macht ihn stabil über Zeit?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "trigger_type": "situativ"
-                    },
-                    "questions": [
-                      "Welche konkrete Spielsituation löst ihn aus?",
-                      "Ist er abhängig von Tempo, Score oder Wechseln?",
-                      "Wie leicht ist er reproduzierbar?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "trigger_type": "zufaellig"
-                    },
-                    "questions": [
-                      "Warum ist dieser Trigger nicht verlässlich?",
-                      "Welche Bedingung fehlt für Wiederholung?",
-                      "Woran würdest du erkennen, dass er bedeutungslos bleibt?"
-                    ]
+                      "Welches Merkmal sah zunächst wichtig aus, hat sich aber als variable Ausprägung herausgestellt?"
+                    ],
+                    "hint": "Seite · Rolle · Ablauf · Positionierung · anderes"
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mechanic": "pattern_invariant",
+                "mode": "invariant_map",
+                "logs_key": "pattern_invariant_observations",
+                "candidate_key": "pattern_candidate",
+                "minObservations": 3,
+                "maxObservations": 5,
+                "enable_side": true,
+                "require_candidate_first": true,
+                "submit_label": "Beobachtung speichern",
+                "add_more_label": "+ Weitere Beobachtung",
+                "decision_rule": "Suche nicht nach identischen Bildern. Suche nach einem stabilen funktionalen Kern.",
+                "summary_title": "Funktionaler Kern",
+                "fingerprint_title": "Invariant Fingerprint",
+                "invariant_dimensions": [
+                  "zone",
+                  "trigger",
+                  "primaryAction",
+                  "targetEffect",
+                  "actorRole",
+                  "side",
+                  "sequenceSimilarity"
+                ]
+              },
+              "sceneSlug": "Invariant-Map"
+            },
+            {
+              "id": "E1_D4",
+              "title": "Strukturell oder situativ?",
+              "drill_type": "pattern_attribution",
+              "description": "Ordne ein beobachtetes Muster vorsichtig ein: wirkt es eher strukturell, situativ, gegnerbedingt, personell oder spielstandsbedingt?",
+              "didactics": {
+                "explanation": "Wiederkehrendes Verhalten kann viele Ursachen haben. Es kann Teil eines stabilen Teamprinzips sein – oder nur durch Gegner, Personal, Spielstand oder eine spezielle Situation entstehen.\n\nVergleiche mehrere Beispiele und frage dich: Bleibt das Muster auch dann bestehen, wenn sich der Kontext verändert?\n\nJe mehr unterschiedliche Kontexte das gleiche Verhalten überlebt, desto eher könnte es strukturell sein. Aber auch das ist nur ein Hinweis, keine Gewissheit.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "ob das erwartete Muster in der Situation auftritt",
+                    "wie ähnlich Gegnerverhalten, Personal und Ausgangslage sind",
+                    "ob der Game State vergleichbar ist",
+                    "welche Beobachtung am stärksten für oder gegen deine Einordnung spricht"
+                  ],
+                  "how_to_decide": [
+                    "Strukturell heißt nicht „oft gesehen“, sondern „bleibt trotz veränderter Umstände erkennbar“.",
+                    "Formuliere vorsichtig: „spricht eher dafür“, „wirkt strukturell“, „im beobachteten Segment“.",
+                    "Kein automatisches Label – du triffst die Endentscheidung."
+                  ],
+                  "ignore": [
+                    "Systemnamen wie 1-2-2 oder overload",
+                    "sichere Kausalitätsbehauptungen",
+                    "Übernahme von Ergebnissen aus D1–D3",
+                    "komplette Teamprofile (kommt erst in D5)"
+                  ]
+                },
+                "learning_hint": "D3 fragt: Was am Muster selbst bleibt? D4 fragt: Warum könnte dieses Muster in diesem Kontext auftreten?"
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "key": "trigger_type",
-                    "type": "radio",
-                    "label": "Art des Triggers",
-                    "options": [
-                      "strukturell",
-                      "situativ",
-                      "zufaellig"
-                    ]
-                  },
-                  {
-                    "key": "trigger_origin",
-                    "type": "radio",
-                    "label": "Auslöser beginnt meist bei…",
-                    "options": [
-                      "Exit",
-                      "Entry",
-                      "Transition",
-                      "langer Shift",
-                      "Special Teams"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Trigger kurz formulieren",
-                    "max_chars": 1500
+                    "when": {},
+                    "questions": [
+                      "Welche Kontextänderung hätte deine Einordnung am stärksten ins Wanken gebracht?"
+                    ],
+                    "hint": "anderer Gegnerdruck · anderes Personal · anderer Game State · andere Ausgangslage · anderes"
                   }
                 ]
               },
-              "sceneSlug": "Trigger-Conditions"
+              "config": {
+                "mechanic": "pattern_attribution",
+                "mode": "attribution_board",
+                "logs_key": "pattern_attribution_observations",
+                "candidate_key": "pattern_candidate",
+                "attribution_key": "pattern_attribution",
+                "confidence_key": "attribution_confidence",
+                "strongest_evidence_key": "strongest_evidence",
+                "counter_evidence_key": "counter_evidence",
+                "minObservations": 3,
+                "maxObservations": 5,
+                "enable_game_state": true,
+                "require_candidate_first": true,
+                "submit_label": "Beobachtung speichern",
+                "add_more_label": "+ Weitere Beobachtung",
+                "observe_hint": "Erfasse eine Situation und prüfe, welchen Kontext sie für die Einordnung liefert.",
+                "decision_rule": "Strukturell heißt nicht „oft gesehen“, sondern „bleibt trotz veränderter Umstände erkennbar“.",
+                "summary_title": "Muster-Einordnung"
+              },
+              "sceneSlug": "Attribution-Board"
+            },
+            {
+              "id": "E1_D5",
+              "title": "Welche Tendenzen prägen das beobachtete Segment?",
+              "drill_type": "tendency_profile",
+              "description": "Priorisiere 1–3 wiederkehrende Muster, die den beobachteten Abschnitt wirklich erklären – mit Bedingung, stabilem Kern, vorsichtiger Einordnung und Confidence.",
+              "didactics": {
+                "explanation": "Nicht alles, was mehrfach passiert, gehört automatisch ins Tendenzprofil.\n\nFasse deine Beobachtungen zu wenigen relevanten Tendenzen zusammen und prüfe: Was wiederholt sich? Unter welchen Bedingungen? Was bleibt stabil? Was variiert? Welche Einordnung ist plausibel – und wie sicher bist du?\n\nBleibe beim beobachteten Segment. Keine Teamwahrheit, keine historischen Profile.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "wenige Muster, die den Abschnitt stark prägen",
+                    "Bedingungen, unter denen sie auftreten",
+                    "stabilen funktionalen Kern vs. erlaubte Variation",
+                    "welche Tendenz du als Nächstes weiter prüfen würdest"
+                  ],
+                  "how_to_decide": [
+                    "Priorisiere Relevanz vor Vollständigkeit — maximal drei Tendenzen.",
+                    "Formuliere vorsichtig und segmentbezogen.",
+                    "Markiere, was deine Einschätzung falsifizieren würde."
+                  ],
+                  "ignore": [
+                    "automatische Übernahme aus D1–D4",
+                    "historische Teamprofile",
+                    "Systemnamen und Prozent-Scores",
+                    "beliebig viele Nebenbeobachtungen"
+                  ]
+                },
+                "learning_hint": "D4 ordnet ein Muster ein. D5 fragt: Welche wenigen Tendenzen erklären das beobachtete Segment am besten – und welche davon willst du weiter prüfen?"
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Welche deiner Tendenzen würdest du nach diesem Segment am ehesten wieder verwerfen, wenn das nächste Drittel sie nicht bestätigt?"
+                    ],
+                    "hint": "Tendenz 1 · Tendenz 2 · Tendenz 3 · keine · unklar"
+                  }
+                ]
+              },
+              "config": {
+                "mechanic": "tendency_profile",
+                "mode": "tendency_profile",
+                "tendencies_key": "tendency_entries",
+                "segment_summary_key": "segment_summary",
+                "strongest_tendency_key": "strongest_tendency_id",
+                "next_watch_key": "next_watch_tendency_id",
+                "falsification_note_key": "falsification_note",
+                "minTendencies": 1,
+                "maxTendencies": 3,
+                "require_segment_summary": true,
+                "require_strongest_tendency": true,
+                "require_next_watch": true,
+                "submit_label": "Tendenz speichern",
+                "add_more_label": "+ Tendenz hinzufügen",
+                "observe_hint": "Priorisiere wenige belastbare Tendenzen — nicht alles, was mehrfach passiert.",
+                "decision_rule": "Nicht alles, was mehrfach passiert, gehört automatisch ins Tendenzprofil.",
+                "summary_title": "Tendenzprofil · beobachtetes Segment"
+              },
+              "sceneSlug": "Tendency-Profile"
             }
           ]
         },

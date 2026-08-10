@@ -4,7 +4,7 @@
     "type": "catalog",
     "avatarId": "avatar_puck_01"
   },
-  "bannerId": "banner_blue_line_01",
+  "bannerId": "banner_neutral_01",
   "emblem": {
     "type": "catalog",
     "emblemId": "emblem_puck_01"
@@ -20,5 +20,5 @@
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-10T08:15:34.908509"
+  "updatedAt": "2026-08-10T21:03:27.877150"
 }

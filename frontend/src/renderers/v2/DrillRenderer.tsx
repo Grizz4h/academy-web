@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
+import { PatternLogDrill, PatternConditionDrill, PatternInvariantDrill, PatternAttributionDrill, TendencyProfileDrill } from "../../features/patternLog";
 
 interface DrillRendererV2Props {
   drill: Drill;
@@ -335,6 +336,21 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "clickable_rink_observation":
 			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
+		case "pattern_log":
+		case "multi_observation_pattern":
+			return <PatternLogDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "pattern_condition":
+		case "pattern_condition_matrix":
+			return <PatternConditionDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "pattern_invariant":
+		case "pattern_invariant_map":
+			return <PatternInvariantDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "pattern_attribution":
+		case "pattern_attribution_board":
+			return <PatternAttributionDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "tendency_profile":
+		case "pattern_tendency_profile":
+			return <TendencyProfileDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "observation_log_drill":
 		case "impact_classification_observation":
 		case "support_classification_observation":
@@ -7084,6 +7100,16 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		</div>
 	);
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

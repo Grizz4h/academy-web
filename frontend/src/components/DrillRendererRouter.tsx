@@ -13,11 +13,14 @@ interface DrillRendererRouterProps {
   phase?: string;
 }
 
-function pickRenderer(moduleId?: string): 'v1' | 'v2' | 'v3' | 'v4' {
+function pickRenderer(moduleId?: string, drillType?: string): 'v1' | 'v2' | 'v3' | 'v4' {
   if (!moduleId) return 'v2';
+  // Pattern Log and other modern multi-obs mechanics always use V2
+  const type = String(drillType || '').toLowerCase()
+  if (type === 'pattern_log' || type === 'multi_observation_pattern' || type === 'pattern_condition' || type === 'pattern_condition_matrix' || type === 'pattern_invariant' || type === 'pattern_invariant_map' || type === 'pattern_attribution' || type === 'pattern_attribution_board' || type === 'tendency_profile' || type === 'pattern_tendency_profile') return 'v2';
   // V4 for Meta-Scan modules (M* or contains META)
   if (moduleId.startsWith('M') || moduleId.includes('META')) return 'v4';
-  // V3 for E-Track modules
+  // V3 for E-Track modules (legacy checkins)
   if (moduleId.startsWith('E')) return 'v3';
   // V1 for A1 legacy
   if (moduleId === 'A1') return 'v1';
@@ -27,7 +30,7 @@ function pickRenderer(moduleId?: string): 'v1' | 'v2' | 'v3' | 'v4' {
 
 export function DrillRendererRouter(props: DrillRendererRouterProps) {
   const moduleId = props?.session?.module_id;
-  const renderer = pickRenderer(moduleId);
+  const renderer = pickRenderer(moduleId, props?.drill?.drill_type);
 
   if (renderer === 'v1') {
     return <DrillRendererV1 drill={props.drill} initialAnswers={props.initialAnswers} onChangeAnswers={props.onChangeAnswers} />;

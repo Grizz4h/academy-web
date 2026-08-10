@@ -574,6 +574,207 @@ export default function SessionPage() {
       }
     }
 
+    if (drill.drill_type === 'pattern_log' || drill.drill_type === 'multi_observation_pattern') {
+      const logsKey = drill?.config?.logs_key || 'pattern_observations'
+      const minObservations = Math.max(1, Number(drill?.config?.minObservations || 3))
+      const assessmentKey = drill?.config?.assessment_key || 'pattern_assessment'
+      const summaryKey = drill?.config?.summary_key || 'pattern_summary'
+      const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
+
+      if (logs.length < minObservations) {
+        return 'Bitte erfasse mindestens ' + minObservations + ' Beobachtungen, bevor du weitergehst.'
+      }
+
+      if (!answers?.[assessmentKey]) {
+        return 'Bitte bewerte, wie stark der Hinweis auf ein wiederkehrendes Muster ist.'
+      }
+
+      if (!String(answers?.[summaryKey] || '').trim()) {
+        return 'Bitte beschreibe das mögliche Muster in einem Satz, bevor du weitergehst.'
+      }
+    }
+
+    if (drill.drill_type === 'pattern_condition' || drill.drill_type === 'pattern_condition_matrix') {
+      const logsKey = drill?.config?.logs_key || 'pattern_condition_cases'
+      const candidateKey = drill?.config?.candidate_key || 'pattern_candidate'
+      const minPatternCases = Math.max(1, Number(drill?.config?.minPatternCases || drill?.config?.minObservations || 3))
+      const assessmentKey = drill?.config?.condition_assessment_key || 'condition_assessment'
+      const ifThenKey = drill?.config?.if_then_key || 'if_then_summary'
+      const relevantKey = drill?.config?.relevant_conditions_key || 'relevant_conditions'
+      const cases = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
+      const patternCases = cases.filter((item: any) => (item?.caseType || 'pattern_case') === 'pattern_case')
+      const counterCases = cases.filter((item: any) => item?.caseType === 'counter_case')
+      const relevant = Array.isArray(answers?.[relevantKey]) ? answers[relevantKey] : []
+
+      if (!String(answers?.[candidateKey] || '').trim()) {
+        return 'Bitte formuliere zuerst, welches Verhalten du auf Bedingungen prüfen möchtest.'
+      }
+
+      if (patternCases.length < minPatternCases) {
+        return 'Bitte erfasse mindestens ' + minPatternCases + ' Musterfälle, bevor du weitergehst.'
+      }
+
+      if (counterCases.length === 0 && answers?.__pattern_condition_no_counter !== true) {
+        return 'Bitte bestätige, dass kein Gegenfall beobachtet wurde – oder erfasse einen Gegenfall.'
+      }
+
+      if (relevant.length === 0) {
+        return 'Bitte markiere, welche Bedingungen Teil des Musters zu sein scheinen.'
+      }
+
+      const needsRole = relevant.some((entry: any) => (
+        entry?.dimensionId
+        && entry.dimensionId !== 'none_clear'
+        && entry.dimensionId !== 'unclear'
+        && !entry?.role
+      ))
+      if (needsRole) {
+        return 'Bitte ordne die ausgewählten Bedingungen als Kern / unterstützend / beiläufig ein.'
+      }
+
+      if (counterCases.length > 0) {
+        const diffsKey = drill?.config?.counter_differences_key || 'counter_case_differences'
+        const diffs = Array.isArray(answers?.[diffsKey]) ? answers[diffsKey] : []
+        if (diffs.length === 0) {
+          return 'Bitte markiere, was im Gegenfall anders war.'
+        }
+      }
+
+      if (!answers?.[assessmentKey]) {
+        return 'Bitte bewerte, wie klar die Bedingungen des Musters sind.'
+      }
+
+      if (!String(answers?.[ifThenKey] || '').trim()) {
+        return 'Bitte formuliere das Muster als Wenn–Dann-Satz.'
+      }
+    }
+
+    if (drill.drill_type === 'pattern_invariant' || drill.drill_type === 'pattern_invariant_map') {
+      const logsKey = drill?.config?.logs_key || 'pattern_invariant_observations'
+      const candidateKey = drill?.config?.candidate_key || 'pattern_candidate'
+      const minObservations = Math.max(1, Number(drill?.config?.minObservations || 3))
+      const assessmentsKey = drill?.config?.dimension_assessments_key || 'dimension_assessments'
+      const invariantSummaryKey = drill?.config?.invariant_summary_key || 'invariant_summary'
+      const allowedVariationKey = drill?.config?.allowed_variation_key || 'allowed_variation'
+      const flexibilityKey = drill?.config?.flexibility_key || 'flexibility_assessment'
+      const primaryActionEqualityKey = drill?.config?.primary_action_equality_key || 'primary_action_equality'
+      const defaultDims = ['zone', 'trigger', 'primaryAction', 'targetEffect', 'actorRole', 'side', 'sequenceSimilarity']
+      const dims: string[] = Array.isArray(drill?.config?.invariant_dimensions) && drill.config.invariant_dimensions.length
+        ? drill.config.invariant_dimensions
+        : defaultDims
+      const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
+      const assessments = Array.isArray(answers?.[assessmentsKey]) ? answers[assessmentsKey] : []
+      const allowed = Array.isArray(answers?.[allowedVariationKey]) ? answers[allowedVariationKey] : []
+
+      if (!String(answers?.[candidateKey] || '').trim()) {
+        return 'Bitte formuliere zuerst, welches Verhalten du zerlegen möchtest.'
+      }
+
+      if (logs.length < minObservations) {
+        return 'Bitte erfasse mindestens ' + minObservations + ' Beobachtungen, bevor du weitergehst.'
+      }
+
+      const assessed = new Set(assessments.map((entry: any) => entry?.dimensionId).filter(Boolean))
+      if (dims.some((dim) => !assessed.has(dim))) {
+        return 'Bitte ordne jede Dimension als Kern / häufig / variabel ein.'
+      }
+
+      if (!answers?.[primaryActionEqualityKey]) {
+        return 'Bitte bewerte, ob die zentrale Aktion funktional gleich war.'
+      }
+
+      if (!String(answers?.[invariantSummaryKey] || '').trim()) {
+        return 'Bitte formuliere den kleinsten gemeinsamen funktionalen Kern.'
+      }
+
+      if (allowed.length === 0) {
+        return 'Bitte markiere, welche Merkmale variieren dürfen.'
+      }
+
+      if (!answers?.[flexibilityKey]) {
+        return 'Bitte schätze die Flexibilität des Musters ein.'
+      }
+    }
+
+    if (drill.drill_type === 'pattern_attribution' || drill.drill_type === 'pattern_attribution_board') {
+      const logsKey = drill?.config?.logs_key || 'pattern_attribution_observations'
+      const candidateKey = drill?.config?.candidate_key || 'pattern_candidate'
+      const minObservations = Math.max(1, Number(drill?.config?.minObservations || 3))
+      const attributionKey = drill?.config?.attribution_key || 'pattern_attribution'
+      const confidenceKey = drill?.config?.confidence_key || 'attribution_confidence'
+      const strongestEvidenceKey = drill?.config?.strongest_evidence_key || 'strongest_evidence'
+      const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
+
+      if (!String(answers?.[candidateKey] || '').trim()) {
+        return 'Bitte formuliere zuerst, welches Muster du einordnen möchtest.'
+      }
+
+      if (logs.length < minObservations) {
+        return 'Bitte erfasse mindestens ' + minObservations + ' Beobachtungen, bevor du weitergehst.'
+      }
+
+      if (!answers?.[attributionKey]) {
+        return 'Bitte ordne das Muster ein (strukturell, situativ, …).'
+      }
+
+      if (!answers?.[confidenceKey]) {
+        return 'Bitte schätze ein, wie sicher du dir mit der Einordnung bist.'
+      }
+
+      if (!String(answers?.[strongestEvidenceKey] || '').trim()) {
+        return 'Bitte nenne die Beobachtung, die am stärksten für deine Einordnung spricht.'
+      }
+    }
+
+    if (drill.drill_type === 'tendency_profile' || drill.drill_type === 'pattern_tendency_profile') {
+      const tendenciesKey = drill?.config?.tendencies_key || 'tendency_entries'
+      const segmentSummaryKey = drill?.config?.segment_summary_key || 'segment_summary'
+      const strongestKey = drill?.config?.strongest_tendency_key || 'strongest_tendency_id'
+      const nextWatchKey = drill?.config?.next_watch_key || 'next_watch_tendency_id'
+      const minTendencies = Math.max(1, Number(drill?.config?.minTendencies || 1))
+      const maxTendencies = Math.max(minTendencies, Number(drill?.config?.maxTendencies || 3))
+      const requireSegmentSummary = drill?.config?.require_segment_summary !== false
+      const requireStrongest = drill?.config?.require_strongest_tendency !== false
+      const requireNextWatch = drill?.config?.require_next_watch !== false
+      const tendencies = Array.isArray(answers?.[tendenciesKey]) ? answers[tendenciesKey] : []
+
+      if (tendencies.length < minTendencies) {
+        return 'Bitte dokumentiere mindestens ' + minTendencies + ' Tendenz' + (minTendencies === 1 ? '' : 'en') + '.'
+      }
+
+      if (tendencies.length > maxTendencies) {
+        return 'Maximal ' + maxTendencies + ' Tendenzen — bitte priorisiere.'
+      }
+
+      const incomplete = tendencies.some((entry: any) => (
+        !String(entry?.summary || '').trim()
+        || !entry?.frequency
+        || !entry?.primaryCondition
+        || !Array.isArray(entry?.stableCore)
+        || entry.stableCore.length === 0
+        || !Array.isArray(entry?.allowedVariation)
+        || entry.allowedVariation.length === 0
+        || !entry?.attribution
+        || !entry?.confidence
+        || !String(entry?.strongestEvidence || '').trim()
+      ))
+      if (incomplete) {
+        return 'Bitte vervollständige alle Tendenzen (Beschreibung, Häufigkeit, Bedingung, Kern, Variation, Einordnung, Confidence, Indiz).'
+      }
+
+      if (requireStrongest && tendencies.length >= 2 && !answers?.[strongestKey]) {
+        return 'Bitte markiere, welche Tendenz am belastbarsten ist.'
+      }
+
+      if (requireSegmentSummary && !String(answers?.[segmentSummaryKey] || '').trim()) {
+        return 'Bitte fasse das Tendenzprofil des beobachteten Segments zusammen.'
+      }
+
+      if (requireNextWatch && !answers?.[nextWatchKey]) {
+        return 'Bitte markiere, welche Tendenz du als Nächstes weiter beobachten würdest.'
+      }
+    }
+
     if (drill.drill_type === 'observation_log_drill' || drill.drill_type === 'impact_classification_observation' || drill.drill_type === 'support_classification_observation' || drill.drill_type === 'sequence_classification_observation') {
       const logsKey = drill?.config?.logs_key || 'logs'
       const requiredLogs = Number(drill?.config?.log_count || 3)
