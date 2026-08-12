@@ -1,4 +1,4 @@
-export type ObservationScope = 'FULL_GAME' | 'P1' | 'P2' | 'P3'
+export type ObservationScope = 'FULL_GAME' | 'P1' | 'P2' | 'P3' | 'LESSON'
 export type PeriodPhase = 'P1' | 'P2' | 'P3'
 
 export const ACTIVE_PERIODS_BY_SCOPE: Record<ObservationScope, PeriodPhase[]> = {
@@ -6,6 +6,8 @@ export const ACTIVE_PERIODS_BY_SCOPE: Record<ObservationScope, PeriodPhase[]> = 
   P1: ['P1'],
   P2: ['P2'],
   P3: ['P3'],
+  /** Single-pass lesson (Track 0 / foundation) — no live periods */
+  LESSON: ['P1'],
 }
 
 export const OBSERVATION_SCOPE_OPTIONS: Array<{ value: ObservationScope; label: string }> = [
@@ -23,6 +25,8 @@ export function getObservationScopeLabel(scope?: string | null): string {
       return '2. Drittel'
     case 'P3':
       return '3. Drittel'
+    case 'LESSON':
+      return 'Lektion'
     case 'FULL_GAME':
     case undefined:
     case null:
@@ -36,4 +40,8 @@ export function getObservationScopeLabel(scope?: string | null): string {
 export function getActivePeriodsForScope(scope?: string | null): PeriodPhase[] {
   const normalized = (scope || '').trim().toUpperCase() as ObservationScope
   return ACTIVE_PERIODS_BY_SCOPE[normalized] || ACTIVE_PERIODS_BY_SCOPE.FULL_GAME
+}
+
+export function isLessonScope(scope?: string | null): boolean {
+  return (scope || '').trim().toUpperCase() === 'LESSON'
 }

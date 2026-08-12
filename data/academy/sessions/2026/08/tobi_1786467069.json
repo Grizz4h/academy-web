@@ -1,0 +1,185 @@
+{
+  "id": "tobi_1786467069",
+  "user": "tobi",
+  "created_by": "tobi",
+  "module_id": "C1",
+  "goal": "Auto: C1 – Defensive Zone Systeme",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "C1_D1",
+  "learning_area": "academy",
+  "lab_mode": null,
+  "lab_template_id": null,
+  "observation_scope": "FULL_GAME",
+  "state": "IN_PROGRESS",
+  "current_phase": "P1",
+  "created_at": "2026-08-11T18:51:09.244069",
+  "drills": [
+    {
+      "id": "C1_D1",
+      "title": "Welche Räume schützt die Defensive?",
+      "drill_type": "paintable_rink_observation",
+      "description": "Analysiere mehrere defensive Situationen und markiere, welche Räume das Team schützt, welche Räume besonders gefährlich wären und welche Räume bewusst zugelassen werden. Achte besonders auf Momente, in denen die Defensive in der Ordnung ist.",
+      "didactics": {
+        "explanation": "Defensive Systeme beginnen nicht erst beim Zweikampf. Entscheidend ist, welche Räume ein Team priorisiert.\n\nEine gute Defensive schützt nicht jeden Bereich gleichzeitig. Sie entscheidet, welche Räume geschlossen werden müssen und welche Bereiche weniger gefährlich sind.\n\nDer beste Beobachtungstrigger ist oft der Moment, in dem die Defensive in der Ordnung ist: Abstände stimmen, Rollen sind klar und die Formation wirkt verbunden. In genau diesen Situationen zeigt sich die Raumpriorität am deutlichsten.\n\nBeobachte nicht den Erfolg einer einzelnen Aktion, sondern die wiederkehrende Raumpriorität des Teams.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Ist die Defensive gerade in der Ordnung – verbunden, mit klaren Abständen und erkennbaren Rollen?",
+            "Welcher Raum wird vor dem Tor konsequent geschützt?",
+            "Welche Passwege oder Angriffswege werden geschlossen?",
+            "Welche Räume lässt die Defensive bewusst zu?",
+            "Welche Räume wären für den Gegner besonders gefährlich?"
+          ],
+          "how_to_decide": [
+            "Warte auf Situationen, in denen die Defensive erkennbar geordnet steht",
+            "Sammle mehrere Situationen innerhalb deiner Session",
+            "Suche nach wiederkehrenden Raumprioritäten",
+            "Bewerte die Struktur vor dem Ergebnis",
+            "Markiere nicht den Ort des Pucks, sondern die Bedeutung des Raumes"
+          ],
+          "ignore": [
+            "Chaotische Wechsel oder ungeordnete Scrambles",
+            "Einzelne Fehler oder Tore",
+            "Nur die Position eines einzelnen Verteidigers",
+            "Erfolg oder Misserfolg einer Aktion",
+            "Eine Szene ohne wiederkehrendes Muster"
+          ]
+        },
+        "learning_hint": "Defensive Systeme erkennst du zuerst daran, welche Räume eine Mannschaft besonders konsequent schützt – am klarsten, wenn sie in der Ordnung ist."
+      },
+      "config": {
+        "mode": "zone_priority",
+        "rink_preset": "detailed",
+        "observation_count": 3,
+        "observations_key": "observations",
+        "observation_index_key": "observationIndex",
+        "annotations_key": "rinkAnnotations",
+        "note_key": "note",
+        "created_at_key": "createdAt",
+        "paintLayers": [
+          {
+            "id": "protected_space",
+            "label": "Geschützter Raum",
+            "color": "#22c55e"
+          },
+          {
+            "id": "danger_space",
+            "label": "Gefährlicher Raum",
+            "color": "#ef4444"
+          },
+          {
+            "id": "accepted_space",
+            "label": "Bewusst zugelassener Raum",
+            "color": "#facc15"
+          }
+        ],
+        "minimumLayers": 2,
+        "rinkOverlays": {
+          "zones": true,
+          "goals": true,
+          "crease": true,
+          "faceoffDots": true,
+          "labels": false,
+          "defendingSide": "left",
+          "showDefendingHint": true
+        },
+        "missions": [
+          {
+            "title": "Mission 1 von 3",
+            "prompt": "Finde eine Szene, in der die Defensive in der Ordnung ist, und markiere die wichtigsten Raumprioritäten.",
+            "hint": "Starte erst, wenn Abstände und Rollen klar erkennbar sind. Markiere mindestens zwei Ebenen, wenn mehrere Prioritäten gleichzeitig sichtbar sind."
+          },
+          {
+            "title": "Mission 2 von 3",
+            "prompt": "Finde eine weitere geordnete Szene und vergleiche die Raumverteilung.",
+            "hint": "Achte darauf, welche Räume konstant geschützt oder bewusst freigegeben bleiben."
+          },
+          {
+            "title": "Mission 3 von 3",
+            "prompt": "Finde eine dritte geordnete Szene und prüfe, ob sich ein wiederkehrendes Muster zeigt.",
+            "hint": "Markiere Struktur, nicht Einzelaktion."
+          }
+        ],
+        "note_label": "Optionale Notiz",
+        "note_placeholder": "Optional",
+        "note_max_chars": 300,
+        "completion_question": {
+          "key": "defensive_space_priority",
+          "label": "Welche Raumpriorität zeigte die Defensive heute am häufigsten?",
+          "options": [
+            {
+              "value": "center_priority",
+              "label": "Das Zentrum wurde konsequent geschlossen"
+            },
+            {
+              "value": "outside_control",
+              "label": "Der Gegner wurde bewusst nach außen gelenkt"
+            },
+            {
+              "value": "shot_lane_priority",
+              "label": "Schusswege wurden priorisiert"
+            },
+            {
+              "value": "situational",
+              "label": "Die Defensive passte sich stark situativ an"
+            },
+            {
+              "value": "unclear",
+              "label": "Kein klares Muster erkennbar"
+            }
+          ]
+        },
+        "completion_note": {
+          "key": "defensive_space_priority_reason",
+          "label": "Woran hast du dieses Muster erkannt?",
+          "placeholder": "Optional: kurze Begründung",
+          "max_chars": 600
+        },
+        "save_button_label": "Beobachtung speichern"
+      },
+      "sceneSlug": "Protected-Spaces"
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [],
+  "drafts": {},
+  "post": null,
+  "game_info": {
+    "league": "DEL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Augsburger Panther",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-10-18T16:30:00",
+    "season": "2026/27",
+    "game_id": "del:2026_2027:20261018_erc_ingolstadt_vs_augsburger_panther",
+    "competition_phase": "regular_season",
+    "competition_phase_label": "Hauptrunde",
+    "competition_unit_type": "matchday",
+    "competition_unit_label": "Spieltag",
+    "competition_unit_value": "10",
+    "matchday": "DEL · 2026/27 · Hauptrunde · Spieltag 10"
+  },
+  "game_id": "del:2026_2027:20261018_erc_ingolstadt_vs_augsburger_panther",
+  "observed_team": null,
+  "observed_team_id": null,
+  "observed_team_name": null,
+  "microfeedback": {
+    "P1": {
+      "done": false,
+      "text": ""
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  },
+  "is_dummy": false
+}

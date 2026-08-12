@@ -19,6 +19,8 @@
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
+  "hockeyExperience": "beginner",
+  "experiencePromptDismissed": true,
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-08T18:00:23.757808"
+  "updatedAt": "2026-08-12T08:56:10.379056"
 }

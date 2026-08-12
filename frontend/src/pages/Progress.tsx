@@ -321,7 +321,7 @@ export default function Progress() {
   if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ui-page-shell`}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Stats</h1>
         <p className="ui-page-lead">
@@ -340,7 +340,7 @@ export default function Progress() {
         analyzedTeamCount={analyzedTeamCount}
       />
 
-      <Card className={styles.sectionCard}>
+      <Card surface="section" className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
           <div>
             <h2 className="ui-section-title">Team-Übersicht</h2>
@@ -447,7 +447,7 @@ export default function Progress() {
       </Card>
 
       {selectedTeamExposure && (
-        <Card className={styles.detailCard}>
+        <Card surface="nested" className={styles.detailCard}>
           <div ref={detailRef} className={styles.detailAnchor}>
             <div className={styles.sectionHeader}>
               <div>
@@ -658,13 +658,13 @@ export default function Progress() {
         </summary>
         <div className={styles.moreBody}>
           {moduleProgress.size === 0 ? (
-            <Card className={styles.emptyCard}>
+            <Card surface="section" className={styles.emptyCard}>
               <p className={styles.mutedText}>Noch keine Sessions vorhanden. Starte in der Akademie!</p>
             </Card>
           ) : (
             <div className={styles.grid}>
               {Array.from(moduleProgress.entries()).map(([moduleId, progress]) => (
-                <Card key={moduleId} className={styles.moduleCard}>
+                <Card key={moduleId} surface="nested" className={styles.moduleCard}>
                   <h3 className={styles.moduleTitle}>{getModuleTitle(moduleId)}</h3>
 
                   <div className={styles.progressSection}>

@@ -51,9 +51,13 @@ class PennyDelImporter:
                 {
                     "id": slug.replace("-", "_"),
                     "slug": slug,
+                    "catalog_id": (item.get("catalog_id") or slug.replace("-", "_")).strip(),
                     "team": (item.get("team") or slug).strip(),
                     "league": (item.get("league") or "PENNY DEL").strip(),
                     "url": (item.get("url") or "").strip(),
+                    "overview_url": (item.get("overview_url") or "").strip(),
+                    "kader_available": bool(item.get("kader_available", True)),
+                    "kader_note": (item.get("kader_note") or "").strip(),
                     "enabled": bool(item.get("enabled", True)),
                 }
             )
@@ -303,6 +307,14 @@ class PennyDelImporter:
             return {"error": f"Kein konfiguriertes Team für team_id '{team_id}' gefunden"}
         if not team_cfg.get("enabled"):
             return {"error": f"Team '{team_id}' ist deaktiviert"}
+        if not team_cfg.get("kader_available", True):
+            note = team_cfg.get("kader_note") or "Kader-Seite bei PENNY-DEL noch nicht verfügbar"
+            return {
+                "error": note,
+                "kader_pending": True,
+                "team_id": team_id,
+                "overview_url": team_cfg.get("overview_url") or "",
+            }
 
         url = team_cfg.get("url")
         if not url:
@@ -310,7 +322,12 @@ class PennyDelImporter:
 
         html = self.fetch_raw_html(url)
         if not html:
-            return {"error": "HTML konnte nicht abgerufen werden"}
+            return {
+                "error": "Kader-Seite nicht erreichbar (404 oder Netzwerkfehler)",
+                "kader_pending": True,
+                "team_id": team_id,
+                "url": url,
+            }
 
         players = self.parse_roster_sections(html, team_cfg.get("team") or team_id, team_cfg.get("league") or "PENNY DEL")
         if not players:

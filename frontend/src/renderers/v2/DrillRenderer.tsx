@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 import { PatternLogDrill, PatternConditionDrill, PatternInvariantDrill, PatternAttributionDrill, TendencyProfileDrill } from "../../features/patternLog";
+import FoundationLessonDrill from "../../features/foundation/FoundationLessonDrill";
 
 interface DrillRendererV2Props {
   drill: Drill;
@@ -369,6 +370,8 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 			return <SampleLog drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "micro_quiz":
 			return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "foundation_lesson":
+			return <FoundationLessonDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "shift_tracker":
 			return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "triangle_spotting":

@@ -1,0 +1,212 @@
+.wrap {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.progressBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+}
+
+.badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(167, 243, 208, 0.95);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+}
+
+.progressText {
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.88);
+  font-weight: 650;
+}
+
+.stepFrac {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: rgba(148, 163, 184, 0.9);
+  font-variant-numeric: tabular-nums;
+}
+
+.prompt {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  color: rgba(248, 250, 252, 0.96);
+}
+
+.options {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.option {
+  text-align: left;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(248, 250, 252, 0.92);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  min-height: 44px;
+}
+
+.option:hover:not(:disabled) {
+  border-color: rgba(125, 211, 252, 0.4);
+  background: rgba(125, 211, 252, 0.1);
+}
+
+.optionSelected {
+  border-color: rgba(125, 211, 252, 0.55);
+}
+
+.optionCorrect {
+  border-color: rgba(52, 211, 153, 0.65);
+  background: rgba(16, 185, 129, 0.14);
+}
+
+.optionWrong {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.option:disabled {
+  cursor: default;
+  opacity: 0.95;
+}
+
+.summary {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+}
+
+.summaryList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.termsCount {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.summaryLead {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.feedback {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feedbackOk {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.feedbackSoft {
+  background: rgba(251, 191, 36, 0.08);
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.feedback p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(241, 245, 249, 0.92);
+}
+
+.termBlock {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.termBlock strong {
+  font-size: 0.95rem;
+  color: rgba(167, 243, 208, 0.98);
+}
+
+.termBlock p {
+  margin: 0;
+}
+
+.why {
+  margin-top: 0.45rem !important;
+  font-size: 0.8rem !important;
+  color: rgba(203, 213, 225, 0.85) !important;
+}
+
+.why span {
+  font-weight: 700;
+  color: rgba(186, 230, 253, 0.95);
+}
+
+.nav {
+  display: flex;
+  gap: 0.55rem;
+  justify-content: space-between;
+}
+
+.navBtn {
+  min-height: 42px;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(248, 250, 252, 0.9);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.navBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.navPrimary {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(52, 211, 153, 0.5);
+  color: rgba(236, 253, 245, 0.98);
+  margin-left: auto;
+}
+
+.completeHint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: rgba(167, 243, 208, 0.92);
+}
+
+@media (max-width: 520px) {
+  .prompt {
+    font-size: 1rem;
+  }
+
+  .option {
+    font-size: 0.86rem;
+  }
+}

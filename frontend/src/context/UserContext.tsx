@@ -35,10 +35,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
     if (!password) return { ok: false, error: 'Passwort erforderlich' }
     try {
       const res = await apiLogin(username, password)
-      // Username immer mit erstem Buchstaben groß speichern
-      const normalized = res.username ? res.username.charAt(0).toUpperCase() + res.username.slice(1).toLowerCase() : res.username
-      setUserState(normalized)
-      localStorage.setItem('academy.user', normalized)
+      // Use server username as-is (matches session.user / users.json casing).
+      // Do NOT Title-Case — that breaks users like "tobi" whose sessions are lowercase.
+      const resolved = res.username || username
+      setUserState(resolved)
+      localStorage.setItem('academy.user', resolved)
       localStorage.setItem('academy.token', res.token)
       return { ok: true }
     } catch (e: any) {

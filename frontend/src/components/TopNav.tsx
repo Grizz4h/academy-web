@@ -37,6 +37,7 @@ const TopNav: React.FC = () => {
   const [devNav, setDevNav] = useState(() => isDevNavEnabled());
   const [devHint, setDevHint] = useState('');
   const logoClicksRef = useRef<{ count: number; timer: number | null }>({ count: 0, timer: null });
+  const navTabsWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const { data: activeSessions } = useQuery({
     queryKey: ['sessions', user, 'IN_PROGRESS'],
@@ -47,8 +48,11 @@ const TopNav: React.FC = () => {
 
   const activeSession = activeSessions
     ? [...activeSessions]
-      .filter(session => session.state === 'IN_PROGRESS')
+      .filter(session => session.state === 'IN_PROGRESS' && !session.is_dummy)
       .sort((a, b) => getSessionSortDate(b) - getSessionSortDate(a))[0]
+      || [...activeSessions]
+        .filter(session => session.state === 'IN_PROGRESS')
+        .sort((a, b) => getSessionSortDate(b) - getSessionSortDate(a))[0]
     : undefined;
 
   useEffect(() => {
@@ -56,6 +60,14 @@ const TopNav: React.FC = () => {
       if (logoClicksRef.current.timer) window.clearTimeout(logoClicksRef.current.timer);
     };
   }, []);
+
+  // Reset tab scroller so the session chip (first item) stays visible — sticky inside
+  // overflow-x is unreliable on iOS Safari and scrollIntoView can scroll the wrong ancestor.
+  useEffect(() => {
+    const wrapper = navTabsWrapperRef.current
+    if (!activeSession || !wrapper) return
+    wrapper.scrollLeft = 0
+  }, [activeSession?.id])
 
   const handleLogoClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
     const state = logoClicksRef.current;
@@ -97,38 +109,38 @@ const TopNav: React.FC = () => {
               <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
             </NavLink>
 
-            <div className={styles.navTabsWrapper}>
+            <div ref={navTabsWrapperRef} className={styles.navTabsWrapper}>
               <div className={styles.navTabs}>
+                {activeSession && (
+                  <NavLink
+                    to={getSessionRoute(activeSession)}
+                    className={({ isActive }) =>
+                      [
+                        styles.navLink,
+                        styles.activeSessionLink,
+                        isActive ? styles.navLinkActive : '',
+                      ].filter(Boolean).join(' ')
+                    }
+                    title={`Aktive Session · ${getSessionContext(activeSession)}`}
+                  >
+                    <span className={styles.activeSessionPulse} aria-hidden="true" />
+                    <span className={styles.activeSessionText}>
+                      <span>Aktive Session</span>
+                      <span>{getSessionContext(activeSession)} läuft</span>
+                    </span>
+                  </NavLink>
+                )}
                 {navTabs.map(tab => (
-                  <React.Fragment key={tab.to}>
-                    {tab.to === '/history' && activeSession && (
-                      <NavLink
-                        to={getSessionRoute(activeSession)}
-                        className={({ isActive }) =>
-                          [
-                            styles.navLink,
-                            styles.activeSessionLink,
-                            isActive ? styles.navLinkActive : '',
-                          ].filter(Boolean).join(' ')
-                        }
-                      >
-                        <span className={styles.activeSessionPulse} aria-hidden="true" />
-                        <span className={styles.activeSessionText}>
-                          <span>Aktive Session</span>
-                          <span>{getSessionContext(activeSession)} läuft</span>
-                        </span>
-                      </NavLink>
-                    )}
-                    <NavLink
-                      to={tab.to}
-                      className={({ isActive }) =>
-                        isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
-                      }
-                      end={tab.exact}
-                    >
-                      {tab.label}
-                    </NavLink>
-                  </React.Fragment>
+                  <NavLink
+                    key={tab.to}
+                    to={tab.to}
+                    className={({ isActive }) =>
+                      isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
+                    }
+                    end={tab.exact}
+                  >
+                    {tab.label}
+                  </NavLink>
                 ))}
                 {devNav && (
                   <NavLink

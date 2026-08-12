@@ -36,18 +36,10 @@
 }
 
 .popup {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 60;
-  width: min(300px, 88vw);
+  /* Position via AnchoredPopover portal (fixed + viewport clamp). */
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.85rem 0.9rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid rgba(81, 145, 162, 0.42);
-  background: linear-gradient(180deg, rgba(14, 22, 38, 0.98) 0%, rgba(8, 14, 26, 0.98) 100%);
-  box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.48),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   color: rgba(226, 232, 240, 0.92);
 }
 

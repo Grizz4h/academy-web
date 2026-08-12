@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
-import { api } from '../api'
+import { api, type CatalogGame } from '../api'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useUser } from '../context/UserContext'
 import { makeGlossaryRenderer } from '../components/GlossaryTerm'
@@ -9,7 +9,7 @@ import type { DrillGuide } from '../components/DrillGuideCard'
 import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
-import { OBSERVATION_SCOPE_OPTIONS, getObservationScopeLabel, type ObservationScope } from '../utils/observationScope'
+import { OBSERVATION_SCOPE_OPTIONS, type ObservationScope } from '../utils/observationScope'
 import {
   isSplitSeasonLeague,
   normalizeSeasonValue,
@@ -20,6 +20,20 @@ import { isDevNavEnabled } from '../config/featureFlags'
 import { createDummySessionForDrill } from '../dev/createDummySession'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
+import GameContextSummary from '../components/game/GameContextSummary'
+import GameStatsDevPanel from '../components/game/GameStatsDevPanel'
+import {
+  filterCatalogGamesForSeason,
+  filterGamesForDate,
+  findCatalogGameForPairing,
+  findGamesForTeams,
+  getCatalogSeasonStats,
+  localTodayIsoDate,
+  uniqueMatchdays,
+} from '../components/game/gameCatalogUtils'
+import TodayMatchdaySlate from '../components/game/TodayMatchdaySlate'
+import { inferSplitSeasonLabelForDate } from '../stats/seasonNormalization'
+import setupStyles from './SessionSetup.module.css'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
 const NHL_TEAMS: Array<{ name: string; division: string; short?: string }> = [
@@ -114,6 +128,14 @@ export default function SessionSetup() {
       }
     }, [league]);
 
+  useEffect(() => {
+    if (league !== 'DEL' || season) return
+    const inferred = inferSplitSeasonLabelForDate()
+    if (seasonOptions.includes(inferred)) {
+      setSeason(inferred)
+    }
+  }, [league, season, seasonOptions])
+
   // Draft laden
   useEffect(() => {
     if (!draftKey) return
@@ -170,6 +192,63 @@ export default function SessionSetup() {
     gcTime: 0
   })
 
+  const normalizedSeason = normalizeSeasonValue(season, league) || ''
+  const { data: gamesData } = useQuery({
+    queryKey: ['games', league, normalizedSeason],
+    queryFn: () => api.getGames({ league, season: normalizedSeason }),
+    enabled: Boolean(league && normalizedSeason && league === 'DEL'),
+    staleTime: 60_000,
+  })
+
+  const catalogGames = useMemo(
+    () => filterCatalogGamesForSeason(gamesData?.games || [], normalizedSeason),
+    [gamesData?.games, normalizedSeason],
+  )
+  const useCatalogFlow = league === 'DEL' && Boolean(normalizedSeason) && catalogGames.length > 0
+  const catalogStats = useMemo(() => getCatalogSeasonStats(catalogGames), [catalogGames])
+  const todayCatalogGames = useMemo(
+    () => filterGamesForDate(catalogGames, localTodayIsoDate()),
+    [catalogGames],
+  )
+  const gamesWithStatsInSeason = useMemo(
+    () => catalogGames.filter((game) => Boolean(game.stats?.imported_at)),
+    [catalogGames],
+  )
+
+  const availableMatchdays = useMemo(() => uniqueMatchdays(catalogGames), [catalogGames])
+
+  const gamesForTeams = useMemo(() => {
+    if (!teamHome || !teamAway) return []
+    return findGamesForTeams(catalogGames, teamHome, teamAway)
+  }, [catalogGames, teamHome, teamAway])
+
+  const matchdaysForTeams = useMemo(() => uniqueMatchdays(gamesForTeams), [gamesForTeams])
+
+  const selectedMatchday = useMemo(() => {
+    const parsed = Number(competitionValue)
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+  }, [competitionValue])
+
+  /** Import reagiert nur auf Live-Auswahl — kein Rückwärts-Befüllen */
+  const matchedCatalogGame = useMemo<CatalogGame | null>(() => {
+    if (!useCatalogFlow || !teamHome || !teamAway || !selectedMatchday) return null
+    return findCatalogGameForPairing(
+      catalogGames,
+      teamHome,
+      teamAway,
+      selectedMatchday,
+      normalizedSeason,
+    ) || null
+  }, [useCatalogFlow, teamHome, teamAway, selectedMatchday, catalogGames, normalizedSeason])
+
+  const handleSelectTodayGame = (game: CatalogGame) => {
+    if (game.home_team_name) setTeamHome(game.home_team_name)
+    if (game.away_team_name) setTeamAway(game.away_team_name)
+    if (game.matchday != null) setCompetitionValue(String(game.matchday))
+    if (game.phase_id) setCompetitionPhase(game.phase_id)
+    setObservedTeam('')
+  }
+
   const { data: sessions } = useQuery({
     queryKey: ['sessions', user],
     queryFn: () => api.getSessions(user || undefined),
@@ -203,9 +282,17 @@ export default function SessionSetup() {
 
   // Finde aktuelles Modul
   const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
+  const foundationTrack = curriculum?.tracks?.find(
+    (track) => track.trackType === 'foundation' && (track.modules || []).some((m) => m.id === moduleId),
+  )
+  const isFoundationModule = Boolean(foundationTrack)
   const moduleInactive = currentModule?.active === false
   const moduleDeprecationNote = currentModule?.deprecation_note
     || 'Dieses Modul ist nicht mehr als regulärer Track aktiv.'
+
+  useEffect(() => {
+    if (isFoundationModule) setObservationScope('LESSON')
+  }, [isFoundationModule])
 
   const dummySessionMutation = useMutation({
     mutationFn: async () => {
@@ -430,6 +517,28 @@ export default function SessionSetup() {
       alert('Bitte oben im Login einen Namen speichern, damit wir die Session zuordnen können.')
       return
     }
+
+    // Foundation / Track 0: no live matchup required
+    if (isFoundationModule) {
+      const effectiveGoal = goal.trim() || `Foundation: ${currentModule.title}`
+      const chosenDrill = selectedDrill || currentModule.drills[0]?.id
+      const payload = {
+        user: user.trim(),
+        module_id: moduleId!,
+        goal: effectiveGoal,
+        confidence,
+        observation_scope: 'LESSON' as const,
+        focus: currentModule.defaultFocus,
+        session_method: 'self_paced',
+        drill_id: chosenDrill || undefined,
+        game_info: undefined,
+        game_id: undefined,
+      }
+      lastPayloadRef.current = payload
+      createSessionMutation.mutate(payload)
+      return
+    }
+
     if (!league) {
       alert('Bitte eine Liga wählen (z.B. NHL oder DEL).')
       return
@@ -468,6 +577,12 @@ export default function SessionSetup() {
     }
     const normalizedSeason = normalizeSeasonValue(season, league)
     if (normalizedSeason) gameInfo.season = normalizedSeason
+    if (matchedCatalogGame?.id) {
+      gameInfo.game_id = matchedCatalogGame.id
+    }
+    if (matchedCatalogGame?.date) {
+      gameInfo.date = `${matchedCatalogGame.date}T${matchedCatalogGame.time || '19:00'}:00`
+    }
     if (selectedCompetitionPhase) {
       const unitValue = competitionValue.trim()
       gameInfo.competition_phase = selectedCompetitionPhase.id
@@ -498,7 +613,8 @@ export default function SessionSetup() {
       focus: currentModule.defaultFocus,
       session_method: currentModule.recommendedSessionMethod || 'live_watch',
       drill_id: chosenDrill || undefined,
-      game_info: gameInfo
+      game_info: gameInfo,
+      game_id: matchedCatalogGame?.id || undefined,
     }
     lastPayloadRef.current = payload
     createSessionMutation.mutate(payload)
@@ -506,20 +622,116 @@ export default function SessionSetup() {
 
   const rwg = makeGlossaryRenderer();
 
+  if (isFoundationModule) {
+    const drills = currentModule.drills || []
+    return (
+      <div className="ui-page-shell" style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <header className="ui-page-header">
+          <p className={setupStyles.foundationEyebrow}>
+            {foundationTrack?.foundationLabel || 'FOUNDATION · TRACK 0'}
+          </p>
+          <h1 className="ui-page-title">{currentModule.title}</h1>
+          <p className="ui-page-lead">
+            {currentModule.summary || 'Spielfeld, Regeln, Rollen und Begriffe — ohne Live-Spiel.'}
+          </p>
+        </header>
+
+        {!user && (
+          <div className="card ui-surface ui-surface--section ui-flat-mobile" style={{ border: '1px solid #ffc107' }}>
+            <strong>Anmeldung nötig:</strong> Bitte oben in der Navigation deinen Namen speichern.
+          </div>
+        )}
+
+        <div className={`card ui-surface ui-surface--primary primary-card ${setupStyles.foundationCard}`}>
+          <h2 className="ui-section-title">Welche Lektion?</h2>
+          <p className={setupStyles.setupIntro}>
+            Keine Paarung, kein Spieltag — einfach eine Lektion wählen und starten.
+          </p>
+          <div className={setupStyles.foundationDrillList}>
+            {drills.map((drill, index) => (
+              <label
+                key={drill.id}
+                className={[
+                  setupStyles.foundationDrill,
+                  selectedDrill === drill.id ? setupStyles.foundationDrillActive : '',
+                ].filter(Boolean).join(' ')}
+              >
+                <input
+                  type="radio"
+                  name="foundation-drill"
+                  value={drill.id}
+                  checked={selectedDrill === drill.id}
+                  onChange={(e) => setSelectedDrill(e.target.value)}
+                />
+                <span className={setupStyles.foundationStep}>{index + 1}/5</span>
+                <span className={setupStyles.foundationDrillText}>
+                  <strong>{drill.title}</strong>
+                  {drill.description && <span>{drill.description}</span>}
+                </span>
+              </label>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="btn"
+            onClick={handleCreateSession}
+            disabled={!user || !selectedDrill || createSessionMutation.isPending}
+            style={{
+              width: '100%',
+              marginTop: '1rem',
+              padding: '1rem',
+              fontSize: '1.05rem',
+              backgroundColor: '#0d9488',
+              opacity: !user || !selectedDrill || createSessionMutation.isPending ? 0.55 : 1,
+            }}
+          >
+            {createSessionMutation.isPending ? 'Starte Lektion…' : 'Lektion starten'}
+          </button>
+
+          {createError && (
+            <div style={{ marginTop: '0.75rem', color: '#ff8e8e', fontSize: '0.9rem', whiteSpace: 'pre-wrap' }}>
+              {createError}
+            </div>
+          )}
+        </div>
+
+        <details className={setupStyles.foundationMore}>
+          <summary>Mehr zur Foundation</summary>
+          <p>{rwg(currentModule.description ?? '')}</p>
+          {currentModule.learningGoals && currentModule.learningGoals.length > 0 && (
+            <>
+              <strong>Lernziele</strong>
+              <ul>
+                {currentModule.learningGoals.map((item, i) => (
+                  <li key={i}>{rwg(item)}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </details>
+
+        <button type="button" className="btn" style={{ background: 'transparent', borderColor: 'rgba(255,255,255,0.2)' }} onClick={() => navigate('/curriculum')}>
+          Zurück zum Lehrplan
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="ui-page-shell" style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Session Setup</h1>
         <p className="ui-section-title-content" style={{ margin: 0 }}>{currentModule.title}</p>
       </header>
 
       {!user && (
-        <div className="card" style={{ border: '1px solid #ffc107' }}>
+        <div className="card ui-surface ui-surface--section ui-flat-mobile" style={{ border: '1px solid #ffc107' }}>
           <strong>Anmeldung nötig:</strong> Bitte oben in der Navigation deinen Namen speichern. Wir merken ihn im Browser, damit Sessions dir zugeordnet sind.
         </div>
       )}
 
-      <div className="card">
+      <div className="card ui-surface ui-surface--section ui-flat-mobile">
         <h2 className="ui-section-title">Modul Info</h2>
         <p style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{rwg(currentModule.description ?? '')}</p>
         <div style={{ marginTop: '1rem' }}>
@@ -532,11 +744,14 @@ export default function SessionSetup() {
         </div>
       </div>
 
-      <div className="card">
-        <h2>Spiel-Setup</h2>
-        <p>Welche Partie schaust du dir an?</p>
+      <div className="card ui-surface ui-surface--primary primary-card">
+        <h2 className="ui-section-title">Session vorbereiten</h2>
+        <p className={setupStyles.setupIntro}>
+          <strong>Saison + Spieltag + Teams</strong> legst du oben in der Live-Beobachtung fest — das ist deine Session.
+          Der Import-Bereich darunter zeigt nur, ob es dazu passende PENNY-DEL-Daten gibt.
+        </p>
 
-        <label style={{ display: 'block', marginTop: '0.75rem' }}>
+        <label style={{ display: 'block', marginTop: '0.25rem' }}>
           Liga auswählen
           <select
             className="appSelect"
@@ -549,9 +764,7 @@ export default function SessionSetup() {
               setCompetitionPhase('')
               setCompetitionValue('')
             }}
-            style={{
-              marginTop: '0.35rem'
-            }}
+            style={{ marginTop: '0.35rem' }}
           >
             <option value="">-- Liga wählen --</option>
             {LEAGUES.map((lg) => (
@@ -560,96 +773,49 @@ export default function SessionSetup() {
           </select>
         </label>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
-          <label style={{ display: 'block' }}>
-            Heimteam
-            <select
-              className="appSelect"
-              value={teamHome}
-              onChange={(e) => {
-                setTeamHome(e.target.value)
-                if (observedTeam === teamHome) setObservedTeam('')
-              }}
-              disabled={!league}
-              style={{
-                marginTop: '0.35rem'
-              }}
-            >
-              <option value="">-- Heimteam --</option>
-              {availableTeams.map((team) => (
-                <option key={team} value={team}>{team}</option>
-              ))}
-            </select>
-            <div>
-              <input
-                type="radio"
-                checked={observedTeam === teamHome}
-                onChange={() => setObservedTeam(teamHome)}
-                disabled={!teamHome}
-                id="observe-home"
-                name="observed-team"
-              />
-              <label htmlFor="observe-home" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
-            </div>
-          </label>
+        {useCatalogFlow && todayCatalogGames.length > 0 ? (
+          <section className={`${setupStyles.panel} ${setupStyles.livePanel} ui-flat-panel`}>
+            <TodayMatchdaySlate
+              league={league}
+              games={catalogGames}
+              onSelectGame={handleSelectTodayGame}
+              selectable
+            />
+          </section>
+        ) : null}
 
-          <label style={{ display: 'block' }}>
-            Auswärtsteam
-            <select
-              className="appSelect"
-              value={teamAway}
-              onChange={(e) => {
-                setTeamAway(e.target.value)
-                if (observedTeam === teamAway) setObservedTeam('')
-              }}
-              disabled={!league}
-              style={{
-                marginTop: '0.35rem'
-              }}
-            >
-              <option value="">-- Auswärtsteam --</option>
-              {availableTeams.map((team) => (
-                <option key={team} value={team}>{team}</option>
-              ))}
-            </select>
-            <div>
-              <input
-                type="radio"
-                checked={observedTeam === teamAway}
-                onChange={() => setObservedTeam(teamAway)}
-                disabled={!teamAway}
-                id="observe-away"
-                name="observed-team"
-              />
-              <label htmlFor="observe-away" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
+        <section className={`${setupStyles.panel} ${setupStyles.livePanel} ui-flat-panel`}>
+          <div className={setupStyles.panelHeader}>
+            <div className={setupStyles.panelTitleRow}>
+              <span className={setupStyles.liveBadge}>Live</span>
+              <h3 className={setupStyles.panelTitle}>Deine Beobachtung</h3>
             </div>
-          </label>
-        </div>
+            <p className={setupStyles.panelLead}>
+              Primärauswahl: Saison, Spieltag, Teams — unabhängig vom Import.
+            </p>
+          </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
-          <label style={{ display: 'block' }}>
-            Saison <span style={{ color: 'rgba(255,255,255,0.6)' }}>(optional)</span>
-            <select
-              className="appSelect"
-              value={season}
-              onChange={(e) => setSeason(e.target.value)}
-              disabled={!league}
-              style={{
-                marginTop: '0.35rem'
-              }}
-            >
-              <option value="">-- Saison wählen --</option>
-              {seasonOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-            <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
-              {useSplitSeason ? 'Liga-Modus: Split-Season (z. B. 2025/26)' : 'Turnier-Modus: Jahreszahl (z. B. 2026)'}
-            </div>
-          </label>
+          <div className={setupStyles.formGrid2}>
+            <label style={{ display: 'block' }}>
+              Saison
+              <select
+                className="appSelect"
+                value={season}
+                onChange={(e) => {
+                  setSeason(e.target.value)
+                  setCompetitionValue('')
+                }}
+                disabled={!league}
+                style={{ marginTop: '0.35rem' }}
+              >
+                <option value="">-- Saison --</option>
+                {seasonOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            </label>
 
-          {competitionConfig && selectedCompetitionPhase && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 0.75fr', gap: '0.75rem' }}>
+            {competitionConfig && selectedCompetitionPhase ? (
               <label style={{ display: 'block' }}>
                 Phase
                 <select
@@ -666,16 +832,36 @@ export default function SessionSetup() {
                   ))}
                 </select>
               </label>
+            ) : (
+              <div />
+            )}
+          </div>
 
-              <label style={{ display: 'block' }}>
-                {selectedCompetitionPhase.unit.label}
+          {competitionConfig && selectedCompetitionPhase && (
+            <label style={{ display: 'block' }}>
+              {selectedCompetitionPhase.unit.label}
+              {useCatalogFlow && availableMatchdays.length > 0 ? (
+                <select
+                  className="appSelect"
+                  value={competitionValue}
+                  onChange={(e) => setCompetitionValue(e.target.value)}
+                  style={{ marginTop: '0.35rem' }}
+                >
+                  <option value="">-- Spieltag wählen --</option>
+                  {availableMatchdays.map((matchday) => (
+                    <option key={matchday} value={String(matchday)}>
+                      Spieltag {matchday}
+                    </option>
+                  ))}
+                </select>
+              ) : (
                 <input
                   type="number"
                   value={competitionValue}
                   onChange={(e) => setCompetitionValue(e.target.value)}
                   min={selectedCompetitionPhase.unit.min}
                   max={selectedCompetitionPhase.unit.max}
-                  placeholder={selectedCompetitionPhase.unit.min + '-' + selectedCompetitionPhase.unit.max}
+                  placeholder={`${selectedCompetitionPhase.unit.min}–${selectedCompetitionPhase.unit.max}`}
                   style={{
                     width: '100%',
                     padding: '0.5rem',
@@ -683,35 +869,174 @@ export default function SessionSetup() {
                     backgroundColor: '#050712',
                     color: '#f7f7ff',
                     border: '1px solid #5191a2',
-                    borderRadius: '4px'
+                    borderRadius: '4px',
                   }}
                 />
-              </label>
-            </div>
+              )}
+              <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+                {useSplitSeason ? 'Split-Season (z. B. 2025/26)' : 'Turnier-Jahr'}
+                {useCatalogFlow && availableMatchdays.length > 0
+                  ? ` · ${availableMatchdays.length} Spieltage im Import`
+                  : ''}
+              </div>
+            </label>
           )}
-          {!competitionConfig && (
-            <div style={{ color: 'rgba(255,255,255,0.62)', fontSize: '0.85rem', alignSelf: 'end' }}>
-              Für diese Liga ist noch keine Wettbewerbsstruktur hinterlegt.
-            </div>
-          )}
-        </div>
 
-        <label style={{ display: 'block', marginTop: '0.9rem' }}>
-          Beobachtungsumfang
-          <select
-            className="appSelect"
-            value={observationScope}
-            onChange={(e) => setObservationScope(e.target.value as ObservationScope)}
-            style={{ marginTop: '0.35rem' }}
-          >
-            {OBSERVATION_SCOPE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-          <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
-            Aktuell ausgewählt: {getObservationScopeLabel(observationScope)}
+          <div className={setupStyles.formGrid2}>
+            <label style={{ display: 'block' }}>
+              Heimteam
+              <select
+                className="appSelect"
+                value={teamHome}
+                onChange={(e) => {
+                  setTeamHome(e.target.value)
+                  if (observedTeam === teamHome) setObservedTeam('')
+                }}
+                disabled={!league}
+                style={{ marginTop: '0.35rem' }}
+              >
+                <option value="">-- Heimteam --</option>
+                {availableTeams.map((team) => (
+                  <option key={team} value={team}>{team}</option>
+                ))}
+              </select>
+              <div>
+                <input
+                  type="radio"
+                  checked={observedTeam === teamHome}
+                  onChange={() => setObservedTeam(teamHome)}
+                  disabled={!teamHome}
+                  id="observe-home"
+                  name="observed-team"
+                />
+                <label htmlFor="observe-home" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
+              </div>
+            </label>
+
+            <label style={{ display: 'block' }}>
+              Auswärtsteam
+              <select
+                className="appSelect"
+                value={teamAway}
+                onChange={(e) => {
+                  setTeamAway(e.target.value)
+                  if (observedTeam === teamAway) setObservedTeam('')
+                }}
+                disabled={!league}
+                style={{ marginTop: '0.35rem' }}
+              >
+                <option value="">-- Auswärtsteam --</option>
+                {availableTeams.map((team) => (
+                  <option key={team} value={team}>{team}</option>
+                ))}
+              </select>
+              <div>
+                <input
+                  type="radio"
+                  checked={observedTeam === teamAway}
+                  onChange={() => setObservedTeam(teamAway)}
+                  disabled={!teamAway}
+                  id="observe-away"
+                  name="observed-team"
+                />
+                <label htmlFor="observe-away" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
+              </div>
+            </label>
           </div>
-        </label>
+
+          {teamHome && teamAway && !observedTeam && (
+            <p className={setupStyles.observedHint}>Bitte das beobachtete Team wählen — Pflicht für die Session.</p>
+          )}
+
+          {isFoundationModule ? (
+            <p style={{ margin: '0.75rem 0 0', fontSize: '0.82rem', color: 'rgba(167, 243, 208, 0.9)' }}>
+              Foundation-Lektion — ohne Live-Drittel. Du arbeitest die Schritte einmal durch und schließt die Session ab.
+            </p>
+          ) : (
+          <label style={{ display: 'block' }}>
+            Beobachtungsumfang
+            <select
+              className="appSelect"
+              value={observationScope}
+              onChange={(e) => setObservationScope(e.target.value as ObservationScope)}
+              style={{ marginTop: '0.35rem' }}
+            >
+              {OBSERVATION_SCOPE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+              Dein Analyse-Fokus in dieser Session — unabhängig vom Import-Ergebnis.
+            </div>
+          </label>
+          )}
+        </section>
+
+        {useCatalogFlow && normalizedSeason && (
+          <section className={`${setupStyles.panel} ${setupStyles.importPanel} ui-flat-panel`}>
+            <div className={setupStyles.panelHeader}>
+              <div className={setupStyles.panelTitleRow}>
+                <span className={setupStyles.importBadge}>Import</span>
+                <h3 className={setupStyles.panelTitle}>Spielkontext · PENNY DEL</h3>
+              </div>
+              <p className={setupStyles.panelLead}>
+                Nur Anzeige — reagiert auf Saison, Spieltag und Teams oben. Du musst hier nichts auswählen.
+              </p>
+              <p className={setupStyles.catalogStats}>
+                Katalog {normalizedSeason}: {catalogStats.withResult} mit Ergebnis
+                {catalogStats.scheduled > 0 ? ` · ${catalogStats.scheduled} geplant` : ''}
+                {catalogStats.missingResult > 0 ? (
+                  <span className={setupStyles.catalogStatsWarn}>
+                    {` · ${catalogStats.missingResult} ohne Ergebnis`}
+                  </span>
+                ) : null}
+              </p>
+            </div>
+
+            {!season || !selectedMatchday || !teamHome || !teamAway ? (
+              <p style={{ margin: 0, fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+                {!season && 'Saison wählen'}
+                {season && !selectedMatchday && ' · Spieltag wählen'}
+                {season && selectedMatchday && (!teamHome || !teamAway) && ' · Beide Teams wählen'}
+                {' — dann erscheint die Import-Referenz.'}
+              </p>
+            ) : matchedCatalogGame ? (
+              <>
+                <GameContextSummary
+                  game={matchedCatalogGame}
+                  compact
+                  embedded
+                  catalogGames={catalogGames}
+                  perspectiveTeam={observedTeam || teamHome}
+                  showImportChrome
+                />
+                {devMode && matchedCatalogGame && (
+                  <GameStatsDevPanel
+                    game={matchedCatalogGame}
+                    catalogGames={catalogGames}
+                    compact
+                    embedded
+                    perspectiveTeam={observedTeam || teamHome}
+                    exampleGamesWithStats={gamesWithStatsInSeason}
+                  />
+                )}
+              </>
+            ) : (
+              <p style={{ margin: 0, fontSize: '0.78rem', color: 'rgba(255, 193, 7, 0.95)' }}>
+                Kein Import-Treffer für {teamHome} vs {teamAway}, Spieltag {competitionValue}, Saison {normalizedSeason}.
+                {matchdaysForTeams.length > 0 && (
+                  <> Diese Paarung im Import: Spieltag {matchdaysForTeams.join(', ')}.</>
+                )}
+              </p>
+            )}
+          </section>
+        )}
+
+        {league === 'DEL' && normalizedSeason && !useCatalogFlow && (
+          <p style={{ marginTop: '0.9rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+            Für diese Saison sind noch keine Spiele importiert. Dev-Cockpit → DEL Data → Spielplan synchronisieren.
+          </p>
+        )}
 
         {league === 'NHL' && teamHome && teamAway && (
           <div style={{ 
@@ -747,7 +1072,10 @@ export default function SessionSetup() {
                   : 'linear-gradient(140deg, rgba(90, 210, 255, 0.12), rgba(8, 16, 35, 0.8))'
           }}
         >
-          <h2 style={{ marginBottom: '0.35rem' }}>Paarungs-Check</h2>
+          <h2 style={{ marginBottom: '0.35rem' }}>Deine Session-Historie · Paarung</h2>
+          <p style={{ margin: '0 0 0.35rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
+            Bisherige Academy-Sessions zu dieser Paarung — nicht der PENNY-Import.
+          </p>
           <div style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.85)' }}>
             {teamHome} vs {teamAway}
           </div>

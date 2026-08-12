@@ -770,7 +770,7 @@ export default function RingAbout() {
   ].filter(Boolean).length
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ui-page-shell`}>
       <style>{`
         @keyframes ringAboutAssignedGlow {
           0% { box-shadow: 0 0 0 rgba(20,184,166,0), 0 0 0 rgba(34,197,94,0); transform: translateY(0) scale(1); }
@@ -879,7 +879,7 @@ export default function RingAbout() {
             </div>
           )}
 
-          <Card className={styles.filterCard}>
+          <Card surface="section" className={styles.filterCard}>
             <div className={styles.filterHeader}>
               <h2 className={styles.filterTitle}>Filter</h2>
               {hasActiveFilter && (
@@ -1184,7 +1184,7 @@ export default function RingAbout() {
           {error && <Card><span style={{ color: '#f87171' }}>Fehler beim Laden der Szenen.</span></Card>}
 
           {!isLoading && !error && scenes.length === 0 && (
-            <Card className={styles.emptyCard}>
+            <Card surface="section" className={styles.emptyCard}>
               <h2 className={styles.emptyTitle}>Noch keine Szenen gespeichert</h2>
               <p className={styles.emptyText}>
                 Erfasse Momente live mit „Szene hinzufügen“ oder während eines Drills mit „Szene merken“.
@@ -1205,7 +1205,7 @@ export default function RingAbout() {
           )}
 
           {!isLoading && !error && scenes.length > 0 && filtered.length === 0 && (
-            <Card className={styles.emptyCard}>
+            <Card surface="section" className={styles.emptyCard}>
               <h2 className={styles.emptyTitle}>Keine Szenen für die gewählten Filter</h2>
               <p className={styles.emptyText}>
                 {filterContextKey
@@ -1386,7 +1386,7 @@ export default function RingAbout() {
           {error && <Card><span style={{ color: '#f87171' }}>Fehler beim Laden der Insights.</span></Card>}
 
           {!isLoading && !error && scenes.length === 0 && (
-            <Card className={styles.emptyCard}>
+            <Card surface="section" className={styles.emptyCard}>
               <h2 className={styles.emptyTitle}>Noch keine Szenen im Pool</h2>
               <p className={styles.emptyText}>
                 Sobald du Szenen markierst, erscheinen hier automatisch die redaktionellen Insights.
@@ -1408,7 +1408,7 @@ export default function RingAbout() {
               />
 
               {leagues.length > 0 && (
-                <Card className={styles.filterCard}>
+                <Card surface="section" className={styles.filterCard}>
                   <div className={styles.filterHeader}>
                     <h2 className={styles.filterTitle}>Insights-Filter</h2>
                   </div>
@@ -1430,7 +1430,7 @@ export default function RingAbout() {
               )}
 
               {insightsScenes.length === 0 && (
-                <Card className={styles.emptyCard}>
+                <Card surface="section" className={styles.emptyCard}>
                   <h2 className={styles.emptyTitle}>Keine Insights für die gewählte Liga</h2>
                   <p className={styles.emptyText}>Wähle eine andere Liga oder setze den Filter zurück.</p>
                 </Card>
@@ -1439,7 +1439,7 @@ export default function RingAbout() {
               {insightsScenes.length > 0 && (
                 <>
                   {insights.showContentHint && insights.topTeam && (
-                    <Card className={styles.contentHint}>
+                    <Card surface="inline" className={styles.contentHint}>
                       <h3 className={styles.insightTitle}>Content-Hinweis</h3>
                       <p className={styles.contentHintText}>
                         {insights.topTeam.team} taucht aktuell besonders häufig im Szenenpool auf ({insights.topTeam.scenes} Szenen, Durchschnitt {insights.teamAverage.toFixed(1)}).
@@ -1450,7 +1450,7 @@ export default function RingAbout() {
                     </Card>
                   )}
 
-                  <Card className={styles.insightCard}>
+                  <Card surface="nested" className={styles.insightCard}>
                     <h3 className={styles.insightTitle}>Team-Verteilung</h3>
                     <div className={styles.barList}>
                       {insights.teamDistribution.map((row) => (
@@ -1471,7 +1471,7 @@ export default function RingAbout() {
                       <span className={styles.moreChevron} aria-hidden="true" />
                     </summary>
                     <div className={styles.moreBody}>
-                      <Card className={styles.insightCard}>
+                      <Card surface="nested" className={styles.insightCard}>
                         <h3 className={styles.insightTitle}>Liga-Verteilung</h3>
                         <div className={styles.barList}>
                           {insights.leagueDistribution.map((row) => (
@@ -1486,7 +1486,7 @@ export default function RingAbout() {
                         </div>
                       </Card>
 
-                      <Card className={styles.insightCard}>
+                      <Card surface="nested" className={styles.insightCard}>
                         <h3 className={styles.insightTitle}>Drill-Verteilung</h3>
                         <div className={styles.barList}>
                           {insights.drillDistribution.map((row) => (
@@ -1501,7 +1501,7 @@ export default function RingAbout() {
                         </div>
                       </Card>
 
-                      <Card className={styles.insightCard}>
+                      <Card surface="nested" className={styles.insightCard}>
                         <h3 className={styles.insightTitle}>Veröffentlichte Szenen</h3>
                         <div className={styles.publishGrid}>
                           <div className={styles.publishTile}>
@@ -1518,7 +1518,7 @@ export default function RingAbout() {
                         </p>
                       </Card>
 
-                      <Card className={styles.insightCard}>
+                      <Card surface="nested" className={styles.insightCard}>
                         <h3 className={styles.insightTitle}>Team × Veröffentlicht</h3>
                         <div className={styles.tableWrap}>
                           <table className={styles.table}>

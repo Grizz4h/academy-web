@@ -71,6 +71,7 @@ export type CustomEmblem = {
 export type AcademyHelpLevel = 'discover' | 'guided' | 'learning'
 export type TerminologyMode = 'direct' | 'explained'
 export type PreferredAttackDirection = 'left' | 'right' | 'auto'
+export type HockeyExperienceLevel = 'beginner' | 'familiar' | 'advanced'
 
 export type DashboardPreferences = {
   layoutHints?: string[]
@@ -93,6 +94,10 @@ export type UserProfileCustomization = {
   academyHelpLevel: AcademyHelpLevel
   terminologyMode: TerminologyMode
   preferredAttackDirection: PreferredAttackDirection
+  /** Optional foundation onboarding signal — null/undefined = legacy profile */
+  hockeyExperience?: HockeyExperienceLevel | null
+  /** Soft dismiss for experience prompt (existing users) */
+  experiencePromptDismissed?: boolean
   dashboardPreferences: DashboardPreferences
   updatedAt?: string | null
 }

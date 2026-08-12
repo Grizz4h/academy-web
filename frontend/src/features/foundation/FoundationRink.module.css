@@ -1,0 +1,145 @@
+.wrap {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.svg {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  touch-action: manipulation;
+}
+
+.board {
+  fill: rgba(12, 28, 48, 0.92);
+  stroke: rgba(186, 230, 253, 0.35);
+  stroke-width: 2;
+}
+
+.region {
+  fill: rgba(125, 211, 252, 0.06);
+  stroke: transparent;
+  stroke-width: 0;
+  transition: fill 140ms ease, stroke 140ms ease;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.interactive:hover,
+.interactive:focus-visible {
+  fill: rgba(125, 211, 252, 0.16);
+}
+
+.highlighted {
+  fill: rgba(45, 212, 191, 0.22);
+  stroke: transparent;
+}
+
+.selected {
+  fill: rgba(52, 211, 153, 0.34);
+  stroke: transparent;
+}
+
+.weakSide {
+  fill: rgba(251, 191, 36, 0.16);
+}
+
+.weakSide.selected,
+.weakSide.highlighted {
+  fill: rgba(251, 191, 36, 0.28);
+}
+
+.blueLine {
+  stroke: rgba(96, 165, 250, 0.85);
+  stroke-width: 3;
+}
+
+.redLine {
+  stroke: rgba(248, 113, 113, 0.9);
+  stroke-width: 3;
+}
+
+.goalLine {
+  stroke: rgba(248, 113, 113, 0.55);
+  stroke-width: 2;
+}
+
+.goal {
+  fill: rgba(248, 250, 252, 0.15);
+  stroke: rgba(248, 250, 252, 0.55);
+  stroke-width: 1.5;
+}
+
+.dot {
+  fill: rgba(248, 113, 113, 0.55);
+  stroke: none;
+  pointer-events: none;
+}
+
+.attackArrow {
+  stroke: rgba(125, 211, 252, 0.75);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.marker {
+  cursor: default;
+}
+
+.marker.interactive {
+  cursor: pointer;
+}
+
+.player {
+  fill: rgba(56, 189, 248, 0.92);
+  stroke: rgba(8, 16, 32, 0.9);
+  stroke-width: 1.5;
+}
+
+.puck {
+  fill: rgba(251, 191, 36, 0.95);
+  stroke: rgba(8, 16, 32, 0.9);
+  stroke-width: 1.5;
+}
+
+.markerSelected .player,
+.markerSelected .puck {
+  stroke: rgba(52, 211, 153, 0.95);
+  stroke-width: 2.5;
+}
+
+.markerLabel {
+  fill: rgba(8, 16, 32, 0.95);
+  font-size: 10px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.legend {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  font-size: 0.68rem;
+  color: rgba(203, 213, 225, 0.65);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.legendAttack {
+  margin-left: auto;
+  color: rgba(125, 211, 252, 0.85);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+@media (max-width: 520px) {
+  .svg {
+    max-width: 100%;
+  }
+}

@@ -16,6 +16,7 @@ import { profileTitleCatalog, DEFAULT_PROFILE_TITLE_ID } from '../data/profile/p
 import { createDefaultProfile } from '../data/profile/defaults'
 import type {
   AcademyHelpLevel,
+  HockeyExperienceLevel,
   PreferredAttackDirection,
   TerminologyMode,
   UserProfileCustomization,
@@ -167,6 +168,8 @@ export default function AccountPage() {
         academyHelpLevel: draft.academyHelpLevel,
         terminologyMode: draft.terminologyMode,
         preferredAttackDirection: draft.preferredAttackDirection,
+        hockeyExperience: draft.hockeyExperience ?? null,
+        experiencePromptDismissed: draft.experiencePromptDismissed ?? false,
         dashboardPreferences: draft.dashboardPreferences || {},
       })
       setDraft(saved)
@@ -228,7 +231,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ui-page-shell`}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Account</h1>
         <p className="ui-page-lead">
@@ -241,7 +244,7 @@ export default function AccountPage() {
         <RinkIdentityCard profile={draft} stats={identityStats} />
       </section>
 
-      <Card className={styles.sectionCard}>
+      <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Progression & Achievements</h2>
         <p className={styles.sectionLead}>
           XP, Level und Freischaltungen entstehen aus echten Academy-Aktivitäten – nicht aus Dummy-Sessions.
@@ -249,7 +252,7 @@ export default function AccountPage() {
         <AccountProgressionPanel />
       </Card>
 
-      <Card className={styles.sectionCard}>
+      <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Profil</h2>
 
         <label className={styles.field}>
@@ -285,7 +288,7 @@ export default function AccountPage() {
         </div>
       </Card>
 
-      <Card className={styles.sectionCard}>
+      <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Hockey-Personalisierung</h2>
 
         <div className={styles.row2}>
@@ -415,7 +418,7 @@ export default function AccountPage() {
         </div>
       </Card>
 
-      <Card className={styles.sectionCard}>
+      <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Academy-Personalisierung</h2>
         <p className={styles.sectionLead}>
           Präferenzen werden gespeichert. Die Academy nutzt sie später, ohne bestehende Drills jetzt umzubauen.
@@ -480,9 +483,34 @@ export default function AccountPage() {
             </label>
           ))}
         </fieldset>
+
+        <fieldset className={styles.fieldset}>
+          <legend className={styles.label}>Hockey-Erfahrung</legend>
+          <p className={styles.hint}>
+            Steuert nur die Empfehlung für Track 0 (Hockey Basics). Keine Sperre für andere Tracks.
+          </p>
+          {([
+            { value: 'beginner', label: 'Neu bei Hockey' },
+            { value: 'familiar', label: 'Grundlagen bekannt' },
+            { value: 'advanced', label: 'Taktisch erfahren' },
+          ] as Array<{ value: HockeyExperienceLevel; label: string }>).map((opt) => (
+            <label key={opt.value} className={styles.choice}>
+              <input
+                type="radio"
+                name="hockeyExperience"
+                checked={draft.hockeyExperience === opt.value}
+                onChange={() => updateDraft({
+                  hockeyExperience: opt.value,
+                  experiencePromptDismissed: true,
+                })}
+              />
+              <span>{opt.label}</span>
+            </label>
+          ))}
+        </fieldset>
       </Card>
 
-      <Card className={styles.sectionCard}>
+      <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Account-Status</h2>
         <div className={styles.statusGrid}>
           <div>

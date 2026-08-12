@@ -16,6 +16,7 @@ import {
   ObservationVisualPreview,
   type SpatialSnapshot,
 } from './visuals'
+import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 
 interface SessionCardProps {
   session: Session
@@ -239,6 +240,15 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
         {isLabPredict && (
           <div className={styles.observedBadge} style={{ marginTop: '0.4rem', background: 'rgba(129,196,214,0.2)', borderColor: 'rgba(129,196,214,0.45)' }}>
             Lab · Predict
+          </div>
+        )}
+
+        {session.ai_reflection && (
+          <div
+            className={styles.observedBadge}
+            style={{ marginTop: '0.4rem', background: 'rgba(56,189,248,0.12)', borderColor: 'rgba(56,189,248,0.35)' }}
+          >
+            🤖 Reflection
           </div>
         )}
 
@@ -811,6 +821,17 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
                   )
                 })}
               </div>
+            </div>
+          )}
+
+          {session.state === 'COMPLETED' && session.ai_reflection && (
+            <div style={{ padding: '0 1.5rem 1rem' }}>
+              <SessionReflectionPanel
+                session={session}
+                reflection={session.ai_reflection}
+                onReflectionSaved={() => {}}
+                showGenerateButton={false}
+              />
             </div>
           )}
 

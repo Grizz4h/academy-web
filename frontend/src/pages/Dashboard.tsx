@@ -20,6 +20,14 @@ import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
 import { UiButton, UiButtonLink, UiProgress } from '../components/ui';
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard';
+import TodayMatchdaySlate from '../components/game/TodayMatchdaySlate';
+import { filterCatalogGamesForSeason, filterGamesForDate, localTodayIsoDate } from '../components/game/gameCatalogUtils';
+import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../stats/seasonNormalization';
+import {
+  selectNextStepRecommendation,
+  shouldPromptHockeyExperience,
+} from '../features/foundation/recommendations';
+import HockeyExperiencePrompt from '../features/foundation/HockeyExperiencePrompt';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string => {
@@ -51,6 +59,27 @@ export default function Dashboard() {
   const [scopeInitialized, setScopeInitialized] = useState(false);
   const [showAllTracks, setShowAllTracks] = useState(false);
 
+  const slateSeason = useMemo(
+    () => normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate(),
+    [],
+  );
+
+  const { data: slateGamesData } = useQuery({
+    queryKey: ['games', 'DEL', slateSeason, 'today-slate'],
+    queryFn: () => api.getGames({ league: 'DEL', season: slateSeason }),
+    enabled: Boolean(user && slateSeason),
+    staleTime: 60_000,
+  });
+
+  const slateCatalogGames = useMemo(
+    () => filterCatalogGamesForSeason(slateGamesData?.games || [], slateSeason),
+    [slateGamesData?.games, slateSeason],
+  );
+  const todaySlateGames = useMemo(
+    () => filterGamesForDate(slateCatalogGames, localTodayIsoDate()),
+    [slateCatalogGames],
+  );
+
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ["sessions", user],
     queryFn: () => api.getSessions(user || undefined),
@@ -63,6 +92,28 @@ export default function Dashboard() {
     queryFn: () => api.getCurriculum(),
     enabled: Boolean(user),
   });
+
+  const { data: account } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+  });
+
+  const [experiencePromptOpen, setExperiencePromptOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user || !account?.profile) return
+    const completedCount = getRealSessions(sessions || []).filter(
+      (s) => String(s.state || '').toUpperCase() === 'COMPLETED',
+    ).length
+    setExperiencePromptOpen(
+      shouldPromptHockeyExperience(
+        account.profile.hockeyExperience,
+        account.profile.experiencePromptDismissed,
+        { completedSessionCount: completedCount },
+      ),
+    )
+  }, [user, account?.profile?.hockeyExperience, account?.profile?.experiencePromptDismissed, sessions]);
 
   useEffect(() => {
     if (user) {
@@ -409,6 +460,21 @@ export default function Dashboard() {
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
   }, [sessions]);
 
+  const foundationRecommendation = useMemo(() => {
+    const completed = new Set<string>()
+    for (const s of getRealSessions(sessions || [])) {
+      if (String(s.state || '').toUpperCase() !== 'COMPLETED') continue
+      for (const d of s.drills || []) {
+        if (d?.id) completed.add(d.id)
+      }
+    }
+    return selectNextStepRecommendation({
+      curriculum,
+      completedDrillIds: completed,
+      hockeyExperience: account?.profile?.hockeyExperience,
+    })
+  }, [curriculum, sessions, account?.profile?.hockeyExperience]);
+
   // ---- Render Branches (ab hier dürfen returns kommen) ----
   if (!user)
     return (
@@ -532,6 +598,9 @@ export default function Dashboard() {
   const nextDrillTitle = nextDrill
     ? (nextDrill.moduleId ? `${nextDrill.moduleId} · ${nextDrill.title}` : nextDrill.title)
     : null;
+  const showFoundationEntry =
+    !resumeSession
+    && foundationRecommendation?.kind === 'foundation_entry';
   const drillProgressPct = derived.totalDrills
     ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
     : 0;
@@ -548,11 +617,21 @@ export default function Dashboard() {
   const hiddenTrackCount = Math.max(0, trackProgressList.length - TRACK_PREVIEW);
 
   return (
-    <div className={styles.dashboardPage}>
+    <div className={`${styles.dashboardPage} ui-page-shell`}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Übersicht</h1>
         <p className="ui-page-lead">Stand und nächster Schritt.</p>
       </header>
+
+      {todaySlateGames.length > 0 ? (
+        <Card surface="primary" className={styles.todaySlateCard}>
+          <TodayMatchdaySlate
+            league="DEL"
+            games={slateCatalogGames}
+            hint="Spielplan aus dem DEL-Import. In der Session-Vorbereitung kannst du eine Paarung antippen und Teams + Spieltag übernehmen."
+          />
+        </Card>
+      ) : null}
 
       <div className={styles.kpiGrid}>
         <KpiRevealCard
@@ -667,16 +746,26 @@ export default function Dashboard() {
         />
       </div>
 
-      <Card className={styles.nextStepCard} elevation="featured">
+      <Card className={styles.nextStepCard} elevation="featured" surface="primary">
         <div className={styles.nextStepCopy}>
           <h2 className={styles.nextStepTitle}>
-            {resumeSession ? 'Weiter geht’s' : 'Nächster Schritt'}
+            {resumeSession
+              ? 'Weiter geht’s'
+              : showFoundationEntry
+                ? 'Dein Einstieg'
+                : 'Nächster Schritt'}
           </h2>
           {resumeSession ? (
             <p className={styles.nextStepText}>
               Aktive Session offen
               {derived.streak > 0 ? ` · Streak ${derived.streak}` : ''}.
               {' '}Mach weiter, bevor der Faden reißt.
+            </p>
+          ) : showFoundationEntry && foundationRecommendation?.kind === 'foundation_entry' ? (
+            <p className={styles.nextStepText}>
+              <strong className={styles.nextStepDrillName}>{foundationRecommendation.title}</strong>
+              {' — '}
+              {foundationRecommendation.subtitle}
             </p>
           ) : nextDrillTitle ? (
             <p className={styles.nextStepText}>
@@ -689,7 +778,7 @@ export default function Dashboard() {
               Noch keine klare Empfehlung — starte einfach in der Akademie.
             </p>
           )}
-          {derived.lastSession && !resumeSession && (
+          {derived.lastSession && !resumeSession && !showFoundationEntry && (
             <p className={styles.nextStepMeta}>
               Letzte Session: {new Date(derived.lastSession.created_at).toLocaleDateString('de-DE')}
               {' · '}
@@ -723,6 +812,15 @@ export default function Dashboard() {
                 </UiButtonLink>
               )}
             </>
+          ) : showFoundationEntry && foundationRecommendation?.kind === 'foundation_entry' ? (
+            <>
+              <UiButtonLink to={`/setup/${foundationRecommendation.moduleId}`}>
+                Track 0 starten
+              </UiButtonLink>
+              <UiButtonLink to="/curriculum" variant="secondary">
+                Akademie öffnen
+              </UiButtonLink>
+            </>
           ) : nextDrill?.moduleId ? (
             <>
               <UiButtonLink to={`/setup/${nextDrill.moduleId}`}>
@@ -740,6 +838,11 @@ export default function Dashboard() {
         </div>
       </Card>
 
+      <HockeyExperiencePrompt
+        open={experiencePromptOpen}
+        onDone={() => setExperiencePromptOpen(false)}
+      />
+
       <DrillPriorityCards
         recommendedNext={derived.recommendedNext}
         mostTrained={derived.mostTrained}
@@ -748,7 +851,7 @@ export default function Dashboard() {
         onScopeChange={setCurrentScope}
       />
 
-      <Card>
+      <Card surface="section">
         <LearningRhythmWidget
           sessions={getRealSessions(sessions ?? [])}
           weeks={8}
@@ -762,7 +865,7 @@ export default function Dashboard() {
         <DrillActivityHeatmap attempts={derived.drillAttempts} days={56} />
       )}
 
-      <Card className={styles.recentCard}>
+      <Card surface="section" className={styles.recentCard}>
         <h2 className="ui-section-title">Zuletzt</h2>
         {derived.recentSessions.length === 0 ? (
           <p className={styles.emptyState}>
@@ -791,7 +894,7 @@ export default function Dashboard() {
         </summary>
         <div className={styles.moreBody}>
           <div className={styles.flexWrapRow}>
-            <Card className={styles.flexCard}>
+            <Card surface="nested" className={styles.flexCard}>
               <h2 className="ui-section-title">Fortschritt</h2>
               <div className={styles.progressRow}>
                 <div className={styles.progressCol}>
@@ -833,7 +936,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </Card>
-            <Card className={styles.flexCard}>
+            <Card surface="nested" className={styles.flexCard}>
               <h2 className="ui-section-title">Session-Qualität</h2>
               {derived.hygieneIssues.length === 0 ? (
                 <div className={styles.integrityStatus}>
@@ -858,7 +961,7 @@ export default function Dashboard() {
           <span className={styles.moreChevron} aria-hidden="true" />
         </summary>
         <div className={styles.moreBody}>
-          <Card>
+          <Card surface="section">
             <div className={styles.rewardHeaderRow}>
               <div className={styles.rewardHeaderItem}>
                 <strong>Level {levelProgress.level}</strong>
@@ -918,7 +1021,7 @@ export default function Dashboard() {
           <span className={styles.moreChevron} aria-hidden="true" />
         </summary>
         <div className={styles.moreBody}>
-          <Card>
+          <Card surface="section">
             <h2 className="ui-section-title">Meist beobachtete Teams</h2>
             {derived.mostObservedTeams.length === 0 ? (
               <div className={styles.rewardHint}>Noch keine Team-Beobachtungen vorhanden.</div>

@@ -4,6 +4,10 @@
  * Prefer these classes (or the React wrappers in components/ui)
  * instead of inventing new pill/button/progress styles per page.
  *
+ * Layout surfaces (responsive nesting) live in styles/layout-surfaces.css:
+ *   .ui-page-shell  .ui-content-section  .ui-surface--primary|section|nested|inline
+ *   Card prop: surface="primary" | "section" | "nested" | "inline"
+ *
  * Catalog
  * -------
  * Buttons:  .ui-btn  .ui-btn--primary | --secondary | --ghost | --danger | --dev | --sm | --block

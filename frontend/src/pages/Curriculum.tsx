@@ -7,6 +7,11 @@ import theoryData from '../data/theoryData.json'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { UiButton } from '../components/ui'
+import {
+  getFoundationTrack,
+  isFoundationTrack,
+  isFoundationTrackComplete,
+} from '../features/foundation/recommendations'
 import styles from './Curriculum.module.css'
 
 const cluster2Tracks = [
@@ -64,9 +69,17 @@ export default function Curriculum() {
   })
 
   const completedDrillIds = useMemo(() => collectCompletedDrillIds(sessions), [sessions])
+  const foundationTrack = getFoundationTrack(curriculum)
+  const foundationDone = isFoundationTrackComplete(curriculum, completedDrillIds)
 
   if (isLoading) return <div className="card">Lade Lehrplan...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
+
+  const orderedTracks = [...(curriculum?.tracks || [])].sort((a, b) => {
+    const aF = isFoundationTrack(a) ? 0 : 1
+    const bF = isFoundationTrack(b) ? 0 : 1
+    return aF - bF
+  })
 
   return (
     <div className={styles.page}>
@@ -75,13 +88,23 @@ export default function Curriculum() {
         <p className="ui-page-lead">Tracks antippen, um Module und Details auszuklappen.</p>
       </header>
 
-      {curriculum?.tracks.map((track: CurriculumTrack) => {
+      {orderedTracks.map((track: CurriculumTrack) => {
         const activeModules = (track.modules || []).filter((module: CurriculumModule) => module.active !== false)
         if (activeModules.length === 0) return null
+        const foundation = isFoundationTrack(track)
         return (
-        <details key={track.id} className={styles.track}>
+        <details
+          key={track.id}
+          className={`${styles.track} ${foundation ? styles.trackFoundation : ''}`}
+          open={foundation && track === foundationTrack && !foundationDone ? true : undefined}
+        >
           <summary className={styles.trackSummary}>
             <div className={styles.trackSummaryMain}>
+              {foundation && (
+                <div className={styles.foundationLabel}>
+                  {track.foundationLabel || 'FOUNDATION · TRACK 0'}
+                </div>
+              )}
               <h2 className={styles.trackTitle}>{track.title}</h2>
             </div>
             <div className={styles.trackMeta}>

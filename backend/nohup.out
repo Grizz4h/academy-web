@@ -48278,3 +48278,15 @@ INFO:     141.78.133.235:0 - "GET /api/curriculum HTTP/1.0" 200 OK
 INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 INFO:     141.78.133.235:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     Started server process [1185382]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [1192076]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

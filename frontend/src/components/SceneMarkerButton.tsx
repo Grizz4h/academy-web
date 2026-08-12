@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { api, type Session, type Drill } from '../api'
 import { buildSceneCreatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { isDummySession } from '../utils/sessionEligibility'
 import { formatGameTimeInput } from '../utils/sceneHelpers'
+import styles from './SceneMarkerButton.module.css'
 
 interface SceneMarkerExtension {
   type: 'select'
@@ -38,10 +40,20 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
       )
     : []
 
-  // Focus game_time input when modal opens
+  // Focus game_time after portal mounts; lock body scroll while open
   useEffect(() => {
-    if (showModal) {
-      setTimeout(() => inputRef.current?.focus(), 50)
+    if (!showModal) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const focusTimer = window.setTimeout(() => {
+      inputRef.current?.focus({ preventScroll: true })
+    }, 80)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.clearTimeout(focusTimer)
     }
   }, [showModal])
 
@@ -185,29 +197,27 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         )}
       </div>
 
-      {/* Modal */}
-      {showModal && (
+      {/* Modal — portaled to body so fixed centering ignores page scroll / transformed parents */}
+      {showModal && createPortal(
         <div
-          style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.75)',
-            zIndex: 2000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
+          className={styles.overlay}
           onClick={e => { if (e.target === e.currentTarget) handleClose() }}
         >
           <div
-            className="card"
-            style={{ maxWidth: 420, width: '92%', margin: '0 auto', padding: '1.5rem' }}
+            className={styles.panel}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Szene merken"
             onKeyDown={handleKeyDown}
           >
-            <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.2rem' }}>🎬 Szene merken</h3>
+            <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.2rem', color: '#f1f5f9' }}>🎬 Szene merken</h3>
 
             {/* Context info */}
             <div style={{
               fontSize: '0.8rem', color: '#94a3b8', marginBottom: '1.2rem',
-              padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.04)',
+              padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.05)',
               borderRadius: '0.4rem', lineHeight: 1.6,
+              border: '1px solid rgba(255,255,255,0.08)',
             }}>
               {session.game_info?.team_home && session.game_info?.team_away && (
                 <div><strong style={{ color: '#cbd5e1' }}>{session.game_info.team_home}</strong> vs <strong style={{ color: '#cbd5e1' }}>{session.game_info.team_away}</strong></div>
@@ -217,7 +227,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             </div>
 
             {/* Game time input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem' }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
               Minute <span style={{ color: '#f87171' }}>*</span>
             </label>
             <input
@@ -233,7 +243,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
               style={{
                 width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
                 border: error ? '1.5px solid #f87171' : '1.5px solid #334155',
-                background: '#0f172a', color: '#f1f5f9',
+                background: '#050a14', color: '#f1f5f9',
                 fontSize: '1.25rem', fontWeight: 700, letterSpacing: '0.05em',
                 boxSizing: 'border-box', marginBottom: '0.3rem',
               }}
@@ -244,7 +254,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
 
             {sceneMarkerExtensions.map((extension) => (
               <div key={extension.key} style={{ marginTop: '0.9rem' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
                   {extension.label} <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <select
@@ -262,7 +272,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             ))}
 
             {/* Note input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', marginTop: '0.9rem', fontSize: '0.95rem' }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', marginTop: '0.9rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
               Kurze Notiz <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
             </label>
             <textarea
@@ -273,7 +283,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
               maxLength={300}
               style={{
                 width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
-                border: '1.5px solid #334155', background: '#0f172a', color: '#f1f5f9',
+                border: '1.5px solid #334155', background: '#050a14', color: '#f1f5f9',
                 fontSize: '0.95rem', resize: 'vertical', boxSizing: 'border-box',
               }}
             />
@@ -308,7 +318,8 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   )

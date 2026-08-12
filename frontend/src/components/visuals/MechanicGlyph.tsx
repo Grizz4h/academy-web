@@ -116,6 +116,7 @@ export function resolveMechanicKind(drillType?: string | null, mode?: string | n
   }
   if (type.includes('pattern_log') || type.includes('multi_observation_pattern') || type.includes('pattern_condition') || type.includes('pattern_invariant')) return 'log'
   if (type.includes('event_log') || type.includes('sample_log') || type.includes('shift_tracker') || type.includes('observation_log')) return 'log'
+  if (type.includes('foundation') || type.includes('micro_quiz')) return 'choice'
   if (type.includes('sidequest')) return 'sidequest'
   if (type.includes('rink') || type.includes('clickable') || type.includes('draggable')) return 'marker'
   return 'generic'

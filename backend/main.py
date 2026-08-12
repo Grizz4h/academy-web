@@ -1,14 +1,47 @@
 import os
+
+_ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+def _load_env_files() -> None:
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    load_dotenv(os.path.join(_ROOT_DIR, ".env"))
+    load_dotenv(os.path.join(_ROOT_DIR, ".env.local"))
+
+
+_load_env_files()
+
 import json
 import jwt
 from datetime import datetime, timedelta
 from fastapi import Header, HTTPException, Depends
 from auth_utils import hash_password, verify_password
 from player_importer import PennyDelImporter
+from del_data.season_utils import season_to_display, season_to_file_key
+from del_data.team_mapping import TeamCatalogMapper
+from del_data.roster_store import (
+    get_team_roster_snapshot,
+    upsert_team_roster_snapshot,
+    migrate_legacy_team_players_to_season,
+    roster_status_summary,
+    load_roster_catalog,
+)
+from del_data.game_store import (
+    list_games,
+    get_game,
+    upsert_games,
+    games_status_summary,
+    update_game_stats,
+)
+from del_data.schedule_importer import PennyDelScheduleImporter
+from del_data.spieldetails_importer import PennyDelSpieldetailsImporter
 # JWT config
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 USERS_FILE = os.path.join(DATA_DIR, "users.json")
-JWT_SECRET = os.environ.get("ACADEMY_JWT_SECRET", "dev-secret")
+JWT_SECRET = os.environ.get("ACADEMY_JWT_SECRET") or "dev-secret"
 JWT_ALGO = "HS256"
 JWT_EXP_DAYS = 7
 
@@ -124,6 +157,7 @@ SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
 ROOT_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 ROSTERS_DIR = os.path.join(ROOT_DATA_DIR, "rosters")
+GAMES_DIR = os.path.join(ROOT_DATA_DIR, "games")
 PLAYERS_DIR = os.path.join(DATA_DIR, "players")
 OBSERVATIONS_DIR = os.path.join(ROOT_DATA_DIR, "observations")
 OBS_RUNS_DIR = os.path.join(OBSERVATIONS_DIR, "runs")
@@ -141,6 +175,7 @@ class SessionCreate(BaseModel):
     confidence: int  # 1-5
     observation_scope: Optional[str] = None
     game_info: Optional[dict] = None
+    game_id: Optional[str] = None
     observed_team: Optional[str] = None
     observed_team_id: Optional[str] = None
     observed_team_name: Optional[str] = None
@@ -184,6 +219,7 @@ OBSERVATION_SCOPE_LABELS = {
     "P1": "1. Drittel",
     "P2": "2. Drittel",
     "P3": "3. Drittel",
+    "LESSON": "Lektion",
 }
 
 SCENE_STATUS_NEW = "NEW"
@@ -842,12 +878,83 @@ def _touch_player_observation(team_id: str, player_id: str, observed_at: Optiona
 
 def _load_roster_file(league: str, season: str) -> dict:
     league_key = (league or "").strip().lower()
-    season_key = (season or "").strip().lower()
+    season_key = season_to_file_key(season)
     file_name = f"{league_key}_{season_key}.json"
     file_path = os.path.join(ROSTERS_DIR, file_name)
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="Roster not found")
     return load_json(file_path)
+
+
+def _team_catalog_mapper() -> TeamCatalogMapper:
+    mapper = TeamCatalogMapper(os.path.join(DATA_DIR, "teams.json"))
+    if os.path.exists(PENNY_DEL_IMPORT_CONFIG_FILE):
+        try:
+            raw = load_json(PENNY_DEL_IMPORT_CONFIG_FILE)
+            for item in raw if isinstance(raw, list) else []:
+                catalog_id = (item.get("catalog_id") or "").strip()
+                slug = (item.get("slug") or "").strip().lower()
+                if catalog_id and slug:
+                    mapper.register_slug(slug, catalog_id)
+                importer_id = slug.replace("-", "_") if slug else ""
+                if catalog_id and importer_id:
+                    mapper.register_slug(importer_id, catalog_id)
+        except Exception as exc:
+            print(f"[DEL] Team config mapping failed: {exc}")
+    return mapper
+
+
+def _resolve_catalog_team_id(team_id: str) -> str:
+    mapper = _team_catalog_mapper()
+    resolved = mapper.resolve(team_id=team_id) or mapper.resolve(slug=team_id)
+    return resolved or team_id
+
+
+def _merge_observation_stats(team_id: str, roster_players: List[dict]) -> List[dict]:
+    """Attach observation_count/last_observed from global kader registry."""
+    global_players = _load_team_players(team_id)
+    merged = []
+    for player in roster_players:
+        player_id = player.get("player_id")
+        global_row = global_players.get(player_id) or {}
+        merged.append(
+            {
+                **player,
+                "player_name": player.get("name") or player.get("player_name") or global_row.get("player_name"),
+                "observation_count": int(global_row.get("observation_count") or 0),
+                "last_observed": global_row.get("last_observed"),
+                "summary": global_row.get("summary") or "",
+                "active": True,
+            }
+        )
+    return merged
+
+
+def _find_latest_roster_season(league: str, team_id: str) -> Optional[dict]:
+    if not os.path.exists(ROSTERS_DIR):
+        return None
+    latest = None
+    for name in os.listdir(ROSTERS_DIR):
+        if not name.endswith(".json"):
+            continue
+        if not name.lower().startswith(f"{league.lower()}_"):
+            continue
+        try:
+            catalog = load_json(os.path.join(ROSTERS_DIR, name))
+        except Exception:
+            continue
+        for team in catalog.get("teams") or []:
+            if team.get("team_id") != team_id or not team.get("players"):
+                continue
+            season_label = catalog.get("season_label") or season_to_display(catalog.get("season") or "")
+            candidate = {
+                "season": season_label,
+                "season_key": catalog.get("season"),
+                "team": team,
+            }
+            if not latest or (candidate.get("season_key") or "") > (latest.get("season_key") or ""):
+                latest = candidate
+    return latest
 
 
 def _iter_user_observation_entries(user: str):
@@ -909,12 +1016,43 @@ def _aggregate_players(entries: List[dict]) -> List[dict]:
     return players
 
 # API Endpunkte
+def _merge_foundation_tracks(curriculum: dict) -> dict:
+    """Prepend optional foundation tracks (e.g. T0) without editing the main curriculum dump."""
+    foundation_dir = os.path.join(DATA_DIR, "foundation")
+    if not os.path.isdir(foundation_dir):
+        return curriculum
+    tracks = list(curriculum.get("tracks") or [])
+    existing_ids = {t.get("id") for t in tracks if isinstance(t, dict)}
+    foundation_tracks = []
+    try:
+        for name in sorted(os.listdir(foundation_dir)):
+            if not name.endswith(".json"):
+                continue
+            path = os.path.join(foundation_dir, name)
+            try:
+                payload = load_json(path) or {}
+            except Exception:
+                continue
+            track = payload.get("track") if isinstance(payload, dict) else None
+            if not isinstance(track, dict) or not track.get("id"):
+                continue
+            if track["id"] in existing_ids:
+                continue
+            foundation_tracks.append(track)
+            existing_ids.add(track["id"])
+    except Exception:
+        return curriculum
+    if not foundation_tracks:
+        return curriculum
+    return {**curriculum, "tracks": foundation_tracks + tracks}
+
+
 @app.get("/api/curriculum")
 async def get_curriculum():
     """Curriculum laden"""
     try:
         curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
-        return curriculum
+        return _merge_foundation_tracks(curriculum)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
@@ -1301,10 +1439,14 @@ async def list_importable_teams(current_user: str = Depends(get_current_user)):
         "teams": [
             {
                 "id": team.get("id"),
+                "catalog_id": team.get("catalog_id") or team.get("id"),
                 "slug": team.get("slug"),
                 "name": team.get("team"),
                 "league": team.get("league"),
                 "url": team.get("url"),
+                "overview_url": team.get("overview_url") or "",
+                "kader_available": bool(team.get("kader_available", True)),
+                "kader_note": team.get("kader_note") or "",
                 "enabled": bool(team.get("enabled")),
                 "status": "supported" if team.get("enabled") else "planned",
             }
@@ -1317,17 +1459,18 @@ async def list_importable_teams(current_user: str = Depends(get_current_user)):
 @app.post("/api/players/import")
 async def import_players(
     team_id: Optional[str] = None,
+    season: Optional[str] = Query(default=None),
+    league: Optional[str] = Query(default="DEL"),
     current_user: str = Depends(get_current_user)
 ):
     """
-    Importiert Spieler für ein Team.
-    
-    Unterstützte Teams kommen aus der Konfigurationsdatei.
+    Importiert Spieler für ein Team (optional saisonbezogen).
     
     Upsert-Logik:
     - Neue Spieler: erstellen
     - Existierende Spieler: aktualisieren
     - Inaktive Spieler: active=false markieren (nicht löschen)
+    - Season Snapshot: 1 Team + 1 Season = 1 canonical roster (andere Saisons bleiben)
     """
     importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
     configured_teams = importer.list_teams(enabled_only=False)
@@ -1348,12 +1491,38 @@ async def import_players(
             },
         )
 
+    target_season = season or "2025/26"
+    mapper = _team_catalog_mapper()
+    team_cfg = next((team for team in configured_teams if team.get("id") == team_id), None)
+    catalog_id = (team_cfg or {}).get("catalog_id") or mapper.resolve(team_id=team_id) or team_id
+    team_name = (team_cfg or {}).get("team") or mapper.team_name(catalog_id) or team_id
+
     try:
         result = importer.import_team(team_id)
 
         if result.get("error"):
-            raise HTTPException(status_code=502, detail=result)
+            status = 409 if result.get("kader_pending") else 502
+            raise HTTPException(status_code=status, detail=result)
 
+        active_players = _get_active_team_players(team_id)
+        snapshot = upsert_team_roster_snapshot(
+            ROSTERS_DIR,
+            league=league or "DEL",
+            season=target_season,
+            team_id=catalog_id,
+            team_name=team_name,
+            players=active_players,
+            source={
+                "provider": "penny_del",
+                "externalTeamId": team_id,
+                "sourceUrl": result.get("url"),
+                "importedAt": datetime.utcnow().isoformat() + "Z",
+            },
+        )
+        result["season"] = season_to_display(target_season)
+        result["catalog_team_id"] = catalog_id
+        result["roster_quality"] = (snapshot.get("snapshot") or {}).get("quality")
+        result["roster_warnings"] = (snapshot.get("snapshot") or {}).get("warnings") or []
         return result
     except HTTPException:
         raise
@@ -1369,31 +1538,112 @@ async def import_players(
 
 
 @app.post("/api/players/import-all")
-async def import_all_players(current_user: str = Depends(get_current_user)):
+async def import_all_players(
+    season: Optional[str] = Query(default=None),
+    league: Optional[str] = Query(default="DEL"),
+    current_user: str = Depends(get_current_user),
+):
     importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
-    results = importer.import_all_enabled()
+    target_season = season or "2025/26"
+    mapper = _team_catalog_mapper()
+    results = []
+    for team in importer.list_teams(enabled_only=True):
+        team_id = team.get("id") or ""
+        try:
+            result = importer.import_team(team_id)
+            if result.get("error"):
+                results.append(result)
+                continue
+            catalog_id = team.get("catalog_id") or mapper.resolve(team_id=team_id) or team_id
+            team_name = team.get("team") or mapper.team_name(catalog_id) or team_id
+            active_players = _get_active_team_players(team_id)
+            snapshot = upsert_team_roster_snapshot(
+                ROSTERS_DIR,
+                league=league or "DEL",
+                season=target_season,
+                team_id=catalog_id,
+                team_name=team_name,
+                players=active_players,
+                source={
+                    "provider": "penny_del",
+                    "externalTeamId": team_id,
+                    "sourceUrl": result.get("url"),
+                    "importedAt": datetime.utcnow().isoformat() + "Z",
+                },
+            )
+            result["season"] = season_to_display(target_season)
+            result["catalog_team_id"] = catalog_id
+            result["roster_quality"] = (snapshot.get("snapshot") or {}).get("quality")
+            results.append(result)
+        except Exception as exc:
+            results.append({"team_id": team_id, "error": str(exc)})
     if not results:
         raise HTTPException(status_code=400, detail={"error": "Keine aktivierten Teams in der Konfiguration"})
-    return {"results": results, "total": len(results)}
+    return {"results": results, "total": len(results), "season": season_to_display(target_season)}
 
 
 @app.get("/api/players/team/{team_id}")
-async def get_team_players(team_id: str, active_only: bool = True, current_user: str = Depends(get_current_user)):
-    """Gibt alle Spieler eines Teams zurück."""
-    players = _load_team_players(team_id)
+async def get_team_players(
+    team_id: str,
+    season: Optional[str] = Query(default=None),
+    league: Optional[str] = Query(default="DEL"),
+    active_only: bool = Query(default=True),
+    allow_fallback: bool = Query(default=False),
+    current_user: str = Depends(get_current_user),
+):
+    """Gibt Spieler eines Teams zurück — optional saisonbezogen aus Roster Snapshot."""
+    catalog_id = _resolve_catalog_team_id(team_id)
 
+    if season:
+        snapshot = get_team_roster_snapshot(ROSTERS_DIR, league or "DEL", season, catalog_id)
+        fallback = None
+        if not snapshot or not snapshot.get("players"):
+            if allow_fallback:
+                fallback = _find_latest_roster_season(league or "DEL", catalog_id)
+                if fallback:
+                    snapshot = fallback["team"]
+            if not snapshot or not snapshot.get("players"):
+                raise HTTPException(
+                    status_code=404,
+                    detail={
+                        "error": "roster_not_found",
+                        "message": f"Für Saison {season_to_display(season)} ist noch kein Kader importiert.",
+                        "team_id": catalog_id,
+                        "season": season_to_display(season),
+                    },
+                )
+
+        roster_players = snapshot.get("players") or []
+        players_list = _merge_observation_stats(team_id, roster_players)
+        if active_only:
+            players_list = [p for p in players_list if p.get("active", True)]
+        players_list.sort(key=lambda p: (p.get("number") or p.get("jersey_number") or 999))
+
+        response = {
+            "team_id": catalog_id,
+            "season": season_to_display(season),
+            "players": players_list,
+            "total": len(players_list),
+            "updated_at": (snapshot.get("snapshot") or {}).get("imported_at") or datetime.utcnow().isoformat() + "Z",
+            "quality": (snapshot.get("snapshot") or {}).get("quality"),
+            "warnings": (snapshot.get("snapshot") or {}).get("warnings") or [],
+        }
+        if fallback:
+            response["fallback_season"] = fallback.get("season")
+            response["fallback"] = True
+        return response
+
+    players = _load_team_players(team_id)
     if active_only:
         players_list = [p for p in players.values() if p.get('active', True)]
     else:
         players_list = list(players.values())
-
     players_list.sort(key=lambda p: (p.get('jersey_number') or 999))
-
     return {
         "team_id": team_id,
         "players": players_list,
         "total": len(players_list),
-        "updated_at": datetime.utcnow().isoformat() + "Z"
+        "updated_at": datetime.utcnow().isoformat() + "Z",
     }
 
 
@@ -1407,6 +1657,242 @@ async def refresh_player_profile_placeholder(player_id: str, current_user: str =
     }
 
 
+# ---- DEL Data Hub (Rosters + Games) ----
+
+@app.get("/api/games")
+async def get_games(
+    league: str = Query(default="DEL"),
+    season: str = Query(...),
+    team_id: Optional[str] = Query(default=None),
+    phase_id: Optional[str] = Query(default=None),
+    status: Optional[str] = Query(default=None),
+    current_user: str = Depends(get_current_user),
+):
+    games = list_games(
+        GAMES_DIR,
+        league=league,
+        season=season,
+        team_id=_resolve_catalog_team_id(team_id) if team_id else None,
+        phase_id=phase_id,
+        status=status,
+    )
+    mapper = _team_catalog_mapper()
+    for game in games:
+        game["home_team_name"] = game.get("home_team_name") or mapper.team_name(game.get("home_team_id") or "")
+        game["away_team_name"] = game.get("away_team_name") or mapper.team_name(game.get("away_team_id") or "")
+    return {"games": games, "total": len(games), "season": season_to_display(season), "league": league}
+
+
+@app.get("/api/games/{game_id:path}")
+async def get_game_by_id(game_id: str, current_user: str = Depends(get_current_user)):
+    game = get_game(GAMES_DIR, game_id)
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    mapper = _team_catalog_mapper()
+    game["home_team_name"] = game.get("home_team_name") or mapper.team_name(game.get("home_team_id") or "")
+    game["away_team_name"] = game.get("away_team_name") or mapper.team_name(game.get("away_team_id") or "")
+    return game
+
+
+@app.post("/api/del-data/import-schedule")
+async def import_del_schedule(
+    season: str = Query(default="2025/26"),
+    league: str = Query(default="DEL"),
+    current_user: str = Depends(get_current_user),
+):
+    mapper = _team_catalog_mapper()
+    importer = PennyDelScheduleImporter(mapper)
+    result = importer.import_season(season, league=league)
+    if not result.get("games"):
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "error": "schedule_import_failed",
+                "errors": result.get("errors") or ["Keine Spiele gefunden"],
+            },
+        )
+    upsert_result = upsert_games(
+        GAMES_DIR,
+        league=league,
+        season=season,
+        games=result["games"],
+    )
+    return {
+        **result,
+        **upsert_result,
+        "season": season_to_display(season),
+    }
+
+
+@app.post("/api/del-data/migrate-rosters")
+async def migrate_del_rosters(
+    season: str = Query(default="2025/26"),
+    league: str = Query(default="DEL"),
+    current_user: str = Depends(get_current_user),
+):
+    mapper = _team_catalog_mapper()
+    return migrate_legacy_team_players_to_season(
+        ROSTERS_DIR,
+        PLAYERS_DIR,
+        league=league,
+        season=season,
+        team_mapper=mapper,
+        import_config_path=PENNY_DEL_IMPORT_CONFIG_FILE,
+    )
+
+
+@app.get("/api/del-data/status")
+async def get_del_data_status(
+    season: str = Query(default="2025/26"),
+    league: str = Query(default="DEL"),
+    current_user: str = Depends(get_current_user),
+):
+    roster_status = roster_status_summary(ROSTERS_DIR, league, season)
+    games_status = games_status_summary(GAMES_DIR, league, season)
+    importable = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE).list_teams(enabled_only=True)
+    expected_teams = len(importable)
+    return {
+        "season": season_to_display(season),
+        "league": league,
+        "rosters": roster_status,
+        "games": games_status,
+        "expected_teams": expected_teams,
+        "issues": [
+            {
+                "team_id": team.get("team_id"),
+                "name": team.get("name"),
+                "quality": team.get("quality"),
+                "warnings": team.get("warnings") or [],
+            }
+            for team in roster_status.get("teams") or []
+            if team.get("quality") not in (None, "plausible")
+        ],
+    }
+
+
+def _build_game_stats_payload(fetch_result: dict) -> dict:
+    return {
+        "provider": "penny_del",
+        "imported_at": fetch_result.get("imported_at"),
+        "external_id": fetch_result.get("external_id"),
+        "overview_url": fetch_result.get("overview_url"),
+        "boxscore_url": fetch_result.get("boxscore_url"),
+        "team": fetch_result.get("team_stats") or {},
+        "players": fetch_result.get("player_stats") or [],
+        "warnings": fetch_result.get("errors") or [],
+    }
+
+
+@app.post("/api/del-data/import-game-stats")
+async def import_del_game_stats(
+    game_id: str = Query(...),
+    current_user: str = Depends(get_current_user),
+):
+    game = get_game(GAMES_DIR, game_id)
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    external_id = (game.get("source") or {}).get("external_id")
+    if not external_id:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "missing_external_id", "message": "Spiel hat keine PENNY spieldetails-ID"},
+        )
+
+    mapper = _team_catalog_mapper()
+    importer = PennyDelSpieldetailsImporter(mapper)
+    fetch_result = importer.fetch_game_stats(external_id)
+    if not fetch_result.get("ok"):
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "error": "game_stats_import_failed",
+                "errors": fetch_result.get("errors") or ["Import fehlgeschlagen"],
+            },
+        )
+
+    stats_payload = _build_game_stats_payload(fetch_result)
+    updated = update_game_stats(GAMES_DIR, game_id, stats_payload)
+    if not updated:
+        raise HTTPException(status_code=500, detail="Stats konnten nicht gespeichert werden")
+
+    mapper_names = mapper
+    updated["home_team_name"] = updated.get("home_team_name") or mapper_names.team_name(updated.get("home_team_id") or "")
+    updated["away_team_name"] = updated.get("away_team_name") or mapper_names.team_name(updated.get("away_team_id") or "")
+    return {
+        "ok": True,
+        "game_id": game_id,
+        "external_id": external_id,
+        "stats_summary": {
+            "team_metrics": len(stats_payload.get("team") or {}),
+            "player_rows": sum(len(team.get("players") or []) for team in stats_payload.get("players") or []),
+            "warnings": stats_payload.get("warnings") or [],
+        },
+        "game": updated,
+    }
+
+
+@app.post("/api/del-data/import-game-stats-batch")
+async def import_del_game_stats_batch(
+    season: str = Query(default="2025/26"),
+    league: str = Query(default="DEL"),
+    limit: int = Query(default=5, ge=1, le=25),
+    skip_existing: bool = Query(default=True),
+    current_user: str = Depends(get_current_user),
+):
+    games = list_games(GAMES_DIR, league=league, season=season, status="final")
+    if not games:
+        games = [game for game in list_games(GAMES_DIR, league=league, season=season) if game.get("score")]
+
+    mapper = _team_catalog_mapper()
+    importer = PennyDelSpieldetailsImporter(mapper)
+    batch = importer.import_games_batch(
+        games,
+        limit=limit,
+        skip_existing=skip_existing,
+    )
+
+    saved = 0
+    enriched_results = []
+    for item in batch.get("results") or []:
+        game_id = item.get("game_id") or ""
+        catalog_game = get_game(GAMES_DIR, game_id) if game_id else None
+        enriched = {**item}
+        if catalog_game:
+            enriched["home_team_name"] = catalog_game.get("home_team_name") or mapper.team_name(
+                catalog_game.get("home_team_id") or ""
+            )
+            enriched["away_team_name"] = catalog_game.get("away_team_name") or mapper.team_name(
+                catalog_game.get("away_team_id") or ""
+            )
+            enriched["date"] = catalog_game.get("date")
+            enriched["matchday"] = catalog_game.get("matchday")
+            enriched["score"] = catalog_game.get("score")
+
+        if item.get("ok") and item.get("stats"):
+            stats_payload = _build_game_stats_payload(item["stats"])
+            enriched["stats_summary"] = {
+                "team_metrics": len(stats_payload.get("team") or {}),
+                "player_rows": sum(len(team.get("players") or []) for team in stats_payload.get("players") or []),
+                "warnings": stats_payload.get("warnings") or [],
+            }
+            if update_game_stats(GAMES_DIR, game_id, stats_payload):
+                saved += 1
+                enriched["saved"] = True
+            else:
+                enriched["saved"] = False
+                enriched["error"] = enriched.get("error") or "Speichern fehlgeschlagen"
+        enriched_results.append(enriched)
+
+    return {
+        **batch,
+        "results": enriched_results,
+        "saved": saved,
+        "season": season_to_display(season),
+        "league": league,
+        "candidates": len(games),
+    }
+
 
 @app.get("/api/sessions")
 async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
@@ -1414,10 +1900,11 @@ async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
     if not os.path.exists(SESSIONS_DIR):
         return []
 
+    user_norm = _normalize_user_key(user) if user else None
     sessions = []
     for session_path in iter_session_files():
         session = load_json(session_path)
-        if user and session.get('user') != user:
+        if user_norm and _normalize_user_key(session.get('user', '')) != user_norm:
             continue
         if state and session.get('state') != state:
             continue
@@ -1441,8 +1928,8 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
     now = datetime.now()
     session_id = f"{user_cased}_{int(now.timestamp())}"
 
-    # Lade Module-Drills aus Curriculum
-    curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
+    # Lade Module-Drills aus Curriculum (inkl. Foundation-Tracks wie T0)
+    curriculum = _merge_foundation_tracks(load_json(os.path.join(DATA_DIR, "curriculum.json")))
     module_drills = []
     for track in curriculum.get("tracks", []):
         for module in track.get("modules", []):
@@ -1459,6 +1946,13 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
                 break
         if module_drills:
             break
+
+    if session.module_id and not module_drills:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Kein Drill für Modul {session.module_id} gefunden"
+            + (f" (drill_id={session.drill_id})" if session.drill_id else ""),
+        )
 
     enforce_max_text_length(session.goal, "session.goal")
     enforce_max_text_length(session.focus, "session.focus")
@@ -1491,6 +1985,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "drafts": {},  # Store draft answers for continuation
         "post": None,
         "game_info": session.game_info,
+        "game_id": session.game_id,
         "observed_team": session.observed_team,
         "observed_team_id": session.observed_team_id,
         "observed_team_name": session.observed_team_name,
@@ -1915,6 +2410,43 @@ async def add_microfeedback(session_id: str, data: MicroFeedbackData, request: R
     return {"status": "ok", "microfeedback": session["microfeedback"][phase]}
 
 
+from reflection import generate_session_reflection
+
+
+@app.post("/api/sessions/{session_id}/reflection")
+async def create_session_reflection(session_id: str):
+    """Generate or return cached AI reflection for a completed session."""
+    session_path = get_session_path_or_404(session_id)
+    session = load_json(session_path)
+
+    if session.get("state") != "COMPLETED":
+        raise HTTPException(status_code=400, detail="Session must be COMPLETED")
+
+    if session.get("is_dummy") is True:
+        raise HTTPException(
+            status_code=400,
+            detail="DEV · KI-Reflexion deaktiviert für Dummy-Session",
+        )
+
+    existing = session.get("ai_reflection")
+    if existing:
+        return {"reflection": existing, "cached": True}
+
+    curriculum = _merge_foundation_tracks(
+        load_json(os.path.join(DATA_DIR, "curriculum.json"))
+    )
+    reflection = generate_session_reflection(session, curriculum)
+    session["ai_reflection"] = reflection.model_dump()
+    save_json(session_path, session)
+    logging.info(
+        "[reflection] session=%s model=%s prompt=%s cached=false",
+        session_id,
+        reflection.model,
+        reflection.promptVersion,
+    )
+    return {"reflection": session["ai_reflection"], "cached": False}
+
+
 @app.get("/api/rewards/state")
 async def get_rewards_state(current_user: str = Depends(get_current_user)):
     state = _load_reward_state(current_user)
@@ -2244,6 +2776,8 @@ def _active_periods_for_scope(scope: Optional[str]) -> List[str]:
         return ["P2"]
     if normalized == "P3":
         return ["P3"]
+    if normalized == "LESSON":
+        return ["P1"]
     return ["P1", "P2", "P3"]
 
 
@@ -2888,12 +3422,13 @@ async def login(payload: dict):
     user = next((u for u in users["users"] if u["username"].strip().lower() == username), None)
     if not user or not verify_password(password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    user_cased = user.get("username") or username
     token = jwt.encode({
         "sub": username,
         "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
     }, JWT_SECRET, algorithm=JWT_ALGO)
-    print(f"[AUTH] login ok user={username}")
-    return {"token": token, "username": username}
+    print(f"[AUTH] login ok user={user_cased}")
+    return {"token": token, "username": user_cased}
 
 
 # ---- Account / RINK ID profile ----
@@ -2937,6 +3472,8 @@ def _default_user_profile(username: str) -> dict:
         "academyHelpLevel": "guided",
         "terminologyMode": "direct",
         "preferredAttackDirection": "auto",
+        "hockeyExperience": None,
+        "experiencePromptDismissed": False,
         "dashboardPreferences": {},
         "updatedAt": None,
     }
@@ -2993,6 +3530,8 @@ class ProfileUpdatePayload(BaseModel):
     academyHelpLevel: Optional[str] = None
     terminologyMode: Optional[str] = None
     preferredAttackDirection: Optional[str] = None
+    hockeyExperience: Optional[str] = None
+    experiencePromptDismissed: Optional[bool] = None
     dashboardPreferences: Optional[dict] = None
 
 
@@ -3110,6 +3649,18 @@ async def patch_my_profile(payload: ProfileUpdatePayload, current_user: str = De
         if data["preferredAttackDirection"] not in ("left", "right", "auto"):
             raise HTTPException(status_code=400, detail="Ungültige Rink-Ausrichtung.")
         profile["preferredAttackDirection"] = data["preferredAttackDirection"]
+
+    if "hockeyExperience" in data:
+        exp = data["hockeyExperience"]
+        if exp is None:
+            profile["hockeyExperience"] = None
+        elif exp not in ("beginner", "familiar", "advanced"):
+            raise HTTPException(status_code=400, detail="Ungültiges Hockey-Erfahrungslevel.")
+        else:
+            profile["hockeyExperience"] = exp
+
+    if "experiencePromptDismissed" in data and data["experiencePromptDismissed"] is not None:
+        profile["experiencePromptDismissed"] = bool(data["experiencePromptDismissed"])
 
     if "dashboardPreferences" in data and data["dashboardPreferences"] is not None:
         if not isinstance(data["dashboardPreferences"], dict):

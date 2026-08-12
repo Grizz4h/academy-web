@@ -52,6 +52,10 @@ export interface Track {
   title: string
   goal: string
   description?: string
+  /** e.g. "foundation" for Track 0 — prefer metadata over id hardcodes */
+  trackType?: string
+  supportsMastery?: boolean
+  foundationLabel?: string
   modules: Module[]
 }
 
@@ -211,6 +215,111 @@ export interface Session {
   is_dummy?: boolean
   isDummy?: boolean
   dev_seed_version?: number
+  game_id?: string
+  ai_reflection?: import('./features/reflection/types').StoredAiReflection
+}
+
+export type DataQuality = 'verified' | 'plausible' | 'incomplete' | 'suspicious'
+
+export interface GameScore {
+  home: number
+  away: number
+  periods?: Array<{ home: number; away: number }>
+}
+
+export interface GameTeamStatMetric {
+  label?: string
+  home?: number | string | null
+  away?: number | string | null
+}
+
+export interface GamePlayerStatRow {
+  number?: string
+  name: string
+  position_group?: 'forward' | 'defense' | 'goalie' | string
+  goals?: number | null
+  assists?: number | null
+  points?: number | null
+  plus_minus?: number | null
+  pim?: number | null
+  sog?: number | null
+  toi?: string | null
+  saves?: number | null
+  save_pct?: number | string | null
+}
+
+export interface GameTeamPlayerStats {
+  team_id?: string
+  team_name?: string
+  players: GamePlayerStatRow[]
+}
+
+export interface CatalogGameStats {
+  provider?: string
+  imported_at?: string
+  external_id?: string
+  overview_url?: string
+  boxscore_url?: string
+  team?: Record<string, GameTeamStatMetric>
+  players?: GameTeamPlayerStats[]
+  warnings?: string[]
+}
+
+export interface CatalogGame {
+  id: string
+  league_id: string
+  season_id: string
+  phase_id?: string
+  phase_label?: string
+  matchday?: number
+  date?: string
+  time?: string
+  home_team_id: string
+  away_team_id: string
+  home_team_name?: string
+  away_team_name?: string
+  status: 'scheduled' | 'live' | 'final' | string
+  score?: GameScore | null
+  stats?: CatalogGameStats | null
+  source?: {
+    provider?: string
+    external_id?: string
+    imported_at?: string
+  }
+}
+
+export interface DelDataStatus {
+  season: string
+  league: string
+  rosters: {
+    season: string
+    teams_total: number
+    teams_with_roster: number
+    warnings_count: number
+    teams: Array<{
+      team_id: string
+      name: string
+      player_count: number
+      imported_at?: string
+      quality?: DataQuality
+      warnings?: string[]
+    }>
+  }
+  games: {
+    season: string
+    total: number
+    by_status: Record<string, number>
+    with_stats?: number
+    final_without_stats?: number
+    updated_at?: string
+  }
+  expected_teams: number
+  issues: Array<{
+    team_id: string
+    name: string
+    quality?: DataQuality
+    warnings?: string[]
+  }>
 }
 
 export interface GameInfo {
@@ -229,6 +338,7 @@ export interface GameInfo {
   competition_unit_type?: string
   competition_unit_label?: string
   competition_unit_value?: string
+  game_id?: string
 }
 
 export interface Checkin {
@@ -307,10 +417,14 @@ export interface KaderPlayer {
 export interface TeamsListResponse {
   teams: {
     id: string
+    catalog_id?: string
     slug: string
     name: string
     league: string
     url: string
+    overview_url?: string
+    kader_available?: boolean
+    kader_note?: string
     enabled: boolean
     status: "supported" | "planned"
   }[]
@@ -827,7 +941,7 @@ export const api = {
     return res.json()
   },
 
-  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string; is_dummy?: boolean; isDummy?: boolean; dev_seed_version?: number }): Promise<Session> => {
+  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; game_id?: string; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string; is_dummy?: boolean; isDummy?: boolean; dev_seed_version?: number }): Promise<Session> => {
     const res = await fetch(buildUrl('/sessions'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
@@ -889,6 +1003,26 @@ export const api = {
       body: JSON.stringify(data)
     })
     if (!res.ok) throw new Error('Failed to complete session')
+    return res.json()
+  },
+
+  createSessionReflection: async (
+    sessionId: string,
+  ): Promise<{ reflection: NonNullable<Session['ai_reflection']>; cached: boolean }> => {
+    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/reflection`), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    })
+    if (!res.ok) {
+      let detail = 'KI-Reflexion konnte nicht erstellt werden.'
+      try {
+        const payload = await res.json()
+        if (typeof payload?.detail === 'string') detail = payload.detail
+      } catch {
+        // ignore parse errors
+      }
+      throw new Error(detail)
+    }
     return res.json()
   },
 
@@ -1248,20 +1382,154 @@ export const api = {
   },
 
   // Kaderimport Players
-  getTeamPlayers: async (teamId: string, activeOnly: boolean = true): Promise<PlayersResponse> => {
+  getTeamPlayers: async (
+    teamId: string,
+    activeOnly: boolean = true,
+    options?: { season?: string; league?: string; allowFallback?: boolean },
+  ): Promise<PlayersResponse & { season?: string; quality?: DataQuality; warnings?: string[]; fallback?: boolean; fallback_season?: string }> => {
     const qs = new URLSearchParams()
     if (!activeOnly) qs.append('active_only', 'false')
+    if (options?.season) qs.append('season', options.season)
+    if (options?.league) qs.append('league', options.league)
+    if (options?.allowFallback) qs.append('allow_fallback', 'true')
     const query = qs.toString() ? `?${qs.toString()}` : ''
     const res = await fetch(buildUrl(`/players/team/${encodeURIComponent(teamId)}${query}`), {
       headers: { ...authHeaders() }
     })
-    if (!res.ok) throw new Error('Failed to fetch team players')
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      const detail = err?.detail
+      const message = typeof detail === 'string' ? detail : detail?.message || detail?.error
+      throw new Error(message || 'Failed to fetch team players')
+    }
     return res.json()
   },
 
-  importPlayers: async (teamId?: string): Promise<ImportResult> => {
+  getGames: async (params: {
+    league: string
+    season: string
+    team_id?: string
+    phase_id?: string
+    status?: string
+  }): Promise<{ games: CatalogGame[]; total: number; season: string; league: string }> => {
+    const qs = new URLSearchParams()
+    qs.append('league', params.league)
+    qs.append('season', params.season)
+    if (params.team_id) qs.append('team_id', params.team_id)
+    if (params.phase_id) qs.append('phase_id', params.phase_id)
+    if (params.status) qs.append('status', params.status)
+    const res = await fetch(buildUrl(`/games?${qs.toString()}`), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw new Error('Failed to fetch games')
+    return res.json()
+  },
+
+  getGame: async (gameId: string): Promise<CatalogGame> => {
+    const res = await fetch(buildUrl(`/games/${encodeURIComponent(gameId)}`), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw new Error('Failed to fetch game')
+    return res.json()
+  },
+
+  getDelDataStatus: async (season: string, league: string = 'DEL'): Promise<DelDataStatus> => {
+    const qs = new URLSearchParams({ season, league })
+    const res = await fetch(buildUrl(`/del-data/status?${qs.toString()}`), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw new Error('Failed to fetch DEL data status')
+    return res.json()
+  },
+
+  importDelSchedule: async (season: string, league: string = 'DEL') => {
+    const qs = new URLSearchParams({ season, league })
+    const res = await fetch(buildUrl(`/del-data/import-schedule?${qs.toString()}`), {
+      method: 'POST',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      const detail = err?.detail
+      if (res.status === 404 && typeof detail === 'string' && detail === 'Not Found') {
+        throw new Error('Backend-Kennen die Route noch nicht — bitte Backend neu starten (start_all.sh).')
+      }
+      const message =
+        (typeof detail === 'string' ? detail : detail?.error) ||
+        (Array.isArray(detail?.errors) ? detail.errors.join(' · ') : undefined) ||
+        `Spielplan-Import fehlgeschlagen (HTTP ${res.status})`
+      throw new Error(message)
+    }
+    return res.json()
+  },
+
+  migrateDelRosters: async (season: string, league: string = 'DEL') => {
+    const qs = new URLSearchParams({ season, league })
+    const res = await fetch(buildUrl(`/del-data/migrate-rosters?${qs.toString()}`), {
+      method: 'POST',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw new Error('Roster-Migration fehlgeschlagen')
+    return res.json()
+  },
+
+  importDelGameStats: async (gameId: string) => {
+    const qs = new URLSearchParams({ game_id: gameId })
+    const res = await fetch(buildUrl(`/del-data/import-game-stats?${qs.toString()}`), {
+      method: 'POST',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      const detail = err?.detail
+      if (res.status === 404 && (typeof detail === 'string' ? detail : detail?.error) === 'Not Found') {
+        throw new Error('Backend kennt Spielstats-Route noch nicht — bitte Backend neu starten (./start_all.sh oder ./start_backend.sh).')
+      }
+      const message =
+        (typeof detail === 'string' ? detail : detail?.message || detail?.error) ||
+        (Array.isArray(detail?.errors) ? detail.errors.join(' · ') : undefined) ||
+        `Spielstats-Import fehlgeschlagen (HTTP ${res.status})`
+      throw new Error(message)
+    }
+    return res.json()
+  },
+
+  importDelGameStatsBatch: async (params: {
+    season: string
+    league?: string
+    limit?: number
+    skipExisting?: boolean
+  }) => {
+    const qs = new URLSearchParams({
+      season: params.season,
+      league: params.league || 'DEL',
+      limit: String(params.limit ?? 5),
+      skip_existing: String(params.skipExisting ?? true),
+    })
+    const res = await fetch(buildUrl(`/del-data/import-game-stats-batch?${qs.toString()}`), {
+      method: 'POST',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      const detail = err?.detail
+      if (res.status === 404 && (typeof detail === 'string' ? detail : detail?.error) === 'Not Found') {
+        throw new Error('Backend kennt Spielstats-Route noch nicht — bitte Backend neu starten (./start_all.sh oder ./start_backend.sh).')
+      }
+      const message =
+        (typeof detail === 'string' ? detail : detail?.error) ||
+        (Array.isArray(detail?.errors) ? detail.errors.join(' · ') : undefined) ||
+        `Batch-Stats-Import fehlgeschlagen (HTTP ${res.status})`
+      throw new Error(message)
+    }
+    return res.json()
+  },
+
+  importPlayers: async (teamId?: string, season?: string, league: string = 'DEL'): Promise<ImportResult> => {
     const qs = new URLSearchParams()
     if (teamId) qs.append('team_id', teamId)
+    if (season) qs.append('season', season)
+    if (league) qs.append('league', league)
     const query = qs.toString() ? `?${qs.toString()}` : ''
     const res = await fetch(buildUrl(`/players/import${query}`), {
       method: 'POST',
@@ -1279,8 +1547,12 @@ export const api = {
     return res.json()
   },
 
-  importAllPlayers: async (): Promise<ImportAllResult> => {
-    const res = await fetch(buildUrl('/players/import-all'), {
+  importAllPlayers: async (season?: string, league: string = 'DEL'): Promise<ImportAllResult> => {
+    const qs = new URLSearchParams()
+    if (season) qs.append('season', season)
+    if (league) qs.append('league', league)
+    const query = qs.toString() ? `?${qs.toString()}` : ''
+    const res = await fetch(buildUrl(`/players/import-all${query}`), {
       method: 'POST',
       headers: { ...authHeaders() }
     })

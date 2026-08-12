@@ -20,6 +20,8 @@ export type DrillModuleRef = {
 	moduleTitle: string
 	drillId: string
 	drillTitle: string
+	drillType?: string
+	trackType?: string
 	defaultFocus?: string
 	recommendedSessionMethod?: string
 }
@@ -41,6 +43,8 @@ export function findDrillModuleRef(
 					moduleTitle: module.title,
 					drillId: drill.id,
 					drillTitle: drill.title,
+					drillType: drill.drill_type,
+					trackType: track.trackType,
 					defaultFocus: (module as any).defaultFocus,
 					recommendedSessionMethod: (module as any).recommendedSessionMethod,
 				})
@@ -108,7 +112,10 @@ export function buildDummySessionPayload(input: CreateDummySessionInput & { dril
 		module_id: drillRef.moduleId,
 		goal: `DEV · Dummy · ${drillRef.drillId} · ${drillRef.drillTitle}`,
 		confidence: 3,
-		observation_scope: 'FULL_GAME',
+		observation_scope:
+			drillRef.trackType === 'foundation' || drillRef.drillType === 'foundation_lesson'
+				? 'LESSON'
+				: 'FULL_GAME',
 		focus: drillRef.defaultFocus,
 		session_method: drillRef.recommendedSessionMethod || 'live_watch',
 		drill_id: drillRef.drillId,

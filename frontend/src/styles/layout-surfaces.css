@@ -1,0 +1,356 @@
+/**
+ * RINK Tank — Responsive Surface System
+ *
+ * Desktop: full card hierarchy is fine.
+ * Mobile: keep logical grouping, flatten visual nesting.
+ *
+ * Catalog
+ * -------
+ * Shell:     .ui-page-shell
+ * Section:   .ui-content-section  (+ .ui-section-header / .ui-section-body)
+ * Surfaces:  .ui-surface  .ui-surface--primary | --section | --nested | --inline
+ * Opt-in:    .ui-flat-mobile  (force flatten this node on small screens)
+ * Legacy:    .primary-card  .mobile-flatten  .mobile-flatten-card  .nested-section
+ *
+ * Rule of thumb
+ * -------------
+ * - one dominant primary surface per main block
+ * - inner groups → section / nested / inline (not another full card)
+ * - group via title, divider, spacing, subtle tint — not box-in-box
+ */
+
+:root {
+  --page-pad-x: 1rem;
+  --page-pad-y: 2rem;
+  --surface-pad: 1.5rem;
+  --surface-pad-sm: 0.85rem;
+  --surface-gap: 1rem;
+  --mobile-bp: 768px;
+}
+
+/* ---- Page shell ---- */
+
+.ui-page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--surface-gap);
+  width: 100%;
+  min-width: 0;
+}
+
+.ui-page-shell > .card,
+.ui-page-shell > .ui-surface {
+  margin-bottom: 0;
+}
+
+/* ---- Content section (grouping without a card) ---- */
+
+.ui-content-section {
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.ui-section-header {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.ui-section-body {
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.ui-section-divider {
+  height: 1px;
+  border: 0;
+  margin: 0.15rem 0;
+  background: linear-gradient(
+    90deg,
+    rgba(186, 230, 253, 0.28),
+    rgba(81, 145, 162, 0.12) 45%,
+    transparent 90%
+  );
+}
+
+/* ---- Surface base ---- */
+
+.ui-surface {
+  position: relative;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.ui-surface--primary {
+  /* Primary keeps full Card chrome; class is a semantic marker */
+}
+
+.ui-surface--section {
+  /* Desktop: looks like a normal card when used with .card */
+}
+
+.ui-surface--nested {
+  /* Desktop: quieter nested panel */
+}
+
+.ui-surface--inline {
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
+/* Quiet nested look when Card uses surface=nested on desktop */
+.card.ui-surface--nested {
+  box-shadow: var(--elev-quiet-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.015) 100%);
+  padding: 1rem 1.1rem;
+}
+
+.card.ui-surface--inline {
+  margin-bottom: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.card.ui-surface--inline::before {
+  display: none;
+}
+
+/* ---- Stacked mobile stats (tables → rows) ---- */
+
+.ui-stat-stack {
+  display: none;
+  gap: 0.45rem;
+}
+
+.ui-stat-stack__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+}
+
+.ui-stat-stack__row:last-child {
+  border-bottom: 0;
+}
+
+.ui-stat-stack__label {
+  color: rgba(203, 213, 225, 0.78);
+}
+
+.ui-stat-stack__value {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: rgba(241, 245, 249, 0.96);
+  text-align: right;
+}
+
+.ui-table-desktop {
+  display: block;
+}
+
+/* Responsive 2-column form/content grids — stack on phone widths (e.g. iPhone 17 ≈ 402px) */
+.ui-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+@media (min-width: 520px) {
+  .ui-grid-2:not(.ui-grid-2--wide) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Wider pairings (form + side panel) stay stacked until tablet */
+@media (min-width: 720px) {
+  .ui-grid-2--wide {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---- Mobile flattening ---- */
+
+@media (max-width: 768px) {
+  :root {
+    --page-pad-x: 0.7rem;
+    --page-pad-y: 1rem;
+    --surface-pad: 1rem;
+    --surface-gap: 0.85rem;
+  }
+
+  .ui-page-shell {
+    gap: var(--surface-gap);
+  }
+
+  /* Primary: keep one dominant surface, tighten padding */
+  .card.ui-surface--primary,
+  .card.primary-card {
+    padding: var(--surface-pad);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Section cards: flat hierarchy, but keep a soft tint so blocks stay readable */
+  .card.ui-surface--section,
+  .card.ui-flat-mobile {
+    padding: 0.85rem 0.7rem !important;
+    margin-inline: 0 !important;
+    margin-bottom: 0.55rem !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .ui-page-shell > .card.ui-surface--section + .card.ui-surface--section,
+  .ui-page-shell > .card.ui-flat-mobile + .card.ui-flat-mobile,
+  .page > .card.ui-surface--section + .card.ui-surface--section {
+    margin-top: 0.15rem !important;
+  }
+
+  .card.ui-surface--section::before,
+  .card.ui-surface--section::after,
+  .card.ui-flat-mobile::before,
+  .card.ui-flat-mobile::after {
+    display: none !important;
+  }
+
+  /* Nested / inline: compact tinted blocks, not invisible */
+  .card.ui-surface--nested,
+  .ui-surface--nested,
+  .ui-surface--inline,
+  .card.ui-surface--inline,
+  .mobile-flatten-card,
+  .nested-section.mobile-flatten {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-shadow: none !important;
+    border-radius: 10px !important;
+    margin-inline: 0 !important;
+    padding: 0.65rem 0.7rem !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .card.ui-surface--nested::before,
+  .card.ui-surface--inline::before,
+  .mobile-flatten-card::before {
+    display: none !important;
+  }
+
+  .ui-surface--inline,
+  .card.ui-surface--inline {
+    background: rgba(255, 255, 255, 0.025) !important;
+  }
+
+  /* Nested card inside a primary surface → compact tint, no heavy chrome */
+  .ui-surface--primary .card:not(.ui-surface--primary),
+  .primary-card .card:not(.primary-card),
+  .card.ui-surface--primary .card:not(.ui-surface--primary) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-shadow: none !important;
+    border-radius: 10px !important;
+    margin-inline: 0 !important;
+    margin-bottom: 0.45rem !important;
+    padding: 0.6rem 0.7rem !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .ui-surface--primary .card:not(.ui-surface--primary)::before,
+  .primary-card .card:not(.primary-card)::before,
+  .card.ui-surface--primary .card:not(.ui-surface--primary)::before {
+    display: none !important;
+  }
+
+  /* Panels: keep their accent tint, only lose heavy nesting waste */
+  .ui-flat-panel {
+    padding: 0.75rem 0.7rem !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+
+  .ui-flat-panel + .ui-flat-panel {
+    margin-top: 0.55rem;
+  }
+
+  /* Tables: prefer stacked companion when present */
+  .ui-table-desktop.ui-table-hide-mobile {
+    display: none;
+  }
+
+  .ui-stat-stack {
+    display: grid;
+  }
+
+  /* Drill-specific section accents (legacy, still useful) */
+  .primary-card .observation-guide-section,
+  .ui-surface--primary .observation-guide-section {
+    margin-bottom: 1rem !important;
+  }
+
+  .primary-card .didactic-focus-section,
+  .ui-surface--primary .didactic-focus-section {
+    margin-bottom: 0.75rem !important;
+    border-left: 2px solid rgba(143, 211, 223, 0.55) !important;
+    padding-left: 0.5rem !important;
+  }
+
+  .primary-card .decision-rule-section,
+  .ui-surface--primary .decision-rule-section {
+    margin-bottom: 0.75rem !important;
+    border-left: 2px solid rgba(153, 246, 228, 0.5) !important;
+    padding-left: 0.5rem !important;
+  }
+
+  .primary-card .interaction-surface,
+  .ui-surface--primary .interaction-surface {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    width: calc(100% + 0.85rem);
+    margin-inline: -0.4rem;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  .period-analysis-wrapper {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin-inline: 0 !important;
+  }
+
+  .period-analysis-title {
+    margin: 0 0 12px;
+  }
+
+  .primary-card .interaction-surface .rink-wrapper,
+  .ui-surface--primary .interaction-surface .rink-wrapper {
+    max-width: none !important;
+    width: 100% !important;
+    border-radius: 10px !important;
+  }
+}

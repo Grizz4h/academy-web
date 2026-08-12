@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Link, useNavigate } from 'react-router-dom'
 import { api, type KaderPlayer, type RosterCatalog, type RosterPlayer, type RosterTeam } from '../api'
 import { useUser } from '../context/UserContext'
+import { normalizeSeasonValue } from '../stats/seasonNormalization'
 
 type SelectableTeam = {
   team_id: string
@@ -11,12 +12,13 @@ type SelectableTeam = {
   source: 'roster' | 'import'
   url?: string
   enabled?: boolean
+  kader_available?: boolean
+  kader_note?: string
 }
 
 export default function ObservationSetup() {
   const navigate = useNavigate()
   const { user } = useUser()
-  const queryClient = useQueryClient()
 
   const { data: rosterIndex, isLoading: indexLoading, error: indexError } = useQuery({
     queryKey: ['roster-index'],
@@ -26,6 +28,7 @@ export default function ObservationSetup() {
 
   const [league, setLeague] = useState('DEL')
   const [season, setSeason] = useState('2025_2026')
+  const seasonForApi = normalizeSeasonValue(season.replace('_', '/'), league) || season.replace('_', '/')
 
   const rosterOptions = rosterIndex?.rosters || []
 
@@ -52,10 +55,6 @@ export default function ObservationSetup() {
   const [sourceType, setSourceType] = useState('self_observation')
   const [sourceLabel, setSourceLabel] = useState('Eigene Beobachtung')
 
-  // Import-Status
-  const [importStatus, setImportStatus] = useState<string | null>(null)
-  const [adminOpen, setAdminOpen] = useState(false)
-
   const { data: importableTeamsData } = useQuery({
     queryKey: ['importable-teams'],
     queryFn: () => api.getImportableTeams(),
@@ -64,52 +63,61 @@ export default function ObservationSetup() {
   })
 
   const importableTeams = importableTeamsData?.teams || []
-  const enabledImportTeamIds = useMemo(
-    () => new Set(importableTeams.filter((team) => team.enabled).map((team) => team.id)),
-    [importableTeams],
-  )
+
+  const importMetaByCatalogId = useMemo(() => {
+    const map = new Map<string, { kader_available?: boolean; kader_note?: string }>()
+    for (const team of importableTeams) {
+      const catalogId = team.catalog_id || team.id
+      map.set(catalogId, {
+        kader_available: team.kader_available,
+        kader_note: team.kader_note,
+      })
+    }
+    return map
+  }, [importableTeams])
 
   const selectableTeams = useMemo<SelectableTeam[]>(() => {
-    const merged: SelectableTeam[] = []
-    const seen = new Set<string>()
-
-    // Normalize IDs: convert rostern team_id (erc_ingolstadt) to match import id format (erc-ingolstadt)
-    for (const team of roster?.teams || []) {
-      const normalizedId = team.team_id.replace(/_/g, '-')
-      if (seen.has(normalizedId)) continue
-      seen.add(normalizedId)
-      merged.push({
-        team_id: team.team_id,
-        name: team.name,
-        league,
-        source: 'roster'
+    // Season roster catalog is canonical — no duplicate merge with import list
+    if (roster?.teams?.length) {
+      return roster.teams.map((team) => {
+        const importMeta = importMetaByCatalogId.get(team.team_id)
+        return {
+          team_id: team.team_id,
+          name: team.name,
+          league,
+          source: 'roster' as const,
+          kader_available: importMeta?.kader_available,
+          kader_note: importMeta?.kader_note,
+        }
       })
     }
 
-    // Add import teams (use their native ID format: erc-ingolstadt)
-    for (const team of importableTeams) {
-      if (seen.has(team.id)) continue
-      seen.add(team.id)
-      merged.push({
-        team_id: team.id,
+    return importableTeams
+      .filter((team) => team.enabled)
+      .map((team) => ({
+        team_id: team.catalog_id || team.id,
         name: team.name,
         league: team.league,
-        source: 'import',
+        source: 'import' as const,
         url: team.url,
-        enabled: team.enabled
-      })
-    }
-
-    return merged
-  }, [importableTeams, league, roster?.teams])
+        enabled: team.enabled,
+        kader_available: team.kader_available,
+        kader_note: team.kader_note,
+      }))
+  }, [importableTeams, importMetaByCatalogId, league, roster?.teams])
 
   // Lade Kader-Spieler wenn Team ausgewählt
+  const [rosterMissing, setRosterMissing] = useState<string | null>(null)
+
   const { data: kaderPlayersData, isLoading: kaderLoading } = useQuery({
-    queryKey: ['team-players', teamId],
+    queryKey: ['team-players', teamId, seasonForApi, league],
     queryFn: async () => {
+      setRosterMissing(null)
       try {
-        return await api.getTeamPlayers(teamId, true)
-      } catch {
+        return await api.getTeamPlayers(teamId, true, { season: seasonForApi, league })
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Kader nicht verfügbar'
+        setRosterMissing(message)
         return {
           team_id: teamId,
           players: [],
@@ -118,8 +126,8 @@ export default function ObservationSetup() {
         }
       }
     },
-    enabled: Boolean(user && teamId && enabledImportTeamIds.has(teamId)),
-    staleTime: 5 * 60 * 1000  // 5 Minuten cache
+    enabled: Boolean(user && teamId),
+    staleTime: 5 * 60 * 1000,
   })
 
   useEffect(() => {
@@ -140,15 +148,14 @@ export default function ObservationSetup() {
   // Kombiniere Roster-Spieler mit Kader-Spielern
   const combinedPlayers = useMemo<RosterPlayer[]>(() => {
     if (kaderPlayersData?.players && kaderPlayersData.players.length > 0) {
-      // Nutze Kader-Spieler, konvertiert zu RosterPlayer format
-      return kaderPlayersData.players.map(p => ({
+      return kaderPlayersData.players.map((p) => ({
         player_id: p.player_id,
         name: p.player_name,
         number: p.jersey_number,
-        position: p.position || 'Unknown'
+        position: p.position || 'Unknown',
       }))
-    } else if (selectedRosterTeam?.players) {
-      // Fallback auf Roster-Spieler
+    }
+    if (selectedRosterTeam?.players?.length) {
       return selectedRosterTeam.players
     }
     return []
@@ -182,7 +189,7 @@ export default function ObservationSetup() {
       }
       return api.createObservationRun({
         league: selectedTeam.league || league,
-        season,
+        season: seasonForApi,
         team_id: selectedTeam.team_id,
         team_name: selectedTeam.name,
         player_id: selectedPlayer.player_id,
@@ -206,36 +213,6 @@ export default function ObservationSetup() {
     }
   })
 
-  const importMutation = useMutation({
-    mutationFn: (targetTeamId: string) => api.importPlayers(targetTeamId),
-    onSuccess: (result) => {
-      setImportStatus(`${result.team || result.team_id}: ${result.created} neu, ${result.updated} aktualisiert, ${result.reactivated} reaktiviert`)
-      queryClient.invalidateQueries({ queryKey: ['team-players', result.team_id] })
-      setTimeout(() => setImportStatus(null), 5000)
-    },
-    onError: (error) => {
-      setImportStatus(`Import fehlgeschlagen: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`)
-      setTimeout(() => setImportStatus(null), 5000)
-    }
-  })
-
-  const importAllMutation = useMutation({
-    mutationFn: () => api.importAllPlayers(),
-    onSuccess: (result) => {
-      setImportStatus(`Alle Kader aktualisiert: ${result.total} Team(s)`) 
-      result.results.forEach((entry) => {
-        if (entry.team_id) {
-          queryClient.invalidateQueries({ queryKey: ['team-players', entry.team_id] })
-        }
-      })
-      setTimeout(() => setImportStatus(null), 5000)
-    },
-    onError: (error) => {
-      setImportStatus(`Gesamtimport fehlgeschlagen: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`)
-      setTimeout(() => setImportStatus(null), 5000)
-    }
-  })
-
   if (!user) {
     return <div className="card">Bitte zuerst einloggen, um Observation Runs zu starten.</div>
   }
@@ -243,68 +220,17 @@ export default function ObservationSetup() {
   const posGroupLabel: Record<string, string> = { forward: 'Stürmer', defense: 'Verteidiger', goalie: 'Torhüter' }
 
   return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
+    <div className="ui-page-shell" style={{ display: 'grid', gap: '1rem' }}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Observation Setup</h1>
         <p className="ui-page-lead">Beobachtungslauf konfigurieren und starten.</p>
       </header>
 
-      {/* ── Admin: Kaderimport (einklappbar) ── */}
-      <div className="card" style={{ padding: '0' }}>
-        <button
-          type="button"
-          onClick={() => setAdminOpen((o) => !o)}
-          style={{
-            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '0.75rem 1rem', background: 'none', border: 'none', cursor: 'pointer',
-            color: 'inherit', fontWeight: 600, fontSize: '0.9rem', opacity: 0.75,
-          }}
-        >
-          <span>⚙ Kaderimport (Admin)</span>
-          <span style={{ fontSize: '0.75rem' }}>{adminOpen ? '▲ Einklappen' : '▼ Ausklappen'}</span>
-        </button>
-
-        {adminOpen && (
-          <div style={{ padding: '0 1rem 1rem', display: 'grid', gap: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-            {importStatus && (
-              <p style={{ margin: '0.5rem 0 0', padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.07)', borderRadius: '0.4rem', fontSize: '0.85rem' }}>
-                {importStatus}
-              </p>
-            )}
-            <div style={{ display: 'grid', gap: '0.4rem', marginTop: '0.5rem' }}>
-              {importableTeams.map((team) => (
-                <div key={team.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.5rem 0.65rem', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem' }}>
-                  <span style={{ fontSize: '0.85rem' }}><strong>{team.name}</strong> <span style={{ opacity: 0.6 }}>· {team.league}</span></span>
-                  <button
-                    className="btn"
-                    type="button"
-                    style={{ fontSize: '0.78rem', padding: '0.25rem 0.65rem', whiteSpace: 'nowrap' }}
-                    onClick={() => importMutation.mutate(team.id)}
-                    disabled={!team.enabled || importMutation.isPending || importAllMutation.isPending}
-                  >
-                    {importMutation.isPending ? '…' : 'Kader laden'}
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button
-              className="btn"
-              type="button"
-              onClick={() => importAllMutation.mutate()}
-              disabled={importAllMutation.isPending || importMutation.isPending || importableTeams.length === 0}
-              style={{ fontSize: '0.85rem' }}
-            >
-              {importAllMutation.isPending ? 'Aktualisiere alle Kader…' : 'Alle Kader aktualisieren'}
-            </button>
-          </div>
-        )}
-      </div>
-
       {/* ── Haupt-Layout: Form + Player-Info ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'start' }}>
+      <div className="ui-grid-2 ui-grid-2--wide" style={{ alignItems: 'start', gap: '1rem' }}>
 
         {/* ─ Linke Spalte: Auswahl-Form ─ */}
-        <div className="card" style={{ display: 'grid', gap: '0.85rem' }}>
+        <div className="card ui-surface ui-surface--primary primary-card" style={{ display: 'grid', gap: '0.85rem' }}>
           <h2 className="ui-section-title">Beobachtung starten</h2>
 
           <label style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem' }}>
@@ -329,17 +255,17 @@ export default function ObservationSetup() {
             <select className="appSelect" value={teamId} onChange={(e) => setTeamId(e.target.value)} disabled={!selectableTeams.length}>
               {selectableTeams.map((team) => (
                 <option key={team.team_id} value={team.team_id}>
-                  {team.name}{team.source === 'import' ? '' : ' · Roster'}
+                  {team.name}
                 </option>
               ))}
             </select>
           </label>
 
           <label style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem' }}>
-            Spieler
-            {enabledImportTeamIds.has(teamId) && kaderLoading
+            Spieler · Kader {seasonForApi}
+            {kaderLoading
               ? <p style={{ margin: 0, opacity: 0.7, fontSize: '0.8rem' }}>Lade Kader…</p>
-              : <select className="appSelect" value={playerId} onChange={(e) => setPlayerId(e.target.value)} disabled={rosterLoading || !selectedTeam}>
+              : <select className="appSelect" value={playerId} onChange={(e) => setPlayerId(e.target.value)} disabled={rosterLoading || !selectedTeam || combinedPlayers.length === 0}>
                   {combinedPlayers.map((player) => (
                     <option key={player.player_id} value={player.player_id}>
                       #{player.number ?? '-'} {player.name} ({player.position})
@@ -347,12 +273,35 @@ export default function ObservationSetup() {
                   ))}
                 </select>
             }
-            {selectedTeam?.source === 'import' && !kaderLoading && combinedPlayers.length === 0 && (
-              <span style={{ fontSize: '0.78rem', opacity: 0.7 }}>Noch keine Spieler importiert – Kaderimport oben ausführen.</span>
+            {selectedTeam?.kader_available === false && (
+              <span style={{ fontSize: '0.78rem', color: 'rgba(255, 193, 7, 0.95)' }}>
+                {selectedTeam.kader_note || 'Kader bei PENNY-DEL noch nicht veröffentlicht — Import folgt, sobald die Kader-Seite online ist.'}
+              </span>
+            )}
+            {rosterMissing && selectedTeam?.kader_available !== false && (
+              <span style={{ fontSize: '0.78rem', color: 'rgba(255, 193, 7, 0.95)' }}>
+                {rosterMissing}
+              </span>
+            )}
+            {!rosterMissing && selectedTeam?.kader_available !== false && !kaderLoading && combinedPlayers.length === 0 && (
+              <span style={{ fontSize: '0.78rem', opacity: 0.7 }}>
+                Für {seasonForApi} ist noch kein Kader importiert —{' '}
+                <Link to="/dev" style={{ color: 'rgba(153, 246, 228, 0.95)' }}>Dev Cockpit → DEL Data</Link>.
+              </span>
+            )}
+            {kaderPlayersData?.fallback && (
+              <span style={{ fontSize: '0.78rem', color: 'rgba(255, 193, 7, 0.95)' }}>
+                ⚠ Kader aus {kaderPlayersData.fallback_season} angezeigt — für {seasonForApi} kein Snapshot vorhanden.
+              </span>
+            )}
+            {kaderPlayersData?.quality && kaderPlayersData.quality !== 'plausible' && (
+              <span style={{ fontSize: '0.78rem', color: 'rgba(255, 193, 7, 0.9)' }}>
+                Kader-Status: {kaderPlayersData.quality}
+              </span>
             )}
           </label>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+          <div className="ui-grid-2" style={{ gap: '0.6rem' }}>
             <label style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem' }}>
               Drill
               <select className="appSelect" value={drillId} onChange={(e) => setDrillId(e.target.value)}>
@@ -382,7 +331,7 @@ export default function ObservationSetup() {
             <input className="appSelect" value={sourceLabel} onChange={(e) => setSourceLabel(e.target.value)} placeholder="z.B. EP, Matchclip" />
           </label>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+          <div className="ui-grid-2" style={{ gap: '0.6rem' }}>
             <label style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem' }}>
               Geburtsjahr
               <input className="appSelect" type="number" min={1900} max={2100} value={playerBirthYear}
@@ -424,7 +373,7 @@ export default function ObservationSetup() {
 
           {/* Spieler-Profilkarte */}
           {selectedPlayer ? (
-            <div className="card" style={{ display: 'grid', gap: '0.6rem' }}>
+            <div className="card ui-surface ui-surface--section ui-flat-mobile" style={{ display: 'grid', gap: '0.6rem' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '1.4rem', fontWeight: 700 }}>#{selectedPlayer.number ?? '–'}</span>
                 <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>{selectedPlayer.name}</span>
@@ -438,7 +387,7 @@ export default function ObservationSetup() {
               {selectedKaderPlayer ? (
                 <>
                   {/* Bio-Daten Grid */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem 1rem', fontSize: '0.82rem' }}>
+                  <div className="ui-grid-2" style={{ gap: '0.4rem 1rem', fontSize: '0.82rem' }}>
                     {selectedKaderPlayer.nationality && <div><span style={{ opacity: 0.55 }}>Land</span><br />{selectedKaderPlayer.nationality}</div>}
                     {selectedKaderPlayer.age && <div><span style={{ opacity: 0.55 }}>Alter</span><br />{selectedKaderPlayer.age} J.</div>}
                     {selectedKaderPlayer.height_cm && <div><span style={{ opacity: 0.55 }}>Größe</span><br />{selectedKaderPlayer.height_cm} cm</div>}
@@ -475,14 +424,14 @@ export default function ObservationSetup() {
               )}
             </div>
           ) : (
-            <div className="card" style={{ opacity: 0.5, fontStyle: 'italic', fontSize: '0.85rem' }}>
+            <div className="card ui-surface ui-surface--inline" style={{ opacity: 0.5, fontStyle: 'italic', fontSize: '0.85rem' }}>
               Kein Spieler ausgewählt.
             </div>
           )}
 
           {/* Team-Info */}
           {selectedTeam && (
-            <div className="card" style={{ fontSize: '0.82rem', display: 'grid', gap: '0.3rem', opacity: 0.8 }}>
+            <div className="card ui-surface ui-surface--inline" style={{ fontSize: '0.82rem', display: 'grid', gap: '0.3rem', opacity: 0.8 }}>
               <div style={{ fontWeight: 600 }}>{selectedTeam.name}</div>
               <div style={{ opacity: 0.6 }}>{selectedTeam.league} · {season.replace('_', '/')}</div>
               {kaderPlayersData?.players && kaderPlayersData.players.length > 0 && (

@@ -13,7 +13,9 @@ import SyncStatusChip, { type SyncStatus } from '../components/SyncStatusChip';
 import { formatCompetitionContext } from '../data/competitionConfig';
 import { shareOrCopy } from '../utils/share';
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { getActivePeriodsForScope, getObservationScopeLabel } from '../utils/observationScope'
+import { getActivePeriodsForScope, getObservationScopeLabel, isLessonScope } from '../utils/observationScope'
+import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
+import type { StoredAiReflection } from '../features/reflection/types'
 import stickyStyles from './SessionSticky.module.css'
 
 // Patch: Checkin type ohne microfeedback_done
@@ -54,6 +56,7 @@ export default function SessionPage() {
   const [advanceError, setAdvanceError] = useState<string>('')
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const [shareNote, setShareNote] = useState<string>('')
+  const [localReflection, setLocalReflection] = useState<StoredAiReflection | null>(null)
 
   // FIX: getrennte States für "Feedback gehört zu welcher Phase" und "wohin danach wechseln"
   const [microPhase, setMicroPhase] = useState<Phase | null>(null)
@@ -92,6 +95,15 @@ export default function SessionPage() {
     const latest = module?.drills?.find((d: any) => d.id === sessionDrill.id)
     return latest || sessionDrill
   }, [session, curriculum])
+
+  const isFoundationSession = useMemo(() => {
+    if (isLessonScope(session?.observation_scope)) return true
+    if (activeDrill?.drill_type === 'foundation_lesson') return true
+    const track = curriculum?.tracks?.find((t: any) =>
+      (t.modules || []).some((m: any) => m.id === session?.module_id),
+    )
+    return track?.trackType === 'foundation'
+  }, [session?.observation_scope, session?.module_id, activeDrill?.drill_type, curriculum])
 
   const activePeriods = useMemo<PeriodPhase[]>(
     () => getActivePeriodsForScope(session?.observation_scope),
@@ -383,6 +395,7 @@ export default function SessionPage() {
   }
 
   function needsMicrofeedback(phase: string, sessionObj: any, drill: any, answers?: any): boolean {
+    if (isFoundationSession) return false
     if (!['P1', 'P2', 'P3'].includes(phase)) return false
     if (!drill) return false
     if (sessionObj?.microfeedback?.[phase]?.done === true) return false
@@ -394,6 +407,80 @@ export default function SessionPage() {
       setDrillCompleted(false)
     }
   }, [currentPhase])
+
+  const finalizeSessionRewards = async (completedSession: any) => {
+    await queryClient.invalidateQueries({ queryKey: ['session', id] })
+    await queryClient.invalidateQueries({ queryKey: ['sessions'] })
+
+    const freshSessions = await queryClient.fetchQuery({
+      queryKey: ['sessions', user],
+      queryFn: () => api.getSessions(user || undefined)
+    })
+
+    const rewardResult = evaluateSessionRewards({
+      currentSession: completedSession,
+      sessions: freshSessions,
+      rewardState,
+      context: {
+        completedAt: completedSession.post?.completed_at || new Date().toISOString(),
+        deviceType: detectDeviceType(),
+        noteText: sessionNote,
+        performance: null,
+      }
+    })
+
+    if (isProgressionEligibleSession(completedSession)) {
+      await grantRewardResult(rewardResult)
+
+      const priorDrillIds = new Set(
+        getRealSessions(freshSessions)
+          .filter((s) => s.id !== completedSession.id && s.state === 'COMPLETED')
+          .map((s) => String(s.drill_id || s.module_id || '').trim())
+          .filter(Boolean),
+      )
+      const progressionEvents = buildEventsFromCompletedSession(completedSession, {
+        priorCompletedDrillIds: priorDrillIds,
+      })
+
+      let trackDrills: Record<string, string[]> = {}
+      try {
+        const curriculumData = await queryClient.fetchQuery({
+          queryKey: ['curriculum'],
+          queryFn: () => api.getCurriculum(),
+        })
+        for (const track of curriculumData.tracks || []) {
+          const ids: string[] = []
+          for (const module of track.modules || []) {
+            if (module.active === false) continue
+            for (const drill of module.drills || []) {
+              if (drill.id) ids.push(drill.id)
+            }
+            if (module.id) ids.push(module.id)
+          }
+          trackDrills[track.id] = Array.from(new Set(ids))
+        }
+        progressionEvents.push(
+          ...buildTrackCompletionEvents(
+            getRealSessions(freshSessions).filter((s) => s.state === 'COMPLETED'),
+            trackDrills,
+          ),
+        )
+      } catch {
+        // Track completion optional
+      }
+
+      await ingestActivityEvents(progressionEvents)
+
+      try {
+        await evaluateLockerMetaProgress({
+          sessions: getRealSessions(freshSessions).filter((s) => s.state === 'COMPLETED'),
+          trackDrills,
+        })
+      } catch (metaError) {
+        console.error('Locker mastery/collection evaluation failed', metaError)
+      }
+    }
+  }
 
   const handleDrillComplete = (answers: any) => {
     checkinMutation.mutate({
@@ -414,84 +501,11 @@ export default function SessionPage() {
               helpfulness: 0
             })
             try {
-              await queryClient.invalidateQueries({ queryKey: ['session', id] })
-              await queryClient.invalidateQueries({ queryKey: ['sessions'] })
-
-              const freshSessions = await queryClient.fetchQuery({
-                queryKey: ['sessions', user],
-                queryFn: () => api.getSessions(user || undefined)
-              })
-
-              const rewardResult = evaluateSessionRewards({
-                currentSession: completedSession,
-                sessions: freshSessions,
-                rewardState,
-                context: {
-                  completedAt: completedSession.post?.completed_at || new Date().toISOString(),
-                  deviceType: detectDeviceType(),
-                  noteText: sessionNote,
-                  performance: null,
-                }
-              })
-
-              // Dummy/dev sessions must never touch PUX, achievements, or mastery.
-              if (isProgressionEligibleSession(completedSession)) {
-                await grantRewardResult(rewardResult)
-
-                const priorDrillIds = new Set(
-                  getRealSessions(freshSessions)
-                    .filter((session) => session.id !== completedSession.id && session.state === 'COMPLETED')
-                    .map((session) => String(session.drill_id || session.module_id || '').trim())
-                    .filter(Boolean),
-                )
-                const progressionEvents = buildEventsFromCompletedSession(completedSession, {
-                  priorCompletedDrillIds: priorDrillIds,
-                })
-
-                let trackDrills: Record<string, string[]> = {}
-                try {
-                  const curriculum = await queryClient.fetchQuery({
-                    queryKey: ['curriculum'],
-                    queryFn: () => api.getCurriculum(),
-                  })
-                  for (const track of curriculum.tracks || []) {
-                    const ids: string[] = []
-                    for (const module of track.modules || []) {
-                      if (module.active === false) continue
-                      for (const drill of module.drills || []) {
-                        if (drill.id) ids.push(drill.id)
-                      }
-                      if (module.id) ids.push(module.id)
-                    }
-                    trackDrills[track.id] = Array.from(new Set(ids))
-                  }
-                  progressionEvents.push(
-                    ...buildTrackCompletionEvents(
-                      getRealSessions(freshSessions).filter((session) => session.state === 'COMPLETED'),
-                      trackDrills,
-                    ),
-                  )
-                } catch {
-                  // Track completion is optional if curriculum cannot be loaded.
-                }
-
-                await ingestActivityEvents(progressionEvents)
-
-                try {
-                  await evaluateLockerMetaProgress({
-                    sessions: getRealSessions(freshSessions).filter((session) => session.state === 'COMPLETED'),
-                    trackDrills,
-                  })
-                } catch (metaError) {
-                  console.error('Locker mastery/collection evaluation failed', metaError)
-                }
-              }
+              await finalizeSessionRewards(completedSession)
             } catch (rewardError) {
               console.error('Reward evaluation failed', rewardError)
             }
           } catch (e) {}
-          // Keep user on the completed session page so reward popups are visible
-          // even when a host environment injects a full-page navigate handler.
         }
       }
     })
@@ -504,6 +518,13 @@ export default function SessionPage() {
     const readPathValue = (obj: any, path: string) => {
       if (!obj || !path) return undefined
       return path.split('.').reduce((acc: any, key: string) => (acc == null ? undefined : acc[key]), obj)
+    }
+
+    if (drill.drill_type === 'foundation_lesson') {
+      if (!answers?.foundationComplete) {
+        return 'Bitte durchlaufe alle Lernschritte, bevor du weitergehst.'
+      }
+      return null
     }
 
     if (
@@ -931,6 +952,26 @@ export default function SessionPage() {
         return
       }
 
+      // Foundation / lesson: skip period POST form — complete in one step
+      if (isFoundationSession && (next === 'POST' || !next)) {
+        await clearDraft()
+        setDrillCompleted(true)
+        const completedSession = await api.completeSession(id!, {
+          summary: 'Foundation-Lektion abgeschlossen',
+          unclear: '',
+          next_module: '',
+          helpfulness: 5,
+        })
+        try {
+          await finalizeSessionRewards(completedSession)
+        } catch (rewardError) {
+          console.error('Reward evaluation failed', rewardError)
+        }
+        console.log(`[ADVANCE ${clickId}] FOUNDATION COMPLETE`)
+        console.groupEnd()
+        return
+      }
+
       // 4) Phase updaten (ohne Modal)
       if (next) {
         await api.updateSessionPhase(id as string, { phase: next })
@@ -997,8 +1038,13 @@ export default function SessionPage() {
   }
 
   const isCompleted = session?.state === 'COMPLETED'
+  const activeReflection = localReflection ?? session?.ai_reflection ?? null
 
   const getPhaseTitle = (phase: string) => {
+    if (isFoundationSession || isLessonScope(session?.observation_scope)) {
+      if (phase === 'P1' || phase === 'P2' || phase === 'P3') return 'Lektion'
+      if (phase === 'POST') return 'Abschluss'
+    }
     if (phase === 'PRE') return 'Vor dem Spiel'
     if (phase === 'P1') return '1. Drittel'
     if (phase === 'P2') return '2. Drittel'
@@ -1006,6 +1052,20 @@ export default function SessionPage() {
     if (phase === 'POST') return 'Nach dem Spiel'
     return phase
   }
+
+  const foundationReady = Boolean(answersByPhase[currentPhase]?.foundationComplete)
+  const advanceCtaLabel = (() => {
+    if (isAdvancing) return 'Speichere…'
+    if (isFoundationSession) return 'Session abschließen'
+    if (getNextPhaseForFlow(currentPhase) === 'POST') return 'Session abschließen'
+    return 'Weiter →'
+  })()
+  const stickyCtaLabel = (() => {
+    if (isAdvancing) return 'Speichere…'
+    if (isFoundationSession) return 'Session abschließen'
+    if (getNextPhaseForFlow(currentPhase) === 'POST') return 'Abschließen'
+    return 'Weiter →'
+  })()
 
   function handleDraftChange(answers: any): void {
     setAnswersByPhase(prev => ({ ...prev, [currentPhase]: answers }))
@@ -1019,15 +1079,24 @@ export default function SessionPage() {
   if (!session) return <div className="card">Session nicht gefunden.</div>
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="ui-page-shell" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <header className="ui-page-header">
-        <h1 className="ui-page-title">Live-Session</h1>
+        <h1 className="ui-page-title">{isFoundationSession ? 'Foundation-Lektion' : 'Live-Session'}</h1>
         <p className="ui-section-title-content" style={{ margin: 0 }}>{session.module_id}</p>
       </header>
 
-      <div className="card">
-        <h2 className="ui-section-title">Spiel-Info</h2>
-        {session.game_info ? (
+      <div className="card ui-surface ui-surface--section ui-flat-mobile">
+        <h2 className="ui-section-title">{isFoundationSession ? 'Lektion' : 'Spiel-Info'}</h2>
+        {isFoundationSession ? (
+          <>
+            <p><strong>Modul:</strong> {session.module_id}</p>
+            {session.drill_id && <p><strong>Drill:</strong> {session.drill_id}</p>}
+            <p><strong>Umfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
+            <p style={{ margin: '0.35rem 0 0', fontSize: '0.82rem', color: 'rgba(167, 243, 208, 0.88)' }}>
+              Foundation — keine Live-Paarung nötig.
+            </p>
+          </>
+        ) : session.game_info ? (
           <>
             <p><strong>Teams:</strong> {session.game_info.team_home} vs {session.game_info.team_away}</p>
             <p><strong>Beobachtetes Team:</strong> {session.game_info.observed_team_name || session.game_info.observed_team || session.observed_team || 'Beobachtetes Team nicht hinterlegt'}</p>
@@ -1079,7 +1148,13 @@ export default function SessionPage() {
 
           {(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') && (
             <div>
-              <p className="period-analysis-title">Analysiere das letzte Drittel und gib Feedback.</p>
+              {isFoundationSession ? (
+                <p className="period-analysis-title">
+                  Arbeite die Schritte der Lektion durch. Danach unten „Session abschließen“.
+                </p>
+              ) : (
+                <p className="period-analysis-title">Analysiere das letzte Drittel und gib Feedback.</p>
+              )}
               {advanceError && (
                 <div style={{ marginBottom: '0.8rem', padding: '0.6rem 0.8rem', background: 'rgba(220,53,69,0.12)', border: '1px solid rgba(220,53,69,0.4)', borderRadius: '0.45rem', color: '#ffb7bf', fontSize: '0.9rem' }}>
                   {advanceError}
@@ -1099,8 +1174,8 @@ export default function SessionPage() {
                 <p>Keine Drills für diese Session verfügbar.</p>
               )}
 
-              {/* RingAbout Szenenmarker + Special-Teams-Sidequest */}
-              <div style={{ margin: '1.2rem 0 0.6rem', display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {!isFoundationSession && (
+              <div className={stickyStyles.sidequestRow}>
                 <SceneMarkerButton
                   session={session}
                   currentPhase={currentPhase}
@@ -1114,20 +1189,27 @@ export default function SessionPage() {
                   onAppendSidequest={handleDraftChange}
                 />
               </div>
+              )}
+              {!isCompleted && session.state !== 'ABORTED' && (['P1', 'P2', 'P3'] as Phase[]).includes(currentPhase) && (
+                <div className={stickyStyles.stickyClearance} aria-hidden="true" />
+              )}
 
               <div className={stickyStyles.inlineNav}>
                 <div className={stickyStyles.inlinePhase}>{getPhaseTitle(currentPhase)}</div>
                 <div className={stickyStyles.inlineActions}>
-                  {currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
+                  {!isFoundationSession && currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
                     <button onClick={handleGoBack} className="btn" style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}>
                       ← Zurück
                     </button>
                   )}
-                  {getNextPhaseForFlow(currentPhase) && (
-                    <button onClick={handleAdvanceToNext} className="btn" style={{ minWidth: 120 }} disabled={isAdvancing}>
-                      {isAdvancing
-                        ? "Speichere…"
-                        : (getNextPhaseForFlow(currentPhase) === 'POST' ? "Session abschließen" : "Weiter →")}
+                  {(getNextPhaseForFlow(currentPhase) || isFoundationSession) && (
+                    <button
+                      onClick={handleAdvanceToNext}
+                      className="btn"
+                      style={{ minWidth: 140 }}
+                      disabled={isAdvancing || (isFoundationSession && !foundationReady)}
+                    >
+                      {advanceCtaLabel}
                     </button>
                   )}
                 </div>
@@ -1141,21 +1223,19 @@ export default function SessionPage() {
                     <SyncStatusChip status={syncStatus} />
                   </div>
                   <div className={stickyStyles.stickyActions}>
-                    {currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
+                    {!isFoundationSession && currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
                       <button type="button" className={stickyStyles.stickyBtn} onClick={handleGoBack}>
                         ← Zurück
                       </button>
                     )}
-                    {getNextPhaseForFlow(currentPhase) && (
+                    {(getNextPhaseForFlow(currentPhase) || isFoundationSession) && (
                       <button
                         type="button"
                         className={`${stickyStyles.stickyBtn} ${stickyStyles.stickyBtnPrimary}`}
                         onClick={handleAdvanceToNext}
-                        disabled={isAdvancing}
+                        disabled={isAdvancing || (isFoundationSession && !foundationReady)}
                       >
-                        {isAdvancing
-                          ? 'Speichere…'
-                          : (getNextPhaseForFlow(currentPhase) === 'POST' ? 'Abschließen' : 'Weiter →')}
+                        {stickyCtaLabel}
                       </button>
                     )}
                   </div>
@@ -1224,7 +1304,21 @@ export default function SessionPage() {
         </div>
       )}
 
-      {session.state === 'ABORTED' && (
+      {isCompleted && session && (
+        <SessionReflectionPanel
+          session={session}
+          reflection={activeReflection}
+          onReflectionSaved={(reflection) => {
+            setLocalReflection(reflection)
+            queryClient.setQueryData(['session', id], (prev: typeof session | undefined) =>
+              prev ? { ...prev, ai_reflection: reflection } : prev,
+            )
+            queryClient.invalidateQueries({ queryKey: ['sessions'] })
+          }}
+        />
+      )}
+
+      {session?.state === 'ABORTED' && (
         <div className="card">
           <h2>Session abgebrochen</h2>
           <p><strong>Grund:</strong> {session.abort?.reason}</p>

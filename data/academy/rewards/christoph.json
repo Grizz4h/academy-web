@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 1820
+    "PUX": 1915
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -445,6 +445,54 @@
         "averageAccuracy": null,
         "perfectRuns": 0
       }
+    },
+    "A1_D1:bronze": {
+      "key": "A1_D1:bronze",
+      "drillId": "A1_D1",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-12T13:18:39.260483",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 5,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "A1_D1:silver": {
+      "key": "A1_D1:silver",
+      "drillId": "A1_D1",
+      "tier": "silver",
+      "unlockedAt": "2026-08-12T13:18:39.260483",
+      "rewardPux": 15,
+      "statsSnapshot": {
+        "runs": 5,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "A1_D1:gold": {
+      "key": "A1_D1:gold",
+      "drillId": "A1_D1",
+      "tier": "gold",
+      "unlockedAt": "2026-08-12T13:18:39.260483",
+      "rewardPux": 25,
+      "statsSnapshot": {
+        "runs": 5,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "B1_D1:silver": {
+      "key": "B1_D1:silver",
+      "drillId": "B1_D1",
+      "tier": "silver",
+      "unlockedAt": "2026-08-12T13:42:10.748875",
+      "rewardPux": 15,
+      "statsSnapshot": {
+        "runs": 3,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
     }
   },
   "processedSessions": {
@@ -622,9 +670,24 @@
       "sessionId": "Christoph_1786179938",
       "grantedAt": "2026-08-08T12:02:06.969683",
       "pux": 20
+    },
+    "Christoph_1786533467": {
+      "sessionId": "Christoph_1786533467",
+      "grantedAt": "2026-08-12T13:18:39.260483",
+      "pux": 60
+    },
+    "Christoph_1786533693": {
+      "sessionId": "Christoph_1786533693",
+      "grantedAt": "2026-08-12T13:22:08.275525",
+      "pux": 10
+    },
+    "Christoph_1786534763": {
+      "sessionId": "Christoph_1786534763",
+      "grantedAt": "2026-08-12T13:42:10.748875",
+      "pux": 25
     }
   },
-  "xp": 9365,
+  "xp": 9665,
   "processedEvents": {
     "bootstrap:v1": {
       "eventId": "bootstrap:v1",
@@ -1320,6 +1383,24 @@
       "eventId": "locker:seen:2026-08-10T21:03:25.881Z",
       "processedAt": "2026-08-10T21:03:25.881Z",
       "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786533467": {
+      "eventId": "session_completed:Christoph_1786533467",
+      "processedAt": "2026-08-12T11:18:39.710Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786533693": {
+      "eventId": "session_completed:Christoph_1786533693",
+      "processedAt": "2026-08-12T11:22:08.790Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786534763": {
+      "eventId": "session_completed:Christoph_1786534763",
+      "processedAt": "2026-08-12T11:42:11.134Z",
+      "grantedXp": 100,
       "grantedPux": 0
     }
   },
@@ -3149,6 +3230,54 @@
       "sceneId": "scene_1785690893_96a608",
       "rating": 3,
       "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1786533467",
+      "type": "session_completed",
+      "occurredAt": "2026-08-12T13:18:39.260483",
+      "sessionId": "Christoph_1786533467",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "observedTeamId": "Eisbären Berlin",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1786533693",
+      "type": "session_completed",
+      "occurredAt": "2026-08-12T13:22:08.275525",
+      "sessionId": "Christoph_1786533693",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
+    },
+    {
+      "id": "session_completed:Christoph_1786534763",
+      "type": "session_completed",
+      "occurredAt": "2026-08-12T13:42:10.748875",
+      "sessionId": "Christoph_1786534763",
+      "drillId": "B1_D1",
+      "trackId": "B1",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "DEL",
+      "mechanicIds": [
+        "sample_log"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false
     }
   ],
   "unlockHistory": [
@@ -3165,7 +3294,7 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-10T19:05:37.149Z",
-  "lastUpdatedAt": "2026-08-10T21:03:25.881Z",
+  "lastUpdatedAt": "2026-08-12T11:42:11.134Z",
   "favoriteCosmeticIds": [],
   "puxTransactions": [],
   "completedCollections": {},

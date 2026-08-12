@@ -1,0 +1,326 @@
+.wrap {
+  margin-top: 0.75rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.06);
+  display: grid;
+  gap: 0.65rem;
+}
+
+.wrap.hasStats {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(251, 191, 36, 0.05) 100%);
+}
+
+/* Inside parent Import card: section with accent, not another box */
+.embedded {
+  margin-top: 0.35rem;
+  padding: 0.55rem 0 0.1rem 0.7rem;
+  border: 0;
+  border-radius: 0;
+  border-left: 3px solid rgba(251, 191, 36, 0.65);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+}
+
+.embedded.hasStats {
+  border-left-color: rgba(52, 211, 153, 0.7);
+  background: transparent;
+}
+
+.embedded.compact {
+  padding: 0.55rem 0 0.1rem 0.7rem;
+}
+
+.compact {
+  padding: 0.75rem 0.8rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+}
+
+.badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(253, 224, 71, 0.95);
+}
+
+.meta {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.matchupBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.score {
+  font-size: 1rem;
+  color: rgba(110, 231, 183, 0.98);
+}
+
+.vs {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.matchday {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.lead {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.emptyState {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.examplesList {
+  margin: 0.2rem 0 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.65rem;
+  align-items: center;
+}
+
+.link {
+  font-size: 0.72rem;
+  color: rgba(125, 211, 252, 0.95);
+}
+
+.hint,
+.error {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.hint {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.error {
+  color: rgba(248, 113, 113, 0.95);
+}
+
+.metrics,
+.scorers,
+.boxscore,
+.examples,
+.seasonSlice,
+.h2hBlock,
+.boxscoreAgg {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.seasonSlice {
+  padding: 0.55rem 0.6rem;
+  border-radius: 8px;
+  background: rgba(8, 16, 35, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.embedded .seasonSlice,
+.embedded .h2hBlock,
+.embedded .boxscoreAgg,
+.embedded .metrics,
+.embedded .scorers,
+.embedded .boxscore {
+  padding: 0.35rem 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sliceStack {
+  display: none;
+}
+
+.sliceCard {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.5rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 16, 35, 0.28);
+}
+
+.sliceCardObserved {
+  border-color: rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.08);
+}
+
+.sliceCardTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(241, 245, 249, 0.95);
+}
+
+.sliceCardGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.18rem 0.75rem;
+  font-size: 0.74rem;
+  color: rgba(203, 213, 225, 0.78);
+}
+
+.sliceCardGrid strong {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+  color: rgba(241, 245, 249, 0.95);
+}
+
+@media (max-width: 768px) {
+  .wrap:not(.embedded) {
+    padding: 0.75rem 0.7rem;
+    border-radius: 12px;
+    background: rgba(251, 191, 36, 0.05);
+  }
+
+  .wrap:not(.embedded).hasStats {
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.07) 0%, rgba(251, 191, 36, 0.04) 100%);
+  }
+
+  .embedded {
+    padding-left: 0.6rem;
+  }
+
+  /* Wide season-slice table → stacked team cards */
+  .seasonSlice > .statsTableWrap {
+    display: none;
+  }
+
+  .sliceStack {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .statsTable {
+    font-size: 0.7rem;
+  }
+
+  .statsTable th,
+  .statsTable td {
+    padding: 0.24rem 0.3rem;
+  }
+}
+
+.h2hList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.h2hList li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.18rem 0.35rem;
+  border-radius: 6px;
+}
+
+.h2hCurrent {
+  background: rgba(125, 211, 252, 0.12);
+}
+
+.h2hTag {
+  color: rgba(125, 211, 252, 0.95);
+  font-size: 0.68rem;
+}
+
+.observedTableRow td {
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.metricsTitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.statsTableWrap {
+  overflow-x: auto;
+}
+
+.statsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+}
+
+.statsTable th,
+.statsTable td {
+  padding: 0.28rem 0.45rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.statsTable th {
+  color: rgba(255, 255, 255, 0.52);
+  font-weight: 600;
+}
+
+.statsTable td:not(:first-child),
+.statsTable th:not(:first-child) {
+  text-align: center;
+}
+
+.scorersList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.scorersList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.72);
+  padding: 0.18rem 0.35rem;
+  border-radius: 6px;
+}
+
+.observedRow {
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.scorerMeta {
+  color: rgba(255, 255, 255, 0.52);
+  white-space: nowrap;
+}

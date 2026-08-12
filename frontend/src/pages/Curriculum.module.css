@@ -16,6 +16,19 @@
   background: linear-gradient(180deg, rgba(10, 12, 26, 0.94) 0%, rgba(8, 16, 30, 0.96) 100%);
 }
 
+.trackFoundation {
+  border-color: rgba(52, 211, 153, 0.4);
+  background: linear-gradient(180deg, rgba(8, 28, 24, 0.92) 0%, rgba(8, 16, 30, 0.96) 100%);
+}
+
+.foundationLabel {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(167, 243, 208, 0.9);
+  margin-bottom: 0.2rem;
+}
+
 .trackSummary {
   list-style: none;
   display: flex;

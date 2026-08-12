@@ -1,0 +1,122 @@
+.panel {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(12, 18, 32, 0.72) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1.05rem;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 650;
+  color: rgba(226, 232, 240, 0.95);
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summaryMeta {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.body {
+  padding: 0 1.05rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.65rem;
+}
+
+.empty {
+  margin: 0.65rem 0 0;
+  color: rgba(216, 225, 255, 0.62);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.list {
+  list-style: none;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.entry {
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.entryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+  font-size: 0.75rem;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.entryAction {
+  font-weight: 650;
+  color: rgba(203, 213, 225, 0.95);
+}
+
+.entryMessage {
+  margin: 0.35rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.95);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.entryDetail {
+  margin: 0.45rem 0 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.28);
+  color: rgba(186, 210, 230, 0.88);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  overflow: auto;
+  max-height: 140px;
+  white-space: pre-wrap;
+}
+
+.levelInfo {
+  border-left: 3px solid rgba(125, 211, 252, 0.55);
+}
+
+.levelSuccess {
+  border-left: 3px solid rgba(52, 211, 153, 0.75);
+}
+
+.levelError {
+  border-left: 3px solid rgba(248, 113, 113, 0.85);
+}
+
+.levelWarn {
+  border-left: 3px solid rgba(251, 191, 36, 0.85);
+}
+
+.levelPending {
+  border-left: 3px solid rgba(148, 163, 184, 0.65);
+}

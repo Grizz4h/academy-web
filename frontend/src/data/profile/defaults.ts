@@ -20,6 +20,8 @@ export function createDefaultProfile(displayName: string): UserProfileCustomizat
     academyHelpLevel: 'guided',
     terminologyMode: 'direct',
     preferredAttackDirection: 'auto',
+    hockeyExperience: null,
+    experiencePromptDismissed: false,
     dashboardPreferences: {},
     updatedAt: null,
   }

@@ -1,7 +1,2876 @@
 {
   "league": "DEL",
   "season": "2025_2026",
+  "season_label": "2025/26",
   "teams": [
-  
+    {
+      "team_id": "adler_mannheim",
+      "name": "Adler Mannheim",
+      "players": [
+        {
+          "player_id": "dan_renouf",
+          "name": "Dan Renouf",
+          "number": 4,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "tobias_fohrler",
+          "name": "Tobias Fohrler",
+          "number": 5,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "john_gilmour",
+          "name": "John Gilmour",
+          "number": 7,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "colin_schlenker",
+          "name": "Colin Schlenker",
+          "number": 8,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "leon_gawanke",
+          "name": "Leon Gawanke",
+          "number": 9,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "kristian_reichel",
+          "name": "Kristian Reichel",
+          "number": 11,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "william_worge_kre",
+          "name": "William Worge Kreü",
+          "number": 14,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "luke_esposito",
+          "name": "Luke Esposito",
+          "number": 19,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "kris_bennett",
+          "name": "Kris Bennett",
+          "number": 21,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "matthias_plachta",
+          "name": "Matthias Plachta",
+          "number": 22,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "yannick_proske",
+          "name": "Yannick Proske",
+          "number": 27,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "alexander_ehl",
+          "name": "Alexander Ehl",
+          "number": 28,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "johan_christer_mattsson",
+          "name": "Johan Christer Mattsson",
+          "number": 33,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "tom_khnhackl",
+          "name": "Tom Kühnhackl",
+          "number": 34,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "max_calce",
+          "name": "Max Calce",
+          "number": 39,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "anthony_greco",
+          "name": "Anthony Greco",
+          "number": 44,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "lukas_klble",
+          "name": "Lukas Kälble",
+          "number": 49,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nicolas_mattinen",
+          "name": "Nicolas Mattinen",
+          "number": 52,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "maximilian_franzreb",
+          "name": "Maximilian Franzreb",
+          "number": 56,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "marc_michaelis",
+          "name": "Marc Michaelis",
+          "number": 65,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "nick_mhler",
+          "name": "Nick Mähler",
+          "number": 66,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "leon_willerscheid",
+          "name": "Leon Willerscheid",
+          "number": 67,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "kimi_saffran",
+          "name": "Kimi Saffran",
+          "number": 72,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "zachary_solow",
+          "name": "Zachary Solow",
+          "number": 73,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "justin_schtz",
+          "name": "Justin Schütz",
+          "number": 74,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "kevin_bicker",
+          "name": "Kevin Bicker",
+          "number": 78,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "hayden_shaw",
+          "name": "Hayden Shaw",
+          "number": 82,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "alexander_ruuttu",
+          "name": "Alexander Ruuttu",
+          "number": 83,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "maximilian_heim",
+          "name": "Maximilian Heim",
+          "number": 86,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "brendan_odonnell",
+          "name": "Brendan O´Donnell",
+          "number": 91,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.554425Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "adler_mannheim_players.json",
+          "importedAt": "2026-08-11T08:24:35.553978Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 30,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "augsburger_panther",
+      "name": "Augsburger Panther",
+      "players": [
+        {
+          "player_id": "david_farrance",
+          "name": "David Farrance",
+          "number": 4,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "moritz_wirth",
+          "name": "Moritz Wirth",
+          "number": 9,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "donald_dj_busdeker",
+          "name": "Donald D.J. Busdeker",
+          "number": 14,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "anthony_louis",
+          "name": "Anthony Louis",
+          "number": 18,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "riley_damiani",
+          "name": "Riley Damiani",
+          "number": 19,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "cody_kunyk",
+          "name": "Cody Kunyk",
+          "number": 20,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "madison_bowey",
+          "name": "Madison Bowey",
+          "number": 22,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "thomas_jordan_trevelyan",
+          "name": "Thomas Jordan Trevelyan",
+          "number": 24,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "christian_hanke",
+          "name": "Christian Hanke",
+          "number": 25,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "alexander_blank",
+          "name": "Alexander Blank",
+          "number": 26,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "kyle_mayhew",
+          "name": "Kyle Mayhew",
+          "number": 27,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "dave_dtzka",
+          "name": "Dave Dützka",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "lasse_dietzschold",
+          "name": "Lasse Dietzschold",
+          "number": 31,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "tim_wohlgemuth",
+          "name": "Tim Wohlgemuth",
+          "number": 33,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "michael_garteig",
+          "name": "Michael Garteig",
+          "number": 34,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "markus_keller",
+          "name": "Markus Keller",
+          "number": 35,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "peyton_jones",
+          "name": "Peyton Jones",
+          "number": 41,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "leon_van_der_linde",
+          "name": "Leon van der Linde",
+          "number": 43,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "jason_bast",
+          "name": "Jason Bast",
+          "number": 45,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "moritz_elias",
+          "name": "Moritz Elias",
+          "number": 46,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "enrico_henriquez_morales",
+          "name": "Enrico Henriquez Morales",
+          "number": 52,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "ryan_button",
+          "name": "Ryan Button",
+          "number": 55,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "maximilian_renner",
+          "name": "Maximilian Renner",
+          "number": 58,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "liron_alec_pellizzari",
+          "name": "Liron Alec Pellizzari",
+          "number": 60,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "thomas_schemitsch",
+          "name": "Thomas Schemitsch",
+          "number": 62,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "fabrizio_pilu",
+          "name": "Fabrizio Pilu",
+          "number": 68,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "alexandre_grenier",
+          "name": "Alexandre Grenier",
+          "number": 82,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "sebastian_zwickl",
+          "name": "Sebastian Zwickl",
+          "number": 83,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "joseph_cramarossa",
+          "name": "Joseph Cramarossa",
+          "number": 92,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.546718Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "augsburger_panther_players.json",
+          "importedAt": "2026-08-11T08:24:35.546407Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 29,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "eislowen_dresden",
+      "name": "Dresdner Eislöwen",
+      "players": [],
+      "snapshot": {
+        "imported_at": "2026-08-11T14:00:12.606296Z",
+        "source": {
+          "provider": "team_catalog_sync"
+        },
+        "quality": "empty",
+        "warnings": [
+          "Noch kein Kader importiert — Dev → Kader sync"
+        ],
+        "active_count": 0,
+        "status": "placeholder"
+      }
+    },
+    {
+      "team_id": "red_bull_munchen",
+      "name": "EHC Red Bull München",
+      "players": [
+        {
+          "player_id": "tobias_rieder",
+          "name": "Tobias Rieder",
+          "number": 8,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "markus_eisenschmid",
+          "name": "Markus Eisenschmid",
+          "number": 11,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "brady_ferguson",
+          "name": "Brady Ferguson",
+          "number": 12,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "vadim_schreiner",
+          "name": "Vadim Schreiner",
+          "number": 14,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "nikolaus_heigl",
+          "name": "Nikolaus Heigl",
+          "number": 15,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "konrad_abeltshauser",
+          "name": "Konrad Abeltshauser",
+          "number": 16,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "taro_hirose",
+          "name": "Taro Hirose",
+          "number": 17,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "rio_kaiser",
+          "name": "Rio Kaiser",
+          "number": 18,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "moritz_warnecke",
+          "name": "Moritz Warnecke",
+          "number": 21,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ville_pokka",
+          "name": "Ville Pokka",
+          "number": 22,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "alberts_smits",
+          "name": "Alberts Smits",
+          "number": 23,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ryan_murphy",
+          "name": "Ryan Murphy",
+          "number": 24,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "simon_wolf",
+          "name": "Simon Wolf",
+          "number": 25,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "veit_oswald",
+          "name": "Veit Oswald",
+          "number": 27,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "antoine_bibeau",
+          "name": "Antoine Bibeau",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "matthias_bittner",
+          "name": "Matthias Bittner",
+          "number": 32,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "mathias_niederberger",
+          "name": "Mathias Niederberger",
+          "number": 35,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "yasin_ehliz",
+          "name": "Yasin Ehliz",
+          "number": 42,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "phillip_sinn",
+          "name": "Phillip Sinn",
+          "number": 43,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "patrick_hager",
+          "name": "Patrick Hager",
+          "number": 52,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "fabio_wagner",
+          "name": "Fabio Wagner",
+          "number": 55,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "maximilian_daubner",
+          "name": "Maximilian Daubner",
+          "number": 70,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "adam_brooks",
+          "name": "Adam Brooks",
+          "number": 77,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "philipp_krening",
+          "name": "Philipp Krening",
+          "number": 79,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "christopher_desousa",
+          "name": "Christopher DeSousa",
+          "number": 82,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jeremy_mckenna",
+          "name": "Jeremy McKenna",
+          "number": 91,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "maximilian_kastner",
+          "name": "Maximilian Kastner",
+          "number": 93,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "dillon_heatherington",
+          "name": "Dillon Heatherington",
+          "number": 95,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "gabriel_fontaine",
+          "name": "Gabriel Fontaine",
+          "number": 97,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.541750Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "ehc_red_bull_muenchen_players.json",
+          "importedAt": "2026-08-11T08:24:35.541492Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 29,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "erc_ingolstadt",
+      "name": "ERC Ingolstadt",
+      "players": [
+        {
+          "player_id": "nico_pertuch",
+          "name": "Nico Pertuch",
+          "number": 1,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "sam_ruopp",
+          "name": "Sam Ruopp",
+          "number": 2,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "morgan_ellis",
+          "name": "Morgan Ellis",
+          "number": 4,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "lukas_simon_jung",
+          "name": "Lukas Simon Jung",
+          "number": 5,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "chris_jandric",
+          "name": "Chris Jandric",
+          "number": 7,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "philipp_krau",
+          "name": "Philipp Krauß",
+          "number": 8,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "myles_powell",
+          "name": "Myles Powell",
+          "number": 9,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "matthew_boucher",
+          "name": "Matthew Boucher",
+          "number": 10,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "kenny_agostino",
+          "name": "Kenny Agostino",
+          "number": 11,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "dominik_zerhoch",
+          "name": "Dominik Zerhoch",
+          "number": 13,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "johannes_krau",
+          "name": "Johannes Krauß",
+          "number": 16,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "abbott_girduckis",
+          "name": "Abbott Girduckis",
+          "number": 17,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jakin_smallwood",
+          "name": "Jakin Smallwood",
+          "number": 23,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "leon_httl",
+          "name": "Leon Hüttl",
+          "number": 25,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "bartholomus_oswald",
+          "name": "Bartholomäus Oswald",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "devin_williams",
+          "name": "Devin Williams",
+          "number": 31,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "brett_brochu",
+          "name": "Brett Brochu",
+          "number": 36,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "riley_barber",
+          "name": "Riley Barber",
+          "number": 37,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "nicolas_schindler",
+          "name": "Nicolas Schindler",
+          "number": 44,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "peter_spornberger",
+          "name": "Peter Spornberger",
+          "number": 50,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "edwin_tropmann",
+          "name": "Edwin Tropmann",
+          "number": 55,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "alex_breton",
+          "name": "Alex Breton",
+          "number": 75,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "samir_kharboutli",
+          "name": "Samir Kharboutli",
+          "number": 83,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "luca_hauf",
+          "name": "Luca Hauf",
+          "number": 85,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "daniel_pietta",
+          "name": "Daniel Pietta",
+          "number": 86,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "austen_keating",
+          "name": "Austen Keating",
+          "number": 89,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "riley_sheen",
+          "name": "Riley Sheen",
+          "number": 91,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "daniel_schmlz",
+          "name": "Daniel Schmölz",
+          "number": 92,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "philip_rosa-preto",
+          "name": "Philip Rosa-Preto",
+          "number": 95,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "peter_abbandonato",
+          "name": "Peter Abbandonato",
+          "number": 98,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.579597Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "erc_ingolstadt_players.json",
+          "importedAt": "2026-08-11T08:24:35.578468Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 30,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "eisbaren_berlin",
+      "name": "Eisbären Berlin",
+      "players": [
+        {
+          "player_id": "jonas_stettmer",
+          "name": "Jonas Stettmer",
+          "number": 1,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "adam_smith",
+          "name": "Adam Smith",
+          "number": 4,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "mitchell_reinke",
+          "name": "Mitchell Reinke",
+          "number": 5,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "kai_wissmann",
+          "name": "Kai Wissmann",
+          "number": 6,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ty_ronning",
+          "name": "Ty Ronning",
+          "number": 9,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "lean_bergmann",
+          "name": "Lean Bergmann",
+          "number": 10,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "eric_mik",
+          "name": "Eric Mik",
+          "number": 12,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "patrick_khodorenko",
+          "name": "Patrick Khodorenko",
+          "number": 13,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jean-sbastien_dea",
+          "name": "Jean-Sébastien Dea",
+          "number": 17,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jonas_mller",
+          "name": "Jonas Müller",
+          "number": 18,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "manuel_wiederer",
+          "name": "Manuel Wiederer",
+          "number": 21,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "blaine_byron",
+          "name": "Blaine Byron",
+          "number": 23,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jake_hildebrand",
+          "name": "Jake Hildebrand",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "niclas_wolter",
+          "name": "Niclas Wolter",
+          "number": 32,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "anton_brandt",
+          "name": "Anton Brandt",
+          "number": 35,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "markus_vikingstad",
+          "name": "Markus Vikingstad",
+          "number": 37,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "yannick_veilleux",
+          "name": "Yannick Veilleux",
+          "number": 38,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "korbinian_geibel",
+          "name": "Korbinian Geibel",
+          "number": 40,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "andreas_eder",
+          "name": "Andreas Eder",
+          "number": 43,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "gregor_stocker",
+          "name": "Gregor Stocker",
+          "number": 46,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "lennard_nieleck",
+          "name": "Lennard Nieleck",
+          "number": 52,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "markus_niemelinen",
+          "name": "Markus Niemeläinen",
+          "number": 56,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "lennart_neie",
+          "name": "Lennart Neiße",
+          "number": 73,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "lester_lancaster",
+          "name": "Lester Lancaster",
+          "number": 74,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "norwin_panocha",
+          "name": "Norwin Panocha",
+          "number": 75,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "eric_hrdler",
+          "name": "Eric Hördler",
+          "number": 77,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "moritz_kretzschmar",
+          "name": "Moritz Kretzschmar",
+          "number": 83,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "marcel_noebels",
+          "name": "Marcel Noebels",
+          "number": 92,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "leonhard_pfderl",
+          "name": "Leonhard Pföderl",
+          "number": 93,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "liam_kirk",
+          "name": "Liam Kirk",
+          "number": 94,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "frederik_tiffels",
+          "name": "Frederik Tiffels",
+          "number": 95,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.560538Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "eisbaeren_berlin_players.json",
+          "importedAt": "2026-08-11T08:24:35.560053Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 31,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "fischtown_pinguins",
+      "name": "Fischtown Pinguins Bremerhaven",
+      "players": [
+        {
+          "player_id": "akito_hirose",
+          "name": "Akito Hirose",
+          "number": 2,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nino_kinder",
+          "name": "Nino Kinder",
+          "number": 8,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jan_urbas",
+          "name": "Jan Urbas",
+          "number": 9,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "ziga_jeglic",
+          "name": "Ziga Jeglic",
+          "number": 13,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "ross_mauermann",
+          "name": "Ross Mauermann",
+          "number": 14,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "rayan_bettahar",
+          "name": "Rayan Bettahar",
+          "number": 15,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ludwig_bystrm",
+          "name": "Ludwig Byström",
+          "number": 17,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "cj_smith",
+          "name": "C.J. Smith",
+          "number": 19,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "nicolas_krmmer",
+          "name": "Nicolas Krämmer",
+          "number": 21,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "vladimir_eminger",
+          "name": "Vladimir Eminger",
+          "number": 22,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "max_grtz",
+          "name": "Max Görtz",
+          "number": 23,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "fabian_herrmann",
+          "name": "Fabian Herrmann",
+          "number": 25,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "leon_hungerecker",
+          "name": "Leon Hungerecker",
+          "number": 27,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "kristers_gudlevskis",
+          "name": "Kristers Gudlevskis",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "julius_hudacek",
+          "name": "Julius Hudacek",
+          "number": 33,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "christopher_strasen",
+          "name": "Christopher Strasen",
+          "number": 34,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "mathis_lwe",
+          "name": "Mathis Löwe",
+          "number": 35,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "matthew_abt",
+          "name": "Matthew Abt",
+          "number": 42,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nicholas_b_jensen",
+          "name": "Nicholas B. Jensen",
+          "number": 48,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "andy_miele",
+          "name": "Andy Miele",
+          "number": 51,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "maxim_rausch",
+          "name": "Maxim Rausch",
+          "number": 53,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "alexander_friesen",
+          "name": "Alexander Friesen",
+          "number": 57,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "christian_wejse",
+          "name": "Christian Wejse",
+          "number": 65,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "phillip_bruggisser",
+          "name": "Phillip Bruggisser",
+          "number": 72,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "bennet_romy",
+          "name": "Bennet Roßmy",
+          "number": 73,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "justin_bsing",
+          "name": "Justin Büsing",
+          "number": 76,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "colt_adam_conrad",
+          "name": "Colt Adam Conrad",
+          "number": 79,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "miha_verlic",
+          "name": "Miha Verlic",
+          "number": 91,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.540295Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "pinguins_bremerhaven_players.json",
+          "importedAt": "2026-08-11T08:24:35.540049Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 28,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "grizzlys_wolfsburg",
+      "name": "Grizzlys Wolfsburg",
+      "players": [
+        {
+          "player_id": "dustin_strahlmeier",
+          "name": "Dustin Strahlmeier",
+          "number": 1,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "keaton_thompson",
+          "name": "Keaton Thompson",
+          "number": 4,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "bjrn_krupp",
+          "name": "Björn Krupp",
+          "number": 5,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ethan_prow",
+          "name": "Ethan Prow",
+          "number": 6,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "jimmy_lambert",
+          "name": "Jimmy Lambert",
+          "number": 7,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "lucas_dumont",
+          "name": "Lucas Dumont",
+          "number": 13,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jacob_hayhurst",
+          "name": "Jacob Hayhurst",
+          "number": 15,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "robin_veber",
+          "name": "Robin Veber",
+          "number": 22,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "janik_mser",
+          "name": "Janik Möser",
+          "number": 24,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "jimmy_martinovic",
+          "name": "Jimmy Martinovic",
+          "number": 28,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "leo_hafenrichter",
+          "name": "Leo Hafenrichter",
+          "number": 29,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ennio_albrecht",
+          "name": "Ennio Albrecht",
+          "number": 39,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "julian_chrobot",
+          "name": "Julian Chrobot",
+          "number": 40,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "julian_melchiori",
+          "name": "Julian Melchiori",
+          "number": 44,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "gemel_smith",
+          "name": "Gemel Smith",
+          "number": 46,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "robert_lynch",
+          "name": "Robert Lynch",
+          "number": 49,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "julius_ramoser",
+          "name": "Julius Ramoser",
+          "number": 50,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "sven_ziegler",
+          "name": "Sven Ziegler",
+          "number": 52,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tyler_gaudet",
+          "name": "Tyler Gaudet",
+          "number": 58,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "luis_schinko",
+          "name": "Luis Schinko",
+          "number": 63,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "hannibal_weitzmann",
+          "name": "Hannibal Weitzmann",
+          "number": 67,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "justin_feser",
+          "name": "Justin Feser",
+          "number": 71,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "fynn_wild",
+          "name": "Fynn Wild",
+          "number": 72,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "til_raab",
+          "name": "Til Raab",
+          "number": 74,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "matt_choupani",
+          "name": "Matt Choupani",
+          "number": 89,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "timo_ruckdschel",
+          "name": "Timo Ruckdäschel",
+          "number": 91,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "spencer_machacek",
+          "name": "Spencer Machacek",
+          "number": 93,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "fabio_pfohl",
+          "name": "Fabio Pfohl",
+          "number": 95,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "matthew_white",
+          "name": "Matthew White",
+          "number": 97,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.543529Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "grizzlys_wolfsburg_players.json",
+          "importedAt": "2026-08-11T08:24:35.543135Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 29,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "iserlohn_roosters",
+      "name": "Iserlohn Roosters",
+      "players": [
+        {
+          "player_id": "kyle_wood",
+          "name": "Kyle Wood",
+          "number": 3,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nils_elten",
+          "name": "Nils Elten",
+          "number": 4,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "gordejs_radionovs",
+          "name": "Gordejs Radionovs",
+          "number": 7,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "daniel_geiger",
+          "name": "Daniel Geiger",
+          "number": 8,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tyler_boland",
+          "name": "Tyler Boland",
+          "number": 10,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "henrik_trnqvist",
+          "name": "Henrik Törnqvist",
+          "number": 11,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "noel_saffran",
+          "name": "Noel Saffran",
+          "number": 14,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "matias_lassen",
+          "name": "Matias Lassen",
+          "number": 15,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "eirik_salsten",
+          "name": "Eirik Salsten",
+          "number": 17,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "eric_cornel",
+          "name": "Eric Cornel",
+          "number": 18,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "macoy_erkamps",
+          "name": "Macoy Erkamps",
+          "number": 20,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "daniel_neumann",
+          "name": "Daniel Neumann",
+          "number": 22,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "lua_niehus",
+          "name": "Lua Niehus",
+          "number": 26,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "christian_thomas",
+          "name": "Christian Thomas",
+          "number": 27,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jakub_borzecki",
+          "name": "Jakub Borzecki",
+          "number": 29,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "hendrik_hane",
+          "name": "Hendrik Hane",
+          "number": 32,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "finn_becker",
+          "name": "Finn Becker",
+          "number": 35,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "anthony_camara",
+          "name": "Anthony Camara",
+          "number": 36,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "bence_farkas",
+          "name": "Bence Farkas",
+          "number": 40,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "maximilian_eisenmenger",
+          "name": "Maximilian Eisenmenger",
+          "number": 41,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "johannes_hu",
+          "name": "Johannes Huß",
+          "number": 55,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "robin_norell",
+          "name": "Robin Norell",
+          "number": 56,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "manuel_alberg",
+          "name": "Manuel Alberg",
+          "number": 63,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "daniel_fischbuch",
+          "name": "Daniel Fischbuch",
+          "number": 71,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "julian_napravnik",
+          "name": "Julian Napravnik",
+          "number": 75,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "colin_ugbekile",
+          "name": "Colin Ugbekile",
+          "number": 79,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "taro_jentzsch",
+          "name": "Taro Jentzsch",
+          "number": 90,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "andreas_jenike",
+          "name": "Andreas Jenike",
+          "number": 92,
+          "position": "Goalie",
+          "position_group": "goalie"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.551753Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "iserlohn_roosters_players.json",
+          "importedAt": "2026-08-11T08:24:35.551355Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 28,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "kolner_haie",
+      "name": "Kölner Haie",
+      "players": [
+        {
+          "player_id": "robin_van_calster",
+          "name": "Robin van Calster",
+          "number": 5,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "oliwer_kaski",
+          "name": "Oliwer Kaski",
+          "number": 7,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "maximilian_kammerer",
+          "name": "Maximilian Kammerer",
+          "number": 9,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tanner_kero",
+          "name": "Tanner Kero",
+          "number": 10,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "valtteri_kemilinen",
+          "name": "Valtteri Kemiläinen",
+          "number": 13,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "louis-marc_aubry",
+          "name": "Louis-Marc Aubry",
+          "number": 15,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jan_luca_sennhenn",
+          "name": "Jan Luca Sennhenn",
+          "number": 17,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "frederik_storm",
+          "name": "Frederik Storm",
+          "number": 19,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "juhani_tyrvinen",
+          "name": "Juhani Tyrväinen",
+          "number": 21,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "maximilian_gltzl",
+          "name": "Maximilian Glötzl",
+          "number": 22,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "dominik_uher",
+          "name": "Dominik Uher",
+          "number": 26,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "aaron_kaiser",
+          "name": "Aaron Kaiser",
+          "number": 29,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "janne_juvonen",
+          "name": "Janne Juvonen",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "tobias_ancicka",
+          "name": "Tobias Ancicka",
+          "number": 45,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "kevin_niedenz",
+          "name": "Kevin Niedenz",
+          "number": 46,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "veli-matti_vittasmki",
+          "name": "Veli-Matti Vittasmäki",
+          "number": 47,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "marko_brlic",
+          "name": "Marko Brlic",
+          "number": 48,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "markus_nutivaara",
+          "name": "Markus Nutivaara",
+          "number": 56,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "brady_austin",
+          "name": "Brady Austin",
+          "number": 57,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "thor_scheida",
+          "name": "Thor Scheida",
+          "number": 58,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "parker_tuomie",
+          "name": "Parker Tuomie",
+          "number": 62,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "patrick_russell",
+          "name": "Patrick Russell",
+          "number": 63,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "marco_mnzenberger",
+          "name": "Marco Münzenberger",
+          "number": 65,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tobin_brandt",
+          "name": "Tobin Brandt",
+          "number": 67,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "max_ziergiebel",
+          "name": "Max Ziergiebel",
+          "number": 68,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "dominik_klein",
+          "name": "Dominik Klein",
+          "number": 73,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "sten_fischer",
+          "name": "Sten Fischer",
+          "number": 74,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "luca_mnzenberger",
+          "name": "Luca Münzenberger",
+          "number": 75,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nate_schnarr",
+          "name": "Nate Schnarr",
+          "number": 76,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "ryan_macinnis",
+          "name": "Ryan MacInnis",
+          "number": 77,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "dominik_bokk",
+          "name": "Dominik Bokk",
+          "number": 78,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "gregor_macleod",
+          "name": "Gregor MacLeod",
+          "number": 89,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "felix_brckmann",
+          "name": "Felix Brückmann",
+          "number": 90,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "moritz_mller",
+          "name": "Moritz Müller",
+          "number": 91,
+          "position": "Defender",
+          "position_group": "defense"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.586642Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "koelner_haie_players.json",
+          "importedAt": "2026-08-11T08:24:35.585779Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 34,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "lowen_frankfurt",
+      "name": "Löwen Frankfurt",
+      "players": [
+        {
+          "player_id": "ty_glover",
+          "name": "Ty Glover",
+          "number": 7,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "nathan_burns",
+          "name": "Nathan Burns",
+          "number": 8,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "noah_dunham",
+          "name": "Noah Dunham",
+          "number": 12,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "carter_proft",
+          "name": "Carter Proft",
+          "number": 15,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tommy_pasanen",
+          "name": "Tommy Pasanen",
+          "number": 16,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "carter_rowney",
+          "name": "Carter Rowney",
+          "number": 17,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "eric_jonathan_uba",
+          "name": "Eric Jonathan Uba",
+          "number": 18,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "fabio_kose",
+          "name": "Fabio Kose",
+          "number": 20,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "timo_kose",
+          "name": "Timo Kose",
+          "number": 22,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "philipp_bidoul",
+          "name": "Philipp Bidoul",
+          "number": 24,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "dennis_lobach",
+          "name": "Dennis Lobach",
+          "number": 26,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "mirko_pantkowski",
+          "name": "Mirko Pantkowski",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "michael_joyaux",
+          "name": "Michael Joyaux",
+          "number": 49,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "cody_brenner",
+          "name": "Cody Brenner",
+          "number": 51,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "maksim_matushkin",
+          "name": "Maksim Matushkin",
+          "number": 52,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "ryan_mckiernan",
+          "name": "Ryan McKiernan",
+          "number": 58,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "markus_schweiger",
+          "name": "Markus Schweiger",
+          "number": 64,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "matthew_wedman",
+          "name": "Matthew Wedman",
+          "number": 67,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "linus_frberg",
+          "name": "Linus Fröberg",
+          "number": 71,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "rodion_schumacher",
+          "name": "Rodion Schumacher",
+          "number": 74,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "daniel_wirt",
+          "name": "Daniel Wirt",
+          "number": 76,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "daniel_pfaffengut",
+          "name": "Daniel Pfaffengut",
+          "number": 77,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "christopher_wilkie",
+          "name": "Christopher Wilkie",
+          "number": 84,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "cameron_brace",
+          "name": "Cameron Brace",
+          "number": 86,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.548904Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "loewen_frankfurt_players.json",
+          "importedAt": "2026-08-11T08:24:35.548418Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 24,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "nurnberg_ice_tigers",
+      "name": "Nürnberg Ice Tigers",
+      "players": [
+        {
+          "player_id": "julius_karrer",
+          "name": "Julius Karrer",
+          "number": 6,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "sinan_akdag",
+          "name": "Sinan Akdag",
+          "number": 8,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "justus_bttner",
+          "name": "Justus Böttner",
+          "number": 9,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "evan_barratt",
+          "name": "Evan Barratt",
+          "number": 10,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "cole_maier",
+          "name": "Cole Maier",
+          "number": 14,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "maximilian_merkl",
+          "name": "Maximilian Merkl",
+          "number": 18,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "timo_bakos",
+          "name": "Timo Bakos",
+          "number": 22,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "marcus_weber",
+          "name": "Marcus Weber",
+          "number": 24,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "eugen_alanov",
+          "name": "Eugen Alanov",
+          "number": 29,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "evan_fitzpatrick",
+          "name": "Evan Fitzpatrick",
+          "number": 30,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "niklas_treutle",
+          "name": "Niklas Treutle",
+          "number": 31,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "luca_ganz",
+          "name": "Luca Ganz",
+          "number": 35,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "tyler_spezia",
+          "name": "Tyler Spezia",
+          "number": 37,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jakob_weber",
+          "name": "Jakob Weber",
+          "number": 41,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "greg_meireles",
+          "name": "Greg Meireles",
+          "number": 43,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "josef_eham",
+          "name": "Josef Eham",
+          "number": 44,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "owen_headrick",
+          "name": "Owen Headrick",
+          "number": 47,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "jakob_ustorf",
+          "name": "Jakob Ustorf",
+          "number": 48,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "thomas_heigl",
+          "name": "Thomas Heigl",
+          "number": 49,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "roman_kechter",
+          "name": "Roman Kechter",
+          "number": 73,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "cody_haiskanen",
+          "name": "Cody Haiskanen",
+          "number": 74,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "samuel_dove-mcfalls",
+          "name": "Samuel Dove-McFalls",
+          "number": 75,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "william_graber",
+          "name": "William Graber",
+          "number": 77,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "brett_murray",
+          "name": "Brett Murray",
+          "number": 81,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "lasse_roelofsen",
+          "name": "Lasse Roelofsen",
+          "number": 82,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "constantin_braun",
+          "name": "Constantin Braun",
+          "number": 90,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "charlie_gerard",
+          "name": "Charlie Gerard",
+          "number": 95,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.570888Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "nuernberg_ice_tigers_players.json",
+          "importedAt": "2026-08-11T08:24:35.569859Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 27,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "schwenninger_wild_wings",
+      "name": "Schwenninger Wild Wings",
+      "players": [
+        {
+          "player_id": "michael_bitzer",
+          "name": "Michael Bitzer",
+          "number": 1,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "dominik_bittner",
+          "name": "Dominik Bittner",
+          "number": 7,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "philip_feist",
+          "name": "Philip Feist",
+          "number": 9,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "mirko_hfflin",
+          "name": "Mirko Höfflin",
+          "number": 10,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "daniel_oregan",
+          "name": "Daniel O'Regan",
+          "number": 11,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "felix_maegaard_scheel",
+          "name": "Felix Maegaard Scheel",
+          "number": 13,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "jordan_szwarz",
+          "name": "Jordan Szwarz",
+          "number": 14,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "arkadiusz_dziambor",
+          "name": "Arkadiusz Dziambor",
+          "number": 16,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "hkon_hnelt",
+          "name": "Håkon Hänelt",
+          "number": 19,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tim_gettinger",
+          "name": "Tim Gettinger",
+          "number": 26,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "gianluca_buml",
+          "name": "Gianluca Bäuml",
+          "number": 29,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "christopher_gibson",
+          "name": "Christopher Gibson",
+          "number": 33,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "thomas_larkin",
+          "name": "Thomas Larkin",
+          "number": 37,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "baran_bruno_cicek",
+          "name": "Baran Bruno Cicek",
+          "number": 40,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "eric_martinsson",
+          "name": "Eric Martinsson",
+          "number": 46,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "alexander_karachun",
+          "name": "Alexander Karachun",
+          "number": 47,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "alex_trivellato",
+          "name": "Alex Trivellato",
+          "number": 53,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "benjamin_marshall",
+          "name": "Benjamin Marshall",
+          "number": 54,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "joacim_eriksson",
+          "name": "Joacim Eriksson",
+          "number": 60,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "niclas_hempel",
+          "name": "Niclas Hempel",
+          "number": 61,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "boaz_bassen",
+          "name": "Boaz Bassen",
+          "number": 64,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "niklas_hbner",
+          "name": "Niklas Hübner",
+          "number": 72,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "william_weber",
+          "name": "William Weber",
+          "number": 78,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "kyle_platzer",
+          "name": "Kyle Platzer",
+          "number": 88,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tylor_spink",
+          "name": "Tylor Spink",
+          "number": 90,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "sebastian_uvira",
+          "name": "Sebastian Uvira",
+          "number": 93,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "phil_hungerecker",
+          "name": "Phil Hungerecker",
+          "number": 94,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tyson_spink",
+          "name": "Tyson Spink",
+          "number": 96,
+          "position": "Forward",
+          "position_group": "forward"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.593906Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "schwenninger_wild_wings_players.json",
+          "importedAt": "2026-08-11T08:24:35.593003Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 28,
+        "status": "active"
+      }
+    },
+    {
+      "team_id": "straubing_tigers",
+      "name": "Straubing Tigers",
+      "players": [
+        {
+          "player_id": "florian_bugl",
+          "name": "Florian Bugl",
+          "number": 1,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "alex_green",
+          "name": "Alex Green",
+          "number": 6,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nicolas_beaudin",
+          "name": "Nicolas Beaudin",
+          "number": 7,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "zachary_james_leslie",
+          "name": "Zachary James Leslie",
+          "number": 8,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "stephan_daschner",
+          "name": "Stephan Daschner",
+          "number": 9,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "mario_zimmermann",
+          "name": "Mario Zimmermann",
+          "number": 13,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "adrian_klein",
+          "name": "Adrian Klein",
+          "number": 17,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "tyler_madden",
+          "name": "Tyler Madden",
+          "number": 18,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tim_brunnhuber",
+          "name": "Tim Brunnhuber",
+          "number": 19,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "justin_scott",
+          "name": "Justin Scott",
+          "number": 20,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "sebastian_wieber",
+          "name": "Sebastian Wieber",
+          "number": 21,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "michael_connolly",
+          "name": "Michael Connolly",
+          "number": 22,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tobias_schwarz",
+          "name": "Tobias Schwarz",
+          "number": 25,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "josh_melnick",
+          "name": "Josh Melnick",
+          "number": 37,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "stefan_loibl",
+          "name": "Stefan Loibl",
+          "number": 38,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "simon_seidl",
+          "name": "Simon Seidl",
+          "number": 39,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "henrik_haukeland",
+          "name": "Henrik Haukeland",
+          "number": 40,
+          "position": "Goalie",
+          "position_group": "goalie"
+        },
+        {
+          "player_id": "danjo_leonhardt",
+          "name": "Danjo Leonhardt",
+          "number": 53,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "ryan_merkley",
+          "name": "Ryan Merkley",
+          "number": 58,
+          "position": "Defender",
+          "position_group": "defense"
+        },
+        {
+          "player_id": "nicholas_halloran",
+          "name": "Nicholas Halloran",
+          "number": 71,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "linus_brandl",
+          "name": "Linus Brandl",
+          "number": 73,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "elis_hede",
+          "name": "Elis Hede",
+          "number": 75,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "skyler_mckenzie",
+          "name": "Skyler McKenzie",
+          "number": 86,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "wade_allison",
+          "name": "Wade Allison",
+          "number": 88,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "filip_varejcka",
+          "name": "Filip Varejcka",
+          "number": 90,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "tim_fleischer",
+          "name": "Tim Fleischer",
+          "number": 91,
+          "position": "Forward",
+          "position_group": "forward"
+        },
+        {
+          "player_id": "marcel_brandt",
+          "name": "Marcel Brandt",
+          "number": 92,
+          "position": "Defender",
+          "position_group": "defense"
+        }
+      ],
+      "snapshot": {
+        "imported_at": "2026-08-11T08:24:35.565748Z",
+        "source": {
+          "provider": "legacy_migration",
+          "sourceTeamFile": "straubing_tigers_players.json",
+          "importedAt": "2026-08-11T08:24:35.565190Z"
+        },
+        "quality": "plausible",
+        "warnings": [],
+        "active_count": 27,
+        "status": "active"
+      }
+    }
   ]
 }

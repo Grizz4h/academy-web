@@ -2,3 +2,9 @@ streamlit
 fastapi
 uvicorn
 pydantic
+PyJWT
+python-dotenv
+openai
+bcrypt
+httpx
+requests

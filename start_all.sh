@@ -2,8 +2,10 @@
 # Startet Backend (Port 8000) und Frontend (Port 5173) jeweils neu
 # und beendet ggf. laufende Instanzen
 
-# Backend stoppen (uvicorn)
+# Backend stoppen (uvicorn + python main.py)
 pkill -f "uvicorn.*main:app" 2>/dev/null
+pkill -f "python3 main.py" 2>/dev/null
+pkill -f "python main.py" 2>/dev/null
 sleep 1
 
 # Frontend stoppen (vite)

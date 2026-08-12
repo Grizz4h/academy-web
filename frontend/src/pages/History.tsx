@@ -243,7 +243,7 @@ export default function History() {
 
   if (!user) {
     return (
-      <div className={styles.page}>
+      <div className={`${styles.page} ui-page-shell`}>
         <header className="ui-page-header">
           <h1 className="ui-page-title">Session-Verlauf</h1>
           <p className="ui-page-lead">Melde dich an, um deine Sessions und Szenen zu sehen.</p>
@@ -256,7 +256,7 @@ export default function History() {
   if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ui-page-shell`}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Session-Verlauf</h1>
         <p className="ui-page-lead">
@@ -339,7 +339,7 @@ export default function History() {
         )}
       </div>
 
-      <Card className={`${styles.filterCard} ${styles.filterDesktop}`}>
+      <Card surface="section" className={`${styles.filterCard} ${styles.filterDesktop}`}>
         <div className={styles.filterHeader}>
           <h2 className={styles.filterTitle}>Filter</h2>
           <UiButton type="button" variant="ghost" size="sm" onClick={resetFilters}>
@@ -540,7 +540,7 @@ export default function History() {
 
       <div className={styles.sessionList}>
         {sortedSessions.length === 0 ? (
-          <Card className={styles.emptyCard}>
+          <Card surface="section" className={styles.emptyCard}>
             <h3 className={styles.emptyTitle}>Keine Sessions gefunden</h3>
             <p className={styles.emptyText}>
               {overview.total === 0

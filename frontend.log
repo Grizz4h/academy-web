@@ -3,9 +3,7 @@
 > vite --port 5174
 
 
-  ROLLDOWN-VITE v7.2.5  ready in 315 ms
+  ROLLDOWN-VITE v7.2.5  ready in 623 ms
 
   ➜  Local:   http://localhost:5174/
   ➜  Network: use --host to expose
-11:00:10 PM [vite] (client) page reload index.html
-8:31:01 AM [vite] (client) page reload index.html

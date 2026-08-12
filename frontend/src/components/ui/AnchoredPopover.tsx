@@ -30,25 +30,29 @@ function computePosition(
   const gap = 6
   const rect = anchor.getBoundingClientRect()
   const popupWidth = Math.min(preferredWidth, window.innerWidth - margin * 2)
-  const popupHeight = popover?.offsetHeight ?? 160
+  const maxHeight = Math.max(120, window.innerHeight - margin * 2)
+  const popupHeight = Math.min(popover?.offsetHeight ?? 160, maxHeight)
 
   let left = rect.left
   if (left + popupWidth > window.innerWidth - margin) {
     left = rect.right - popupWidth
   }
-  left = Math.max(margin, left)
+  left = Math.max(margin, Math.min(left, window.innerWidth - margin - popupWidth))
 
   let top = rect.bottom + gap
   if (top + popupHeight > window.innerHeight - margin) {
     top = rect.top - gap - popupHeight
   }
-  top = Math.max(margin, top)
+  top = Math.max(margin, Math.min(top, window.innerHeight - margin - popupHeight))
 
   return {
     position: 'fixed',
     top: `${Math.round(top)}px`,
     left: `${Math.round(left)}px`,
     width: `${Math.round(popupWidth)}px`,
+    maxHeight: `${Math.round(maxHeight)}px`,
+    overflowY: 'auto',
+    WebkitOverflowScrolling: 'touch',
     zIndex: 200,
   }
 }

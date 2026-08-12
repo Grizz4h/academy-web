@@ -1,9 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { getHiddenNavTabs, isDevNavEnabled, setDevNavEnabled } from '../config/featureFlags'
+import DevActionLogPanel from '../components/dev/DevActionLogPanel'
+import {
+  buildGameStatsBatchLogDetail,
+  buildGameStatsImportLogDetail,
+  buildMigrationLogDetail,
+  buildRosterImportAllLogDetail,
+  buildScheduleImportLogDetail,
+} from '../dev/devLogMessages'
+import {
+  formatDevError,
+  prependDevLogEntry,
+  type DevLogEntry,
+} from '../dev/devActionLog'
 import {
   createDummySessionForDrill,
   deleteAllDummySessions,
@@ -37,8 +50,230 @@ export default function DevLab() {
 
   const [devNavOn, setDevNavOn] = useState(() => isDevNavEnabled())
   const [floatRewardsOn, setFloatRewardsOn] = useState(() => isFloatingRewardDevToolsEnabled())
-  const [status, setStatus] = useState('')
+  const [logEntries, setLogEntries] = useState<DevLogEntry[]>([])
   const [diagCopied, setDiagCopied] = useState(false)
+  const [delSeason, setDelSeason] = useState('2025/26')
+  const [statsBatchLimit, setStatsBatchLimit] = useState(5)
+  const [statsGameId, setStatsGameId] = useState('')
+
+  const appendLog = useCallback((entry: Omit<DevLogEntry, 'id' | 'at'> & { at?: string }) => {
+    setLogEntries((prev) => prependDevLogEntry(prev, entry))
+  }, [])
+
+  const clearLog = useCallback(() => setLogEntries([]), [])
+
+  const { data: delDataStatus, refetch: refetchDelStatus } = useQuery({
+    queryKey: ['del-data-status', delSeason],
+    queryFn: () => api.getDelDataStatus(delSeason, 'DEL'),
+    enabled: Boolean(user),
+  })
+
+  const { data: delSeasonGames, refetch: refetchDelGames } = useQuery({
+    queryKey: ['games', 'DEL', delSeason],
+    queryFn: () => api.getGames({ league: 'DEL', season: delSeason }),
+    enabled: Boolean(user),
+    staleTime: 30_000,
+  })
+
+  const gamesWithStats = useMemo(
+    () => (delSeasonGames?.games || []).filter((game) => Boolean(game.stats?.imported_at)),
+    [delSeasonGames?.games],
+  )
+
+  const { data: importableTeamsData } = useQuery({
+    queryKey: ['importable-teams'],
+    queryFn: () => api.getImportableTeams(),
+    enabled: Boolean(user),
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const importableTeams = importableTeamsData?.teams || []
+
+  const importScheduleMutation = useMutation({
+    mutationFn: () => api.importDelSchedule(delSeason, 'DEL'),
+    onMutate: () => {
+      appendLog({
+        level: 'pending',
+        action: 'Spielplan sync',
+        message: `Import startet für ${delSeason}…`,
+      })
+    },
+    onSuccess: (result) => {
+      const count = result.imported_count || result.total || 0
+      const months = Array.isArray(result.months_fetched) ? result.months_fetched.join(', ') : ''
+      const source = result.import_source || 'unbekannt'
+      appendLog({
+        level: 'success',
+        action: 'Spielplan sync',
+        message: `${count} Spiele importiert · Quelle: ${source}${months ? ` · Monate: ${months}` : ''}`,
+        detail: buildScheduleImportLogDetail(result),
+      })
+      refetchDelStatus()
+      queryClient.invalidateQueries({ queryKey: ['games'] })
+      refetchDelGames()
+    },
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Spielplan sync',
+        message: formatDevError(err),
+      })
+    },
+  })
+
+  const importRostersMutation = useMutation({
+    mutationFn: () => api.importAllPlayers(delSeason, 'DEL'),
+    onMutate: () => {
+      appendLog({
+        level: 'pending',
+        action: 'Kader sync (alle)',
+        message: `Alle Kader werden für ${delSeason} synchronisiert…`,
+      })
+    },
+    onSuccess: (result) => {
+      const failed = (result.results || []).filter((item) => item.error)
+      appendLog({
+        level: failed.length ? 'warn' : 'success',
+        action: 'Kader sync (alle)',
+        message: `${result.total} Team(s) verarbeitet (${delSeason})`,
+        detail: buildRosterImportAllLogDetail(result),
+      })
+      refetchDelStatus()
+      queryClient.invalidateQueries({ queryKey: ['team-players'] })
+      queryClient.invalidateQueries({ queryKey: ['roster'] })
+    },
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Kader sync (alle)',
+        message: formatDevError(err),
+      })
+    },
+  })
+
+  const importTeamRosterMutation = useMutation({
+    mutationFn: (targetTeamId: string) => api.importPlayers(targetTeamId, delSeason, 'DEL'),
+    onMutate: (targetTeamId) => {
+      const team = importableTeams.find((item) => item.id === targetTeamId || item.catalog_id === targetTeamId)
+      appendLog({
+        level: 'pending',
+        action: 'Kader sync (Team)',
+        message: `${team?.name || targetTeamId} · ${delSeason}…`,
+      })
+    },
+    onSuccess: (result) => {
+      appendLog({
+        level: result.error ? 'warn' : 'success',
+        action: 'Kader sync (Team)',
+        message: result.error
+          ? `${result.team || result.team_id}: ${result.error}`
+          : `${result.team || result.team_id}: ${result.created} neu, ${result.updated} aktualisiert (${result.total_players} Spieler)`,
+        detail: result.url ? `Quelle: ${result.url}` : undefined,
+      })
+      refetchDelStatus()
+      queryClient.invalidateQueries({ queryKey: ['team-players'] })
+      queryClient.invalidateQueries({ queryKey: ['roster'] })
+    },
+    onError: (err: Error, targetTeamId) => {
+      appendLog({
+        level: 'error',
+        action: 'Kader sync (Team)',
+        message: `${targetTeamId}: ${formatDevError(err)}`,
+      })
+    },
+  })
+
+  const migrateRostersMutation = useMutation({
+    mutationFn: () => api.migrateDelRosters(delSeason, 'DEL'),
+    onMutate: () => {
+      appendLog({
+        level: 'pending',
+        action: 'Legacy-Migration',
+        message: `Migration startet für ${delSeason}…`,
+      })
+    },
+    onSuccess: (result) => {
+      appendLog({
+        level: 'success',
+        action: 'Legacy-Migration',
+        message: `${result.total} Team(s) migriert`,
+        detail: buildMigrationLogDetail(result as Record<string, unknown>),
+      })
+      refetchDelStatus()
+    },
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Legacy-Migration',
+        message: formatDevError(err),
+      })
+    },
+  })
+
+  const importGameStatsBatchMutation = useMutation({
+    mutationFn: () => api.importDelGameStatsBatch({
+      season: delSeason,
+      league: 'DEL',
+      limit: statsBatchLimit,
+      skipExisting: true,
+    }),
+    onMutate: () => {
+      appendLog({
+        level: 'pending',
+        action: 'Spielstats sync',
+        message: `Batch-Import startet (${delSeason}, max ${statsBatchLimit})…`,
+      })
+    },
+    onSuccess: (result) => {
+      const failed = result.failed || 0
+      const saved = result.saved ?? result.imported ?? 0
+      appendLog({
+        level: failed ? 'warn' : 'success',
+        action: 'Spielstats sync',
+        message: `${saved} gespeichert · ${result.attempted ?? 0} versucht (${delSeason}) — Details im Log aufklappen`,
+        detail: buildGameStatsBatchLogDetail(result),
+      })
+      refetchDelStatus()
+      queryClient.invalidateQueries({ queryKey: ['games'] })
+      refetchDelGames()
+    },
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Spielstats sync',
+        message: formatDevError(err),
+      })
+    },
+  })
+
+  const importGameStatsSingleMutation = useMutation({
+    mutationFn: (gameId: string) => api.importDelGameStats(gameId),
+    onMutate: (gameId) => {
+      appendLog({
+        level: 'pending',
+        action: 'Spielstats (1 Spiel)',
+        message: `Import startet für ${gameId}…`,
+      })
+    },
+    onSuccess: (result) => {
+      appendLog({
+        level: 'success',
+        action: 'Spielstats (1 Spiel)',
+        message: `Stats importiert · ${result.stats_summary?.player_rows ?? 0} Spielerzeilen`,
+        detail: buildGameStatsImportLogDetail(result),
+      })
+      refetchDelStatus()
+      queryClient.invalidateQueries({ queryKey: ['games'] })
+      refetchDelGames()
+    },
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Spielstats (1 Spiel)',
+        message: formatDevError(err),
+      })
+    },
+  })
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
@@ -117,20 +352,48 @@ export default function DevLab() {
     },
     onSuccess: (session) => {
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
-      setStatus(`Dummy-Session erstellt · ${session.module_id}`)
+      appendLog({
+        level: 'success',
+        action: 'Dummy-Session',
+        message: `Erstellt · Modul ${session.module_id}`,
+        detail: `Session-ID: ${session.id}`,
+      })
       navigate(getDummySessionPath(session))
     },
-    onError: (err: Error) => setStatus(err.message || 'Dummy fehlgeschlagen'),
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Dummy-Session',
+        message: formatDevError(err),
+      })
+    },
   })
 
   const deleteDummiesMutation = useMutation({
     mutationFn: async () => deleteAllDummySessions(sessionList),
+    onMutate: () => {
+      appendLog({
+        level: 'pending',
+        action: 'Dummy-Cleanup',
+        message: `Lösche ${dummyCount} Dummy-Session(s)…`,
+      })
+    },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
       queryClient.invalidateQueries({ queryKey: ['scenes'] })
-      setStatus(`Gelöscht: ${result.deletedSessions} Sessions, ${result.deletedScenes} Szenen`)
+      appendLog({
+        level: 'success',
+        action: 'Dummy-Cleanup',
+        message: `${result.deletedSessions} Sessions, ${result.deletedScenes} Szenen gelöscht`,
+      })
     },
-    onError: (err: Error) => setStatus(err.message || 'Cleanup fehlgeschlagen'),
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'Dummy-Cleanup',
+        message: formatDevError(err),
+      })
+    },
   })
 
   const [lastDevPuxDelta, setLastDevPuxDelta] = useState<number | null>(() => {
@@ -187,10 +450,20 @@ export default function DevLab() {
       }
       setLastDevPuxDelta(amount)
       const signed = amount > 0 ? `+${amount}` : `${amount}`
-      setStatus(`${signed} PUX — Seite lädt neu…`)
+      appendLog({
+        level: 'success',
+        action: 'PUX Grant',
+        message: `${signed} PUX angewendet — Seite lädt neu…`,
+      })
       window.setTimeout(() => window.location.reload(), 500)
     },
-    onError: (err: Error) => setStatus(err.message || 'PUX-Änderung fehlgeschlagen'),
+    onError: (err: Error) => {
+      appendLog({
+        level: 'error',
+        action: 'PUX Grant',
+        message: formatDevError(err),
+      })
+    },
   })
 
   const trackDrills = useMemo(() => {
@@ -214,9 +487,18 @@ export default function DevLab() {
     try {
       await navigator.clipboard.writeText(JSON.stringify(diagnostics, null, 2))
       setDiagCopied(true)
+      appendLog({
+        level: 'info',
+        action: 'Diagnostics',
+        message: 'JSON in Zwischenablage kopiert',
+      })
       window.setTimeout(() => setDiagCopied(false), 1600)
     } catch {
-      setStatus('Clipboard nicht verfügbar')
+      appendLog({
+        level: 'error',
+        action: 'Diagnostics',
+        message: 'Clipboard nicht verfügbar',
+      })
     }
   }
 
@@ -228,9 +510,17 @@ export default function DevLab() {
       setFloatRewardsOn(false)
       setDevNavEnabled(false)
       setFloatingRewardDevToolsEnabled(false)
-      setStatus('Dev-Flags gelöscht')
+      appendLog({
+        level: 'info',
+        action: 'Flags',
+        message: 'Dev-Flags gelöscht',
+      })
     } catch {
-      setStatus('LocalStorage nicht verfügbar')
+      appendLog({
+        level: 'error',
+        action: 'Flags',
+        message: 'LocalStorage nicht verfügbar',
+      })
     }
   }
 
@@ -244,7 +534,7 @@ export default function DevLab() {
         </p>
       </header>
 
-      {status && <p className={styles.status}>{status}</p>}
+      <DevActionLogPanel entries={logEntries} onClear={clearLog} />
 
       {!user && (
         <section className={styles.card}>
@@ -263,7 +553,11 @@ export default function DevLab() {
               const next = !devNavOn
               setDevNavEnabled(next)
               setDevNavOn(next)
-              setStatus(next ? 'Dev-Nav an' : 'Dev-Nav aus')
+              appendLog({
+                level: 'info',
+                action: 'Dev-Nav',
+                message: next ? 'Dev-Nav eingeschaltet' : 'Dev-Nav ausgeschaltet',
+              })
             }}
           >
             Dev-Nav {devNavOn ? 'an' : 'aus'}
@@ -276,7 +570,11 @@ export default function DevLab() {
               const next = !floatRewardsOn
               setFloatingRewardDevToolsEnabled(next)
               setFloatRewardsOn(next)
-              setStatus(next ? 'Floating Rewards an — Seite neu laden' : 'Floating Rewards aus')
+              appendLog({
+                level: 'info',
+                action: 'Floating Rewards',
+                message: next ? 'Floating Rewards an — Seite neu laden' : 'Floating Rewards aus',
+              })
               if (next) window.setTimeout(() => window.location.reload(), 400)
             }}
           >
@@ -360,7 +658,21 @@ export default function DevLab() {
                 sessions: getRealSessions(sessionList),
                 scenes: scenesData?.scenes || [],
                 trackDrills,
-              }).catch((err) => setStatus(err instanceof Error ? err.message : 'Rebuild fehlgeschlagen'))
+              })
+                .then(() => {
+                  appendLog({
+                    level: 'success',
+                    action: 'Progression rebuild',
+                    message: 'Progression neu berechnet',
+                  })
+                })
+                .catch((err) => {
+                  appendLog({
+                    level: 'error',
+                    action: 'Progression rebuild',
+                    message: formatDevError(err),
+                  })
+                })
             }}
           >
             Progression rebuild
@@ -414,14 +726,261 @@ export default function DevLab() {
       </section>
 
       <section className={styles.card}>
-        <h2 className="ui-section-title">Diagnostics</h2>
-        <pre className={styles.diag}>{JSON.stringify(diagnostics, null, 2)}</pre>
+        <h2 className="ui-section-title">DEL Data</h2>
+        <p className={styles.note}>
+          Saisonbezogene Kader + Spielplan.
+          {' '}
+          25/26: Statistik-Hauptrunde · 26/27 (noch):{' '}
+          <a href="https://www.penny-del.org/spiele/monat/januar" target="_blank" rel="noreferrer" style={{ color: 'rgba(153, 246, 228, 0.95)' }}>
+            penny-del.org/spiele/monat/…
+          </a>
+        </p>
         <div className={styles.actions}>
-          <UiButton type="button" size="sm" variant="secondary" onClick={copyDiagnostics}>
-            {diagCopied ? 'Kopiert' : 'JSON kopieren'}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            Saison
+            <select className="appSelect" value={delSeason} onChange={(e) => setDelSeason(e.target.value)}>
+              <option value="2025/26">2025/26</option>
+              <option value="2026/27">2026/27</option>
+            </select>
+          </label>
+          <UiButton
+            type="button"
+            size="sm"
+            variant="secondary"
+            disabled={!user || importScheduleMutation.isPending}
+            onClick={() => importScheduleMutation.mutate()}
+          >
+            Spielplan synchronisieren
+          </UiButton>
+          <UiButton
+            type="button"
+            size="sm"
+            variant="secondary"
+            disabled={!user || importRostersMutation.isPending}
+            onClick={() => importRostersMutation.mutate()}
+          >
+            Kader synchronisieren
+          </UiButton>
+          <UiButton
+            type="button"
+            size="sm"
+            variant="ghost"
+            disabled={!user || migrateRostersMutation.isPending}
+            onClick={() => migrateRostersMutation.mutate()}
+          >
+            Legacy → Saison migrieren
           </UiButton>
         </div>
+
+        <div className={styles.actions} style={{ marginTop: '0.65rem' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            Stats-Batch
+            <select
+              className="appSelect"
+              value={statsBatchLimit}
+              onChange={(e) => setStatsBatchLimit(Number(e.target.value))}
+            >
+              <option value={3}>3 Spiele</option>
+              <option value={5}>5 Spiele</option>
+              <option value={10}>10 Spiele</option>
+            </select>
+          </label>
+          <UiButton
+            type="button"
+            size="sm"
+            variant="secondary"
+            disabled={!user || importGameStatsBatchMutation.isPending}
+            onClick={() => importGameStatsBatchMutation.mutate()}
+          >
+            Spielstats sync (Batch)
+          </UiButton>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 280px' }}>
+            game_id
+            <input
+              className="appInput"
+              value={statsGameId}
+              onChange={(e) => setStatsGameId(e.target.value)}
+              placeholder="del:2025_2026:…"
+              style={{ minWidth: '220px' }}
+            />
+          </label>
+          <UiButton
+            type="button"
+            size="sm"
+            variant="ghost"
+            disabled={!user || !statsGameId.trim() || importGameStatsSingleMutation.isPending}
+            onClick={() => importGameStatsSingleMutation.mutate(statsGameId.trim())}
+          >
+            1 Spiel importieren
+          </UiButton>
+        </div>
+        <p className={styles.note}>
+          Spielstats: PENNY spieldetails (Übersicht + Boxscore). Experiment — Ergebnisse landen im Game-Katalog unter{' '}
+          <code>stats</code>.
+        </p>
+
+        {delDataStatus && (
+          <>
+            <p className={styles.note}>
+              Games: {delDataStatus.games.total}
+              {typeof delDataStatus.games.with_stats === 'number'
+                ? ` · Stats: ${delDataStatus.games.with_stats}`
+                : ''}
+              {typeof delDataStatus.games.final_without_stats === 'number'
+                && delDataStatus.games.final_without_stats > 0
+                ? ` · ${delDataStatus.games.final_without_stats} Final ohne Stats`
+                : ''}
+              {' · '}
+              Rosters: {delDataStatus.rosters.teams_with_roster}/{delDataStatus.expected_teams}
+              {delDataStatus.rosters.warnings_count > 0 ? ` · ${delDataStatus.rosters.warnings_count} Warnung(en)` : ''}
+            </p>
+            {delDataStatus.issues.length > 0 && (
+              <ul className={styles.list}>
+                {delDataStatus.issues.map((issue) => (
+                  <li key={issue.team_id} className={styles.item}>
+                    <div className={styles.itemMain}>
+                      <strong>{issue.name}</strong>
+                      <p className={styles.note}>Status: {issue.quality} · {(issue.warnings || []).join(', ')}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <details className={styles.collapsible} style={{ marginTop: '0.75rem' }}>
+              <summary className={styles.collapsibleSummary}>
+                <span>Spiele mit Stats</span>
+                <span className={styles.summaryMeta}>{gamesWithStats.length} importiert</span>
+              </summary>
+              <div className={styles.collapsibleBody}>
+                <p className={styles.note} style={{ marginTop: '0.65rem' }}>
+                  Finale Spiele mit importiertem Boxscore für {delSeason}. Session Setup (Dev) zeigt die Vorschau,
+                  wenn du eine dieser Paarungen wählst.
+                </p>
+                {gamesWithStats.length === 0 ? (
+                  <p className={styles.empty}>Noch keine Spielstats importiert — Batch oben starten.</p>
+                ) : (
+                  <ul className={styles.teamImportList}>
+                    {gamesWithStats.map((game) => (
+                      <li key={game.id} className={styles.teamImportItem}>
+                        <span className={styles.teamImportName}>
+                          <strong>
+                            ST {game.matchday ?? '?'} · {game.home_team_name} vs {game.away_team_name}
+                          </strong>
+                          <span className={styles.teamImportMeta}>
+                            {' '}
+                            · {game.date?.split('-').reverse().join('.') || '?'}
+                            {' '}
+                            · {game.score ? `${game.score.home}:${game.score.away}` : '–'}
+                            {' '}
+                            · {game.stats?.imported_at
+                              ? new Date(game.stats.imported_at).toLocaleString('de-DE')
+                              : ''}
+                          </span>
+                        </span>
+                        <UiButton
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setStatsGameId(game.id)}
+                        >
+                          game_id
+                        </UiButton>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </details>
+
+            <details className={styles.collapsible} style={{ marginTop: '0.75rem' }}>
+              <summary className={styles.collapsibleSummary}>
+                <span>Einzelteams importieren</span>
+                <span className={styles.summaryMeta}>{importableTeams.length} Teams</span>
+              </summary>
+              <div className={styles.collapsibleBody}>
+                <p className={styles.note} style={{ marginTop: '0.65rem' }}>
+                  PENNY-DEL Kader pro Team — Saison wie oben ({delSeason}).
+                </p>
+                {importableTeams.length === 0 ? (
+                  <p className={styles.empty}>Keine importierbaren Teams geladen.</p>
+                ) : (
+                  <ul className={styles.teamImportList}>
+                    {importableTeams.map((team) => (
+                      <li key={team.id} className={styles.teamImportItem}>
+                        <span className={styles.teamImportName}>
+                          <strong>{team.name}</strong>
+                          <span className={styles.teamImportMeta}> · {team.league}</span>
+                          {team.kader_available === false && (
+                            <span className={styles.kaderPendingBadge}>Kader folgt</span>
+                          )}
+                          {team.kader_available === false && team.kader_note && (
+                            <span className={styles.kaderPendingNote}>{team.kader_note}</span>
+                          )}
+                        </span>
+                        <UiButton
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          disabled={
+                            !user
+                            || !team.enabled
+                            || team.kader_available === false
+                            || importTeamRosterMutation.isPending
+                            || importRostersMutation.isPending
+                          }
+                          onClick={() => importTeamRosterMutation.mutate(team.id)}
+                        >
+                          {importTeamRosterMutation.isPending ? '…' : 'Kader laden'}
+                        </UiButton>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </details>
+
+            <details className={styles.collapsible} style={{ marginTop: '0.75rem' }}>
+              <summary className={styles.collapsibleSummary}>
+                <span>Roster-Übersicht</span>
+                <span className={styles.summaryMeta}>
+                  {delDataStatus.rosters.teams_with_roster}/{delDataStatus.expected_teams}
+                </span>
+              </summary>
+              <div className={styles.collapsibleBody}>
+                <ul className={styles.list}>
+                  {(delDataStatus.rosters.teams || []).map((team) => (
+                    <li key={team.team_id} className={styles.item}>
+                      <div className={styles.itemMain}>
+                        <strong>{team.name}</strong>
+                        <p className={styles.note}>
+                          {team.player_count} Spieler · {team.quality || '—'}
+                          {team.imported_at ? ` · Import ${new Date(team.imported_at).toLocaleDateString('de-DE')}` : ''}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          </>
+        )}
       </section>
+
+      <details className={styles.collapsible}>
+        <summary className={styles.collapsibleSummary}>
+          <span>Diagnostics</span>
+          <span className={styles.summaryMeta}>JSON Snapshot</span>
+        </summary>
+        <div className={styles.collapsibleBody}>
+          <pre className={styles.diag}>{JSON.stringify(diagnostics, null, 2)}</pre>
+          <div className={styles.actions}>
+            <UiButton type="button" size="sm" variant="secondary" onClick={copyDiagnostics}>
+              {diagCopied ? 'Kopiert' : 'JSON kopieren'}
+            </UiButton>
+          </div>
+        </div>
+      </details>
 
       <section className={styles.card}>
         <h2 className="ui-section-title">Unfertige Bereiche</h2>

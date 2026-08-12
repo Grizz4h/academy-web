@@ -4,6 +4,15 @@ const TOURNAMENT_YEAR_LEAGUES = new Set(['WM', 'OLYMPIA', 'NATIONALMANNSCHAFTEN'
 export const SEASON_OPTIONS = ['2025/26', '2026/27', '2027/28']
 export const TOURNAMENT_YEAR_OPTIONS = ['2024', '2025', '2026', '2027', '2028']
 
+/** Split-Saison (z. B. DEL): Jul–Jun → „2025/26“. */
+export function inferSplitSeasonLabelForDate(date: Date = new Date()): string {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const startYear = month >= 7 ? year : year - 1
+  const endTwo = String((startYear + 1) % 100).padStart(2, '0')
+  return `${startYear}/${endTwo}`
+}
+
 function parseYearToken(token?: string): number | null {
   if (!token) return null
   const clean = token.trim()

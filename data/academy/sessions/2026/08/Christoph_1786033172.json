@@ -343,5 +343,34 @@
       "done": false,
       "text": ""
     }
+  },
+  "ai_reflection": {
+    "id": "refl_13fd5b83d06d",
+    "sessionId": "Christoph_1786033172",
+    "createdAt": "2026-08-12T13:20:31.059643",
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "promptVersion": "v1",
+    "content": {
+      "strengths": [
+        "Initiatorpositionen (LW / RW / C) wurden konsequent erfasst.",
+        "Zonenangaben (Offensive Zone) sind bei allen Beobachtungen dokumentiert.",
+        "Kurze qualitative Notizen ('aggressiv foregecheckt') liefern Kontext zum Zugriffstyp."
+      ],
+      "cautions": [
+        "Nur drei Beobachtungen — zu wenige Datenpunkte, um ein belastbares Muster abzuleiten.",
+        "Alle Fälle in der Offensivzone (und ein Powerplay-Eintrag) können Auswahlbias verursachen.",
+        "Erfolg der Defensivaktion und späterer Puckgewinn wurden nicht systematisch festgehalten."
+      ],
+      "alternativeInterpretation": "Die Häufung von Zugriffen durch LW/RW/C könnte durch die Auswahl der Szenen (z. B. Fokus auf Forecheck-Phasen oder spezielle Spielsituationen wie Powerplay) bedingt sein und muss nicht ein allgemeines Team-Muster widerspiegeln.",
+      "nextObservationFocus": "Bei den nächsten 3 beobachteten Zugriffen zusätzlich protokollieren: Erfolg (Puckgewinn ja/nein), Spielzustand (5-5 / PP / PK) und genauer Startort (z. B. Bande links/rechts, zentral vor Tor, hinter Blueline).",
+      "reflectionQuestion": "Kam der erste Druck meistens von derselben Spielerposition?",
+      "summary": "Du hast die initiierenden Positionen und die Zone systematisch notiert und mit kurzen Kontexthinweisen ergänzt. Wegen der geringen Fallzahl, der Konzentration auf die Offensivzone und fehlender Angaben zu Erfolg/Puckgewinn sind Verallgemeinerungen bisher aber fragil."
+    },
+    "usage": {
+      "inputTokens": 1328,
+      "outputTokens": 1661,
+      "totalTokens": 2989
+    }
   }
 }
