@@ -297,16 +297,16 @@ export function SpecialTeamsSidequestButton({
 
       {open && (
         <div
-          className={`${styles.overlay} ${styles.overlayBottom}`}
+          className={styles.overlay}
           onClick={(e) => {
             if (e.target === e.currentTarget) handleClose()
           }}
         >
           <div className={`${styles.panel} ${styles.panelAmber}`}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
+            <div className={styles.header}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.15rem' }}>⚡ Special Teams</h3>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.62)' }}>
+                <h3 className={styles.headerTitle}>⚡ Special Teams</h3>
+                <p className={styles.headerMeta}>
                   {phaseLabel}
                   {activeDrill?.title ? ` · ${activeDrill.title}` : ''}
                   {observedTeam ? ` · ${observedTeam}` : ''}
@@ -315,17 +315,7 @@ export function SpecialTeamsSidequestButton({
               <button
                 type="button"
                 onClick={handleClose}
-                style={{
-                  border: '1px solid rgba(255,255,255,0.25)',
-                  background: 'rgba(255,255,255,0.06)',
-                  color: '#f7f7ff',
-                  borderRadius: '999px',
-                  padding: '0.25rem 0.7rem',
-                  cursor: 'pointer',
-                  fontSize: '0.82rem',
-                  backdropFilter: 'blur(8px)',
-                  WebkitBackdropFilter: 'blur(8px)',
-                }}
+                className={styles.closeButton}
               >
                 Schließen
               </button>

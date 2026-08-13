@@ -158,6 +158,18 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
     : currentPhase === 'P3' ? '3. Drittel'
     : currentPhase
 
+  const observedTeam =
+    session.game_info?.observed_team_name
+    || session.game_info?.observed_team
+    || session.observed_team
+    || ''
+
+  const headerMeta = [
+    phaseLabel,
+    activeDrill?.title || session.module_id,
+    observedTeam,
+  ].filter(Boolean).join(' · ')
+
   return (
     <>
       {/* The main button */}
@@ -166,12 +178,11 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
           type="button"
           onClick={handleOpen}
           className={`${styles.trigger} ${styles.triggerCyan}`}
-          style={{ fontSize: '1.1rem', padding: '0.8rem 1.6rem' }}
         >
           🎬 Szene merken
         </button>
         {savedMsg && (
-          <div style={{ color: '#4fc3f7', fontWeight: 600, fontSize: '0.9rem', textAlign: 'center' }}>
+          <div style={{ color: '#4fc3f7', fontWeight: 600, fontSize: '0.88rem', textAlign: 'center', maxWidth: 320 }}>
             {savedMsg}
           </div>
         )}
@@ -190,24 +201,30 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             aria-label="Szene merken"
             onKeyDown={handleKeyDown}
           >
-            <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.2rem', color: '#f1f5f9' }}>🎬 Szene merken</h3>
-
-            {/* Context info */}
-            <div style={{
-              fontSize: '0.8rem', color: '#94a3b8', marginBottom: '1.2rem',
-              padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.05)',
-              borderRadius: '0.4rem', lineHeight: 1.6,
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}>
-              {session.game_info?.team_home && session.game_info?.team_away && (
-                <div><strong style={{ color: '#cbd5e1' }}>{session.game_info.team_home}</strong> vs <strong style={{ color: '#cbd5e1' }}>{session.game_info.team_away}</strong></div>
-              )}
-              <div>{phaseLabel} · {activeDrill?.title || session.module_id}</div>
-              {session.game_info?.league && <div>{session.game_info.league}{session.game_info.season ? ` · ${session.game_info.season}` : ''}</div>}
+            <div className={styles.header}>
+              <div>
+                <h3 className={styles.headerTitle}>🎬 Szene merken</h3>
+                <p className={styles.headerMeta}>
+                  {headerMeta}
+                  {session.game_info?.team_home && session.game_info?.team_away
+                    ? ` · ${session.game_info.team_home} vs ${session.game_info.team_away}`
+                    : ''}
+                  {session.game_info?.league
+                    ? ` · ${session.game_info.league}${session.game_info.season ? ` · ${session.game_info.season}` : ''}`
+                    : ''}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleClose}
+                className={styles.closeButton}
+              >
+                Schließen
+              </button>
             </div>
 
             {/* Game time input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.35rem', fontSize: '0.9rem' }}>
               Minute <span style={{ color: '#f87171' }}>*</span>
             </label>
             <input
@@ -221,21 +238,22 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
               }}
               placeholder="13:42"
               style={{
-                width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
-                border: error ? '1.5px solid #f87171' : '1.5px solid #334155',
-                background: '#050a14', color: '#f1f5f9',
-                fontSize: '1.25rem', fontWeight: 700, letterSpacing: '0.05em',
+                width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.65rem',
+                border: error ? '1.5px solid #f87171' : '1.5px solid rgba(255,255,255,0.18)',
+                background: 'rgba(255,255,255,0.06)', color: '#f1f5f9',
+                fontSize: '1.15rem', fontWeight: 700, letterSpacing: '0.05em',
                 boxSizing: 'border-box', marginBottom: '0.3rem',
+                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
               }}
             />
             {error && (
-              <div style={{ color: '#f87171', fontSize: '0.8rem', marginBottom: '0.5rem' }}>{error}</div>
+              <div style={{ color: '#ffb7bf', fontSize: '0.86rem', marginBottom: '0.5rem' }}>{error}</div>
             )}
 
             {sceneMarkerExtensions.map((extension) => (
-              <div key={extension.key} style={{ marginTop: '0.9rem' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
-                  {extension.label} <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
+              <div key={extension.key} style={{ marginTop: '0.85rem' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.35rem', fontSize: '0.9rem' }}>
+                  {extension.label} <span style={{ fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
                 </label>
                 <select
                   className="appSelect"
@@ -252,8 +270,8 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             ))}
 
             {/* Note input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', marginTop: '0.9rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
-              Kurze Notiz <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.35rem', marginTop: '0.85rem', fontSize: '0.9rem' }}>
+              Kurze Notiz <span style={{ fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
             </label>
             <textarea
               value={note}
@@ -262,39 +280,39 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
               rows={2}
               maxLength={300}
               style={{
-                width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
-                border: '1.5px solid #334155', background: '#050a14', color: '#f1f5f9',
+                width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.65rem',
+                border: '1.5px solid rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.06)', color: '#f1f5f9',
                 fontSize: '0.95rem', resize: 'vertical', boxSizing: 'border-box',
+                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
               }}
             />
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '0.55rem', marginTop: '0.9rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="btn"
+                style={{ minWidth: 160, opacity: isSaving ? 0.7 : 1 }}
+              >
+                {isSaving ? 'Speichere…' : '🎬 Speichern'}
+              </button>
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={isSaving}
                 style={{
-                  padding: '0.55rem 1.2rem', borderRadius: '0.4rem',
-                  border: '1px solid #334155', background: 'transparent',
-                  color: '#94a3b8', cursor: 'pointer', fontWeight: 500,
+                  border: '1px solid rgba(255,255,255,0.25)',
+                  background: 'transparent',
+                  color: '#f7f7ff',
+                  borderRadius: '999px',
+                  padding: '0.45rem 0.9rem',
+                  cursor: 'pointer',
+                  fontSize: '0.86rem',
                 }}
               >
                 Abbrechen
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                style={{
-                  padding: '0.55rem 1.4rem', borderRadius: '0.4rem',
-                  border: 'none', background: '#4fc3f7',
-                  color: '#0a0a1a', cursor: isSaving ? 'not-allowed' : 'pointer',
-                  fontWeight: 700, fontSize: '0.95rem',
-                  opacity: isSaving ? 0.7 : 1,
-                }}
-              >
-                {isSaving ? 'Speichere…' : '🎬 Speichern'}
               </button>
             </div>
           </div>

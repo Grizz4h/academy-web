@@ -7,33 +7,25 @@
   inset: 0;
   z-index: 3000;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  padding: max(0.75rem, env(safe-area-inset-top, 0px))
-    max(0.75rem, env(safe-area-inset-right, 0px))
-    max(0.75rem, env(safe-area-inset-bottom, 0px))
-    max(0.75rem, env(safe-area-inset-left, 0px));
-  background: rgba(2, 6, 14, 0.55);
+  padding: 0.75rem;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  background: rgba(2, 6, 14, 0.5);
   -webkit-backdrop-filter: blur(6px) saturate(1.1);
   backdrop-filter: blur(6px) saturate(1.1);
   box-sizing: border-box;
 }
 
-.overlayBottom {
-  align-items: flex-end;
-  z-index: 2100;
-  background: rgba(2, 6, 14, 0.5);
-}
-
 .panel {
   position: relative;
-  width: min(420px, 100%);
-  max-height: min(90dvh, 90vh);
+  width: min(560px, 100%);
+  max-height: min(92dvh, 92vh);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0;
-  padding: 1.35rem 1.25rem 1.25rem;
-  border-radius: 16px;
+  margin: 0 auto;
+  padding: 1.2rem 1.25rem;
+  border-radius: 1rem 1rem 16px 16px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   color: #e2e8f0;
   box-sizing: border-box;
@@ -69,11 +61,41 @@
 }
 
 .panelAmber {
-  width: min(560px, 100%);
   border-color: rgba(251, 191, 36, 0.4);
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  max-height: 92vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #f7f7ff;
+}
+
+.headerMeta {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.4;
+}
+
+.closeButton {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f7f7ff;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .trigger {
@@ -147,22 +169,7 @@
 }
 
 @media (max-width: 768px) {
-  .overlay:not(.overlayBottom) {
-    align-items: flex-start;
-    padding-top: max(1rem, env(safe-area-inset-top, 0px));
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .panel:not(.panelAmber) {
-    width: 100%;
-    max-height: none;
-    margin: auto 0;
-    margin-top: max(0.5rem, 8dvh);
-    margin-bottom: 1rem;
-  }
-
-  .panelAmber {
+  .panel {
     width: 100%;
     margin: 0;
     max-height: min(92dvh, 92vh);
