@@ -5,7 +5,7 @@ import { buildSceneCreatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { isDummySession } from '../utils/sessionEligibility'
 import { formatGameTimeInput } from '../utils/sceneHelpers'
-import styles from './SceneMarkerButton.module.css'
+import styles from './SessionCaptureOverlay.module.css'
 
 interface SceneMarkerExtension {
   type: 'select'
@@ -165,28 +165,8 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         <button
           type="button"
           onClick={handleOpen}
-          style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-            border: '2px solid #4fc3f7',
-            borderRadius: '0.75rem',
-            color: '#e0f7fa',
-            fontSize: '1.1rem',
-            fontWeight: 700,
-            padding: '0.8rem 1.6rem',
-            cursor: 'pointer',
-            letterSpacing: '0.02em',
-            boxShadow: '0 0 16px rgba(79, 195, 247, 0.25)',
-            transition: 'box-shadow 0.15s, transform 0.1s',
-            minWidth: 220,
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 28px rgba(79, 195, 247, 0.5)'
-            ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 16px rgba(79, 195, 247, 0.25)'
-            ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
-          }}
+          className={`${styles.trigger} ${styles.triggerCyan}`}
+          style={{ fontSize: '1.1rem', padding: '0.8rem 1.6rem' }}
         >
           🎬 Szene merken
         </button>
@@ -204,7 +184,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
           onClick={e => { if (e.target === e.currentTarget) handleClose() }}
         >
           <div
-            className={styles.panel}
+            className={`${styles.panel} ${styles.panelCyan}`}
             role="dialog"
             aria-modal="true"
             aria-label="Szene merken"

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import type { CSSProperties } from 'react'
 import type { Drill, Session } from '../api'
 import { PeriodCheckin } from '../renderers/v2/DrillRenderer'
 import specialTeamsCatalog from '../data/sidequests/special_teams.json'
@@ -20,6 +19,7 @@ import { formatGameTimeInput } from '../utils/sceneHelpers'
 import { buildSidequestCompletedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { isDummySession } from '../utils/sessionEligibility'
+import styles from './SessionCaptureOverlay.module.css'
 
 type HubCategory = 'power_play' | 'penalty_kill' | 'numerical_situation'
 type Step = 'category' | 'st_pick' | 'num_situation' | 'num_perspective' | 'drill' | 'saved'
@@ -278,44 +278,13 @@ export function SpecialTeamsSidequestButton({
     : currentPhase === 'P3' ? '3. Drittel'
     : currentPhase
 
-  const choiceButtonStyle: CSSProperties = {
-    textAlign: 'left',
-    padding: '0.85rem 0.95rem',
-    borderRadius: '0.65rem',
-    border: '1px solid rgba(251,191,36,0.35)',
-    background: 'rgba(251,191,36,0.08)',
-    color: '#fef3c7',
-    cursor: 'pointer',
-  }
-
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
         <button
           type="button"
           onClick={handleOpen}
-          style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #1e293b 100%)',
-            border: '2px solid #fbbf24',
-            borderRadius: '0.75rem',
-            color: '#fef3c7',
-            fontSize: '1.05rem',
-            fontWeight: 700,
-            padding: '0.8rem 1.4rem',
-            cursor: 'pointer',
-            letterSpacing: '0.02em',
-            boxShadow: '0 0 16px rgba(251, 191, 36, 0.22)',
-            transition: 'box-shadow 0.15s, transform 0.1s',
-            minWidth: 220,
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 28px rgba(251, 191, 36, 0.5)'
-            ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 16px rgba(251, 191, 36, 0.22)'
-            ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
-          }}
+          className={`${styles.trigger} ${styles.triggerAmber}`}
         >
           ⚡ Special Teams
         </button>
@@ -328,36 +297,12 @@ export function SpecialTeamsSidequestButton({
 
       {open && (
         <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.78)',
-            zIndex: 2100,
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-            padding: '0.75rem',
-          }}
+          className={`${styles.overlay} ${styles.overlayBottom}`}
           onClick={(e) => {
             if (e.target === e.currentTarget) handleClose()
           }}
         >
-          <div
-            className="card"
-            style={{
-              width: '100%',
-              maxWidth: 560,
-              maxHeight: '92vh',
-              overflowY: 'auto',
-              margin: '0 auto',
-              padding: '1.2rem 1.25rem',
-              borderTopLeftRadius: '1rem',
-              borderTopRightRadius: '1rem',
-            }}
-          >
+          <div className={`${styles.panel} ${styles.panelAmber}`}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.15rem' }}>⚡ Special Teams</h3>
@@ -372,12 +317,14 @@ export function SpecialTeamsSidequestButton({
                 onClick={handleClose}
                 style={{
                   border: '1px solid rgba(255,255,255,0.25)',
-                  background: 'transparent',
+                  background: 'rgba(255,255,255,0.06)',
                   color: '#f7f7ff',
                   borderRadius: '999px',
                   padding: '0.25rem 0.7rem',
                   cursor: 'pointer',
                   fontSize: '0.82rem',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
                 }}
               >
                 Schließen
@@ -408,7 +355,7 @@ export function SpecialTeamsSidequestButton({
                         setGameState(item.id)
                         setStep('st_pick')
                       }}
-                      style={choiceButtonStyle}
+                      className={styles.choiceButton}
                     >
                       <div style={{ fontWeight: 700 }}>{item.label}</div>
                       <div style={{ marginTop: '0.2rem', fontSize: '0.82rem', color: 'rgba(254,243,199,0.75)' }}>{item.hint}</div>
@@ -459,10 +406,13 @@ export function SpecialTeamsSidequestButton({
                         textAlign: 'left',
                         padding: '0.8rem 0.9rem',
                         borderRadius: '0.65rem',
-                        border: '1px solid rgba(255,255,255,0.16)',
-                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.18)',
+                        background: 'rgba(255,255,255,0.08)',
                         color: '#f7f7ff',
                         cursor: 'pointer',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
                       }}
                     >
                       <div style={{ fontWeight: 700 }}>{drill.title}</div>
@@ -526,10 +476,13 @@ export function SpecialTeamsSidequestButton({
                         textAlign: 'left',
                         padding: '0.8rem 0.9rem',
                         borderRadius: '0.65rem',
-                        border: '1px solid rgba(255,255,255,0.16)',
-                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.18)',
+                        background: 'rgba(255,255,255,0.08)',
                         color: '#f7f7ff',
                         cursor: 'pointer',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
                       }}
                     >
                       <div style={{ fontWeight: 700 }}>{item.label}</div>
@@ -578,7 +531,7 @@ export function SpecialTeamsSidequestButton({
                         setPerspective(value)
                         openNumericalTemplate(situationType, value)
                       }}
-                      style={choiceButtonStyle}
+                      className={styles.choiceButton}
                     >
                       <div style={{ fontWeight: 700 }}>{PERSPECTIVE_LABELS[value].label}</div>
                       <div style={{ marginTop: '0.2rem', fontSize: '0.82rem', color: 'rgba(254,243,199,0.75)' }}>
