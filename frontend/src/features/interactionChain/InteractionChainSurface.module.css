@@ -1,0 +1,157 @@
+.surface {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.header {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #e2e8f0;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.62);
+  line-height: 1.4;
+}
+
+.chain {
+  display: grid;
+  gap: 0;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr;
+  gap: 0.65rem;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dot {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #0f172a;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.dotProblem {
+  background: rgba(251, 191, 36, 0.92);
+}
+
+.dotAdjustment {
+  background: rgba(56, 189, 248, 0.92);
+}
+
+.dotResponse {
+  background: rgba(45, 212, 191, 0.92);
+}
+
+.line {
+  flex: 1;
+  width: 2px;
+  min-height: 1.15rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(148, 163, 184, 0.45),
+    rgba(148, 163, 184, 0.18)
+  );
+  margin: 0.2rem 0;
+}
+
+.card {
+  min-width: 0;
+  padding: 0.75rem 0.85rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 0.65rem;
+}
+
+.label {
+  margin: 0 0 0.28rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.value {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: rgba(241, 245, 249, 0.96);
+}
+
+.meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(186, 230, 253, 0.9);
+}
+
+.assessGrid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.block {
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(241, 245, 249, 0.95);
+}
+
+@media (min-width: 900px) {
+  .chain {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0.45rem;
+  }
+
+  .step {
+    display: contents;
+  }
+
+  .rail {
+    display: none;
+  }
+
+  .card {
+    margin-bottom: 0;
+  }
+
+  .arrow {
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: rgba(125, 211, 252, 0.95);
+    padding: 0 0.15rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .arrow {
+    display: none;
+  }
+}

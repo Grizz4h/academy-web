@@ -33,16 +33,658 @@
   ],
   "prediction_templates": [
     {
+      "id": "pressure_carrier_solution",
+      "categoryId": "pressure_solution",
+      "title": "Wie löst der Puckführer den Druck?",
+      "shortTitle": "Drucklösung",
+      "description": "Lies Druck, Support und Raum, bevor der Puckführer entscheidet – und sage seine wahrscheinlichste Lösung voraus.",
+      "learningGoal": "Reale Optionen unter Druck früh erkennen und daraus eine begründete Vorhersage ableiten.",
+      "relatedAcademyDrills": [
+        "B2_D1",
+        "B2_D2"
+      ],
+      "perspective": "selected_team",
+      "perspectiveHint": "Beobachte einen Puckführer des ausgewählten Teams, der erkennbar unter Druck gerät und noch einen kurzen Entscheidungsmoment besitzt.",
+      "situationTrigger": "Suche eine Situation, in der ein Puckführer erkennbar unter Druck gerät und noch mindestens einen kurzen Entscheidungsmoment besitzt.",
+      "situationGuide": [
+        "Defender bekommt im Breakout Druck",
+        "Puckführer wird an der Bande angelaufen",
+        "Center erhält Puck mit Gegner im Rücken",
+        "Spieler erreicht Blue Line unter Druck",
+        "Puckführer wird nach Turnover sofort attackiert",
+        "Spieler erhält Pass und muss vor Zugriff reagieren",
+        "Retrieval unter Forecheckdruck"
+      ],
+      "observationGuide": {
+        "suitableSituations": [
+          "Defender bekommt beim Breakout Forecheckdruck",
+          "Puckführer wird an der Bande geschlossen",
+          "Center nimmt Pass unter Druck an",
+          "Spieler nähert sich unter Druck einer Blue Line",
+          "Retrieval mit Gegner direkt im Rücken",
+          "Turnover → sofortiger gegnerischer Zugriff"
+        ],
+        "unsuitableSituations": [
+          "völlig freier Puckführer",
+          "bereits laufender Zweikampf ohne echte Wahl",
+          "Loose Puck / 50/50 ohne klare Kontrolle",
+          "sofortiger Körperkontakt ohne Entscheidungsmöglichkeit",
+          "bereits verlorener Puck",
+          "abgeschlossene Aktion"
+        ],
+        "whenToPredict": [
+          "Predicte die Entscheidung, bevor sie sichtbar wird.",
+          "Lies zuerst Optionen – nicht den späteren Erfolg."
+        ],
+        "howToDecide": [
+          "Lies Druckquelle, Zeitfenster und Support, bevor du eine Lösung vorhersagst.",
+          "Begründe die Prediction mit einem sichtbaren Hinweis, nicht nur mit dem späteren Outcome."
+        ],
+        "ignore": [
+          "Ob die Entscheidung später gut oder schlecht war",
+          "Ob der Pass ankommt oder die Aktion erfolgreich endet",
+          "Welche Lösung du selbst gewählt hättest"
+        ]
+      },
+      "coreHints": [
+        "Predicte die Entscheidung, bevor sie sichtbar wird.",
+        "Lies zuerst Optionen – nicht den späteren Erfolg."
+      ],
+      "observationStartLabel": "Drucksituation einordnen",
+      "observationStartPrompt": "Suche eine Situation, in der ein Puckführer erkennbar unter Druck gerät und noch mindestens einen kurzen Entscheidungsmoment besitzt.",
+      "nextSituationLabel": "+ Nächste Drucksituation",
+      "lockLabel": "Prediction festlegen",
+      "lockedStatusLabel": "Prediction gespeichert",
+      "captureGameClock": true,
+      "recommendedPredictions": 5,
+      "contextFields": [
+        {
+          "id": "pressureSource",
+          "prompt": "Woher kommt der Hauptdruck?",
+          "required": true,
+          "options": [
+            {
+              "value": "front",
+              "label": "frontal"
+            },
+            {
+              "value": "side",
+              "label": "seitlich"
+            },
+            {
+              "value": "behind",
+              "label": "von hinten"
+            },
+            {
+              "value": "multiple",
+              "label": "von mehreren Seiten"
+            },
+            {
+              "value": "closing_lane",
+              "label": "Pass-/Laufweg wird geschlossen"
+            },
+            {
+              "value": "unclear",
+              "label": "unklar"
+            }
+          ]
+        },
+        {
+          "id": "pressureWindow",
+          "prompt": "Wie viel Zeit scheint dem Puckführer zu bleiben?",
+          "required": true,
+          "options": [
+            {
+              "value": "time_available",
+              "label": "Zeit vorhanden",
+              "description": "Mehrere Optionen scheinen noch realistisch."
+            },
+            {
+              "value": "limited_time",
+              "label": "Wenig Zeit",
+              "description": "Entscheidung muss schnell kommen."
+            },
+            {
+              "value": "immediate_pressure",
+              "label": "Sofortiger Druck",
+              "description": "Nur sehr kleines Entscheidungsfenster."
+            },
+            {
+              "value": "unclear",
+              "label": "Unklar"
+            }
+          ]
+        },
+        {
+          "id": "supportState",
+          "prompt": "Wie sieht der Support aus?",
+          "required": true,
+          "options": [
+            {
+              "value": "multiple_options",
+              "label": "mehrere klare Optionen"
+            },
+            {
+              "value": "one_clear_option",
+              "label": "eine klare Option"
+            },
+            {
+              "value": "distant_support",
+              "label": "Support vorhanden, aber weit/unter Druck"
+            },
+            {
+              "value": "isolated",
+              "label": "weitgehend isoliert"
+            },
+            {
+              "value": "unclear",
+              "label": "unklar"
+            }
+          ]
+        }
+      ],
+      "predictionPrompt": "Was wird der Puckführer tun?",
+      "predictionOptions": [
+        {
+          "value": "short_pass",
+          "label": "Kurzer Pass",
+          "shortLabel": "Kurzer Pass",
+          "description": "Schnelle nahe Anspielstation nutzen."
+        },
+        {
+          "value": "middle_pass",
+          "label": "Pass in die Mitte",
+          "shortLabel": "Pass Mitte",
+          "description": "Zentrale Lösung / Middle Support suchen."
+        },
+        {
+          "value": "wall_pass",
+          "label": "Pass an die Bande",
+          "shortLabel": "Pass Bande",
+          "description": "Wall-/Side-Option nutzen."
+        },
+        {
+          "value": "reverse",
+          "label": "Reverse / zurück",
+          "shortLabel": "Reverse",
+          "description": "Richtung wechseln oder auf hintere Unterstützung zurückspielen."
+        },
+        {
+          "value": "carry",
+          "label": "Puck tragen",
+          "shortLabel": "Carry",
+          "description": "Mit Kontrolle selbst aus dem Druck skaten."
+        },
+        {
+          "value": "chip_space",
+          "label": "Chip / Raum spielen",
+          "shortLabel": "Chip",
+          "description": "Puck kontrolliert in freien Raum legen."
+        },
+        {
+          "value": "dump",
+          "label": "Dump / tief",
+          "shortLabel": "Dump",
+          "description": "Puck bewusst tief spielen."
+        },
+        {
+          "value": "clear",
+          "label": "Clear / Befreiung",
+          "shortLabel": "Clear",
+          "description": "Druck durch Herausspielen aus der Gefahrenzone lösen."
+        },
+        {
+          "value": "protect_hold",
+          "label": "Puck schützen / halten",
+          "shortLabel": "Puck schützen",
+          "description": "Körper/Puck benutzen, um Zeit zu gewinnen."
+        },
+        {
+          "value": "reset",
+          "label": "Reset",
+          "shortLabel": "Reset",
+          "description": "Situation bewusst neu aufbauen statt vorwärts zu erzwingen."
+        },
+        {
+          "value": "risky_pass",
+          "label": "Riskanter Pass durch Druck",
+          "shortLabel": "Riskanter Pass",
+          "description": "Versucht eine enge / zugestellte Passlinie."
+        },
+        {
+          "value": "turnover",
+          "label": "Puckverlust",
+          "shortLabel": "Puckverlust",
+          "description": "Prognose: Druck kann nicht sauber gelöst werden."
+        },
+        {
+          "value": "other",
+          "label": "Andere Lösung",
+          "shortLabel": "Andere Lösung"
+        },
+        {
+          "value": "unclear",
+          "label": "Unklar",
+          "shortLabel": "Unklar"
+        }
+      ],
+      "optionGroups": [
+        {
+          "id": "controlled",
+          "label": "Kontrollierte Lösungen",
+          "optionValues": [
+            "short_pass",
+            "middle_pass",
+            "wall_pass",
+            "reverse",
+            "carry",
+            "chip_space",
+            "dump",
+            "clear",
+            "protect_hold",
+            "reset",
+            "risky_pass"
+          ]
+        },
+        {
+          "id": "uncontrolled",
+          "label": "Keine kontrollierte Lösung",
+          "optionValues": [
+            "turnover",
+            "other",
+            "unclear"
+          ]
+        }
+      ],
+      "cueField": {
+        "id": "predictionCue",
+        "prompt": "Welcher Hinweis war für deine Vorhersage am wichtigsten?",
+        "required": true,
+        "maxSelect": 2,
+        "options": [
+          {
+            "value": "body_orientation",
+            "label": "Körperstellung"
+          },
+          {
+            "value": "head_scan",
+            "label": "Blick / Scan"
+          },
+          {
+            "value": "stick_puck_position",
+            "label": "Puck-/Schlägerposition"
+          },
+          {
+            "value": "support_position",
+            "label": "Position des Supports"
+          },
+          {
+            "value": "pressure_angle",
+            "label": "Winkel des Gegners"
+          },
+          {
+            "value": "open_space",
+            "label": "freier Raum"
+          },
+          {
+            "value": "speed",
+            "label": "Tempo"
+          },
+          {
+            "value": "distance_to_pressure",
+            "label": "Abstand zum Druck"
+          },
+          {
+            "value": "previous_behavior",
+            "label": "vorheriges Verhalten des Spielers/Teams"
+          },
+          {
+            "value": "other",
+            "label": "anderer Hinweis"
+          },
+          {
+            "value": "gut_feeling",
+            "label": "Bauchgefühl"
+          },
+          {
+            "value": "unclear",
+            "label": "unklar"
+          }
+        ]
+      },
+      "confidence": {
+        "enabled": true,
+        "question": "Wie sicher bist du dir?",
+        "options": [
+          {
+            "value": "low",
+            "label": "niedrig"
+          },
+          {
+            "value": "medium",
+            "label": "mittel"
+          },
+          {
+            "value": "high",
+            "label": "hoch"
+          }
+        ]
+      },
+      "resolution": {
+        "actualOutcomePrompt": "Was hat der Puckführer tatsächlich gemacht?",
+        "actualOutcomeOptions": [
+          {
+            "value": "short_pass",
+            "label": "Kurzer Pass",
+            "shortLabel": "Kurzer Pass",
+            "description": "Schnelle nahe Anspielstation nutzen."
+          },
+          {
+            "value": "middle_pass",
+            "label": "Pass in die Mitte",
+            "shortLabel": "Pass Mitte",
+            "description": "Zentrale Lösung / Middle Support suchen."
+          },
+          {
+            "value": "wall_pass",
+            "label": "Pass an die Bande",
+            "shortLabel": "Pass Bande",
+            "description": "Wall-/Side-Option nutzen."
+          },
+          {
+            "value": "reverse",
+            "label": "Reverse / zurück",
+            "shortLabel": "Reverse",
+            "description": "Richtung wechseln oder auf hintere Unterstützung zurückspielen."
+          },
+          {
+            "value": "carry",
+            "label": "Puck tragen",
+            "shortLabel": "Carry",
+            "description": "Mit Kontrolle selbst aus dem Druck skaten."
+          },
+          {
+            "value": "chip_space",
+            "label": "Chip / Raum spielen",
+            "shortLabel": "Chip",
+            "description": "Puck kontrolliert in freien Raum legen."
+          },
+          {
+            "value": "dump",
+            "label": "Dump / tief",
+            "shortLabel": "Dump",
+            "description": "Puck bewusst tief spielen."
+          },
+          {
+            "value": "clear",
+            "label": "Clear / Befreiung",
+            "shortLabel": "Clear",
+            "description": "Druck durch Herausspielen aus der Gefahrenzone lösen."
+          },
+          {
+            "value": "protect_hold",
+            "label": "Puck schützen / halten",
+            "shortLabel": "Puck schützen",
+            "description": "Körper/Puck benutzen, um Zeit zu gewinnen."
+          },
+          {
+            "value": "reset",
+            "label": "Reset",
+            "shortLabel": "Reset",
+            "description": "Situation bewusst neu aufbauen statt vorwärts zu erzwingen."
+          },
+          {
+            "value": "risky_pass",
+            "label": "Riskanter Pass durch Druck",
+            "shortLabel": "Riskanter Pass",
+            "description": "Versucht eine enge / zugestellte Passlinie."
+          },
+          {
+            "value": "turnover",
+            "label": "Puckverlust",
+            "shortLabel": "Puckverlust",
+            "description": "Prognose: Druck kann nicht sauber gelöst werden."
+          },
+          {
+            "value": "other",
+            "label": "Andere Lösung",
+            "shortLabel": "Andere Lösung"
+          },
+          {
+            "value": "unclear",
+            "label": "Unklar",
+            "shortLabel": "Unklar"
+          }
+        ],
+        "evaluationPrompt": "Prediction vs Reality",
+        "evaluationOptions": [
+          {
+            "value": "correct",
+            "label": "exakt getroffen"
+          },
+          {
+            "value": "incorrect",
+            "label": "anders gelöst"
+          },
+          {
+            "value": "unjudgeable",
+            "label": "nicht auswertbar"
+          }
+        ],
+        "autoEvaluateExactMatches": true,
+        "compareMode": "exact",
+        "hideManualEvaluation": true,
+        "unjudgeableActualValues": [
+          "unclear"
+        ],
+        "outcomeField": {
+          "id": "pressureResolution",
+          "prompt": "Wurde der unmittelbare Druck dadurch gelöst?",
+          "required": false,
+          "options": [
+            {
+              "value": "cleanly_resolved",
+              "label": "sauber gelöst"
+            },
+            {
+              "value": "temporarily_resolved",
+              "label": "zunächst gelöst"
+            },
+            {
+              "value": "pressure_continues",
+              "label": "Druck bleibt bestehen"
+            },
+            {
+              "value": "possession_lost",
+              "label": "Puckbesitz verloren"
+            },
+            {
+              "value": "unclear",
+              "label": "unklar"
+            }
+          ]
+        },
+        "reflectionField": {
+          "id": "readAssessment",
+          "prompt": "Was hast du vor der Entscheidung übersehen oder richtig gelesen?",
+          "required": false,
+          "maxSelect": 2,
+          "options": [
+            {
+              "value": "support_read",
+              "label": "Support richtig gelesen"
+            },
+            {
+              "value": "pressure_angle_read",
+              "label": "Druckwinkel richtig gelesen"
+            },
+            {
+              "value": "body_orientation_read",
+              "label": "Körperstellung richtig gelesen"
+            },
+            {
+              "value": "open_space_read",
+              "label": "freien Raum richtig gelesen"
+            },
+            {
+              "value": "speed_read",
+              "label": "Tempo richtig gelesen"
+            },
+            {
+              "value": "missed_option",
+              "label": "zusätzliche Option übersehen"
+            },
+            {
+              "value": "underestimated_pressure",
+              "label": "Gegnerdruck unterschätzt"
+            },
+            {
+              "value": "overestimated_support",
+              "label": "Support überschätzt"
+            },
+            {
+              "value": "misread_body",
+              "label": "Körperstellung falsch interpretiert"
+            },
+            {
+              "value": "unpredictable",
+              "label": "Entscheidung war für mich nicht vorhersehbar"
+            },
+            {
+              "value": "unclear",
+              "label": "unklar"
+            }
+          ]
+        },
+        "alternativeSolutionField": {
+          "id": "alternativeSolution",
+          "prompt": "Welche andere Lösung war ebenfalls realistisch?",
+          "required": false,
+          "options": [
+            {
+              "value": "short_pass",
+              "label": "Kurzer Pass",
+              "shortLabel": "Kurzer Pass",
+              "description": "Schnelle nahe Anspielstation nutzen."
+            },
+            {
+              "value": "middle_pass",
+              "label": "Pass in die Mitte",
+              "shortLabel": "Pass Mitte",
+              "description": "Zentrale Lösung / Middle Support suchen."
+            },
+            {
+              "value": "wall_pass",
+              "label": "Pass an die Bande",
+              "shortLabel": "Pass Bande",
+              "description": "Wall-/Side-Option nutzen."
+            },
+            {
+              "value": "reverse",
+              "label": "Reverse / zurück",
+              "shortLabel": "Reverse",
+              "description": "Richtung wechseln oder auf hintere Unterstützung zurückspielen."
+            },
+            {
+              "value": "carry",
+              "label": "Puck tragen",
+              "shortLabel": "Carry",
+              "description": "Mit Kontrolle selbst aus dem Druck skaten."
+            },
+            {
+              "value": "chip_space",
+              "label": "Chip / Raum spielen",
+              "shortLabel": "Chip",
+              "description": "Puck kontrolliert in freien Raum legen."
+            },
+            {
+              "value": "dump",
+              "label": "Dump / tief",
+              "shortLabel": "Dump",
+              "description": "Puck bewusst tief spielen."
+            },
+            {
+              "value": "clear",
+              "label": "Clear / Befreiung",
+              "shortLabel": "Clear",
+              "description": "Druck durch Herausspielen aus der Gefahrenzone lösen."
+            },
+            {
+              "value": "protect_hold",
+              "label": "Puck schützen / halten",
+              "shortLabel": "Puck schützen",
+              "description": "Körper/Puck benutzen, um Zeit zu gewinnen."
+            },
+            {
+              "value": "reset",
+              "label": "Reset",
+              "shortLabel": "Reset",
+              "description": "Situation bewusst neu aufbauen statt vorwärts zu erzwingen."
+            },
+            {
+              "value": "risky_pass",
+              "label": "Riskanter Pass durch Druck",
+              "shortLabel": "Riskanter Pass",
+              "description": "Versucht eine enge / zugestellte Passlinie."
+            },
+            {
+              "value": "turnover",
+              "label": "Puckverlust",
+              "shortLabel": "Puckverlust",
+              "description": "Prognose: Druck kann nicht sauber gelöst werden."
+            },
+            {
+              "value": "other",
+              "label": "Andere Lösung",
+              "shortLabel": "Andere Lösung"
+            },
+            {
+              "value": "unclear",
+              "label": "Unklar",
+              "shortLabel": "Unklar"
+            }
+          ]
+        }
+      },
+      "note": {
+        "enabled": true,
+        "label": "Kurze Notiz",
+        "placeholder": "Optional: ein Satz zur Situation",
+        "maxChars": 240
+      },
+      "minimumResolvedPredictions": 3,
+      "activeFocus": {
+        "title": "Active Focus",
+        "text": "Achte beim nächsten Puckführer schon vor der Aktion auf Körperstellung, Support und Pressure Angle."
+      },
+      "reflectionGuidance": [
+        "Prüfe, ob die Prediction auf sichtbaren Hinweisen wie Support, Druckwinkel, Körperstellung oder Raum basiert.",
+        "Unterscheide Prediction Accuracy von Qualität oder Erfolg der tatsächlichen Aktion.",
+        "Weise darauf hin, wenn aus dem späteren Outcome rückwirkend auf die Qualität der Prediction geschlossen wird.",
+        "Hilf dem Nutzer zu erkennen, welche Pre-Decision-Cues er häufiger beachten sollte.",
+        "Behaupte nicht, welche Entscheidung objektiv richtig gewesen wäre, wenn die Session dafür keine ausreichenden Informationen liefert."
+      ]
+    },
+    {
       "id": "pred_transition_after_possession_gain",
       "categoryId": "transition",
       "title": "Was folgt nach dem Puckgewinn?",
+      "shortTitle": "Puckgewinn",
       "description": "Beobachte kontrollierte Puckgewinne des ausgewählten Teams und sage voraus, welche erste Priorität in den nächsten zwei bis drei Sekunden sichtbar wird.",
+      "learningGoal": "Die erste erkennbare Priorität nach einem kontrollierten Puckgewinn vorhersagen – nicht den späteren Angriffserfolg.",
       "relatedAcademyDrills": [
         "B2_D4"
       ],
       "perspective": "selected_team",
       "perspectiveHint": "Beobachte immer einen Puckgewinn des ausgewählten Teams. Wenn Augsburg als beobachtetes Team ausgewählt ist, gibst du deine Vorhersage in dem Moment ab, in dem Augsburg den Puck erkennbar gewinnt oder kontrolliert übernimmt.",
       "situationTrigger": "Kontrollierter Puckgewinn des ausgewählten Teams",
+      "observationStartLabel": "Prediction abgeben",
+      "observationStartPrompt": "Warte auf einen kontrollierten Puckgewinn des ausgewählten Teams.",
+      "nextSituationLabel": "+ Nächste Situation",
+      "lockLabel": "Prediction festlegen",
+      "lockedStatusLabel": "Prediction gespeichert",
+      "captureGameClock": true,
+      "recommendedPredictions": 5,
       "observationGuide": {
         "suitableSituations": [
           "Abgefangener Pass mit anschließender Kontrolle",
@@ -67,6 +709,10 @@
           "Wähle nur eine dominante Vorhersage"
         ]
       },
+      "coreHints": [
+        "Predicte die Entscheidung, bevor sie sichtbar wird.",
+        "Bewerte die erste Priorität, nicht den späteren Erfolg."
+      ],
       "predictionPrompt": "Welche erste Priorität erwartest du nach diesem Puckgewinn?",
       "predictionOptions": [
         {
@@ -151,7 +797,11 @@
             "label": "nicht beurteilbar"
           }
         ],
-        "autoEvaluateExactMatches": true
+        "autoEvaluateExactMatches": true,
+        "compareMode": "manual",
+        "unjudgeableActualValues": [
+          "nicht_beurteilbar"
+        ]
       },
       "missedCue": {
         "enabled": true,

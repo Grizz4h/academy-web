@@ -400,6 +400,22 @@ export function formatGameTimeLabel(time?: string): string {
   return trimmed.endsWith(' Uhr') ? trimmed : `${trimmed} Uhr`
 }
 
+export function formatCatalogGameOptionLabel(game: CatalogGame): string {
+  const home = game.home_team_name || game.home_team_id
+  const away = game.away_team_name || game.away_team_id
+  const date = game.date
+    ? new Date(`${game.date}T12:00:00`).toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    : ''
+  const matchday = game.matchday != null ? `Spieltag ${game.matchday}` : ''
+  const score = game.score ? ` ${game.score.home}:${game.score.away}` : ''
+  const dummy = game.isDummy || game.is_dummy ? ' · DEV · TESTSPIEL' : ''
+  return [matchday, date, `${home} – ${away}${score}`].filter(Boolean).join(' · ') + dummy
+}
+
 export function formatGameStatusLabel(game: CatalogGame): string {
   const status = String(game.status || '').toLowerCase()
   if (status === 'final') {

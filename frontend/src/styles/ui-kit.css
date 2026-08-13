@@ -17,6 +17,7 @@
  * Progress: .ui-progress  .ui-progress__fill  .ui-progress--lg | --sm
  * Switch:   .ui-switch  (input[type=checkbox].ui-switch)
  * Segment:  .ui-seg  .ui-seg__item  .ui-seg__item.is-active
+ * Sheets:   UiSheet / UiSheetActions  (Abbrechen links, primäre Aktion rechts)
  */
 
 /* ---- Buttons ---- */

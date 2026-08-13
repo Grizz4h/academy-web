@@ -111,10 +111,25 @@ export function resolveMechanicKind(drillType?: string | null, mode?: string | n
     || type.includes('meta_scan')
     || type.includes('pattern_attribution')
     || type.includes('tendency_profile')
+    || type.includes('before_after_compare')
+    || type.includes('state_compare')
+    || type.includes('trigger_hypothesis')
+    || type.includes('adjustment_attribution')
+    || type.includes('interaction_chain')
+    || type.includes('problem_adjustment_response')
+    || type.includes('adjustment_profile')
+    || type.includes('multi_change_synthesis')
   ) {
     return 'profile'
   }
-  if (type.includes('pattern_log') || type.includes('multi_observation_pattern') || type.includes('pattern_condition') || type.includes('pattern_invariant')) return 'log'
+  if (
+    type.includes('pattern_log')
+    || type.includes('multi_observation_pattern')
+    || type.includes('pattern_condition')
+    || type.includes('pattern_invariant')
+    || type.includes('change_timeline')
+    || type.includes('change_point_observation')
+  ) return 'log'
   if (type.includes('event_log') || type.includes('sample_log') || type.includes('shift_tracker') || type.includes('observation_log')) return 'log'
   if (type.includes('foundation') || type.includes('micro_quiz')) return 'choice'
   if (type.includes('sidequest')) return 'sidequest'

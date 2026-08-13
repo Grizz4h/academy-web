@@ -214,12 +214,70 @@ def _compact_microfeedback(session: Dict[str, Any]) -> Dict[str, Any]:
     return compact
 
 
+def _lab_prediction_template(
+    session: Dict[str, Any],
+    lab_content: Optional[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    if not lab_content:
+        return None
+    template_id = session.get("lab_template_id")
+    if not template_id:
+        return None
+    for template in lab_content.get("prediction_templates") or []:
+        if isinstance(template, dict) and template.get("id") == template_id:
+            return template
+    return None
+
+
+def _drill_from_prediction_template(template: Dict[str, Any]) -> Dict[str, Any]:
+    observation_guide = template.get("observationGuide") or {}
+    return {
+        "id": template.get("id"),
+        "title": template.get("title"),
+        "description": template.get("description"),
+        "config": {
+            "reflectionGuidance": template.get("reflectionGuidance") or [],
+        },
+        "didactics": {
+            "goal": template.get("learningGoal"),
+            "observation_guide": {
+                "what_to_watch": observation_guide.get("suitableSituations") or template.get("situationGuide") or [],
+                "how_to_decide": observation_guide.get("howToDecide") or template.get("coreHints") or [],
+                "ignore": observation_guide.get("ignore") or [],
+            },
+        },
+    }
+
+
+def _prediction_observations(session: Dict[str, Any]) -> List[Dict[str, Any]]:
+    entries = session.get("prediction_entries") or []
+    if not isinstance(entries, list) or not entries:
+        return []
+    return [
+        {
+            "phase": "PREDICT",
+            "answers": {
+                "predictionEntries": entries,
+                "predictionSummary": session.get("prediction_summary"),
+                "openPredictionId": session.get("open_prediction_id"),
+            },
+        }
+    ]
+
+
 def build_reflection_payload(
     session: Dict[str, Any],
     module_learning_goals: Optional[List[str]] = None,
+    lab_content: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     drills = session.get("drills") or []
     drill = copy.deepcopy(drills[0]) if drills else {}
+    template = _lab_prediction_template(session, lab_content)
+    if template:
+        drill = _drill_from_prediction_template(template)
+
+    observations = _collect_observations(session, drill)
+    observations.extend(_prediction_observations(session))
 
     return {
         "drill": {
@@ -237,8 +295,8 @@ def build_reflection_payload(
             "observationScope": session.get("observation_scope"),
             "goal": session.get("goal"),
             "focus": session.get("focus"),
-            "observations": _collect_observations(session, drill),
-            "result": session.get("post"),
+            "observations": observations,
+            "result": session.get("post") or session.get("prediction_summary"),
             "microfeedback": _compact_microfeedback(session),
         },
     }

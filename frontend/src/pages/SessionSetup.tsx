@@ -1,15 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
-import { api, type CatalogGame } from '../api'
+import { api } from '../api'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useUser } from '../context/UserContext'
 import { makeGlossaryRenderer } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
-import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
+import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
-import { OBSERVATION_SCOPE_OPTIONS, type ObservationScope } from '../utils/observationScope'
+import { type ObservationScope } from '../utils/observationScope'
 import {
   isSplitSeasonLeague,
   normalizeSeasonValue,
@@ -20,18 +20,10 @@ import { isDevNavEnabled } from '../config/featureFlags'
 import { createDummySessionForDrill } from '../dev/createDummySession'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
-import GameContextSummary from '../components/game/GameContextSummary'
-import GameStatsDevPanel from '../components/game/GameStatsDevPanel'
-import {
-  filterCatalogGamesForSeason,
-  filterGamesForDate,
-  findCatalogGameForPairing,
-  findGamesForTeams,
-  getCatalogSeasonStats,
-  localTodayIsoDate,
-  uniqueMatchdays,
-} from '../components/game/gameCatalogUtils'
-import TodayMatchdaySlate from '../components/game/TodayMatchdaySlate'
+import { LiveObservationPanel } from '../components/game/LiveObservationPanel'
+import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
+import { PastDrillSessions } from '../features/reflection/PastDrillSessions'
+import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
 import { inferSplitSeasonLabelForDate } from '../stats/seasonNormalization'
 import setupStyles from './SessionSetup.module.css'
 
@@ -97,6 +89,7 @@ export default function SessionSetup() {
   const [competitionPhase, setCompetitionPhase] = useState<string>('')
   const [competitionValue, setCompetitionValue] = useState<string>('')
   const [observationScope, setObservationScope] = useState<ObservationScope>('FULL_GAME')
+  const [selectedGameId, setSelectedGameId] = useState<string>('')
   const [devMode, setDevMode] = useState(() => isDevNavEnabled())
   const [dummyError, setDummyError] = useState('')
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
@@ -119,14 +112,6 @@ export default function SessionSetup() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-    // Setze DEL-Defaults für Teams, wenn DEL gewählt wird und noch keine Teams gesetzt sind
-    useEffect(() => {
-      if (league === 'DEL' && !teamHome && !teamAway) {
-        setTeamHome('ERC Ingolstadt');
-        setTeamAway('Augsburger Panther');
-      }
-    }, [league]);
 
   useEffect(() => {
     if (league !== 'DEL' || season) return
@@ -154,6 +139,7 @@ export default function SessionSetup() {
       if (!parsed.competitionValue && parsed.matchday) setCompetitionValue(parsed.matchday)
       if (parsed.selectedDrill) setSelectedDrill(parsed.selectedDrill)
       if (parsed.observationScope) setObservationScope(parsed.observationScope)
+      if (parsed.selectedGameId) setSelectedGameId(parsed.selectedGameId)
     } catch (e) {
       console.warn('Draft konnte nicht geladen werden', e)
     }
@@ -174,10 +160,11 @@ export default function SessionSetup() {
       competitionValue,
       selectedDrill,
       observationScope,
-      observedTeam
+      observedTeam,
+      selectedGameId,
     }
     localStorage.setItem(draftKey, JSON.stringify(draft))
-  }, [draftKey, goal, confidence, league, teamHome, teamAway, season, competitionPhase, competitionValue, selectedDrill, observationScope, observedTeam])
+  }, [draftKey, goal, confidence, league, teamHome, teamAway, season, competitionPhase, competitionValue, selectedDrill, observationScope, observedTeam, selectedGameId])
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
@@ -192,62 +179,17 @@ export default function SessionSetup() {
     gcTime: 0
   })
 
-  const normalizedSeason = normalizeSeasonValue(season, league) || ''
-  const { data: gamesData } = useQuery({
-    queryKey: ['games', league, normalizedSeason],
-    queryFn: () => api.getGames({ league, season: normalizedSeason }),
-    enabled: Boolean(league && normalizedSeason && league === 'DEL'),
-    staleTime: 60_000,
+  const catalog = useGameCatalogMatch({
+    league,
+    season,
+    teamHome,
+    teamAway,
+    competitionValue,
+    selectedGameId,
   })
-
-  const catalogGames = useMemo(
-    () => filterCatalogGamesForSeason(gamesData?.games || [], normalizedSeason),
-    [gamesData?.games, normalizedSeason],
-  )
-  const useCatalogFlow = league === 'DEL' && Boolean(normalizedSeason) && catalogGames.length > 0
-  const catalogStats = useMemo(() => getCatalogSeasonStats(catalogGames), [catalogGames])
-  const todayCatalogGames = useMemo(
-    () => filterGamesForDate(catalogGames, localTodayIsoDate()),
-    [catalogGames],
-  )
-  const gamesWithStatsInSeason = useMemo(
-    () => catalogGames.filter((game) => Boolean(game.stats?.imported_at)),
-    [catalogGames],
-  )
-
-  const availableMatchdays = useMemo(() => uniqueMatchdays(catalogGames), [catalogGames])
-
-  const gamesForTeams = useMemo(() => {
-    if (!teamHome || !teamAway) return []
-    return findGamesForTeams(catalogGames, teamHome, teamAway)
-  }, [catalogGames, teamHome, teamAway])
-
-  const matchdaysForTeams = useMemo(() => uniqueMatchdays(gamesForTeams), [gamesForTeams])
-
-  const selectedMatchday = useMemo(() => {
-    const parsed = Number(competitionValue)
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : null
-  }, [competitionValue])
-
-  /** Import reagiert nur auf Live-Auswahl — kein Rückwärts-Befüllen */
-  const matchedCatalogGame = useMemo<CatalogGame | null>(() => {
-    if (!useCatalogFlow || !teamHome || !teamAway || !selectedMatchday) return null
-    return findCatalogGameForPairing(
-      catalogGames,
-      teamHome,
-      teamAway,
-      selectedMatchday,
-      normalizedSeason,
-    ) || null
-  }, [useCatalogFlow, teamHome, teamAway, selectedMatchday, catalogGames, normalizedSeason])
-
-  const handleSelectTodayGame = (game: CatalogGame) => {
-    if (game.home_team_name) setTeamHome(game.home_team_name)
-    if (game.away_team_name) setTeamAway(game.away_team_name)
-    if (game.matchday != null) setCompetitionValue(String(game.matchday))
-    if (game.phase_id) setCompetitionPhase(game.phase_id)
-    setObservedTeam('')
-  }
+  const {
+    matchedCatalogGame,
+  } = catalog
 
   const { data: sessions } = useQuery({
     queryKey: ['sessions', user],
@@ -577,8 +519,12 @@ export default function SessionSetup() {
     }
     const normalizedSeason = normalizeSeasonValue(season, league)
     if (normalizedSeason) gameInfo.season = normalizedSeason
-    if (matchedCatalogGame?.id) {
+    const dummyGame = isDummyCatalogGame(matchedCatalogGame)
+    if (matchedCatalogGame?.id && !dummyGame) {
       gameInfo.game_id = matchedCatalogGame.id
+    }
+    if (dummyGame) {
+      gameInfo.is_dummy = true
     }
     if (matchedCatalogGame?.date) {
       gameInfo.date = `${matchedCatalogGame.date}T${matchedCatalogGame.time || '19:00'}:00`
@@ -614,7 +560,7 @@ export default function SessionSetup() {
       session_method: currentModule.recommendedSessionMethod || 'live_watch',
       drill_id: chosenDrill || undefined,
       game_info: gameInfo,
-      game_id: matchedCatalogGame?.id || undefined,
+      game_id: dummyGame ? undefined : (matchedCatalogGame?.id || undefined),
     }
     lastPayloadRef.current = payload
     createSessionMutation.mutate(payload)
@@ -746,297 +692,33 @@ export default function SessionSetup() {
 
       <div className="card ui-surface ui-surface--primary primary-card">
         <h2 className="ui-section-title">Session vorbereiten</h2>
-        <p className={setupStyles.setupIntro}>
-          <strong>Saison + Spieltag + Teams</strong> legst du oben in der Live-Beobachtung fest — das ist deine Session.
-          Der Import-Bereich darunter zeigt nur, ob es dazu passende PENNY-DEL-Daten gibt.
-        </p>
-
-        <label style={{ display: 'block', marginTop: '0.25rem' }}>
-          Liga auswählen
-          <select
-            className="appSelect"
-            value={league}
-            onChange={(e) => {
-              setLeague(e.target.value)
-              setTeamHome('')
-              setTeamAway('')
-              setObservedTeam('')
-              setCompetitionPhase('')
-              setCompetitionValue('')
-            }}
-            style={{ marginTop: '0.35rem' }}
-          >
-            <option value="">-- Liga wählen --</option>
-            {LEAGUES.map((lg) => (
-              <option key={lg} value={lg}>{lg.replace(/_/g, ' ')}</option>
-            ))}
-          </select>
-        </label>
-
-        {useCatalogFlow && todayCatalogGames.length > 0 ? (
-          <section className={`${setupStyles.panel} ${setupStyles.livePanel} ui-flat-panel`}>
-            <TodayMatchdaySlate
-              league={league}
-              games={catalogGames}
-              onSelectGame={handleSelectTodayGame}
-              selectable
-            />
-          </section>
-        ) : null}
-
-        <section className={`${setupStyles.panel} ${setupStyles.livePanel} ui-flat-panel`}>
-          <div className={setupStyles.panelHeader}>
-            <div className={setupStyles.panelTitleRow}>
-              <span className={setupStyles.liveBadge}>Live</span>
-              <h3 className={setupStyles.panelTitle}>Deine Beobachtung</h3>
-            </div>
-            <p className={setupStyles.panelLead}>
-              Primärauswahl: Saison, Spieltag, Teams — unabhängig vom Import.
-            </p>
-          </div>
-
-          <div className={setupStyles.formGrid2}>
-            <label style={{ display: 'block' }}>
-              Saison
-              <select
-                className="appSelect"
-                value={season}
-                onChange={(e) => {
-                  setSeason(e.target.value)
-                  setCompetitionValue('')
-                }}
-                disabled={!league}
-                style={{ marginTop: '0.35rem' }}
-              >
-                <option value="">-- Saison --</option>
-                {seasonOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-            </label>
-
-            {competitionConfig && selectedCompetitionPhase ? (
-              <label style={{ display: 'block' }}>
-                Phase
-                <select
-                  className="appSelect"
-                  value={selectedCompetitionPhase.id}
-                  onChange={(e) => {
-                    setCompetitionPhase(e.target.value)
-                    setCompetitionValue('')
-                  }}
-                  style={{ marginTop: '0.35rem' }}
-                >
-                  {competitionConfig.phases.map((phase) => (
-                    <option key={phase.id} value={phase.id}>{phase.label}</option>
-                  ))}
-                </select>
-              </label>
-            ) : (
-              <div />
-            )}
-          </div>
-
-          {competitionConfig && selectedCompetitionPhase && (
-            <label style={{ display: 'block' }}>
-              {selectedCompetitionPhase.unit.label}
-              {useCatalogFlow && availableMatchdays.length > 0 ? (
-                <select
-                  className="appSelect"
-                  value={competitionValue}
-                  onChange={(e) => setCompetitionValue(e.target.value)}
-                  style={{ marginTop: '0.35rem' }}
-                >
-                  <option value="">-- Spieltag wählen --</option>
-                  {availableMatchdays.map((matchday) => (
-                    <option key={matchday} value={String(matchday)}>
-                      Spieltag {matchday}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type="number"
-                  value={competitionValue}
-                  onChange={(e) => setCompetitionValue(e.target.value)}
-                  min={selectedCompetitionPhase.unit.min}
-                  max={selectedCompetitionPhase.unit.max}
-                  placeholder={`${selectedCompetitionPhase.unit.min}–${selectedCompetitionPhase.unit.max}`}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    marginTop: '0.35rem',
-                    backgroundColor: '#050712',
-                    color: '#f7f7ff',
-                    border: '1px solid #5191a2',
-                    borderRadius: '4px',
-                  }}
-                />
-              )}
-              <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
-                {useSplitSeason ? 'Split-Season (z. B. 2025/26)' : 'Turnier-Jahr'}
-                {useCatalogFlow && availableMatchdays.length > 0
-                  ? ` · ${availableMatchdays.length} Spieltage im Import`
-                  : ''}
-              </div>
-            </label>
-          )}
-
-          <div className={setupStyles.formGrid2}>
-            <label style={{ display: 'block' }}>
-              Heimteam
-              <select
-                className="appSelect"
-                value={teamHome}
-                onChange={(e) => {
-                  setTeamHome(e.target.value)
-                  if (observedTeam === teamHome) setObservedTeam('')
-                }}
-                disabled={!league}
-                style={{ marginTop: '0.35rem' }}
-              >
-                <option value="">-- Heimteam --</option>
-                {availableTeams.map((team) => (
-                  <option key={team} value={team}>{team}</option>
-                ))}
-              </select>
-              <div>
-                <input
-                  type="radio"
-                  checked={observedTeam === teamHome}
-                  onChange={() => setObservedTeam(teamHome)}
-                  disabled={!teamHome}
-                  id="observe-home"
-                  name="observed-team"
-                />
-                <label htmlFor="observe-home" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
-              </div>
-            </label>
-
-            <label style={{ display: 'block' }}>
-              Auswärtsteam
-              <select
-                className="appSelect"
-                value={teamAway}
-                onChange={(e) => {
-                  setTeamAway(e.target.value)
-                  if (observedTeam === teamAway) setObservedTeam('')
-                }}
-                disabled={!league}
-                style={{ marginTop: '0.35rem' }}
-              >
-                <option value="">-- Auswärtsteam --</option>
-                {availableTeams.map((team) => (
-                  <option key={team} value={team}>{team}</option>
-                ))}
-              </select>
-              <div>
-                <input
-                  type="radio"
-                  checked={observedTeam === teamAway}
-                  onChange={() => setObservedTeam(teamAway)}
-                  disabled={!teamAway}
-                  id="observe-away"
-                  name="observed-team"
-                />
-                <label htmlFor="observe-away" style={{ marginLeft: '0.5rem' }}>Beobachtetes Team</label>
-              </div>
-            </label>
-          </div>
-
-          {teamHome && teamAway && !observedTeam && (
-            <p className={setupStyles.observedHint}>Bitte das beobachtete Team wählen — Pflicht für die Session.</p>
-          )}
-
-          {isFoundationModule ? (
-            <p style={{ margin: '0.75rem 0 0', fontSize: '0.82rem', color: 'rgba(167, 243, 208, 0.9)' }}>
-              Foundation-Lektion — ohne Live-Drittel. Du arbeitest die Schritte einmal durch und schließt die Session ab.
-            </p>
-          ) : (
-          <label style={{ display: 'block' }}>
-            Beobachtungsumfang
-            <select
-              className="appSelect"
-              value={observationScope}
-              onChange={(e) => setObservationScope(e.target.value as ObservationScope)}
-              style={{ marginTop: '0.35rem' }}
-            >
-              {OBSERVATION_SCOPE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-            <div style={{ marginTop: '0.3rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
-              Dein Analyse-Fokus in dieser Session — unabhängig vom Import-Ergebnis.
-            </div>
-          </label>
-          )}
-        </section>
-
-        {useCatalogFlow && normalizedSeason && (
-          <section className={`${setupStyles.panel} ${setupStyles.importPanel} ui-flat-panel`}>
-            <div className={setupStyles.panelHeader}>
-              <div className={setupStyles.panelTitleRow}>
-                <span className={setupStyles.importBadge}>Import</span>
-                <h3 className={setupStyles.panelTitle}>Spielkontext · PENNY DEL</h3>
-              </div>
-              <p className={setupStyles.panelLead}>
-                Nur Anzeige — reagiert auf Saison, Spieltag und Teams oben. Du musst hier nichts auswählen.
-              </p>
-              <p className={setupStyles.catalogStats}>
-                Katalog {normalizedSeason}: {catalogStats.withResult} mit Ergebnis
-                {catalogStats.scheduled > 0 ? ` · ${catalogStats.scheduled} geplant` : ''}
-                {catalogStats.missingResult > 0 ? (
-                  <span className={setupStyles.catalogStatsWarn}>
-                    {` · ${catalogStats.missingResult} ohne Ergebnis`}
-                  </span>
-                ) : null}
-              </p>
-            </div>
-
-            {!season || !selectedMatchday || !teamHome || !teamAway ? (
-              <p style={{ margin: 0, fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
-                {!season && 'Saison wählen'}
-                {season && !selectedMatchday && ' · Spieltag wählen'}
-                {season && selectedMatchday && (!teamHome || !teamAway) && ' · Beide Teams wählen'}
-                {' — dann erscheint die Import-Referenz.'}
-              </p>
-            ) : matchedCatalogGame ? (
-              <>
-                <GameContextSummary
-                  game={matchedCatalogGame}
-                  compact
-                  embedded
-                  catalogGames={catalogGames}
-                  perspectiveTeam={observedTeam || teamHome}
-                  showImportChrome
-                />
-                {devMode && matchedCatalogGame && (
-                  <GameStatsDevPanel
-                    game={matchedCatalogGame}
-                    catalogGames={catalogGames}
-                    compact
-                    embedded
-                    perspectiveTeam={observedTeam || teamHome}
-                    exampleGamesWithStats={gamesWithStatsInSeason}
-                  />
-                )}
-              </>
-            ) : (
-              <p style={{ margin: 0, fontSize: '0.78rem', color: 'rgba(255, 193, 7, 0.95)' }}>
-                Kein Import-Treffer für {teamHome} vs {teamAway}, Spieltag {competitionValue}, Saison {normalizedSeason}.
-                {matchdaysForTeams.length > 0 && (
-                  <> Diese Paarung im Import: Spieltag {matchdaysForTeams.join(', ')}.</>
-                )}
-              </p>
-            )}
-          </section>
-        )}
-
-        {league === 'DEL' && normalizedSeason && !useCatalogFlow && (
-          <p style={{ marginTop: '0.9rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)' }}>
-            Für diese Saison sind noch keine Spiele importiert. Dev-Cockpit → DEL Data → Spielplan synchronisieren.
-          </p>
-        )}
+        <LiveObservationPanel
+          intro="Liga und Saison wählen, dann ein Spiel. Heim-/Auswärtsteam, Datum und Spieltag kommen aus dem Spielplan. Welches Team du beobachtest, bleibt deine Auswahl."
+          fields={{
+            league,
+            season,
+            competitionPhase,
+            competitionValue,
+            teamHome,
+            teamAway,
+            observedTeam,
+            observationScope,
+            selectedGameId,
+          }}
+          onChange={(patch) => {
+            if (patch.league !== undefined) setLeague(patch.league)
+            if (patch.season !== undefined) setSeason(patch.season)
+            if (patch.competitionPhase !== undefined) setCompetitionPhase(patch.competitionPhase)
+            if (patch.competitionValue !== undefined) setCompetitionValue(patch.competitionValue)
+            if (patch.teamHome !== undefined) setTeamHome(patch.teamHome)
+            if (patch.teamAway !== undefined) setTeamAway(patch.teamAway)
+            if (patch.observedTeam !== undefined) setObservedTeam(patch.observedTeam)
+            if (patch.observationScope !== undefined) setObservationScope(patch.observationScope)
+            if (patch.selectedGameId !== undefined) setSelectedGameId(patch.selectedGameId)
+          }}
+          availableTeams={availableTeams}
+          catalog={catalog}
+        />
 
         {league === 'NHL' && teamHome && teamAway && (
           <div style={{ 
@@ -1242,6 +924,15 @@ export default function SessionSetup() {
             )})}
           </div>
         </div>
+      )}
+
+      {selectedDrill && (
+        <PastDrillSessions
+          sessions={realSessions}
+          drillId={selectedDrill}
+          homeTeam={teamHome}
+          awayTeam={teamAway}
+        />
       )}
 
       {selectedDrill && (() => {

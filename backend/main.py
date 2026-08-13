@@ -1947,7 +1947,8 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         if module_drills:
             break
 
-    if session.module_id and not module_drills:
+    is_lab_session = str(session.learning_area or "").strip().lower() == "lab"
+    if session.module_id and not module_drills and not is_lab_session:
         raise HTTPException(
             status_code=400,
             detail=f"Kein Drill für Modul {session.module_id} gefunden"
@@ -2435,7 +2436,12 @@ async def create_session_reflection(session_id: str):
     curriculum = _merge_foundation_tracks(
         load_json(os.path.join(DATA_DIR, "curriculum.json"))
     )
-    reflection = generate_session_reflection(session, curriculum)
+    lab_content = None
+    try:
+        lab_content = load_json(os.path.join(DATA_DIR, "lab_content.json"))
+    except FileNotFoundError:
+        lab_content = None
+    reflection = generate_session_reflection(session, curriculum, lab_content)
     session["ai_reflection"] = reflection.model_dump()
     save_json(session_path, session)
     logging.info(

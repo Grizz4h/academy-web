@@ -31,15 +31,34 @@ export type PredictionResolutionOption = {
   description?: string
 }
 
+export type PredictionFieldDefinition = {
+  id: string
+  prompt: string
+  options: PredictionOption[]
+  required?: boolean
+  maxSelect?: number
+}
+
+export type PredictionOptionGroup = {
+  id: string
+  label: string
+  optionValues: string[]
+}
+
+export type PredictionCompareMode = 'manual' | 'exact'
+
 export type PredictionTemplate = {
   id: string
   categoryId: PredictionCategoryId
   title: string
+  shortTitle?: string
   description: string
+  learningGoal?: string
   relatedAcademyDrills?: string[]
   perspective: 'selected_team' | 'opponent' | 'both'
   perspectiveHint?: string
   situationTrigger: string
+  situationGuide?: string[]
   observationGuide: {
     suitableSituations: string[]
     unsuitableSituations: string[]
@@ -47,8 +66,19 @@ export type PredictionTemplate = {
     howToDecide?: string[]
     ignore?: string[]
   }
+  coreHints?: string[]
+  observationStartLabel?: string
+  observationStartPrompt?: string
+  nextSituationLabel?: string
+  lockLabel?: string
+  lockedStatusLabel?: string
+  captureGameClock?: boolean
+  recommendedPredictions?: number
+  contextFields?: PredictionFieldDefinition[]
   predictionPrompt: string
   predictionOptions: PredictionOption[]
+  optionGroups?: PredictionOptionGroup[]
+  cueField?: PredictionFieldDefinition
   confidence: {
     enabled: boolean
     question: string
@@ -60,6 +90,12 @@ export type PredictionTemplate = {
     evaluationPrompt: string
     evaluationOptions: PredictionResolutionOption[]
     autoEvaluateExactMatches?: boolean
+    compareMode?: PredictionCompareMode
+    hideManualEvaluation?: boolean
+    unjudgeableActualValues?: string[]
+    outcomeField?: PredictionFieldDefinition
+    reflectionField?: PredictionFieldDefinition
+    alternativeSolutionField?: PredictionFieldDefinition
   }
   missedCue?: {
     enabled: boolean
@@ -77,4 +113,5 @@ export type PredictionTemplate = {
     title: string
     text: string
   }
+  reflectionGuidance?: string[]
 }

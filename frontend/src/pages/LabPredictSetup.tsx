@@ -1,28 +1,33 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { api } from '../api'
+import { api, type GameInfo } from '../api'
 import { useUser } from '../context/UserContext'
-import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
+import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
-import { normalizeSeasonValue, isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
-import { OBSERVATION_SCOPE_OPTIONS, getObservationScopeLabel, type ObservationScope } from '../utils/observationScope'
+import { isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
+import { inferSplitSeasonLabelForDate } from '../stats/seasonNormalization'
 import type { PredictionTemplate } from '../features/lab/types'
-import { PredictionSessionSetup, PredictionTemplatePicker } from '../features/lab/PredictComponents'
+import { PredictionTemplatePicker } from '../features/lab/PredictComponents'
+import { LiveObservationPanel, type LiveObservationFields } from '../components/game/LiveObservationPanel'
+import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
+import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
 
 export default function LabPredictSetup() {
   const navigate = useNavigate()
   const { user } = useUser()
 
   const [templateId, setTemplateId] = useState<string>('')
-  const [league, setLeague] = useState<string>('DEL')
-  const [teamHome, setTeamHome] = useState<string>('')
-  const [teamAway, setTeamAway] = useState<string>('')
-  const [observedTeam, setObservedTeam] = useState<string>('')
-  const [season, setSeason] = useState<string>('')
-  const [competitionPhase, setCompetitionPhase] = useState<string>('')
-  const [competitionValue, setCompetitionValue] = useState<string>('')
-  const [observationScope, setObservationScope] = useState<ObservationScope>('FULL_GAME')
+  const [fields, setFields] = useState<LiveObservationFields>({
+    league: 'DEL',
+    season: '',
+    competitionPhase: '',
+    competitionValue: '',
+    teamHome: '',
+    teamAway: '',
+    observedTeam: '',
+    observationScope: 'FULL_GAME',
+  })
 
   const { data: labContent, isLoading: isLabContentLoading } = useQuery({
     queryKey: ['lab-content'],
@@ -31,15 +36,26 @@ export default function LabPredictSetup() {
 
   const predictionTemplates = (labContent?.prediction_templates || []) as PredictionTemplate[]
   const selectedTemplate = predictionTemplates.find((template) => template.id === templateId)
-  const competitionConfig = getCompetitionConfig(league)
-  const selectedCompetitionPhase = competitionConfig?.phases.find((phase) => phase.id === competitionPhase) || competitionConfig?.phases[0]
-  const useSplitSeason = isSplitSeasonLeague(league)
+  const selectedModule = (labContent?.modules || []).find((module) => module.id === 'predict')
+  const competitionConfig = getCompetitionConfig(fields.league)
+  const selectedCompetitionPhase =
+    competitionConfig?.phases.find((phase) => phase.id === fields.competitionPhase) || competitionConfig?.phases[0]
+  const useSplitSeason = isSplitSeasonLeague(fields.league)
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
 
+  const catalog = useGameCatalogMatch({
+    league: fields.league,
+    season: fields.season,
+    teamHome: fields.teamHome,
+    teamAway: fields.teamAway,
+    competitionValue: fields.competitionValue,
+    selectedGameId: fields.selectedGameId,
+  })
+
   const { data: teamsResp } = useQuery({
-    queryKey: ['teams', league, season],
-    queryFn: () => api.getTeams(league, season || undefined),
-    enabled: Boolean(league),
+    queryKey: ['teams', fields.league, fields.season],
+    queryFn: () => api.getTeams(fields.league, fields.season || undefined),
+    enabled: Boolean(fields.league),
     staleTime: 0,
     gcTime: 0,
   })
@@ -47,15 +63,56 @@ export default function LabPredictSetup() {
   const availableTeams = useMemo(() => {
     const apiTeams = teamsResp?.teams?.map((team: any) => team.name) || []
     if (apiTeams.length > 0) return apiTeams
-    return getTeamNamesForLeague(league, season || undefined)
-  }, [league, season, teamsResp])
+    return getTeamNamesForLeague(fields.league, fields.season || undefined)
+  }, [fields.league, fields.season, teamsResp])
+
+  useEffect(() => {
+    if (templateId && !predictionTemplates.some((template) => template.id === templateId)) {
+      setTemplateId('')
+    }
+  }, [templateId, predictionTemplates])
+
+  useEffect(() => {
+    if (fields.league !== 'DEL' || fields.season) return
+    const inferred = inferSplitSeasonLabelForDate()
+    if (seasonOptions.includes(inferred)) {
+      setFields((prev) => ({ ...prev, season: inferred }))
+    }
+  }, [fields.league, fields.season, seasonOptions])
 
   useEffect(() => {
     if (!availableTeams.length) return
-    if (teamHome && !availableTeams.includes(teamHome)) setTeamHome('')
-    if (teamAway && !availableTeams.includes(teamAway)) setTeamAway('')
-    if (observedTeam && !availableTeams.includes(observedTeam)) setObservedTeam('')
-  }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
+    setFields((prev) => {
+      const next = { ...prev }
+      let changed = false
+      if (prev.teamHome && !availableTeams.includes(prev.teamHome)) {
+        next.teamHome = ''
+        changed = true
+      }
+      if (prev.teamAway && !availableTeams.includes(prev.teamAway)) {
+        next.teamAway = ''
+        changed = true
+      }
+      if (prev.observedTeam && !availableTeams.includes(prev.observedTeam)) {
+        next.observedTeam = ''
+        changed = true
+      }
+      return changed ? next : prev
+    })
+  }, [fields.league, fields.season, availableTeams])
+
+  useEffect(() => {
+    if (competitionConfig && !fields.competitionPhase) {
+      setFields((prev) => ({
+        ...prev,
+        competitionPhase: competitionConfig.phases[0]?.id || '',
+        competitionValue: '',
+      }))
+    }
+    if (!competitionConfig && fields.competitionPhase) {
+      setFields((prev) => ({ ...prev, competitionPhase: '', competitionValue: '' }))
+    }
+  }, [competitionConfig, fields.competitionPhase])
 
   const createSessionMutation = useMutation({
     mutationFn: (payload: Parameters<typeof api.createSession>[0]) => api.createSession(payload),
@@ -64,16 +121,14 @@ export default function LabPredictSetup() {
     },
   })
 
-  const selectedModule = (labContent?.modules || []).find((module) => module.id === 'predict')
-
-  useEffect(() => {
-    if (!templateId && predictionTemplates.length > 0) {
-      setTemplateId(predictionTemplates[0].id)
-    }
-  }, [templateId, predictionTemplates])
-
   const canCreate = Boolean(
-    user && templateId && league && teamHome && teamAway && observedTeam && teamHome !== teamAway
+    user
+      && templateId
+      && fields.league
+      && fields.teamHome
+      && fields.teamAway
+      && fields.observedTeam
+      && fields.teamHome !== fields.teamAway,
   )
 
   const handleCreate = () => {
@@ -85,11 +140,11 @@ export default function LabPredictSetup() {
       alert('Bitte ein Predict-Template auswählen.')
       return
     }
-    if (!teamHome || !teamAway || teamHome === teamAway) {
+    if (!fields.teamHome || !fields.teamAway || fields.teamHome === fields.teamAway) {
       alert('Bitte zwei unterschiedliche Teams auswählen.')
       return
     }
-    if (!observedTeam) {
+    if (!fields.observedTeam) {
       alert('Bitte das ausgewählte Team festlegen.')
       return
     }
@@ -97,33 +152,50 @@ export default function LabPredictSetup() {
       alert('Bitte eine Wettbewerbsphase wählen.')
       return
     }
+    if (selectedCompetitionPhase) {
+      const numericValue = Number(fields.competitionValue)
+      if (
+        !fields.competitionValue
+        || !Number.isFinite(numericValue)
+        || numericValue < selectedCompetitionPhase.unit.min
+        || numericValue > selectedCompetitionPhase.unit.max
+      ) {
+        alert(
+          `Bitte ${selectedCompetitionPhase.unit.label} ${selectedCompetitionPhase.unit.min}-${selectedCompetitionPhase.unit.max} eingeben.`,
+        )
+        return
+      }
+    }
 
-    const normalizedSeason = normalizeSeasonValue(season, league)
-    const gameInfo: any = {
-      league,
-      team_home: teamHome,
-      team_away: teamAway,
-      observed_team: observedTeam,
-      observed_team_name: observedTeam,
-      observed_team_id: observedTeam,
+    const normalizedSeason = catalog.normalizedSeason
+    const matched = catalog.matchedCatalogGame
+    const gameInfo: GameInfo = {
+      league: fields.league,
+      team_home: fields.teamHome,
+      team_away: fields.teamAway,
+      observed_team: fields.observedTeam,
+      observed_team_name: fields.observedTeam,
+      observed_team_id: fields.observedTeam,
       date: new Date().toISOString(),
     }
 
     if (normalizedSeason) gameInfo.season = normalizedSeason
+    const dummyGame = isDummyCatalogGame(matched)
+    if (matched?.id && !dummyGame) gameInfo.game_id = matched.id
+    if (dummyGame) gameInfo.is_dummy = true
+    if (matched?.date) {
+      gameInfo.date = `${matched.date}T${matched.time || '19:00'}:00`
+    }
 
     if (selectedCompetitionPhase) {
-      const unitValue = competitionValue.trim()
-      if (!unitValue) {
-        alert(`Bitte ${selectedCompetitionPhase.unit.label} eingeben.`)
-        return
-      }
+      const unitValue = fields.competitionValue.trim()
       gameInfo.competition_phase = selectedCompetitionPhase.id
       gameInfo.competition_phase_label = selectedCompetitionPhase.label
       gameInfo.competition_unit_type = selectedCompetitionPhase.unit.type
       gameInfo.competition_unit_label = selectedCompetitionPhase.unit.label
       gameInfo.competition_unit_value = unitValue
       gameInfo.matchday = formatCompetitionContext({
-        league,
+        league: fields.league,
         season: normalizedSeason || undefined,
         competition_phase: selectedCompetitionPhase.id,
         competition_phase_label: selectedCompetitionPhase.label,
@@ -137,12 +209,13 @@ export default function LabPredictSetup() {
       module_id: 'LAB_PREDICT',
       goal: `Predict: ${selectedTemplate.title}`,
       confidence: 3,
-      observation_scope: observationScope,
+      observation_scope: fields.observationScope,
       session_method: 'live_watch',
       game_info: gameInfo,
-      observed_team: observedTeam,
-      observed_team_id: observedTeam,
-      observed_team_name: observedTeam,
+      game_id: dummyGame ? undefined : (matched?.id || undefined),
+      observed_team: fields.observedTeam,
+      observed_team_id: fields.observedTeam,
+      observed_team_name: fields.observedTeam,
       learning_area: 'lab',
       lab_mode: 'predict',
       lab_template_id: selectedTemplate.id,
@@ -150,10 +223,10 @@ export default function LabPredictSetup() {
   }
 
   return (
-    <div style={{ display: 'grid', gap: '1rem', maxWidth: '760px', margin: '0 auto' }}>
+    <div className="ui-page-shell" style={{ display: 'grid', gap: '1rem', maxWidth: '600px', margin: '0 auto' }}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Lab · Predict Setup</h1>
-        <p className="ui-page-lead">Vorhersage-Übung konfigurieren.</p>
+        <p className="ui-page-lead">Wähle zuerst, was du vorhersagen möchtest. Danach legst du den Spielkontext fest.</p>
       </header>
 
       {isLabContentLoading && <div className="card">Lade Lab-Inhalte...</div>}
@@ -173,9 +246,15 @@ export default function LabPredictSetup() {
       )}
 
       {selectedTemplate && (
-        <div className="card" style={{ marginBottom: 0 }}>
-          <h2 style={{ marginTop: 0 }}>{selectedTemplate.title}</h2>
+        <div className="card ui-surface ui-surface--section ui-flat-mobile" style={{ marginBottom: 0 }}>
+          {selectedTemplate.shortTitle && (
+            <p style={{ margin: 0, fontSize: '0.72rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(148,163,184,0.95)' }}>
+              {selectedTemplate.shortTitle}
+            </p>
+          )}
+          <h2 style={{ marginTop: '0.25rem' }}>{selectedTemplate.title}</h2>
           <p>{selectedTemplate.description}</p>
+          {selectedTemplate.learningGoal && <p>{selectedTemplate.learningGoal}</p>}
           {selectedTemplate.relatedAcademyDrills?.length ? (
             <p style={{ marginBottom: 0 }}>
               Passende Akademie-Grundlage: {selectedTemplate.relatedAcademyDrills.join(', ')}
@@ -184,125 +263,33 @@ export default function LabPredictSetup() {
         </div>
       )}
 
-      <PredictionSessionSetup>
-        <label style={{ display: 'grid', gap: '0.4rem' }}>
-          Liga
-          <select className="appSelect" value={league} onChange={(event) => {
-            setLeague(event.target.value)
-            setTeamHome('')
-            setTeamAway('')
-            setObservedTeam('')
-          }}>
-            <option value="">-- Liga wählen --</option>
-            {LEAGUES.map((value) => (
-              <option key={value} value={value}>{value.replace(/_/g, ' ')}</option>
-            ))}
-          </select>
-        </label>
+      {selectedTemplate && (
+        <div className="card ui-surface ui-surface--primary primary-card">
+          <h2 className="ui-section-title">Session vorbereiten</h2>
+          <LiveObservationPanel
+            intro="Liga und Saison wählen, dann ein Spiel. Heim-/Auswärtsteam, Datum und Spieltag kommen aus dem Spielplan. Welches Team du beobachtest, bleibt deine Auswahl."
+            fields={fields}
+            onChange={(patch) => setFields((prev) => ({ ...prev, ...patch }))}
+            availableTeams={availableTeams}
+            catalog={catalog}
+          />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginTop: '0.8rem' }}>
-          <label style={{ display: 'grid', gap: '0.4rem' }}>
-            Heimteam
-            <select className="appSelect" value={teamHome} onChange={(event) => setTeamHome(event.target.value)}>
-              <option value="">-- Heimteam --</option>
-              {availableTeams.map((team) => (
-                <option key={team} value={team}>{team}</option>
-              ))}
-            </select>
-          </label>
+          <button
+            className="btn"
+            onClick={handleCreate}
+            disabled={!canCreate || createSessionMutation.isPending}
+            style={{ marginTop: '1rem', width: '100%', minHeight: '50px' }}
+          >
+            {createSessionMutation.isPending ? 'Session wird erstellt...' : 'Predict-Session starten'}
+          </button>
 
-          <label style={{ display: 'grid', gap: '0.4rem' }}>
-            Auswärtsteam
-            <select className="appSelect" value={teamAway} onChange={(event) => setTeamAway(event.target.value)}>
-              <option value="">-- Auswärtsteam --</option>
-              {availableTeams.map((team) => (
-                <option key={team} value={team}>{team}</option>
-              ))}
-            </select>
-          </label>
+          {createSessionMutation.error && (
+            <p style={{ color: '#ff9ea3', marginBottom: 0 }}>
+              Fehler beim Erstellen: {(createSessionMutation.error as Error).message}
+            </p>
+          )}
         </div>
-
-        <div style={{ marginTop: '0.8rem', display: 'grid', gap: '0.45rem' }}>
-          <strong>Ausgewähltes Team</strong>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <input type="radio" checked={observedTeam === teamHome} onChange={() => setObservedTeam(teamHome)} disabled={!teamHome} />
-            {teamHome || 'Heimteam'}
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <input type="radio" checked={observedTeam === teamAway} onChange={() => setObservedTeam(teamAway)} disabled={!teamAway} />
-            {teamAway || 'Auswärtsteam'}
-          </label>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginTop: '0.8rem' }}>
-          <label style={{ display: 'grid', gap: '0.4rem' }}>
-            Saison (optional)
-            <select className="appSelect" value={season} onChange={(event) => setSeason(event.target.value)}>
-              <option value="">-- Saison wählen --</option>
-              {seasonOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </label>
-
-          <label style={{ display: 'grid', gap: '0.4rem' }}>
-            Beobachtungsumfang
-            <select className="appSelect" value={observationScope} onChange={(event) => setObservationScope(event.target.value as ObservationScope)}>
-              {OBSERVATION_SCOPE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-            <span style={{ color: 'rgba(216,225,255,0.75)', fontSize: '0.85rem' }}>Aktuell: {getObservationScopeLabel(observationScope)}</span>
-          </label>
-        </div>
-
-        {competitionConfig && selectedCompetitionPhase && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginTop: '0.8rem' }}>
-            <label style={{ display: 'grid', gap: '0.4rem' }}>
-              Wettbewerb
-              <select
-                className="appSelect"
-                value={selectedCompetitionPhase.id}
-                onChange={(event) => {
-                  setCompetitionPhase(event.target.value)
-                  setCompetitionValue('')
-                }}
-              >
-                {competitionConfig.phases.map((phase) => (
-                  <option key={phase.id} value={phase.id}>{phase.label}</option>
-                ))}
-              </select>
-            </label>
-
-            <label style={{ display: 'grid', gap: '0.4rem' }}>
-              {selectedCompetitionPhase.unit.label}
-              <input
-                type="number"
-                value={competitionValue}
-                onChange={(event) => setCompetitionValue(event.target.value)}
-                min={selectedCompetitionPhase.unit.min}
-                max={selectedCompetitionPhase.unit.max}
-                style={{ width: '100%', padding: '0.55rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', background: '#050712', color: '#f7f7ff' }}
-              />
-            </label>
-          </div>
-        )}
-
-        <button
-          className="btn"
-          onClick={handleCreate}
-          disabled={!canCreate || createSessionMutation.isPending}
-          style={{ marginTop: '1rem', width: '100%', minHeight: '50px' }}
-        >
-          {createSessionMutation.isPending ? 'Session wird erstellt...' : 'Predict-Session starten'}
-        </button>
-
-        {createSessionMutation.error && (
-          <p style={{ color: '#ff9ea3', marginBottom: 0 }}>
-            Fehler beim Erstellen: {(createSessionMutation.error as Error).message}
-          </p>
-        )}
-      </PredictionSessionSetup>
+      )}
     </div>
   )
 }

@@ -4,6 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 import { PatternLogDrill, PatternConditionDrill, PatternInvariantDrill, PatternAttributionDrill, TendencyProfileDrill } from "../../features/patternLog";
+import { BeforeAfterCompareDrill } from "../../features/beforeAfterCompare/BeforeAfterCompareDrill";
+import { ChangeTimelineDrill } from "../../features/changeTimeline/ChangeTimelineDrill";
+import { TriggerHypothesisDrill } from "../../features/triggerHypothesis/TriggerHypothesisDrill";
+import { InteractionChainDrill } from "../../features/interactionChain/InteractionChainDrill";
+import { AdjustmentProfileDrill } from "../../features/adjustmentProfile/AdjustmentProfileDrill";
 import FoundationLessonDrill from "../../features/foundation/FoundationLessonDrill";
 
 interface DrillRendererV2Props {
@@ -352,6 +357,21 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 		case "tendency_profile":
 		case "pattern_tendency_profile":
 			return <TendencyProfileDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "before_after_compare":
+		case "state_compare":
+			return <BeforeAfterCompareDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "change_timeline":
+		case "change_point_observation":
+			return <ChangeTimelineDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "trigger_hypothesis":
+		case "adjustment_attribution":
+			return <TriggerHypothesisDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "interaction_chain":
+		case "problem_adjustment_response":
+			return <InteractionChainDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "adjustment_profile":
+		case "multi_change_synthesis":
+			return <AdjustmentProfileDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "observation_log_drill":
 		case "impact_classification_observation":
 		case "support_classification_observation":
@@ -718,6 +738,28 @@ function finalizeActiveStroke(annotations: PaintAnnotation[], layerId: string): 
 	return annotations;
 }
 
+function undoLastStrokeOnLayer(annotations: PaintAnnotation[], layerId: string): PaintAnnotation[] {
+	const idx = annotations.findIndex((item) => item.layerId === layerId);
+	if (idx === -1) return annotations;
+	if (annotations[idx].strokes.length === 0) return annotations;
+
+	const next = annotations.map((item) => ({
+		...item,
+		strokes: item.strokes.map((stroke) => [...stroke]),
+	}));
+	next[idx] = {
+		...next[idx],
+		strokes: next[idx].strokes.slice(0, -1),
+	};
+	return next.filter((item) => item.strokes.length > 0 || item.layerId === layerId);
+}
+
+function layerStrokeCount(annotations: PaintAnnotation[], layerId: string): number {
+	const annotation = annotations.find((item) => item.layerId === layerId);
+	if (!annotation) return 0;
+	return annotation.strokes.filter(isUsableStroke).length;
+}
+
 function serializePaintAnnotations(annotations: PaintAnnotation[]): PaintAnnotation[] {
 	return annotations
 		.map((annotation) => ({
@@ -1021,10 +1063,17 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const paintedLayerCount = new Set(paintedLayerIds).size;
 	const canSave = paintedLayerCount >= minimumLayers && !isComplete;
 
+	const undoLastStroke = (layerId: string) => {
+		if (isDrawingRef.current) return;
+		persistAnnotations(undoLastStrokeOnLayer(annotationsRef.current, layerId));
+	};
+
 	const clearLayer = (layerId: string) => {
 		const nextAnnotations = annotationsRef.current.filter((annotation) => annotation.layerId !== layerId);
 		persistAnnotations(nextAnnotations);
 	};
+
+	const canUndoActiveLayer = !isDrawing && layerStrokeCount(localAnnotations, selectedLayerId) > 0;
 
 	const clearAll = () => {
 		annotationsRef.current = [];
@@ -1216,6 +1265,23 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 					</div>
 
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem", marginBottom: "0.5rem" }}>
+						<button
+							type="button"
+							onClick={() => undoLastStroke(selectedLayerId)}
+							disabled={!canUndoActiveLayer}
+							title="Nur den letzten Strich der aktiven Farbe entfernen"
+							style={{
+								padding: "0.34rem 0.65rem",
+								borderRadius: "6px",
+								border: "1px solid rgba(148,163,184,0.4)",
+								background: "rgba(255,255,255,0.04)",
+								color: canUndoActiveLayer ? "#cbd5e1" : "rgba(203,213,225,0.45)",
+								fontSize: "0.82rem",
+								cursor: canUndoActiveLayer ? "pointer" : "not-allowed",
+							}}
+						>
+							Letzten Strich zurück
+						</button>
 						<button
 							type="button"
 							onClick={() => clearLayer(selectedLayerId)}

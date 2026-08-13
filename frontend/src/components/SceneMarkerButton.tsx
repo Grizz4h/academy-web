@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { api, type Session, type Drill } from '../api'
 import { buildSceneCreatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { isDummySession } from '../utils/sessionEligibility'
 import { formatGameTimeInput } from '../utils/sceneHelpers'
+import { UiButton, UiSheet, UiSheetActions } from './ui'
 import styles from './SceneMarkerButton.module.css'
 
 interface SceneMarkerExtension {
@@ -40,21 +40,12 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
       )
     : []
 
-  // Focus game_time after portal mounts; lock body scroll while open
   useEffect(() => {
     if (!showModal) return
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-
     const focusTimer = window.setTimeout(() => {
       inputRef.current?.focus({ preventScroll: true })
     }, 80)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.clearTimeout(focusTimer)
-    }
+    return () => window.clearTimeout(focusTimer)
   }, [showModal])
 
   const handleOpen = () => {
@@ -197,130 +188,93 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         )}
       </div>
 
-      {/* Modal — portaled to body so fixed centering ignores page scroll / transformed parents */}
-      {showModal && createPortal(
-        <div
-          className={styles.overlay}
-          onClick={e => { if (e.target === e.currentTarget) handleClose() }}
-        >
-          <div
-            className={styles.panel}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Szene merken"
-            onKeyDown={handleKeyDown}
-          >
-            <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.2rem', color: '#f1f5f9' }}>🎬 Szene merken</h3>
-
-            {/* Context info */}
-            <div style={{
-              fontSize: '0.8rem', color: '#94a3b8', marginBottom: '1.2rem',
-              padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.05)',
-              borderRadius: '0.4rem', lineHeight: 1.6,
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}>
-              {session.game_info?.team_home && session.game_info?.team_away && (
-                <div><strong style={{ color: '#cbd5e1' }}>{session.game_info.team_home}</strong> vs <strong style={{ color: '#cbd5e1' }}>{session.game_info.team_away}</strong></div>
-              )}
-              <div>{phaseLabel} · {activeDrill?.title || session.module_id}</div>
-              {session.game_info?.league && <div>{session.game_info.league}{session.game_info.season ? ` · ${session.game_info.season}` : ''}</div>}
-            </div>
-
-            {/* Game time input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
-              Minute <span style={{ color: '#f87171' }}>*</span>
-            </label>
-            <input
-              ref={inputRef}
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              value={gameTime}
-              onChange={e => {
-                setGameTime(formatGameTimeInput(e.target.value))
-              }}
-              placeholder="13:42"
-              style={{
-                width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
-                border: error ? '1.5px solid #f87171' : '1.5px solid #334155',
-                background: '#050a14', color: '#f1f5f9',
-                fontSize: '1.25rem', fontWeight: 700, letterSpacing: '0.05em',
-                boxSizing: 'border-box', marginBottom: '0.3rem',
-              }}
-            />
-            {error && (
-              <div style={{ color: '#f87171', fontSize: '0.8rem', marginBottom: '0.5rem' }}>{error}</div>
-            )}
-
-            {sceneMarkerExtensions.map((extension) => (
-              <div key={extension.key} style={{ marginTop: '0.9rem' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
-                  {extension.label} <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
-                </label>
-                <select
-                  className="appSelect"
-                  value={extensionValues[extension.key] || ''}
-                  onChange={e => setExtensionValues(prev => ({ ...prev, [extension.key]: e.target.value }))}
-                  style={{ width: '100%' }}
-                >
-                  <option value="">Auswählen...</option>
-                  {extension.options.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
+      <UiSheet
+        open={showModal}
+        onClose={handleClose}
+        title="🎬 Szene merken"
+        label="Szene merken"
+        meta={`${phaseLabel}${activeDrill?.title ? ` · ${activeDrill.title}` : session.module_id ? ` · ${session.module_id}` : ''}`}
+        onKeyDown={handleKeyDown}
+      >
+        {(session.game_info?.team_home || session.game_info?.league) && (
+          <div className={styles.context}>
+            {session.game_info?.team_home && session.game_info?.team_away && (
+              <div>
+                <strong style={{ color: '#f7f7ff' }}>{session.game_info.team_home}</strong>
+                {' vs '}
+                <strong style={{ color: '#f7f7ff' }}>{session.game_info.team_away}</strong>
               </div>
-            ))}
-
-            {/* Note input */}
-            <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem', marginTop: '0.9rem', fontSize: '0.95rem', color: '#e2e8f0' }}>
-              Kurze Notiz <span style={{ color: '#64748b', fontWeight: 400 }}>(optional)</span>
-            </label>
-            <textarea
-              value={note}
-              onChange={e => setNote(e.target.value)}
-              placeholder="z. B. guter Outlet-Moment, Turnover, interessante Rotation…"
-              rows={2}
-              maxLength={300}
-              style={{
-                width: '100%', padding: '0.6rem 0.75rem', borderRadius: '0.4rem',
-                border: '1.5px solid #334155', background: '#050a14', color: '#f1f5f9',
-                fontSize: '0.95rem', resize: 'vertical', boxSizing: 'border-box',
-              }}
-            />
-
-            {/* Actions */}
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.2rem', justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                onClick={handleClose}
-                disabled={isSaving}
-                style={{
-                  padding: '0.55rem 1.2rem', borderRadius: '0.4rem',
-                  border: '1px solid #334155', background: 'transparent',
-                  color: '#94a3b8', cursor: 'pointer', fontWeight: 500,
-                }}
-              >
-                Abbrechen
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                style={{
-                  padding: '0.55rem 1.4rem', borderRadius: '0.4rem',
-                  border: 'none', background: '#4fc3f7',
-                  color: '#0a0a1a', cursor: isSaving ? 'not-allowed' : 'pointer',
-                  fontWeight: 700, fontSize: '0.95rem',
-                  opacity: isSaving ? 0.7 : 1,
-                }}
-              >
-                {isSaving ? 'Speichere…' : '🎬 Speichern'}
-              </button>
-            </div>
+            )}
+            {session.game_info?.league && (
+              <div>
+                {session.game_info.league}
+                {session.game_info.season ? ` · ${session.game_info.season}` : ''}
+              </div>
+            )}
           </div>
-        </div>,
-        document.body,
-      )}
+        )}
+
+        <label className={styles.fieldLabel}>
+          Minute <span className={styles.required}>*</span>
+        </label>
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          value={gameTime}
+          onChange={e => {
+            setGameTime(formatGameTimeInput(e.target.value))
+          }}
+          placeholder="13:42"
+          className={`${styles.input} ${error ? styles.inputError : ''}`}
+        />
+        {error && <p className={styles.error}>{error}</p>}
+
+        {sceneMarkerExtensions.map((extension) => (
+          <div key={extension.key} className={styles.field}>
+            <label className={styles.fieldLabel}>
+              {extension.label} <span className={styles.optional}>(optional)</span>
+            </label>
+            <select
+              className="appSelect"
+              value={extensionValues[extension.key] || ''}
+              onChange={e => setExtensionValues(prev => ({ ...prev, [extension.key]: e.target.value }))}
+              style={{ width: '100%' }}
+            >
+              <option value="">Auswählen...</option>
+              {extension.options.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        ))}
+
+        <label className={`${styles.fieldLabel} ${styles.field}`}>
+          Kurze Notiz <span className={styles.optional}>(optional)</span>
+        </label>
+        <textarea
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          placeholder="z. B. guter Outlet-Moment, Turnover, interessante Rotation…"
+          rows={2}
+          maxLength={300}
+          className={styles.textarea}
+        />
+
+        <UiSheetActions
+          secondary={
+            <UiButton variant="secondary" onClick={handleClose} disabled={isSaving}>
+              Abbrechen
+            </UiButton>
+          }
+          primary={
+            <UiButton onClick={handleSave} disabled={isSaving}>
+              {isSaving ? 'Speichere…' : '🎬 Speichern'}
+            </UiButton>
+          }
+        />
+      </UiSheet>
     </>
   )
 }

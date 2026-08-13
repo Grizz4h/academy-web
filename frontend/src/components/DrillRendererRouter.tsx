@@ -2,6 +2,7 @@ import DrillRendererV1 from '../renderers/v1/DrillRenderer';
 import DrillRendererV2 from '../renderers/v2/DrillRenderer';
 import DrillRendererV3 from '../renderers/v3/DrillRenderer';
 import DrillRendererV4 from '../renderers/v4/DrillRenderer';
+import { pickRendererVersion } from './drillRendererRouting';
 
 interface DrillRendererRouterProps {
   drill: any;
@@ -13,24 +14,13 @@ interface DrillRendererRouterProps {
   phase?: string;
 }
 
-function pickRenderer(moduleId?: string, drillType?: string): 'v1' | 'v2' | 'v3' | 'v4' {
-  if (!moduleId) return 'v2';
-  // Pattern Log and other modern multi-obs mechanics always use V2
-  const type = String(drillType || '').toLowerCase()
-  if (type === 'pattern_log' || type === 'multi_observation_pattern' || type === 'pattern_condition' || type === 'pattern_condition_matrix' || type === 'pattern_invariant' || type === 'pattern_invariant_map' || type === 'pattern_attribution' || type === 'pattern_attribution_board' || type === 'tendency_profile' || type === 'pattern_tendency_profile') return 'v2';
-  // V4 for Meta-Scan modules (M* or contains META)
-  if (moduleId.startsWith('M') || moduleId.includes('META')) return 'v4';
-  // V3 for E-Track modules (legacy checkins)
-  if (moduleId.startsWith('E')) return 'v3';
-  // V1 for A1 legacy
-  if (moduleId === 'A1') return 'v1';
-  // V2 default
-  return 'v2';
-}
-
+/**
+ * Track letters no longer select the renderer.
+ * New mechanics extend V2; V3 remains only as unused legacy fallback.
+ */
 export function DrillRendererRouter(props: DrillRendererRouterProps) {
   const moduleId = props?.session?.module_id;
-  const renderer = pickRenderer(moduleId, props?.drill?.drill_type);
+  const renderer = pickRendererVersion(moduleId, props?.drill);
 
   if (renderer === 'v1') {
     return <DrillRendererV1 drill={props.drill} initialAnswers={props.initialAnswers} onChangeAnswers={props.onChangeAnswers} />;

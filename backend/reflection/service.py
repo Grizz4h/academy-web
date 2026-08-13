@@ -147,11 +147,12 @@ def _call_openai(payload: Dict[str, Any], cfg: Dict[str, str]) -> Tuple[AiSessio
 def generate_session_reflection(
     session: Dict[str, Any],
     curriculum: Optional[Dict[str, Any]] = None,
+    lab_content: Optional[Dict[str, Any]] = None,
 ) -> StoredAiReflection:
     cfg = _config()
     module_id = session.get("module_id")
     goals = _module_learning_goals(curriculum, module_id)
-    payload = build_reflection_payload(session, goals)
+    payload = build_reflection_payload(session, goals, lab_content)
     content, usage = _call_openai(payload, cfg)
 
     return StoredAiReflection(

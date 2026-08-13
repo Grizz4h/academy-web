@@ -30,11 +30,39 @@ export type LockerItemView = {
   isFavorite: boolean
   hidden: boolean
   silhouette: boolean
+  mystery: boolean
   displayName: string
   displayDescription?: string
   artworkUrl?: string
   originLabel: string
   unlockHint?: string
+}
+
+export function formatUnlockHow(origin: RewardOrigin): string {
+  switch (origin.type) {
+    case 'achievement':
+      return `Achievement · ${origin.achievementId}`
+    case 'level':
+      return `Erreiche Level ${origin.level}`
+    case 'track_mastery':
+      return `Track Mastery · ${origin.trackId}`
+    case 'starter':
+      return 'Starter-Item'
+    case 'pux_shop':
+      return 'Im Pux Shop kaufen'
+    case 'battle_pass':
+      return `Battle Pass · ${origin.seasonId}`
+    case 'collection':
+      return `Collection · ${origin.collectionId}`
+    case 'event':
+      return `Event · ${origin.eventId}`
+    case 'secret':
+      return 'Geheimnis — weiter spielen'
+    case 'artist_series':
+      return `Artist Series · ${origin.seriesId}`
+    default:
+      return 'Noch nicht freigeschaltet'
+  }
 }
 
 export function formatOriginLabel(origin: RewardOrigin): string {
@@ -65,34 +93,27 @@ export function formatOriginLabel(origin: RewardOrigin): string {
 }
 
 function artworkFor(def: CosmeticDefinition): string | undefined {
-  const assetId = def.assetId || (def.type === 'avatar' || def.type === 'banner' || def.type === 'emblem' ? def.id : undefined)
-  if (!assetId) return undefined
-  if (def.type === 'avatar' || def.type === 'banner' || def.type === 'emblem') {
-    return (
-      getAvatarAsset(assetId)?.src ||
-      getBannerAsset(assetId)?.src ||
-      getEmblemAsset(assetId)?.src
-    )
-  }
-  return (
-    getAvatarAsset(assetId)?.src ||
-    getBannerAsset(assetId)?.src ||
-    getEmblemAsset(assetId)?.src
-  )
+  const assetId = def.assetId || def.id
+  if (def.type === 'avatar') return getAvatarAsset(assetId)?.src
+  if (def.type === 'banner') return getBannerAsset(assetId)?.src
+  if (def.type === 'emblem') return getEmblemAsset(assetId)?.src
+  return undefined
 }
 
 export function selectLockerItems(
   state: ProgressionViewState & {
     favoriteCosmeticIds?: string[]
   },
+  options?: { revealAll?: boolean },
 ): LockerItemView[] {
+  const revealAll = options?.revealAll === true
   const favorites = new Set(state.favoriteCosmeticIds || [])
   return COSMETIC_CATALOG.map((definition) => {
     const owned = isCosmeticOwned(state, definition.id)
     const unlock = state.unlockedCosmetics?.[definition.id]
     const visibility = definition.visibility || 'visible'
-    const hidden = !owned && visibility === 'secret'
-    const silhouette = !owned && visibility === 'silhouette'
+    const mystery = !revealAll && !owned && visibility === 'secret'
+    const silhouette = !revealAll && !owned && visibility === 'silhouette'
     const isNew = Boolean(owned && unlock && !unlock.seenAt && unlock.earnKind !== 'starter' && !isStarterCosmetic(definition.id))
 
     return {
@@ -100,29 +121,24 @@ export function selectLockerItems(
       owned,
       isNew,
       isFavorite: favorites.has(definition.id),
-      hidden,
+      hidden: mystery,
       silhouette,
-      displayName: hidden ? '???' : silhouette ? definition.name : definition.name,
-      displayDescription: hidden
-        ? undefined
-        : silhouette
-          ? 'Details verborgen, bis freigeschaltet.'
-          : definition.description || definition.flavorText,
-      artworkUrl: hidden || silhouette ? undefined : artworkFor(definition),
-      originLabel: hidden ? '???' : formatOriginLabel(definition.origin),
+      mystery,
+      displayName: mystery ? 'Geheimnis' : definition.name,
+      displayDescription: mystery
+        ? 'Noch nicht entdeckt.'
+        : definition.description || definition.flavorText,
+      artworkUrl: mystery ? undefined : artworkFor(definition),
+      originLabel: mystery ? 'Geheimnis' : formatOriginLabel(definition.origin),
       unlockHint: owned
         ? unlock?.unlockedAt
           ? `Freigeschaltet: ${new Date(unlock.unlockedAt).toLocaleDateString('de-DE')}`
           : 'Freigeschaltet'
-        : hidden
-          ? undefined
-          : definition.origin.type === 'pux_shop'
-            ? 'Im Pux Shop erhältlich'
-            : definition.origin.type === 'achievement'
-              ? `Achievement: ${definition.origin.achievementId}`
-              : formatOriginLabel(definition.origin),
+        : mystery
+          ? 'Geheimnis — weiter spielen'
+          : formatUnlockHow(definition.origin),
     }
-  }).filter((item) => !item.hidden)
+  })
 }
 
 export function filterLockerItems(

@@ -1,6 +1,14 @@
 import { useMemo, useState } from 'react'
-import type { CSSProperties } from 'react'
 import type { Drill, Session } from '../api'
+import {
+  UiButton,
+  UiSheet,
+  UiSheetActions,
+  UiSheetBack,
+  UiSheetChoice,
+  UiSheetChoiceList,
+  uiSheetStyles,
+} from './ui'
 import { PeriodCheckin } from '../renderers/v2/DrillRenderer'
 import specialTeamsCatalog from '../data/sidequests/special_teams.json'
 import numericalSituationCatalog from '../data/sidequests/numerical_situation.json'
@@ -278,16 +286,6 @@ export function SpecialTeamsSidequestButton({
     : currentPhase === 'P3' ? '3. Drittel'
     : currentPhase
 
-  const choiceButtonStyle: CSSProperties = {
-    textAlign: 'left',
-    padding: '0.85rem 0.95rem',
-    borderRadius: '0.65rem',
-    border: '1px solid rgba(251,191,36,0.35)',
-    background: 'rgba(251,191,36,0.08)',
-    color: '#fef3c7',
-    cursor: 'pointer',
-  }
-
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
@@ -326,384 +324,235 @@ export function SpecialTeamsSidequestButton({
         )}
       </div>
 
-      {open && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.78)',
-            zIndex: 2100,
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-            padding: '0.75rem',
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) handleClose()
-          }}
-        >
-          <div
-            className="card"
-            style={{
-              width: '100%',
-              maxWidth: 560,
-              maxHeight: '92vh',
-              overflowY: 'auto',
-              margin: '0 auto',
-              padding: '1.2rem 1.25rem',
-              borderTopLeftRadius: '1rem',
-              borderTopRightRadius: '1rem',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.15rem' }}>⚡ Special Teams</h3>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.62)' }}>
-                  {phaseLabel}
-                  {activeDrill?.title ? ` · ${activeDrill.title}` : ''}
-                  {observedTeam ? ` · ${observedTeam}` : ''}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleClose}
-                style={{
-                  border: '1px solid rgba(255,255,255,0.25)',
-                  background: 'transparent',
-                  color: '#f7f7ff',
-                  borderRadius: '999px',
-                  padding: '0.25rem 0.7rem',
-                  cursor: 'pointer',
-                  fontSize: '0.82rem',
-                }}
-              >
-                Schließen
-              </button>
-            </div>
-
-            {step === 'category' && (
-              <div>
-                <p style={{ marginTop: 0, marginBottom: '0.85rem', color: 'rgba(255,255,255,0.82)' }}>
-                  Was beobachtest du gerade?
-                </p>
-                <div style={{ display: 'grid', gap: '0.55rem' }}>
-                  {([
-                    { id: 'power_play' as const, label: 'Powerplay', hint: 'Beobachtetes Team spielt fünf gegen vier' },
-                    { id: 'penalty_kill' as const, label: 'Penalty Kill', hint: 'Beobachtetes Team spielt vier gegen fünf' },
-                    { id: 'numerical_situation' as const, label: 'Numerical Situation', hint: '5v3, 6v5, Empty Net und andere seltene Lagen' },
-                  ]).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        setHubCategory(item.id)
-                        setError(null)
-                        if (item.id === 'numerical_situation') {
-                          setStep('num_situation')
-                          return
-                        }
-                        setGameState(item.id)
-                        setStep('st_pick')
-                      }}
-                      style={choiceButtonStyle}
-                    >
-                      <div style={{ fontWeight: 700 }}>{item.label}</div>
-                      <div style={{ marginTop: '0.2rem', fontSize: '0.82rem', color: 'rgba(254,243,199,0.75)' }}>{item.hint}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {step === 'st_pick' && stGameStateConfig && (
-              <div>
-                <button
-                  type="button"
+      <UiSheet
+        open={open}
+        onClose={handleClose}
+        title="⚡ Special Teams"
+        label="Special Teams"
+        meta={`${phaseLabel}${activeDrill?.title ? ` · ${activeDrill.title}` : ''}${observedTeam ? ` · ${observedTeam}` : ''}`}
+      >
+        {step === 'category' && (
+          <div>
+            <p style={{ marginTop: 0, marginBottom: '0.85rem', color: 'rgba(255,255,255,0.82)' }}>
+              Was beobachtest du gerade?
+            </p>
+            <UiSheetChoiceList>
+              {([
+                { id: 'power_play' as const, label: 'Powerplay', hint: 'Beobachtetes Team spielt fünf gegen vier' },
+                { id: 'penalty_kill' as const, label: 'Penalty Kill', hint: 'Beobachtetes Team spielt vier gegen fünf' },
+                { id: 'numerical_situation' as const, label: 'Numerical Situation', hint: '5v3, 6v5, Empty Net und andere seltene Lagen' },
+              ]).map((item) => (
+                <UiSheetChoice
+                  key={item.id}
+                  title={item.label}
+                  hint={item.hint}
                   onClick={() => {
-                    setStep('category')
-                    setHubCategory(null)
-                    setGameState(null)
+                    setHubCategory(item.id)
                     setError(null)
-                  }}
-                  style={{
-                    marginBottom: '0.7rem',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#8fd3df',
-                    cursor: 'pointer',
-                    padding: 0,
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  ← Zurück
-                </button>
-                <h4 style={{ margin: '0 0 0.35rem' }}>{stGameStateConfig.label}</h4>
-                <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
-                  {stGameStateConfig.description}
-                </p>
-                <div style={{ display: 'grid', gap: '0.5rem' }}>
-                  {stMiniDrills.map((drill) => (
-                    <button
-                      key={drill.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedDrill(drill)
-                        setMiniAnswers({})
-                        setStep('drill')
-                        setError(null)
-                      }}
-                      style={{
-                        textAlign: 'left',
-                        padding: '0.8rem 0.9rem',
-                        borderRadius: '0.65rem',
-                        border: '1px solid rgba(255,255,255,0.16)',
-                        background: 'rgba(255,255,255,0.04)',
-                        color: '#f7f7ff',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div style={{ fontWeight: 700 }}>{drill.title}</div>
-                      {drill.description && (
-                        <div style={{ marginTop: '0.2rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.68)', lineHeight: 1.35 }}>
-                          {drill.description}
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {step === 'num_situation' && (
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep('category')
-                    setHubCategory(null)
-                    setSituationType(null)
-                    setError(null)
-                  }}
-                  style={{
-                    marginBottom: '0.7rem',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#8fd3df',
-                    cursor: 'pointer',
-                    padding: 0,
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  ← Zurück
-                </button>
-                <h4 style={{ margin: '0 0 0.35rem' }}>Welche Sondersituation beobachtest du?</h4>
-                <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
-                  Kurz mitnehmen, wenn Hockey sie dir gerade schenkt.
-                </p>
-                <div style={{ display: 'grid', gap: '0.5rem' }}>
-                  {situationOptions.map((item: any) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        const nextType = item.id as NumericalSituationType
-                        const perspectives = Array.isArray(item.perspectives) ? item.perspectives : []
-                        setSituationType(nextType)
-                        setError(null)
-                        if (perspectives.length === 1) {
-                          const only = perspectives[0] as SidequestPerspective
-                          setPerspective(only)
-                          openNumericalTemplate(nextType, only)
-                          return
-                        }
-                        setPerspective(null)
-                        setStep('num_perspective')
-                      }}
-                      style={{
-                        textAlign: 'left',
-                        padding: '0.8rem 0.9rem',
-                        borderRadius: '0.65rem',
-                        border: '1px solid rgba(255,255,255,0.16)',
-                        background: 'rgba(255,255,255,0.04)',
-                        color: '#f7f7ff',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div style={{ fontWeight: 700 }}>{item.label}</div>
-                      {item.hint && (
-                        <div style={{ marginTop: '0.2rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.68)', lineHeight: 1.35 }}>
-                          {item.hint}
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {step === 'num_perspective' && situationType && (
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep('num_situation')
-                    setPerspective(null)
-                    setError(null)
-                  }}
-                  style={{
-                    marginBottom: '0.7rem',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#8fd3df',
-                    cursor: 'pointer',
-                    padding: 0,
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  ← Situation wählen
-                </button>
-                <h4 style={{ margin: '0 0 0.35rem' }}>Welche Perspektive beobachtest du?</h4>
-                <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
-                  Bezogen auf {observedTeam || 'dein beobachtetes Team'}
-                </p>
-                <div style={{ display: 'grid', gap: '0.5rem' }}>
-                  {availablePerspectives.map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => {
-                        setPerspective(value)
-                        openNumericalTemplate(situationType, value)
-                      }}
-                      style={choiceButtonStyle}
-                    >
-                      <div style={{ fontWeight: 700 }}>{PERSPECTIVE_LABELS[value].label}</div>
-                      <div style={{ marginTop: '0.2rem', fontSize: '0.82rem', color: 'rgba(254,243,199,0.75)' }}>
-                        {PERSPECTIVE_LABELS[value].hint}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {step === 'drill' && syntheticDrill && selectedDrill && (
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedDrill(null)
-                    setMiniAnswers({})
-                    setError(null)
-                    if (hubCategory === 'numerical_situation') {
-                      if (availablePerspectives.length > 1) setStep('num_perspective')
-                      else setStep('num_situation')
+                    if (item.id === 'numerical_situation') {
+                      setStep('num_situation')
                       return
                     }
+                    setGameState(item.id)
                     setStep('st_pick')
                   }}
-                  style={{
-                    marginBottom: '0.7rem',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#8fd3df',
-                    cursor: 'pointer',
-                    padding: 0,
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  ← Zurück
-                </button>
+                />
+              ))}
+            </UiSheetChoiceList>
+            <UiSheetActions
+              secondary={<UiButton variant="secondary" onClick={handleClose}>Abbrechen</UiButton>}
+            />
+          </div>
+        )}
 
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '0.35rem', fontSize: '0.9rem' }}>
-                  Spielzeit <span style={{ fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="off"
-                  value={gameTime}
-                  onChange={(e) => setGameTime(formatGameTimeInput(e.target.value))}
-                  placeholder="12:43"
-                  style={{
-                    width: '100%',
-                    padding: '0.55rem 0.7rem',
-                    borderRadius: '0.4rem',
-                    border: '1.5px solid #334155',
-                    background: '#050712',
-                    color: '#f7f7ff',
-                    marginBottom: '0.85rem',
+        {step === 'st_pick' && stGameStateConfig && (
+          <div>
+            <UiSheetBack
+              onClick={() => {
+                setStep('category')
+                setHubCategory(null)
+                setGameState(null)
+                setError(null)
+              }}
+            />
+            <h4 style={{ margin: '0 0 0.35rem' }}>{stGameStateConfig.label}</h4>
+            <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+              {stGameStateConfig.description}
+            </p>
+            <UiSheetChoiceList>
+              {stMiniDrills.map((drill) => (
+                <UiSheetChoice
+                  key={drill.id}
+                  title={drill.title}
+                  hint={drill.description}
+                  onClick={() => {
+                    setSelectedDrill(drill)
+                    setMiniAnswers({})
+                    setStep('drill')
+                    setError(null)
                   }}
                 />
-
-                <div className="sidequest-mini-drill">
-                  <PeriodCheckin
-                    drill={syntheticDrill}
-                    answers={miniAnswers}
-                    setAnswers={setMiniAnswers}
-                  />
-                </div>
-
-                {error && (
-                  <p style={{ margin: '0.7rem 0 0', color: '#ffb7bf', fontSize: '0.86rem' }}>{error}</p>
-                )}
-
-                <div style={{ display: 'flex', gap: '0.55rem', marginTop: '0.9rem', flexWrap: 'wrap' }}>
-                  <button
-                    type="button"
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="btn"
-                    style={{ minWidth: 160 }}
-                  >
-                    {isSaving ? 'Speichere…' : 'Speichern'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    style={{
-                      padding: '0.55rem 0.9rem',
-                      borderRadius: '0.45rem',
-                      border: '1px solid rgba(255,255,255,0.25)',
-                      background: 'transparent',
-                      color: '#f7f7ff',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Abbrechen
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 'saved' && lastSaved && (
-              <div>
-                <h4 style={{ margin: '0 0 0.45rem', color: '#99f6e4' }}>✓ {formatSidequestLabel(lastSaved)} Sidequest gespeichert</h4>
-                <div style={{ display: 'grid', gap: '0.25rem', marginBottom: '0.85rem', fontSize: '0.86rem', color: 'rgba(255,255,255,0.78)' }}>
-                  {summarizeSidequestAnswers(lastSaved).map((line) => (
-                    <div key={line}>{line}</div>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={handleClose}
-                  style={{ minWidth: 180 }}
-                >
-                  Zurück zum Drill
-                </button>
-              </div>
-            )}
-
-            {error && step !== 'drill' && (
-              <p style={{ margin: '0.7rem 0 0', color: '#ffb7bf', fontSize: '0.86rem' }}>{error}</p>
-            )}
+              ))}
+            </UiSheetChoiceList>
+            <UiSheetActions
+              secondary={<UiButton variant="secondary" onClick={handleClose}>Abbrechen</UiButton>}
+            />
           </div>
-        </div>
-      )}
+        )}
+
+        {step === 'num_situation' && (
+          <div>
+            <UiSheetBack
+              onClick={() => {
+                setStep('category')
+                setHubCategory(null)
+                setSituationType(null)
+                setError(null)
+              }}
+            />
+            <h4 style={{ margin: '0 0 0.35rem' }}>Welche Sondersituation beobachtest du?</h4>
+            <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+              Kurz mitnehmen, wenn Hockey sie dir gerade schenkt.
+            </p>
+            <UiSheetChoiceList>
+              {situationOptions.map((item: any) => (
+                <UiSheetChoice
+                  key={item.id}
+                  title={item.label}
+                  hint={item.hint}
+                  onClick={() => {
+                    const nextType = item.id as NumericalSituationType
+                    const perspectives = Array.isArray(item.perspectives) ? item.perspectives : []
+                    setSituationType(nextType)
+                    setError(null)
+                    if (perspectives.length === 1) {
+                      const only = perspectives[0] as SidequestPerspective
+                      setPerspective(only)
+                      openNumericalTemplate(nextType, only)
+                      return
+                    }
+                    setPerspective(null)
+                    setStep('num_perspective')
+                  }}
+                />
+              ))}
+            </UiSheetChoiceList>
+            <UiSheetActions
+              secondary={<UiButton variant="secondary" onClick={handleClose}>Abbrechen</UiButton>}
+            />
+          </div>
+        )}
+
+        {step === 'num_perspective' && situationType && (
+          <div>
+            <UiSheetBack
+              onClick={() => {
+                setStep('num_situation')
+                setPerspective(null)
+                setError(null)
+              }}
+            >
+              ← Situation wählen
+            </UiSheetBack>
+            <h4 style={{ margin: '0 0 0.35rem' }}>Welche Perspektive beobachtest du?</h4>
+            <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+              Bezogen auf {observedTeam || 'dein beobachtetes Team'}
+            </p>
+            <UiSheetChoiceList>
+              {availablePerspectives.map((value) => (
+                <UiSheetChoice
+                  key={value}
+                  title={PERSPECTIVE_LABELS[value].label}
+                  hint={PERSPECTIVE_LABELS[value].hint}
+                  onClick={() => {
+                    setPerspective(value)
+                    openNumericalTemplate(situationType, value)
+                  }}
+                />
+              ))}
+            </UiSheetChoiceList>
+            <UiSheetActions
+              secondary={<UiButton variant="secondary" onClick={handleClose}>Abbrechen</UiButton>}
+            />
+          </div>
+        )}
+
+        {step === 'drill' && syntheticDrill && selectedDrill && (
+          <div>
+            <UiSheetBack
+              onClick={() => {
+                setSelectedDrill(null)
+                setMiniAnswers({})
+                setError(null)
+                if (hubCategory === 'numerical_situation') {
+                  if (availablePerspectives.length > 1) setStep('num_perspective')
+                  else setStep('num_situation')
+                  return
+                }
+                setStep('st_pick')
+              }}
+            />
+
+            <label className={uiSheetStyles.fieldLabel}>
+              Spielzeit <span className={uiSheetStyles.optional}>(optional)</span>
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={gameTime}
+              onChange={(e) => setGameTime(formatGameTimeInput(e.target.value))}
+              placeholder="12:43"
+              className={uiSheetStyles.input}
+            />
+
+            <div className="sidequest-mini-drill">
+              <PeriodCheckin
+                drill={syntheticDrill}
+                answers={miniAnswers}
+                setAnswers={setMiniAnswers}
+              />
+            </div>
+
+            {error && <p className={uiSheetStyles.error}>{error}</p>}
+
+            <UiSheetActions
+              secondary={
+                <UiButton variant="secondary" onClick={handleClose} disabled={isSaving}>
+                  Abbrechen
+                </UiButton>
+              }
+              primary={
+                <UiButton onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? 'Speichere…' : 'Speichern'}
+                </UiButton>
+              }
+            />
+          </div>
+        )}
+
+        {step === 'saved' && lastSaved && (
+          <div>
+            <h4 style={{ margin: '0 0 0.45rem', color: '#99f6e4' }}>✓ {formatSidequestLabel(lastSaved)} Sidequest gespeichert</h4>
+            <div style={{ display: 'grid', gap: '0.25rem', marginBottom: '0.85rem', fontSize: '0.86rem', color: 'rgba(255,255,255,0.78)' }}>
+              {summarizeSidequestAnswers(lastSaved).map((line) => (
+                <div key={line}>{line}</div>
+              ))}
+            </div>
+            <UiSheetActions
+              primary={
+                <UiButton onClick={handleClose}>
+                  Zurück zum Drill
+                </UiButton>
+              }
+            />
+          </div>
+        )}
+
+        {error && step !== 'drill' && (
+          <p className={uiSheetStyles.error}>{error}</p>
+        )}
+      </UiSheet>
     </>
   )
 }

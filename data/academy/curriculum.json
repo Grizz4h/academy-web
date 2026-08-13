@@ -13795,7 +13795,13 @@
                 "outcome_similarity_hint": "Ein ähnliches Ergebnis bedeutet noch nicht automatisch, dass dasselbe Muster dahintersteckt.",
                 "summary_title": "Mögliches Muster",
                 "fingerprint_title": "Pattern Fingerprint",
-                "summary_dimensions": ["zone", "trigger", "reaction", "side", "sequence"]
+                "summary_dimensions": [
+                  "zone",
+                  "trigger",
+                  "reaction",
+                  "side",
+                  "sequence"
+                ]
               },
               "sceneSlug": "Pattern-Repeat-Check"
             },
@@ -14068,291 +14074,500 @@
             "Bewerte Adjustments unabhängig vom Ergebnis"
           ],
           "difficulty": 4,
-          "duration": 45,
+          "duration": 75,
           "drills": [
             {
               "id": "E2_D1",
-              "title": "Adjustment ableiten (Ursache → Maßnahme)",
-              "drill_type": "period_checkin",
-              "description": "Leite aus einer erkannten Ursache genau ein konkretes Adjustment für das nächste Drittel ab.",
+              "title": "Was hat sich verändert?",
+              "drill_type": "before_after_compare",
+              "description": "Vergleiche zwei ausreichend ähnliche Spielabschnitte und benenne sauber, was sich im Verhalten unterscheidet – ohne Ursache oder Adjustment zu erklären.",
               "didactics": {
-                "explanation": "Ein gutes Adjustment ist klein, gezielt und coachbar. Es adressiert eine Ursache – nicht ein Symptom – und verändert Verhalten, nicht Hoffnung.",
+                "explanation": "Adjustments erkennst du nicht daran, dass eine einzelne Szene anders aussieht. Vergleiche deshalb zwei ausreichend ähnliche Spielabschnitte und frage dich zuerst nur: Was ist später tatsächlich anders als vorher? Ursache und Wirkung kommen später. Hier geht es ausschließlich um eine saubere Vorher–Nachher-Beobachtung.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welche Ursache kippt das Spiel wiederholt?",
-                    "Welche Entscheidung oder welcher Ablauf ist instabil?",
-                    "Wo entsteht der erste Kontrollverlust?"
+                    "Wie verhält sich das Team im ersten beobachteten Abschnitt?",
+                    "Wie verhält es sich später in vergleichbaren Situationen?",
+                    "Welche Dimensionen bleiben stabil?",
+                    "Welche Dimensionen verändern sich sichtbar?"
                   ],
                   "how_to_decide": [
-                    "Formuliere genau ein Adjustment",
-                    "Beschreibe Verhalten, nicht Ergebnis",
-                    "Das Adjustment muss im nächsten Shift sichtbar sein",
-                    "Weniger ist besser als zu viel"
+                    "Beschreibe zuerst die Veränderung. Erkläre sie noch nicht.",
+                    "Vergleiche nur ähnliche Ausgangssituationen",
+                    "Trenne Beobachtung von Interpretation",
+                    "Markiere, was stabil bleibt und was sich ändert"
                   ],
                   "ignore": [
-                    "Mehrere gleichzeitige Änderungen",
-                    "Motivationssätze ohne Inhalt",
-                    "Ergebnisdenken (Tor, Sieg, Momentum)"
+                    "Warum das Team adjusted hat",
+                    "Coach-Trigger oder Score State",
+                    "Erfolg oder Misserfolg einzelner Szenen",
+                    "Automatische Adjustment-Behauptungen"
                   ]
                 },
-                "inline_explanations": {
-                  "adjustment": {
-                    "meaning": "Eine konkrete, umsetzbare Verhaltensänderung innerhalb bestehender Struktur. Kein Systemwechsel."
-                  },
-                  "ursache": {
-                    "meaning": "Der wiederholbare strukturelle Auslöser eines Problems, nicht dessen sichtbare Folge."
-                  }
-                },
-                "learning_hint": "Wenn du dein Adjustment nicht klar sagen kannst, kannst du es auch nicht coachen."
+                "reflectionGuidance": [
+                  "Prüfe, ob Vorher und Nachher tatsächlich beschrieben wurden.",
+                  "Achte darauf, ob der Nutzer bereits Ursachen behauptet, obwohl der Drill nur Veränderung beobachten soll.",
+                  "Bewerte keine taktische Entscheidung anhand des späteren Ergebnisses."
+                ],
+                "learning_hint": "Eine Veränderung ist erst interessant, wenn du sauber beschreiben kannst, was vorher stabil war und was danach anders aussieht."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "adjustment_clarity": "klar"
-                    },
+                    "when": {},
                     "questions": [
-                      "Warum adressiert dieses Adjustment genau die Ursache?",
-                      "Welches Verhalten ändert sich konkret?",
-                      "Woran erkennst du Wirkung innerhalb eines Shifts?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "adjustment_clarity": "unklar"
-                    },
-                    "questions": [
-                      "Was ist an deinem Adjustment zu allgemein?",
-                      "Welches Verhalten bleibt trotz Ansage gleich?",
-                      "Wie könntest du es vereinfachen?"
+                      "Was blieb überraschend stabil, obwohl sich das Verhalten sichtbar verändert hat?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "adjustment_clarity",
-                    "type": "radio",
-                    "label": "Wie klar ist dein Adjustment?",
-                    "options": [
-                      "klar",
-                      "unklar"
-                    ]
-                  },
-                  {
-                    "key": "focus_zone",
-                    "type": "radio",
-                    "label": "Wo greift es an?",
-                    "options": [
-                      "D-Zone",
-                      "Neutral Zone",
-                      "O-Zone"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Formuliere dein Adjustment (ein Satz, coachbar)",
-                    "max_chars": 1500
-                  }
+                "mechanic": "before_after_compare",
+                "compare_mode": "structured",
+                "require_primary_change": true,
+                "require_summary": true,
+                "require_confidence": true,
+                "summary_min_chars": 20,
+                "comparison_rule": "Vergleiche nicht einfach zwei unterschiedliche Szenen. Vergleiche dieselbe Art von Problem zu zwei verschiedenen Zeitpunkten.",
+                "decision_rule": "Beschreibe zuerst die Veränderung. Erkläre sie noch nicht.",
+                "similar_situations_hint": "Du brauchst nicht exakt dieselbe Spielsituation. Aber Vorher und Nachher müssen ähnlich genug sein, dass der Unterschied sinnvoll vergleichbar ist.",
+                "comparison_examples": {
+                  "title": "Beispiele für geeignete Vorher/Nachher-Situationen",
+                  "intro": "Reine Inspiration während des Spiels — keine Pflichtvorgabe. Suche Situationen derselben Art zu zwei verschiedenen Zeitpunkten.",
+                  "suitable": [
+                    {
+                      "title": "Forecheck verändert sich",
+                      "description": "Vorher greift F1 sehr früh und aggressiv an, später bleibt er tiefer und lenkt eher."
+                    },
+                    {
+                      "title": "Neutral-Zone-Defense verändert sich",
+                      "description": "Vorher wird die Mitte aggressiv geschlossen, später steht die Formation breiter oder tiefer."
+                    },
+                    {
+                      "title": "Entry Defense verändert sich",
+                      "description": "Vorher wird der Puckführer an der Blue Line direkt attackiert, später lässt die Defense mehr Raum und nimmt erst tiefer Zugriff."
+                    },
+                    {
+                      "title": "Breakout unter Druck verändert sich",
+                      "description": "Vorher wird häufig früh gecleart, später sucht das Team öfter kurze Support-Pässe oder Reverses."
+                    },
+                    {
+                      "title": "Offensive-Zone-Aufbau verändert sich",
+                      "description": "Vorher läuft viel über eine Halfwall, später wird häufiger über High / Weak Side verlagert."
+                    },
+                    {
+                      "title": "Net-Front-Verhalten verändert sich",
+                      "description": "Vorher bleibt ein Spieler dauerhaft vor dem Tor, später rotiert diese Rolle stärker."
+                    },
+                    {
+                      "title": "Defensive Raumpriorität verändert sich",
+                      "description": "Vorher wird stark puckseitig kollabiert, später bleibt die Weak Side bewusster kontrolliert."
+                    },
+                    {
+                      "title": "Drucktrigger verändert sich",
+                      "description": "Vorher greift die Defensive bei fast jedem Pass zu, später wartet sie stärker auf schlechte Puckkontrolle oder einen Wandpass."
+                    },
+                    {
+                      "title": "Support beim Entry verändert sich",
+                      "description": "Vorher ist der Puckführer oft isoliert, später entstehen häufiger Trailer-/Weak-Side-/Depth-Optionen."
+                    },
+                    {
+                      "title": "Exit-Risikoprofil verändert sich",
+                      "description": "Vorher hält das Team lange an kontrollierten Lösungen fest, später vereinfacht es früher."
+                    }
+                  ],
+                  "unsuitable_title": "Nicht sinnvoll vergleichen",
+                  "unsuitable": [
+                    "5v5 vorher mit Powerplay nachher",
+                    "Breakout vorher mit Forecheck nachher",
+                    "Kontrollierten Entry mit komplettem Odd-Man-Rush",
+                    "Normale Spielphase mit Empty Net",
+                    "Eine einzelne Szene vor und eine einzelne völlig andere Szene danach"
+                  ],
+                  "footer": "Du brauchst nicht exakt dieselbe Spielsituation. Aber Vorher und Nachher müssen ähnlich genug sein, dass der Unterschied sinnvoll vergleichbar ist."
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob Vorher und Nachher tatsächlich beschrieben wurden.",
+                  "Achte darauf, ob der Nutzer bereits Ursachen behauptet, obwohl der Drill nur Veränderung beobachten soll.",
+                  "Bewerte keine taktische Entscheidung anhand des späteren Ergebnisses."
                 ]
               },
-              "sceneSlug": "Adjustment-Derive"
+              "sceneSlug": "State-Compare"
             },
             {
               "id": "E2_D2",
-              "title": "Messsignal definieren",
-              "drill_type": "period_checkin",
-              "description": "Definiere ein klares Messsignal: Woran erkennst du innerhalb weniger Shifts, ob dein Adjustment wirkt?",
+              "title": "Wann beginnt die Veränderung?",
+              "drill_type": "change_timeline",
+              "description": "Beobachte dasselbe Verhalten mehrfach über Zeit. Prüfe, ob eine Abweichung nur ein Ausreißer ist – oder ab einem bestimmten Moment ein neuer Zustand beginnt.",
               "didactics": {
-                "explanation": "Ein Adjustment ohne Messsignal ist nur eine Idee. Du trainierst hier, Wirkung sichtbar zu machen: nicht über Tore, sondern über Verhalten, Abstände und Wiederholungen.",
+                "explanation": "Eine einzelne Szene, die anders aussieht, ist noch kein Adjustment.\n\nBeobachte dasselbe Verhalten mehrfach über einen längeren Abschnitt. Suche nach dem Moment, an dem eine Abweichung erstmals auftaucht – und prüfe, ob sie danach bestehen bleibt.\n\nErst wenn aus einer Abweichung ein wiederkehrender neuer Zustand wird, lohnt sich die Frage nach einer möglichen Anpassung.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Verändert sich das beobachtete Muster?",
-                    "Tritt die vorherige Schwäche seltener auf?",
-                    "Sind Entscheidungen früher, klarer oder ruhiger?"
+                    "Was war vorher typisch?",
+                    "Wann erscheint erstmals etwas Neues?",
+                    "Wiederholt sich dieses neue Verhalten?",
+                    "Bleibt es bestehen – oder springt das Team zurück?"
                   ],
                   "how_to_decide": [
-                    "Wähle ein Signal, das innerhalb weniger Shifts sichtbar ist",
-                    "Beobachte Verhalten, nicht Ergebnis",
-                    "Formuliere das Signal so, dass es eindeutig erkennbar ist",
-                    "Ein gutes Signal ist binär: da / nicht da"
+                    "Ein Change Point braucht ein Vorher und ein Danach",
+                    "Eine Abweichung wird erst interessant, wenn sie sich wiederholt",
+                    "Vergleiche nur ausreichend ähnliche Situationen",
+                    "Ursachen noch nicht erklären"
                   ],
                   "ignore": [
-                    "Tore oder Schüsse zählen",
+                    "Warum das Team adjusted hat",
+                    "Coach-Trigger, Score State oder Matchup-Ursachen",
                     "Einzelaktionen ohne Wiederholung",
-                    "Emotionale Spielmomente"
+                    "Automatische Adjustment-Behauptungen"
                   ]
                 },
-                "inline_explanations": {
-                  "verhalten": {
-                    "meaning": "Bewegung, Positionierung oder Entscheidung der Spieler (z. B. frühere Unterstützung, engerer Abstand)."
-                  },
-                  "struktur": {
-                    "meaning": "Ordnung im Team: Dreiecke, Staffelung, klare Rollen bleiben erhalten."
-                  },
-                  "tempo": {
-                    "meaning": "Nicht Geschwindigkeit, sondern Rhythmus: weniger Hektik, mehr Kontrolle."
-                  }
-                },
-                "learning_hint": "Wenn du nicht weißt, woran du Wirkung erkennst, kannst du kein Adjustment bewerten."
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer eine einzelne Abweichung vorschnell als stabilen Change Point interpretiert.",
+                  "Achte darauf, ob genügend Vorher- und Nachher-Beobachtungen vorhanden sind.",
+                  "Prüfe, ob die verglichenen Situationen ausreichend vergleichbar waren.",
+                  "Die Ursache der Veränderung soll in diesem Drill noch nicht behauptet werden."
+                ],
+                "learning_hint": "Baseline → Abweichung → Wiederholung → möglicher neuer Zustand."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "signal_type": "verhalten"
-                    },
+                    "when": {},
                     "questions": [
-                      "Welches konkrete Verhalten soll sich ändern?",
-                      "Wie schnell müsste dieses Signal sichtbar werden?",
-                      "Woran würdest du erkennen, dass es nicht greift?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "signal_type": "struktur"
-                    },
-                    "questions": [
-                      "Welche Struktur war vorher instabil?",
-                      "Wie sieht dieselbe Situation stabil aus?",
-                      "Wie oft müsste das Signal auftreten, um sicher zu sein?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "signal_type": "tempo"
-                    },
-                    "questions": [
-                      "Woran erkennst du kontrolliertes statt hektischem Tempo?",
-                      "Welche Entscheidung wirkt dadurch ruhiger?",
-                      "Kann das Signal auch bei Rückstand sichtbar sein?"
+                      "Welche Beobachtung hat aus einer einzelnen Abweichung für dich erstmals einen möglichen neuen Zustand gemacht?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "signal_type",
-                    "type": "radio",
-                    "label": "Art des Messsignals",
-                    "options": [
-                      "verhalten",
-                      "struktur",
-                      "tempo"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Beschreibe dein Messsignal (konkret, beobachtbar)",
-                    "max_chars": 1500
-                  }
+                "mechanic": "change_timeline",
+                "minObservations": 4,
+                "maxObservations": 6,
+                "supports_game_clock": true,
+                "baseline_after_count": 2,
+                "require_change_point": true,
+                "require_comparability": true,
+                "require_magnitude": true,
+                "summary_min_chars": 20,
+                "decision_rule": "Ein Change Point braucht ein Vorher und ein Danach. Eine Abweichung wird erst interessant, wenn sie sich wiederholt.",
+                "core_hint": "Eine neue Aktion ist noch kein neuer Zustand. Erst wenn das veränderte Verhalten erneut auftaucht oder bestehen bleibt, wird ein Adjustment-Hinweis stärker.",
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer eine einzelne Abweichung vorschnell als stabilen Change Point interpretiert.",
+                  "Achte darauf, ob genügend Vorher- und Nachher-Beobachtungen vorhanden sind.",
+                  "Prüfe, ob die verglichenen Situationen ausreichend vergleichbar waren.",
+                  "Die Ursache der Veränderung soll in diesem Drill noch nicht behauptet werden."
                 ]
               },
-              "sceneSlug": "Measure-Signal"
+              "sceneSlug": "Change-Timeline"
             },
             {
               "id": "E2_D3",
-              "title": "Adjustment nachschärfen oder verwerfen",
-              "drill_type": "period_checkin",
-              "description": "Bewerte, ob ein Adjustment angepasst, vereinfacht oder verworfen werden muss.",
+              "title": "Worauf könnte die Veränderung reagieren?",
+              "drill_type": "trigger_hypothesis",
+              "description": "Welche vorherige Entwicklung oder welches wiederkehrende Problem könnte die beobachtete Veränderung ausgelöst haben? Formuliere eine vorsichtige Hypothese – keine behauptete Coaching-Absicht.",
               "didactics": {
-                "explanation": "Nicht jedes Adjustment greift sofort. Gute Analyse erkennt, ob ein Eingriff falsch war – oder nur unklar, zu komplex oder schlecht umgesetzt.",
+                "explanation": "Eine Veränderung im Spiel kann viele Gründe haben. Vielleicht reagiert ein Team auf ein wiederkehrendes Problem – vielleicht entstehen die Unterschiede aber auch durch Gegner, Personal, Game State oder Zufall.\n\nSuche deshalb nicht sofort nach einer Geschichte. Prüfe zuerst, welche Evidenz die mögliche Verbindung zwischen Problem und Veränderung tatsächlich trägt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Ist das definierte Messsignal aufgetreten?",
-                    "Gab es Teilerfolge oder gar keine Wirkung?",
-                    "Wirkt das Team unsicher oder stabiler?"
+                    "Welche Veränderung ist sichtbar?",
+                    "Welches Problem trat davor wiederholt auf?",
+                    "Was spricht für eine Reaktion – und was dagegen?",
+                    "Welche alternative Erklärung bleibt plausibel?"
                   ],
                   "how_to_decide": [
-                    "Wenn kein Signal sichtbar ist: Ursache prüfen, nicht panisch wechseln",
-                    "Unterscheide: falsches Adjustment vs. falsche Umsetzung",
-                    "Vereinfache vor dem Verwerfen",
-                    "Ein gutes Adjustment darf Zeit brauchen, aber nicht Orientierung kosten"
+                    "Zeitliche Reihenfolge ist ein Hinweis – keine Ursache",
+                    "Prüfe funktionale Passung Problem ↔ Veränderung",
+                    "Alternative Erklärung ernsthaft prüfen",
+                    "Formuliere vorsichtig: könnte / spricht dafür / möglicherweise"
                   ],
                   "ignore": [
-                    "Scoreline als alleinige Entscheidungsgrundlage",
-                    "Einzelaktionen oder Zufall",
-                    "Emotionale Reaktionen auf Gegentore"
+                    "Coach-Absicht als Tatsache",
+                    "Automatische Erfolgsbewertung des Adjustments",
+                    "Einzelaktionen ohne Wiederholung als sicheren Trigger",
+                    "Scoreline als alleinige Erklärung"
                   ]
                 },
-                "inline_explanations": {
-                  "nachschaerfen": {
-                    "meaning": "Adjustment bleibt, wird aber klarer oder einfacher formuliert."
-                  },
-                  "vereinfachen": {
-                    "meaning": "Teil des Adjustments wird gestrichen, Fokus wird enger."
-                  },
-                  "verwerfen": {
-                    "meaning": "Adjustment war strukturell falsch und wird bewusst beendet."
-                  }
-                },
-                "learning_hint": "Nicht jedes Problem braucht ein neues Adjustment – oft braucht es ein besseres."
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer zeitliche Reihenfolge vorschnell als Ursache interpretiert.",
+                  "Achte darauf, ob die beobachtete Veränderung funktional zum beschriebenen Problem passt.",
+                  "Prüfe, ob eine alternative Erklärung ernsthaft berücksichtigt wurde.",
+                  "Die reale Coaching-Absicht ist unbekannt und darf nicht als Tatsache behauptet werden.",
+                  "Belohne vorsichtige Hypothesen und klare Evidenztrennung."
+                ],
+                "learning_hint": "Veränderung beschreiben → mögliches Problem → Evidenz → Alternative → vorsichtige Hypothese."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "decision": "nachschaerfen"
-                    },
+                    "when": {},
                     "questions": [
-                      "Was war am Adjustment zu unklar oder zu weich formuliert?",
-                      "Welche kleine Präzisierung könnte Wirkung erzeugen?",
-                      "Woran würdest du die Verbesserung erkennen?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "decision": "vereinfachen"
-                    },
-                    "questions": [
-                      "Welcher Teil des Adjustments war zu viel?",
-                      "Was ist der minimale Kern, der bleiben muss?",
-                      "Wie ändert sich dadurch das Messsignal?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "decision": "verwerfen"
-                    },
-                    "questions": [
-                      "Woran hast du erkannt, dass es strukturell nicht passt?",
-                      "Welche Annahme war falsch?",
-                      "Was würdest du beim nächsten Drittel anders prüfen?"
+                      "Welches Indiz würde deine Hypothese am stärksten widerlegen?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mechanic": "trigger_hypothesis",
+                "requireAlternativeExplanation": true,
+                "requireFunctionalLink": true,
+                "requireHypothesisSummary": true,
+                "summary_min_chars": 30,
+                "functional_link_min_chars": 20,
+                "decision_rule": "Zeitliche Reihenfolge ist ein Hinweis – keine Ursache. Eine gute Adjustment-Hypothese erklärt, warum genau diese Veränderung zu genau diesem Problem passen könnte.",
+                "core_hint": "Formuliere vorsichtig: könnte / spricht dafür / möglicherweise. Die reale Coaching-Absicht ist unbekannt.",
+                "hypothesis_examples": {
+                  "title": "Beispiele für geeignete Adjustment-Hypothesen",
+                  "intro": "Geeignete Hypothesen verbinden ein wiederkehrendes Vorher-Problem mit einer funktional passenden Veränderung – ohne Coaching-Absicht als Tatsache zu behaupten.",
+                  "suitable": [
+                    {
+                      "title": "Forecheck",
+                      "description": "Vorher: Gegner überspielt F1 wiederholt mit kurzem Pass. Danach: F1 startet tiefer und lenkt stärker nach außen. Mögliche Hypothese: Reaktion auf überspielten ersten Druck."
+                    },
+                    {
+                      "title": "Neutral-Zone-Defense",
+                      "description": "Vorher: Gegner gewinnt wiederholt die Mitte beim Entry. Danach: Verteidiger priorisieren stärker Inside Position. Mögliche Hypothese: Reaktion auf zentrale Entries."
+                    },
+                    {
+                      "title": "Breakout",
+                      "description": "Vorher: Exits enden unter Forecheckdruck häufig im blinden Clear. Danach: Center kommt tiefer als Support. Mögliche Hypothese: zusätzliche sichere erste Option."
+                    },
+                    {
+                      "title": "Offensive Zone",
+                      "description": "Vorher: Angriffe bleiben stark auf einer Seite hängen. Danach: häufiger High-to-Low / Weak-Side-Wechsel. Mögliche Hypothese: Defensive soll stärker horizontal bewegt werden."
+                    },
+                    {
+                      "title": "Net Front",
+                      "description": "Vorher: Gegner erhält wiederholt freie Second Pucks. Danach: Verteidiger bleiben enger am Net Front. Mögliche Hypothese: Priorität auf Second-Puck-Kontrolle."
+                    },
+                    {
+                      "title": "Matchup",
+                      "description": "Vorher: bestimmte gegnerische Reihe erzeugt wiederholt Probleme. Danach: andere eigene Line wird häufiger dagegen eingesetzt. Mögliche Hypothese: Matchup-Reaktion — nur wenn Line-/Shift-Daten beobachtbar sind."
+                    }
+                  ],
+                  "unsuitable_title": "Nicht sauber",
+                  "unsuitable": [
+                    "Gegner erzielt Tor → Team spielt danach anders → also Reaktion auf das Tor.",
+                    "Ein schlechter Exit → nächster Exit anders → Adjustment.",
+                    "Andere Reihe auf dem Eis → andere Struktur → Coach hat System geändert.",
+                    "Führung/Rückstand verändert sich → jedes andere Verhalten automatisch als Adjustment interpretieren."
+                  ],
+                  "footer": "E2_D3 bildet eine Hypothese. Ob sich das ursprüngliche Problem danach tatsächlich verändert, prüft erst E2_D4."
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer zeitliche Reihenfolge vorschnell als Ursache interpretiert.",
+                  "Achte darauf, ob die beobachtete Veränderung funktional zum beschriebenen Problem passt.",
+                  "Prüfe, ob eine alternative Erklärung ernsthaft berücksichtigt wurde.",
+                  "Die reale Coaching-Absicht ist unbekannt und darf nicht als Tatsache behauptet werden.",
+                  "Belohne vorsichtige Hypothesen und klare Evidenztrennung."
+                ]
+              },
+              "sceneSlug": "Trigger-Hypothesis"
+            },
+            {
+              "id": "E2_D4",
+              "title": "Hat das Adjustment das Problem verändert?",
+              "drill_type": "interaction_chain",
+              "description": "Verändert sich nach dem beobachteten Adjustment tatsächlich die Interaktion, die vorher problematisch war? Bewerte nicht das Ergebnis – prüfe, ob sich dieselbe Interaktion anders entwickelt.",
+              "didactics": {
+                "explanation": "Ein Adjustment ist analytisch erst interessant, wenn wir prüfen, was danach mit genau dem Problem passiert, auf das es möglicherweise reagiert.\n\nVorher kam der Gegner wiederholt durch die Mitte. Danach schützt die Defensive die Mitte anders. Was macht der Gegner jetzt?\n\nDas bedeutet nicht automatisch: Adjustment erfolgreich. Aber: Die Interaktion hat sich verändert. Genau das soll dieser Drill erkennen.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Welches wiederkehrende Problem war vorher sichtbar?",
+                    "Was verändert das Team danach beobachtbar?",
+                    "Wie reagiert genau dieselbe Interaktion darauf?",
+                    "Verschiebt sich das Problem – oder bleibt es gleich?"
+                  ],
+                  "how_to_decide": [
+                    "Bewerte nicht das Ergebnis. Prüfe, ob sich dieselbe Interaktion anders entwickelt",
+                    "Das ursprüngliche Problem und die spätere Reaktion müssen ausreichend vergleichbar sein",
+                    "Eine einzelne Response-Szene reicht nicht als Beweis",
+                    "Ein Adjustment kann funktionieren, obwohl danach ein Tor fällt"
+                  ],
+                  "ignore": [
+                    "Tore / Saves / Pfosten als Beweis",
+                    "5v5 vorher vs. Powerplay danach",
+                    "völlig anderer Gegnerkontext",
+                    "Breakout vorher vs. Offensive Zone danach",
+                    "automatische Erfolgsbewertung"
+                  ]
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer tatsächlich dieselbe Interaktion vor und nach der Veränderung vergleicht.",
+                  "Achte darauf, ob Erfolg oder Misserfolg anhand von Toren oder Outcomes statt Verhalten bewertet wird.",
+                  "Prüfe, ob aus einer einzelnen Response-Szene zu viel abgeleitet wird.",
+                  "Achte darauf, ob ein Trade-off oder eine Problemverlagerung berücksichtigt wurde.",
+                  "Die KI darf nicht behaupten, dass das Adjustment objektiv erfolgreich war, da sie das Spiel nicht gesehen hat."
+                ],
+                "learning_hint": "Problem → Veränderung → Reaktion. Nicht: danach kein Tor → erfolgreich."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "key": "decision",
-                    "type": "radio",
-                    "label": "Umgang mit dem Adjustment",
-                    "options": [
-                      "nachschaerfen",
-                      "vereinfachen",
-                      "verwerfen"
+                    "when": {},
+                    "questions": [
+                      "Hat das Adjustment das Problem gelöst – oder nur an eine andere Stelle verschoben?"
                     ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Begründung (kurz & konkret)",
-                    "max_chars": 1500
                   }
                 ]
               },
-              "sceneSlug": "Adjustment-Refine"
+              "config": {
+                "mechanic": "interaction_chain",
+                "supportsTradeoff": true,
+                "supportsComparability": true,
+                "requireSummary": true,
+                "summary_min_chars": 40,
+                "decision_rule": "Bewerte nicht das Ergebnis. Prüfe, ob sich dieselbe Interaktion anders entwickelt.",
+                "core_hint": "Ein Adjustment kann funktionieren, obwohl danach ein Tor fällt – und wirkungslos sein, obwohl keines fällt.",
+                "outcome_bias_hint": "Bewerte Verhalten → Reaktion, nicht das Scoreboard.",
+                "summary_helper": "Vorher … Danach veränderte das Team … Darauf reagierte der Gegner mit …",
+                "chain_examples": {
+                  "title": "Geeignete Adjustment-Sequenzen",
+                  "intro": "Das ursprüngliche Problem und die spätere Reaktion müssen ausreichend vergleichbar sein. Bewerte die Interaktion, nicht das Scoreboard.",
+                  "suitable": [
+                    {
+                      "title": "Entry Defense",
+                      "description": "Vorher: Gegner kommt mehrfach kontrolliert durch die Mitte. Adjustment: Defensive schützt zentral kompakter. Danach: Gegner wird häufiger nach außen gelenkt oder dumpt."
+                    },
+                    {
+                      "title": "Forecheck",
+                      "description": "Vorher: Gegner löst ersten Forechecker regelmäßig über kurzen Support. Adjustment: F1 lenkt stärker, F2 schließt Support früher. Danach: Gegner muss häufiger Reverse oder Rim nutzen."
+                    },
+                    {
+                      "title": "Breakout",
+                      "description": "Vorher: eigener Exit bricht wiederholt unter hohem Forecheckdruck. Adjustment: Center fällt tiefer / Reverse wird früher angeboten. Danach: gegnerischer erster Druck erreicht den Puckführer seltener direkt."
+                    },
+                    {
+                      "title": "Offensive Zone",
+                      "description": "Vorher: Angriff bleibt auf einer Seite hängen. Adjustment: mehr High-Low- oder Weak-Side-Verlagerung. Danach: Defensive muss stärker verschieben / Weak Side öffnet sich häufiger."
+                    },
+                    {
+                      "title": "Defensive Zone",
+                      "description": "Vorher: Gegner erzeugt wiederholt Zugriff am Net Front. Adjustment: Verteidigung priorisiert Slot/Net Front stärker. Danach: Gegner schießt häufiger von außen oder sucht andere Passwege."
+                    },
+                    {
+                      "title": "Neutral Zone",
+                      "description": "Vorher: Gegner trägt den Puck mehrfach zentral durch. Adjustment: erste Linie schließt Mitte früher. Danach: Angriffe gehen häufiger außen oder werden verzögert."
+                    }
+                  ],
+                  "unsuitable_title": "Ungeeignete Vergleiche",
+                  "unsuitable": [
+                    "5v5 vorher vs. Powerplay danach",
+                    "völlig anderer Gegnerkontext",
+                    "Breakout vorher vs. Offensive Zone danach",
+                    "eine einzige auffällige Szene vorher",
+                    "Tor vorher vs. kein Tor danach",
+                    "Save / Pfosten / individueller Fehler als Beweis"
+                  ],
+                  "footer": "E2_D4 analysiert eine Adjustment-Kette. Ob mehrere Adjustments eines Segments ein Profil ergeben, prüft erst E2_D5."
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer tatsächlich dieselbe Interaktion vor und nach der Veränderung vergleicht.",
+                  "Achte darauf, ob Erfolg oder Misserfolg anhand von Toren oder Outcomes statt Verhalten bewertet wird.",
+                  "Prüfe, ob aus einer einzelnen Response-Szene zu viel abgeleitet wird.",
+                  "Achte darauf, ob ein Trade-off oder eine Problemverlagerung berücksichtigt wurde.",
+                  "Die KI darf nicht behaupten, dass das Adjustment objektiv erfolgreich war, da sie das Spiel nicht gesehen hat."
+                ]
+              },
+              "sceneSlug": "Interaction-Chain"
+            },
+            {
+              "id": "E2_D5",
+              "title": "Adjustment-Profil des beobachteten Segments",
+              "drill_type": "adjustment_profile",
+              "description": "Welche relevanten Veränderungen haben das beobachtete Segment geprägt – und welche davon wirken wie echte Adjustments? Maximal zwei Kandidaten, inklusive Unsicherheit und Gegenargument.",
+              "didactics": {
+                "explanation": "Dieser Drill synthetisiert den Adjustment-Track: Was war vorher typisch, was wurde später anders, ab wann wirkte es stabil, worauf könnte es reagiert haben, was blieb gleich, und wie veränderte sich die ursprüngliche Interaktion danach?\n\nWir sprechen über beobachtete Veränderungen im aktuellen Segment – nicht über sichere Coaching-Entscheidungen. Ein Adjustment-Profil ist eine belastbare Hypothese inklusive Unsicherheit, nicht die Behauptung, zu wissen, was der Coach geändert hat.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Welche Veränderung war im Segment taktisch wirklich relevant?",
+                    "Blieb sie danach bestehen – oder war es nur situativ?",
+                    "Worauf könnte sie reagiert haben – und was spricht dagegen?",
+                    "Was blieb trotz der Veränderung gleich?"
+                  ],
+                  "how_to_decide": [
+                    "Maximal zwei Adjustments – priorisieren statt Spielbericht",
+                    "Veränderung und vermutete Ursache sauber trennen",
+                    "Kein Outcome Bias: Tore beweisen kein Adjustment",
+                    "Kein belastbares Adjustment ist ein valides Ergebnis"
+                  ],
+                  "ignore": [
+                    "Coach-Absicht als Tatsache",
+                    "Systemnamen erzwingen",
+                    "Erfolg oder Misserfolg anhand des Scoreboards",
+                    "Alles auflisten, was irgendwie anders aussah"
+                  ]
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer beobachtete Veränderung und vermutete Ursache sauber trennt.",
+                  "Achte darauf, ob ein Adjustment aus genügend vergleichbaren Situationen abgeleitet wird.",
+                  "Prüfe, ob die nachfolgende gegnerische Reaktion wirklich beschrieben oder nur aus dem Ergebnis abgeleitet wird.",
+                  "Achte auf Outcome Bias.",
+                  "Prüfe, ob Unsicherheit und alternative Erklärungen angemessen berücksichtigt werden.",
+                  "Die KI hat das Spiel nicht gesehen und darf die Adjustment-Hypothese nicht als objektiv richtig oder falsch bewerten."
+                ],
+                "learning_hint": "Vorher → möglicher Trigger → Veränderung → anschließende Reaktion. Signal und Confidence getrennt halten."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Welches Indiz trennt für dich ein echtes Adjustment am stärksten von normaler situativer Variation?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "mechanic": "adjustment_profile",
+                "minAdjustments": 1,
+                "maxAdjustments": 2,
+                "allowNoClearAdjustment": true,
+                "requireSegmentSummary": true,
+                "requireNextWatchFocus": true,
+                "summary_min_chars": 40,
+                "decision_rule": "Priorisiere maximal zwei relevante Veränderungen. Nicht alles, was anders aussieht, ist ein Adjustment.",
+                "core_hint": "Die Veränderung könnte auf X reagiert haben — nicht: Das Adjustment kam wegen X. Die Coaching-Absicht ist unbekannt.",
+                "profile_examples": {
+                  "title": "Geeignete Adjustment-Profile",
+                  "intro": "Ein Profil verdichtet das beobachtete Segment. Es behauptet keine Coaching-Intention und bewertet keine Qualität.",
+                  "suitable": [
+                    {
+                      "title": "Neutral-Zone-Zugriff",
+                      "description": "Vorher früher Zugriff an der Blue Line. Danach fällt die erste Linie tiefer zurück. Möglicher Trigger: wiederholte zentrale Entries. Danach versucht der Gegner häufiger Entries außen. Signal: wahrscheinliches Adjustment."
+                    },
+                    {
+                      "title": "Breakout unter Druck",
+                      "description": "Vorher sofortiger Clear über die Bande. Danach häufiger kurzer Support. Möglicher Trigger: eigenes wiederholtes Exit-Problem. Danach erreicht der erste Forecheck den Puckführer seltener direkt."
+                    }
+                  ],
+                  "unsuitable_title": "Nicht sauber",
+                  "unsuitable": [
+                    "Drei oder mehr Veränderungen als Spielbericht ohne Priorisierung.",
+                    "„Der Coach hat das System gewechselt“ ohne beobachtbares Vorher/Nachher.",
+                    "Ein Tor danach als Beweis, dass das Adjustment funktioniert hat.",
+                    "Eine einzelne abweichende Szene als Segment-Profil."
+                  ],
+                  "footer": "E2_D5 schließt den Track mit einer begründeten Hypothese inklusive Unsicherheit. Meta Analysis kann später mehrere Sessions verbinden."
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer beobachtete Veränderung und vermutete Ursache sauber trennt.",
+                  "Achte darauf, ob ein Adjustment aus genügend vergleichbaren Situationen abgeleitet wird.",
+                  "Prüfe, ob die nachfolgende gegnerische Reaktion wirklich beschrieben oder nur aus dem Ergebnis abgeleitet wird.",
+                  "Achte auf Outcome Bias.",
+                  "Prüfe, ob Unsicherheit und alternative Erklärungen angemessen berücksichtigt werden.",
+                  "Die KI hat das Spiel nicht gesehen und darf die Adjustment-Hypothese nicht als objektiv richtig oder falsch bewerten."
+                ]
+              },
+              "sceneSlug": "Adjustment-Profile"
             }
           ]
         },

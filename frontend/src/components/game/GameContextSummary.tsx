@@ -8,6 +8,7 @@ import {
   pairingMeetings,
   pennyDelSpieldetailsUrl,
 } from './gameCatalogUtils'
+import { isDummyCatalogGame } from '../../features/schedule/scheduleLayer'
 import styles from './GameContextSummary.module.css'
 
 type GameContextSummaryProps = {
@@ -65,8 +66,13 @@ export default function GameContextSummary({
   const meetings = catalogGames?.length ? pairingMeetings(catalogGames, home, away) : []
   const h2h = pairingHeadToHeadSummary(meetings, perspectiveTeam || home)
   const isArchive = isCatalogArchiveGame(game)
-  const importChrome = showImportChrome ?? Boolean(game?.source?.provider || game?.id?.startsWith('del:'))
-  const contextHint = catalogGameContextHint(game)
+  const isDummy = isDummyCatalogGame(game)
+  const importChrome = isDummy
+    ? false
+    : (showImportChrome ?? Boolean(game?.source?.provider || game?.id?.startsWith('del:')))
+  const contextHint = isDummy
+    ? 'DEV · TESTSPIEL — deterministische Testdaten, kein importierter Spielplan.'
+    : catalogGameContextHint(game)
 
   return (
     <div
@@ -79,6 +85,12 @@ export default function GameContextSummary({
         embedded && !isArchive ? styles.embeddedPlan : '',
       ].filter(Boolean).join(' ')}
     >
+      {isDummy && (
+        <div className={styles.sourceBar}>
+          <span className={styles.badgeWarn}>DEV · TESTSPIEL</span>
+          <span className={styles.sourceProvider}>Dev Fixture · nicht persistiert</span>
+        </div>
+      )}
       {importChrome && (
         <div className={styles.sourceBar}>
           <span className={isArchive ? styles.badgeArchive : styles.badgePlan}>

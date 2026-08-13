@@ -1,0 +1,274 @@
+.root {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.title {
+  margin: 0;
+}
+
+.lead,
+.hint,
+.rule {
+  margin: 0;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.hint {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  color: rgba(253, 230, 138, 0.95);
+  font-size: 0.88rem;
+}
+
+.rule {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 116, 144, 0.12);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.fieldBlock {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.fieldLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.groupLabel {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.92);
+}
+
+.choiceList {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-height: 48px;
+  padding: 0.7rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  width: 100%;
+}
+
+.choiceSelected {
+  border-color: rgba(45, 212, 191, 0.55);
+  background: rgba(20, 184, 166, 0.14);
+}
+
+.choiceInput {
+  margin-top: 0.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+.choiceText {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.choiceTitle {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #f1f5f9;
+  line-height: 1.25;
+}
+
+.choiceDescription {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.65);
+  line-height: 1.35;
+}
+
+.clockRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.clockInput {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #050712;
+  color: #f7f7ff;
+  font: inherit;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 74px;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #050712;
+  color: #f7f7ff;
+  font: inherit;
+  resize: vertical;
+}
+
+.actions {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+}
+
+.lockBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  background: rgba(20, 184, 166, 0.16);
+  font-weight: 700;
+  color: #99f6e4;
+}
+
+.lockPulse {
+  animation: lockPulse 0.7s ease;
+}
+
+@keyframes lockPulse {
+  0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.45); }
+  60% { transform: scale(1.01); box-shadow: 0 0 0 8px rgba(45, 212, 191, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+}
+
+.comparison {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.comparisonGrid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.comparisonCol {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.comparisonArrow {
+  align-self: center;
+  color: rgba(148, 163, 184, 0.8);
+  font-size: 1.1rem;
+}
+
+.matchExact,
+.matchDifferent,
+.matchUnjudgeable {
+  margin: 0;
+  font-weight: 700;
+}
+
+.matchExact { color: #9ee5b4; }
+.matchDifferent { color: #fcd34d; }
+.matchUnjudgeable { color: rgba(226, 232, 240, 0.78); }
+
+.compactCard {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.compactTitle {
+  font-weight: 700;
+}
+
+.templateCard {
+  width: 100%;
+  text-align: left;
+  margin: 0;
+  padding: 0.95rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(5, 7, 18, 0.55);
+  color: #f7f7ff;
+  cursor: pointer;
+}
+
+.templateCardSelected {
+  border-color: #80e0fa;
+  background: rgba(128, 224, 250, 0.12);
+}
+
+.help {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.15rem 0.85rem 0.85rem;
+}
+
+.help summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.7rem 0;
+}
+
+.helpList {
+  margin: 0.35rem 0 0.7rem;
+  padding-left: 1.1rem;
+  color: rgba(226, 232, 240, 0.82);
+  line-height: 1.4;
+}
+
+.counts {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .clockRow,
+  .comparisonGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparisonArrow {
+    display: none;
+  }
+}

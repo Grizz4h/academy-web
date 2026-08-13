@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 1915
+    "PUX": 1935
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -493,6 +493,18 @@
         "averageAccuracy": null,
         "perfectRuns": 0
       }
+    },
+    "B3_D3:bronze": {
+      "key": "B3_D3:bronze",
+      "drillId": "B3_D3",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-13T20:10:39.374861",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
     }
   },
   "processedSessions": {
@@ -685,722 +697,775 @@
       "sessionId": "Christoph_1786534763",
       "grantedAt": "2026-08-12T13:42:10.748875",
       "pux": 25
+    },
+    "Christoph_1786643514": {
+      "sessionId": "Christoph_1786643514",
+      "grantedAt": "2026-08-13T20:10:39.374861",
+      "pux": 20
     }
   },
-  "xp": 9665,
+  "xp": 8150,
   "processedEvents": {
     "bootstrap:v1": {
       "eventId": "bootstrap:v1",
-      "processedAt": "2026-08-10T19:05:37.149Z",
-      "grantedXp": 9365,
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 8150,
       "grantedPux": 0
     },
     "session_completed:christoph_1768336950": {
       "eventId": "session_completed:christoph_1768336950",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:christoph_1768742300": {
       "eventId": "session_completed:christoph_1768742300",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:christoph_1769106228": {
       "eventId": "session_completed:christoph_1769106228",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:christoph_1769537070": {
       "eventId": "session_completed:christoph_1769537070",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:christoph_1769638791": {
       "eventId": "session_completed:christoph_1769638791",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:christoph_1769755684": {
       "eventId": "session_completed:christoph_1769755684",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1769790235": {
       "eventId": "session_completed:Christoph_1769790235",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:christoph_1769202987": {
       "eventId": "session_completed:christoph_1769202987",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1771445003": {
       "eventId": "session_completed:Christoph_1771445003",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1771618366": {
       "eventId": "session_completed:Christoph_1771618366",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1771702907": {
       "eventId": "session_completed:Christoph_1771702907",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1771689314": {
       "eventId": "session_completed:Christoph_1771689314",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1771765449": {
       "eventId": "session_completed:Christoph_1771765449",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1771822892": {
       "eventId": "session_completed:Christoph_1771822892",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772129257": {
       "eventId": "session_completed:Christoph_1772129257",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772218350": {
       "eventId": "session_completed:Christoph_1772218350",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772369969": {
       "eventId": "session_completed:Christoph_1772369969",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772378824": {
       "eventId": "session_completed:Christoph_1772378824",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772561232": {
       "eventId": "session_completed:Christoph_1772561232",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772535850": {
       "eventId": "session_completed:Christoph_1772535850",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1772897423": {
       "eventId": "session_completed:Christoph_1772897423",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1773257309": {
       "eventId": "session_completed:Christoph_1773257309",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1773311269": {
       "eventId": "session_completed:Christoph_1773311269",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1773474665": {
       "eventId": "session_completed:Christoph_1773474665",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1773590454": {
       "eventId": "session_completed:Christoph_1773590454",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1773772274": {
       "eventId": "session_completed:Christoph_1773772274",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1774033766": {
       "eventId": "session_completed:Christoph_1774033766",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1774461573": {
       "eventId": "session_completed:Christoph_1774461573",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1774713737": {
       "eventId": "session_completed:Christoph_1774713737",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1774793611": {
       "eventId": "session_completed:Christoph_1774793611",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1775048627": {
       "eventId": "session_completed:Christoph_1775048627",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1775670682": {
       "eventId": "session_completed:Christoph_1775670682",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1775842403": {
       "eventId": "session_completed:Christoph_1775842403",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1775888581": {
       "eventId": "session_completed:Christoph_1775888581",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1776188037": {
       "eventId": "session_completed:Christoph_1776188037",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1776274636": {
       "eventId": "session_completed:Christoph_1776274636",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1776447280": {
       "eventId": "session_completed:Christoph_1776447280",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1776611008": {
       "eventId": "session_completed:Christoph_1776611008",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1776706323": {
       "eventId": "session_completed:Christoph_1776706323",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1776792933": {
       "eventId": "session_completed:Christoph_1776792933",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1777212211": {
       "eventId": "session_completed:Christoph_1777212211",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1778853069": {
       "eventId": "session_completed:Christoph_1778853069",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1779128690": {
       "eventId": "session_completed:Christoph_1779128690",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1779201820": {
       "eventId": "session_completed:Christoph_1779201820",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1779294752": {
       "eventId": "session_completed:Christoph_1779294752",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "track_completed:A:v1": {
       "eventId": "track_completed:A:v1",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1779730654": {
       "eventId": "session_completed:Christoph_1779730654",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1779805176": {
       "eventId": "session_completed:Christoph_1779805176",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1779819910": {
       "eventId": "session_completed:Christoph_1779819910",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1780164386": {
       "eventId": "session_completed:Christoph_1780164386",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782131519_e7af9f": {
       "eventId": "scene_created:scene_1782131519_e7af9f",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782132638_e0bd84": {
       "eventId": "scene_created:scene_1782132638_e0bd84",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782133395_230b58": {
       "eventId": "scene_created:scene_1782133395_230b58",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782133588_6982b1": {
       "eventId": "scene_created:scene_1782133588_6982b1",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782134210_9581b5": {
       "eventId": "scene_created:scene_1782134210_9581b5",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782134290_0e94df": {
       "eventId": "scene_created:scene_1782134290_0e94df",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1782131281": {
       "eventId": "session_completed:Christoph_1782131281",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782650372_0c0621": {
       "eventId": "scene_created:scene_1782650372_0c0621",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782650514_6d429a": {
       "eventId": "scene_created:scene_1782650514_6d429a",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782650644_bc413f": {
       "eventId": "scene_created:scene_1782650644_bc413f",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782651027_0d2613": {
       "eventId": "scene_created:scene_1782651027_0d2613",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1782651164_af827e": {
       "eventId": "scene_created:scene_1782651164_af827e",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1782649917": {
       "eventId": "session_completed:Christoph_1782649917",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1782132638_e0bd84:1": {
       "eventId": "scene_rated:scene_1782132638_e0bd84:1",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1782651027_0d2613:3": {
       "eventId": "scene_rated:scene_1782651027_0d2613:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1782133588_6982b1:5": {
       "eventId": "scene_rated:scene_1782133588_6982b1:5",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785592704_bc2104": {
       "eventId": "scene_created:scene_1785592704_bc2104",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785594157_2f981d": {
       "eventId": "scene_created:scene_1785594157_2f981d",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785592704_bc2104:4": {
       "eventId": "scene_rated:scene_1785592704_bc2104:4",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785594157_2f981d:2": {
       "eventId": "scene_rated:scene_1785594157_2f981d:2",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1785592381": {
       "eventId": "session_completed:Christoph_1785592381",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785687829_39a023": {
       "eventId": "scene_created:scene_1785687829_39a023",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1785685792": {
       "eventId": "session_completed:Christoph_1785685792",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785690365_f7a346": {
       "eventId": "scene_created:scene_1785690365_f7a346",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785690365_f7a346:3": {
       "eventId": "scene_rated:scene_1785690365_f7a346:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785690893_96a608": {
       "eventId": "scene_created:scene_1785690893_96a608",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1785690282": {
       "eventId": "session_completed:Christoph_1785690282",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785764455_610f66": {
       "eventId": "scene_created:scene_1785764455_610f66",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785764455_610f66:2": {
       "eventId": "scene_rated:scene_1785764455_610f66:2",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785764729_925bf7": {
       "eventId": "scene_created:scene_1785764729_925bf7",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1785763689": {
       "eventId": "session_completed:Christoph_1785763689",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "sidequest_completed:b39739d3-bba1-482c-9f3f-682271fbd7d8": {
       "eventId": "sidequest_completed:b39739d3-bba1-482c-9f3f-682271fbd7d8",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785958884_e705f1": {
       "eventId": "scene_created:scene_1785958884_e705f1",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785958884_e705f1:2": {
       "eventId": "scene_rated:scene_1785958884_e705f1:2",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785958972_64957d": {
       "eventId": "scene_created:scene_1785958972_64957d",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785958972_64957d:2": {
       "eventId": "scene_rated:scene_1785958972_64957d:2",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785959047_fb5835": {
       "eventId": "scene_created:scene_1785959047_fb5835",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785959047_fb5835:2": {
       "eventId": "scene_rated:scene_1785959047_fb5835:2",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1785959676_132b9d": {
       "eventId": "scene_created:scene_1785959676_132b9d",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785959676_132b9d:3": {
       "eventId": "scene_rated:scene_1785959676_132b9d:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1785957207": {
       "eventId": "session_completed:Christoph_1785957207",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "sidequest_completed:dc74294b-d18a-4b20-ad3c-bfe11841c321": {
       "eventId": "sidequest_completed:dc74294b-d18a-4b20-ad3c-bfe11841c321",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1786032537_be2f9f": {
       "eventId": "scene_created:scene_1786032537_be2f9f",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1786030749": {
       "eventId": "session_completed:Christoph_1786030749",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "sidequest_completed:9489aef1-4ca3-49de-a552-bd8d66bd701e": {
       "eventId": "sidequest_completed:9489aef1-4ca3-49de-a552-bd8d66bd701e",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1786038233_3735d7": {
       "eventId": "scene_created:scene_1786038233_3735d7",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1786038233_3735d7:3": {
       "eventId": "scene_rated:scene_1786038233_3735d7:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1786045448_79e3c2": {
       "eventId": "scene_created:scene_1786045448_79e3c2",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1786045448_79e3c2:3": {
       "eventId": "scene_rated:scene_1786045448_79e3c2:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1786045757_9b6502": {
       "eventId": "scene_created:scene_1786045757_9b6502",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1786033172": {
       "eventId": "session_completed:Christoph_1786033172",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "sidequest_completed:ef40f008-1198-4c39-8144-79bb971aa8d4": {
       "eventId": "sidequest_completed:ef40f008-1198-4c39-8144-79bb971aa8d4",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "sidequest_completed:34b5e231-56b4-435e-8724-9cc44d48442a": {
       "eventId": "sidequest_completed:34b5e231-56b4-435e-8724-9cc44d48442a",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_created:scene_1786182846_e4e237": {
       "eventId": "scene_created:scene_1786182846_e4e237",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "session_completed:Christoph_1786179938": {
       "eventId": "session_completed:Christoph_1786179938",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1786045757_9b6502:3": {
       "eventId": "scene_rated:scene_1786045757_9b6502:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1786182846_e4e237:4": {
       "eventId": "scene_rated:scene_1786182846_e4e237:4",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785687829_39a023:4": {
       "eventId": "scene_rated:scene_1785687829_39a023:4",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1786032537_be2f9f:3": {
       "eventId": "scene_rated:scene_1786032537_be2f9f:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785764729_925bf7:3": {
       "eventId": "scene_rated:scene_1785764729_925bf7:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
     "scene_rated:scene_1785690893_96a608:3": {
       "eventId": "scene_rated:scene_1785690893_96a608:3",
-      "processedAt": "2026-08-10T19:05:37.149Z",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
-    "locker:seen:2026-08-10T19:46:59.963Z": {
-      "eventId": "locker:seen:2026-08-10T19:46:59.963Z",
-      "processedAt": "2026-08-10T19:46:59.963Z",
+    "sidequest_completed:bb6759ec-8af6-47b8-b60c-5a0d81a6e840": {
+      "eventId": "sidequest_completed:bb6759ec-8af6-47b8-b60c-5a0d81a6e840",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
-    "locker:seen:2026-08-10T19:47:07.360Z": {
-      "eventId": "locker:seen:2026-08-10T19:47:07.360Z",
-      "processedAt": "2026-08-10T19:47:07.360Z",
+    "sidequest_completed:4a873057-c37d-4170-907a-2d074c930e50": {
+      "eventId": "sidequest_completed:4a873057-c37d-4170-907a-2d074c930e50",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
-    "locker:seen:2026-08-10T19:48:44.348Z": {
-      "eventId": "locker:seen:2026-08-10T19:48:44.348Z",
-      "processedAt": "2026-08-10T19:48:44.348Z",
+    "sidequest_completed:602fc065-ca64-43de-bf4b-f0d928dc06dc": {
+      "eventId": "sidequest_completed:602fc065-ca64-43de-bf4b-f0d928dc06dc",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
-    "locker:seen:2026-08-10T21:03:25.881Z": {
-      "eventId": "locker:seen:2026-08-10T21:03:25.881Z",
-      "processedAt": "2026-08-10T21:03:25.881Z",
+    "scene_created:scene_1786641385_024f0e": {
+      "eventId": "scene_created:scene_1786641385_024f0e",
+      "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
     },
-    "session_completed:Christoph_1786533467": {
-      "eventId": "session_completed:Christoph_1786533467",
-      "processedAt": "2026-08-12T11:18:39.710Z",
-      "grantedXp": 100,
+    "scene_created:scene_1786641974_beb2ef": {
+      "eventId": "scene_created:scene_1786641974_beb2ef",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
       "grantedPux": 0
     },
-    "session_completed:Christoph_1786533693": {
-      "eventId": "session_completed:Christoph_1786533693",
-      "processedAt": "2026-08-12T11:22:08.790Z",
-      "grantedXp": 100,
+    "scene_rated:scene_1786641974_beb2ef:3": {
+      "eventId": "scene_rated:scene_1786641974_beb2ef:3",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
       "grantedPux": 0
     },
-    "session_completed:Christoph_1786534763": {
-      "eventId": "session_completed:Christoph_1786534763",
-      "processedAt": "2026-08-12T11:42:11.134Z",
-      "grantedXp": 100,
+    "scene_rated:scene_1786641385_024f0e:3": {
+      "eventId": "scene_rated:scene_1786641385_024f0e:3",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786640760": {
+      "eventId": "session_completed:Christoph_1786640760",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786644206_865c28": {
+      "eventId": "scene_created:scene_1786644206_865c28",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786644206_865c28:4": {
+      "eventId": "scene_rated:scene_1786644206_865c28:4",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786644297_93d30c": {
+      "eventId": "scene_created:scene_1786644297_93d30c",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_created:scene_1786644600_dee844": {
+      "eventId": "scene_created:scene_1786644600_dee844",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1786643514": {
+      "eventId": "session_completed:Christoph_1786643514",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786644600_dee844:3": {
+      "eventId": "scene_rated:scene_1786644600_dee844:3",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "scene_rated:scene_1786644297_93d30c:4": {
+      "eventId": "scene_rated:scene_1786644297_93d30c:4",
+      "processedAt": "2026-08-13T20:38:32.602Z",
+      "grantedXp": 0,
       "grantedPux": 0
     }
   },
@@ -3232,69 +3297,175 @@
       "isDummy": false
     },
     {
-      "id": "session_completed:Christoph_1786533467",
-      "type": "session_completed",
-      "occurredAt": "2026-08-12T13:18:39.260483",
-      "sessionId": "Christoph_1786533467",
-      "drillId": "A1_D1",
-      "trackId": "A1",
-      "observedTeamId": "Eisbären Berlin",
-      "leagueId": "DEL",
-      "mechanicIds": [
-        "period_checkin"
-      ],
-      "tags": [],
-      "isDummy": false,
-      "isFirstSessionOfDrill": false
+      "id": "sidequest_completed:bb6759ec-8af6-47b8-b60c-5a0d81a6e840",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-13T17:12:54.654Z",
+      "sidequestId": "bb6759ec-8af6-47b8-b60c-5a0d81a6e840",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786640760",
+      "isDummy": false
     },
     {
-      "id": "session_completed:Christoph_1786533693",
-      "type": "session_completed",
-      "occurredAt": "2026-08-12T13:22:08.275525",
-      "sessionId": "Christoph_1786533693",
-      "drillId": "A1_D1",
-      "trackId": "A1",
-      "observedTeamId": "ERC Ingolstadt",
-      "leagueId": "DEL",
-      "mechanicIds": [
-        "period_checkin"
-      ],
-      "tags": [],
-      "isDummy": false,
-      "isFirstSessionOfDrill": false
+      "id": "sidequest_completed:4a873057-c37d-4170-907a-2d074c930e50",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-13T17:24:33.453Z",
+      "sidequestId": "4a873057-c37d-4170-907a-2d074c930e50",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786640760",
+      "isDummy": false
     },
     {
-      "id": "session_completed:Christoph_1786534763",
+      "id": "sidequest_completed:602fc065-ca64-43de-bf4b-f0d928dc06dc",
+      "type": "sidequest_completed",
+      "occurredAt": "2026-08-13T17:28:31.780Z",
+      "sidequestId": "602fc065-ca64-43de-bf4b-f0d928dc06dc",
+      "category": "special_teams",
+      "sessionId": "Christoph_1786640760",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786641385_024f0e",
+      "type": "scene_created",
+      "occurredAt": "2026-08-13T19:16:25.843465",
+      "sceneId": "scene_1786641385_024f0e",
+      "sessionId": "Christoph_1786640760",
+      "drillId": "B3_D2",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786641974_beb2ef",
+      "type": "scene_created",
+      "occurredAt": "2026-08-13T19:26:14.662077",
+      "sceneId": "scene_1786641974_beb2ef",
+      "sessionId": "Christoph_1786640760",
+      "drillId": "B3_D2",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786641974_beb2ef:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-13T19:26:27.437916",
+      "sceneId": "scene_1786641974_beb2ef",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786641385_024f0e:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-13T19:26:34.891408",
+      "sceneId": "scene_1786641385_024f0e",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1786640760",
       "type": "session_completed",
-      "occurredAt": "2026-08-12T13:42:10.748875",
-      "sessionId": "Christoph_1786534763",
-      "drillId": "B1_D1",
-      "trackId": "B1",
+      "occurredAt": "2026-08-13T19:40:03.202291",
+      "sessionId": "Christoph_1786640760",
+      "drillId": "B3_D2",
+      "trackId": "B3",
       "observedTeamId": "ERC Ingolstadt",
-      "leagueId": "DEL",
+      "leagueId": "U20_DNL",
       "mechanicIds": [
-        "sample_log"
+        "impact_classification_observation"
       ],
-      "tags": [],
+      "tags": [
+        "defensive_zone",
+        "unclear"
+      ],
       "isDummy": false,
-      "isFirstSessionOfDrill": false
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_created:scene_1786644206_865c28",
+      "type": "scene_created",
+      "occurredAt": "2026-08-13T20:03:26.845313",
+      "sceneId": "scene_1786644206_865c28",
+      "sessionId": "Christoph_1786643514",
+      "drillId": "B3_D3",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786644206_865c28:4",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-13T20:03:35.642685",
+      "sceneId": "scene_1786644206_865c28",
+      "rating": 4,
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786644297_93d30c",
+      "type": "scene_created",
+      "occurredAt": "2026-08-13T20:04:57.205249",
+      "sceneId": "scene_1786644297_93d30c",
+      "sessionId": "Christoph_1786643514",
+      "drillId": "B3_D3",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "scene_created:scene_1786644600_dee844",
+      "type": "scene_created",
+      "occurredAt": "2026-08-13T20:10:00.157421",
+      "sceneId": "scene_1786644600_dee844",
+      "sessionId": "Christoph_1786643514",
+      "drillId": "B3_D3",
+      "trackId": "B3",
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1786643514",
+      "type": "session_completed",
+      "occurredAt": "2026-08-13T20:10:39.374861",
+      "sessionId": "Christoph_1786643514",
+      "drillId": "B3_D3",
+      "trackId": "B3",
+      "observedTeamId": "ERC Ingolstadt",
+      "leagueId": "U20_DNL",
+      "mechanicIds": [
+        "support_classification_observation"
+      ],
+      "tags": [
+        "defensive_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true
+    },
+    {
+      "id": "scene_rated:scene_1786644600_dee844:3",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-13T20:11:07.077187",
+      "sceneId": "scene_1786644600_dee844",
+      "rating": 3,
+      "isDummy": false
+    },
+    {
+      "id": "scene_rated:scene_1786644297_93d30c:4",
+      "type": "scene_rated",
+      "occurredAt": "2026-08-13T20:11:10.355117",
+      "sceneId": "scene_1786644297_93d30c",
+      "rating": 4,
+      "isDummy": false
     }
   ],
   "unlockHistory": [
     {
-      "id": "bootstrap:2026-08-10T19:05:37.126Z",
+      "id": "bootstrap:2026-08-13T20:38:32.578Z",
       "kind": "bootstrap",
       "title": "Dein RINK-Fortschritt wurde ausgewertet",
-      "description": "9 Achievements freigeschaltet · Level 10 erreicht · 4 Cosmetics erhalten · +9365 XP",
-      "occurredAt": "2026-08-10T19:05:37.126Z",
+      "description": "0 Achievements freigeschaltet · Level 9 erreicht · 0 Cosmetics erhalten · +8150 XP",
+      "occurredAt": "2026-08-13T20:38:32.578Z",
       "sourceEventId": "bootstrap:v1",
-      "amountXp": 9365,
-      "amountPux": 825,
-      "level": 10
+      "amountXp": 8150,
+      "amountPux": 50,
+      "level": 9
     }
   ],
-  "bootstrapCompletedAt": "2026-08-10T19:05:37.149Z",
-  "lastUpdatedAt": "2026-08-12T11:42:11.134Z",
+  "bootstrapCompletedAt": "2026-08-13T20:38:32.602Z",
+  "lastUpdatedAt": "2026-08-13T20:38:32.602Z",
   "favoriteCosmeticIds": [],
   "puxTransactions": [],
   "completedCollections": {},

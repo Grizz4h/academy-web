@@ -1,0 +1,314 @@
+{
+  "id": "Christoph_1786643514",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "B3",
+  "goal": "Auto: B3 – Defensive Stabilität & Zugriff",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "B3_D3",
+  "learning_area": "academy",
+  "lab_mode": null,
+  "lab_template_id": null,
+  "observation_scope": "P2",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-08-13T19:51:54.869658",
+  "drills": [
+    {
+      "id": "B3_D3",
+      "title": "Unterstützt das Team den Zugriff?",
+      "drill_type": "support_classification_observation",
+      "description": "Ein defensiver Zugriff ist selten eine Einzelaktion. Entscheidend ist, ob das Team den ersten Druck unterstützt und daraus eine gemeinsame Defensivaktion entsteht.",
+      "didactics": {
+        "explanation": "Nach D1 und D2 verschiebt sich der Fokus: Nicht nur wer den Zugriff startet und welche Wirkung entsteht, sondern ob das Team den ersten Druck gemeinsam weiterträgt.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Kommt nach dem ersten Zugriff sofort ein zweiter Teamimpuls?",
+            "Wird ein Passweg geschlossen oder Raum abgesichert?",
+            "Bleibt der erste Zugriff isoliert oder entsteht Teamdruck?"
+          ],
+          "how_to_decide": [
+            "Finde eine Situation mit erstem defensiven Druck",
+            "Beobachte direkt danach die Teamreaktion",
+            "Bewerte die Unterstützung als sofortig, verzögert oder nicht erkennbar"
+          ],
+          "ignore": [
+            "Ob am Ende ein Puckgewinn entsteht",
+            "Ob die Defensive insgesamt perfekt gespielt wurde",
+            "Ob die Aktion am Ende erfolgreich abgeschlossen wird"
+          ]
+        },
+        "learning_hint": "Fokus bleibt eng: Es geht nur darum, ob aus individuellem Zugriff eine Teamaktion entsteht."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "support_teamaction_frequency": "meistens"
+            },
+            "questions": [
+              "Welches Muster hat in deinen Szenen am häufigsten dazu geführt, dass aus dem ersten Zugriff eine Teamaktion wurde?"
+            ]
+          },
+          {
+            "when": {
+              "support_teamaction_frequency": "manchmal"
+            },
+            "questions": [
+              "Was hat in den Szenen mit verzögerter Unterstützung gefehlt, damit der Zugriff sofort gemeinsam getragen wird?"
+            ]
+          },
+          {
+            "when": {
+              "support_teamaction_frequency": "selten"
+            },
+            "questions": [
+              "Was war der häufigste Grund, dass der erste Zugriff isoliert blieb?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "logs_key": "support_observations",
+        "log_count": 3,
+        "observe_hint": "Finde eine Situation, in der ein Spieler defensiven Druck ausübt. Beobachte danach, ob das Team diesen Zugriff unterstützt.",
+        "submit_label": "Beobachtung speichern",
+        "summary_title": "Deine Beobachtungen",
+        "missions": [
+          {
+            "title": "Mission 1 von 3",
+            "prompt": "Finde eine Situation, in der ein Spieler defensiven Druck ausübt.",
+            "hint": "Fokus: Erkenne, ob daraus eine gemeinsame Aktion entsteht."
+          },
+          {
+            "title": "Mission 2 von 3",
+            "prompt": "Finde eine weitere Situation mit erstem defensiven Druck.",
+            "hint": "Fokus: Achte darauf, wie schnell ein zweiter Spieler oder die Mannschaft reagiert."
+          },
+          {
+            "title": "Mission 3 von 3",
+            "prompt": "Finde eine dritte Situation und vergleiche: Wird der erste Zugriff wieder unterstützt?",
+            "hint": "Fokus: Erkenne erste Muster im Teamverhalten."
+          }
+        ],
+        "decision": {
+          "key": "supportLevel",
+          "label": "Wird dieser Zugriff unterstützt?",
+          "options": [
+            "Sofortige Unterstützung",
+            "Verzögerte Unterstützung",
+            "Keine Unterstützung erkennbar"
+          ]
+        },
+        "secondary_decision": {
+          "key": "supportFunction",
+          "label": "Welche Funktion übernimmt die Unterstützung?",
+          "show_when_decision_in": [
+            "Sofortige Unterstützung",
+            "Verzögerte Unterstützung"
+          ],
+          "options": [
+            "Passweg schließen",
+            "Raum absichern",
+            "Druck aufrechterhalten",
+            "Gegner übernehmen"
+          ]
+        },
+        "reflection": {
+          "key": "note",
+          "label": "Optionale Notiz",
+          "placeholder": "Optional: kurze Beobachtung",
+          "max_chars": 500
+        },
+        "completion_reflection": {
+          "key": "support_teamaction_frequency",
+          "label": "Wie häufig wurde aus einem ersten Zugriff eine Teamaktion?",
+          "options": [
+            "meistens",
+            "manchmal",
+            "selten"
+          ]
+        },
+        "active_focus_title": "Active Focus",
+        "active_focus_text": "Beobachte im laufenden Spiel weiter, ob erste defensive Zugriffe regelmäßig Unterstützung durch weitere Spieler erhalten.",
+        "questions": [
+          {
+            "key": "supportLevel",
+            "type": "radio",
+            "label": "Wird dieser Zugriff unterstützt?",
+            "options": [
+              "Sofortige Unterstützung",
+              "Verzögerte Unterstützung",
+              "Keine Unterstützung erkennbar"
+            ]
+          },
+          {
+            "key": "supportFunction",
+            "type": "radio",
+            "label": "Welche Funktion übernimmt die Unterstützung?",
+            "options": [
+              "Passweg schließen",
+              "Raum absichern",
+              "Druck aufrechterhalten",
+              "Gegner übernehmen"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Optionale Notiz",
+            "max_chars": 500
+          }
+        ]
+      },
+      "sceneSlug": "Support-the-Pressure"
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P2",
+      "answers": {
+        "__observation_log_draft_decision": "",
+        "__observation_log_draft_secondary_decision": "",
+        "__observation_log_draft_reflection": "",
+        "support_observations": [
+          {
+            "mission_index": 1,
+            "mission_title": "Mission 1 von 3",
+            "mission_prompt": "Finde eine Situation, in der ein Spieler defensiven Druck ausübt.",
+            "supportLevel": "Keine Unterstützung erkennbar",
+            "note": "Zu zaghaft drauf gegangen"
+          },
+          {
+            "mission_index": 2,
+            "mission_title": "Mission 2 von 3",
+            "mission_prompt": "Finde eine weitere Situation mit erstem defensiven Druck.",
+            "supportLevel": "Sofortige Unterstützung",
+            "supportFunction": "Raum absichern",
+            "note": ""
+          },
+          {
+            "mission_index": 3,
+            "mission_title": "Mission 3 von 3",
+            "mission_prompt": "Finde eine dritte Situation und vergleiche: Wird der erste Zugriff wieder unterstützt?",
+            "supportLevel": "Sofortige Unterstützung",
+            "supportFunction": "Druck aufrechterhalten",
+            "note": ""
+          }
+        ],
+        "support_teamaction_frequency": "meistens"
+      },
+      "timestamp": "2026-08-13T20:10:10.873039"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-08-13T20:10:39.015998"
+    }
+  ],
+  "drafts": {
+    "P2": {
+      "__observation_log_draft_decision": "",
+      "__observation_log_draft_secondary_decision": "",
+      "__observation_log_draft_reflection": "",
+      "support_observations": [
+        {
+          "mission_index": 1,
+          "mission_title": "Mission 1 von 3",
+          "mission_prompt": "Finde eine Situation, in der ein Spieler defensiven Druck ausübt.",
+          "supportLevel": "Keine Unterstützung erkennbar",
+          "note": "Zu zaghaft drauf gegangen"
+        },
+        {
+          "mission_index": 2,
+          "mission_title": "Mission 2 von 3",
+          "mission_prompt": "Finde eine weitere Situation mit erstem defensiven Druck.",
+          "supportLevel": "Sofortige Unterstützung",
+          "supportFunction": "Raum absichern",
+          "note": ""
+        },
+        {
+          "mission_index": 3,
+          "mission_title": "Mission 3 von 3",
+          "mission_prompt": "Finde eine dritte Situation und vergleiche: Wird der erste Zugriff wieder unterstützt?",
+          "supportLevel": "Sofortige Unterstützung",
+          "supportFunction": "Druck aufrechterhalten",
+          "note": ""
+        }
+      ],
+      "support_teamaction_frequency": "meistens"
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-08-13T20:10:39.374861"
+  },
+  "game_info": {
+    "league": "U20_DNL",
+    "team_home": "ERC Ingolstadt",
+    "team_away": "Ungarn U20 (HUN)",
+    "observed_team": "ERC Ingolstadt",
+    "date": "2026-08-13T17:51:54.671Z",
+    "season": "2026/27"
+  },
+  "game_id": null,
+  "observed_team": null,
+  "observed_team_id": null,
+  "observed_team_name": null,
+  "microfeedback": {
+    "P1": {
+      "done": false,
+      "text": ""
+    },
+    "P2": {
+      "done": true,
+      "text": "Sie haben gut reagiert nach dem Zugriff",
+      "ts": "2026-08-13T20:10:26.719661"
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  },
+  "is_dummy": false,
+  "ai_reflection": {
+    "id": "refl_fd97753c008a",
+    "sessionId": "Christoph_1786643514",
+    "createdAt": "2026-08-13T20:10:48.414845",
+    "provider": "openai",
+    "model": "gpt-5.6-luna",
+    "promptVersion": "v1",
+    "content": {
+      "strengths": [
+        "Du trennst mehrere konkrete Situationen voneinander und vergleichst sie.",
+        "Du benennst bei zwei Situationen die vermutete Unterstützungsfunktion: Raum absichern und Druck aufrechterhalten.",
+        "Die Einschätzung „meistens“ berücksichtigt, dass nicht alle beobachteten Situationen gleich verliefen."
+      ],
+      "cautions": [
+        "„Zu zaghaft drauf gegangen“ beschreibt eher die Intensität des ersten Zugriffs als die anschließende Unterstützung.",
+        "Die Verallgemeinerung „meistens“ ist mit drei Situationen nur begrenzt abgesichert.",
+        "Es bleibt teilweise unklar, woran du die sofortige Unterstützung konkret erkannt hast, etwa an einem geschlossenen Passweg oder einem nachrückenden Spieler."
+      ],
+      "alternativeInterpretation": "Die erste Situation könnte nicht nur als fehlende Unterstützung, sondern auch als zu geringer erster Druck mit anschließend möglicherweise vorhandener Raumabsicherung gelesen werden.",
+      "nextObservationFocus": "Beobachte beim nächsten Zugriff unmittelbar die folgenden zwei bis drei Sekunden: Welcher Mitspieler reagiert zuerst, und welchen Passweg oder Raum nimmt er konkret weg?",
+      "reflectionQuestion": "Woran genau hast du in den beiden Situationen „sofortige Unterstützung“ erkannt?",
+      "summary": "Dein Vergleich zeigt ein differenziertes Bild: eine isoliert wirkende Situation und zwei Situationen mit unmittelbarer Teamreaktion. Für eine belastbarere Einschätzung solltest du die sichtbare Anschlussaktion genauer beschreiben und „meistens“ an mehr als drei Beispielen prüfen."
+    },
+    "usage": {
+      "inputTokens": 1218,
+      "outputTokens": 401,
+      "totalTokens": 1619
+    }
+  }
+}

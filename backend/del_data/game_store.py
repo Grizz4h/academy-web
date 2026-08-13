@@ -48,6 +48,18 @@ def build_game_id(league: str, season: str, external_id: str) -> str:
     return f"{league_key}:{season_key}:{safe_external}"
 
 
+def is_dummy_game(game: Dict[str, Any]) -> bool:
+    if not isinstance(game, dict):
+        return False
+    if game.get("isDummy") is True or game.get("is_dummy") is True:
+        return True
+    source = game.get("source") or {}
+    if isinstance(source, dict) and source.get("provider") == "dev_fixture":
+        return True
+    game_id = str(game.get("id") or "")
+    return game_id.startswith("dev:")
+
+
 def upsert_games(
     games_dir: str,
     *,
@@ -61,11 +73,17 @@ def upsert_games(
     catalog["season_label"] = season_to_display(season)
     catalog["updated_at"] = datetime.utcnow().isoformat() + "Z"
 
-    existing_by_id = {game.get("id"): game for game in catalog.get("games") or [] if game.get("id")}
+    existing_by_id = {
+        game.get("id"): game
+        for game in catalog.get("games") or []
+        if game.get("id") and not is_dummy_game(game)
+    }
     created = 0
     updated = 0
 
     for game in games:
+        if is_dummy_game(game):
+            continue
         game_id = game.get("id")
         if not game_id:
             continue
@@ -81,7 +99,7 @@ def upsert_games(
         [
             game
             for game in existing_by_id.values()
-            if game_date_in_season(game.get("date"), season)
+            if not is_dummy_game(game) and game_date_in_season(game.get("date"), season)
         ],
         key=lambda item: (item.get("date") or "", item.get("matchday") or 0),
     )
@@ -103,6 +121,8 @@ def list_games(
     season_key = season_to_file_key(season)
     filtered = []
     for game in games:
+        if is_dummy_game(game):
+            continue
         if not game_date_in_season(game.get("date"), season_key):
             continue
         if team_id and game.get("home_team_id") != team_id and game.get("away_team_id") != team_id:
@@ -125,6 +145,8 @@ def get_game(games_dir: str, game_id: str) -> Optional[Dict[str, Any]]:
     catalog = load_games_catalog(games_dir, league.upper(), season_key)
     for game in catalog.get("games") or []:
         if game.get("id") == game_id:
+            if is_dummy_game(game) or game_id.startswith("dev:"):
+                return None
             return game
     return None
 

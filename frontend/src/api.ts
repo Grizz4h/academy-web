@@ -139,12 +139,19 @@ export interface PredictionEntry {
   categoryId: string
   observedTeamId: string
   observedTeamName: string
+  order?: number
   period: number
   gameTime?: string
   predictedValue: string
   confidence: 'low' | 'medium' | 'high'
+  predictionCues?: string[]
+  context?: Record<string, string>
+  lockedAt?: string
   actualValue?: string
   resolution?: PredictionResolution
+  outcome?: Record<string, string>
+  reflectionReads?: string[]
+  alternativeSolution?: string
   missedCue?: string
   note?: string
   createdAt: string
@@ -158,8 +165,12 @@ export interface PredictionSessionSummary {
   partial: number
   incorrect: number
   unjudgeable: number
+  evaluable?: number
   mostPredictedValue?: string
   mostActualValue?: string
+  cueCounts?: Record<string, number>
+  actualValueCounts?: Record<string, number>
+  reflectionReadCounts?: Record<string, number>
   confidenceTotals: {
     low: number
     medium: number
@@ -286,6 +297,8 @@ export interface CatalogGame {
     external_id?: string
     imported_at?: string
   }
+  isDummy?: boolean
+  is_dummy?: boolean
 }
 
 export interface DelDataStatus {
@@ -339,6 +352,7 @@ export interface GameInfo {
   competition_unit_label?: string
   competition_unit_value?: string
   game_id?: string
+  is_dummy?: boolean
 }
 
 export interface Checkin {

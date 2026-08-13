@@ -2,7 +2,7 @@
   "displayName": "Christoph",
   "avatar": {
     "type": "catalog",
-    "avatarId": "avatar_puck_01"
+    "avatarId": "avatar_net_01"
   },
   "bannerId": "banner_neutral_01",
   "emblem": {
@@ -19,6 +19,8 @@
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
+  "hockeyExperience": null,
+  "experiencePromptDismissed": false,
   "dashboardPreferences": {},
-  "updatedAt": "2026-08-10T21:03:27.877150"
+  "updatedAt": "2026-08-13T20:39:24.396093"
 }

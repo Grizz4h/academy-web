@@ -72,6 +72,15 @@
   opacity: 0.65;
 }
 
+@media (min-width: 769px) {
+  .card {
+    background:
+      linear-gradient(180deg, rgba(22, 32, 52, 0.82) 0%, rgba(10, 16, 30, 0.90) 58%, rgba(6, 10, 20, 0.94) 100%);
+    backdrop-filter: blur(22px) saturate(1.25);
+    -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  }
+}
+
 /* Elevation ladder — opt-in via Card elevation prop */
 .quiet {
   box-shadow: var(--elev-quiet-shadow, 0 8px 24px rgba(0,0,0,0.28)), inset 0 1px 0 rgba(255,255,255,0.05) !important;
@@ -86,6 +95,18 @@
   background:
     linear-gradient(135deg, rgba(81, 145, 162, 0.12), rgba(255, 255, 255, 0.03) 52%) !important;
   padding-left: 1.35rem !important;
+}
+
+@media (min-width: 769px) {
+  .quiet {
+    background:
+      linear-gradient(180deg, rgba(16, 24, 40, 0.80) 0%, rgba(10, 16, 30, 0.88) 100%) !important;
+  }
+
+  .featured {
+    background:
+      linear-gradient(135deg, rgba(81, 145, 162, 0.22), rgba(10, 16, 30, 0.90) 52%) !important;
+  }
 }
 
 .featured::after {

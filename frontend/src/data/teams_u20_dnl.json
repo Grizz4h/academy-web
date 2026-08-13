@@ -82,6 +82,12 @@
         "id": "jung_eisbaren_regensburg",
         "name": "Jung-Eisbären Regensburg",
         "short": "JER"
+      },
+      {
+        "id": "hungary_u20",
+        "name": "Ungarn U20 (HUN)",
+        "short": "HUN",
+        "country": "Hungary"
       }
     ],
     "2026/27": [
@@ -164,6 +170,12 @@
         "id": "jung_eisbaren_regensburg",
         "name": "Jung-Eisbären Regensburg",
         "short": "JER"
+      },
+      {
+        "id": "hungary_u20",
+        "name": "Ungarn U20 (HUN)",
+        "short": "HUN",
+        "country": "Hungary"
       }
     ]
   }

@@ -1,11 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { api, type PredictionEntry } from '../api'
 import { SceneMarkerButton } from '../components/SceneMarkerButton'
+import GameContextSummary from '../components/game/GameContextSummary'
+import GameStatsDevPanel from '../components/game/GameStatsDevPanel'
+import { isDevNavEnabled } from '../config/featureFlags'
 import { useUser } from '../context/UserContext'
 import type { PredictionTemplate } from '../features/lab/types'
 import {
+  CompactPredictionCard,
+  emptyPredictionDraft,
+  emptyRevealDraft,
   OpenPredictionCard,
   PredictionHistoryDetails,
   PredictionInputForm,
@@ -13,9 +19,20 @@ import {
   PredictionProgress,
   PredictionResolutionForm,
   PredictionSessionSummary,
+  type PredictionDraft,
+  type PredictionRevealDraft,
 } from '../features/lab/PredictComponents'
-import { calculatePredictionCalibration, calculatePredictionSessionSummary, createPredictionEntry, findOpenPredictionEntry, resolvePredictionEntry } from '../features/lab/predictService'
+import { canEditLockedPrediction } from '../features/lab/predictCompare'
+import {
+  calculatePredictionCalibration,
+  calculatePredictionSessionSummary,
+  createPredictionEntry,
+  findOpenPredictionEntry,
+  resolvePredictionEntryForTemplate,
+} from '../features/lab/predictService'
+import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import { getActivePeriodsForScope, type PeriodPhase } from '../utils/observationScope'
+import { formatGameTimeInput } from '../utils/sceneHelpers'
 
 const phaseLabel: Record<string, string> = {
   P1: '1. Drittel',
@@ -29,6 +46,8 @@ const phaseNumber: Record<string, number> = {
   P3: 3,
 }
 
+const PREDICT_DRAFT_KEY = 'predict'
+
 export default function LabPredictSession() {
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
@@ -36,13 +55,11 @@ export default function LabPredictSession() {
 
   const [isPredictionFormOpen, setIsPredictionFormOpen] = useState(false)
   const [isResolutionOpen, setIsResolutionOpen] = useState(false)
-  const [selectedPrediction, setSelectedPrediction] = useState<string | undefined>(undefined)
-  const [selectedConfidence, setSelectedConfidence] = useState<'low' | 'medium' | 'high' | undefined>(undefined)
-  const [predictionNote, setPredictionNote] = useState('')
-  const [selectedActual, setSelectedActual] = useState<string | undefined>(undefined)
-  const [selectedResolution, setSelectedResolution] = useState<'correct' | 'partial' | 'incorrect' | 'unjudgeable' | undefined>(undefined)
-  const [selectedMissedCue, setSelectedMissedCue] = useState<string | undefined>(undefined)
-  const [statusMessage, setStatusMessage] = useState<string>('')
+  const [draft, setDraft] = useState<PredictionDraft>(emptyPredictionDraft())
+  const [revealDraft, setRevealDraft] = useState<PredictionRevealDraft>(emptyRevealDraft())
+  const [statusMessage, setStatusMessage] = useState('')
+  const [justLocked, setJustLocked] = useState(false)
+  const restoredDraftRef = useRef(false)
 
   const { data: session, isLoading, error } = useQuery({
     queryKey: ['session', id],
@@ -58,6 +75,13 @@ export default function LabPredictSession() {
   const { data: labContent } = useQuery({
     queryKey: ['lab-content'],
     queryFn: () => api.getLabContent(),
+  })
+
+  const gameId = session?.game_id || session?.game_info?.game_id
+  const { data: catalogGame } = useQuery({
+    queryKey: ['game', gameId],
+    queryFn: () => api.getGame(String(gameId)),
+    enabled: Boolean(gameId),
   })
 
   const updateSessionMutation = useMutation({
@@ -122,6 +146,34 @@ export default function LabPredictSession() {
     : fallbackPhase) as PeriodPhase
   const lastPhase = activePeriods[activePeriods.length - 1] || 'P1'
   const canFinish = summary.resolved >= (template?.minimumResolvedPredictions || 0) && !openEntry && currentPhase === lastPhase
+  const resolvedEntries = entries.filter((entry) => Boolean(entry.resolution))
+
+  useEffect(() => {
+    if (!session || restoredDraftRef.current) return
+    restoredDraftRef.current = true
+    const stored = session.drafts?.[PREDICT_DRAFT_KEY] as PredictionDraft | undefined
+    if (stored && !openEntry) {
+      setDraft({
+        ...emptyPredictionDraft(),
+        ...stored,
+        context: stored.context || {},
+        cues: stored.cues || [],
+      })
+      setIsPredictionFormOpen(true)
+    }
+  }, [session, openEntry])
+
+  useEffect(() => {
+    if (!id || !session || openEntry || !isPredictionFormOpen || session.state === 'COMPLETED' || session.state === 'ABORTED') return
+    const handle = window.setTimeout(() => {
+      const nextDrafts = {
+        ...(session.drafts || {}),
+        [PREDICT_DRAFT_KEY]: draft,
+      }
+      api.saveDrafts(id, nextDrafts).catch(() => undefined)
+    }, 400)
+    return () => window.clearTimeout(handle)
+  }, [draft, id, isPredictionFormOpen, openEntry, session])
 
   const academyDrillTitle = useMemo(() => {
     if (!template?.relatedAcademyDrills?.length || !curriculum?.tracks) return null
@@ -147,26 +199,34 @@ export default function LabPredictSession() {
     return <div className="card">Aktuell sind keine Predict-Übungen verfügbar.</div>
   }
 
+  const patchDraft = (patch: Partial<PredictionDraft>) => {
+    setDraft((prev) => {
+      const next = { ...prev, ...patch }
+      if (patch.gameTime !== undefined) {
+        next.gameTime = formatGameTimeInput(patch.gameTime)
+      }
+      return next
+    })
+  }
+
   const goToNextPhase = () => {
     const idx = activePeriods.indexOf(currentPhase)
     if (idx === -1 || idx === activePeriods.length - 1) return
-    const next = activePeriods[idx + 1]
-    updatePhaseMutation.mutate(next)
+    updatePhaseMutation.mutate(activePeriods[idx + 1])
   }
 
   const goToPreviousPhase = () => {
     const idx = activePeriods.indexOf(currentPhase)
     if (idx <= 0) return
-    const previous = activePeriods[idx - 1]
-    updatePhaseMutation.mutate(previous)
+    updatePhaseMutation.mutate(activePeriods[idx - 1])
   }
 
   const handleSavePrediction = async () => {
-    if (openEntry) {
+    if (openEntry && !canEditLockedPrediction(openEntry)) {
       setStatusMessage('Es gibt bereits eine offene Prediction. Bitte zuerst auflösen.')
       return
     }
-    if (!selectedPrediction || !selectedConfidence) {
+    if (!draft.predictedValue || (template.confidence.enabled && !draft.confidence)) {
       setStatusMessage('Bitte Vorhersage und Sicherheit auswählen.')
       return
     }
@@ -175,24 +235,33 @@ export default function LabPredictSession() {
       session,
       templateId: template.id,
       categoryId: template.categoryId,
-      predictedValue: selectedPrediction,
-      confidence: selectedConfidence,
+      predictedValue: draft.predictedValue,
+      confidence: draft.confidence || 'medium',
       period: phaseNumber[currentPhase],
-      note: predictionNote,
+      order: openEntry?.order || entries.length + 1,
+      gameTime: draft.gameTime,
+      note: draft.note,
+      context: draft.context,
+      predictionCues: draft.cues,
+      existingId: openEntry?.id,
+      createdAt: openEntry?.createdAt,
     })
 
-    const nextEntries = [...entries, newEntry]
+    const nextEntries = openEntry
+      ? entries.map((entry) => entry.id === openEntry.id ? newEntry : entry)
+      : [...entries, newEntry]
     const nextSummary = calculatePredictionSessionSummary(nextEntries)
     await updateSessionMutation.mutateAsync({
       prediction_entries: nextEntries,
       open_prediction_id: newEntry.id,
       prediction_summary: nextSummary,
     })
+    await api.saveDrafts(id!, { ...(session.drafts || {}), [PREDICT_DRAFT_KEY]: undefined }).catch(() => undefined)
 
-    setSelectedPrediction(undefined)
-    setSelectedConfidence(undefined)
-    setPredictionNote('')
+    setDraft(emptyPredictionDraft())
     setIsPredictionFormOpen(false)
+    setJustLocked(true)
+    window.setTimeout(() => setJustLocked(false), 900)
     setStatusMessage(`Prediction ${nextEntries.length} gespeichert`)
   }
 
@@ -201,16 +270,21 @@ export default function LabPredictSession() {
       setStatusMessage('Keine offene Prediction gefunden.')
       return
     }
-    if (!selectedActual || !selectedResolution) {
-      setStatusMessage('Bitte tatsächliche Aktion und Auflösung wählen.')
+    if (!revealDraft.actualValue) {
+      setStatusMessage('Bitte tatsächliche Aktion wählen.')
       return
     }
 
-    const resolvedEntry: PredictionEntry = resolvePredictionEntry({
+    const resolvedEntry: PredictionEntry = resolvePredictionEntryForTemplate({
+      template,
       entry: openEntry,
-      actualValue: selectedActual,
-      resolution: selectedResolution,
-      missedCue: selectedMissedCue,
+      actualValue: revealDraft.actualValue,
+      resolution: revealDraft.resolution,
+      missedCue: revealDraft.missedCue,
+      note: revealDraft.note,
+      outcome: revealDraft.outcome,
+      reflectionReads: revealDraft.reflectionReads,
+      alternativeSolution: revealDraft.alternativeSolution,
     })
 
     const nextEntries = entries.map((entry) => entry.id === openEntry.id ? resolvedEntry : entry)
@@ -222,25 +296,37 @@ export default function LabPredictSession() {
       prediction_summary: nextSummary,
     })
 
-    setSelectedActual(undefined)
-    setSelectedResolution(undefined)
-    setSelectedMissedCue(undefined)
+    setRevealDraft(emptyRevealDraft())
     setIsResolutionOpen(false)
     setStatusMessage(`Prediction ${nextSummary.resolved} gespeichert`)
   }
 
-  const handleActualChange = (actualValue: string) => {
-    setSelectedActual(actualValue)
-    if (!openEntry) return
+  const handleActualChange = (patch: Partial<PredictionRevealDraft>) => {
+    setRevealDraft((prev) => {
+      const next = { ...prev, ...patch }
+      if (patch.actualValue && openEntry) {
+        if (patch.actualValue === 'nicht_beurteilbar') {
+          next.resolution = 'unjudgeable'
+        } else if (template.resolution.autoEvaluateExactMatches && patch.actualValue === openEntry.predictedValue) {
+          next.resolution = 'correct'
+        }
+      }
+      return next
+    })
+  }
 
-    if (actualValue === 'nicht_beurteilbar') {
-      setSelectedResolution('unjudgeable')
-      return
-    }
-
-    if (template.resolution.autoEvaluateExactMatches && actualValue === openEntry.predictedValue) {
-      setSelectedResolution('correct')
-    }
+  const startEditLockedPrediction = () => {
+    if (!openEntry || !canEditLockedPrediction(openEntry)) return
+    setDraft({
+      context: openEntry.context || {},
+      predictedValue: openEntry.predictedValue,
+      cues: openEntry.predictionCues || [],
+      confidence: openEntry.confidence,
+      note: openEntry.note || '',
+      gameTime: openEntry.gameTime || '',
+    })
+    setIsPredictionFormOpen(true)
+    setIsResolutionOpen(false)
   }
 
   const handleCompleteSession = () => {
@@ -259,6 +345,8 @@ export default function LabPredictSession() {
     completeMutation.mutate()
   }
 
+  const latestResolved = resolvedEntries[resolvedEntries.length - 1]
+
   return (
     <div style={{ display: 'grid', gap: '1rem', maxWidth: '820px', margin: '0 auto' }}>
       <header className="ui-page-header">
@@ -266,8 +354,9 @@ export default function LabPredictSession() {
         <p className="ui-section-title-content" style={{ margin: 0 }}>{template.title}</p>
       </header>
 
-      <div className="card" style={{ marginBottom: 0 }}>
+      <div className="card ui-flat-mobile" style={{ marginBottom: 0 }}>
         <p>{template.description}</p>
+        {template.learningGoal && <p>{template.learningGoal}</p>}
         <p style={{ marginBottom: '0.4rem' }}>
           Beobachtetes Team: <strong>{session.game_info?.observed_team || session.observed_team || 'Unbekannt'}</strong>
         </p>
@@ -277,8 +366,28 @@ export default function LabPredictSession() {
         {academyDrillTitle && <p style={{ marginBottom: 0 }}>Passende Akademie-Grundlage: {academyDrillTitle}</p>}
       </div>
 
-      {activePeriods.length > 1 && (
+      {catalogGame && (
         <div className="card" style={{ marginBottom: 0 }}>
+          <GameContextSummary
+            game={catalogGame}
+            compact
+            embedded
+            perspectiveTeam={session.game_info?.observed_team || session.observed_team || undefined}
+            showImportChrome
+          />
+          {isDevNavEnabled() && (
+            <GameStatsDevPanel
+              game={catalogGame}
+              compact
+              embedded
+              perspectiveTeam={session.game_info?.observed_team || session.observed_team || undefined}
+            />
+          )}
+        </div>
+      )}
+
+      {activePeriods.length > 1 && (
+        <div className="card ui-flat-mobile" style={{ marginBottom: 0 }}>
           <h3 style={{ marginTop: 0 }}>Drittelsteuerung</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
             <button
@@ -299,18 +408,38 @@ export default function LabPredictSession() {
         </div>
       )}
 
-      <PredictionProgress summary={summary} minimumResolvedPredictions={template.minimumResolvedPredictions} />
+      <PredictionProgress
+        summary={summary}
+        minimumResolvedPredictions={template.minimumResolvedPredictions}
+        recommendedPredictions={template.recommendedPredictions}
+      />
 
-      {openEntry && !isResolutionOpen && (
-        <OpenPredictionCard template={template} entry={openEntry} onResolve={() => {
-          setIsResolutionOpen(true)
-          setIsPredictionFormOpen(false)
-        }} />
+      {latestResolved && !openEntry && !isPredictionFormOpen && session.state !== 'COMPLETED' && (
+        <CompactPredictionCard
+          template={template}
+          entry={latestResolved}
+          index={latestResolved.order || resolvedEntries.length}
+        />
       )}
 
-      {!openEntry && !isPredictionFormOpen && !isResolutionOpen && (
+      {openEntry && !isResolutionOpen && !isPredictionFormOpen && (
+        <OpenPredictionCard
+          template={template}
+          entry={openEntry}
+          justLocked={justLocked}
+          onResolve={() => {
+            setIsResolutionOpen(true)
+            setIsPredictionFormOpen(false)
+          }}
+          onEdit={canEditLockedPrediction(openEntry) ? startEditLockedPrediction : undefined}
+        />
+      )}
+
+      {!openEntry && !isPredictionFormOpen && !isResolutionOpen && session.state !== 'COMPLETED' && session.state !== 'ABORTED' && (
         <PredictionObservationState
+          template={template}
           hasOpenPrediction={Boolean(openEntry)}
+          resolvedCount={resolvedEntries.length}
           onStartPrediction={() => {
             setIsPredictionFormOpen(true)
             setStatusMessage('')
@@ -318,23 +447,20 @@ export default function LabPredictSession() {
         />
       )}
 
-      {isPredictionFormOpen && !openEntry && (
+      {isPredictionFormOpen && (!openEntry || canEditLockedPrediction(openEntry)) && (
         <PredictionInputForm
           template={template}
-          selectedPrediction={selectedPrediction}
-          selectedConfidence={selectedConfidence}
-          note={predictionNote}
-          onChangePrediction={setSelectedPrediction}
-          onChangeConfidence={setSelectedConfidence}
-          onChangeNote={setPredictionNote}
+          draft={draft}
+          periodLabel={phaseLabel[currentPhase]}
+          onChange={patchDraft}
           onCancelUnclear={() => {
             setIsPredictionFormOpen(false)
-            setSelectedPrediction(undefined)
-            setSelectedConfidence(undefined)
-            setPredictionNote('')
+            setDraft(emptyPredictionDraft())
+            api.saveDrafts(id!, { ...(session.drafts || {}), [PREDICT_DRAFT_KEY]: undefined }).catch(() => undefined)
             setStatusMessage('Situation wurde als nicht klar genug markiert.')
           }}
           onSave={handleSavePrediction}
+          saving={updateSessionMutation.isPending}
         />
       )}
 
@@ -342,43 +468,63 @@ export default function LabPredictSession() {
         <PredictionResolutionForm
           template={template}
           openEntry={openEntry}
-          selectedActual={selectedActual}
-          selectedResolution={selectedResolution}
-          selectedMissedCue={selectedMissedCue}
-          onChangeActual={handleActualChange}
-          onChangeResolution={setSelectedResolution}
-          onChangeMissedCue={setSelectedMissedCue}
+          draft={revealDraft}
+          onChange={handleActualChange}
           onResolve={handleResolvePrediction}
+          onBack={() => {
+            setIsResolutionOpen(false)
+            setRevealDraft(emptyRevealDraft())
+          }}
+          saving={updateSessionMutation.isPending}
         />
       )}
 
-      <div className="card" style={{ marginBottom: 0 }}>
+      <div className="card ui-flat-mobile" style={{ marginBottom: 0 }}>
         <h3 style={{ marginTop: 0 }}>Szenenmarkierung</h3>
-        <p>Du kannst weiterhin interessante Szenen für Rink About It markieren.</p>
+        <p>Optional: interessante Szenen für später speichern – besonders wenn Prediction und Reality auseinanderlaufen.</p>
         <SceneMarkerButton session={session} currentPhase={currentPhase} activeDrill={null} />
       </div>
 
       {statusMessage && (
-        <div className="card" style={{ marginBottom: 0 }}>
+        <div className="card ui-flat-mobile" style={{ marginBottom: 0 }}>
           <p style={{ margin: 0 }}>{statusMessage}</p>
         </div>
       )}
 
       {session.state === 'COMPLETED' && (
-        <PredictionSessionSummary template={template} summary={summary} insight={insight} />
+        <>
+          <PredictionSessionSummary template={template} summary={summary} insight={insight} />
+          <SessionReflectionPanel
+            session={session}
+            reflection={session.ai_reflection}
+            onReflectionSaved={(reflection) => {
+              queryClient.setQueryData(['session', id], (prev: typeof session | undefined) =>
+                prev ? { ...prev, ai_reflection: reflection } : prev,
+              )
+              queryClient.invalidateQueries({ queryKey: ['sessions'] })
+            }}
+          />
+        </>
       )}
 
-      <PredictionHistoryDetails template={template} entries={entries} />
+      <PredictionHistoryDetails
+        template={template}
+        entries={
+          latestResolved && !openEntry && !isPredictionFormOpen && session.state !== 'COMPLETED'
+            ? resolvedEntries.slice(0, -1)
+            : entries
+        }
+      />
 
-      {template.activeFocus && (
-        <div className="card" style={{ marginBottom: 0 }}>
+      {template.activeFocus && session.state !== 'COMPLETED' && (
+        <div className="card ui-flat-mobile" style={{ marginBottom: 0 }}>
           <h3 style={{ marginTop: 0 }}>{template.activeFocus.title}</h3>
           <p style={{ marginBottom: 0 }}>{template.activeFocus.text}</p>
         </div>
       )}
 
       {session.state !== 'COMPLETED' && session.state !== 'ABORTED' && (
-        <div className="card" style={{ marginBottom: 0 }}>
+        <div className="card ui-flat-mobile" style={{ marginBottom: 0 }}>
           {openEntry && (
             <p style={{ color: '#ffd8a6' }}>
               Du hast noch eine offene Prediction. Löse sie auf oder markiere sie als nicht beurteilbar.

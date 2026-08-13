@@ -80,6 +80,58 @@ class ReflectionPayloadTests(unittest.TestCase):
         self.assertIn("summary", required)
         self.assertIn("nextObservationFocus", required)
 
+    def test_lab_predict_template_guidance_and_entries(self):
+        session = {
+            "id": "lab_1",
+            "learning_area": "lab",
+            "lab_mode": "predict",
+            "lab_template_id": "pressure_carrier_solution",
+            "observed_team": "Augsburg",
+            "prediction_entries": [
+                {
+                    "id": "p1",
+                    "predictedValue": "reverse",
+                    "actualValue": "reverse",
+                    "resolution": "correct",
+                    "predictionCues": ["support_position"],
+                    "lockedAt": "2026-08-12T10:00:00",
+                    "outcome": {"pressureResolution": "possession_lost"},
+                }
+            ],
+            "prediction_summary": {"total": 1, "correct": 1},
+            "drills": [],
+        }
+        lab_content = {
+            "prediction_templates": [
+                {
+                    "id": "pressure_carrier_solution",
+                    "title": "Wie löst der Puckführer den Druck?",
+                    "learningGoal": "Optionen unter Druck früh erkennen.",
+                    "reflectionGuidance": [
+                        "Unterscheide Prediction Accuracy von Qualität oder Erfolg der tatsächlichen Aktion."
+                    ],
+                    "coreHints": ["Predicte die Entscheidung, bevor sie sichtbar wird."],
+                    "observationGuide": {
+                        "howToDecide": ["Lies zuerst Optionen."],
+                    },
+                }
+            ]
+        }
+
+        payload = build_reflection_payload(session, None, lab_content)
+        self.assertEqual(payload["drill"]["id"], "pressure_carrier_solution")
+        self.assertIn("Optionen unter Druck", payload["drill"]["learningGoal"])
+        self.assertTrue(
+            any("Prediction Accuracy" in item for item in payload["drill"]["reflectionGuidance"])
+        )
+        predict_obs = payload["session"]["observations"][-1]
+        self.assertEqual(predict_obs["phase"], "PREDICT")
+        self.assertEqual(predict_obs["answers"]["predictionEntries"][0]["predictedValue"], "reverse")
+        self.assertEqual(
+            predict_obs["answers"]["predictionEntries"][0]["outcome"]["pressureResolution"],
+            "possession_lost",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

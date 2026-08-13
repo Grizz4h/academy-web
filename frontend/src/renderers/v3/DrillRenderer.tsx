@@ -1,4 +1,8 @@
-// ✅ ACTIVE: Renderer v3 for E (Kopie von v2, Stand 2026-01-21)
+/**
+ * DEPRECATED: Track E now routes to V2.
+ * Kept only as unused legacy fallback from the piece-wise ChatGPT iteration era.
+ * Do not add new mechanics here — extend V2 / feature modules instead.
+ */
 
 import { useEffect } from "react";
 import type { Drill } from "../../api";
@@ -90,45 +94,29 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 }
 
 export default function DrillRendererV3({ drill, answers, setAnswers }: DrillRendererV3Props) {
-	return (
-		<div>
-			<div style={{
-				background: '#1e293b',
-				color: '#fff',
-				padding: '6px 12px',
-				fontWeight: 700,
-				fontSize: '1.1rem',
-				borderRadius: 6,
-				marginBottom: 12,
-				textAlign: 'center',
-				letterSpacing: 1,
-				zIndex: 1000
-			}}>
-				[DrillRenderer V3 AKTIV]
-			</div>
-			{/* Drill-Rendering wie bisher */}
-			{
-				(() => {
-					switch (drill.drill_type) {
-						case "period_checkin":
-							return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
-						case "pressure_diagnosis":
-							return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
-						case "micro_quiz":
-							return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
-						case "shift_tracker":
-							return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} />;
-						case "triangle_spotting":
-							return <TriangleSpotting drill={drill} answers={answers} setAnswers={setAnswers} />;
-						case "role_identification":
-							return <RoleIdentification drill={drill} answers={answers} setAnswers={setAnswers} />;
-						default:
-							return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
-					}
-				})()
-			}
-		</div>
-	);
+	// Legacy fallback only — router no longer selects V3 for Track E.
+	switch (drill.drill_type) {
+		case "period_checkin":
+		case "pressure_diagnosis":
+			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "micro_quiz":
+			return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "shift_tracker":
+			return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "triangle_spotting":
+			return <TriangleSpotting drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "role_identification":
+			return <RoleIdentification drill={drill} answers={answers} setAnswers={setAnswers} />;
+		default:
+			return (
+				<div>
+					<p>V3 ist deprecated. Unbekannter Drill-Typ: {drill.drill_type}</p>
+					<p style={{ opacity: 0.7, fontSize: '0.85rem' }}>
+						Neue Mechanics gehören in V2 / Feature-Module.
+					</p>
+				</div>
+			);
+	}
 }
 
 

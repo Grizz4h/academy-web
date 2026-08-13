@@ -17,6 +17,26 @@ import { getActivePeriodsForScope, getObservationScopeLabel, isLessonScope } fro
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import type { StoredAiReflection } from '../features/reflection/types'
 import stickyStyles from './SessionSticky.module.css'
+import {
+  resolveBeforeAfterCompareConfig,
+  validateBeforeAfterCompareAnswers,
+} from '../features/beforeAfterCompare/compareLogic'
+import {
+  resolveChangeTimelineConfig,
+  validateChangeTimelineAnswers,
+} from '../features/changeTimeline/timelineLogic'
+import {
+  resolveTriggerHypothesisConfig,
+  validateTriggerHypothesisAnswers,
+} from '../features/triggerHypothesis/hypothesisLogic'
+import {
+  resolveInteractionChainConfig,
+  validateInteractionChainAnswers,
+} from '../features/interactionChain/chainLogic'
+import {
+  resolveAdjustmentProfileConfig,
+  validateAdjustmentProfileAnswers,
+} from '../features/adjustmentProfile/profileLogic'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -828,6 +848,47 @@ export default function SessionPage() {
       if (!answers?.[changedKey]) {
         return 'Bitte beantworte die kurze Reflexionsfrage, bevor du weitergehst.'
       }
+    }
+
+    if (drill.drill_type === 'before_after_compare' || drill.drill_type === 'state_compare') {
+      const cfg = resolveBeforeAfterCompareConfig(drill?.config || {})
+      const stage = answers?.[cfg.stageKey]
+      if (stage !== 'complete') {
+        return 'Bitte schließe den Vorher/Nachher-Vergleich vollständig ab.'
+      }
+      return validateBeforeAfterCompareAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'change_timeline' || drill.drill_type === 'change_point_observation') {
+      const cfg = resolveChangeTimelineConfig(drill?.config || {})
+      if (answers?.__change_timeline_stage !== 'complete') {
+        return 'Bitte schließe die Change-Timeline-Auswertung vollständig ab.'
+      }
+      return validateChangeTimelineAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'trigger_hypothesis' || drill.drill_type === 'adjustment_attribution') {
+      const cfg = resolveTriggerHypothesisConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Adjustment-Hypothese vollständig ab.'
+      }
+      return validateTriggerHypothesisAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'interaction_chain' || drill.drill_type === 'problem_adjustment_response') {
+      const cfg = resolveInteractionChainConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Adjustment-Kette vollständig ab.'
+      }
+      return validateInteractionChainAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'adjustment_profile' || drill.drill_type === 'multi_change_synthesis') {
+      const cfg = resolveAdjustmentProfileConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe das Adjustment-Profil vollständig ab.'
+      }
+      return validateAdjustmentProfileAnswers(cfg, answers || {})
     }
 
     if (drill.drill_type === 'period_checkin' && drill?.config?.validate_answers === true) {

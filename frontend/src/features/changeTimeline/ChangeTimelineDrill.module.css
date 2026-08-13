@@ -1,0 +1,199 @@
+.drillRoot {
+  display: grid;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.title {
+  margin: 0;
+}
+
+.lead,
+.hint,
+.rule {
+  margin: 0;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.hint {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  color: rgba(253, 230, 138, 0.95);
+  font-size: 0.88rem;
+}
+
+.rule {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 116, 144, 0.12);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.panel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fieldBlock {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.fieldLabel {
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: #e2e8f0;
+}
+
+.textarea,
+.input,
+.select {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  color: #f8fafc;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.row2 {
+  display: grid;
+  gap: 0.65rem;
+}
+
+@media (min-width: 640px) {
+  .row2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.progress {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.progressBar {
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: rgba(45, 212, 191, 0.75);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  appearance: none;
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryBtn {
+  border: 1px solid rgba(45, 212, 191, 0.45);
+  background: rgba(20, 184, 166, 0.18);
+  color: #ccfbf1;
+}
+
+.secondaryBtn {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: transparent;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.evidence {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.84rem;
+  color: rgba(226, 232, 240, 0.88);
+  line-height: 1.4;
+}
+
+.resultBlock {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.resultLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.resultValue {
+  margin: 0;
+  color: rgba(241, 245, 249, 0.95);
+  line-height: 1.45;
+}
+
+.completeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(20, 184, 166, 0.14);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  color: #99f6e4;
+  font-size: 0.78rem;
+  font-weight: 700;
+}

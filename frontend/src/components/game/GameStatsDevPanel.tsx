@@ -9,6 +9,7 @@ import {
   formatSeasonForm,
   isCatalogArchiveGame,
 } from './gameCatalogUtils'
+import { isDummyCatalogGame } from '../../features/schedule/scheduleLayer'
 import styles from './GameStatsDevPanel.module.css'
 
 type GameStatsDevPanelProps = {
@@ -93,16 +94,17 @@ export default function GameStatsDevPanel({
 }: GameStatsDevPanelProps) {
   const queryClient = useQueryClient()
 
+  const dummyGame = isDummyCatalogGame(game)
   const { data: freshGame } = useQuery({
     queryKey: ['game', game.id],
     queryFn: () => api.getGame(game.id),
-    enabled: Boolean(game.id),
+    enabled: Boolean(game.id) && !dummyGame,
     staleTime: 15_000,
   })
 
   const displayGame = freshGame || game
   const hasStats = Boolean(displayGame.stats?.imported_at)
-  const canImport = isCatalogArchiveGame(displayGame) && Boolean(displayGame.source?.external_id)
+  const canImport = !dummyGame && isCatalogArchiveGame(displayGame) && Boolean(displayGame.source?.external_id)
   const homeTeam = displayGame.home_team_name || 'Heim'
   const awayTeam = displayGame.away_team_name || 'Auswärts'
   const observedTeam = perspectiveTeam && [homeTeam, awayTeam].includes(perspectiveTeam)

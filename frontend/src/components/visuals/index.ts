@@ -4,5 +4,8 @@ export { ObservationVisualPreview, extractSpatialSnapshots } from './Observation
 export type { SpatialSnapshot, SpatialSnapshotKind } from './ObservationVisualPreview'
 export { MechanicGlyph, resolveMechanicKind } from './MechanicGlyph'
 export type { MechanicKind } from './MechanicGlyph'
+export { CosmeticGlyph } from './CosmeticGlyph'
+export { resolveCosmeticGlyphKind } from './cosmeticGlyphKind'
+export type { CosmeticGlyphKind } from './cosmeticGlyphKind'
 export { TrackProgressMap, buildDrillProgressNodes } from './TrackProgressMap'
 export type { TrackProgressNode } from './TrackProgressMap'

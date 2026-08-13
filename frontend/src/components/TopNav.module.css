@@ -30,6 +30,18 @@
   transform: translateZ(0);
 }
 
+@media (min-width: 769px) {
+  .glassBar {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(12, 18, 34, 0.84) 28%,
+        rgba(8, 12, 24, 0.94) 100%
+      );
+  }
+}
+
 .navbar > .container {
   position: relative;
   z-index: 1;

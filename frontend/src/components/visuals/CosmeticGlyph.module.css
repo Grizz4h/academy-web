@@ -1,0 +1,41 @@
+.glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(143, 211, 223, 0.95);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.art {
+  display: block;
+}
+
+.sm .art {
+  width: 18px;
+  height: 18px;
+}
+
+.tile .art {
+  width: 46px;
+  height: 46px;
+}
+
+.lg .art {
+  width: 72px;
+  height: 72px;
+}
+
+.glyph[data-kind='emblem'] { color: #7dd3fc; }
+.glyph[data-kind='banner'] { color: #93c5fd; }
+.glyph[data-kind='avatar'] { color: #5eead4; }
+.glyph[data-kind='frame'] { color: #c4b5fd; }
+.glyph[data-kind='title'] { color: #fcd34d; }
+.glyph[data-kind='tagline'] { color: #fde68a; }
+.glyph[data-kind='sticker'] { color: #86efac; }
+.glyph[data-kind='masteryCoin'] { color: #fbbf24; }
+.glyph[data-kind='stick'] { color: #fdba74; }
+.glyph[data-kind='puck'] { color: #94a3b8; }
+.glyph[data-kind='card'] { color: #a5b4fc; }
+.glyph[data-kind='rink'] { color: #67e8f9; }
+.glyph[data-kind='generic'] { color: #8fd3df; }

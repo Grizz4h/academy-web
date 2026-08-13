@@ -4,6 +4,8 @@
  * Routes stay registered either way; only the top tabs are gated.
  */
 
+import { useEffect, useState } from 'react'
+
 export type NavFeature = {
   to: string
   label: string
@@ -55,6 +57,20 @@ export function isDevNavEnabled(): boolean {
   } catch {
     return false
   }
+}
+
+export function useDevNavEnabled(): boolean {
+  const [enabled, setEnabled] = useState(isDevNavEnabled)
+  useEffect(() => {
+    const sync = () => setEnabled(isDevNavEnabled())
+    window.addEventListener('academy-dev-nav', sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener('academy-dev-nav', sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+  return enabled
 }
 
 export function setDevNavEnabled(enabled: boolean): void {

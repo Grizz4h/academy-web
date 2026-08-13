@@ -1,0 +1,37 @@
+---
+description: Spielpläne über bestehende Quellen; Dummy-Games nur im Dev Mode als Fallback
+globs: frontend/src/components/game/**/*.{ts,tsx},frontend/src/dev/devFixtures/**/*.ts,frontend/src/features/schedule/**/*.ts,backend/del_data/**/*.py,data/games/**/*.json
+alwaysApply: true
+---
+
+# Spielpläne und Game-Daten
+
+Echte Spielplandaten verwenden. **Keine zweite Quelle für dieselbe Liga bauen.**
+
+## Vor neuer Integration
+
+Repo zuerst prüfen: `backend/del_data/`, `data/games/`, `/api/games`, DevLab-Importer, Team-/Season-Mappings.
+
+## DEL
+
+Bestehende Pipeline wiederverwenden, nicht neu bauen:
+
+```text
+penny-del.org → PennyDelScheduleImporter → data/games/del_*.json → /api/games → CatalogGame → UI
+```
+
+## Andere Ligen
+
+Keine Website scrapen, keine kostenpflichtige API, keine fragilen URLs. Adapter später an denselben kanonischen `CatalogGame`-Layer hängen.
+
+## Dummy-Games (nur Dev Mode)
+
+```text
+echte Games → echte Games
+keine echten Games + Dev Mode → Dummy-Fixtures (isDummy: true, DEV · TESTSPIEL)
+keine echten Games + normal → Empty State
+```
+
+Dummy nie in `data/games/` schreiben, keine PENNY-IDs vortäuschen, keine Stats/Achievements beeinflussen. Sobald echte Games da sind, verschwindet der Fallback von selbst.
+
+Fixtures zentral: `frontend/src/dev/devFixtures/games.ts`
