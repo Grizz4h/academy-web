@@ -366,5 +366,34 @@
       "text": ""
     }
   },
-  "is_dummy": false
+  "is_dummy": false,
+  "ai_reflection": {
+    "id": "refl_cb88138bdccb",
+    "sessionId": "Christoph_1786640760",
+    "createdAt": "2026-08-13T19:44:12.237882",
+    "provider": "openai",
+    "model": "gpt-5.6-luna",
+    "promptVersion": "v1",
+    "content": {
+      "strengths": [
+        "Du hast drei unterschiedliche Situationen erfasst, darunter auch „kein klarer Effekt“.",
+        "Du orientierst dich an den vorgesehenen Wirkungen Zeit und Optionen.",
+        "Du vermeidest eine Bewertung allein anhand eines späteren Puckgewinns oder Gegentors."
+      ],
+      "cautions": [
+        "Die Notizen benennen den ersten aktiven Druckmoment und die unmittelbare Reaktion noch nicht eindeutig.",
+        "„Durch den Zeitverlust gingen Optionen verloren“ ist teilweise eine Interpretation; die konkret geschlossene oder weggefallene Option fehlt.",
+        "Die Häufigkeit „Optionen“ wird aus nur wenigen und teils unklar beschriebenen Situationen abgeleitet."
+      ],
+      "alternativeInterpretation": "Der beobachtete Verlust an Optionen könnte auch primär durch räumliche Einschränkung oder eine erzwungene frühere Entscheidung entstanden sein. „Optionen“ wäre dann eher die Folge der Wirkung auf Zeit oder Raum als die klar getrennte Hauptwirkung.",
+      "nextObservationFocus": "Notiere beim nächsten Zugriff in drei Schritten: 1) Was war der erste aktive Druckmoment? 2) Was tat der Gegner unmittelbar danach? 3) Welche konkrete Option fiel weg, etwa ein Passweg, eine Fortsetzung oder eine gefährliche Richtung?",
+      "reflectionQuestion": "Woran hast du in der zweiten Situation konkret erkannt, dass eine Option verloren ging und nicht nur Zeit oder Raum?",
+      "summary": "Dein Beobachtungsprozess folgt grundsätzlich der Drill-Logik und berücksichtigt auch einen Fall ohne klaren Effekt. Für eine belastbarere Schlussfolgerung solltest du Druckmoment, unmittelbare Reaktion und konkrete Einschränkung noch präziser voneinander trennen, bevor du „Optionen“ als häufigste Wirkung festlegst."
+    },
+    "usage": {
+      "inputTokens": 1610,
+      "outputTokens": 477,
+      "totalTokens": 2087
+    }
+  }
 }
