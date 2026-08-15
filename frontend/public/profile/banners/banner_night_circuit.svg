@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img">
+  <defs>
+    <linearGradient id="ncBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#12061a"/>
+      <stop offset="55%" stop-color="#0a1220"/>
+      <stop offset="100%" stop-color="#061018"/>
+    </linearGradient>
+    <linearGradient id="ncNeon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#67e8f9"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="240" fill="url(#ncBg)"/>
+  <g opacity=".28" stroke="#22d3ee" stroke-width="1">
+    <path d="M0 48 H960 M0 96 H960 M0 144 H960 M0 192 H960"/>
+    <path d="M80 0 V240 M160 0 V240 M240 0 V240 M320 0 V240 M400 0 V240 M480 0 V240 M560 0 V240 M640 0 V240 M720 0 V240 M800 0 V240 M880 0 V240"/>
+  </g>
+  <path d="M40 188 L220 72 L390 168 L560 58 L740 150 L920 64" fill="none" stroke="url(#ncNeon)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="480" cy="108" r="34" fill="none" stroke="#f472b6" stroke-width="3"/>
+  <circle cx="480" cy="108" r="12" fill="#22d3ee"/>
+  <path d="M120 28 H210 M750 28 H840" stroke="#67e8f9" stroke-width="2" opacity=".7"/>
+  <path d="M120 28 V52 M840 28 V52" stroke="#f472b6" stroke-width="2" opacity=".7"/>
+</svg>

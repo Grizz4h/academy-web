@@ -73,6 +73,42 @@ export const COLLECTIONS: CollectionDefinition[] = [
     ],
     visibility: 'visible',
   },
+  {
+    id: 'night_circuit',
+    name: 'Night Circuit',
+    description: 'Magenta rein. Cyan raus. Nachtschicht auf dem Eis.',
+    artworkAssetId: 'banner_night_circuit',
+    itemIds: [
+      'title_night_circuit',
+      'avatar_night_circuit',
+      'banner_night_circuit',
+      'emblem_night_circuit',
+      'frame_night_circuit',
+    ],
+    completionRewards: [
+      { type: 'xp', amount: 500 },
+      { type: 'pux', amount: 400 },
+      { type: 'cosmetic', cosmeticId: 'tagline_stay_on_the_grid' },
+    ],
+    visibility: 'visible',
+  },
+  {
+    id: 'matchday_moments',
+    name: 'Matchday Moments',
+    description: 'Prototype: echte Spieltage, echte Reads. Noch nicht das endgültige Collection-Design.',
+    itemIds: ['sticker_matchday_first_read'],
+    completionRewards: [{ type: 'pux', amount: 50 }],
+    visibility: 'visible',
+  },
+  {
+    id: 'wasteland',
+    name: 'Wasteland',
+    description: 'Schrottplatz-Rink. Rost, Staub, ein Puck der schon zu viel überlebt hat. Prototype-Art.',
+    artworkAssetId: 'wasteland',
+    itemIds: ['puck_wasteland_scrap'],
+    completionRewards: [{ type: 'pux', amount: 40 }],
+    visibility: 'visible',
+  },
 ]
 
 export const COLLECTION_BY_ID: Record<string, CollectionDefinition> = Object.fromEntries(

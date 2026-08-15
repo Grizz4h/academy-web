@@ -2,12 +2,13 @@
   "displayName": "Christoph",
   "avatar": {
     "type": "catalog",
-    "avatarId": "avatar_net_01"
+    "avatarId": "avatar_goldpuck_01"
   },
-  "bannerId": "banner_neutral_01",
+  "bannerId": "banner_chalk_01",
+  "frameId": "frame_rink_rat",
   "emblem": {
     "type": "catalog",
-    "emblemId": "emblem_puck_01"
+    "emblemId": "emblem_night_circuit"
   },
   "customEmblemId": null,
   "customEmblems": [],
@@ -21,6 +22,19 @@
   "preferredAttackDirection": "auto",
   "hockeyExperience": null,
   "experiencePromptDismissed": false,
-  "dashboardPreferences": {},
-  "updatedAt": "2026-08-13T20:39:24.396093"
+  "dashboardPreferences": {
+    "tutorials": {
+      "main_onboarding": {
+        "tutorialId": "main_onboarding",
+        "version": 1,
+        "status": "not_started",
+        "currentStepId": "session-save",
+        "completedStepIds": [],
+        "startedAt": "2026-08-13T21:24:06.521Z",
+        "completedAt": "2026-08-13T21:15:24.841Z",
+        "dismissedAt": "2026-08-13T21:28:09.488Z"
+      }
+    }
+  },
+  "updatedAt": "2026-08-15T07:45:44.183092"
 }

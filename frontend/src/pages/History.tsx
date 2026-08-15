@@ -13,6 +13,7 @@ import { countDummySessions } from '../utils/sessionEligibility'
 import { computeSessionOverview } from '../stats/sessionOverview'
 import { SessionOverviewKpis } from '../components/dashboard/SessionOverviewKpis'
 import { UiButton, UiButtonLink } from '../components/ui'
+import { TUTORIAL_TARGET } from '../features/tutorial'
 import styles from './History.module.css'
 
 export default function History() {
@@ -257,7 +258,7 @@ export default function History() {
 
   return (
     <div className={`${styles.page} ui-page-shell`}>
-      <header className="ui-page-header">
+      <header className="ui-page-header" data-tutorial-id={TUTORIAL_TARGET.historyList}>
         <h1 className="ui-page-title">Session-Verlauf</h1>
         <p className="ui-page-lead">
           Alle Sessions im Überblick — filtern, öffnen und bei Bedarf Details nachschauen.

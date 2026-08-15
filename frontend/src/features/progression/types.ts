@@ -42,6 +42,7 @@ export type RewardOrigin =
   | { type: 'pux_shop' }
   | { type: 'battle_pass'; seasonId: string }
   | { type: 'collection'; collectionId: string }
+  | { type: 'challenge'; challengeId: string }
   | { type: 'event'; eventId: string }
   | { type: 'secret'; achievementId?: string }
   | { type: 'artist_series'; seriesId: string }
@@ -64,6 +65,7 @@ export type SessionCompletedEvent = ActivityEventBase & {
   trackId: string
   observedTeamId?: string
   leagueId?: string
+  gameId?: string
   mechanicIds?: string[]
   tags?: string[]
   isDummy?: boolean
@@ -76,6 +78,7 @@ export type SceneCreatedEvent = ActivityEventBase & {
   sessionId?: string
   drillId?: string
   trackId?: string
+  gameId?: string
   isDummy?: boolean
 }
 
@@ -113,7 +116,49 @@ export type PredictionCompletedEvent = ActivityEventBase & {
   type: 'prediction_completed'
   predictionId: string
   sessionId?: string
+  gameId?: string
   isDummy?: boolean
+}
+
+export type ObservationCreatedEvent = ActivityEventBase & {
+  type: 'observation_created'
+  sessionId?: string
+  drillId?: string
+  trackId?: string
+  gameId?: string
+  teamId?: string
+  mechanicIds?: string[]
+  isDummy?: boolean
+}
+
+export type ReflectionCreatedEvent = ActivityEventBase & {
+  type: 'reflection_created'
+  sessionId?: string
+  drillId?: string
+  trackId?: string
+  gameId?: string
+  isDummy?: boolean
+}
+
+export type GameObservationCompletedEvent = ActivityEventBase & {
+  type: 'game_observation_completed'
+  sessionId?: string
+  gameId?: string
+  teamId?: string
+  isDummy?: boolean
+}
+
+export type MatchdayActivityCompletedEvent = ActivityEventBase & {
+  type: 'matchday_activity_completed'
+  gameId?: string
+  phase?: 'pre_game' | 'in_game' | 'post_game'
+  isDummy?: boolean
+}
+
+export type CollectionItemUnlockedEvent = ActivityEventBase & {
+  type: 'collection_item_unlocked'
+  cosmeticId: string
+  collectionId?: string
 }
 
 export type RinkActivityEvent =
@@ -124,6 +169,27 @@ export type RinkActivityEvent =
   | SidequestCompletedEvent
   | MechanicUsedEvent
   | PredictionCompletedEvent
+  | ObservationCreatedEvent
+  | ReflectionCreatedEvent
+  | GameObservationCompletedEvent
+  | MatchdayActivityCompletedEvent
+  | CollectionItemUnlockedEvent
+
+export const CHALLENGE_EVENT_TYPES = [
+  'drill_completed',
+  'session_completed',
+  'observation_created',
+  'scene_saved',
+  'scene_created',
+  'reflection_created',
+  'prediction_created',
+  'prediction_completed',
+  'game_observation_completed',
+  'matchday_activity_completed',
+  'collection_item_unlocked',
+] as const
+
+export type ChallengeEventType = (typeof CHALLENGE_EVENT_TYPES)[number]
 
 export type AchievementCategory =
   | 'activity'
@@ -306,7 +372,7 @@ export type MasteryProgressUnlock = {
 
 export type UnlockHistoryEntry = {
   id: string
-  kind: 'achievement' | 'level' | 'cosmetic' | 'xp' | 'pux' | 'bootstrap' | 'collection' | 'mastery' | 'shop'
+  kind: 'achievement' | 'level' | 'cosmetic' | 'xp' | 'pux' | 'bootstrap' | 'collection' | 'mastery' | 'shop' | 'challenge'
   title: string
   description?: string
   occurredAt: string
@@ -314,6 +380,7 @@ export type UnlockHistoryEntry = {
   achievementId?: string
   cosmeticId?: string
   collectionId?: string
+  challengeId?: string
   masteryId?: string
   level?: number
   amountXp?: number

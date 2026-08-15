@@ -21,6 +21,8 @@ import { getRealSessions } from '../utils/sessionEligibility'
 import { computeSessionOverview } from '../stats/sessionOverview'
 import { SessionOverviewKpis } from '../components/dashboard/SessionOverviewKpis'
 import { RewardOverviewKpis } from '../components/dashboard/RewardOverviewKpis'
+import { DrillActivityHeatmap } from '../components/dashboard/DrillActivityHeatmap'
+import { buildDrillAttempts } from '../components/dashboard/drillActivity'
 import { UiProgress } from '../components/ui'
 import { AchievementRevealItem } from '../components/progression/AchievementRevealItem'
 import styles from './Progress.module.css'
@@ -286,6 +288,10 @@ export default function Progress() {
   const overview = useMemo(
     () => computeSessionOverview(sessionList),
     [sessionList],
+  )
+  const drillAttempts = useMemo(
+    () => buildDrillAttempts(sessionList, curriculum),
+    [sessionList, curriculum],
   )
 
   const analyzedTeamCount = teamData.filter((team) => team.count > 0).length
@@ -703,6 +709,10 @@ export default function Progress() {
           )}
         </div>
       </details>
+
+      <div id="learning-progress" className={styles.learningProgress}>
+        <DrillActivityHeatmap attempts={drillAttempts} days={56} />
+      </div>
     </div>
   )
 }

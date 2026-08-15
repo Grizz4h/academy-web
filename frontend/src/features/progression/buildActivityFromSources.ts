@@ -2,6 +2,8 @@ import type { Session, SceneMarker } from '../../api'
 import { isProgressionEligibleSession } from '../../utils/sessionEligibility'
 import { readSidequests } from '../../utils/sessionSidequests'
 import {
+  buildGameObservationCompletedEvent,
+  buildObservationCreatedEvent,
   buildSceneCreatedEvent,
   buildSceneRatedEvent,
   buildSessionCompletedEvent,
@@ -130,6 +132,13 @@ export function buildEventsFromCompletedSession(
     session.post?.completed_at ||
     session.created_at ||
     new Date().toISOString()
+  const gameId = session.game_id || session.game_info?.game_id || undefined
+  const teamId =
+    session.observed_team_id ||
+    session.game_info?.observed_team_id ||
+    session.observed_team ||
+    session.game_info?.observed_team ||
+    undefined
 
   const prior = options?.priorCompletedDrillIds
   const isFirstSessionOfDrill = prior ? !prior.has(drillId) : true
@@ -140,19 +149,37 @@ export function buildEventsFromCompletedSession(
       drillId,
       trackId,
       occurredAt,
-      observedTeamId:
-        session.observed_team_id ||
-        session.game_info?.observed_team_id ||
-        session.observed_team ||
-        session.game_info?.observed_team ||
-        undefined,
+      observedTeamId: teamId,
       leagueId: session.game_info?.league || undefined,
+      gameId,
       mechanicIds,
       tags,
       isDummy: false,
       isFirstSessionOfDrill,
     }),
+    buildObservationCreatedEvent({
+      sessionId: session.id,
+      drillId,
+      trackId,
+      gameId,
+      teamId,
+      mechanicIds,
+      occurredAt,
+      isDummy: false,
+    }),
   ]
+
+  if (gameId) {
+    events.push(
+      buildGameObservationCompletedEvent({
+        sessionId: session.id,
+        gameId,
+        teamId,
+        occurredAt,
+        isDummy: false,
+      }),
+    )
+  }
 
   // Sidequests embedded in drafts / checkin answers
   for (const answers of collectSessionAnswerMaps(session)) {

@@ -61,16 +61,40 @@
 }
 
 .avatarWrap {
+  --avatar-shape: circle(50%);
+  --avatar-rim: 143, 211, 223;
   width: 84px;
   height: 84px;
   margin-top: -42px;
-  border-radius: 999px;
-  border: 3px solid rgba(15, 23, 42, 0.95);
-  overflow: hidden;
-  background: #0f172a;
-  box-shadow:
-    0 0 0 2px rgba(143, 211, 223, 0.4),
-    0 8px 20px rgba(0, 0, 0, 0.4);
+  padding: 3px;
+  background: rgb(var(--avatar-rim));
+  clip-path: var(--avatar-shape);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.avatarWrap[data-avatar-rarity='uncommon'] {
+  --avatar-shape: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  --avatar-rim: 74, 222, 128;
+}
+
+.avatarWrap[data-avatar-rarity='rare'] {
+  --avatar-shape: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  --avatar-rim: 59, 130, 246;
+}
+
+.avatarWrap[data-avatar-rarity='epic'] {
+  --avatar-shape: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  --avatar-rim: 167, 139, 250;
+}
+
+.avatarWrap[data-avatar-rarity='legendary'] {
+  --avatar-shape: polygon(50% 0%, 70% 16%, 100% 16%, 84% 50%, 100% 84%, 70% 84%, 50% 100%, 30% 84%, 0% 84%, 16% 50%, 0% 16%, 30% 16%);
+  --avatar-rim: 251, 191, 36;
+}
+
+.avatarWrap[data-avatar-rarity='mythic'] {
+  --avatar-shape: polygon(50% 0%, 63% 28%, 100% 28%, 72% 52%, 82% 91%, 50% 70%, 18% 91%, 28% 52%, 0% 28%, 37% 28%);
+  --avatar-rim: 244, 114, 182;
 }
 
 .avatar {
@@ -78,6 +102,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  clip-path: var(--avatar-shape);
 }
 
 .identity {

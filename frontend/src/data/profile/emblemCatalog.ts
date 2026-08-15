@@ -41,6 +41,14 @@ export const emblemCatalog: ProfileAsset[] = [
     category: 'rink',
     tags: ['crease'],
   },
+  {
+    id: 'emblem_night_circuit',
+    label: 'Grid Crest',
+    src: '/profile/emblems/emblem_night_circuit.svg',
+    category: 'abstract',
+    tags: ['cyberpunk', 'night-circuit'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_EMBLEM_ID = 'emblem_puck_01'

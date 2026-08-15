@@ -1467,6 +1467,168 @@
       "processedAt": "2026-08-13T20:38:32.602Z",
       "grantedXp": 0,
       "grantedPux": 0
+    },
+    "locker:favorite:2026-08-13T22:08:08.746Z": {
+      "eventId": "locker:favorite:2026-08-13T22:08:08.746Z",
+      "processedAt": "2026-08-13T22:08:08.746Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:favorite:2026-08-13T22:08:10.346Z": {
+      "eventId": "locker:favorite:2026-08-13T22:08:10.346Z",
+      "processedAt": "2026-08-13T22:08:10.346Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "locker:favorite:2026-08-14T13:32:28.167Z": {
+      "eventId": "locker:favorite:2026-08-14T13:32:28.167Z",
+      "processedAt": "2026-08-14T13:32:28.167Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-14T16:33:38.853Z": {
+      "eventId": "challenge:sync:2026-08-14T16:33:38.853Z",
+      "processedAt": "2026-08-14T16:33:38.853Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-14T16:51:55.925Z": {
+      "eventId": "challenge:sync:2026-08-14T16:51:55.925Z",
+      "processedAt": "2026-08-14T16:51:55.925Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-14T16:51:59.317Z": {
+      "eventId": "challenge:sync:2026-08-14T16:51:59.317Z",
+      "processedAt": "2026-08-14T16:51:59.317Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-14T19:30:44.336Z": {
+      "eventId": "challenge:sync:2026-08-14T19:30:44.336Z",
+      "processedAt": "2026-08-14T19:30:44.336Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T06:53:12.486Z": {
+      "eventId": "challenge:sync:2026-08-15T06:53:12.486Z",
+      "processedAt": "2026-08-15T06:53:12.486Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T06:57:21.883Z": {
+      "eventId": "challenge:sync:2026-08-15T06:57:21.883Z",
+      "processedAt": "2026-08-15T06:57:21.883Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T06:59:17.026Z": {
+      "eventId": "challenge:sync:2026-08-15T06:59:17.026Z",
+      "processedAt": "2026-08-15T06:59:17.026Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:30:59.854Z": {
+      "eventId": "challenge:sync:2026-08-15T07:30:59.854Z",
+      "processedAt": "2026-08-15T07:30:59.854Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:31:04.131Z": {
+      "eventId": "challenge:sync:2026-08-15T07:31:04.131Z",
+      "processedAt": "2026-08-15T07:31:04.131Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:32:13.954Z": {
+      "eventId": "challenge:sync:2026-08-15T07:32:13.954Z",
+      "processedAt": "2026-08-15T07:32:13.954Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:35:06.071Z": {
+      "eventId": "challenge:sync:2026-08-15T07:35:06.071Z",
+      "processedAt": "2026-08-15T07:35:06.071Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:35:38.217Z": {
+      "eventId": "challenge:sync:2026-08-15T07:35:38.217Z",
+      "processedAt": "2026-08-15T07:35:38.217Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:37:30.036Z": {
+      "eventId": "challenge:sync:2026-08-15T07:37:30.036Z",
+      "processedAt": "2026-08-15T07:37:30.036Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:47:29.068Z": {
+      "eventId": "challenge:sync:2026-08-15T07:47:29.068Z",
+      "processedAt": "2026-08-15T07:47:29.068Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:48:37.907Z": {
+      "eventId": "challenge:sync:2026-08-15T07:48:37.907Z",
+      "processedAt": "2026-08-15T07:48:37.907Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:49:28.642Z": {
+      "eventId": "challenge:sync:2026-08-15T07:49:28.642Z",
+      "processedAt": "2026-08-15T07:49:28.642Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:49:40.779Z": {
+      "eventId": "challenge:sync:2026-08-15T07:49:40.779Z",
+      "processedAt": "2026-08-15T07:49:40.779Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:52:35.326Z": {
+      "eventId": "challenge:sync:2026-08-15T07:52:35.326Z",
+      "processedAt": "2026-08-15T07:52:35.326Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:57:24.988Z": {
+      "eventId": "challenge:sync:2026-08-15T07:57:24.988Z",
+      "processedAt": "2026-08-15T07:57:24.988Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T07:59:07.774Z": {
+      "eventId": "challenge:sync:2026-08-15T07:59:07.774Z",
+      "processedAt": "2026-08-15T07:59:07.774Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:03:55.040Z": {
+      "eventId": "challenge:sync:2026-08-15T08:03:55.040Z",
+      "processedAt": "2026-08-15T08:03:55.040Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:04:00.073Z": {
+      "eventId": "challenge:sync:2026-08-15T08:04:00.073Z",
+      "processedAt": "2026-08-15T08:04:00.073Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:13:49.517Z": {
+      "eventId": "challenge:sync:2026-08-15T08:13:49.517Z",
+      "processedAt": "2026-08-15T08:13:49.517Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:20:53.571Z": {
+      "eventId": "challenge:sync:2026-08-15T08:20:53.571Z",
+      "processedAt": "2026-08-15T08:20:53.571Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -3465,8 +3627,10 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-13T20:38:32.602Z",
-  "lastUpdatedAt": "2026-08-13T20:38:32.602Z",
-  "favoriteCosmeticIds": [],
+  "lastUpdatedAt": "2026-08-15T08:20:53.571Z",
+  "favoriteCosmeticIds": [
+    "avatar_goldpuck_01"
+  ],
   "puxTransactions": [],
   "completedCollections": {},
   "masteryMilestoneUnlocks": {},

@@ -1,0 +1,83 @@
+---
+description: Eine UI-Bibliothek — Katalog, Sheets, Buttons, Mobile, Tap-to-reveal
+alwaysApply: true
+---
+
+# UI-Katalog
+
+Ein Ort für Design-Regeln. Sichtprüfung: `/dev/ui`.
+Code: `frontend/src/components/ui`, `styles/ui-kit.css`, `styles/layout-surfaces.css`.
+
+Neue UI zuerst hier + `/dev/ui`. Keine neuen Looks. Bestehende Seiten nicht umbauen, außer Christoph eine Kachel nennt.
+
+## Bausteine
+
+| Was | Nutzen |
+|-----|--------|
+| Seite | `ui-page-shell` · `ui-page-header` · `ui-page-title` · `ui-page-lead` · `ui-section-title` |
+| Fläche | `Card` `surface="primary\|section\|nested\|inline"` |
+| Button | `UiButton` / `UiButtonLink` · Paarung `UiActionRow` |
+| Filter | `UiChip` |
+| Label | `UiPill` |
+| Balken | `UiProgress` |
+| KPI | `KpiRevealCard` + `TapReveal` |
+| Akkordeon | `.ui-more` / `__summary` / `__chevron` / `__body` |
+| Dialog | `UiSheet` + `UiSheetActions` |
+| Filter-Sheet | `FilterSheet` nur History/Progress |
+| Aufgaben-Karte | `LockerTasksPanel` `.card` |
+
+Nicht vereinheitlichen: Drill-Renderer, Session-`.btn`, Locker-Rarity, Tutorial.
+
+## Buttons
+
+Ein Button = türkis (`primary`). Zweiter daneben = farblos (`secondary`). Immer `UiActionRow`, Varianten nicht raten.
+
+Keine ad-hoc Pills/Buttons (anderer Radius, Border, Hover).
+
+## Sheets
+
+`UiSheet`: Portal auf `document.body`, Glas, Mobile = Bottom-Sheet.
+
+```text
+Abbrechen links · primäre Aktion rechts
+Kein extra „Schließen“, wenn es schon Abbrechen gibt
+Auswahl: UiSheetChoice · Zurück: UiSheetBack
+```
+
+Nicht: eigenes `position: fixed`, `.card` als Modal, Header-X plus Footer-Abbrechen.
+`FilterSheet` nicht mit Action-Sheets mischen.
+
+## Tap-to-reveal
+
+Klick = Antwort auf die Frage beim Ansehen. Tote Zahlen vermeiden.
+
+| Element | Klick liefert |
+|---------|---------------|
+| Glyph | Erklärung |
+| KPI | Breakdown + `UiActionRow` |
+| PUX | Wallet / Shop |
+| Achievement | Fortschritt + Detail |
+| Track | Fortschritt / Start |
+
+`TapReveal` / `KpiRevealCard`: Outside-Click + Escape schließen. Hinweis `.ui-tap-hint`. Kein `<button>` mit Block-`div`-Kindern.
+
+## Mobile (768px, Absicht)
+
+Desktop darf Karten-Hierarchie. Mobile kein Card-in-Card. Surface-Rolle setzen — nicht Schriften verkleinern.
+
+| Desktop | Mobile |
+|---------|--------|
+| `section` / `nested` / `inline` mit Chrome | flacht (Titel, Divider, Abstand) |
+| `primary` volle Karte | bleibt Karte, enger |
+| Grid 2–4 Spalten | 1 Spalte |
+| Chips nebeneinander | horizontal scrollen |
+| Sheet mittig | Bottom-Sheet |
+| Tabelle | `.ui-stat-stack` / `.ui-table-hide-mobile` |
+
+Legacy-Aliasse: `primary-card`, `mobile-flatten`, `ui-flat-panel`.
+
+## Kachel-Check
+
+1. Nur diese Datei + `/dev/ui` + die genannte Stelle
+2. An den Baustein oben anpassen oder Abweichung benennen
+3. Mobile mitprüfen — nicht Desktop 1:1 verkleinern

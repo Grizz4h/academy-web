@@ -1,0 +1,241 @@
+import { Fragment, useEffect, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '../../../api'
+import { useUser } from '../../../context/UserContext'
+import { contentRegistry } from '../../../content/registry'
+import { getMatchdayGroup } from '../../../content/matchdays'
+import { filterCatalogGamesForSeason } from '../../../components/game/gameCatalogUtils'
+import { UiButton, UiChip, UiPill, UiProgress, UiSheet, UiSheetActions } from '../../../components/ui'
+import { useRewards } from '../../rewards'
+import { resolveMatchdayContext } from '../challenges/matchdayContext'
+import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../../../stats/seasonNormalization'
+import {
+  LANE_LABELS,
+  compactRewardLabel,
+  filterLockerTaskViews,
+  selectLockerTaskViews,
+  type LockerTaskView,
+  type TaskLaneFilter,
+  type TaskStatusFilter,
+} from './taskViews'
+import styles from './LockerTasksPanel.module.css'
+
+const LANE_CHIPS: Array<{ id: TaskLaneFilter; label: string }> = [
+  { id: 'all', label: 'Alle' },
+  { id: 'permanent', label: 'Permanent' },
+  { id: 'daily', label: 'Daily' },
+  { id: 'weekly', label: 'Weekly' },
+  { id: 'matchday', label: 'Matchday' },
+  { id: 'event', label: 'Event' },
+]
+
+const STATUS_CHIPS: Array<{ id: TaskStatusFilter; label: string }> = [
+  { id: 'all', label: 'Alle' },
+  { id: 'active', label: 'Aktiv' },
+  { id: 'completed', label: 'Abgeschlossen' },
+]
+
+function statusLabel(status: LockerTaskView['status']) {
+  if (status === 'completed') return 'Abgeschlossen'
+  if (status === 'expired') return 'Abgelaufen'
+  if (status === 'upcoming') return 'Demnächst'
+  return 'Aktiv'
+}
+
+function emptyCopy(lane: TaskLaneFilter) {
+  if (lane === 'daily') return 'Heute sind keine Daily Challenges aktiv.'
+  if (lane === 'weekly') return 'Diese Woche sind keine Weekly Challenges aktiv.'
+  if (lane === 'matchday') return 'Kein Matchday-Content aktiv.'
+  if (lane === 'event') return 'Kein Event-Content aktiv.'
+  if (lane === 'permanent') return 'Keine permanenten Achievements in diesem Filter.'
+  return 'Keine Aufgaben in diesem Filter.'
+}
+
+export function LockerTasksPanel({
+  lane,
+  status,
+  selectedId,
+  onLaneChange,
+  onStatusChange,
+  onSelect,
+}: {
+  lane: TaskLaneFilter
+  status: TaskStatusFilter
+  selectedId?: string | null
+  onLaneChange: (lane: TaskLaneFilter) => void
+  onStatusChange: (status: TaskStatusFilter) => void
+  onSelect: (sourceId: string | null) => void
+}) {
+  const { user } = useUser()
+  const { rewardState, syncChallengeBoard } = useRewards()
+  const slateSeason = useMemo(
+    () => normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate(),
+    [],
+  )
+  const { data: slateGamesData } = useQuery({
+    queryKey: ['games', 'DEL', slateSeason, 'today-slate'],
+    queryFn: () => api.getGames({ league: 'DEL', season: slateSeason }),
+    enabled: Boolean(user && slateSeason),
+    staleTime: 60_000,
+  })
+  const games = useMemo(
+    () => filterCatalogGamesForSeason(slateGamesData?.games || [], slateSeason),
+    [slateGamesData?.games, slateSeason],
+  )
+  const matchday = useMemo(() => resolveMatchdayContext(games), [games])
+
+  useEffect(() => {
+    if (!user) return
+    void syncChallengeBoard({ matchday })
+  }, [user, matchday?.gameId, syncChallengeBoard])
+
+  const views = useMemo(
+    () =>
+      selectLockerTaskViews({
+        state: rewardState,
+        definitions: contentRegistry.challenges,
+        pools: contentRegistry.pools,
+        campaigns: contentRegistry.campaigns,
+        progress: rewardState.challengeProgress || {},
+        rotation: rewardState.challengeRotation,
+        matchday,
+        userId: user || undefined,
+      }),
+    [rewardState, matchday, user],
+  )
+
+  const filtered = useMemo(() => filterLockerTaskViews(views, lane, status), [views, lane, status])
+  const selected = views.find((item) => item.sourceId === selectedId || item.id === selectedId) || null
+
+  return (
+    <div className={styles.stack}>
+      <div className={styles.chipRow}>
+        {LANE_CHIPS.map((chip) => (
+          <UiChip key={chip.id} active={lane === chip.id} onClick={() => onLaneChange(chip.id)}>
+            {chip.label}
+          </UiChip>
+        ))}
+      </div>
+      <div className={styles.chipRow}>
+        {STATUS_CHIPS.map((chip) => (
+          <UiChip key={chip.id} active={status === chip.id} onClick={() => onStatusChange(chip.id)}>
+            {chip.label}
+          </UiChip>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className={styles.empty}>{emptyCopy(lane)}</p>
+      ) : (
+        <div className={styles.list}>
+          {filtered.map((item, index) => {
+            const group = getMatchdayGroup(item.matchdayGroupId)
+            const prevGroup = index > 0 ? filtered[index - 1].matchdayGroupId : null
+            const showGroup = Boolean(group && item.matchdayGroupId !== prevGroup)
+            const groupViews = filtered.filter((entry) => entry.matchdayGroupId === item.matchdayGroupId)
+            const groupDone = groupViews.filter((entry) => entry.status === 'completed').length
+            const done = item.status === 'completed'
+            return (
+              <Fragment key={item.id}>
+                {showGroup && group ? (
+                  <p className={styles.group}>
+                    {group.shortLabel}
+                    {' · '}
+                    {groupDone} / {groupViews.length} Matchday Achievements
+                  </p>
+                ) : null}
+                <button
+                  type="button"
+                  className={`${styles.card} ${done ? styles.cardDone : ''}`}
+                  onClick={() => onSelect(item.sourceId)}
+                >
+                  <span className={styles.rowTop}>
+                    <strong>{item.secretHidden ? 'Geheimnis' : item.title}</strong>
+                    <UiPill>{LANE_LABELS[item.lane]}</UiPill>
+                  </span>
+                  {!item.secretHidden ? (
+                    <>
+                      {item.description ? <p className={styles.cardDesc}>{item.description}</p> : null}
+                      <UiProgress
+                        value={item.current}
+                        max={item.target || 1}
+                        label={item.title}
+                        size="sm"
+                        complete={done}
+                      />
+                      <span className={styles.rowMeta}>
+                        <span>{item.current} / {item.target}</span>
+                        {item.rewardLabel ? <span>{compactRewardLabel(item.rewards)}</span> : null}
+                        <span>{statusLabel(item.status)}</span>
+                      </span>
+                    </>
+                  ) : (
+                    <span className={styles.rowMeta}>Geheimnis — weiter spielen</span>
+                  )}
+                </button>
+              </Fragment>
+            )
+          })}
+        </div>
+      )}
+
+      <UiSheet
+        open={Boolean(selected)}
+        onClose={() => onSelect(null)}
+        title={selected?.secretHidden ? 'Geheimnis' : selected?.title || ''}
+        meta={selected ? `${LANE_LABELS[selected.lane]} · ${statusLabel(selected.status)}` : undefined}
+      >
+        {selected && !selected.secretHidden ? (
+          <>
+            <p className={styles.detailLead}>{selected.description}</p>
+            <div className={styles.detailBlock}>
+              <span>Progress</span>
+              <strong>{selected.current} / {selected.target}</strong>
+              <UiProgress value={selected.current} max={selected.target || 1} label={selected.title} />
+            </div>
+            {selected.rewardLabel ? (
+              <div className={styles.detailBlock}>
+                <span>Reward</span>
+                <strong>{selected.rewardLabel}</strong>
+              </div>
+            ) : null}
+            <div className={styles.detailBlock}>
+              <span>{selected.lane === 'permanent' ? 'Zeitraum' : 'Expires'}</span>
+              <strong>{selected.windowLabel}</strong>
+            </div>
+            {selected.matchdayGroupId ? (
+              <div className={styles.detailBlock}>
+                <span>Matchday</span>
+                <strong>{getMatchdayGroup(selected.matchdayGroupId)?.shortLabel || 'Matchday'}</strong>
+                <em>
+                  {views.filter((item) => item.matchdayGroupId === selected.matchdayGroupId && item.status === 'completed').length}
+                  {' / '}
+                  {views.filter((item) => item.matchdayGroupId === selected.matchdayGroupId).length}
+                  {' gesammelt'}
+                </em>
+              </div>
+            ) : null}
+            {selected.collectionName ? (
+              <div className={styles.detailBlock}>
+                <span>Teil von</span>
+                <strong>{selected.collectionName} Collection</strong>
+                {selected.collectionTotal ? (
+                  <em>{selected.collectionOwned} / {selected.collectionTotal} gesammelt</em>
+                ) : null}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <p className={styles.detailLead}>Geheimnis — weiter spielen</p>
+        )}
+        <UiSheetActions
+          secondary={
+            <UiButton type="button" variant="secondary" onClick={() => onSelect(null)}>
+              Abbrechen
+            </UiButton>
+          }
+        />
+      </UiSheet>
+    </div>
+  )
+}

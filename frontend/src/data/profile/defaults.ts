@@ -9,6 +9,7 @@ export function createDefaultProfile(displayName: string): UserProfileCustomizat
     displayName: displayName || 'Spieler',
     avatar: { type: 'catalog', avatarId: DEFAULT_AVATAR_ID },
     bannerId: DEFAULT_BANNER_ID,
+    frameId: null,
     emblem: { type: 'catalog', emblemId: DEFAULT_EMBLEM_ID },
     customEmblemId: null,
     customEmblems: [],

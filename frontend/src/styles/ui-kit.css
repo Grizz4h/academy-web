@@ -11,6 +11,8 @@
  * Catalog
  * -------
  * Buttons:  .ui-btn  .ui-btn--primary | --secondary | --ghost | --danger | --dev | --sm | --block
+ *           Paarung: 1 Button = primary · 2. Button daneben = secondary
+ *           Im Code: UiActionRow (setzt die Varianten automatisch)
  * Chips:    .ui-chip  .ui-chip.is-active | --sm | --static
  * Tabs:     .ui-tablist  .ui-tab  .ui-tab.is-active
  * Pills:    .ui-pill  .ui-pill--accent | --ok | --warn | --danger | --neutral | --new
@@ -18,6 +20,9 @@
  * Switch:   .ui-switch  (input[type=checkbox].ui-switch)
  * Segment:  .ui-seg  .ui-seg__item  .ui-seg__item.is-active
  * Sheets:   UiSheet / UiSheetActions  (Abbrechen links, primäre Aktion rechts)
+ * Accordion:.ui-more  .ui-more__summary  .ui-more__chevron  .ui-more__body
+ *
+ * Agent-Regeln: nur .cursor/rules/ui-catalog.mdc · Sichtprüfung: /dev/ui
  */
 
 /* ---- Buttons ---- */
@@ -417,6 +422,57 @@
   background: var(--selected-bg);
   color: #99f6e4;
   box-shadow: var(--selected-glow);
+}
+
+/* ---- Accordion (Stats/Home morePanel) ---- */
+
+.ui-more {
+  border: 1px solid rgba(140, 160, 190, 0.28);
+  border-radius: 14px;
+  background: rgba(12, 18, 32, 0.55);
+  overflow: hidden;
+}
+
+.ui-more__summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 1.1rem;
+  cursor: pointer;
+  user-select: none;
+  color: rgba(230, 240, 250, 0.95);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.ui-more__summary::-webkit-details-marker {
+  display: none;
+}
+
+.ui-more__chevron {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid rgba(148, 196, 214, 0.9);
+  border-bottom: 2px solid rgba(148, 196, 214, 0.9);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  margin-top: -0.15rem;
+  transition: transform 0.15s ease;
+}
+
+.ui-more[open] .ui-more__chevron {
+  transform: rotate(-135deg);
+  margin-top: 0.15rem;
+}
+
+.ui-more__body {
+  padding: 0.9rem 1rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,6 @@
 import type { ScenePoolOverview, ScenePoolStatus } from '../../stats/sceneOverview'
 import { scenePoolStatusLabel } from '../../stats/sceneOverview'
-import { UiButton } from '../ui'
+import { UiActionRow, UiButton } from '../ui'
 import { KpiRevealCard } from './KpiRevealCard'
 
 type ScenePoolOverviewKpisProps = {
@@ -52,11 +52,11 @@ export function ScenePoolOverviewKpis({
           <>
             <p>Frisch markiert — noch nicht für die Produktion vorgemerkt.</p>
             {onApplyStatusFilter && (
-              <div className="ui-tap-reveal-actions">
-                <UiButton type="button" variant="primary" size="sm" onClick={() => onApplyStatusFilter('NEW')}>
+              <UiActionRow>
+                <UiButton type="button" size="sm" onClick={() => onApplyStatusFilter('NEW')}>
                   Neu filtern
                 </UiButton>
-              </div>
+              </UiActionRow>
             )}
           </>
         }
@@ -75,11 +75,11 @@ export function ScenePoolOverviewKpis({
                 : 'Noch keine Szenen im Pool.'}
             </p>
             {onApplyStatusFilter && (
-              <div className="ui-tap-reveal-actions">
-                <UiButton type="button" variant="primary" size="sm" onClick={() => onApplyStatusFilter('PIPELINE')}>
+              <UiActionRow>
+                <UiButton type="button" size="sm" onClick={() => onApplyStatusFilter('PIPELINE')}>
                   Pipeline filtern
                 </UiButton>
-              </div>
+              </UiActionRow>
             )}
           </>
         }
@@ -94,11 +94,11 @@ export function ScenePoolOverviewKpis({
           <>
             <p>Status {scenePoolStatusLabel('ASSIGNED')} — für Episoden / Veröffentlichung gesetzt.</p>
             {onApplyStatusFilter && (
-              <div className="ui-tap-reveal-actions">
-                <UiButton type="button" variant="primary" size="sm" onClick={() => onApplyStatusFilter('ASSIGNED')}>
+              <UiActionRow>
+                <UiButton type="button" size="sm" onClick={() => onApplyStatusFilter('ASSIGNED')}>
                   Zugeordnet filtern
                 </UiButton>
-              </div>
+              </UiActionRow>
             )}
           </>
         }

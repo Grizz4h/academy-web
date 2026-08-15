@@ -18,7 +18,7 @@ export const TAGLINE_PRESETS: Array<{ id: string; text: string; description?: st
 ]
 
 function starterAvatarCosmetics(): CosmeticDefinition[] {
-  return avatarCatalog.map((asset) => ({
+  return avatarCatalog.filter((asset) => asset.starter !== false).map((asset) => ({
     id: asset.id,
     type: 'avatar' as const,
     name: asset.label,
@@ -29,7 +29,7 @@ function starterAvatarCosmetics(): CosmeticDefinition[] {
 }
 
 function starterBannerCosmetics(): CosmeticDefinition[] {
-  return bannerCatalog.map((asset) => ({
+  return bannerCatalog.filter((asset) => asset.starter !== false).map((asset) => ({
     id: asset.id,
     type: 'banner' as const,
     name: asset.label,
@@ -40,7 +40,7 @@ function starterBannerCosmetics(): CosmeticDefinition[] {
 }
 
 function starterEmblemCosmetics(): CosmeticDefinition[] {
-  return emblemCatalog.map((asset) => ({
+  return emblemCatalog.filter((asset) => asset.starter !== false).map((asset) => ({
     id: asset.id,
     type: 'emblem' as const,
     name: asset.label,

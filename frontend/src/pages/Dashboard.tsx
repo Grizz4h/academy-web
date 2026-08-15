@@ -1,4 +1,5 @@
 import { useMemo, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
@@ -9,25 +10,34 @@ import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
 import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
 import { CoverageMap } from '../components/dashboard/CoverageMap';
 import { LearningRhythmWidget } from '../components/dashboard/LearningRhythmWidget';
-import { DrillActivityHeatmap } from '../components/dashboard/DrillActivityHeatmap';
+import { LearningProgressTeaser } from '../components/dashboard/LearningProgressTeaser';
 import type { ModuleCoverage } from '../components/dashboard/CoverageMap';
-import { formatPux, getRecentUnlockedAchievements, getTopNearAchievements, useRewards } from '../features/rewards';
-import { selectLevelProgress } from '../features/progression';
+import { formatPux, useRewards } from '../features/rewards';
+import { selectAchievementViews, selectLevelProgress } from '../features/progression';
+import { lockerTaskHref } from '../features/progression/tasks';
 import { computeObservedTeamStats } from '../stats/exposureStats';
 import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
-import { UiButton, UiButtonLink, UiProgress } from '../components/ui';
+import { UiActionRow, UiButton, UiButtonLink, UiProgress } from '../components/ui';
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard';
 import TodayMatchdaySlate from '../components/game/TodayMatchdaySlate';
+import TodayChallenges from '../features/progression/challenges/TodayChallenges';
 import { filterCatalogGamesForSeason, filterGamesForDate, localTodayIsoDate } from '../components/game/gameCatalogUtils';
 import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../stats/seasonNormalization';
 import {
+  getAcademyEntryModule,
+  getFoundationModule,
+  hasCompletedAnyFoundationDrill,
+  isAcademyLocked,
   selectNextStepRecommendation,
   shouldPromptHockeyExperience,
 } from '../features/foundation/recommendations';
 import HockeyExperiencePrompt from '../features/foundation/HockeyExperiencePrompt';
+import { selectTutorialEntryRecommendation } from '../features/tutorial/resolveEntry';
+import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial';
+import { useDevNavEnabled } from '../config/featureFlags';
 import styles from './Dashboard.module.css';
 
 const formatSessionState = (state: string): string => {
@@ -41,6 +51,8 @@ const formatSessionState = (state: string): string => {
 export default function Dashboard() {
   const { user, setUser } = useUser();
   const { rewardState } = useRewards();
+  const tutorial = useTutorialOptional();
+  const devMode = useDevNavEnabled();
 
   const [nameInput, setNameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -467,13 +479,19 @@ export default function Dashboard() {
       for (const d of s.drills || []) {
         if (d?.id) completed.add(d.id)
       }
+      if (s.drill_id) completed.add(s.drill_id)
     }
-    return selectNextStepRecommendation({
+    const args = {
       curriculum,
       completedDrillIds: completed,
       hockeyExperience: account?.profile?.hockeyExperience,
-    })
-  }, [curriculum, sessions, account?.profile?.hockeyExperience]);
+    }
+    // New profiles have no hockeyExperience yet; without this the hero card
+    // points at A1 (full game setup) while the tutorial leads to Track 0.
+    return tutorial?.active
+      ? selectTutorialEntryRecommendation(args)
+      : selectNextStepRecommendation(args)
+  }, [curriculum, sessions, account?.profile?.hockeyExperience, tutorial?.active]);
 
   // ---- Render Branches (ab hier dürfen returns kommen) ----
   if (!user)
@@ -574,8 +592,15 @@ export default function Dashboard() {
   if (isLoading) return <PageSkeleton />;
   if (error) return <Card>Fehler beim Laden: {(error as Error).message}</Card>;
 
-  const nearAchievements = getTopNearAchievements(getRealSessions(sessions || []), rewardState, 5);
-  const recentUnlocked = getRecentUnlockedAchievements(rewardState, 5);
+  const achievementViews = selectAchievementViews(rewardState);
+  const nearAchievements = achievementViews
+    .filter((item) => !item.unlocked && !item.secretHidden && item.ratio > 0)
+    .sort((left, right) => right.ratio - left.ratio || right.current - left.current)
+    .slice(0, 5);
+  const recentUnlocked = achievementViews
+    .filter((item) => item.unlocked && !item.secretHidden)
+    .sort((left, right) => String(right.unlockedAt || '').localeCompare(String(left.unlockedAt || '')))
+    .slice(0, 5);
   const levelProgress = selectLevelProgress(rewardState);
   const weekActivityDays = (() => {
     const list = getRealSessions(sessions ?? []);
@@ -595,12 +620,37 @@ export default function Dashboard() {
     return days.size;
   })();
   const nextDrill = derived.recommendedNext[0] as DrillWithCount | undefined;
-  const nextDrillTitle = nextDrill
-    ? (nextDrill.moduleId ? `${nextDrill.moduleId} · ${nextDrill.title}` : nextDrill.title)
-    : null;
   const showFoundationEntry =
     !resumeSession
     && foundationRecommendation?.kind === 'foundation_entry';
+  const completedDrillIds = (() => {
+    const completed = new Set<string>()
+    for (const s of getRealSessions(sessions || [])) {
+      if (String(s.state || '').toUpperCase() !== 'COMPLETED') continue
+      for (const d of s.drills || []) {
+        if (d?.id) completed.add(d.id)
+      }
+      if (s.drill_id) completed.add(s.drill_id)
+    }
+    return completed
+  })()
+  const foundationModule = getFoundationModule(curriculum)
+  const academyEntry = getAcademyEntryModule(curriculum)
+  const completedModuleIds = getRealSessions(sessions || [])
+    .filter((session) => String(session.state || '').toUpperCase() === 'COMPLETED')
+    .map((session) => String(session.module_id || ''))
+    .filter(Boolean)
+  const track0Done = hasCompletedAnyFoundationDrill(curriculum, completedDrillIds)
+    || completedModuleIds.some((id) => id === 'T0' || id.startsWith('T0'))
+  const hasUsedAcademy = getRealSessions(sessions || []).some((session) => {
+    const moduleId = String(session.module_id || '')
+    return moduleId && moduleId !== 'T0' && !moduleId.startsWith('T0')
+  })
+  const academyLocked = isAcademyLocked(curriculum, completedDrillIds, {
+    devMode,
+    hasUsedAcademy,
+    completedModuleIds,
+  })
   const drillProgressPct = derived.totalDrills
     ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
     : 0;
@@ -633,6 +683,8 @@ export default function Dashboard() {
         </Card>
       ) : null}
 
+      {user ? <TodayChallenges games={slateCatalogGames} /> : null}
+
       <div className={styles.kpiGrid}>
         <KpiRevealCard
           title="Streak"
@@ -654,11 +706,11 @@ export default function Dashboard() {
                   <strong>{new Date(derived.lastSession.created_at).toLocaleDateString('de-DE')}</strong>
                 </div>
               )}
-              <div className="ui-tap-reveal-actions">
-                <UiButtonLink to="/history" variant="primary" size="sm">
+              <UiActionRow>
+                <UiButtonLink to="/history" size="sm">
                   Session-Verlauf
                 </UiButtonLink>
-              </div>
+              </UiActionRow>
             </>
           }
         />
@@ -678,11 +730,11 @@ export default function Dashboard() {
                 <span>Aktive Tage</span>
                 <strong>{weekActivityDays}</strong>
               </div>
-              <div className="ui-tap-reveal-actions">
-                <UiButtonLink to="/history" variant="primary" size="sm">
+              <UiActionRow>
+                <UiButtonLink to="/history" size="sm">
                   Verlauf ansehen
                 </UiButtonLink>
-              </div>
+              </UiActionRow>
             </>
           }
         />
@@ -707,11 +759,11 @@ export default function Dashboard() {
                 <span>Abgebrochen</span>
                 <strong>{derived.aborted}</strong>
               </div>
-              <div className="ui-tap-reveal-actions">
-                <UiButtonLink to="/history" variant="primary" size="sm">
+              <UiActionRow>
+                <UiButtonLink to="/history" size="sm">
                   Alle Sessions
                 </UiButtonLink>
-              </div>
+              </UiActionRow>
             </>
           }
         />
@@ -733,27 +785,28 @@ export default function Dashboard() {
                 <span>Gesamt-XP</span>
                 <strong>{levelProgress.totalXp.toLocaleString('de-DE')}</strong>
               </div>
-              <div className="ui-tap-reveal-actions">
-                <UiButtonLink to="/progress" variant="primary" size="sm">
+              <UiActionRow>
+                <UiButtonLink to="/progress" size="sm">
                   Belohnungen
                 </UiButtonLink>
-                <UiButtonLink to="/account" variant="secondary" size="sm">
+                <UiButtonLink to="/account" size="sm">
                   Profil
                 </UiButtonLink>
-              </div>
+              </UiActionRow>
             </>
           }
         />
       </div>
 
+      <div data-tutorial-id={TUTORIAL_TARGET.homeNextStep}>
       <Card className={styles.nextStepCard} elevation="featured" surface="primary">
         <div className={styles.nextStepCopy}>
           <h2 className={styles.nextStepTitle}>
             {resumeSession
               ? 'Weiter geht’s'
-              : showFoundationEntry
-                ? 'Dein Einstieg'
-                : 'Nächster Schritt'}
+              : track0Done
+                ? 'Nächster Schritt'
+                : 'Dein Einstieg'}
           </h2>
           {resumeSession ? (
             <p className={styles.nextStepText}>
@@ -761,21 +814,11 @@ export default function Dashboard() {
               {derived.streak > 0 ? ` · Streak ${derived.streak}` : ''}.
               {' '}Mach weiter, bevor der Faden reißt.
             </p>
-          ) : showFoundationEntry && foundationRecommendation?.kind === 'foundation_entry' ? (
-            <p className={styles.nextStepText}>
-              <strong className={styles.nextStepDrillName}>{foundationRecommendation.title}</strong>
-              {' — '}
-              {foundationRecommendation.subtitle}
-            </p>
-          ) : nextDrillTitle ? (
-            <p className={styles.nextStepText}>
-              {derived.streak > 0 ? `Streak ${derived.streak} · ` : ''}
-              Als Nächstes empfohlen:{' '}
-              <strong className={styles.nextStepDrillName}>{nextDrillTitle}</strong>
-            </p>
           ) : (
             <p className={styles.nextStepText}>
-              Noch keine klare Empfehlung — starte einfach in der Akademie.
+              {track0Done
+                ? 'Track 0 ist erledigt. Als Nächstes kannst du Track A1 starten.'
+                : 'Zuerst Track 0. Danach wird Track A1 freigeschaltet.'}
             </p>
           )}
           {derived.lastSession && !resumeSession && !showFoundationEntry && (
@@ -802,44 +845,52 @@ export default function Dashboard() {
               <UiButtonLink to={getSessionRoute(resumeSession)}>
                 Session fortsetzen
               </UiButtonLink>
-              {nextDrill?.moduleId ? (
-                <UiButtonLink to={`/setup/${nextDrill.moduleId}`} variant="secondary">
-                  Neue Session
+              {foundationModule?.id ? (
+                <UiButtonLink to={`/setup/${foundationModule.id}`} variant="secondary" data-tutorial-id={TUTORIAL_TARGET.homeStartT0}>
+                  {track0Done ? 'Track 0 weiter' : 'Track 0 starten'}
                 </UiButtonLink>
-              ) : (
-                <UiButtonLink to="/curriculum" variant="secondary">
-                  Akademie öffnen
-                </UiButtonLink>
-              )}
-            </>
-          ) : showFoundationEntry && foundationRecommendation?.kind === 'foundation_entry' ? (
-            <>
-              <UiButtonLink to={`/setup/${foundationRecommendation.moduleId}`}>
-                Track 0 starten
-              </UiButtonLink>
-              <UiButtonLink to="/curriculum" variant="secondary">
-                Akademie öffnen
-              </UiButtonLink>
-            </>
-          ) : nextDrill?.moduleId ? (
-            <>
-              <UiButtonLink to={`/setup/${nextDrill.moduleId}`}>
-                Session starten
-              </UiButtonLink>
-              <UiButtonLink to="/curriculum" variant="secondary">
-                Akademie öffnen
-              </UiButtonLink>
+              ) : null}
             </>
           ) : (
-            <UiButtonLink to="/curriculum">
-              Zur Akademie
-            </UiButtonLink>
+            <>
+              {foundationModule?.id ? (
+                <UiButtonLink
+                  to={`/setup/${foundationModule.id}`}
+                  variant={track0Done ? 'secondary' : 'primary'}
+                  data-tutorial-id={TUTORIAL_TARGET.homeStartT0}
+                >
+                  {track0Done ? '✓ Track 0' : 'Track 0 starten'}
+                </UiButtonLink>
+              ) : null}
+              {academyEntry ? (
+                academyLocked ? (
+                  <UiButton type="button" variant="secondary" disabled data-tutorial-id={TUTORIAL_TARGET.homeStartA1}>
+                    Track A1 · zuerst Track 0
+                  </UiButton>
+                ) : (
+                  <UiButtonLink
+                    to={`/setup/${academyEntry.moduleId}`}
+                    variant={track0Done ? 'primary' : 'secondary'}
+                    data-tutorial-id={TUTORIAL_TARGET.homeStartA1}
+                  >
+                    Track A1 starten
+                  </UiButtonLink>
+                )
+              ) : nextDrill?.moduleId ? (
+                <UiButtonLink to={`/setup/${nextDrill.moduleId}`}>
+                  Session starten
+                </UiButtonLink>
+              ) : (
+                <UiButtonLink to="/curriculum">Zur Akademie</UiButtonLink>
+              )}
+            </>
           )}
         </div>
       </Card>
+      </div>
 
       <HockeyExperiencePrompt
-        open={experiencePromptOpen}
+        open={experiencePromptOpen && !tutorial?.isSurfaceOpen}
         onDone={() => setExperiencePromptOpen(false)}
       />
 
@@ -861,9 +912,10 @@ export default function Dashboard() {
         />
       </Card>
 
-      {derived.drillAttempts.length > 0 && (
-        <DrillActivityHeatmap attempts={derived.drillAttempts} days={56} />
-      )}
+      <LearningProgressTeaser
+        trackProgress={derived.trackProgress}
+        attempts={derived.drillAttempts}
+      />
 
       <Card surface="section" className={styles.recentCard}>
         <h2 className="ui-section-title">Zuletzt</h2>
@@ -980,12 +1032,17 @@ export default function Dashboard() {
                 ) : (
                   <ul className={styles.rewardList}>
                     {nearAchievements.map((item) => (
-                      <li key={item.achievement.id} className={styles.rewardListItem}>
-                        <div>
-                          <div className={styles.rewardName}>{item.achievement.title}</div>
-                          <div className={styles.rewardMeta}>{item.label}</div>
-                        </div>
-                        <span className={styles.rewardProgress}>{Math.round(item.progress * 100)}%</span>
+                      <li key={item.definition.id}>
+                        <Link
+                          className={styles.rewardListItem}
+                          to={lockerTaskHref({ sourceId: item.definition.id, lane: 'permanent' })}
+                        >
+                          <div>
+                            <div className={styles.rewardName}>{item.definition.name}</div>
+                            <div className={styles.rewardMeta}>{item.current} / {item.target}</div>
+                          </div>
+                          <span className={styles.rewardProgress}>{Math.round(item.ratio * 100)}%</span>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -999,12 +1056,19 @@ export default function Dashboard() {
                 ) : (
                   <ul className={styles.rewardList}>
                     {recentUnlocked.map((item) => (
-                      <li key={item.achievement.id} className={styles.rewardListItem}>
-                        <div>
-                          <div className={styles.rewardName}>{item.achievement.title}</div>
-                          <div className={styles.rewardMeta}>{new Date(item.unlockedAt).toLocaleString('de-DE')}</div>
-                        </div>
-                        <span className={styles.rewardTag}>{item.achievement.category}</span>
+                      <li key={item.definition.id}>
+                        <Link
+                          className={styles.rewardListItem}
+                          to={lockerTaskHref({ sourceId: item.definition.id, lane: 'permanent' })}
+                        >
+                          <div>
+                            <div className={styles.rewardName}>{item.definition.name}</div>
+                            <div className={styles.rewardMeta}>
+                              {item.unlockedAt ? new Date(item.unlockedAt).toLocaleString('de-DE') : 'Freigeschaltet'}
+                            </div>
+                          </div>
+                          <span className={styles.rewardTag}>Freigeschaltet</span>
+                        </Link>
                       </li>
                     ))}
                   </ul>

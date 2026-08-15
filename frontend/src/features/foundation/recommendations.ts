@@ -47,6 +47,48 @@ export function isFoundationTrackComplete(
   return module.drills.every((d) => completedDrillIds.has(d.id))
 }
 
+export function hasCompletedAnyFoundationDrill(
+  curriculum: Curriculum | undefined | null,
+  completedDrillIds: Set<string>,
+): boolean {
+  const module = getFoundationModule(curriculum)
+  if (!module?.drills?.length) return false
+  return module.drills.some((d) => completedDrillIds.has(d.id))
+}
+
+export function getAcademyEntryModule(curriculum: Curriculum | undefined | null): {
+  trackId: string
+  moduleId: string
+  title: string
+  subtitle: string
+} | null {
+  const academyTrack = curriculum?.tracks?.find(
+    (t) => t.trackType !== 'foundation' && t.id !== 'T0' && (t.modules || []).some((m) => m.active !== false),
+  )
+  const academyModule = academyTrack?.modules?.find((m) => m.active !== false)
+  if (!academyTrack || !academyModule) return null
+  return {
+    trackId: academyTrack.id,
+    moduleId: academyModule.id,
+    title: academyModule.title,
+    subtitle: academyModule.summary || academyTrack.goal || '',
+  }
+}
+
+/** Outside Dev Mode, A1+ stays locked until the first Track-0 lesson is done. */
+export function isAcademyLocked(
+  curriculum: Curriculum | undefined | null,
+  completedDrillIds: Set<string>,
+  options?: { devMode?: boolean; hasUsedAcademy?: boolean; completedModuleIds?: string[] },
+): boolean {
+  if (options?.devMode) return false
+  if (options?.hasUsedAcademy) return false
+  const foundation = getFoundationModule(curriculum)
+  if (!foundation) return false
+  if (options?.completedModuleIds?.some((id) => id === foundation.id || id.startsWith('T0'))) return false
+  return !hasCompletedAnyFoundationDrill(curriculum, completedDrillIds)
+}
+
 /** First unfinished foundation drill, or first drill if none started. */
 export function getNextFoundationDrillId(
   curriculum: Curriculum | undefined | null,

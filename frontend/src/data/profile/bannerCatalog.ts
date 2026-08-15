@@ -33,6 +33,14 @@ export const bannerCatalog: ProfileAsset[] = [
     category: 'rink',
     tags: ['crease', 'goal'],
   },
+  {
+    id: 'banner_night_circuit',
+    label: 'Neon District',
+    src: '/profile/banners/banner_night_circuit.svg',
+    category: 'abstract',
+    tags: ['cyberpunk', 'night-circuit'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_BANNER_ID = 'banner_neutral_01'

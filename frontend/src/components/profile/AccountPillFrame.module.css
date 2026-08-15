@@ -1,0 +1,425 @@
+@property --frame-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.pill {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.pill > * {
+  position: relative;
+  z-index: 1;
+}
+
+.pill[data-frame]:not([data-frame='none']) {
+  border-color: transparent;
+}
+
+/* Common — Basic */
+.pill[data-frame='frame_shop_basic'] {
+  border-color: rgba(186, 210, 230, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(186, 210, 230, 0.88),
+    0 0 12px rgba(186, 210, 230, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+/* Uncommon — Slot */
+.pill[data-frame='frame_slot'] {
+  border-color: rgba(196, 181, 253, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(196, 181, 253, 0.95),
+    0 0 16px rgba(167, 139, 250, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.pill[data-frame='frame_slot']::before,
+.pill[data-frame='frame_slot']::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #f3e8ff;
+  pointer-events: none;
+}
+
+.pill[data-frame='frame_slot']::before {
+  top: -3px;
+  left: -3px;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 4px 0 0 0;
+}
+
+.pill[data-frame='frame_slot']::after {
+  right: -3px;
+  bottom: -3px;
+  border-left: 0;
+  border-top: 0;
+  border-radius: 0 0 4px 0;
+}
+
+/* Rare — Rink Rat */
+.pill[data-frame='frame_rink_rat'] {
+  border-color: rgba(94, 234, 212, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(94, 234, 212, 0.95),
+    0 0 18px rgba(45, 212, 191, 0.55),
+    inset 0 0 0 1px rgba(153, 246, 228, 0.35);
+}
+
+.pill[data-frame='frame_rink_rat']::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 3px;
+  border-radius: inherit;
+  border: 1.5px dashed rgba(153, 246, 228, 0.75);
+  pointer-events: none;
+}
+
+/* Rare — Rare Trim */
+.pill[data-frame='frame_shop_rare_trim'] {
+  border-color: rgba(253, 230, 138, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(253, 230, 138, 0.95),
+    0 0 0 4px rgba(45, 212, 191, 0.55),
+    0 0 18px rgba(251, 191, 36, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Legendary — Ice Legend */
+.pill[data-frame='frame_ice_legend'] {
+  border-color: rgba(253, 230, 138, 0.7);
+  box-shadow:
+    0 0 0 2px rgba(253, 230, 138, 0.55),
+    0 0 22px rgba(251, 191, 36, 0.45),
+    0 0 28px rgba(94, 234, 212, 0.28);
+}
+
+.pill[data-frame='frame_ice_legend']::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -4px;
+  border-radius: inherit;
+  padding: 3px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--frame-angle),
+    #fde68a 0deg,
+    #5eead4 90deg,
+    #fbbf24 180deg,
+    #99f6e4 270deg,
+    #fde68a 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: frameHue 3.2s linear infinite;
+}
+
+.pill[data-frame='frame_ice_legend']::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -8px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 18% 50%, rgba(253, 230, 138, 0.32), transparent 46%),
+    radial-gradient(ellipse at 82% 50%, rgba(94, 234, 212, 0.26), transparent 46%);
+  animation: frameBloom 2.4s ease-in-out infinite;
+}
+
+@keyframes frameHue {
+  to {
+    --frame-angle: 360deg;
+  }
+}
+
+@keyframes frameBloom {
+  0%,
+  100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.host {
+  --hud-cut: 11px;
+  --hud-shape: polygon(
+    var(--hud-cut) 0,
+    calc(100% - var(--hud-cut)) 0,
+    100% var(--hud-cut),
+    100% calc(100% - var(--hud-cut)),
+    calc(100% - var(--hud-cut)) 100%,
+    var(--hud-cut) 100%,
+    0 calc(100% - var(--hud-cut)),
+    0 var(--hud-cut)
+  );
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  margin-left: auto;
+  overflow: visible;
+}
+
+.hostPreview {
+  display: block;
+  width: 100%;
+  margin-left: 0;
+}
+
+.host[data-frame='frame_night_circuit'] {
+  filter:
+    drop-shadow(0 0 6px rgba(244, 114, 182, 0.55))
+    drop-shadow(0 0 14px rgba(34, 211, 238, 0.32));
+}
+
+/* Mythic — Night Circuit HUD */
+.pill[data-frame='frame_night_circuit'] {
+  border-radius: 0;
+  border-color: rgba(34, 211, 238, 0.85);
+  clip-path: var(--hud-shape);
+  padding-left: 10px;
+  padding-right: 11px;
+  background:
+    linear-gradient(180deg, rgba(18, 6, 26, 0.55) 0%, rgba(10, 18, 32, 0.72) 100%),
+    rgba(12, 18, 32, 0.82);
+  box-shadow:
+    inset 0 0 0 1px rgba(103, 232, 249, 0.55),
+    inset 0 0 14px rgba(244, 114, 182, 0.16);
+}
+
+.pill[data-frame='frame_night_circuit']::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(34, 211, 238, 0.1) 42%,
+    rgba(244, 114, 182, 0.16) 50%,
+    rgba(34, 211, 238, 0.1) 58%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  animation: hudSweep 2.8s linear infinite;
+}
+
+.pill[data-frame='frame_night_circuit']::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 3px,
+    rgba(244, 114, 182, 0.08) 3px 4px
+  );
+  animation: frameGlitch 2.1s steps(2, end) infinite;
+}
+
+.hudChrome {
+  position: absolute;
+  inset: -5px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.hudCorner {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.hudCorner[data-pos='tl'] {
+  top: 1px;
+  left: 1px;
+  border-color: #67e8f9;
+  border-right: 0;
+  border-bottom: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 28%, 28% 28%, 28% 100%, 0 100%);
+}
+
+.hudCorner[data-pos='tr'] {
+  top: 1px;
+  right: 1px;
+  border-color: #f472b6;
+  border-left: 0;
+  border-bottom: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 72% 100%, 72% 28%, 0 28%);
+}
+
+.hudCorner[data-pos='bl'] {
+  bottom: 1px;
+  left: 1px;
+  border-color: #f472b6;
+  border-right: 0;
+  border-top: 0;
+  clip-path: polygon(0 0, 28% 0, 28% 72%, 100% 72%, 100% 100%, 0 100%);
+}
+
+.hudCorner[data-pos='br'] {
+  bottom: 1px;
+  right: 1px;
+  border-color: #67e8f9;
+  border-left: 0;
+  border-top: 0;
+  clip-path: polygon(0 72%, 72% 72%, 72% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.hudNotch {
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 14px;
+  transform: translateY(-50%);
+  background: #22d3ee;
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.85);
+}
+
+.hudNotch[data-pos='left'] {
+  left: -1px;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+
+.hudNotch[data-pos='right'] {
+  right: -1px;
+  background: #f472b6;
+  box-shadow: 0 0 8px rgba(244, 114, 182, 0.85);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.hudTicks {
+  position: absolute;
+  top: 2px;
+  left: 22%;
+  right: 22%;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(103, 232, 249, 0.95) 0 2px,
+    transparent 2px 7px
+  );
+  opacity: 0.85;
+  animation: hudTickPulse 1.4s steps(2, end) infinite;
+}
+
+@keyframes hudSweep {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+@keyframes hudTickPulse {
+  0%,
+  70%,
+  100% { opacity: 0.45; }
+  80% { opacity: 1; }
+}
+
+@keyframes frameGlitch {
+  0%,
+  80%,
+  100% {
+    opacity: 0.55;
+    transform: translateX(0);
+  }
+  84% {
+    opacity: 0.95;
+    transform: translateX(-1px);
+  }
+  88% {
+    opacity: 0.35;
+    transform: translateX(1px);
+  }
+  92% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.preview {
+  width: 100%;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  background: rgba(12, 18, 32, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview[data-frame='frame_night_circuit'] {
+  border-radius: 0;
+}
+
+.previewDot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: rgba(143, 211, 223, 0.55);
+}
+
+.previewBar {
+  flex: 1;
+  height: 0.38rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.preview[data-size='sheet'] {
+  height: 3.2rem;
+  max-width: 14rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 899px) {
+  .host {
+    --hud-cut: 8px;
+  }
+
+  .pill[data-frame='frame_night_circuit'] {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .hudCorner {
+    width: 11px;
+    height: 11px;
+  }
+
+  .hudNotch {
+    width: 6px;
+    height: 11px;
+  }
+
+  .hudTicks {
+    left: 18%;
+    right: 18%;
+    height: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill[data-frame='frame_ice_legend']::before,
+  .pill[data-frame='frame_ice_legend']::after,
+  .pill[data-frame='frame_night_circuit']::before,
+  .pill[data-frame='frame_night_circuit']::after,
+  .hudTicks {
+    animation: none;
+  }
+}

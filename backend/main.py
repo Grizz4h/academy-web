@@ -263,6 +263,8 @@ class RewardApplyData(BaseModel):
     progression_pux_granted: Optional[int] = None
     skip_idempotency: bool = False  # for favorites/seen-only patches with synthetic event ids
     processed_event_ids: List[str] = Field(default_factory=list)  # mark many idempotency keys in one apply
+    challenge_progress: Optional[dict] = None
+    challenge_rotation: Optional[dict] = None
 
 
 class SceneSourcePayload(BaseModel):
@@ -505,6 +507,8 @@ def _create_default_reward_state() -> dict:
         "featuredAchievementId": None,
         "featuredMasteryCoinId": None,
         "progressionPuxGranted": 0,
+        "challengeProgress": {},
+        "challengeRotation": None,
     }
 
 
@@ -535,6 +539,8 @@ def _load_reward_state(user: str) -> dict:
         "featuredAchievementId": state.get("featuredAchievementId"),
         "featuredMasteryCoinId": state.get("featuredMasteryCoinId"),
         "progressionPuxGranted": int(state.get("progressionPuxGranted") or 0),
+        "challengeProgress": state.get("challengeProgress") or {},
+        "challengeRotation": state.get("challengeRotation"),
     }
     return merged
 
@@ -2692,6 +2698,12 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
     if data.progression_pux_granted is not None:
         state["progressionPuxGranted"] = int(data.progression_pux_granted)
 
+    if data.challenge_progress is not None and isinstance(data.challenge_progress, dict):
+        state["challengeProgress"] = data.challenge_progress
+
+    if data.challenge_rotation is not None:
+        state["challengeRotation"] = data.challenge_rotation
+
     if data.activity_events:
         existing_ids = {
             str(item.get("id"))
@@ -3467,6 +3479,7 @@ def _default_user_profile(username: str) -> dict:
         "displayName": display or "Spieler",
         "avatar": {"type": "catalog", "avatarId": "avatar_ice_01"},
         "bannerId": "banner_neutral_01",
+        "frameId": None,
         "emblem": {"type": "catalog", "emblemId": "emblem_puck_01"},
         "customEmblemId": None,
         "customEmblems": [],
@@ -3525,6 +3538,7 @@ class ProfileUpdatePayload(BaseModel):
     displayName: Optional[str] = None
     avatar: Optional[dict] = None
     bannerId: Optional[str] = None
+    frameId: Optional[str] = None
     emblem: Optional[dict] = None
     customEmblemId: Optional[str] = None
     customEmblems: Optional[list] = None
@@ -3587,6 +3601,14 @@ async def patch_my_profile(payload: ProfileUpdatePayload, current_user: str = De
 
     if "bannerId" in data:
         profile["bannerId"] = data["bannerId"]
+
+    if "frameId" in data:
+        frame_id = data["frameId"]
+        if frame_id is not None:
+            frame_id = str(frame_id).strip()
+            if not frame_id:
+                frame_id = None
+        profile["frameId"] = frame_id
 
     if "emblem" in data:
         emblem = data["emblem"]

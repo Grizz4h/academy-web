@@ -29,8 +29,6 @@
 }
 
 .heatmap-scroll {
-  max-height: 280px;
-  overflow-y: auto;
   margin-bottom: 16px;
 }
 
@@ -226,7 +224,8 @@
 
   .activity-grid {
     max-width: 100%;
-    overflow-x: auto;
+    overflow: visible;
+    flex-wrap: wrap;
   }
   
   .activity-cell {
@@ -235,7 +234,7 @@
   }
 
   .heatmap-scroll {
-    max-height: 400px;
+    max-height: none;
   }
 }
 

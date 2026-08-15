@@ -54,6 +54,8 @@ export function formatUnlockHow(origin: RewardOrigin): string {
       return `Battle Pass · ${origin.seasonId}`
     case 'collection':
       return `Collection · ${origin.collectionId}`
+    case 'challenge':
+      return `Challenge · ${origin.challengeId}`
     case 'event':
       return `Event · ${origin.eventId}`
     case 'secret':
@@ -81,6 +83,8 @@ export function formatOriginLabel(origin: RewardOrigin): string {
       return `Battle Pass · ${origin.seasonId}`
     case 'collection':
       return `Collection · ${origin.collectionId}`
+    case 'challenge':
+      return `Challenge · ${origin.challengeId}`
     case 'event':
       return `Event · ${origin.eventId}`
     case 'secret':

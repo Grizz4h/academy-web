@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
-import { buildEventsFromCompletedSession, buildTrackCompletionEvents } from '../features/progression'
-import { isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
+import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrackCompletionEvents } from '../features/progression'
+import { isDummySession, isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
@@ -16,6 +16,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { getActivePeriodsForScope, getObservationScopeLabel, isLessonScope } from '../utils/observationScope'
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import type { StoredAiReflection } from '../features/reflection/types'
+import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial'
 import stickyStyles from './SessionSticky.module.css'
 import {
   resolveBeforeAfterCompareConfig,
@@ -53,6 +54,7 @@ export default function SessionPage() {
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
   const { user } = useUser()
+  const tutorial = useTutorialOptional()
   const { grantRewardResult, rewardState, ingestActivityEvents, evaluateLockerMetaProgress } = useRewards()
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
@@ -520,6 +522,12 @@ export default function SessionPage() {
               next_module: '',
               helpfulness: 0
             })
+            if (completedSession) {
+              queryClient.setQueryData(['session', id], completedSession)
+            }
+            window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
+              detail: { sessionId: id, moduleId: completedSession?.module_id },
+            }))
             try {
               await finalizeSessionRewards(completedSession)
             } catch (rewardError) {
@@ -1013,8 +1021,8 @@ export default function SessionPage() {
         return
       }
 
-      // Foundation / lesson: skip period POST form — complete in one step
-      if (isFoundationSession && (next === 'POST' || !next)) {
+      // Foundation / lesson: skip period walking and POST form — complete in one step
+      if (isFoundationSession) {
         await clearDraft()
         setDrillCompleted(true)
         const completedSession = await api.completeSession(id!, {
@@ -1023,6 +1031,14 @@ export default function SessionPage() {
           next_module: '',
           helpfulness: 5,
         })
+        if (completedSession) {
+          queryClient.setQueryData(['session', id], completedSession)
+        }
+        await queryClient.invalidateQueries({ queryKey: ['session', id] })
+        await queryClient.invalidateQueries({ queryKey: ['sessions'] })
+        window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
+          detail: { sessionId: id, moduleId: session?.module_id },
+        }))
         try {
           await finalizeSessionRewards(completedSession)
         } catch (rewardError) {
@@ -1100,6 +1116,18 @@ export default function SessionPage() {
 
   const isCompleted = session?.state === 'COMPLETED'
   const activeReflection = localReflection ?? session?.ai_reflection ?? null
+  const tutorialWaitingForComplete = Boolean(
+    tutorial?.active
+    && tutorial.currentStep?.action?.type === 'event'
+    && tutorial.currentStep.action.name === 'academy-tutorial-session-completed',
+  )
+
+  useEffect(() => {
+    if (!isCompleted || !session?.id) return
+    window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
+      detail: { sessionId: session.id, moduleId: session.module_id },
+    }))
+  }, [isCompleted, session?.id, session?.module_id, tutorialWaitingForComplete])
 
   const getPhaseTitle = (phase: string) => {
     if (isFoundationSession || isLessonScope(session?.observation_scope)) {
@@ -1210,11 +1238,13 @@ export default function SessionPage() {
           {(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') && (
             <div>
               {isFoundationSession ? (
-                <p className="period-analysis-title">
+                <p className="period-analysis-title" data-tutorial-id={TUTORIAL_TARGET.sessionDrill}>
                   Arbeite die Schritte der Lektion durch. Danach unten „Session abschließen“.
                 </p>
               ) : (
-                <p className="period-analysis-title">Analysiere das letzte Drittel und gib Feedback.</p>
+                <p className="period-analysis-title" data-tutorial-id={TUTORIAL_TARGET.sessionDrill}>
+                  Analysiere das letzte Drittel und gib Feedback.
+                </p>
               )}
               {advanceError && (
                 <div style={{ marginBottom: '0.8rem', padding: '0.6rem 0.8rem', background: 'rgba(220,53,69,0.12)', border: '1px solid rgba(220,53,69,0.4)', borderRadius: '0.45rem', color: '#ffb7bf', fontSize: '0.9rem' }}>
@@ -1268,6 +1298,7 @@ export default function SessionPage() {
                       onClick={handleAdvanceToNext}
                       className="btn"
                       style={{ minWidth: 140 }}
+                      data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
                       disabled={isAdvancing || (isFoundationSession && !foundationReady)}
                     >
                       {advanceCtaLabel}
@@ -1294,6 +1325,7 @@ export default function SessionPage() {
                         type="button"
                         className={`${stickyStyles.stickyBtn} ${stickyStyles.stickyBtnPrimary}`}
                         onClick={handleAdvanceToNext}
+                        data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
                         disabled={isAdvancing || (isFoundationSession && !foundationReady)}
                       >
                         {stickyCtaLabel}
@@ -1334,7 +1366,7 @@ export default function SessionPage() {
       )}
 
       {isCompleted && (
-        <div className="card">
+        <div className="card" data-tutorial-id={TUTORIAL_TARGET.sessionResult}>
           <h2>Session abgeschlossen! 🎉</h2>
           <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.85rem' }}>
@@ -1375,6 +1407,18 @@ export default function SessionPage() {
               prev ? { ...prev, ai_reflection: reflection } : prev,
             )
             queryClient.invalidateQueries({ queryKey: ['sessions'] })
+            if (session && !isDummySession(session)) {
+              void ingestActivityEvents([
+                buildReflectionCreatedEvent({
+                  sessionId: session.id,
+                  drillId: session.drill_id,
+                  trackId: session.module_id,
+                  gameId: session.game_id || session.game_info?.game_id,
+                  occurredAt: reflection.createdAt || new Date().toISOString(),
+                  isDummy: false,
+                }),
+              ])
+            }
           }}
         />
       )}

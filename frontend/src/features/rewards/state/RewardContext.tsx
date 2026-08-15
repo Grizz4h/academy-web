@@ -13,6 +13,7 @@ import { useUser } from '../../../context/UserContext'
 import {
   BOOTSTRAP_EVENT_ID,
   bootstrapProgression,
+  evaluateChallenges,
   evaluateCollectionCompletions,
   evaluateMasteryGrants,
   evaluateShopPurchase,
@@ -22,6 +23,8 @@ import {
   type ProgressionStateSlice,
   type RinkActivityEvent,
 } from '../../progression'
+import { contentRegistry } from '../../../content/registry'
+import type { MatchdayContext } from '../../progression/challenges/types'
 import { createEmptyRewardState, type RewardEvaluationResult, type RewardEvent, type RewardState } from '../types'
 
 type RewardContextValue = {
@@ -49,6 +52,7 @@ type RewardContextValue = {
     sessions: Parameters<typeof bootstrapProgression>[0]['sessions']
     trackDrills: Record<string, string[]>
   }) => Promise<void>
+  syncChallengeBoard: (input?: { matchday?: MatchdayContext | null }) => Promise<void>
   bootstrapStatus: 'idle' | 'running' | 'done' | 'error'
 }
 
@@ -70,6 +74,26 @@ function normalizeReward(event: Partial<RewardEvent> & Pick<RewardEvent, 'kind' 
     kind: event.kind,
     title: event.title,
     variant: event.variant,
+  }
+}
+
+function matchdayFromState(state: RewardState): MatchdayContext | null {
+  const gameId = state.challengeRotation?.matchdayGameId
+  if (!gameId) return null
+  return {
+    gameId,
+    homeTeamId: '',
+    awayTeamId: '',
+    startsAt: new Date().toISOString(),
+    phase: 'live',
+    game: {
+      id: gameId,
+      league_id: '',
+      season_id: '',
+      home_team_id: '',
+      away_team_id: '',
+      status: 'scheduled',
+    },
   }
 }
 
@@ -195,6 +219,8 @@ function normalizeRewardState(state: any): RewardState {
     featuredAchievementId: state?.featuredAchievementId ?? null,
     featuredMasteryCoinId: state?.featuredMasteryCoinId ?? null,
     progressionPuxGranted: Number(state?.progressionPuxGranted || 0),
+    challengeProgress: (state && state.challengeProgress) || {},
+    challengeRotation: (state && state.challengeRotation) || null,
   }
 }
 
@@ -397,11 +423,48 @@ export function RewardProvider({ children }: { children: ReactNode }) {
     async (events: RinkActivityEvent[], options?: { showToasts?: boolean }) => {
       if (!events.length) return
       const showToasts = options?.showToasts !== false
-      const slice = toProgressionSlice(rewardStateRef.current)
+      const current = rewardStateRef.current
+      const slice = toProgressionSlice(current)
       const { state: nextSlice, aggregate } = processActivityEventBatch(slice, events)
+      const challengeResult = evaluateChallenges({
+        events,
+        definitions: contentRegistry.challenges,
+        pools: contentRegistry.pools,
+        campaigns: contentRegistry.campaigns,
+        progress: current.challengeProgress || {},
+        processedEvents: nextSlice.processedEvents,
+        rotation: current.challengeRotation,
+        matchday: matchdayFromState(current),
+        unlockedCosmetics: {
+          ...nextSlice.unlockedCosmetics,
+        },
+        userId: user || undefined,
+      })
 
-      if (!aggregate.grantedXp && !aggregate.grantedPux && !aggregate.unlockedAchievements.length && !aggregate.unlockedCosmetics.length) {
-        // Still mark processed locally if engine skipped dummies / duplicates.
+      const collectionResult = evaluateCollectionCompletions({
+        unlockedCosmetics: {
+          ...nextSlice.unlockedCosmetics,
+          ...Object.fromEntries(challengeResult.unlockedCosmetics.map((item) => [item.cosmeticId, item])),
+        },
+        processedEvents: {
+          ...nextSlice.processedEvents,
+          ...Object.fromEntries(challengeResult.processedEventIds.map((id) => [id, true])),
+        },
+        starterOwned: isStarterCosmetic,
+      })
+
+      const grantedXp = aggregate.grantedXp + challengeResult.grantedXp + collectionResult.grantedXp
+      const grantedPux = aggregate.grantedPux + challengeResult.grantedPux + collectionResult.grantedPux
+      const hasProgression =
+        grantedXp ||
+        grantedPux ||
+        aggregate.unlockedAchievements.length ||
+        aggregate.unlockedCosmetics.length ||
+        challengeResult.unlockedCosmetics.length ||
+        collectionResult.unlockedCosmetics.length
+      const hasChallenge = challengeResult.changed || challengeResult.processedEventIds.length
+
+      if (!hasProgression && !hasChallenge) {
         if (Object.keys(nextSlice.processedEvents).length !== Object.keys(slice.processedEvents).length) {
           setRewardState((previous) => ({
             ...previous,
@@ -412,39 +475,71 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      const primaryEventId = events[0]?.id || `batch:${Date.now()}`
+      const processedEventIds = [
+        ...challengeResult.processedEventIds,
+        ...(collectionResult.processedEventIds || []),
+      ]
+      const unlockedCosmetics = [
+        ...aggregate.unlockedCosmetics,
+        ...challengeResult.unlockedCosmetics,
+        ...collectionResult.unlockedCosmetics,
+      ]
+      const unlockHistory = [
+        ...aggregate.unlockHistory,
+        ...challengeResult.unlockHistory,
+        ...collectionResult.unlockHistory,
+      ]
+      const rewardEvents = [
+        ...aggregate.rewardEvents,
+        ...challengeResult.rewardEvents,
+        ...collectionResult.rewardEvents,
+      ]
+
+      const primaryEventId = events[0]?.id || processedEventIds[0] || `batch:${Date.now()}`
       try {
         const response = await api.applyRewardResult({
           event_id: primaryEventId,
           session_id: events.find((e) => e.type === 'session_completed' && 'sessionId' in e)?.sessionId,
-          evaluated_at: aggregate.evaluatedAt,
-          granted_pux: aggregate.grantedPux,
-          granted_xp: aggregate.grantedXp,
-          reward_events: showToasts ? aggregate.rewardEvents : [],
+          evaluated_at: aggregate.evaluatedAt || new Date().toISOString(),
+          granted_pux: grantedPux,
+          granted_xp: grantedXp,
+          reward_events: showToasts ? rewardEvents : [],
           unlocked_achievements: aggregate.unlockedAchievements.map((item) => ({
             id: item.achievementId,
             unlockedAt: item.unlockedAt,
             sourceEventId: item.sourceEventId,
           })),
           unlocked_masteries: [],
-          unlocked_cosmetics: aggregate.unlockedCosmetics,
-          unlock_history: aggregate.unlockHistory,
+          unlocked_cosmetics: unlockedCosmetics,
+          unlock_history: unlockHistory,
           activity_events: aggregate.activityEventsAppended,
+          processed_event_ids: processedEventIds,
+          pux_transactions: challengeResult.puxTransactions,
+          completed_collections: (collectionResult.completedCollections || []).map((id) => ({
+            collectionId: id,
+            completedAt: aggregate.evaluatedAt || new Date().toISOString(),
+          })),
+          challenge_progress: challengeResult.progress,
+          challenge_rotation: challengeResult.rotation,
+          skip_idempotency: !hasProgression,
         })
 
-        // Mark all processed event ids from the batch on the returned state if server only stored primary.
         const normalized = normalizeRewardState(response.state)
         normalized.processedEvents = {
           ...normalized.processedEvents,
           ...nextSlice.processedEvents,
+          ...Object.fromEntries(processedEventIds.map((id) => [id, { eventId: id, processedAt: aggregate.evaluatedAt, grantedXp: 0, grantedPux: 0 }])),
         }
-        normalized.xp = nextSlice.xp
+        normalized.xp = nextSlice.xp + challengeResult.grantedXp + collectionResult.grantedXp
         normalized.activityLog = nextSlice.activityLog
-        normalized.unlockHistory = nextSlice.unlockHistory
+        normalized.unlockHistory = [...unlockHistory, ...(normalized.unlockHistory || [])].slice(0, 100)
         normalized.unlockedCosmetics = {
           ...normalized.unlockedCosmetics,
           ...nextSlice.unlockedCosmetics,
+          ...Object.fromEntries(unlockedCosmetics.map((item) => [item.cosmeticId, item])),
         }
+        normalized.challengeProgress = challengeResult.progress
+        normalized.challengeRotation = challengeResult.rotation
         for (const unlock of aggregate.unlockedAchievements) {
           if (!normalized.unlockedAchievements[unlock.achievementId]) {
             normalized.unlockedAchievements[unlock.achievementId] = {
@@ -456,10 +551,9 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         }
         setRewardState(normalized)
 
-        if (showToasts && aggregate.rewardEvents.length > 0) {
-          // Prefer compact achievement toasts; collapse XP small events if many achievements.
-          const toastEvents = aggregate.rewardEvents.filter((event) => {
-            const kind = (event as any).kind
+        if (showToasts && rewardEvents.length > 0) {
+          const toastEvents = rewardEvents.filter((event) => {
+            const kind = (event as { kind?: string }).kind
             return kind === 'achievement' || kind === 'currency' || kind === 'system'
           })
           enqueueRewards(
@@ -470,10 +564,10 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         console.error('Failed to apply progression events', err)
         setRewardState((previous) => ({
           ...previous,
-          xp: nextSlice.xp,
+          xp: nextSlice.xp + challengeResult.grantedXp + collectionResult.grantedXp,
           currency: {
             ...previous.currency,
-            PUX: (previous.currency.PUX || 0) + aggregate.grantedPux,
+            PUX: (previous.currency.PUX || 0) + grantedPux,
           },
           unlockedAchievements: {
             ...previous.unlockedAchievements,
@@ -484,21 +578,26 @@ export function RewardProvider({ children }: { children: ReactNode }) {
               ]),
             ),
           },
-          unlockedCosmetics: nextSlice.unlockedCosmetics,
+          unlockedCosmetics: {
+            ...nextSlice.unlockedCosmetics,
+            ...Object.fromEntries(unlockedCosmetics.map((item) => [item.cosmeticId, item])),
+          },
           processedEvents: nextSlice.processedEvents,
           activityLog: nextSlice.activityLog,
-          unlockHistory: nextSlice.unlockHistory,
+          unlockHistory: [...unlockHistory, ...previous.unlockHistory].slice(0, 100),
+          challengeProgress: challengeResult.progress,
+          challengeRotation: challengeResult.rotation,
         }))
-        if (showToasts && aggregate.rewardEvents.length > 0) {
+        if (showToasts && rewardEvents.length > 0) {
           enqueueRewards(
-            aggregate.rewardEvents.map(
+            rewardEvents.map(
               (event) => event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>,
             ),
           )
         }
       }
     },
-    [enqueueRewards],
+    [enqueueRewards, user],
   )
 
   const grantRewardResult = useCallback(
@@ -898,6 +997,52 @@ export function RewardProvider({ children }: { children: ReactNode }) {
     [enqueueRewards],
   )
 
+  const syncChallengeBoard = useCallback(
+    async (input?: { matchday?: MatchdayContext | null }) => {
+      const current = rewardStateRef.current
+      const result = evaluateChallenges({
+        events: [],
+        definitions: contentRegistry.challenges,
+        pools: contentRegistry.pools,
+        campaigns: contentRegistry.campaigns,
+        progress: current.challengeProgress || {},
+        processedEvents: current.processedEvents || {},
+        rotation: current.challengeRotation,
+        matchday: input?.matchday === undefined ? matchdayFromState(current) : input.matchday,
+        unlockedCosmetics: current.unlockedCosmetics || {},
+        userId: user || undefined,
+      })
+      if (!result.changed) return
+      const evaluatedAt = new Date().toISOString()
+      setRewardState((previous) => ({
+        ...previous,
+        challengeProgress: result.progress,
+        challengeRotation: result.rotation,
+      }))
+      try {
+        const response = await api.applyRewardResult({
+          event_id: `challenge:sync:${evaluatedAt}`,
+          evaluated_at: evaluatedAt,
+          granted_pux: 0,
+          granted_xp: 0,
+          reward_events: [],
+          unlocked_achievements: [],
+          unlocked_masteries: [],
+          challenge_progress: result.progress,
+          challenge_rotation: result.rotation,
+          skip_idempotency: true,
+        })
+        const normalized = normalizeRewardState(response.state)
+        normalized.challengeProgress = result.progress
+        normalized.challengeRotation = result.rotation
+        setRewardState(normalized)
+      } catch (err) {
+        console.error('syncChallengeBoard failed', err)
+      }
+    },
+    [user],
+  )
+
   const value = useMemo(
     () => ({
       rewardState,
@@ -913,6 +1058,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       markCosmeticsSeen,
       toggleFavoriteCosmetic,
       evaluateLockerMetaProgress,
+      syncChallengeBoard,
       bootstrapStatus,
     }),
     [
@@ -929,6 +1075,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       markCosmeticsSeen,
       toggleFavoriteCosmetic,
       evaluateLockerMetaProgress,
+      syncChallengeBoard,
       bootstrapStatus,
     ],
   )

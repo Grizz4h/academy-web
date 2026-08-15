@@ -9,6 +9,7 @@ import './styles/tap-reveal.css'
 import './styles/anchored-popover.css'
 import App from './App.tsx'
 import { UserProvider } from './context/UserContext'
+import { TutorialProvider } from './features/tutorial'
 
 const queryClient = new QueryClient()
 
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <UserProvider>
         <BrowserRouter>
-          <App />
+          <TutorialProvider>
+            <App />
+          </TutorialProvider>
         </BrowserRouter>
       </UserProvider>
     </QueryClientProvider>

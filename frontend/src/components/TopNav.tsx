@@ -13,6 +13,8 @@ import {
   isDevNavEnabled,
   setDevNavEnabled,
 } from '../config/featureFlags';
+import { navTutorialTarget } from '../features/tutorial';
+import { AccountPillFrame } from './profile/AccountPillFrame';
 import styles from './TopNav.module.css';
 
 const getSessionSortDate = (session: Session) => new Date(session.created_at).getTime() || 0;
@@ -44,6 +46,13 @@ const TopNav: React.FC = () => {
     queryFn: () => api.getSessions(user || undefined, 'IN_PROGRESS'),
     enabled: Boolean(user),
     refetchInterval: 30000,
+  });
+
+  const { data: account } = useQuery({
+    queryKey: ['me', user],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+    staleTime: 60_000,
   });
 
   const activeSession = activeSessions
@@ -106,7 +115,10 @@ const TopNav: React.FC = () => {
         <div className={styles.navInner}>
           <div className={styles.brandRow}>
             <NavLink to="/" className={styles.logoLink} onClick={handleLogoClick}>
-              <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
+              <picture>
+                <source media="(max-width: 899px)" srcSet="/RINK_TANK_LOGO-2.png" />
+                <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
+              </picture>
             </NavLink>
 
             <div ref={navTabsWrapperRef} className={styles.navTabsWrapper}>
@@ -138,6 +150,7 @@ const TopNav: React.FC = () => {
                       isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
                     }
                     end={tab.exact}
+                    {...(navTutorialTarget(tab.to) ? { 'data-tutorial-id': navTutorialTarget(tab.to) } : {})}
                   >
                     {tab.label}
                   </NavLink>
@@ -157,12 +170,14 @@ const TopNav: React.FC = () => {
               </div>
             </div>
 
-            <div className={styles.userSection}>
+            <AccountPillFrame className={styles.userSection} frameId={account?.profile?.frameId}>
               {devHint && <span className={styles.devHint}>{devHint}</span>}
-              {user && <PuxWalletButton />}
               <UserName />
-              <LogoutButton />
-            </div>
+              <span className={styles.userActions}>
+                {user && <PuxWalletButton />}
+                <LogoutButton />
+              </span>
+            </AccountPillFrame>
           </div>
         </div>
       </div>

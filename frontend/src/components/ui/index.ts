@@ -1,5 +1,6 @@
 export { UiButton, UiButtonLink, buttonClassName } from './UiButton'
 export type { UiButtonVariant, UiButtonSize } from './UiButton'
+export { UiActionRow } from './UiActionRow'
 export { UiChip } from './UiChip'
 export { UiProgress } from './UiProgress'
 export { UiPill } from './UiPill'

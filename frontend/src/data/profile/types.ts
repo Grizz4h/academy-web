@@ -13,6 +13,8 @@ export type ProfileAsset = {
     value?: unknown
   }
   locked?: boolean
+  /** If false, the asset is not a starter cosmetic. Default: starter. */
+  starter?: boolean
 }
 
 export type ProfileTitleAsset = {
@@ -83,6 +85,7 @@ export type UserProfileCustomization = {
   displayName: string
   avatar: UserAvatarSelection
   bannerId: string | null
+  frameId: string | null
   emblem: UserEmblemSelection | null
   customEmblemId?: string | null
   customEmblems?: CustomEmblem[]

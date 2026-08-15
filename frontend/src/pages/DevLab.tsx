@@ -722,6 +722,7 @@ export default function DevLab() {
           <UiButtonLink to="/progress" size="sm" variant="secondary">Stats</UiButtonLink>
           <UiButtonLink to="/account" size="sm" variant="secondary">Account</UiButtonLink>
           <UiButtonLink to="/dev/ui" size="sm">UI Kit</UiButtonLink>
+          <UiButtonLink to="/dev/content" size="sm">Content</UiButtonLink>
         </div>
       </section>
 

@@ -63,7 +63,6 @@
       "pux": 10
     }
   },
-  "lastUpdatedAt": "2026-08-09T18:13:35.907Z",
   "xp": 475,
   "processedEvents": {
     "session_completed:Martin_1768743708": {
@@ -95,6 +94,12 @@
       "processedAt": "2026-08-09T18:13:35.906Z",
       "grantedXp": 475,
       "grantedPux": 25
+    },
+    "locker:seen:2026-08-14T08:21:33.329Z": {
+      "eventId": "locker:seen:2026-08-14T08:21:33.329Z",
+      "processedAt": "2026-08-14T08:21:33.329Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -211,7 +216,8 @@
     "tagline_watch_the_center": {
       "cosmeticId": "tagline_watch_the_center",
       "unlockedAt": "2026-08-09T18:13:35.906Z",
-      "sourceType": "starter"
+      "sourceType": "starter",
+      "seenAt": "2026-08-14T08:21:33.329Z"
     },
     "tagline_starter": {
       "cosmeticId": "tagline_starter",
@@ -281,7 +287,7 @@
       "sessionId": "Martin_1768501247",
       "drillId": "A1_D1",
       "trackId": "A1",
-      "observedTeamId": "Eisb\u00e4ren Berlin",
+      "observedTeamId": "Eisbären Berlin",
       "leagueId": "DEL",
       "mechanicIds": [
         "period_checkin"
@@ -296,7 +302,7 @@
       "id": "bootstrap:2026-08-09T18:13:35.906Z",
       "kind": "bootstrap",
       "title": "Dein RINK-Fortschritt wurde ausgewertet",
-      "description": "1 Achievements freigeschaltet \u00b7 Level 3 erreicht \u00b7 1 Cosmetics erhalten \u00b7 +475 XP",
+      "description": "1 Achievements freigeschaltet · Level 3 erreicht · 1 Cosmetics erhalten · +475 XP",
       "occurredAt": "2026-08-09T18:13:35.906Z",
       "sourceEventId": "bootstrap:v1",
       "amountXp": 475,
@@ -305,5 +311,12 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-09T18:13:35.907Z",
+  "lastUpdatedAt": "2026-08-14T08:21:33.329Z",
+  "favoriteCosmeticIds": [],
+  "puxTransactions": [],
+  "completedCollections": {},
+  "masteryMilestoneUnlocks": {},
+  "featuredAchievementId": null,
+  "featuredMasteryCoinId": null,
   "progressionPuxGranted": 25
 }

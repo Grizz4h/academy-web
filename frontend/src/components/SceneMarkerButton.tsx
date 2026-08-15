@@ -121,8 +121,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             occurredAt: scene.created_at,
             sessionId: session.id,
             drillId: activeDrill?.id,
-            trackId: session.module_id,
-            isDummy: false,
+          gameId: session.game_id || session.game_info?.game_id,
           }),
         ])
       }

@@ -1,4 +1,4 @@
-import { UiButtonLink } from '../ui'
+import { UiActionRow, UiButtonLink } from '../ui'
 import { KpiRevealCard } from './KpiRevealCard'
 import type { SessionOverview } from '../../stats/sessionOverview'
 import { sessionCompletionRate } from '../../stats/sessionOverview'
@@ -48,14 +48,14 @@ export function SessionOverviewKpis({
                 <strong>{overview.sceneCount}</strong>
               </div>
             )}
-            <div className="ui-tap-reveal-actions">
-              <UiButtonLink to="/history" variant="primary" size="sm">
+            <UiActionRow>
+              <UiButtonLink to="/history" size="sm">
                 Zum Verlauf
               </UiButtonLink>
-              <UiButtonLink to="/progress" variant="secondary" size="sm">
+              <UiButtonLink to="/progress" size="sm">
                 Stats
               </UiButtonLink>
-            </div>
+            </UiActionRow>
           </>
         }
       />
@@ -75,11 +75,11 @@ export function SessionOverviewKpis({
               <span>Quote</span>
               <strong>{completionPct}%</strong>
             </div>
-            <div className="ui-tap-reveal-actions">
-              <UiButtonLink to="/curriculum" variant="primary" size="sm">
+            <UiActionRow>
+              <UiButtonLink to="/curriculum" size="sm">
                 Akademie
               </UiButtonLink>
-            </div>
+            </UiActionRow>
           </>
         }
       />
@@ -96,11 +96,11 @@ export function SessionOverviewKpis({
               <span>Offen</span>
               <strong>{overview.inProgress}</strong>
             </div>
-            <div className="ui-tap-reveal-actions">
-              <UiButtonLink to="/history" variant="primary" size="sm">
+            <UiActionRow>
+              <UiButtonLink to="/history" size="sm">
                 Im Verlauf öffnen
               </UiButtonLink>
-            </div>
+            </UiActionRow>
           </>
         }
       />
@@ -117,11 +117,11 @@ export function SessionOverviewKpis({
               <span>Abgebrochen</span>
               <strong>{overview.aborted}</strong>
             </div>
-            <div className="ui-tap-reveal-actions">
-              <UiButtonLink to="/history" variant="secondary" size="sm">
+            <UiActionRow>
+              <UiButtonLink to="/history" size="sm">
                 Verlauf filtern
               </UiButtonLink>
-            </div>
+            </UiActionRow>
           </>
         }
       />

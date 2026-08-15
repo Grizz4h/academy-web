@@ -654,6 +654,8 @@ export interface RewardServerState {
   featuredAchievementId?: string | null
   featuredMasteryCoinId?: string | null
   progressionPuxGranted?: number
+  challengeProgress?: Record<string, any>
+  challengeRotation?: Record<string, any> | null
 }
 
 export interface RewardApplyRequest {
@@ -678,6 +680,8 @@ export interface RewardApplyRequest {
   progression_pux_granted?: number | null
   skip_idempotency?: boolean
   processed_event_ids?: string[]
+  challenge_progress?: Record<string, unknown>
+  challenge_rotation?: Record<string, unknown> | null
 }
 
 export interface RewardApplyResponse {

@@ -24,6 +24,7 @@ import type {
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { UiButton } from '../components/ui'
+import { useTutorialOptional } from '../features/tutorial'
 import styles from './Account.module.css'
 
 function formatMemberSince(iso: string | null | undefined): string | null {
@@ -50,6 +51,7 @@ function deriveTopTrack(sessions: Array<{ module_id?: string; state?: string }>)
 export default function AccountPage() {
   const { user } = useUser()
   const { rewardState } = useRewards()
+  const tutorial = useTutorialOptional()
 
   const { data: account, isLoading, error, refetch } = useQuery({
     queryKey: ['me', user],
@@ -157,6 +159,7 @@ export default function AccountPage() {
         displayName: draft.displayName,
         avatar: draft.avatar,
         bannerId: draft.bannerId,
+        frameId: draft.frameId ?? null,
         emblem: draft.emblem,
         customEmblemId: draft.customEmblemId ?? null,
         customEmblems: draft.customEmblems || [],
@@ -238,6 +241,18 @@ export default function AccountPage() {
           Baue deine RINK ID und speichere persönliche Präferenzen. Keine zweite Stats-Seite – nur Profil und Identität.
         </p>
       </header>
+
+      {tutorial ? (
+        <Card surface="section" className={styles.sectionCard}>
+          <h2 className="ui-section-title">Hilfe</h2>
+          <p className={styles.sectionLead}>
+            Das Tutorial zeigt dir, wo du Übungen findest und wie du eine Session startest.
+          </p>
+          <UiButton type="button" onClick={tutorial.restart}>
+            Tutorial erneut starten
+          </UiButton>
+        </Card>
+      ) : null}
 
       <section className={styles.section}>
         <h2 className="ui-section-title">RINK ID</h2>

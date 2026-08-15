@@ -7,11 +7,16 @@ import theoryData from '../data/theoryData.json'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { UiButton } from '../components/ui'
+import { useUser } from '../context/UserContext'
 import {
   getFoundationTrack,
+  isAcademyLocked,
   isFoundationTrack,
   isFoundationTrackComplete,
 } from '../features/foundation/recommendations'
+import { useDevNavEnabled } from '../config/featureFlags'
+import { selectTutorialEntryRecommendation } from '../features/tutorial/resolveEntry'
+import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial'
 import styles from './Curriculum.module.css'
 
 const cluster2Tracks = [
@@ -49,6 +54,7 @@ function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> 
     for (const drill of session.drills || []) {
       if (drill?.id) completed.add(drill.id)
     }
+    if (session.drill_id) completed.add(session.drill_id)
     // Fallback: module-level completion marks first drill when drills[] missing
     if ((!session.drills || session.drills.length === 0) && session.module_id) {
       completed.add(session.module_id)
@@ -59,6 +65,9 @@ function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> 
 
 export default function Curriculum() {
   const navigate = useNavigate()
+  const { user } = useUser()
+  const tutorial = useTutorialOptional()
+  const devMode = useDevNavEnabled()
   const { data: curriculum, isLoading, error } = useQuery({
     queryKey: ['curriculum'],
     queryFn: () => api.getCurriculum()
@@ -67,10 +76,39 @@ export default function Curriculum() {
     queryKey: ['sessions'],
     queryFn: () => api.getSessions(),
   })
+  const { data: account } = useQuery({
+    queryKey: ['me', user],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+  })
 
   const completedDrillIds = useMemo(() => collectCompletedDrillIds(sessions), [sessions])
   const foundationTrack = getFoundationTrack(curriculum)
   const foundationDone = isFoundationTrackComplete(curriculum, completedDrillIds)
+  const tutorialEntry = useMemo(
+    () => selectTutorialEntryRecommendation({
+      curriculum,
+      completedDrillIds,
+      hockeyExperience: account?.profile?.hockeyExperience,
+    }),
+    [curriculum, completedDrillIds, account?.profile?.hockeyExperience],
+  )
+  const entryModuleId = tutorial?.active
+    ? tutorial.entryModuleId || tutorialEntry?.moduleId
+    : tutorialEntry?.moduleId
+  const entryTrackId = tutorialEntry?.trackId
+  const hasUsedAcademy = getRealSessions(sessions || []).some((session) => {
+    const moduleId = String(session.module_id || '')
+    return moduleId && moduleId !== 'T0' && !moduleId.startsWith('T0')
+  })
+  const academyLocked = isAcademyLocked(curriculum, completedDrillIds, {
+    devMode,
+    hasUsedAcademy,
+    completedModuleIds: getRealSessions(sessions || [])
+      .filter((session) => String(session.state || '').toUpperCase() === 'COMPLETED')
+      .map((session) => String(session.module_id || ''))
+      .filter(Boolean),
+  })
 
   if (isLoading) return <div className="card">Lade Lehrplan...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
@@ -83,20 +121,26 @@ export default function Curriculum() {
 
   return (
     <div className={styles.page}>
-      <header className="ui-page-header">
+      <header className="ui-page-header" data-tutorial-id={TUTORIAL_TARGET.academyTitle}>
         <h1 className="ui-page-title">Lehrplan</h1>
         <p className="ui-page-lead">Tracks antippen, um Module und Details auszuklappen.</p>
       </header>
 
+      <div className={styles.trackList}>
       {orderedTracks.map((track: CurriculumTrack) => {
         const activeModules = (track.modules || []).filter((module: CurriculumModule) => module.active !== false)
         if (activeModules.length === 0) return null
         const foundation = isFoundationTrack(track)
+        const isEntryTrack = track.id === entryTrackId
         return (
         <details
           key={track.id}
           className={`${styles.track} ${foundation ? styles.trackFoundation : ''}`}
-          open={foundation && track === foundationTrack && !foundationDone ? true : undefined}
+          open={
+            (foundation && track === foundationTrack && !foundationDone)
+            || (tutorial?.active && isEntryTrack)
+            || undefined
+          }
         >
           <summary className={styles.trackSummary}>
             <div className={styles.trackSummaryMain}>
@@ -105,7 +149,12 @@ export default function Curriculum() {
                   {track.foundationLabel || 'FOUNDATION · TRACK 0'}
                 </div>
               )}
-              <h2 className={styles.trackTitle}>{track.title}</h2>
+              <h2
+                className={styles.trackTitle}
+                {...(isEntryTrack ? { 'data-tutorial-id': TUTORIAL_TARGET.academyEntryTrack } : {})}
+              >
+                {track.title}
+              </h2>
             </div>
             <div className={styles.trackMeta}>
               <span>{moduleCountLabel(activeModules.length)}</span>
@@ -130,8 +179,14 @@ export default function Curriculum() {
                   <div className={styles.moduleTop}>
                     <h3 className={styles.moduleTitle}>{module.title}</h3>
                     <div className={styles.moduleActions}>
-                      <UiButton type="button" size="sm" onClick={() => navigate(`/setup/${module.id}`)}>
-                        Starten
+                      <UiButton
+                        type="button"
+                        size={module.id === entryModuleId && tutorial?.active ? 'md' : 'sm'}
+                        onClick={() => navigate(`/setup/${module.id}`)}
+                        disabled={academyLocked && !foundation}
+                        {...(module.id === entryModuleId ? { 'data-tutorial-id': TUTORIAL_TARGET.academyEntryStart } : {})}
+                      >
+                        {academyLocked && !foundation ? 'Zuerst Track 0' : 'Starten'}
                       </UiButton>
                       {module.id in theoryData && (
                         <UiButton type="button" size="sm" variant="ghost" onClick={() => navigate(`/theory/${module.id}`)}>
@@ -202,8 +257,13 @@ export default function Curriculum() {
                   <div className={styles.moduleTop}>
                     <h3 className={styles.moduleTitle}>{module.title}</h3>
                     <div className={styles.moduleActions}>
-                      <UiButton type="button" size="sm" onClick={() => navigate('/cluster2/f')}>
-                        Starten
+                      <UiButton
+                        type="button"
+                        size="sm"
+                        onClick={() => navigate('/cluster2/f')}
+                        disabled={academyLocked}
+                      >
+                        {academyLocked ? 'Zuerst Track 0' : 'Starten'}
                       </UiButton>
                     </div>
                   </div>
@@ -230,6 +290,7 @@ export default function Curriculum() {
           </div>
         </details>
       ))}
+      </div>
     </div>
   )
 }

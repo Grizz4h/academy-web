@@ -25,6 +25,8 @@ import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
 import { PastDrillSessions } from '../features/reflection/PastDrillSessions'
 import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
 import { inferSplitSeasonLabelForDate } from '../stats/seasonNormalization'
+import { TUTORIAL_TARGET } from '../features/tutorial'
+import { getFoundationModule, isAcademyLocked } from '../features/foundation/recommendations'
 import setupStyles from './SessionSetup.module.css'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
@@ -204,11 +206,11 @@ export default function SessionSetup() {
 
   const [createError, setCreateError] = useState<string>('')
   const lastPayloadRef = useRef<Parameters<typeof api.createSession>[0] | null>(null)
+  const creatingSessionRef = useRef(false)
 
   const createSessionMutation = useMutation({
     mutationFn: (data: Parameters<typeof api.createSession>[0]) => api.createSession(data),
-    retry: 3,
-    retryDelay: (attempt: number) => Math.min(5000, attempt * 2000),
+    retry: false,
     onSuccess: (session) => {
       queryClient.invalidateQueries({ queryKey: ['sessions', user] })
       if (draftKey) localStorage.removeItem(draftKey)
@@ -216,6 +218,7 @@ export default function SessionSetup() {
       navigate(`/session/${session.id}`)
     },
     onError: (error: any) => {
+      creatingSessionRef.current = false
       const msg = String(error?.message || 'Unbekannter Fehler')
       setCreateError(msg)
     }
@@ -436,6 +439,48 @@ export default function SessionSetup() {
     return <div className="card">Modul nicht gefunden</div>
   }
 
+  const completedDrillIds = new Set<string>()
+  for (const session of realSessions) {
+    if (String(session.state || '').toUpperCase() !== 'COMPLETED') continue
+    for (const drill of session.drills || []) {
+      if (drill?.id) completedDrillIds.add(drill.id)
+    }
+    if (session.drill_id) completedDrillIds.add(session.drill_id)
+  }
+  const hasUsedAcademy = realSessions.some((session) => {
+    const id = String(session.module_id || '')
+    return id && id !== 'T0' && !id.startsWith('T0')
+  })
+  const academyLocked = isAcademyLocked(curriculum, completedDrillIds, {
+    devMode,
+    hasUsedAcademy,
+    completedModuleIds: realSessions
+      .filter((session) => String(session.state || '').toUpperCase() === 'COMPLETED')
+      .map((session) => String(session.module_id || ''))
+      .filter(Boolean),
+  })
+  const foundationModule = getFoundationModule(curriculum)
+
+  if (academyLocked && !isFoundationModule) {
+    return (
+      <div className="ui-page-shell" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">Zuerst Track 0</h1>
+          <p className="ui-page-lead">
+            Starte mit der Einstiegs-Lektion. Danach ist Track A1 freigeschaltet.
+          </p>
+        </header>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => navigate(`/setup/${foundationModule?.id || 'T0'}`)}
+        >
+          Track 0 starten
+        </button>
+      </div>
+    )
+  }
+
   if (moduleInactive) {
     return (
       <div className="card" style={{ maxWidth: 640 }}>
@@ -455,6 +500,7 @@ export default function SessionSetup() {
   }
 
   const handleCreateSession = () => {
+    if (creatingSessionRef.current || createSessionMutation.isPending) return
     if (!user?.trim()) {
       alert('Bitte oben im Login einen Namen speichern, damit wir die Session zuordnen können.')
       return
@@ -477,6 +523,7 @@ export default function SessionSetup() {
         game_id: undefined,
       }
       lastPayloadRef.current = payload
+      creatingSessionRef.current = true
       createSessionMutation.mutate(payload)
       return
     }
@@ -563,6 +610,7 @@ export default function SessionSetup() {
       game_id: dummyGame ? undefined : (matchedCatalogGame?.id || undefined),
     }
     lastPayloadRef.current = payload
+    creatingSessionRef.current = true
     createSessionMutation.mutate(payload)
   }
 
@@ -588,7 +636,10 @@ export default function SessionSetup() {
           </div>
         )}
 
-        <div className={`card ui-surface ui-surface--primary primary-card ${setupStyles.foundationCard}`}>
+        <div
+          className={`card ui-surface ui-surface--primary primary-card ${setupStyles.foundationCard}`}
+          data-tutorial-id={TUTORIAL_TARGET.setupMain}
+        >
           <h2 className="ui-section-title">Welche Lektion?</h2>
           <p className={setupStyles.setupIntro}>
             Keine Paarung, kein Spieltag — einfach eine Lektion wählen und starten.
@@ -621,6 +672,7 @@ export default function SessionSetup() {
           <button
             type="button"
             className="btn"
+            data-tutorial-id={TUTORIAL_TARGET.setupStart}
             onClick={handleCreateSession}
             disabled={!user || !selectedDrill || createSessionMutation.isPending}
             style={{
@@ -690,7 +742,7 @@ export default function SessionSetup() {
         </div>
       </div>
 
-      <div className="card ui-surface ui-surface--primary primary-card">
+      <div className="card ui-surface ui-surface--primary primary-card" data-tutorial-id={TUTORIAL_TARGET.setupMain}>
         <h2 className="ui-section-title">Session vorbereiten</h2>
         <LiveObservationPanel
           intro="Liga und Saison wählen, dann ein Spiel. Heim-/Auswärtsteam, Datum und Spieltag kommen aus dem Spielplan. Welches Team du beobachtest, bleibt deine Auswahl."
@@ -1097,6 +1149,7 @@ export default function SessionSetup() {
       <button
         onClick={handleCreateSession}
         className="btn"
+        data-tutorial-id={TUTORIAL_TARGET.setupStart}
         style={{
           padding: '1rem',
           fontSize: '1.1rem',
@@ -1171,8 +1224,10 @@ export default function SessionSetup() {
             <button
               className="btn"
               onClick={() => {
+                if (creatingSessionRef.current || createSessionMutation.isPending) return
                 if (lastPayloadRef.current) {
                   setCreateError('')
+                  creatingSessionRef.current = true
                   createSessionMutation.mutate(lastPayloadRef.current)
                 }
               }}

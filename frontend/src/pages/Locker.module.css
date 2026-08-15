@@ -220,7 +220,8 @@
 .tileArtWide {
   width: 100%;
   height: 4.6rem;
-  padding: 0.3rem 0.4rem;
+  padding: 0.55rem 0.55rem;
+  overflow: visible;
 }
 
 .tileArt img {
@@ -231,6 +232,56 @@
   height: auto;
   object-fit: contain;
   object-position: center;
+}
+
+.avatarShape {
+  --avatar-shape: circle(50%);
+  --avatar-rim: 148, 163, 184;
+  width: 4.2rem;
+  height: 4.2rem;
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  background: rgb(var(--avatar-rim));
+  clip-path: var(--avatar-shape);
+  filter: drop-shadow(0 0 10px rgba(var(--avatar-rim), 0.45));
+}
+
+.avatarShape img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: var(--avatar-shape);
+}
+
+.avatarShapeSheet {
+  width: 7.2rem;
+  height: 7.2rem;
+}
+
+.avatarShape[data-avatar-rarity='uncommon'] {
+  --avatar-shape: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  --avatar-rim: 74, 222, 128;
+}
+
+.avatarShape[data-avatar-rarity='rare'] {
+  --avatar-shape: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  --avatar-rim: 59, 130, 246;
+}
+
+.avatarShape[data-avatar-rarity='epic'] {
+  --avatar-shape: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  --avatar-rim: 167, 139, 250;
+}
+
+.avatarShape[data-avatar-rarity='legendary'] {
+  --avatar-shape: polygon(50% 0%, 70% 16%, 100% 16%, 84% 50%, 100% 84%, 70% 84%, 50% 100%, 30% 84%, 0% 84%, 16% 50%, 0% 16%, 30% 16%);
+  --avatar-rim: 251, 191, 36;
+}
+
+.avatarShape[data-avatar-rarity='mythic'] {
+  --avatar-shape: polygon(50% 0%, 63% 28%, 100% 28%, 72% 52%, 82% 91%, 50% 70%, 18% 91%, 28% 52%, 0% 28%, 37% 28%);
+  --avatar-rim: 244, 114, 182;
 }
 
 .tileArtMuted {
@@ -409,8 +460,8 @@
   pointer-events: none;
   border-radius: inherit;
   background:
-    linear-gradient(110deg, transparent 10%, rgba(255, 255, 255, 0.5) 40%, rgba(196, 181, 253, 0.35) 52%, transparent 70%),
-    conic-gradient(from 0deg, transparent, rgba(244, 114, 182, 0.35), transparent 30%);
+    linear-gradient(110deg, transparent 10%, rgba(255, 255, 255, 0.28) 40%, rgba(196, 181, 253, 0.18) 52%, transparent 70%),
+    conic-gradient(from 0deg, transparent 8%, rgba(244, 114, 182, 0.14) 18%, transparent 32%);
   background-size: 220% 100%, 100% 100%;
   animation: lockerSheen 1.8s ease-in-out infinite, lockerSpin 8s linear infinite;
   mix-blend-mode: screen;
@@ -474,6 +525,33 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  overflow: hidden;
+}
+
+.collectionCover {
+  margin: -0.7rem -0.7rem 0.15rem;
+}
+
+.collectionCover:empty {
+  display: none;
+}
+
+.collectionHero {
+  width: 100%;
+  max-width: 18rem;
+}
+
+.collectionDetail header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tileArt svg,
+.sheetArt svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .statMini {
@@ -535,10 +613,11 @@
 }
 
 .sheetScrim.rarity_mythic .inspectBurst {
-  animation-duration: 980ms;
+  animation: inspectBurstMythic 1100ms ease-out;
+  filter: blur(22px);
   background:
-    radial-gradient(circle, rgba(251, 191, 36, 0.28), transparent 46%),
-    radial-gradient(circle, rgba(244, 114, 182, 0.3), transparent 64%);
+    radial-gradient(ellipse 82% 68% at 50% 42%, transparent 0%, rgba(251, 191, 36, 0.14) 36%, transparent 68%),
+    radial-gradient(ellipse 98% 82% at 50% 50%, transparent 8%, rgba(244, 114, 182, 0.16) 40%, transparent 74%);
 }
 
 .sheet {
@@ -623,6 +702,12 @@
   100% { opacity: 0; transform: scale(1.35); }
 }
 
+@keyframes inspectBurstMythic {
+  0% { opacity: 0; transform: scale(1.08); }
+  22% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.62); }
+}
+
 @keyframes inspectSlamCommon {
   0% { opacity: 0; transform: translateY(16px) scale(0.97); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -700,6 +785,7 @@
   width: 100%;
   height: 8.5rem;
   padding: 0.55rem 0.7rem;
+  overflow: visible;
 }
 
 .sheetArt img {

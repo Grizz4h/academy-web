@@ -125,6 +125,8 @@ export interface RewardState {
   featuredAchievementId?: string | null
   featuredMasteryCoinId?: string | null
   progressionPuxGranted?: number
+  challengeProgress?: Record<string, import('../progression/challenges/types').ChallengeProgress>
+  challengeRotation?: import('../progression/challenges/types').ChallengeRotationState | null
 }
 
 export interface RewardFacts {
@@ -191,6 +193,8 @@ export function createEmptyRewardState(): RewardState {
     puxTransactions: [],
     completedCollections: {},
     masteryMilestoneUnlocks: {},
+    challengeProgress: {},
+    challengeRotation: null,
   }
 }
 

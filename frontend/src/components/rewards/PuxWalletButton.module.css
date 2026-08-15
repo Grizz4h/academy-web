@@ -9,9 +9,9 @@
   background: rgba(81, 145, 162, 0.2);
   color: rgba(225, 247, 255, 0.96);
   border-radius: 999px;
-  padding: 0.22em 0.7em;
+  padding: 0.28em 0.75em;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
@@ -33,6 +33,13 @@
   border-color: rgba(125, 211, 252, 0.62);
   background: rgba(81, 145, 162, 0.36);
   box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.18);
+}
+
+@media (max-width: 899px) {
+  .trigger {
+    padding: 0.18em 0.58em;
+    font-size: 0.74rem;
+  }
 }
 
 .popup {

@@ -2,6 +2,7 @@ import { getAvatarAsset, DEFAULT_AVATAR_ID } from '../../data/profile/avatarCata
 import { getBannerAsset, DEFAULT_BANNER_ID } from '../../data/profile/bannerCatalog'
 import { getEmblemAsset, DEFAULT_EMBLEM_ID } from '../../data/profile/emblemCatalog'
 import { getProfileTitle } from '../../data/profile/profileTitleCatalog'
+import { resolveAvatarRarity } from '../../features/progression'
 import type { UserProfileCustomization } from '../../data/profile/types'
 import { resolveUploadUrl } from '../../api'
 import styles from './RinkIdentityCard.module.css'
@@ -32,10 +33,13 @@ export default function RinkIdentityCard({ profile, stats, className = '' }: Rin
   const title = getProfileTitle(profile.profileTitle)
 
   let avatarSrc = getAvatarAsset(DEFAULT_AVATAR_ID)?.src || ''
+  let avatarRarity = resolveAvatarRarity(DEFAULT_AVATAR_ID)
   if (profile.avatar?.type === 'upload') {
     avatarSrc = resolveUploadUrl(profile.avatar.uploadUrl) || avatarSrc
+    avatarRarity = 'common'
   } else if (profile.avatar?.type === 'catalog') {
     avatarSrc = getAvatarAsset(profile.avatar.avatarId)?.src || avatarSrc
+    avatarRarity = resolveAvatarRarity(profile.avatar.avatarId)
   }
 
   let emblemSrc: string | null = null
@@ -74,7 +78,7 @@ export default function RinkIdentityCard({ profile, stats, className = '' }: Rin
       </div>
 
       <div className={styles.body}>
-        <div className={styles.avatarWrap}>
+        <div className={styles.avatarWrap} data-avatar-rarity={avatarRarity}>
           <img className={styles.avatar} src={avatarSrc} alt="" />
         </div>
 

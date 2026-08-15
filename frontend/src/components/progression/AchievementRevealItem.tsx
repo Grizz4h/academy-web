@@ -1,6 +1,6 @@
 import type { AchievementProgressItem } from '../../features/rewards/logic/achievementProgress'
 import { TapReveal } from '../ui/TapReveal'
-import { UiButton, UiButtonLink } from '../ui'
+import { UiActionRow, UiButton, UiButtonLink } from '../ui'
 import styles from './AchievementRevealItem.module.css'
 
 type AchievementRevealItemProps = {
@@ -92,20 +92,20 @@ export function AchievementRevealItem({
       {!item.isUnlocked && !hiddenLocked && item.progress === 0 && (
         <p>Noch nicht begonnen — starte eine Session in der Akademie.</p>
       )}
-      <div className="ui-tap-reveal-actions">
+      <UiActionRow>
         {!item.isUnlocked ? (
-          <UiButtonLink to="/curriculum" variant="primary" size="sm">
+          <UiButtonLink to="/curriculum" size="sm">
             Zur Akademie
           </UiButtonLink>
         ) : onReplay ? (
-          <UiButton type="button" variant="secondary" size="sm" onClick={onReplay}>
+          <UiButton type="button" size="sm" onClick={onReplay}>
             Animation erneut
           </UiButton>
         ) : null}
-        <UiButtonLink to="/locker" variant="secondary" size="sm">
+        <UiButtonLink to="/locker" size="sm">
           PUX ausgeben
         </UiButtonLink>
-      </div>
+      </UiActionRow>
     </TapReveal>
   )
 }

@@ -10,13 +10,17 @@ export * from './lockerSelectors'
 export * from './achievements/achievementCatalog'
 export * from './achievements/achievementEngine'
 export * from './cosmetics/cosmeticCatalog'
+export * from './cosmetics/avatarLooks'
 export * from './cosmetics/puckSkins'
 export * from './cosmetics/stickSkins'
 export * from './collections/collectionCatalog'
 export * from './collections/collectionEngine'
+export * from './frames/frameLooks'
 export * from './shop/shopCatalog'
 export * from './shop/shopEngine'
 export * from './mastery/masteryCatalog'
+export * from './challenges'
+export * from './tasks'
 export {
   selectTrackMasteryViews,
   evaluateMasteryGrants,

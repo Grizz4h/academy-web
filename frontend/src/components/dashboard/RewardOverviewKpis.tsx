@@ -1,5 +1,5 @@
 import { formatPux } from '../../features/rewards'
-import { UiButtonLink } from '../ui'
+import { UiActionRow, UiButtonLink } from '../ui'
 import { KpiRevealCard } from './KpiRevealCard'
 
 type RewardOverviewKpisProps = {
@@ -37,11 +37,11 @@ export function RewardOverviewKpis({
               <span>Meisterschaften</span>
               <strong>{unlockedMasteriesCount}</strong>
             </div>
-            <div className="ui-tap-reveal-actions">
-              <UiButtonLink to="/locker" variant="secondary" size="sm">
+            <UiActionRow>
+              <UiButtonLink to="/locker" size="sm">
                 Locker
               </UiButtonLink>
-            </div>
+            </UiActionRow>
           </>
         }
       />
@@ -57,11 +57,11 @@ export function RewardOverviewKpis({
               <span>Teams analysiert</span>
               <strong>{analyzedTeamCount}</strong>
             </div>
-            <div className="ui-tap-reveal-actions">
-              <UiButtonLink to="/locker" variant="primary" size="sm">
+            <UiActionRow>
+              <UiButtonLink to="/locker" size="sm">
                 Zum Shop
               </UiButtonLink>
-            </div>
+            </UiActionRow>
           </>
         }
       />

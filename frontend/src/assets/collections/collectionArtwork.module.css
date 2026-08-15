@@ -1,0 +1,41 @@
+.cover {
+  width: 100%;
+  overflow: hidden;
+  background: #140e0a;
+  border: 1px solid rgba(196, 122, 20, 0.28);
+}
+
+.cover_card {
+  aspect-ratio: 4 / 5;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+
+.cover_detail,
+.cover_poster {
+  aspect-ratio: 4 / 5;
+  max-width: 18rem;
+  border-radius: 12px;
+}
+
+.item {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.item_tile,
+.item_sheet {
+  width: 100%;
+  height: 100%;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}

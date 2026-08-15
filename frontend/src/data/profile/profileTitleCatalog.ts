@@ -20,3 +20,17 @@ export function getProfileTitle(id: string | null | undefined): ProfileTitleAsse
   if (!id) return undefined
   return profileTitleCatalog.find((item) => item.id === id)
 }
+
+/** Catalog label, otherwise the stored title string if it is already display text. */
+export function resolveProfileTitleLabel(raw: string | null | undefined): string | null {
+  if (!raw) return null
+  const catalog = getProfileTitle(raw)
+  if (catalog) return catalog.label
+  if (raw.startsWith('title_catalog_')) {
+    return getProfileTitle(raw.slice('title_catalog_'.length))?.label || null
+  }
+  if (/^[a-z0-9_]+$/.test(raw)) {
+    return raw.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase())
+  }
+  return raw
+}

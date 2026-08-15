@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { Link, useSearchParams } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import {
@@ -16,9 +16,10 @@ import {
   selectLockerStats,
   selectTrackMasteryViews,
   SHOP_LISTINGS,
-  selectAchievementsByCategory,
   type CosmeticType,
   type LockerItemView,
+  type TaskLaneFilter,
+  type TaskStatusFilter,
 } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { isStarterCosmetic } from '../features/progression/cosmetics/cosmeticCatalog'
@@ -26,7 +27,29 @@ import { Puck3DLab } from '../components/puck3d'
 import { CosmeticGlyph } from '../components/visuals/CosmeticGlyph'
 import { useDevNavEnabled } from '../config/featureFlags'
 import { UiButton, UiChip, UiPill, UiProgress } from '../components/ui'
+import { TUTORIAL_TARGET } from '../features/tutorial'
+import { AccountPillFrame } from '../components/profile/AccountPillFrame'
+import { CollectionArtwork, CosmeticArtwork, hasCosmeticArt } from '../assets/collections/collectionArtwork'
+import { LockerTasksPanel } from '../features/progression/tasks/LockerTasksPanel'
 import styles from './Locker.module.css'
+
+type LockerTab = 'home' | 'cosmetics' | 'collections' | 'shop' | 'mastery' | 'achievements'
+
+const LOCKER_TABS: LockerTab[] = ['home', 'cosmetics', 'collections', 'shop', 'mastery', 'achievements']
+const TASK_LANES = ['all', 'permanent', 'daily', 'weekly', 'matchday', 'event'] as const
+const TASK_STATUSES = ['all', 'active', 'completed'] as const
+
+function parseLockerTab(value: string | null): LockerTab {
+  return LOCKER_TABS.includes(value as LockerTab) ? (value as LockerTab) : 'home'
+}
+
+function parseTaskLane(value: string | null): TaskLaneFilter {
+  return TASK_LANES.includes(value as TaskLaneFilter) ? (value as TaskLaneFilter) : 'all'
+}
+
+function parseTaskStatus(value: string | null): TaskStatusFilter {
+  return TASK_STATUSES.includes(value as TaskStatusFilter) ? (value as TaskStatusFilter) : 'all'
+}
 
 function LockMark() {
   return (
@@ -45,22 +68,36 @@ function LockerArt({
   variant = 'tile',
   muted = false,
   className,
+  frameId,
+  rarity,
+  cosmeticId,
 }: {
   type: CosmeticType
   artworkUrl?: string
   variant?: 'tile' | 'sheet'
   muted?: boolean
   className?: string
+  frameId?: string
+  rarity?: string
+  cosmeticId?: string
 }) {
   const hasPhoto = Boolean(artworkUrl) && (type === 'banner' || type === 'avatar' || type === 'emblem')
   const artClass = variant === 'sheet' ? styles.sheetArt : styles.tileArt
-  const shapeClass = type === 'banner'
+  const shapeClass = type === 'banner' || type === 'frame'
     ? (variant === 'sheet' ? styles.sheetArtWide : styles.tileArtWide)
     : (variant === 'sheet' ? styles.sheetArtSquare : styles.tileArtSquare)
 
   return (
     <div className={`${artClass} ${shapeClass} ${muted ? styles.tileArtMuted : ''} ${className || ''}`}>
-      {hasPhoto ? (
+      {cosmeticId && hasCosmeticArt(cosmeticId) ? (
+        <CosmeticArtwork cosmeticId={cosmeticId} variant={variant} title={undefined} />
+      ) : type === 'frame' ? (
+        <AccountPillFrame frameId={frameId} preview previewSize={variant} />
+      ) : type === 'avatar' && artworkUrl ? (
+        <span className={`${styles.avatarShape} ${variant === 'sheet' ? styles.avatarShapeSheet : ''}`} data-avatar-rarity={rarity || 'common'}>
+          <img src={artworkUrl} alt="" />
+        </span>
+      ) : hasPhoto ? (
         <img src={artworkUrl} alt="" />
       ) : (
         <CosmeticGlyph type={type} size={variant === 'sheet' ? 'lg' : 'tile'} />
@@ -96,6 +133,9 @@ function LockerItemCard({
         type={item.definition.type}
         artworkUrl={item.artworkUrl}
         muted={locked}
+        frameId={item.definition.id}
+        rarity={item.definition.rarity}
+        cosmeticId={item.definition.id}
       />
       <div className={styles.tileName}>{item.displayName}</div>
       <div className={styles.tileMeta}>{item.definition.type}</div>
@@ -103,8 +143,6 @@ function LockerItemCard({
     </button>
   )
 }
-
-type LockerTab = 'home' | 'cosmetics' | 'collections' | 'shop' | 'mastery' | 'achievements'
 
 function buildTrackDrills(curriculum: Awaited<ReturnType<typeof api.getCurriculum>> | null | undefined) {
   const trackDrills: Record<string, string[]> = {}
@@ -124,6 +162,7 @@ function buildTrackDrills(curriculum: Awaited<ReturnType<typeof api.getCurriculu
 
 export default function LockerPage() {
   const { user } = useUser()
+  const queryClient = useQueryClient()
   const {
     rewardState,
     purchaseShopListing,
@@ -132,8 +171,42 @@ export default function LockerPage() {
     rebuildProgression,
   } = useRewards()
   const devMode = useDevNavEnabled()
+  const [params, setParams] = useSearchParams()
+  const tab = parseLockerTab(params.get('tab'))
+  const taskLane = parseTaskLane(params.get('lane'))
+  const taskStatus = parseTaskStatus(params.get('status'))
+  const selectedTaskId = params.get('task')
 
-  const [tab, setTab] = useState<LockerTab>('home')
+  const setTab = (next: LockerTab) => {
+    const nextParams = new URLSearchParams(params)
+    if (next === 'home') nextParams.delete('tab')
+    else nextParams.set('tab', next)
+    if (next !== 'achievements') {
+      nextParams.delete('lane')
+      nextParams.delete('status')
+      nextParams.delete('task')
+    }
+    setParams(nextParams, { replace: true })
+  }
+
+  const patchTaskParams = (patch: { lane?: TaskLaneFilter; status?: TaskStatusFilter; task?: string | null }) => {
+    const nextParams = new URLSearchParams(params)
+    nextParams.set('tab', 'achievements')
+    if (patch.lane) {
+      if (patch.lane === 'all') nextParams.delete('lane')
+      else nextParams.set('lane', patch.lane)
+    }
+    if (patch.status) {
+      if (patch.status === 'all') nextParams.delete('status')
+      else nextParams.set('status', patch.status)
+    }
+    if (patch.task !== undefined) {
+      if (patch.task) nextParams.set('task', patch.task)
+      else nextParams.delete('task')
+    }
+    setParams(nextParams, { replace: true })
+  }
+
   const [typeFilter, setTypeFilter] = useState<CosmeticType | 'all'>('all')
   const [ownership, setOwnership] = useState<'all' | 'unlocked' | 'locked' | 'new' | 'favorites'>('all')
   const [selected, setSelected] = useState<LockerItemView | null>(null)
@@ -183,7 +256,6 @@ export default function LockerPage() {
     () => selectTrackMasteryViews(sessions, trackDrills, rewardState.processedEvents || {}),
     [sessions, trackDrills, rewardState.processedEvents],
   )
-  const achievementGroups = useMemo(() => selectAchievementsByCategory(rewardState), [rewardState])
   const newItems = items.filter((item) => item.isNew).slice(0, 8)
 
   // IMPORTANT: no automatic meta-eval on Locker mount.
@@ -198,7 +270,8 @@ export default function LockerPage() {
   }
 
   const handleEquip = async (item: LockerItemView) => {
-    if (!me?.profile || !item.owned || !isEquipableCosmetic(item.definition)) return
+    const canEquip = item.owned || (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline'].includes(item.definition.type))
+    if (!me?.profile || !canEquip || !isEquipableCosmetic(item.definition)) return
     const slot = COSMETIC_TYPE_TO_SLOT[item.definition.type]
     if (!slot) return
     const profile = { ...me.profile }
@@ -210,14 +283,27 @@ export default function LockerPage() {
       profile.bannerId = assetId
     } else if (slot === 'emblem') {
       profile.emblem = { type: 'catalog', emblemId: assetId }
+    } else if (slot === 'frame') {
+      profile.frameId = cosmeticId
     } else if (slot === 'title') {
       profile.profileTitle = String(item.definition.metadata?.profileTitleId || item.definition.text || item.definition.name)
     } else if (slot === 'tagline') {
       profile.profileTagline = item.definition.text || item.definition.name
     }
     try {
-      await api.updateMyProfile(profile)
+      const saved = await api.updateMyProfile(profile)
       await refetchMe()
+      queryClient.setQueryData(['me', user], (prev: { profile?: Record<string, unknown> } | undefined) => {
+        const current = prev?.profile || saved || profile
+        return {
+          ...(prev || { username: user, createdAt: null, role: null }),
+          profile: {
+            ...current,
+            ...profile,
+            frameId: profile.frameId ?? (current as { frameId?: string | null }).frameId ?? null,
+          },
+        }
+      })
       setEquipMsg('✓ Ausgerüstet')
       window.setTimeout(() => setEquipMsg(''), 2000)
     } catch (err: any) {
@@ -259,7 +345,7 @@ export default function LockerPage() {
 
   return (
     <div className={styles.page}>
-      <header className="ui-page-header ui-page-header--row">
+      <header className="ui-page-header ui-page-header--row" data-tutorial-id={TUTORIAL_TARGET.lockerHome}>
         <div>
           <h1 className="ui-page-title">Locker</h1>
           <p className="ui-page-lead">Sammeln · Browsen · Freischalten · Ausrüsten</p>
@@ -326,6 +412,9 @@ export default function LockerPage() {
             <div className={styles.collectionRow}>
               {collections.map((entry) => (
                 <button key={entry.collection.id} type="button" className={styles.collectionCard} onClick={() => setTab('collections')}>
+                  <div className={styles.collectionCover}>
+                    <CollectionArtwork collectionId={entry.collection.id} variant="card" title={entry.collection.name} />
+                  </div>
                   <strong>{entry.collection.name}</strong>
                   <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
                   <span className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Complete' : ''}</span>
@@ -382,6 +471,9 @@ export default function LockerPage() {
           {collections.map((entry) => (
             <article key={entry.collection.id} className={styles.collectionDetail}>
               <header>
+                <div className={styles.collectionHero}>
+                  <CollectionArtwork collectionId={entry.collection.id} variant="detail" labeled title={entry.collection.name} />
+                </div>
                 <h2 className="ui-section-title-content">{entry.collection.name}</h2>
                 <p className={styles.muted}>{entry.collection.description}</p>
                 <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
@@ -395,7 +487,7 @@ export default function LockerPage() {
                     return (
                       <div key={id} className={`${styles.tile} ${styles.tileLocked}`}>
                         <LockMark />
-                        <LockerArt type={def?.type || 'title'} muted />
+                        <LockerArt type={def?.type || 'title'} muted cosmeticId={id} />
                         <div className={styles.tileName}>{def?.name || id}</div>
                         <div className={styles.tileMeta}>Gesperrt</div>
                       </div>
@@ -467,32 +559,14 @@ export default function LockerPage() {
       )}
 
       {tab === 'achievements' && (
-        <div className={styles.stack}>
-          {achievementGroups.map((group) => (
-            <section key={group.category}>
-              <h2 className="ui-section-title">{group.label}</h2>
-              <div className={styles.grid}>
-                {group.items.map((item) => {
-                  const hidden = item.secretHidden && !devMode
-                  return (
-                    <article key={item.definition.id} className={`${styles.shopCard} ${item.unlocked || devMode ? styles.tile : styles.tileLocked}`}>
-                      {!item.unlocked && !devMode && <LockMark />}
-                      <div className={styles.tileName}>{hidden ? 'Geheimnis' : item.definition.name}</div>
-                      {!hidden && (
-                        <>
-                          <p className={styles.muted}>{item.definition.description}</p>
-                          <UiProgress value={item.current} max={item.target || 1} label={item.definition.name} />
-                          <div className={styles.tileMeta}>{item.unlocked ? 'Freigeschaltet' : `${item.current} / ${item.target}`}</div>
-                        </>
-                      )}
-                      {hidden && <p className={styles.unlockHow}>Geheimnis — weiter spielen</p>}
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
-          ))}
-        </div>
+        <LockerTasksPanel
+          lane={taskLane}
+          status={taskStatus}
+          selectedId={selectedTaskId}
+          onLaneChange={(next) => patchTaskParams({ lane: next })}
+          onStatusChange={(next) => patchTaskParams({ status: next })}
+          onSelect={(sourceId) => patchTaskParams({ task: sourceId })}
+        />
       )}
 
       {selected && (
@@ -521,6 +595,9 @@ export default function LockerPage() {
               artworkUrl={selected.artworkUrl}
               variant="sheet"
               muted={!selected.owned && !devMode}
+              frameId={selected.definition.id}
+              rarity={selected.definition.rarity}
+              cosmeticId={selected.definition.id}
             />
             <h2 className={styles.sheetTitle}>{selected.displayName}</h2>
             <div className={styles.tileMeta}>{selected.definition.type}</div>
@@ -539,8 +616,10 @@ export default function LockerPage() {
               <UiChip active={selected.isFavorite} onClick={() => toggleFavoriteCosmetic(selected.definition.id)}>
                 {selected.isFavorite ? '★ Favorit' : '☆ Favorit'}
               </UiChip>
-              {selected.owned && isEquipableCosmetic(selected.definition) && (
-                <UiButton type="button" size="sm" onClick={() => handleEquip(selected)}>Ausrüsten</UiButton>
+              {(selected.owned || (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline'].includes(selected.definition.type))) && isEquipableCosmetic(selected.definition) && (
+                <UiButton type="button" size="sm" onClick={() => handleEquip(selected)}>
+                  {me?.profile?.frameId === selected.definition.id ? 'Ausgerüstet' : 'Ausrüsten'}
+                </UiButton>
               )}
             </div>
             {equipMsg && <p className={styles.muted}>{equipMsg}</p>}
