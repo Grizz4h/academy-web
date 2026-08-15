@@ -30,7 +30,15 @@ Nicht vereinheitlichen: Drill-Renderer, Session-`.btn`, Locker-Rarity, Tutorial.
 
 ## Buttons
 
-Ein Button = türkis (`primary`). Zweiter daneben = farblos (`secondary`). Immer `UiActionRow`, Varianten nicht raten.
+Global in `styles/ui-kit.css` (`.ui-btn--primary` / `--secondary` / `--ghost`). Kein neues Button-CSS.
+
+| Rolle | Variante | Look |
+|-------|----------|------|
+| Einziger oder erster | `primary` | türkis |
+| Zweiter daneben | `secondary` | leicht dunkel, sichtbarer Rand |
+| Nicht der zweite in einem Paar | `ghost` | komplett durchsichtig — nur Zurück / Schließen / Filter-Reset |
+
+Immer `UiActionRow` für Paare — setzt primary/secondary automatisch. `ghost` nie als zweiten Aktionsbutton (Akademie „Theorie lesen“ war der Fehler).
 
 Keine ad-hoc Pills/Buttons (anderer Radius, Border, Hover).
 
@@ -61,6 +69,14 @@ Klick = Antwort auf die Frage beim Ansehen. Tote Zahlen vermeiden.
 
 `TapReveal` / `KpiRevealCard`: Outside-Click + Escape schließen. Hinweis `.ui-tap-hint`. Kein `<button>` mit Block-`div`-Kindern.
 
+## Popovers (Viewport — schon 3× schiefgegangen)
+
+Schwebende Panels **immer** `AnchoredPopover`: Portal auf `document.body`, `position: fixed`, an den Viewport klemmen (links/rechts/oben/unten + max-height scroll).
+
+Nicht: `position: absolute` am Trigger. Das läuft auf Mobile aus dem Bildschirm (KPI-Kacheln, rechter Rand, unterer Rand).
+
+`TapReveal` nutzt `AnchoredPopover`. Neue Popovers nicht selbst positionieren.
+
 ## Mobile (768px, Absicht)
 
 Desktop darf Karten-Hierarchie. Mobile kein Card-in-Card. Surface-Rolle setzen — nicht Schriften verkleinern.
@@ -73,8 +89,17 @@ Desktop darf Karten-Hierarchie. Mobile kein Card-in-Card. Surface-Rolle setzen �
 | Chips nebeneinander | horizontal scrollen |
 | Sheet mittig | Bottom-Sheet |
 | Tabelle | `.ui-stat-stack` / `.ui-table-hide-mobile` |
+| `:hover` auf Pills/Tabs | nur Desktop — siehe Hover |
 
 Legacy-Aliasse: `primary-card`, `mobile-flatten`, `ui-flat-panel`.
+
+## Hover (Touch klebt sonst)
+
+`:hover` auf Touch bleibt nach dem Tippen hängen und überdeckt oft den Aktiv-Look (TopNav: erst Unterstrich, Glow erst nach Scroll).
+
+- Hover nur in `@media (hover: hover) and (pointer: fine)` — Maus behält den Effekt, Finger nicht
+- Aktiv-Styles müssen `:hover` schlagen: `.is-active, .is-active:hover` (gleiche Optik)
+- Ausgewählt/aktiv nie nur über Hover definieren
 
 ## Kachel-Check
 

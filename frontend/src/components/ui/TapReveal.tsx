@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { AnchoredPopover, type AnchoredPopoverAlign } from './AnchoredPopover'
 
-export type TapRevealAlign = 'left' | 'right' | 'center'
+export type TapRevealAlign = AnchoredPopoverAlign
 
 type TapRevealProps = {
   trigger: ReactNode
@@ -22,7 +23,8 @@ export function TapReveal({
   ariaLabel,
 }: TapRevealProps) {
   const [open, setOpen] = useState(false)
-  const rootRef = useRef<HTMLSpanElement>(null)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
 
   useEffect(() => {
@@ -30,9 +32,9 @@ export function TapReveal({
 
     const onPointerDown = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node | null
-      if (rootRef.current && target && !rootRef.current.contains(target)) {
-        setOpen(false)
-      }
+      if (triggerRef.current?.contains(target)) return
+      if (popoverRef.current?.contains(target)) return
+      setOpen(false)
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false)
@@ -48,18 +50,12 @@ export function TapReveal({
     }
   }, [open])
 
-  const panelAlignClass =
-    align === 'right'
-      ? 'ui-tap-reveal-panel--right'
-      : align === 'center'
-        ? 'ui-tap-reveal-panel--center'
-        : 'ui-tap-reveal-panel--left'
-
   const toggle = () => setOpen((value) => !value)
 
   return (
-    <span ref={rootRef} className={['ui-tap-reveal-wrap', className].filter(Boolean).join(' ')}>
+    <span className={['ui-tap-reveal-wrap', className].filter(Boolean).join(' ')}>
       <div
+        ref={triggerRef}
         role="button"
         tabIndex={0}
         className={['ui-tap-reveal-trigger', triggerClassName].filter(Boolean).join(' ')}
@@ -82,32 +78,34 @@ export function TapReveal({
         {trigger}
       </div>
 
-      {open && (
-        <div
-          id={panelId}
-          role="dialog"
-          aria-label={title}
-          className={['ui-tap-reveal-panel', panelAlignClass].join(' ')}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <div className="ui-tap-reveal-header">
-            <h3 className="ui-tap-reveal-title">{title}</h3>
-            <button
-              type="button"
-              className="ui-tap-reveal-close"
-              aria-label="Schließen"
-              onClick={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-                setOpen(false)
-              }}
-            >
-              ×
-            </button>
-          </div>
-          <div className="ui-tap-reveal-body">{children}</div>
+      <AnchoredPopover
+        ref={popoverRef}
+        open={open}
+        anchorRef={triggerRef}
+        align={align}
+        preferredWidth={300}
+        id={panelId}
+        ariaLabel={title}
+        className="ui-tap-reveal-panel"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="ui-tap-reveal-header">
+          <h3 className="ui-tap-reveal-title">{title}</h3>
+          <button
+            type="button"
+            className="ui-tap-reveal-close"
+            aria-label="Schließen"
+            onClick={(event) => {
+              event.preventDefault()
+              event.stopPropagation()
+              setOpen(false)
+            }}
+          >
+            ×
+          </button>
         </div>
-      )}
+        <div className="ui-tap-reveal-body">{children}</div>
+      </AnchoredPopover>
     </span>
   )
 }

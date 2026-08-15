@@ -28,13 +28,13 @@
         "tutorialId": "main_onboarding",
         "version": 1,
         "status": "not_started",
-        "currentStepId": "session-save",
+        "currentStepId": "home-next-step",
         "completedStepIds": [],
-        "startedAt": "2026-08-13T21:24:06.521Z",
+        "startedAt": "2026-08-15T08:41:16.104Z",
         "completedAt": "2026-08-13T21:15:24.841Z",
-        "dismissedAt": "2026-08-13T21:28:09.488Z"
+        "dismissedAt": "2026-08-15T08:41:20.438Z"
       }
     }
   },
-  "updatedAt": "2026-08-15T07:45:44.183092"
+  "updatedAt": "2026-08-15T08:41:23.069761"
 }

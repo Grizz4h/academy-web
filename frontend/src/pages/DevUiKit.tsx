@@ -40,7 +40,10 @@ export default function DevUiKit() {
           <UiButton variant="dev" size="sm">Dev sm</UiButton>
           <UiButtonLink to="/dev" variant="secondary" size="sm">Link</UiButtonLink>
         </div>
-        <p className="ui-page-lead">Paarung über `UiActionRow`: einer türkis, der zweite farblos.</p>
+        <p className="ui-page-lead">
+          Paarung über `UiActionRow`: erster türkis, zweiter `secondary` (leicht dunkel).
+          Nicht `ghost` — das ist komplett durchsichtig und nur für Zurück/Schließen.
+        </p>
         <UiActionRow>
           <UiButton size="sm">Einziger Schritt</UiButton>
         </UiActionRow>

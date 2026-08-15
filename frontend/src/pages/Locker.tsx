@@ -26,7 +26,7 @@ import { isStarterCosmetic } from '../features/progression/cosmetics/cosmeticCat
 import { Puck3DLab } from '../components/puck3d'
 import { CosmeticGlyph } from '../components/visuals/CosmeticGlyph'
 import { useDevNavEnabled } from '../config/featureFlags'
-import { UiButton, UiChip, UiPill, UiProgress } from '../components/ui'
+import { UiActionRow, UiButton, UiChip, UiPill, UiProgress } from '../components/ui'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import { AccountPillFrame } from '../components/profile/AccountPillFrame'
 import { CollectionArtwork, CosmeticArtwork, hasCosmeticArt } from '../assets/collections/collectionArtwork'
@@ -612,16 +612,33 @@ export default function LockerPage() {
             {devMode && !selected.owned && (
               <p className={styles.muted}>DEV-Ansicht · Item ist auf diesem Account noch nicht freigeschaltet.</p>
             )}
-            <div className={styles.sheetActions}>
-              <UiChip active={selected.isFavorite} onClick={() => toggleFavoriteCosmetic(selected.definition.id)}>
-                {selected.isFavorite ? '★ Favorit' : '☆ Favorit'}
-              </UiChip>
-              {(selected.owned || (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline'].includes(selected.definition.type))) && isEquipableCosmetic(selected.definition) && (
-                <UiButton type="button" size="sm" onClick={() => handleEquip(selected)}>
-                  {me?.profile?.frameId === selected.definition.id ? 'Ausgerüstet' : 'Ausrüsten'}
+            {(() => {
+              const canEquip =
+                (selected.owned ||
+                  (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline'].includes(selected.definition.type))) &&
+                isEquipableCosmetic(selected.definition)
+              const favoriteButton = (
+                <UiButton
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => toggleFavoriteCosmetic(selected.definition.id)}
+                >
+                  {selected.isFavorite ? '★ Favorit' : '☆ Favorit'}
                 </UiButton>
-              )}
-            </div>
+              )
+              if (!canEquip) {
+                return <div className={styles.sheetActions}>{favoriteButton}</div>
+              }
+              return (
+                <UiActionRow className={styles.sheetActions}>
+                  <UiButton type="button" size="sm" onClick={() => handleEquip(selected)}>
+                    {me?.profile?.frameId === selected.definition.id ? 'Ausgerüstet' : 'Ausrüsten'}
+                  </UiButton>
+                  {favoriteButton}
+                </UiActionRow>
+              )
+            })()}
             {equipMsg && <p className={styles.muted}>{equipMsg}</p>}
           </div>
         </div>

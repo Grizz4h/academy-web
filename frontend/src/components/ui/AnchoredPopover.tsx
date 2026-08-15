@@ -10,6 +10,8 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 
+export type AnchoredPopoverAlign = 'left' | 'right' | 'center'
+
 type AnchoredPopoverProps = {
   open: boolean
   anchorRef: RefObject<HTMLElement | null>
@@ -19,12 +21,14 @@ type AnchoredPopoverProps = {
   ariaLabel?: string
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
   preferredWidth?: number
+  align?: AnchoredPopoverAlign
 }
 
 function computePosition(
   anchor: HTMLElement,
   popover: HTMLElement | null,
   preferredWidth: number,
+  align: AnchoredPopoverAlign = 'left',
 ): CSSProperties {
   const margin = 8
   const gap = 6
@@ -34,6 +38,8 @@ function computePosition(
   const popupHeight = Math.min(popover?.offsetHeight ?? 160, maxHeight)
 
   let left = rect.left
+  if (align === 'right') left = rect.right - popupWidth
+  if (align === 'center') left = rect.left + rect.width / 2 - popupWidth / 2
   if (left + popupWidth > window.innerWidth - margin) {
     left = rect.right - popupWidth
   }
@@ -67,6 +73,7 @@ export const AnchoredPopover = forwardRef<HTMLDivElement, AnchoredPopoverProps>(
     ariaLabel,
     onClick,
     preferredWidth = 260,
+    align = 'left',
   },
   ref,
 ) {
@@ -82,7 +89,7 @@ export const AnchoredPopover = forwardRef<HTMLDivElement, AnchoredPopoverProps>(
       const anchor = anchorRef.current
       if (!anchor) return
       setStyle({
-        ...computePosition(anchor, innerRef.current, preferredWidth),
+        ...computePosition(anchor, innerRef.current, preferredWidth, align),
         visibility: 'visible',
       })
     }
@@ -101,7 +108,7 @@ export const AnchoredPopover = forwardRef<HTMLDivElement, AnchoredPopoverProps>(
       window.removeEventListener('scroll', update, true)
       window.removeEventListener('resize', update)
     }
-  }, [open, anchorRef, preferredWidth])
+  }, [open, anchorRef, preferredWidth, align])
 
   if (!open) return null
 

@@ -1629,6 +1629,66 @@
       "processedAt": "2026-08-15T08:20:53.571Z",
       "grantedXp": 0,
       "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:35:19.346Z": {
+      "eventId": "challenge:sync:2026-08-15T08:35:19.346Z",
+      "processedAt": "2026-08-15T08:35:19.346Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:36:59.776Z": {
+      "eventId": "challenge:sync:2026-08-15T08:36:59.776Z",
+      "processedAt": "2026-08-15T08:36:59.776Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:37:03.499Z": {
+      "eventId": "challenge:sync:2026-08-15T08:37:03.499Z",
+      "processedAt": "2026-08-15T08:37:03.499Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:38:09.493Z": {
+      "eventId": "challenge:sync:2026-08-15T08:38:09.493Z",
+      "processedAt": "2026-08-15T08:38:09.493Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:38:11.366Z": {
+      "eventId": "challenge:sync:2026-08-15T08:38:11.366Z",
+      "processedAt": "2026-08-15T08:38:11.366Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:38:37.812Z": {
+      "eventId": "challenge:sync:2026-08-15T08:38:37.812Z",
+      "processedAt": "2026-08-15T08:38:37.812Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:45:05.478Z": {
+      "eventId": "challenge:sync:2026-08-15T08:45:05.478Z",
+      "processedAt": "2026-08-15T08:45:05.478Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:46:23.024Z": {
+      "eventId": "challenge:sync:2026-08-15T08:46:23.024Z",
+      "processedAt": "2026-08-15T08:46:23.024Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:46:42.562Z": {
+      "eventId": "challenge:sync:2026-08-15T08:46:42.562Z",
+      "processedAt": "2026-08-15T08:46:42.562Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T08:59:47.692Z": {
+      "eventId": "challenge:sync:2026-08-15T08:59:47.692Z",
+      "processedAt": "2026-08-15T08:59:47.692Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -3627,7 +3687,7 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-13T20:38:32.602Z",
-  "lastUpdatedAt": "2026-08-15T08:20:53.571Z",
+  "lastUpdatedAt": "2026-08-15T08:59:47.692Z",
   "favoriteCosmeticIds": [
     "avatar_goldpuck_01"
   ],

@@ -6,7 +6,7 @@ import type { CurriculumTrack, CurriculumModule, Session } from '../api'
 import theoryData from '../data/theoryData.json'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
-import { UiButton } from '../components/ui'
+import { UiActionRow, UiButton } from '../components/ui'
 import { useUser } from '../context/UserContext'
 import {
   getFoundationTrack,
@@ -178,7 +178,7 @@ export default function Curriculum() {
                 <div key={module.id} className={styles.moduleCard}>
                   <div className={styles.moduleTop}>
                     <h3 className={styles.moduleTitle}>{module.title}</h3>
-                    <div className={styles.moduleActions}>
+                    <UiActionRow className={styles.moduleActions}>
                       <UiButton
                         type="button"
                         size={module.id === entryModuleId && tutorial?.active ? 'md' : 'sm'}
@@ -188,12 +188,12 @@ export default function Curriculum() {
                       >
                         {academyLocked && !foundation ? 'Zuerst Track 0' : 'Starten'}
                       </UiButton>
-                      {module.id in theoryData && (
-                        <UiButton type="button" size="sm" variant="ghost" onClick={() => navigate(`/theory/${module.id}`)}>
+                      {module.id in theoryData ? (
+                        <UiButton type="button" size="sm" onClick={() => navigate(`/theory/${module.id}`)}>
                           Theorie lesen
                         </UiButton>
-                      )}
-                    </div>
+                      ) : null}
+                    </UiActionRow>
                   </div>
                   <p className={styles.moduleText}>{module.summary}</p>
                   {module.description && (
@@ -256,7 +256,7 @@ export default function Curriculum() {
                 <div key={module.id} className={`${styles.moduleCard} ${styles.moduleCardCluster}`}>
                   <div className={styles.moduleTop}>
                     <h3 className={styles.moduleTitle}>{module.title}</h3>
-                    <div className={styles.moduleActions}>
+                    <UiActionRow className={styles.moduleActions}>
                       <UiButton
                         type="button"
                         size="sm"
@@ -265,7 +265,7 @@ export default function Curriculum() {
                       >
                         {academyLocked ? 'Zuerst Track 0' : 'Starten'}
                       </UiButton>
-                    </div>
+                    </UiActionRow>
                   </div>
                   <p className={styles.moduleText}>{module.summary}</p>
                   {module.description && (

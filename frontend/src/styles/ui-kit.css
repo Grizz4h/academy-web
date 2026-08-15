@@ -11,8 +11,9 @@
  * Catalog
  * -------
  * Buttons:  .ui-btn  .ui-btn--primary | --secondary | --ghost | --danger | --dev | --sm | --block
- *           Paarung: 1 Button = primary · 2. Button daneben = secondary
- *           Im Code: UiActionRow (setzt die Varianten automatisch)
+ *           Paarung: 1. = primary (türkis) · 2. = secondary (leicht dunkel)
+ *           ghost nur Zurück/Schließen/Reset, nie als zweiter Aktionsbutton
+ *           Im Code: UiActionRow (setzt primary/secondary automatisch)
  * Chips:    .ui-chip  .ui-chip.is-active | --sm | --static
  * Tabs:     .ui-tablist  .ui-tab  .ui-tab.is-active
  * Pills:    .ui-pill  .ui-pill--accent | --ok | --warn | --danger | --neutral | --new
@@ -23,6 +24,7 @@
  * Accordion:.ui-more  .ui-more__summary  .ui-more__chevron  .ui-more__body
  *
  * Agent-Regeln: nur .cursor/rules/ui-catalog.mdc · Sichtprüfung: /dev/ui
+ * Hover auf interaktiven Pills/Tabs nur @media (hover: hover) and (pointer: fine)
  */
 
 /* ---- Buttons ---- */
