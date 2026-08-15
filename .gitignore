@@ -8,3 +8,7 @@ build/
 venv/
 backend/venv/
 backend/.venv/
+backend/backend.log
+*.log
+__pycache__/
+*.pyc
