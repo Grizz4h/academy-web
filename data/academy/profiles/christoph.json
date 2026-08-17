@@ -2,13 +2,13 @@
   "displayName": "Christoph",
   "avatar": {
     "type": "catalog",
-    "avatarId": "avatar_aurora_01"
+    "avatarId": "avatar_night_circuit"
   },
-  "bannerId": "banner_neutral_zone_goblin_legend",
-  "frameId": "frame_ice_legend",
+  "bannerId": "banner_level_10",
+  "frameId": "frame_slot",
   "emblem": {
     "type": "catalog",
-    "emblemId": "emblem_goblin"
+    "emblemId": "emblem_arrow_01"
   },
   "customEmblemId": null,
   "customEmblems": [],
@@ -16,7 +16,7 @@
   "jerseyNumber": 16,
   "favoriteLeague": "DEL",
   "favoriteTeamName": "ERC Ingolstadt",
-  "profileTagline": "tagline_shop_structure_lite",
+  "profileTagline": "tagline_no_slot",
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
@@ -40,5 +40,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-17T20:39:32.165047"
+  "updatedAt": "2026-08-17T22:19:39.101815"
 }

@@ -209,6 +209,7 @@ export default function Curriculum() {
                             key={drill.id}
                             drillType={drill.drill_type}
                             mode={drill.config?.mode}
+                            mechanic={drill.config?.mechanic}
                           />
                         ))}
                       </div>

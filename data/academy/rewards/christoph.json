@@ -2295,6 +2295,30 @@
       "processedAt": "2026-08-17T20:38:28.670Z",
       "grantedXp": 0,
       "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T21:28:53.536Z": {
+      "eventId": "challenge:sync:2026-08-17T21:28:53.536Z",
+      "processedAt": "2026-08-17T21:28:53.536Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T22:04:52.874Z": {
+      "eventId": "challenge:sync:2026-08-17T22:04:52.874Z",
+      "processedAt": "2026-08-17T22:04:52.874Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T22:05:37.032Z": {
+      "eventId": "challenge:sync:2026-08-17T22:05:37.032Z",
+      "processedAt": "2026-08-17T22:05:37.032Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T22:27:39.795Z": {
+      "eventId": "challenge:sync:2026-08-17T22:27:39.795Z",
+      "processedAt": "2026-08-17T22:27:39.795Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -4293,7 +4317,7 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-13T20:38:32.602Z",
-  "lastUpdatedAt": "2026-08-17T20:38:28.670Z",
+  "lastUpdatedAt": "2026-08-17T22:27:39.795Z",
   "favoriteCosmeticIds": [
     "avatar_goldpuck_01"
   ],

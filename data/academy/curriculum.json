@@ -14573,14 +14573,17 @@
         },
         {
           "id": "E3",
-          "title": "E3 – Micro-Analytics & Mustervergleich",
-          "summary": "Wiederholungen sichtbar machen, ohne Statistik-Overkill",
-          "description": "E3 erweitert Analyse um einfache, gezielte Micro-Analytics. Ziel ist nicht Statistik um der Statistik willen, sondern das bewusste Erfassen wiederkehrender Muster über Zeit. Du lernst, Beobachtungen zu strukturieren, Vergleiche sinnvoll zu ziehen und aus kleinen Datenpunkten belastbare Aussagen abzuleiten – ohne den Blick fürs Spiel zu verlieren.",
+          "title": "E3 – Micro-Analytics & Evidenz",
+          "summary": "Ereignisse erst mit Nenner lesen – ohne Statistik-Overkill",
+          "description": "E3 führt Micro-Analytics als Evidenz-Handwerk ein. Du lernst, Ereignisse ins Verhältnis zu Opportunities zu setzen, saubere Nenner zu definieren und kleine Stichproben nicht zu allgemeinen Teamstatistiken zu machen – ohne den Blick fürs Spiel zu verlieren.",
           "learningGoals": [
-            "Wiederholungen systematisch erfassen",
-            "Beobachtungen über Drittel oder Spiele vergleichen",
-            "Relevante Muster von Rauschen trennen",
-            "Einfache Kennzahlen sinnvoll interpretieren",
+            "Events nur mit klarem Nenner als Rate lesen",
+            "Opportunities vollständig erfassen, nicht nur Target Events",
+            "Unklare Outcomes transparent im Nenner behalten",
+            "Kleine Stichproben als Stichprobe formulieren",
+            "Zusammenhang in der Stichprobe erkennen, ohne Ursache zu behaupten",
+            "Evidenzstärke mehrdimensional prüfen, nicht nur am Prozentunterschied",
+            "Aussagen nur so stark formulieren, wie die Evidenz sie trägt",
             "Analyse objektiver machen, ohne sie zu entmenschlichen"
           ],
           "difficulty": 4,
@@ -14588,308 +14591,467 @@
           "drills": [
             {
               "id": "E3_D1",
-              "title": "Wiederholung zählen (Pattern-Check)",
-              "drill_type": "period_checkin",
-              "description": "Erfasse bewusst, ob ein beobachtetes Muster mehrfach auftritt oder nur einmalig ist.",
+              "title": "Nicht zählen, sondern ins Verhältnis setzen",
+              "drill_type": "opportunity_rate",
+              "description": "Du hast fünf kontrollierte Entries gesehen. Klingt nach viel. Aber waren es fünf von sechs Versuchen – oder fünf von achtzehn? In diesem Drill zählst du deshalb nicht nur ein Ereignis. Du zählst jede Situation, in der es hätte passieren können.",
               "didactics": {
-                "explanation": "Analyse wird belastbar, wenn Beobachtungen nicht isoliert bleiben. In diesem Drill trainierst du, ein konkretes Muster über mehrere Situationen hinweg zu verfolgen und bewusst zu entscheiden, ob es sich um eine Wiederholung oder einen Einzelfall handelt.",
+                "explanation": "Eine Anzahl wird erst analytisch interessant, wenn du weißt, aus wie vielen Möglichkeiten sie entstanden ist. Definiere zuerst Opportunity und Target Event, erfasse dann jede relevante Situation – auch wenn das Target nicht eintritt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Tritt die gleiche Situation mehrfach auf?",
-                    "Sind die Rahmenbedingungen ähnlich (Zone, Druck, Zeit)?",
-                    "Wiederholt sich die Entscheidung oder das Verhalten?"
+                    "Welche Situationen zählen wirklich als Opportunity?",
+                    "Endet die Opportunity als Target Event oder anders?",
+                    "Bleiben unklare Fälle sichtbar, statt zu verschwinden?"
                   ],
                   "how_to_decide": [
-                    "Definiere ein klares Muster (z. B. Exit ohne Anschluss)",
-                    "Zähle nur vergleichbare Situationen",
-                    "Ignoriere Ausreißer mit völlig anderen Bedingungen",
-                    "Bewerte erst nach mehreren Beobachtungen"
+                    "Zähle jede Opportunity, nicht nur das Target Event",
+                    "Der Nenner muss genauso sauber definiert sein wie das Ereignis",
+                    "Unklar gehört in den Nenner, wenn die Opportunity gültig war",
+                    "Formuliere das Ergebnis als Stichprobe, nicht als Teamstatistik"
                   ],
                   "ignore": [
-                    "Einzelne Highlight-Szenen",
-                    "Emotionale Reaktionen auf Tore",
-                    "Zufällige Fehler ohne Wiederholung"
+                    "Kausalität oder warum etwas passiert ist",
+                    "Statistische Signifikanz, p-Werte oder Konfidenzintervalle",
+                    "Automatische Verallgemeinerung auf das ganze Team"
                   ]
                 },
-                "inline_explanations": {
-                  "einzelfall": {
-                    "meaning": "Eine isolierte Situation ohne erkennbare Wiederholung oder strukturelle Ursache."
-                  },
-                  "tendenz": {
-                    "meaning": "Ein Muster, das unter ähnlichen Bedingungen mehrfach auftritt und Aussagekraft entwickelt."
-                  }
-                },
-                "learning_hint": "Was du nicht zählen kannst, bleibt ein Gefühl. Was sich wiederholt, wird zur Aussage."
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer Event Count und Opportunity Count sauber unterscheidet.",
+                  "Achte darauf, ob die Opportunity-Definition ausreichend klar ist.",
+                  "Prüfe, ob unklare Fälle transparent berücksichtigt wurden.",
+                  "Achte darauf, ob der Nutzer seine kleine Stichprobe zu einer allgemeinen Team-Aussage verallgemeinert.",
+                  "Bevorzuge Formulierungen wie 'in dieser Stichprobe' statt allgemeiner Aussagen.",
+                  "Keine kausalen Schlüsse ziehen."
+                ],
+                "learning_hint": "Nicht: „Das ist viermal passiert.“ Sondern: „Das ist in vier von acht relevanten Situationen passiert.“"
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "pattern_type": "tendenz"
-                    },
+                    "when": {},
                     "questions": [
-                      "Wodurch wurde das Muster für dich eindeutig?",
-                      "Ab welcher Wiederholung hattest du Sicherheit?",
-                      "Welche Bedingungen waren konstant?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "pattern_type": "einzelfall"
-                    },
-                    "questions": [
-                      "Was fehlte, damit daraus eine Tendenz wird?",
-                      "Welche Beobachtung würdest du weiter sammeln?",
-                      "Ab wann würdest du neu bewerten?"
+                      "Was hätte dir gefehlt, wenn du nur das Target Event gezählt hättest?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "pattern_type",
-                    "type": "radio",
-                    "label": "Deine Einordnung",
-                    "options": [
-                      "tendenz",
-                      "einzelfall"
-                    ]
-                  },
-                  {
-                    "key": "pattern_count",
-                    "type": "radio",
-                    "label": "Wie oft hast du es gesehen?",
-                    "options": [
-                      "einmal",
-                      "zweimal",
-                      "dreimal_oder_mehr"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurze Beschreibung des Musters",
-                    "max_chars": 1500
-                  }
-                ]
+                "mechanic": "opportunity_rate",
+                "decision_rule": "Eine Anzahl wird erst analytisch interessant, wenn du weißt, aus wie vielen Möglichkeiten sie entstanden ist.",
+                "core_hint": "Der Nenner muss genauso sauber definiert sein wie das Target Event.",
+                "sample_limit_note": "Diese Rate beschreibt deine beobachtete Stichprobe – nicht automatisch das generelle Verhalten des Teams.",
+                "conclusion_hint": "Beginne möglichst mit „In meinen beobachteten Situationen …“. Vermeide „Das Team macht immer …“.",
+                "summary_min_chars": 20,
+                "definition": {
+                  "allowTemplates": true,
+                  "allowCustomDefinition": true
+                },
+                "tracker": {
+                  "minObservations": 6,
+                  "recommendedObservations": 8,
+                  "maxObservations": 10,
+                  "supportsGameClock": true,
+                  "supportsSceneCapture": true,
+                  "supportsUnclear": true
+                },
+                "templates": [
+                  "entries",
+                  "exits",
+                  "pp_entries",
+                  "entry_stops"
+                ],
+                "rate_examples": {
+                  "title": "Welche Fragen eignen sich für eine Rate?",
+                  "intro": "Eine gute Rate braucht einen klaren Nenner: alle Situationen, in denen das Target hätte eintreten können.",
+                  "suitable": [
+                    {
+                      "title": "Zone Entries",
+                      "description": "Von allen Entry-Versuchen: Wie viele waren kontrolliert? Outcomes: controlled, dump, turnover, unclear."
+                    },
+                    {
+                      "title": "Breakouts / Exits",
+                      "description": "Von allen Exit-Versuchen: Wie viele gelangen kontrolliert? Outcomes: controlled_exit, clear, turnover, unclear."
+                    },
+                    {
+                      "title": "Defensive Entry Stops",
+                      "description": "Von allen gegnerischen Entry-Versuchen: Wie oft wurde der Entry früh gestoppt?"
+                    },
+                    {
+                      "title": "Powerplay Entries",
+                      "description": "Von allen PP-Entry-Versuchen: Wie viele führten zu kontrolliertem Zonenbesitz?"
+                    },
+                    {
+                      "title": "Forecheck Recovery",
+                      "description": "Von allen klar definierten Forecheck-Situationen: Wie oft entsteht ein Turnover? Die Opportunity muss hier besonders sauber definiert werden."
+                    }
+                  ],
+                  "unsuitable_title": "Weniger geeignet",
+                  "unsuitable": [
+                    "„Wie oft spielt Team X über rechts?“ ohne alle vergleichbaren Angriffe zu zählen",
+                    "„Wie viele Turnover hatte Spieler X?“ ohne relevante Puckbesitz-/Puckaktionsmöglichkeiten",
+                    "Seltene Ereignisse wie „Tore nach Screen“ bei sehr kleiner Stichprobe",
+                    "Fragen mit unklarem Nenner"
+                  ],
+                  "footer": "Nicht alles, was zählbar ist, ist automatisch eine gute Rate."
+                }
               },
-              "sceneSlug": "Pattern-Count"
+              "sceneSlug": "Opportunity-Rate"
             },
             {
               "id": "E3_D2",
-              "title": "Vergleich lesen (vorher vs. nachher)",
-              "drill_type": "period_checkin",
-              "description": "Vergleiche zwei Spielphasen gezielt: Hat sich ein Muster verändert, stabilisiert oder verschärft?",
+              "title": "Gleich messen, sinnvoll vergleichen",
+              "drill_type": "cohort_rate_compare",
+              "description": "Eine Rate wird interessanter, wenn du sie mit einer zweiten vergleichbaren Gruppe gegenüberstellst. Aber nur, wenn beide Gruppen dieselbe Messfrage beantworten. Vergleiche deshalb dieselbe Opportunity und dasselbe Target – und ändere möglichst nur eine Dimension.",
               "didactics": {
-                "explanation": "Analyse entsteht nicht nur durch Erkennen von Mustern, sondern durch deren Veränderung über Zeit. In diesem Drill lernst du, zwei Phasen bewusst zu vergleichen und zu beurteilen, ob ein Adjustment oder Spielverlauf tatsächlich Wirkung zeigt.",
+                "explanation": "Ein Vergleich ist nur so sauber wie das, was du zwischen den Gruppen konstant hältst. Gleiche Messfrage, gleiches Target, eine bewusste Vergleichsdimension. Ein beobachteter Unterschied ist noch keine Ursache.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Tritt das gleiche Muster später erneut auf?",
-                    "Verändert sich Häufigkeit oder Intensität?",
-                    "Wirken Entscheidungen klarer oder hektischer?"
+                    "Beantworten beide Gruppen dieselbe Messfrage?",
+                    "Bleiben Opportunity und Target identisch?",
+                    "Variiert wirklich nur eine Vergleichsdimension?"
                   ],
                   "how_to_decide": [
-                    "Vergleiche gleiche Situationen, nicht Ergebnisse",
-                    "Achte auf Tempo, Abstände und Entscheidungszeit",
-                    "Bewerte Richtung der Entwicklung, nicht Perfektion",
-                    "Eine kleine Verbesserung ist relevant"
+                    "Vergleiche dieselbe Art von Problem unter zwei klar unterscheidbaren Bedingungen",
+                    "Erfasse jede Opportunity einer Gruppe, nicht nur das Target Event",
+                    "Kleine Samples bleiben kleine Samples",
+                    "Formuliere den Unterschied als Stichprobe, nicht als Teamqualität"
                   ],
                   "ignore": [
-                    "Score-Veränderungen",
-                    "Einzelaktionen ohne Kontext",
-                    "Emotionale Momentum-Schwankungen"
+                    "Welche Gruppe gewinnt",
+                    "Kausale Erklärungen für den Unterschied",
+                    "Automatische Wertung wie besser oder effektiver"
                   ]
                 },
-                "inline_explanations": {
-                  "verbessert": {
-                    "meaning": "Das Muster tritt seltener, stabiler oder kontrollierter auf als zuvor."
-                  },
-                  "gleich": {
-                    "meaning": "Keine erkennbare Veränderung in Häufigkeit oder Ausprägung."
-                  },
-                  "verschlechtert": {
-                    "meaning": "Das Muster tritt häufiger, chaotischer oder unter höherem Druck auf."
-                  }
-                },
-                "learning_hint": "Nicht jedes Adjustment wirkt sofort – aber jede Richtung ist lesbar."
+                "reflectionGuidance": [
+                  "Prüfe, ob beide Gruppen dieselbe Opportunity-Definition verwenden.",
+                  "Prüfe, ob das Target Outcome in beiden Gruppen identisch ist.",
+                  "Achte darauf, ob der Nutzer mehr als eine relevante Vergleichsdimension gleichzeitig verändert.",
+                  "Berücksichtige unterschiedliche Sample Sizes.",
+                  "Achte darauf, ob der Nutzer aus einem beobachteten Unterschied vorschnell eine Qualitäts- oder Kausalaussage macht.",
+                  "Bevorzuge Formulierungen wie 'in dieser Stichprobe' oder 'in den beobachteten Situationen'.",
+                  "Ein Unterschied zwischen Gruppen ist noch keine Erklärung für diesen Unterschied."
+                ],
+                "learning_hint": "Nicht: „Welche Gruppe gewinnt?“ Sondern: „Kann ich dieselbe Messgröße in zwei sinnvoll definierten Gruppen sauber vergleichen?“"
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "trend": "verbessert"
-                    },
+                    "when": {},
                     "questions": [
-                      "Woran hast du die Verbesserung konkret erkannt?",
-                      "War sie strukturell oder nur situativ?",
-                      "Welche Kleinigkeit hat vermutlich den Unterschied gemacht?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "trend": "gleich"
-                    },
-                    "questions": [
-                      "Was verhindert die Veränderung?",
-                      "Reicht die Beobachtungszeit schon aus?",
-                      "Was würdest du im nächsten Drittel genauer beobachten?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "trend": "verschlechtert"
-                    },
-                    "questions": [
-                      "Was hat sich negativ verstärkt?",
-                      "Kam zusätzlicher Druck oder Ermüdung dazu?",
-                      "Welche frühe Warnung gab es bereits?"
+                      "Was hast du zwischen den Gruppen bewusst konstant gehalten?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
-                  {
-                    "key": "trend",
-                    "type": "radio",
-                    "label": "Vergleich",
-                    "options": [
-                      "verbessert",
-                      "gleich",
-                      "verschlechtert"
-                    ]
-                  },
-                  {
-                    "key": "comparison_focus",
-                    "type": "radio",
-                    "label": "Vergleichsfokus",
-                    "options": [
-                      "tempo",
-                      "abstand",
-                      "entscheidungen",
-                      "struktur"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Kurzbegründung (Vergleich)",
-                    "max_chars": 1500
-                  }
-                ]
+                "mechanic": "cohort_rate_compare",
+                "decision_rule": "Ein Vergleich ist nur so sauber wie das, was du zwischen den Gruppen konstant hältst.",
+                "core_hint": "Gleiche Messfrage. Gleiches Target. Eine bewusste Vergleichsdimension.",
+                "sample_limit_note": "Diese Zahlen beschreiben deine beobachtete Stichprobe – nicht automatisch das generelle Verhalten des Teams.",
+                "conclusion_hint": "Nutze „in meiner Stichprobe“ oder „in den beobachteten Situationen“. Vermeide „Das Team ist über links besser.“",
+                "wording_help": "Nicht: „Das Team ist über links besser.“ Besser: „In meiner Stichprobe war die Rate kontrollierter Entries über links höher.“",
+                "summary_min_chars": 20,
+                "definition": {
+                  "allowTemplates": true,
+                  "allowCustomDefinition": true
+                },
+                "tracker": {
+                  "minObservations": 8,
+                  "minPerGroup": 3,
+                  "recommendedObservations": 12,
+                  "maxObservations": 16,
+                  "supportsGameClock": true,
+                  "supportsSceneCapture": true,
+                  "supportsUnclear": true
+                },
+                "templates": [
+                  "entries",
+                  "exits",
+                  "pp_entries",
+                  "entry_stops"
+                ],
+                "compare_examples": {
+                  "title": "Welche Vergleiche eignen sich?",
+                  "intro": "Vergleiche dieselbe Art von Problem unter zwei klar unterscheidbaren Bedingungen.",
+                  "suitable": [
+                    {
+                      "title": "Entry Side",
+                      "description": "Von allen Entry-Versuchen: Wie viele waren kontrolliert? Vergleich: Links vs. Rechts."
+                    },
+                    {
+                      "title": "Exit Pressure Context",
+                      "description": "Von allen Exit-Versuchen: Wie viele gelangen kontrolliert? Vergleich: stärkerer Druck vs. geringerer Druck. Noch keine Ursache behaupten."
+                    },
+                    {
+                      "title": "Puck Side",
+                      "description": "Wie oft gelingt die gewählte Aktion? Vergleich: Puck Side vs. Weak Side."
+                    },
+                    {
+                      "title": "Player Support",
+                      "description": "Wie oft gelingt ein kontrollierter Exit? Vergleich: mit klarer Support-Option vs. ohne. Nur vergleichen, nicht Ursache behaupten."
+                    },
+                    {
+                      "title": "Defensive Entry Read",
+                      "description": "Wie oft wird der Entry früh gestoppt? Vergleich: linke Seite vs. rechte Seite."
+                    }
+                  ],
+                  "unsuitable_title": "Weniger geeignet",
+                  "unsuitable": [
+                    "Gruppe A: kontrollierte Entries vs. Gruppe B: Turnover — unterschiedliche Messgrößen",
+                    "5v5 Breakout vs. Powerplay Entry — Situationen sind fundamental anders",
+                    "Erste Periode vs. letzte zwei Minuten mit Empty Net — zu viele Dimensionen wechseln gleichzeitig",
+                    "Entries vs. Breakouts",
+                    "Controlled-Entry-Count vs. Turnover-Count"
+                  ],
+                  "footer": "Vergleiche dieselbe Art von Problem unter zwei klar unterscheidbaren Bedingungen."
+                }
               },
-              "sceneSlug": "Before-After-Compare"
+              "sceneSlug": "Cohort-Rate-Compare"
             },
             {
               "id": "E3_D3",
-              "title": "Aussage ableiten (Was bedeutet das?)",
-              "drill_type": "period_checkin",
-              "description": "Formuliere eine klare analytische Aussage: Was sagt der Verlauf über Kontrolle, Risiko oder wahrscheinliche Entwicklung aus?",
+              "title": "Bedingte Zusammenhänge erkennen",
+              "drill_type": "conditional_outcome_compare",
+              "description": "Vielleicht glaubst du, dass ein bestimmtes Verhalten häufiger auftritt, wenn eine bestimmte Bedingung vorhanden ist. Jetzt prüfst du diese Vermutung. Erfasse jede passende Opportunity – sowohl mit als auch ohne die Bedingung – und vergleiche anschließend das Outcome. Wichtig: Ein Unterschied zeigt zunächst nur einen Zusammenhang in deiner Stichprobe. Noch keine Ursache.",
               "didactics": {
-                "explanation": "Analyse ist wertlos ohne Schlussfolgerung. In diesem Drill lernst du, Beobachtung und Vergleich in eine präzise Aussage zu überführen – unabhängig von Score oder Bauchgefühl. Die Aussage beschreibt nicht, was war, sondern was das Spiel wahrscheinlich weiter tut.",
+                "explanation": "Zusammenhang ist nicht Ursache. Eine Bedingung kann mit einem Outcome zusammen auftreten, ohne es allein zu erklären. Erfasse deshalb auch die Fälle, die deiner Erwartung widersprechen.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wer kontrolliert Tempo und Raum über Zeit?",
-                    "Welche Seite muss reagieren, welche agiert?",
-                    "Wird Risiko aktiv gewählt oder aufgezwungen?"
+                    "Ist die Bedingung in dieser Opportunity vorhanden, nicht vorhanden oder unklar?",
+                    "Ist das Target Outcome eingetreten, ein anderes Outcome oder unklar?",
+                    "Erfasst du wirklich alle passenden Opportunities – nicht nur die passenden Fälle?"
                   ],
                   "how_to_decide": [
-                    "Formuliere eine Aussage, keinen Bericht",
-                    "Beziehe dich auf Muster, nicht Szenen",
-                    "Denke in Wahrscheinlichkeiten, nicht Gewissheiten",
-                    "Die Aussage muss widersprechbar sein"
+                    "Trenne Opportunity, Bedingung und Outcome",
+                    "Sammle Fälle mit und ohne Bedingung",
+                    "Lass unklare Condition- und Outcome-States getrennt stehen",
+                    "Formuliere den Unterschied als Stichprobe, nicht als Ursache"
                   ],
                   "ignore": [
-                    "Aktueller Spielstand",
-                    "Einzelne Chancen oder Saves",
-                    "Narrative wie Momentum oder Wille"
+                    "Warum das Outcome passiert ist",
+                    "Ob die Bedingung besser oder schlechter ist",
+                    "Coach-Anpassungen oder Empfehlungen",
+                    "Welche Spielweise gewinnt"
                   ]
                 },
-                "inline_explanations": {
-                  "kontrolle": {
-                    "meaning": "Die Fähigkeit, Struktur, Tempo und Entscheidungen über Zeit zu bestimmen."
-                  },
-                  "risiko": {
-                    "meaning": "Grad der strukturellen Instabilität, nicht die Anzahl der Chancen."
-                  },
-                  "entwicklung": {
-                    "meaning": "Die wahrscheinlichste Richtung des Spiels bei gleichbleibenden Bedingungen."
-                  }
-                },
-                "learning_hint": "Eine gute Aussage fühlt sich unangenehm klar an – weil sie etwas festlegt."
+                "reflectionGuidance": [
+                  "Prüfe, ob Opportunity, Bedingung und Outcome klar getrennt definiert wurden.",
+                  "Achte darauf, ob sowohl Fälle mit als auch ohne Bedingung erfasst wurden.",
+                  "Prüfe, ob der Nutzer widersprechende Beobachtungen transparent berücksichtigt.",
+                  "Achte auf Confirmation Bias in der Interpretation.",
+                  "Ein beobachteter Unterschied ist keine kausale Erklärung.",
+                  "Prüfe, ob alternative Erklärungen oder weitere Einflussdimensionen berücksichtigt wurden.",
+                  "Bevorzuge Formulierungen wie 'in dieser Stichprobe trat X häufiger auf, wenn Y vorhanden war'.",
+                  "Keine Empfehlung oder taktische Wahrheit aus der kleinen Stichprobe ableiten."
+                ],
+                "learning_hint": "Beschreibe, was zusammen auftrat – nicht warum es passiert ist."
               },
               "miniFeedback": {
                 "trigger": "onNext",
                 "oncePerSection": true,
                 "groups": [
                   {
-                    "when": {
-                      "statement_type": "kontrolle"
-                    },
+                    "when": {},
                     "questions": [
-                      "Woran genau machst du Kontrolle fest?",
-                      "Was müsste passieren, damit sich das Bild dreht?",
-                      "Welche Zone ist dafür entscheidend?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "statement_type": "risiko"
-                    },
-                    "questions": [
-                      "Ist das Risiko selbst gewählt oder erzwungen?",
-                      "Welche Struktur ist zuerst gefährdet?",
-                      "Wie lange ist dieses Risiko tragbar?"
-                    ]
-                  },
-                  {
-                    "when": {
-                      "statement_type": "entwicklung"
-                    },
-                    "questions": [
-                      "Welche Entwicklung hältst du für am wahrscheinlichsten?",
-                      "Was wäre das erste Gegenargument?",
-                      "Welche Kleinigkeit könnte die Richtung kippen?"
+                      "Welche alternative Erklärung könnte ebenfalls zu diesem Muster passen?"
                     ]
                   }
                 ]
               },
               "config": {
-                "questions": [
+                "mechanic": "conditional_outcome_compare",
+                "decision_rule": "Zusammenhang ist nicht Ursache.",
+                "core_hint": "Erfasse auch die Fälle, die deiner Erwartung widersprechen.",
+                "sample_limit_note": "Das ist noch keine Ursache und keine Empfehlung.",
+                "conclusion_hint": "Beschreibe, was zusammen auftrat – nicht warum es passiert ist. Nutze „in meiner Stichprobe“.",
+                "wording_help": "Nicht: „Support macht Exits erfolgreicher.“ Besser: „In meiner Stichprobe trat ein kontrollierter Exit bei vorhandenem Support häufiger auf.“",
+                "summary_min_chars": 20,
+                "alternative_min_chars": 12,
+                "tracker": {
+                  "minObservations": 10,
+                  "minPresent": 3,
+                  "minAbsent": 3,
+                  "recommendedObservations": 14,
+                  "maxObservations": 20,
+                  "supportsGameClock": true,
+                  "supportsSceneCapture": true
+                },
+                "condition_examples": {
+                  "title": "Welche Fragen eignen sich?",
+                  "intro": "Prüfe eine explizite Bedingung am selben Outcome. Nur Zusammenhang beobachten, nicht Ursache behaupten.",
+                  "suitable": [
+                    {
+                      "title": "Forecheckdruck → Exit",
+                      "description": "Gelingt ein kontrollierter Exit häufiger oder seltener, wenn starker Forecheckdruck vorhanden ist?"
+                    },
+                    {
+                      "title": "Support → Entry",
+                      "description": "Tritt ein kontrollierter Entry häufiger auf, wenn eine zweite Support-Ebene vorhanden ist?"
+                    },
+                    {
+                      "title": "Defensive Gap → Entry Stop",
+                      "description": "Wird ein Entry häufiger früh gestoppt, wenn der Defender bereits vor der Blue Line einen engen Gap hält?"
+                    },
+                    {
+                      "title": "Net-Front Traffic → Shot Through",
+                      "description": "Erreicht ein Abschluss häufiger das Tor, wenn Net-Front-Traffic vorhanden ist?"
+                    },
+                    {
+                      "title": "Weak-Side Support → Exit",
+                      "description": "Gelingt ein kontrollierter Exit häufiger, wenn Weak-Side-Support verfügbar ist?"
+                    },
+                    {
+                      "title": "Early F1 Pressure → Turnover",
+                      "description": "Entsteht häufiger ein Turnover, wenn F1 früh Druck erzeugt?"
+                    }
+                  ],
+                  "unsuitable_title": "Weniger geeignet",
+                  "unsuitable": [
+                    "Warum verliert das Team unter Druck den Puck?",
+                    "Ist aggressiver Forecheck besser?",
+                    "Was verursacht erfolgreiche Entries?",
+                    "Hat der Coach deswegen angepasst?",
+                    "Welche Spielweise gewinnt mehr?"
+                  ],
+                  "footer": "Diese Fragen sind kausal, wertend oder zu unscharf für D3."
+                }
+              },
+              "sceneSlug": "Conditional-Outcome"
+            },
+            {
+              "id": "E3_D4",
+              "title": "Wie stark trägt die Evidenz?",
+              "drill_type": "evidence_assessment",
+              "description": "Eine auffällige Zahl ist noch keine starke Evidenz. Du bewertest kleine Übungsfälle: Wie tragfähig ist die Stichprobe, wie vergleichbar waren die Situationen, welche Gegenbeispiele gibt es – und welche Aussage wäre damit noch vertretbar?",
+              "didactics": {
+                "explanation": "Großer Unterschied heißt nicht automatisch starke Evidenz. Nicht die Zahl allein zählt, sondern wie sauber sie zustande gekommen ist.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wie groß und wie ausgewogen ist das Sample?",
+                    "Wie vergleichbar sind die Gruppen außer der geprüften Dimension?",
+                    "Welche Gegenbeispiele relativieren die Aussage?",
+                    "Wie klar ist der beobachtete Unterschied wirklich?",
+                    "Wie sauber waren Opportunity, Bedingung und Outcome definiert?"
+                  ],
+                  "how_to_decide": [
+                    "Beurteile jede Dimension getrennt, bevor du ein Gesamturteil bildest",
+                    "Bilde das Gesamturteil selbst – die App rechnet keinen Score",
+                    "Wähle die stärkste noch vertretbare Formulierung",
+                    "Markiere, welche Aussage bereits zu stark wäre"
+                  ],
+                  "ignore": [
+                    "p-Werte, Signifikanz oder Konfidenzintervalle",
+                    "Automatische wissenschaftliche Sicherheit",
+                    "Kausale Beweise aus kleinen Samples",
+                    "Ob deine Kategorie „richtig“ ist"
+                  ]
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob der Nutzer Evidenzstärke aus mehreren Dimensionen statt nur aus einem Prozentunterschied beurteilt.",
+                  "Achte darauf, ob kleine Samples überschätzt werden.",
+                  "Prüfe, ob schlechte Vergleichbarkeit berücksichtigt wurde.",
+                  "Gegenbeispiele sollen die Aussage differenzieren, nicht automatisch widerlegen.",
+                  "Achte darauf, ob die finale Aussage zur selbst eingeschätzten Evidenzstärke passt.",
+                  "Keine statistische Signifikanz oder wissenschaftliche Sicherheit behaupten.",
+                  "Bevorzuge qualitative Formulierungen wie 'Hinweis', 'ordentlich gestützt' oder 'in dieser Stichprobe'."
+                ],
+                "learning_hint": "Je stärker deine Aussage, desto sauberer muss ihre Evidenzbasis sein."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
                   {
-                    "key": "statement_type",
-                    "type": "radio",
-                    "label": "Aussagetyp",
-                    "options": [
-                      "kontrolle",
-                      "risiko",
-                      "entwicklung"
+                    "when": {},
+                    "questions": [
+                      "Welche Dimension hat deine Einschätzung der Evidenz am stärksten verändert?"
                     ]
-                  },
-                  {
-                    "key": "confidence",
-                    "type": "radio",
-                    "label": "Sicherheit deiner Aussage",
-                    "options": [
-                      "hoch",
-                      "mittel",
-                      "niedrig"
-                    ]
-                  },
-                  {
-                    "key": "note",
-                    "type": "text",
-                    "label": "Formuliere deine Aussage (klar, prüfbar)",
-                    "max_chars": 1500
                   }
                 ]
               },
-              "sceneSlug": "Meaning-Derive"
+              "config": {
+                "mechanic": "evidence_assessment",
+                "decision_rule": "Großer Unterschied heißt nicht automatisch starke Evidenz.",
+                "core_hint": "Je stärker deine Aussage, desto sauberer muss ihre Evidenzbasis sein.",
+                "sample_limit_note": "Bei kleinen Samples verändert eine einzelne Observation die Rate stark.",
+                "statement_hint": "Bleib bei der Stichprobe. Behaupte keine Ursache.",
+                "cases": [
+                  "thin_sample",
+                  "small_difference",
+                  "poor_comparability",
+                  "solid_picture"
+                ]
+              },
+              "sceneSlug": "Evidence-Assessment"
+            },
+            {
+              "id": "E3_D5",
+              "title": "Von Daten zur belastbaren Aussage",
+              "drill_type": "claim_ladder",
+              "description": "Du hast gezählt, verglichen und deine Evidenz geprüft. Jetzt kommt der wichtigste Schritt: Wie weit darf deine Aussage gehen? Eine gute Analyse klingt nicht maximal selbstsicher. Sie ist genau so stark formuliert, wie die vorhandene Evidenz es erlaubt.",
+              "didactics": {
+                "explanation": "Deine Sprache darf nie stärker sein als deine Evidenz. Eine gute Analyse benennt nicht nur, was sie zeigt, sondern auch, was sie noch nicht zeigen kann.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Was zeigen die Zahlen rein deskriptiv?",
+                    "Bis zu welcher Aussagestärke trägt die Evidenz?",
+                    "Was begrenzt die Aussage am stärksten?",
+                    "Welche Beobachtung widerspricht am klarsten?",
+                    "Welche nächste Beobachtung würde die Aussage stärken oder widerlegen?"
+                  ],
+                  "how_to_decide": [
+                    "Halte Evidence Strength und Claim Ceiling getrennt",
+                    "Wähle selbst die maximale Claim-Stufe – die App rechnet sie nicht",
+                    "Priorisiere eine primäre Limitation",
+                    "Formuliere die Aussage selbst, ohne automatischen Text"
+                  ],
+                  "ignore": [
+                    "Automatische Kausalität",
+                    "Allgemeine Teamwahrheiten aus einem Mini-Sample",
+                    "p-Werte oder wissenschaftliche Sicherheit",
+                    "Ob deine Claim-Stufe die einzig richtige ist"
+                  ]
+                },
+                "reflectionGuidance": [
+                  "Prüfe, ob die Stärke der finalen Aussage zur selbst eingeschätzten Evidenzstärke passt.",
+                  "Achte darauf, ob der Nutzer von Beschreibung oder Vergleich zu einer unbegründeten Generalisierung springt.",
+                  "Prüfe besonders kausale Formulierungen, die aus rein beobachteten Zusammenhängen abgeleitet werden.",
+                  "Die Analyse soll mindestens eine relevante Limitation benennen.",
+                  "Gegenbeispiele sollen transparent berücksichtigt werden.",
+                  "Achte darauf, ob der Nutzer klar zwischen 'in dieser Stichprobe', 'Hinweis/Tendenz', 'allgemein' und 'Ursache' unterscheidet.",
+                  "Der nächste Beobachtungsschritt sollte konkret beschreiben, welche Evidenz die Aussage stärken oder widerlegen könnte.",
+                  "Keine taktische Wahrheit behaupten, da kein Video vorliegt."
+                ],
+                "learning_hint": "Sag auch, was deine Daten nicht zeigen können."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Was hat deine finale Formulierung am stärksten begrenzt?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "mechanic": "claim_ladder",
+                "schemaVersion": 1,
+                "decision_rule": "Deine Sprache darf nie stärker sein als deine Evidenz.",
+                "core_hint": "Sag auch, was deine Daten nicht zeigen können.",
+                "claim_hint": "Wähle die höchste Stufe, die diese Stichprobe noch trägt – nicht die selbstsicherste.",
+                "cases": [
+                  "support_exits",
+                  "thin_overlap",
+                  "clear_gap"
+                ]
+              },
+              "sceneSlug": "Evidence-Profile"
             }
           ]
         },

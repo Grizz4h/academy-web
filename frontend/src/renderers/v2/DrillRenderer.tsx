@@ -9,6 +9,11 @@ import { ChangeTimelineDrill } from "../../features/changeTimeline/ChangeTimelin
 import { TriggerHypothesisDrill } from "../../features/triggerHypothesis/TriggerHypothesisDrill";
 import { InteractionChainDrill } from "../../features/interactionChain/InteractionChainDrill";
 import { AdjustmentProfileDrill } from "../../features/adjustmentProfile/AdjustmentProfileDrill";
+import { OpportunityRateDrill } from "../../features/opportunityRate/OpportunityRateDrill";
+import { CohortRateCompareDrill } from "../../features/cohortRateCompare/CohortRateCompareDrill";
+import { ConditionalOutcomeDrill } from "../../features/conditionalOutcome/ConditionalOutcomeDrill";
+import { EvidenceAssessmentDrill } from "../../features/evidenceAssessment/EvidenceAssessmentDrill";
+import { ClaimLadderDrill } from "../../features/claimLadder/ClaimLadderDrill";
 import FoundationLessonDrill from "../../features/foundation/FoundationLessonDrill";
 
 interface DrillRendererV2Props {
@@ -372,6 +377,21 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 		case "adjustment_profile":
 		case "multi_change_synthesis":
 			return <AdjustmentProfileDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "opportunity_rate":
+		case "rate_definition":
+		case "opportunity_tracker":
+			return <OpportunityRateDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "cohort_rate_compare":
+		case "sample_compare":
+			return <CohortRateCompareDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "conditional_outcome_compare":
+		case "condition_outcome_matrix":
+			return <ConditionalOutcomeDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "evidence_assessment":
+			return <EvidenceAssessmentDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+		case "claim_ladder":
+		case "evidence_profile":
+			return <ClaimLadderDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
 		case "observation_log_drill":
 		case "impact_classification_observation":
 		case "support_classification_observation":

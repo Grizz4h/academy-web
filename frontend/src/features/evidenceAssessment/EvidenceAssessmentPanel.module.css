@@ -1,0 +1,67 @@
+.root {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 8.5rem) minmax(0, 1fr) auto;
+  gap: 0.55rem 0.75rem;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.seg {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.segOn {
+  background: rgba(45, 212, 191, 0.78);
+}
+
+.value {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.78);
+  text-align: right;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.65);
+}
+
+@media (max-width: 520px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .value {
+    text-align: left;
+  }
+}

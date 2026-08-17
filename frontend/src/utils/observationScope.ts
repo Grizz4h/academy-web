@@ -10,6 +10,9 @@ export const ACTIVE_PERIODS_BY_SCOPE: Record<ObservationScope, PeriodPhase[]> = 
   LESSON: ['P1'],
 }
 
+/** Session-Setup startet auf einem Drittel, nicht auf dem ganzen Spiel. */
+export const DEFAULT_OBSERVATION_SCOPE: ObservationScope = 'P1'
+
 export const OBSERVATION_SCOPE_OPTIONS: Array<{ value: ObservationScope; label: string }> = [
   { value: 'FULL_GAME', label: 'Gesamtes Spiel' },
   { value: 'P1', label: '1. Drittel' },

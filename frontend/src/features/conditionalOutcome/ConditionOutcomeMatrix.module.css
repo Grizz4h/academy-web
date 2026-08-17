@@ -1,0 +1,77 @@
+.wrap {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+  padding-bottom: 0.45rem;
+}
+
+.table th,
+.table td {
+  padding: 0.55rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  font-size: 0.88rem;
+  color: #f1f5f9;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.table th[scope='col'],
+.corner {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.table th[scope='row'] {
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: rgba(226, 232, 240, 0.92);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.unclear {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.unclear p {
+  margin: 0;
+}
+
+.unclearTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(253, 230, 138, 0.95);
+}
+
+.unclearNote {
+  color: rgba(226, 232, 240, 0.65);
+  line-height: 1.4;
+}

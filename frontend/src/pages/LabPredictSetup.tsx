@@ -7,6 +7,7 @@ import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { defaultDelSetupSeason, isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
+import { DEFAULT_OBSERVATION_SCOPE } from '../utils/observationScope'
 import type { PredictionTemplate } from '../features/lab/types'
 import { PredictionTemplatePicker } from '../features/lab/PredictComponents'
 import { LiveObservationPanel, type LiveObservationFields } from '../components/game/LiveObservationPanel'
@@ -20,13 +21,13 @@ export default function LabPredictSetup() {
   const [templateId, setTemplateId] = useState<string>('')
   const [fields, setFields] = useState<LiveObservationFields>({
     league: 'DEL',
-    season: '',
+    season: defaultDelSetupSeason(),
     competitionPhase: '',
     competitionValue: '',
     teamHome: '',
     teamAway: '',
     observedTeam: '',
-    observationScope: 'FULL_GAME',
+    observationScope: DEFAULT_OBSERVATION_SCOPE,
   })
 
   const { data: labContent, isLoading: isLabContentLoading } = useQuery({

@@ -46,6 +46,7 @@ export default function Drills() {
               <MechanicGlyph
                 drillType={drill.drill_type}
                 mode={drill.config?.mode}
+                mechanic={drill.config?.mechanic}
                 showLabel
               />
               <GlossaryTerm term={drill.title.toLowerCase()}>{drill.title}</GlossaryTerm>

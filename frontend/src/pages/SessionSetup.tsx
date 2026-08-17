@@ -10,7 +10,7 @@ import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
-import { type ObservationScope } from '../utils/observationScope'
+import { DEFAULT_OBSERVATION_SCOPE, type ObservationScope } from '../utils/observationScope'
 import {
   defaultDelSetupSeason,
   isSplitSeasonLeague,
@@ -92,10 +92,10 @@ export default function SessionSetup() {
   const [league, setLeague] = useState<string>('DEL')
   const [teamHome, setTeamHome] = useState<string>('')
   const [teamAway, setTeamAway] = useState<string>('')
-  const [season, setSeason] = useState<string>('')
+  const [season, setSeason] = useState<string>(() => defaultDelSetupSeason())
   const [competitionPhase, setCompetitionPhase] = useState<string>('')
   const [competitionValue, setCompetitionValue] = useState<string>('')
-  const [observationScope, setObservationScope] = useState<ObservationScope>('FULL_GAME')
+  const [observationScope, setObservationScope] = useState<ObservationScope>(DEFAULT_OBSERVATION_SCOPE)
   const [selectedGameId, setSelectedGameId] = useState<string>('')
   const [devMode, setDevMode] = useState(() => isDevNavEnabled())
   const [dummyError, setDummyError] = useState('')
@@ -145,7 +145,6 @@ export default function SessionSetup() {
       // URL ?drill= wins over draft when deep-linking from Home / Drills
       const queryDrill = (searchParams.get('drill') || '').trim()
       if (parsed.selectedDrill && !queryDrill) setSelectedDrill(parsed.selectedDrill)
-      if (parsed.observationScope) setObservationScope(parsed.observationScope)
       if (parsed.selectedGameId) setSelectedGameId(parsed.selectedGameId)
     } catch (e) {
       console.warn('Draft konnte nicht geladen werden', e)
@@ -985,6 +984,7 @@ export default function SessionSetup() {
                     <MechanicGlyph
                       drillType={drill.drill_type}
                       mode={drill.config?.mode}
+                      mechanic={drill.config?.mechanic}
                       showLabel
                     />
                     <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>

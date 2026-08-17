@@ -2,7 +2,7 @@ import { api } from '../api'
 import type { Curriculum, GameInfo, Session } from '../api'
 import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
-import { SEASON_OPTIONS } from '../stats/seasonNormalization'
+import { defaultDelSetupSeason } from '../stats/seasonNormalization'
 import { getSessionRoute } from '../features/lab/sessionRouting'
 import { isDummySession } from '../utils/sessionEligibility'
 
@@ -62,7 +62,7 @@ export function findDrillModuleRef(
 
 function buildValidDevGameInfo(): { gameInfo: GameInfo; observedTeam: string } {
 	const league = 'DEL'
-	const season = SEASON_OPTIONS[0] || '2025/26'
+	const season = defaultDelSetupSeason()
 	const teams = getTeamNamesForLeague(league, season)
 	const teamHome = teams[1] || teams[0] || 'Adler Mannheim'
 	const teamAway = teams.find((name) => name !== teamHome) || teams[0] || 'EHC Red Bull München'

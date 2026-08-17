@@ -1,0 +1,52 @@
+.layout {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+}
+
+.practiceTag {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(245, 158, 11, 0.1);
+  color: rgba(253, 230, 138, 0.95);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.notes {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.3rem;
+  color: rgba(226, 232, 240, 0.8);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.feedback {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 116, 144, 0.12);
+  color: rgba(226, 232, 240, 0.95);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.reviewList {
+  display: grid;
+  gap: 1rem;
+}

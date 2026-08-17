@@ -1,0 +1,76 @@
+.empty {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.row {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.body {
+  min-width: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.meta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.outcome {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #f1f5f9;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: rgba(226, 232, 240, 0.68);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.actionBtn {
+  appearance: none;
+  min-height: 44px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: transparent;
+  color: rgba(226, 232, 240, 0.9);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .actionBtn:hover {
+    border-color: rgba(45, 212, 191, 0.45);
+  }
+}

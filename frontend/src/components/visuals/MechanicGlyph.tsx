@@ -77,32 +77,49 @@ const LABELS: Record<MechanicKind, string> = Object.fromEntries(
   Object.entries(MECHANIC_INFO).map(([key, value]) => [key, value.label]),
 ) as Record<MechanicKind, string>
 
-/** Map drill_type + optional config.mode to a mechanic kind. */
-export function resolveMechanicKind(drillType?: string | null, mode?: string | null): MechanicKind {
-  const type = String(drillType || '').toLowerCase()
-  const m = String(mode || '').toLowerCase()
+/** Map drill_type + optional config.mode / config.mechanic to a mechanic kind. */
+export function resolveMechanicKind(
+  drillType?: string | null,
+  mode?: string | null,
+  mechanic?: string | null,
+): MechanicKind {
+  const type = [drillType, mode, mechanic].filter(Boolean).join(' ').toLowerCase()
 
-  if (type.includes('paintable') || m.includes('paint')) return 'paint'
-  if (m.includes('directional_path') || m.includes('path_observation') || type.includes('path')) return 'path'
-  if (m.includes('defensive_structure') || m.includes('formation') || m.includes('placement')) return 'placement'
-  if (m.includes('single_marker') || m.includes('marker')) return 'marker'
+  if (type.includes('paintable') || type.includes('paint')) return 'paint'
+  if (type.includes('directional_path') || type.includes('path_observation') || type.includes('path')) return 'path'
+  if (type.includes('defensive_structure') || type.includes('formation') || type.includes('placement')) return 'placement'
+  if (type.includes('single_marker') || type.includes('marker')) return 'marker'
   if (
     type.includes('zone')
     || type.includes('corridor')
-    || m.includes('zone')
-    || m.includes('corridor')
-    || m.includes('semantic_zone')
-    || m.includes('blue_line')
+    || type.includes('semantic_zone')
+    || type.includes('blue_line')
   ) {
     return 'zone'
+  }
+  if (
+    type.includes('opportunity_rate')
+    || type.includes('rate_definition')
+    || type.includes('opportunity_tracker')
+    || type.includes('cohort_rate_compare')
+    || type.includes('sample_compare')
+    || type.includes('conditional_outcome')
+    || type.includes('condition_outcome_matrix')
+  ) {
+    return 'log'
+  }
+  if (type.includes('claim_ladder') || type.includes('evidence_profile')) {
+    return 'profile'
+  }
+  if (type.includes('evidence_assessment') || type.includes('assessment')) {
+    return 'choice'
   }
   if (
     type.includes('classification')
     || type.includes('period_checkin')
     || type.includes('role_identification')
     || type.includes('triangle')
-    || m.includes('diagnosis')
-    || m.includes('assessment')
+    || type.includes('diagnosis')
   ) {
     return 'choice'
   }
@@ -141,6 +158,7 @@ type MechanicGlyphProps = {
   kind?: MechanicKind
   drillType?: string | null
   mode?: string | null
+  mechanic?: string | null
   size?: 'sm' | 'md'
   showLabel?: boolean
   className?: string
@@ -232,12 +250,13 @@ export function MechanicGlyph({
   kind,
   drillType,
   mode,
+  mechanic,
   size = 'sm',
   showLabel = false,
   className,
   explainable = true,
 }: MechanicGlyphProps) {
-  const resolved = kind || resolveMechanicKind(drillType, mode)
+  const resolved = kind || resolveMechanicKind(drillType, mode, mechanic)
   const info = MECHANIC_INFO[resolved]
   const [open, setOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)

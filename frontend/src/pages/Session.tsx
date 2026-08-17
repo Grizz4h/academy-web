@@ -38,6 +38,26 @@ import {
   resolveAdjustmentProfileConfig,
   validateAdjustmentProfileAnswers,
 } from '../features/adjustmentProfile/profileLogic'
+import {
+  resolveOpportunityRateConfig,
+  validateOpportunityRateAnswers,
+} from '../features/opportunityRate/rateLogic'
+import {
+  resolveCohortRateCompareConfig,
+  validateCohortRateCompareAnswers,
+} from '../features/cohortRateCompare/compareLogic'
+import {
+  resolveConditionalOutcomeConfig,
+  validateConditionalOutcomeAnswers,
+} from '../features/conditionalOutcome/conditionLogic'
+import {
+  resolveEvidenceAssessmentConfig,
+  validateEvidenceAssessmentAnswers,
+} from '../features/evidenceAssessment/evidenceLogic'
+import {
+  resolveClaimLadderConfig,
+  validateClaimLadderAnswers,
+} from '../features/claimLadder/claimLogic'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -897,6 +917,50 @@ export default function SessionPage() {
         return 'Bitte schließe das Adjustment-Profil vollständig ab.'
       }
       return validateAdjustmentProfileAnswers(cfg, answers || {})
+    }
+
+    if (
+      drill.drill_type === 'opportunity_rate'
+      || drill.drill_type === 'rate_definition'
+      || drill.drill_type === 'opportunity_tracker'
+    ) {
+      const cfg = resolveOpportunityRateConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Opportunity-Rate-Auswertung vollständig ab.'
+      }
+      return validateOpportunityRateAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'cohort_rate_compare' || drill.drill_type === 'sample_compare') {
+      const cfg = resolveCohortRateCompareConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe den Gruppenvergleich vollständig ab.'
+      }
+      return validateCohortRateCompareAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'conditional_outcome_compare' || drill.drill_type === 'condition_outcome_matrix') {
+      const cfg = resolveConditionalOutcomeConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Bedingungs-Auswertung vollständig ab.'
+      }
+      return validateConditionalOutcomeAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'evidence_assessment') {
+      const cfg = resolveEvidenceAssessmentConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe das Evidence Assessment vollständig ab.'
+      }
+      return validateEvidenceAssessmentAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'claim_ladder' || drill.drill_type === 'evidence_profile') {
+      const cfg = resolveClaimLadderConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Aussage-Synthese vollständig ab.'
+      }
+      return validateClaimLadderAnswers(cfg, answers || {})
     }
 
     if (drill.drill_type === 'period_checkin' && drill?.config?.validate_answers === true) {

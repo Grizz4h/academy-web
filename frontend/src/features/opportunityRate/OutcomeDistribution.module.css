@@ -1,0 +1,71 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.compact {
+  gap: 0.4rem;
+}
+
+.row {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.65rem;
+  align-items: baseline;
+}
+
+.label {
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.92);
+  line-height: 1.3;
+}
+
+.count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.55);
+}
+
+.target .fill {
+  background: rgba(45, 212, 191, 0.8);
+}
+
+.target .label {
+  color: #ccfbf1;
+  font-weight: 650;
+}
+
+.unclear .fill {
+  background: rgba(251, 191, 36, 0.55);
+}
+
+.compact .label,
+.compact .count {
+  font-size: 0.78rem;
+}
+
+.compact .track {
+  height: 0.35rem;
+}
