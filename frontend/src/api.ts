@@ -228,6 +228,7 @@ export interface Session {
   dev_seed_version?: number
   game_id?: string
   ai_reflection?: import('./features/reflection/types').StoredAiReflection
+  location_verification?: import('./data/venues/types').SessionLocationVerification
 }
 
 export type DataQuality = 'verified' | 'plausible' | 'incomplete' | 'suspicious'
@@ -289,6 +290,9 @@ export interface CatalogGame {
   away_team_id: string
   home_team_name?: string
   away_team_name?: string
+  /** Optional explicit venue. Falls back to the home team's default arena. */
+  venue_id?: string | null
+  venueId?: string | null
   status: 'scheduled' | 'live' | 'final' | string
   score?: GameScore | null
   stats?: CatalogGameStats | null
@@ -339,6 +343,8 @@ export interface GameInfo {
   team?: string
   team_home: string
   team_away: string
+  home_team_id?: string
+  away_team_id?: string
   date: string
   observed_team?: string
   observed_team_id?: string
@@ -682,6 +688,7 @@ export interface RewardApplyRequest {
   processed_event_ids?: string[]
   challenge_progress?: Record<string, unknown>
   challenge_rotation?: Record<string, unknown> | null
+  venue_visits?: Record<string, unknown> | null
 }
 
 export interface RewardApplyResponse {
@@ -959,7 +966,7 @@ export const api = {
     return res.json()
   },
 
-  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; game_id?: string; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string; is_dummy?: boolean; isDummy?: boolean; dev_seed_version?: number }): Promise<Session> => {
+  createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; game_id?: string; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string; is_dummy?: boolean; isDummy?: boolean; dev_seed_version?: number; location_verification?: import('./data/venues/types').SessionLocationVerification }): Promise<Session> => {
     const res = await fetch(buildUrl('/sessions'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },

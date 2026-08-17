@@ -101,13 +101,21 @@ export const COLLECTIONS: CollectionDefinition[] = [
     visibility: 'visible',
   },
   {
+    id: 'arena_passport',
+    name: 'Arena Passport',
+    description: 'Hallen, in denen du wirklich mit RINK Tank dabei warst. Prototype — später Patches, Tickets, Road Trips.',
+    itemIds: ['title_home_ice', 'title_on_the_road', 'title_first_visit'],
+    completionRewards: [{ type: 'pux', amount: 80 }],
+    visibility: 'visible',
+  },
+  {
     id: 'wasteland',
     name: 'Wasteland',
     description: 'Schrottplatz-Rink. Rost, Staub, ein Puck der schon zu viel überlebt hat. Prototype-Art.',
     artworkAssetId: 'wasteland',
     itemIds: ['puck_wasteland_scrap'],
     completionRewards: [{ type: 'pux', amount: 40 }],
-    visibility: 'visible',
+    visibility: 'secret',
   },
 ]
 

@@ -25,6 +25,7 @@ import {
 } from '../../progression'
 import { contentRegistry } from '../../../content/registry'
 import type { MatchdayContext } from '../../progression/challenges/types'
+import { applyVenuePresenceToEvents } from '../../location/visits'
 import { createEmptyRewardState, type RewardEvaluationResult, type RewardEvent, type RewardState } from '../types'
 
 type RewardContextValue = {
@@ -54,6 +55,7 @@ type RewardContextValue = {
   }) => Promise<void>
   syncChallengeBoard: (input?: { matchday?: MatchdayContext | null }) => Promise<void>
   bootstrapStatus: 'idle' | 'running' | 'done' | 'error'
+  rewardStateLoaded: boolean
 }
 
 const RewardContext = createContext<RewardContextValue | undefined>(undefined)
@@ -221,6 +223,7 @@ function normalizeRewardState(state: any): RewardState {
     progressionPuxGranted: Number(state?.progressionPuxGranted || 0),
     challengeProgress: (state && state.challengeProgress) || {},
     challengeRotation: (state && state.challengeRotation) || null,
+    venueVisits: (state && state.venueVisits) || {},
   }
 }
 
@@ -424,10 +427,12 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       if (!events.length) return
       const showToasts = options?.showToasts !== false
       const current = rewardStateRef.current
+      const presence = applyVenuePresenceToEvents(events, current.venueVisits || {})
+      const workingEvents = presence.events
       const slice = toProgressionSlice(current)
-      const { state: nextSlice, aggregate } = processActivityEventBatch(slice, events)
+      const { state: nextSlice, aggregate } = processActivityEventBatch(slice, workingEvents)
       const challengeResult = evaluateChallenges({
-        events,
+        events: workingEvents,
         definitions: contentRegistry.challenges,
         pools: contentRegistry.pools,
         campaigns: contentRegistry.campaigns,
@@ -463,8 +468,9 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         challengeResult.unlockedCosmetics.length ||
         collectionResult.unlockedCosmetics.length
       const hasChallenge = challengeResult.changed || challengeResult.processedEventIds.length
+      const hasVenueVisits = presence.changed
 
-      if (!hasProgression && !hasChallenge) {
+      if (!hasProgression && !hasChallenge && !hasVenueVisits) {
         if (Object.keys(nextSlice.processedEvents).length !== Object.keys(slice.processedEvents).length) {
           setRewardState((previous) => ({
             ...previous,
@@ -521,6 +527,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
           })),
           challenge_progress: challengeResult.progress,
           challenge_rotation: challengeResult.rotation,
+          venue_visits: presence.visits,
           skip_idempotency: !hasProgression,
         })
 
@@ -540,6 +547,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         }
         normalized.challengeProgress = challengeResult.progress
         normalized.challengeRotation = challengeResult.rotation
+        normalized.venueVisits = presence.visits
         for (const unlock of aggregate.unlockedAchievements) {
           if (!normalized.unlockedAchievements[unlock.achievementId]) {
             normalized.unlockedAchievements[unlock.achievementId] = {
@@ -587,6 +595,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
           unlockHistory: [...unlockHistory, ...previous.unlockHistory].slice(0, 100),
           challengeProgress: challengeResult.progress,
           challengeRotation: challengeResult.rotation,
+          venueVisits: presence.visits,
         }))
         if (showToasts && rewardEvents.length > 0) {
           enqueueRewards(
@@ -999,6 +1008,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
 
   const syncChallengeBoard = useCallback(
     async (input?: { matchday?: MatchdayContext | null }) => {
+      if (!rewardStateLoaded) return
       const current = rewardStateRef.current
       const result = evaluateChallenges({
         events: [],
@@ -1040,7 +1050,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         console.error('syncChallengeBoard failed', err)
       }
     },
-    [user],
+    [user, rewardStateLoaded],
   )
 
   const value = useMemo(
@@ -1060,6 +1070,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       evaluateLockerMetaProgress,
       syncChallengeBoard,
       bootstrapStatus,
+      rewardStateLoaded,
     }),
     [
       rewardState,
@@ -1077,6 +1088,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       evaluateLockerMetaProgress,
       syncChallengeBoard,
       bootstrapStatus,
+      rewardStateLoaded,
     ],
   )
 

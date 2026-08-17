@@ -27,12 +27,133 @@ export function findGamesForTeams(games: CatalogGame[], home: string, away: stri
   return games.filter((game) => gameMatchesTeamNames(game, home, away))
 }
 
+export type PlayoffSeries = {
+  key: string
+  homeId: string
+  awayId: string
+  homeName: string
+  awayName: string
+  games: CatalogGame[]
+}
+
+function seriesPairKey(left: string, right: string): string {
+  return [left, right].sort().join('|')
+}
+
+export function groupPlayoffSeries(games: CatalogGame[]): PlayoffSeries[] {
+  const buckets = new Map<string, CatalogGame[]>()
+  for (const game of games) {
+    const key = seriesPairKey(game.home_team_id, game.away_team_id)
+    const list = buckets.get(key) || []
+    list.push(game)
+    buckets.set(key, list)
+  }
+  return Array.from(buckets.entries())
+    .map(([key, list]) => {
+      const gamesInSeries = [...list].sort((left, right) => {
+        const matchday = (left.matchday ?? 0) - (right.matchday ?? 0)
+        if (matchday !== 0) return matchday
+        return String(left.date || '').localeCompare(String(right.date || ''))
+      })
+      const first = gamesInSeries[0]
+      return {
+        key,
+        homeId: first.home_team_id,
+        awayId: first.away_team_id,
+        homeName: first.home_team_name || first.home_team_id,
+        awayName: first.away_team_name || first.away_team_id,
+        games: gamesInSeries,
+      }
+    })
+    .sort((left, right) => String(left.games[0]?.date || '').localeCompare(String(right.games[0]?.date || '')))
+}
+
+export function seriesMatchesTeams(series: PlayoffSeries, home: string, away: string): boolean {
+  return series.games.some((game) => gameMatchesTeamNames(game, home, away))
+}
+
+export function seriesWinCounts(series: PlayoffSeries): { home: number; away: number; played: number } {
+  let home = 0
+  let away = 0
+  let played = 0
+  for (const game of series.games) {
+    if (!game.score) continue
+    played += 1
+    const homeWon = game.score.home > game.score.away
+    const winnerId = homeWon ? game.home_team_id : game.away_team_id
+    if (winnerId === series.homeId) home += 1
+    else if (winnerId === series.awayId) away += 1
+  }
+  return { home, away, played }
+}
+
 export function uniqueMatchdays(games: CatalogGame[]): number[] {
   const days = new Set<number>()
   for (const game of games) {
     if (game.matchday != null) days.add(game.matchday)
   }
   return Array.from(days).sort((a, b) => a - b)
+}
+
+/** Nächster Spieltag: heute, sonst nächstes Spiel, sonst zuletzt gespielt — nie einfach die höchste Nummer. */
+export function inferFocusMatchday(
+  games: CatalogGame[],
+  options?: { selectedGame?: CatalogGame | null; today?: string },
+): number | 'other' | null {
+  const selected = options?.selectedGame
+  if (selected?.matchday != null) return selected.matchday
+  if (selected && selected.matchday == null) return 'other'
+
+  const today = options?.today ?? localTodayIsoDate()
+  const todayMatchday = uniqueMatchdays(games.filter((game) => game.date === today))[0]
+  if (todayMatchday != null) return todayMatchday
+
+  const dated = games.filter((game) => Boolean(game.date))
+  const byDateThenMatchday = (left: CatalogGame, right: CatalogGame) => {
+    const dateCmp = String(left.date).localeCompare(String(right.date))
+    if (dateCmp !== 0) return dateCmp
+    return (left.matchday ?? 0) - (right.matchday ?? 0)
+  }
+
+  const upcoming = dated.filter((game) => String(game.date) >= today).sort(byDateThenMatchday)
+  if (upcoming[0]) return upcoming[0].matchday ?? 'other'
+
+  const past = dated.filter((game) => String(game.date) < today).sort((a, b) => byDateThenMatchday(b, a))
+  if (past[0]) return past[0].matchday ?? 'other'
+
+  const known = uniqueMatchdays(games)
+  if (known.length > 0) return known[0]
+  if (games.some((game) => game.matchday == null)) return 'other'
+  return null
+}
+
+/** Aktueller Spieltag: letzter, der schon begonnen hat (erstes Datum ≤ heute), sonst der erste. */
+export function inferCurrentMatchday(
+  games: CatalogGame[],
+  options?: { today?: string },
+): number | null {
+  const today = options?.today ?? localTodayIsoDate()
+  const starts = new Map<number, string>()
+  for (const game of games) {
+    if (game.matchday == null || !game.date) continue
+    const existing = starts.get(game.matchday)
+    if (!existing || game.date < existing) starts.set(game.matchday, game.date)
+  }
+  if (starts.size === 0) {
+    return uniqueMatchdays(games)[0] ?? null
+  }
+
+  let current: number | null = null
+  for (const [matchday, start] of starts) {
+    if (start > today) continue
+    if (current == null || matchday > current) current = matchday
+  }
+  if (current != null) return current
+  return Math.min(...starts.keys())
+}
+
+export function playoffSlotHasDate(games: CatalogGame[], slot: number): boolean {
+  return games.some((game) => game.matchday === slot && Boolean(game.date))
 }
 
 export function pairingMeetings(
@@ -106,7 +227,8 @@ export function findCatalogGameForPairing(
   return pickCatalogGameMatch(matches)
 }
 
-export function formatGameScoreShort(game: CatalogGame): string {
+export function formatGameScoreShort(game: CatalogGame, hideSpoilers = false): string {
+  if (hideSpoilers && (game.score || game.status === 'final')) return 'gespielt'
   if (game.score) return `${game.score.home}:${game.score.away}`
   if (game.status === 'final') return 'n/V'
   return '–'
@@ -410,14 +532,17 @@ export function formatCatalogGameOptionLabel(game: CatalogGame): string {
       year: 'numeric',
     })
     : ''
-  const matchday = game.matchday != null ? `Spieltag ${game.matchday}` : ''
+  const matchday = game.matchday != null
+    ? `${game.phase_id && game.phase_id !== 'hauptrunde' && game.phase_id !== 'regular_season' && game.phase_id !== 'upcoming' ? 'Spiel' : 'Spieltag'} ${game.matchday}`
+    : ''
   const score = game.score ? ` ${game.score.home}:${game.score.away}` : ''
   const dummy = game.isDummy || game.is_dummy ? ' · DEV · TESTSPIEL' : ''
   return [matchday, date, `${home} – ${away}${score}`].filter(Boolean).join(' · ') + dummy
 }
 
-export function formatGameStatusLabel(game: CatalogGame): string {
+export function formatGameStatusLabel(game: CatalogGame, hideSpoilers = false): string {
   const status = String(game.status || '').toLowerCase()
+  if (hideSpoilers && (status === 'final' || Boolean(game.score))) return 'Gespielt'
   if (status === 'final') {
     if (game.score) return `${game.score.home}:${game.score.away}`
     return 'Endstand'

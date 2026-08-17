@@ -5,6 +5,8 @@ import { COLLECTIONS } from '../features/progression/collections/collectionCatal
 import { COSMETIC_CATALOG } from '../features/progression/cosmetics/cosmeticCatalog'
 import { auditRewardReachability, validateContent } from '../features/progression/challenges/validation'
 import { validateHomeLockerIntegrity } from '../features/progression/tasks/taskViews'
+import { validateVenueCatalog } from '../data/venues'
+import type { CatalogGame } from '../api'
 
 export const contentRegistry = {
   challenges: [...MVP_CHALLENGES, ...MATCHDAY_CHALLENGE_SETS],
@@ -22,7 +24,7 @@ export function getChallenge(id: string) {
   return contentRegistry.challenges.find((item) => item.id === id)
 }
 
-export function runContentValidation() {
+export function runContentValidation(games: CatalogGame[] = []) {
   return [
     ...validateContent({
       challenges: contentRegistry.challenges,
@@ -34,6 +36,13 @@ export function runContentValidation() {
       campaigns: contentRegistry.campaigns,
       pools: contentRegistry.pools,
     }),
+    ...validateVenueCatalog(games).map((issue) => ({
+      severity: issue.severity,
+      code: issue.code,
+      message: issue.message,
+      entityType: 'venue' as const,
+      entityId: issue.venueId || issue.gameId,
+    })),
   ]
 }
 

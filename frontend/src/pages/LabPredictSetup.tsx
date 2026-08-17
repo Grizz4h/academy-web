@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { api, type GameInfo } from '../api'
 import { useUser } from '../context/UserContext'
 import { getTeamNamesForLeague } from '../data/teamsByLeague'
+import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
-import { isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
-import { inferSplitSeasonLabelForDate } from '../stats/seasonNormalization'
+import { defaultDelSetupSeason, isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
 import type { PredictionTemplate } from '../features/lab/types'
 import { PredictionTemplatePicker } from '../features/lab/PredictComponents'
 import { LiveObservationPanel, type LiveObservationFields } from '../components/game/LiveObservationPanel'
@@ -50,6 +50,7 @@ export default function LabPredictSetup() {
     teamAway: fields.teamAway,
     competitionValue: fields.competitionValue,
     selectedGameId: fields.selectedGameId,
+    competitionPhase: fields.competitionPhase,
   })
 
   const { data: teamsResp } = useQuery({
@@ -74,9 +75,9 @@ export default function LabPredictSetup() {
 
   useEffect(() => {
     if (fields.league !== 'DEL' || fields.season) return
-    const inferred = inferSplitSeasonLabelForDate()
-    if (seasonOptions.includes(inferred)) {
-      setFields((prev) => ({ ...prev, season: inferred }))
+    const next = defaultDelSetupSeason(seasonOptions)
+    if (seasonOptions.includes(next)) {
+      setFields((prev) => ({ ...prev, season: next }))
     }
   }, [fields.league, fields.season, seasonOptions])
 
@@ -86,15 +87,18 @@ export default function LabPredictSetup() {
       const next = { ...prev }
       let changed = false
       if (prev.teamHome && !availableTeams.includes(prev.teamHome)) {
-        next.teamHome = ''
+        const resolved = resolveCatalogTeamName(prev.teamHome, prev.league, prev.season)
+        next.teamHome = availableTeams.includes(resolved) ? resolved : ''
         changed = true
       }
       if (prev.teamAway && !availableTeams.includes(prev.teamAway)) {
-        next.teamAway = ''
+        const resolved = resolveCatalogTeamName(prev.teamAway, prev.league, prev.season)
+        next.teamAway = availableTeams.includes(resolved) ? resolved : ''
         changed = true
       }
       if (prev.observedTeam && !availableTeams.includes(prev.observedTeam)) {
-        next.observedTeam = ''
+        const resolved = resolveCatalogTeamName(prev.observedTeam, prev.league, prev.season)
+        next.observedTeam = availableTeams.includes(resolved) ? resolved : ''
         changed = true
       }
       return changed ? next : prev
@@ -223,7 +227,7 @@ export default function LabPredictSetup() {
   }
 
   return (
-    <div className="ui-page-shell" style={{ display: 'grid', gap: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+    <div className="ui-page-shell" style={{ display: 'grid', gap: '1rem', maxWidth: '720px', margin: '0 auto' }}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Lab · Predict Setup</h1>
         <p className="ui-page-lead">Wähle zuerst, was du vorhersagen möchtest. Danach legst du den Spielkontext fest.</p>

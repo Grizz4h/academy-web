@@ -37,6 +37,7 @@ import { selectLevelProgress } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { formatPux } from '../features/rewards/types'
 import { countDummySessions, getRealSessions } from '../utils/sessionEligibility'
+import { getDevLocationScenario, setDevLocationScenario, type DevLocationScenario } from '../features/location'
 import { UiButton, UiButtonLink } from '../components/ui'
 import styles from './DevLab.module.css'
 
@@ -55,6 +56,7 @@ export default function DevLab() {
   const [delSeason, setDelSeason] = useState('2025/26')
   const [statsBatchLimit, setStatsBatchLimit] = useState(5)
   const [statsGameId, setStatsGameId] = useState('')
+  const [locationScenario, setLocationScenario] = useState<DevLocationScenario>(() => getDevLocationScenario())
 
   const appendLog = useCallback((entry: Omit<DevLogEntry, 'id' | 'at'> & { at?: string }) => {
     setLogEntries((prev) => prependDevLogEntry(prev, entry))
@@ -583,6 +585,43 @@ export default function DevLab() {
           <UiButton type="button" size="sm" variant="ghost" onClick={clearDevFlags}>
             Flags löschen
           </UiButton>
+        </div>
+      </section>
+
+      <section className={styles.card}>
+        <h2 className="ui-section-title">DEV → Location</h2>
+        <p className={styles.note}>
+          Simuliert den Arena Check. Schreibt keine echten Rewards und füllt nicht den Arena Passport.
+        </p>
+        <div className={styles.actions}>
+          {(
+            [
+              ['off', 'Aus'],
+              ['inside_home', 'Im Stadion'],
+              ['inside_away', 'Im Stadion (Away-Rolle)'],
+              ['outside', 'Außerhalb'],
+              ['poor_accuracy', 'Schlechte Genauigkeit'],
+              ['denied', 'Permission denied'],
+            ] as Array<[DevLocationScenario, string]>
+          ).map(([id, label]) => (
+            <UiButton
+              key={id}
+              type="button"
+              size="sm"
+              variant={locationScenario === id ? 'primary' : 'secondary'}
+              onClick={() => {
+                setDevLocationScenario(id)
+                setLocationScenario(id)
+                appendLog({
+                  level: 'info',
+                  action: 'Location Sim',
+                  message: `Szenario: ${label}`,
+                })
+              }}
+            >
+              {label}
+            </UiButton>
+          ))}
         </div>
       </section>
 

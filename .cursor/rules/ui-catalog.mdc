@@ -17,16 +17,16 @@ Neue UI zuerst hier + `/dev/ui`. Keine neuen Looks. Bestehende Seiten nicht umba
 | Seite | `ui-page-shell` · `ui-page-header` · `ui-page-title` · `ui-page-lead` · `ui-section-title` |
 | Fläche | `Card` `surface="primary\|section\|nested\|inline"` |
 | Button | `UiButton` / `UiButtonLink` · Paarung `UiActionRow` |
-| Filter | `UiChip` |
+| Filter | `UiChip` · 1–2 Felder: inline `appSelect` · mehr: `FilterSheet` / `UiSheet` |
 | Label | `UiPill` |
 | Balken | `UiProgress` |
 | KPI | `KpiRevealCard` + `TapReveal` |
-| Akkordeon | `.ui-more` / `__summary` / `__chevron` / `__body` |
+| Akkordeon | `.ui-more` / `__summary` / `__chevron` / `__body` — auch „erste N, Rest einklappen“; in einer Fläche: `--flush` |
 | Dialog | `UiSheet` + `UiSheetActions` |
-| Filter-Sheet | `FilterSheet` nur History/Progress |
+| Filter-Sheet | `FilterSheet` nur bei mehreren Feldern (History, Ring) — nicht für 1–2 Selects |
 | Aufgaben-Karte | `LockerTasksPanel` `.card` |
 
-Nicht vereinheitlichen: Drill-Renderer, Session-`.btn`, Locker-Rarity, Tutorial.
+Nicht vereinheitlichen: Drill-Renderer, Session-`.btn`, Locker-Rarity, Tutorial, Session-Setup Beobachtungsmaske (`LiveObservationPanel` — darf lauter sein).
 
 ## Buttons
 
@@ -55,6 +55,23 @@ Auswahl: UiSheetChoice · Zurück: UiSheetBack
 Nicht: eigenes `position: fixed`, `.card` als Modal, Header-X plus Footer-Abbrechen.
 `FilterSheet` nicht mit Action-Sheets mischen.
 
+## Filter
+
+| Felder | Baustein |
+|--------|----------|
+| 1–2 Selects (Liga/Saison) | inline `appSelect` — Desktop und Mobile gleich |
+| mehrere Felder | `FilterSheet` (History) oder `UiSheet` |
+
+Kein extra Filter-Button, der ein altes Overlay außerhalb des Viewports öffnet.
+
+## Einklappen („erste N, Rest“)
+
+Listen mit vielen Kacheln/Zeilen: **6 sichtbar**, Rest in `.ui-more` (Teams, Heatmap-Drills, Achievements). Kein Ghost-Button „weitere …“, kein neues Akkordeon.
+
+In einer bestehenden Karte/Liste: **`.ui-more--flush`** — kein zweiter Rahmen, gleiche Breite wie die sichtbaren Zeilen. Die Karten-Variante nur, wenn das Akkordeon selbst die Fläche ist (`/dev/ui`).
+
+Heatmap: **Wochen**, nicht Tageszellen (letzte 8 Wochen). Tägliche Raster bleiben leer.
+
 ## Tap-to-reveal
 
 Klick = Antwort auf die Frage beim Ansehen. Tote Zahlen vermeiden.
@@ -76,6 +93,10 @@ Schwebende Panels **immer** `AnchoredPopover`: Portal auf `document.body`, `posi
 Nicht: `position: absolute` am Trigger. Das läuft auf Mobile aus dem Bildschirm (KPI-Kacheln, rechter Rand, unterer Rand).
 
 `TapReveal` nutzt `AnchoredPopover`. Neue Popovers nicht selbst positionieren.
+
+**Padding:** nur in `styles/anchored-popover.css` (`.ui-anchored-popover`). Consumer-Klassen (`MechanicGlyph`, Track-Map, TapReveal, PUX) dürfen das **nicht** auf `padding: 0` setzen — sonst klebt der Text am Rahmen.
+
+Sichtprüfung: `/dev/ui` → KPI + TapReveal + Glyphs.
 
 ## Mobile (768px, Absicht)
 

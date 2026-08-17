@@ -3,7 +3,7 @@
  * Built from the union of all season rosters — historical names stay resolvable.
  */
 
-import { getAllCatalogTeams } from './teamCatalog'
+import { getAllCatalogTeams, getCatalogTeamsForLeague } from './teamCatalog'
 
 type TeamShortEntry = {
   name: string
@@ -15,12 +15,26 @@ const NAME_ALIASES: Record<string, string> = {
   'Fischtown Pinguins': 'BRE',
   'Fischtown Pinguins Bremerhaven': 'BRE',
   'Pinguins Bremerhaven': 'BRE',
+  BHV: 'BRE',
   'EHC München': 'MUC',
   'EHC Red Bull Muenchen': 'MUC',
   'Utah Hockey Club': 'UTA',
   'EC Kassel': 'KAS',
   'Kassel Huskies': 'KAS',
   'Augsburger Panther': 'AEV',
+  // Legacy U20 names (pre "… U20" catalog rename)
+  'ERC Ingolstadt U20': 'ING',
+  'EV Landshut U20': 'EVL',
+  'Düsseldorfer EG U20': 'DEG',
+  'ESV Kaufbeuren U20': 'ESV',
+  'Starbulls Rosenheim U20': 'SBR',
+  'ESC Dresden U20': 'ESD',
+  'Iserlohner EC U20': 'IEC',
+  'Krefelder EV 81 U20': 'KEV',
+  'Augsburger EV U20': 'AEV',
+  'Schwenninger ERC U20': 'SWW',
+  'EC Bad Tölz U20': 'TOL',
+  'SC Bietigheim-Bissingen U20': 'SBB',
 }
 
 function normalizeTeamKey(value: string): string {
@@ -66,6 +80,48 @@ export function resolveTeamShortCode(teamName: string | null | undefined): strin
 
   const normalized = SHORT_BY_NORMALIZED_NAME.get(normalizeTeamKey(raw))
   return normalized || null
+}
+
+/** Map PENNY-/Alias-Namen auf den Katalognamen der Liga. */
+export function resolveCatalogTeamName(
+  nameOrId: string | null | undefined,
+  league?: string | null,
+  season?: string | null,
+): string {
+  const raw = String(nameOrId || '').trim()
+  if (!raw) return raw
+
+  const pool = league
+    ? getCatalogTeamsForLeague(league, season)
+    : getAllCatalogTeams()
+
+  const exact = pool.find((team) => team.name === raw || team.id === raw)
+  if (exact) return exact.name
+
+  const short = resolveTeamShortCode(raw)
+  if (short) {
+    const byShort = pool.find((team) => String(team.short || '').toUpperCase() === short)
+    if (byShort) return byShort.name
+  }
+
+  const key = normalizeTeamKey(raw)
+  const tokens = key.split(' ').filter((token) => token.length > 2)
+  const fuzzy = pool.find((team) => {
+    const nameKey = normalizeTeamKey(team.name)
+    if (nameKey === key) return true
+    return tokens.length >= 2 && tokens.every((token) => nameKey.includes(token))
+  })
+  return fuzzy?.name || raw
+}
+
+export function isListedTeam(
+  name: string,
+  listed: string[],
+  league?: string | null,
+  season?: string | null,
+): boolean {
+  if (listed.includes(name)) return true
+  return listed.includes(resolveCatalogTeamName(name, league, season))
 }
 
 export function formatMatchupShortCodes(

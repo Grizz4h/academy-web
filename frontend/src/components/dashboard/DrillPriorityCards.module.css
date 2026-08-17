@@ -79,12 +79,35 @@
   border-radius: 6px;
 }
 
-.drillItem:last-child {
-  border-bottom: none;
+.drillItemLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  margin: -0.7rem 0;
+  padding: 0.7rem 0.35rem;
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--motion-fast, 140ms) var(--motion-ease, ease);
 }
 
-.drillItem:hover {
-  background: rgba(255, 255, 255, 0.02);
+.drillItemLink:focus-visible {
+  outline: 2px solid rgba(125, 211, 252, 0.55);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .drillItem:hover,
+  .drillItemLink:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.drillItem:last-child {
+  border-bottom: none;
 }
 
 /* Accent Bar - RINK TANK HUD Style */

@@ -2,21 +2,21 @@
   "displayName": "Christoph",
   "avatar": {
     "type": "catalog",
-    "avatarId": "avatar_goldpuck_01"
+    "avatarId": "avatar_aurora_01"
   },
-  "bannerId": "banner_chalk_01",
-  "frameId": "frame_rink_rat",
+  "bannerId": "banner_neutral_zone_goblin_legend",
+  "frameId": "frame_ice_legend",
   "emblem": {
     "type": "catalog",
-    "emblemId": "emblem_night_circuit"
+    "emblemId": "emblem_goblin"
   },
   "customEmblemId": null,
   "customEmblems": [],
-  "profileTitle": "blue_line_student",
+  "profileTitle": "title_blue_line_student",
   "jerseyNumber": 16,
   "favoriteLeague": "DEL",
   "favoriteTeamName": "ERC Ingolstadt",
-  "profileTagline": "Ich bringe mir gerade Hockey bei.",
+  "profileTagline": "tagline_shop_structure_lite",
   "academyHelpLevel": "guided",
   "terminologyMode": "direct",
   "preferredAttackDirection": "auto",
@@ -27,14 +27,18 @@
       "main_onboarding": {
         "tutorialId": "main_onboarding",
         "version": 1,
-        "status": "not_started",
-        "currentStepId": "home-next-step",
-        "completedStepIds": [],
-        "startedAt": "2026-08-15T08:41:16.104Z",
-        "completedAt": "2026-08-13T21:15:24.841Z",
-        "dismissedAt": "2026-08-15T08:41:20.438Z"
+        "status": "dismissed",
+        "currentStepId": "start-session",
+        "completedStepIds": [
+          "what-is-rink-tank",
+          "home-next-step",
+          "setup-explain"
+        ],
+        "startedAt": "2026-08-15T21:52:17.597Z",
+        "completedAt": "2026-08-13T21:19:15.796Z",
+        "dismissedAt": "2026-08-15T22:58:23.019Z"
       }
     }
   },
-  "updatedAt": "2026-08-15T08:41:23.069761"
+  "updatedAt": "2026-08-17T20:39:32.165047"
 }

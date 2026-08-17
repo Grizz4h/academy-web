@@ -7,6 +7,7 @@ import {
 } from '../api'
 import { formatCompetitionContext, getCompetitionConfig, getCompetitionPhase } from '../data/competitionConfig'
 import { LEAGUES, getTeamNamesForLeague } from '../data/teamsByLeague'
+import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import {
   isSplitSeasonLeague,
   SEASON_OPTIONS,
@@ -93,9 +94,18 @@ export function ManualSceneForm({
 
   useEffect(() => {
     if (!availableTeams.length) return
-    if (teamHome && !availableTeams.includes(teamHome)) setTeamHome('')
-    if (teamAway && !availableTeams.includes(teamAway)) setTeamAway('')
-    if (observedTeam && !availableTeams.includes(observedTeam)) setObservedTeam('')
+    if (teamHome && !availableTeams.includes(teamHome)) {
+      const resolved = resolveCatalogTeamName(teamHome, league, season)
+      setTeamHome(availableTeams.includes(resolved) ? resolved : '')
+    }
+    if (teamAway && !availableTeams.includes(teamAway)) {
+      const resolved = resolveCatalogTeamName(teamAway, league, season)
+      setTeamAway(availableTeams.includes(resolved) ? resolved : '')
+    }
+    if (observedTeam && !availableTeams.includes(observedTeam)) {
+      const resolved = resolveCatalogTeamName(observedTeam, league, season)
+      setObservedTeam(availableTeams.includes(resolved) ? resolved : '')
+    }
   }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
 
   const validateCore = (): string | null => {

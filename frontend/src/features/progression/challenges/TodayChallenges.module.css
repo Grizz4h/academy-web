@@ -1,30 +1,24 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.85rem;
 }
 
 .header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 0.75rem;
 }
 
-@media (max-width: 640px) {
-  .header {
-    flex-wrap: wrap;
-  }
-
-  .allLink {
-    white-space: normal;
-  }
-}
-
-.heading {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 750;
+.eyebrow {
+  margin: 0 0 0.15rem;
+  font-family: var(--font-body);
+  font-size: var(--type-eyebrow, 0.7rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 650;
+  color: rgba(198, 214, 232, 0.55);
 }
 
 .allLink {
@@ -33,74 +27,139 @@
   font-size: 0.86rem;
   font-weight: 650;
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
-.summary {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.summaryRow {
+.tileGrid {
   display: grid;
-  grid-template-columns: 6.2rem minmax(0, 1fr);
-  gap: 0.6rem;
-  align-items: baseline;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.tileLink {
+  display: block;
+  min-width: 0;
   color: inherit;
   text-decoration: none;
-  border-radius: 8px;
-  padding: 0.15rem 0.2rem;
-  margin: 0 -0.2rem;
+  border-radius: inherit;
 }
 
-.summaryRow:hover .summaryValue,
-.highlight:hover .highlightTitle {
-  color: var(--link);
+.tile {
+  margin-bottom: 0 !important;
+  padding: 1rem 1.05rem !important;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  transition:
+    border-color var(--motion-fast, 140ms) var(--motion-ease, ease),
+    transform var(--motion-fast, 140ms) var(--motion-ease, ease),
+    background var(--motion-fast, 140ms) var(--motion-ease, ease);
 }
 
-.summaryLabel {
-  margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-subtle);
-  font-weight: 700;
+.tileLink[data-tone='empty'] .tileValue {
+  color: rgba(198, 214, 232, 0.55);
 }
 
-.summaryValue {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--text);
-}
-
-.highlight {
-  display: flex;
-  flex-direction: column;
-  gap: 0.12rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  color: inherit;
-  text-decoration: none;
-}
-
-.highlightKicker {
-  font-size: 0.7rem;
+.tileTitle {
+  font-family: var(--font-body);
+  font-size: var(--type-eyebrow, 0.7rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-subtle);
-  font-weight: 700;
+  margin-bottom: 0.4rem;
+  font-weight: 650;
 }
 
-.highlightTitle {
-  font-size: 0.98rem;
+.tileValue {
+  font-family: var(--font-body);
+  font-size: clamp(1.45rem, 2.2vw, 1.9rem);
   font-weight: 750;
+  line-height: 1.1;
+  letter-spacing: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
-.highlightMeta {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  font-size: 0.84rem;
-  color: var(--text-muted);
+.tileHint {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: rgba(198, 214, 232, 0.72);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tileLink:hover .tile,
+  .tileLink:focus-visible .tile {
+    border-color: rgba(125, 211, 252, 0.38);
+    transform: translateY(-1px);
+  }
+
+  .allLink:hover {
+    text-decoration: underline;
+  }
+}
+
+.tileLink:focus-visible {
+  outline: none;
+}
+
+.tileLink:focus-visible .tile {
+  outline: 2px solid rgba(125, 211, 252, 0.55);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .allLink {
+    white-space: normal;
+  }
+
+  /* Keep 3 tiles in one row — compact chrome, no vertical stack */
+  .tileGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .tile {
+    padding: 0.65rem 0.55rem !important;
+  }
+
+  .tileTitle {
+    margin-bottom: 0.25rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+
+  .tileValue {
+    font-size: 1.2rem;
+  }
+
+  .tileHint {
+    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    -webkit-line-clamp: 1;
+    line-height: 1.25;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 980px) {
+  .tileGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .tile {
+    padding: 0.9rem 0.85rem !important;
+  }
 }

@@ -4,6 +4,7 @@ import { api, type CatalogGame } from '../../api'
 import { useDevNavEnabled } from '../../config/featureFlags'
 import {
   fieldsFromCatalogGame,
+  gamesForCompetitionPhase,
   isDummyCatalogGame,
   resolveScheduleGames,
 } from '../../features/schedule/scheduleLayer'
@@ -25,6 +26,7 @@ export function useGameCatalogMatch(params: {
   teamAway: string
   competitionValue: string
   selectedGameId?: string
+  competitionPhase?: string
 }) {
   const devMode = useDevNavEnabled()
   const normalizedSeason = normalizeSeasonValue(params.season, params.league) || ''
@@ -53,6 +55,10 @@ export function useGameCatalogMatch(params: {
   )
 
   const catalogGames = resolved.games
+  const phaseGames = useMemo(
+    () => gamesForCompetitionPhase(catalogGames, params.competitionPhase),
+    [catalogGames, params.competitionPhase],
+  )
   const usingDummyFallback = resolved.usingDummyFallback
   const catalogReady = Boolean(params.league && normalizedSeason) && (isFetched || usingDummyFallback)
   const useCatalogFlow = Boolean(normalizedSeason) && catalogGames.length > 0
@@ -65,12 +71,12 @@ export function useGameCatalogMatch(params: {
     () => catalogGames.filter((game) => Boolean(game.stats?.imported_at) && !isDummyCatalogGame(game)),
     [catalogGames],
   )
-  const availableMatchdays = useMemo(() => uniqueMatchdays(catalogGames), [catalogGames])
+  const availableMatchdays = useMemo(() => uniqueMatchdays(phaseGames), [phaseGames])
 
   const gamesForTeams = useMemo(() => {
     if (!params.teamHome || !params.teamAway) return []
-    return findGamesForTeams(catalogGames, params.teamHome, params.teamAway)
-  }, [catalogGames, params.teamHome, params.teamAway])
+    return findGamesForTeams(phaseGames, params.teamHome, params.teamAway)
+  }, [phaseGames, params.teamHome, params.teamAway])
 
   const matchdaysForTeams = useMemo(() => uniqueMatchdays(gamesForTeams), [gamesForTeams])
 
@@ -87,13 +93,13 @@ export function useGameCatalogMatch(params: {
     }
     if (!params.teamHome || !params.teamAway || !selectedMatchday) return null
     return findCatalogGameForPairing(
-      catalogGames,
+      phaseGames,
       params.teamHome,
       params.teamAway,
       selectedMatchday,
       normalizedSeason,
     ) || null
-  }, [useCatalogFlow, params.selectedGameId, params.teamHome, params.teamAway, selectedMatchday, catalogGames, normalizedSeason])
+  }, [useCatalogFlow, params.selectedGameId, params.teamHome, params.teamAway, selectedMatchday, catalogGames, phaseGames, normalizedSeason])
 
   return {
     normalizedSeason,

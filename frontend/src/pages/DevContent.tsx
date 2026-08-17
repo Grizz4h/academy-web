@@ -1,11 +1,16 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '../api'
 import { contentRegistry, runContentValidation, runRewardReachabilityAudit } from '../content/registry'
 import { getActiveProgressViews } from '../features/progression/challenges/challengeEngine'
 import { useRewards } from '../features/rewards'
 import { useUser } from '../context/UserContext'
 import { UiButton, UiChip } from '../components/ui'
 import { buildObservationCreatedEvent, buildSceneCreatedEvent } from '../features/progression'
+import { VENUE_CATALOG, venueForInspector } from '../data/venues'
+import { isGeofenceUsable } from '../data/venues/resolveVenue'
+import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../stats/seasonNormalization'
 import styles from './DevLab.module.css'
 
 type Filter = 'all' | 'active' | 'daily' | 'weekly' | 'matchday' | 'event' | 'broken' | 'orphaned'
@@ -14,7 +19,14 @@ export default function DevContent() {
   const { user } = useUser()
   const { rewardState, ingestActivityEvents, syncChallengeBoard } = useRewards()
   const [filter, setFilter] = useState<Filter>('all')
-  const issues = useMemo(() => runContentValidation(), [])
+  const season = normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate()
+  const { data: gamesData } = useQuery({
+    queryKey: ['games', 'DEL', season, 'content-inspector'],
+    queryFn: () => api.getGames({ league: 'DEL', season }),
+    staleTime: 60_000,
+  })
+  const games = gamesData?.games || []
+  const issues = useMemo(() => runContentValidation(games), [games])
   const reachability = useMemo(() => runRewardReachabilityAudit(), [])
   const errors = issues.filter((item) => item.severity === 'error')
   const warnings = issues.filter((item) => item.severity === 'warning')
@@ -168,6 +180,30 @@ export default function DevContent() {
         <UiButton type="button" size="sm" variant="secondary" onClick={() => void syncChallengeBoard()}>
           Sync Board
         </UiButton>
+      </section>
+
+      <section className={styles.card}>
+        <h2 className="ui-section-title">Venues</h2>
+        <p className={styles.note}>
+          {VENUE_CATALOG.length} Arenen · {VENUE_CATALOG.filter((venue) => isGeofenceUsable(venue)).length} Geofence aktiv ·{' '}
+          {games.length} Games geprüft
+        </p>
+        <ul className={styles.list}>
+          {VENUE_CATALOG.map((venue) => {
+            const row = venueForInspector(venue, games)
+            return (
+              <li key={venue.id}>
+                <strong>{row.name}</strong>
+                {' · '}
+                {row.id} · {row.teams.join(', ') || 'kein Team'} · {row.coordinates} · {row.radius} m · {row.dataQuality}
+                {' · '}
+                {row.source} · {row.games} Games
+                {!isGeofenceUsable(venue) ? ' · ⚠ Geofence aus' : ''}
+                {venue.dataQuality === 'missing' ? ' · ⚠ Missing coordinates' : ''}
+              </li>
+            )
+          })}
+        </ul>
       </section>
     </div>
   )

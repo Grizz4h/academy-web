@@ -4,6 +4,16 @@ const TOURNAMENT_YEAR_LEAGUES = new Set(['WM', 'OLYMPIA', 'NATIONALMANNSCHAFTEN'
 export const SEASON_OPTIONS = ['2025/26', '2026/27', '2027/28']
 export const TOURNAMENT_YEAR_OPTIONS = ['2024', '2025', '2026', '2027', '2028']
 
+/** Session-Setup: DEL startet auf der aktuellen Saison, nicht auf dem Archiv. */
+export const DEFAULT_DEL_SETUP_SEASON = '2026/27'
+
+export function defaultDelSetupSeason(seasonOptions: string[] = SEASON_OPTIONS): string {
+  if (seasonOptions.includes(DEFAULT_DEL_SETUP_SEASON)) return DEFAULT_DEL_SETUP_SEASON
+  const inferred = inferSplitSeasonLabelForDate()
+  if (seasonOptions.includes(inferred)) return inferred
+  return seasonOptions[0] || DEFAULT_DEL_SETUP_SEASON
+}
+
 /** Split-Saison (z. B. DEL): Jul–Jun → „2025/26“. */
 export function inferSplitSeasonLabelForDate(date: Date = new Date()): string {
   const year = date.getFullYear()

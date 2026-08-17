@@ -32,6 +32,13 @@ export function buildSessionCompletedEvent(input: {
   tags?: string[]
   isDummy?: boolean
   isFirstSessionOfDrill?: boolean
+  venueId?: string
+  venueVerified?: boolean
+  homeAwayRole?: 'home' | 'away' | 'unknown'
+  isFirstVenueVisit?: boolean
+  distanceMeters?: number
+  accuracyMeters?: number
+  locationVerificationDevSimulated?: boolean
 }): SessionCompletedEvent {
   return {
     id: activityEventId('session_completed', input.sessionId),
@@ -47,6 +54,13 @@ export function buildSessionCompletedEvent(input: {
     tags: input.tags,
     isDummy: input.isDummy,
     isFirstSessionOfDrill: input.isFirstSessionOfDrill,
+    venueId: input.venueId,
+    venueVerified: input.venueVerified,
+    homeAwayRole: input.homeAwayRole,
+    isFirstVenueVisit: input.isFirstVenueVisit,
+    distanceMeters: input.distanceMeters,
+    accuracyMeters: input.accuracyMeters,
+    locationVerificationDevSimulated: input.locationVerificationDevSimulated,
   }
 }
 

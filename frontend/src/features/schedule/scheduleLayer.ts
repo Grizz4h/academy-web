@@ -1,5 +1,6 @@
 import type { CatalogGame } from '../../api'
 import { buildDevFixtureGames, DEV_FIXTURE_PROVIDER } from '../../dev/devFixtures/games'
+import { resolveCatalogTeamName } from '../../data/teamShortCodes'
 
 export type ScheduleSourceKind = 'catalog' | 'dev_fixture' | 'empty'
 
@@ -46,8 +47,21 @@ export function resolveScheduleGames(params: {
 
 export function catalogPhaseToCompetitionPhase(phaseId?: string): string | undefined {
   if (!phaseId) return undefined
-  if (phaseId === 'hauptrunde') return 'regular_season'
+  if (phaseId === 'hauptrunde' || phaseId === 'upcoming') return 'regular_season'
   return phaseId
+}
+
+export function gamesForCompetitionPhase(
+  games: CatalogGame[],
+  competitionPhase?: string,
+): CatalogGame[] {
+  if (!competitionPhase || competitionPhase === 'regular_season') {
+    return games.filter((game) => {
+      const mapped = catalogPhaseToCompetitionPhase(game.phase_id)
+      return !mapped || mapped === 'regular_season'
+    })
+  }
+  return games.filter((game) => catalogPhaseToCompetitionPhase(game.phase_id) === competitionPhase)
 }
 
 export function fieldsFromCatalogGame(game: CatalogGame): {
@@ -60,8 +74,8 @@ export function fieldsFromCatalogGame(game: CatalogGame): {
 } {
   return {
     selectedGameId: game.id,
-    teamHome: game.home_team_name || '',
-    teamAway: game.away_team_name || '',
+    teamHome: resolveCatalogTeamName(game.home_team_name || game.home_team_id, game.league_id, game.season_id),
+    teamAway: resolveCatalogTeamName(game.away_team_name || game.away_team_id, game.league_id, game.season_id),
     competitionValue: game.matchday != null ? String(game.matchday) : '',
     competitionPhase: catalogPhaseToCompetitionPhase(game.phase_id),
     observedTeam: '',

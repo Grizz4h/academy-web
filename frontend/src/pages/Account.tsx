@@ -7,12 +7,14 @@ import RinkIdentityCard from '../components/profile/RinkIdentityCard'
 import ProfileAssetSelector from '../components/profile/ProfileAssetSelector'
 import { useUser } from '../context/UserContext'
 import { useRewards } from '../features/rewards'
-import { isCosmeticOwned, selectLevelProgress, selectTaglineOptions } from '../features/progression'
+import { isCosmeticOwned, RARITY_LABELS, selectLevelProgress, selectTaglineOptions, selectTitleOptions } from '../features/progression'
+import { getCosmetic } from '../features/progression/cosmetics/cosmeticCatalog'
+import { coinCatalog } from '../data/profile/coinCatalog'
 import AccountProgressionPanel from '../components/progression/AccountProgressionPanel'
 import { avatarCatalog, DEFAULT_AVATAR_ID } from '../data/profile/avatarCatalog'
 import { bannerCatalog, DEFAULT_BANNER_ID } from '../data/profile/bannerCatalog'
 import { emblemCatalog, DEFAULT_EMBLEM_ID } from '../data/profile/emblemCatalog'
-import { profileTitleCatalog, DEFAULT_PROFILE_TITLE_ID } from '../data/profile/profileTitleCatalog'
+import { DEFAULT_PROFILE_TITLE_ID } from '../data/profile/profileTitleCatalog'
 import { createDefaultProfile } from '../data/profile/defaults'
 import type {
   AcademyHelpLevel,
@@ -103,6 +105,11 @@ export default function AccountPage() {
     }
   }, [sessions, scenesPayload, account?.createdAt, rewardState])
 
+  const ownedCoinIds = useMemo(
+    () => coinCatalog.map((coin) => coin.id).filter((id) => isCosmeticOwned(rewardState, id)),
+    [rewardState],
+  )
+
   const avatarItems = useMemo(
     () => avatarCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
     [rewardState],
@@ -115,27 +122,27 @@ export default function AccountPage() {
     () => emblemCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
     [rewardState],
   )
-  const ownedTitleIds = useMemo(() => {
-    return new Set(
-      profileTitleCatalog
-        .filter((title) => {
-          const starterId = `title_catalog_${title.id}`
-          return (
-            isCosmeticOwned(rewardState, starterId) ||
-            isCosmeticOwned(rewardState, `title_${title.id}`) ||
-            // Map achievement titles that reuse profileTitleId metadata
-            Object.values(rewardState.unlockedCosmetics || {}).some((unlock) => {
-              const fromCatalog = unlock.cosmeticId
-              return fromCatalog.includes(title.id)
-            }) ||
-            title.id === 'rink_rat' ||
-            title.id === 'hockey_observer'
-          )
-        })
-        .map((title) => title.id),
-    )
-  }, [rewardState])
+  const titleOptions = selectTitleOptions(rewardState)
+  const titleLabelCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const item of titleOptions) counts.set(item.label, (counts.get(item.label) || 0) + 1)
+    return counts
+  }, [titleOptions])
   const taglineOptions = selectTaglineOptions(rewardState)
+  const titleSelectValue = (() => {
+    const raw = draft?.profileTitle
+    if (raw && titleOptions.some((item) => item.id === raw)) return raw
+    if (raw) {
+      const catalogId = `title_catalog_${raw}`
+      if (titleOptions.some((item) => item.id === catalogId)) return catalogId
+    }
+    return raw || DEFAULT_PROFILE_TITLE_ID
+  })()
+  const taglinePreset = draft?.profileTagline ? getCosmetic(draft.profileTagline) : undefined
+  const taglineInputValue =
+    taglinePreset?.type === 'tagline'
+      ? (taglinePreset.text || taglinePreset.name)
+      : (draft?.profileTagline || '')
 
   const favoriteTeams = draft?.favoriteLeague
     ? teamsByLeague[draft.favoriteLeague] || []
@@ -256,7 +263,7 @@ export default function AccountPage() {
 
       <section className={styles.section}>
         <h2 className="ui-section-title">RINK ID</h2>
-        <RinkIdentityCard profile={draft} stats={identityStats} />
+        <RinkIdentityCard profile={draft} stats={identityStats} coinIds={ownedCoinIds} />
       </section>
 
       <Card surface="section" className={styles.sectionCard}>
@@ -370,14 +377,16 @@ export default function AccountPage() {
             <span className={styles.label}>Profil-Titel</span>
             <select
               className="appSelect"
-              value={draft.profileTitle || DEFAULT_PROFILE_TITLE_ID}
+              value={titleSelectValue}
               onChange={(e) => updateDraft({ profileTitle: e.target.value || null })}
             >
-              {profileTitleCatalog
-                .filter((title) => ownedTitleIds.has(title.id) || title.id === (draft.profileTitle || DEFAULT_PROFILE_TITLE_ID))
-                .map((title) => (
-                  <option key={title.id} value={title.id}>{title.label}</option>
-                ))}
+              {titleOptions.map((title) => (
+                <option key={title.id} value={title.id}>
+                  {(titleLabelCounts.get(title.label) || 0) > 1
+                    ? `${title.label} · ${RARITY_LABELS[title.rarity]}`
+                    : title.label}
+                </option>
+              ))}
             </select>
           </label>
         </div>
@@ -387,10 +396,11 @@ export default function AccountPage() {
           {taglineOptions.length > 0 && (
             <select
               className="appSelect"
-              value={taglineOptions.find((item) => item.label === draft.profileTagline)?.id || ''}
+              value={taglineOptions.find((item) => item.id === draft.profileTagline || item.label === draft.profileTagline)?.id || ''}
               onChange={(e) => {
                 const selected = taglineOptions.find((item) => item.id === e.target.value)
-                if (selected) updateDraft({ profileTagline: selected.label })
+                if (selected) updateDraft({ profileTagline: selected.id })
+                else updateDraft({ profileTagline: null })
               }}
             >
               <option value="">Freie Tagline / keine Vorlage</option>
@@ -403,10 +413,10 @@ export default function AccountPage() {
             className={styles.input}
             maxLength={120}
             placeholder="Ich bringe mir gerade Hockey bei."
-            value={draft.profileTagline || ''}
+            value={taglineInputValue}
             onChange={(e) => updateDraft({ profileTagline: e.target.value })}
           />
-          <span className={styles.hint}>{(draft.profileTagline || '').length}/120</span>
+          <span className={styles.hint}>{taglineInputValue.length}/120</span>
         </label>
 
         <div className={styles.field}>

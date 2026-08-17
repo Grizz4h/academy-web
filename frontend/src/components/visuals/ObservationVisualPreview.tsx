@@ -164,6 +164,7 @@ type ObservationVisualPreviewProps = {
   snapshots?: SpatialSnapshot[]
   max?: number
   size?: 'sm' | 'md'
+  layout?: 'wrap' | 'row'
   className?: string
   emptyLabel?: string
   showLabels?: boolean
@@ -174,6 +175,7 @@ export function ObservationVisualPreview({
   snapshots: snapshotsProp,
   max = 4,
   size = 'sm',
+  layout = 'wrap',
   className,
   emptyLabel,
   showLabels = false,
@@ -184,13 +186,15 @@ export function ObservationVisualPreview({
     return <div className={styles.empty}>{emptyLabel}</div>
   }
 
-  const dims = size === 'md' ? { width: 148, height: 88 } : { width: 108, height: 64 }
+  const dims = size === 'md' ? { width: 148, height: 88 } : { width: 96, height: 56 }
+  const fluid = layout === 'row'
 
   return (
-    <div className={[styles.row, className].filter(Boolean).join(' ')}>
+    <div className={[styles.row, fluid ? styles.rowFill : '', className].filter(Boolean).join(' ')}>
       {snapshots.map((snap, i) => (
         <div key={`${snap.kind}-${i}`} className={styles.item}>
           <MiniRinkPreview
+            className={fluid ? styles.fluidRink : undefined}
             width={dims.width}
             height={dims.height}
             paint={snap.paint}

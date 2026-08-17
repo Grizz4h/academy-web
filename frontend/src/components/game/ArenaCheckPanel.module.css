@@ -1,0 +1,78 @@
+.panel,
+.compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--type-eyebrow, 0.7rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 650;
+  color: rgba(198, 214, 232, 0.55);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.copy,
+.neutral,
+.warn,
+.ok {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--text-muted, rgba(198, 214, 232, 0.78));
+}
+
+.ok {
+  color: var(--text, #e8f4ff);
+}
+
+.ok span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--text-muted, rgba(198, 214, 232, 0.78));
+  font-weight: 500;
+}
+
+.warn {
+  color: #fde68a;
+}
+
+.dev {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(253, 186, 116, 0.95);
+}
+
+.devRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.devRow button {
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  border: 1px dashed rgba(245, 158, 11, 0.55);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.devActive {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-style: solid !important;
+}

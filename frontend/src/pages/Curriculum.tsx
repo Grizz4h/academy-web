@@ -108,6 +108,7 @@ export default function Curriculum() {
       .filter((session) => String(session.state || '').toUpperCase() === 'COMPLETED')
       .map((session) => String(session.module_id || ''))
       .filter(Boolean),
+    hockeyExperience: account?.profile?.hockeyExperience,
   })
 
   if (isLoading) return <div className="card">Lade Lehrplan...</div>

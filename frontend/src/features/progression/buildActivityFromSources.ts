@@ -1,6 +1,9 @@
 import type { Session, SceneMarker } from '../../api'
 import { isProgressionEligibleSession } from '../../utils/sessionEligibility'
 import { readSidequests } from '../../utils/sessionSidequests'
+import { sanitizeLocationVerification } from '../location/privacy'
+import { isQualifyingVenueVerification } from '../location/verification'
+import { resolveHomeAwayRole } from '../location/homeAway'
 import {
   buildGameObservationCompletedEvent,
   buildObservationCreatedEvent,
@@ -142,6 +145,17 @@ export function buildEventsFromCompletedSession(
 
   const prior = options?.priorCompletedDrillIds
   const isFirstSessionOfDrill = prior ? !prior.has(drillId) : true
+  const verification = sanitizeLocationVerification((session as Session).location_verification)
+  const venueVerified = isQualifyingVenueVerification(verification)
+  const homeAwayRole = resolveHomeAwayRole(
+    {
+      home_team_id: session.game_info?.home_team_id || '',
+      away_team_id: session.game_info?.away_team_id || '',
+      home_team_name: session.game_info?.team_home,
+      away_team_name: session.game_info?.team_away,
+    },
+    teamId,
+  )
 
   const events: RinkActivityEvent[] = [
     buildSessionCompletedEvent({
@@ -156,6 +170,12 @@ export function buildEventsFromCompletedSession(
       tags,
       isDummy: false,
       isFirstSessionOfDrill,
+      venueId: verification?.venueId,
+      venueVerified,
+      homeAwayRole,
+      distanceMeters: verification?.distanceMeters,
+      accuracyMeters: verification?.accuracyMeters,
+      locationVerificationDevSimulated: verification?.devSimulated === true,
     }),
     buildObservationCreatedEvent({
       sessionId: session.id,

@@ -11,6 +11,22 @@
   margin-bottom: 0.75rem;
 }
 
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.filterRow label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 150px;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
 .surfaceStack {
   display: flex;
   flex-direction: column;

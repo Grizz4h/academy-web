@@ -127,6 +127,7 @@ export interface RewardState {
   progressionPuxGranted?: number
   challengeProgress?: Record<string, import('../progression/challenges/types').ChallengeProgress>
   challengeRotation?: import('../progression/challenges/types').ChallengeRotationState | null
+  venueVisits?: Record<string, import('../../data/venues/types').VenueVisit>
 }
 
 export interface RewardFacts {
@@ -195,6 +196,7 @@ export function createEmptyRewardState(): RewardState {
     masteryMilestoneUnlocks: {},
     challengeProgress: {},
     challengeRotation: null,
+    venueVisits: {},
   }
 }
 

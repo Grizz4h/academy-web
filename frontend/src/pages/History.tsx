@@ -5,7 +5,7 @@ import type { Session } from '../api'
 import { useUser } from '../context/UserContext'
 import SessionCard from '../components/SessionCard'
 import Card from '../components/Card'
-import FilterSheet from '../components/FilterSheet'
+import FilterSheet, { FilterSheetRow, FilterSheetSection, FilterSheetStack } from '../components/FilterSheet'
 import { PageSkeleton } from '../components/Skeleton'
 import { isDevNavEnabled } from '../config/featureFlags'
 import { deleteAllDummySessions } from '../dev/createDummySession'
@@ -482,50 +482,45 @@ export default function History() {
         onClose={() => setFilterSheetOpen(false)}
         onReset={resetFilters}
       >
-        <div className="stack">
-          <div className="sheetSection">
-            <div className="sheetSectionTitle">Zeitraum</div>
-            <div className="grid2">
-              <select className="appSelect" value={filterYear} onChange={e => setFilterYear(e.target.value)} aria-label="Jahr">
-                <option value="">Jahr: Alle</option>
-                {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
-              </select>
-              <select className="appSelect" value={filterMonth} onChange={e => setFilterMonth(e.target.value)} disabled={!filterYear} aria-label="Monat">
-                <option value="">Monat: Alle</option>
-                {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (
-                  <option key={month} value={month}>{getMonthLabel(month)}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="sheetSection">
-            <div className="sheetSectionTitle">Inhalt</div>
-            <div className="stack">
-              <select className="appSelect" value={filterCreator} onChange={e => setFilterCreator(e.target.value)} aria-label="Ersteller">
-                <option value="">Ersteller: Alle</option>
-                {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
-              </select>
-              <select className="appSelect" value={filterModule} onChange={e => setFilterModule(e.target.value)} aria-label="Modul">
-                <option value="">Modul: Alle</option>
-                {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
-              </select>
-            </div>
-          </div>
-          <div className="sheetSection">
-            <div className="sheetSectionTitle">Status</div>
-            <select className="appSelect" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} aria-label="Status">
-              <option value="">Status: Alle</option>
-              <option value="COMPLETED">Abgeschlossen</option>
-              <option value="ABORTED">Abgebrochen</option>
-              <option value="IN_PROGRESS">In Bearbeitung</option>
-              <option value="PRE">Vorbereitung</option>
-              <option value="P1">Nach 1. Drittel</option>
-              <option value="P2">Nach 2. Drittel</option>
-              <option value="P3">Nach 3. Drittel</option>
-              <option value="POST">Debrief</option>
+        <FilterSheetSection title="Zeitraum">
+          <FilterSheetRow>
+            <select className="appSelect" value={filterYear} onChange={e => setFilterYear(e.target.value)} aria-label="Jahr">
+              <option value="">Jahr: Alle</option>
+              {uniqueYears.map(year => (<option key={year} value={year}>{year}</option>))}
             </select>
-          </div>
-        </div>
+            <select className="appSelect" value={filterMonth} onChange={e => setFilterMonth(e.target.value)} disabled={!filterYear} aria-label="Monat">
+              <option value="">Monat: Alle</option>
+              {(filterYear ? monthsByYear.get(filterYear) || [] : []).map(month => (
+                <option key={month} value={month}>{getMonthLabel(month)}</option>
+              ))}
+            </select>
+          </FilterSheetRow>
+        </FilterSheetSection>
+        <FilterSheetSection title="Inhalt">
+          <FilterSheetStack>
+            <select className="appSelect" value={filterCreator} onChange={e => setFilterCreator(e.target.value)} aria-label="Ersteller">
+              <option value="">Ersteller: Alle</option>
+              {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+            </select>
+            <select className="appSelect" value={filterModule} onChange={e => setFilterModule(e.target.value)} aria-label="Modul">
+              <option value="">Modul: Alle</option>
+              {uniqueModules.map(module => (<option key={module} value={module}>{module}</option>))}
+            </select>
+          </FilterSheetStack>
+        </FilterSheetSection>
+        <FilterSheetSection title="Status">
+          <select className="appSelect" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} aria-label="Status">
+            <option value="">Status: Alle</option>
+            <option value="COMPLETED">Abgeschlossen</option>
+            <option value="ABORTED">Abgebrochen</option>
+            <option value="IN_PROGRESS">In Bearbeitung</option>
+            <option value="PRE">Vorbereitung</option>
+            <option value="P1">Nach 1. Drittel</option>
+            <option value="P2">Nach 2. Drittel</option>
+            <option value="P3">Nach 3. Drittel</option>
+            <option value="POST">Debrief</option>
+          </select>
+        </FilterSheetSection>
       </FilterSheet>
 
       <div className={styles.resultsBar}>

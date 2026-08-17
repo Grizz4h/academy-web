@@ -28,9 +28,8 @@
 }
 
 .ui-tap-reveal-panel {
-  /* Position via AnchoredPopover (fixed + viewport clamp). */
-  padding: 0.8rem 0.85rem 0.85rem;
-  border-radius: 12px;
+  /* Position via AnchoredPopover (fixed + viewport clamp).
+     Outer padding comes from .ui-anchored-popover — do not zero it out. */
 }
 
 .ui-tap-reveal-header {

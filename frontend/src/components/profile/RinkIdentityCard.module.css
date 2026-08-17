@@ -55,6 +55,47 @@
   object-fit: contain;
 }
 
+.sticker {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(2px 3px 0 rgba(15, 23, 42, 0.45));
+}
+
+.sticker[data-slot='0'] {
+  left: 0.7rem;
+  top: 0.65rem;
+  transform: rotate(-11deg);
+}
+
+.sticker[data-slot='1'] {
+  left: 3.4rem;
+  bottom: 0.55rem;
+  transform: rotate(8deg);
+}
+
+.sticker[data-slot='2'] {
+  right: 4.2rem;
+  bottom: 0.45rem;
+  transform: rotate(-6deg);
+}
+
+.coinTray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.coinTray img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .body {
   position: relative;
   padding: 0 1rem 1.1rem;
@@ -142,7 +183,6 @@
 
 .tagline {
   color: rgba(210, 224, 240, 0.86);
-  font-style: italic;
   font-size: 0.92rem;
 }
 

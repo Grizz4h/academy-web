@@ -11,6 +11,7 @@ import {
 import { applyEventToProgress } from './requirementEngine'
 import { selectPoolChallenges } from './rotation'
 import { getRotationKey, isWithinWindow } from './time'
+import { resolveVenueIdForGame } from '../../../data/venues/resolveVenue'
 import type {
   CampaignDefinition,
   ChallengeDefinition,
@@ -43,7 +44,12 @@ function blankRequirements(definition: ChallengeDefinition): RequirementProgress
   }))
 }
 
-function createProgress(definition: ChallengeDefinition, rotationKey: string, boundGameId?: string): ChallengeProgress {
+function createProgress(
+  definition: ChallengeDefinition,
+  rotationKey: string,
+  boundGameId?: string,
+  boundVenueId?: string,
+): ChallengeProgress {
   return {
     instanceKey: challengeInstanceKey(definition.id, rotationKey),
     challengeId: definition.id,
@@ -52,6 +58,7 @@ function createProgress(definition: ChallengeDefinition, rotationKey: string, bo
     requirements: blankRequirements(definition),
     countedEventIds: [],
     boundGameId,
+    boundVenueId,
     rewardClaimed: false,
   }
 }
@@ -80,6 +87,11 @@ function rotationKeyFor(
   rotation: ChallengeRotationState,
   matchday: MatchdayContext | null,
 ): string {
+  if (definition.rotationScope === 'once') return onceRotationKey(definition.id)
+  if (definition.rotationScope === 'venue') {
+    const venueId = matchday?.game ? resolveVenueIdForGame(matchday.game) : undefined
+    return onceRotationKey(`${definition.id}:${venueId || 'none'}`)
+  }
   if (definition.type === 'daily') return rotation.dailyKey
   if (definition.type === 'weekly') return rotation.weeklyKey
   if (definition.type === 'matchday') return matchdayRotationKey(definition.context?.gameId || matchday?.gameId || 'none')
@@ -203,6 +215,7 @@ export function syncChallengeRotation(input: {
         definition,
         rotationKey,
         boundGameIdFor(definition, input.matchday),
+        input.matchday?.game ? resolveVenueIdForGame(input.matchday.game) : undefined,
       )
       changed = true
     } else if (progress[instanceKey].status === 'expired') {
@@ -356,6 +369,7 @@ export function getActiveProgressViews(input: {
       definition,
       rotationKey,
       boundGameIdFor(definition, input.matchday),
+      input.matchday?.game ? resolveVenueIdForGame(input.matchday.game) : undefined,
     )
     return {
       definition,

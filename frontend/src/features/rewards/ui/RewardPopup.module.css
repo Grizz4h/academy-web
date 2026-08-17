@@ -204,6 +204,8 @@
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .toastStack {

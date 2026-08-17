@@ -9,6 +9,7 @@ type UiSheetProps = {
   title: string
   meta?: ReactNode
   label?: string
+  overlayClassName?: string
   children: ReactNode
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void
 }
@@ -19,6 +20,7 @@ export function UiSheet({
   title,
   meta,
   label,
+  overlayClassName,
   children,
   onKeyDown,
 }: UiSheetProps) {
@@ -35,7 +37,7 @@ export function UiSheet({
 
   return createPortal(
     <div
-      className={styles.overlay}
+      className={[styles.overlay, overlayClassName].filter(Boolean).join(' ')}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}

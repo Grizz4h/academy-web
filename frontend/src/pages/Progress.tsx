@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import type { Session } from '../api'
 import Card from '../components/Card'
-import FilterSheet from '../components/FilterSheet'
 import { PageSkeleton } from '../components/Skeleton'
 import { LEAGUES, getAllTeamNamesForLeague, getTeamNamesForLeague } from '../data/teamsByLeague'
 import { useUser } from '../context/UserContext'
@@ -50,6 +49,37 @@ function popupVariantFromTier(tier: string): 'small' | 'popup' | 'hero' {
   return 'small'
 }
 
+function TeamTile({
+  team,
+  selected,
+  onSelect,
+}: {
+  team: { name: string; count: number; lastSeen?: string }
+  selected: boolean
+  onSelect: () => void
+}) {
+  const intensity = getAnalysisIntensity(team.count)
+  const tealSurface = getTealTileSurfaceStyle(team.count)
+  return (
+    <button
+      type="button"
+      className={`${styles.teamTile}${selected ? ` ${styles.teamTileSelected}` : ''}`}
+      data-intensity={intensity}
+      style={tealSurface || undefined}
+      onClick={onSelect}
+    >
+      <div className={styles.teamName}>{team.name}</div>
+      <div className={styles.teamCount}>{team.count} Analysen</div>
+      {team.lastSeen && (
+        <div className={styles.teamNeverSeen}>Zuletzt: {new Date(team.lastSeen).toLocaleDateString('de-DE')}</div>
+      )}
+      {team.count === 0 && (
+        <div className={styles.teamNeverSeen}>Noch nie analysiert</div>
+      )}
+    </button>
+  )
+}
+
 function formatLastSeenLabel(value?: string): string {
   if (!value) return '-'
   const ts = new Date(value).getTime()
@@ -69,7 +99,6 @@ export default function Progress() {
   const [selectedTeam, setSelectedTeam] = useState<string>('')
   const [selectedMatchupKey, setSelectedMatchupKey] = useState<string>('')
   const [shouldScrollToDetails, setShouldScrollToDetails] = useState<boolean>(false)
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const detailRef = useRef<HTMLDivElement | null>(null)
   const scrollAnimationRef = useRef<number | null>(null)
   const useSplitSeason = isSplitSeasonLeague(selectedLeague)
@@ -381,75 +410,46 @@ export default function Progress() {
               </select>
             </div>
           </div>
-          <button
-            type="button"
-            className={styles.filterOpenBtn}
-            onClick={() => setFilterSheetOpen(true)}
-          >
-            Liga / Saison
-            {selectedSeason ? ` · ${selectedSeason}` : ` · ${selectedLeague}`}
-          </button>
         </div>
-
-        <FilterSheet
-          open={filterSheetOpen}
-          title="Team-Filter"
-          onClose={() => setFilterSheetOpen(false)}
-          onReset={() => {
-            setSelectedLeague('DEL')
-            setSelectedSeason('')
-          }}
-        >
-          <div className="stack">
-            <div className="sheetSection">
-              <div className="sheetSectionTitle">Liga</div>
-              <select className="appSelect" value={selectedLeague} onChange={(e) => setSelectedLeague(e.target.value)} aria-label="Liga">
-                {LEAGUES.map((league) => (
-                  <option key={league} value={league}>{league.replace(/_/g, ' ')}</option>
-                ))}
-              </select>
-            </div>
-            <div className="sheetSection">
-              <div className="sheetSectionTitle">Saison</div>
-              <select className="appSelect" value={selectedSeason} onChange={(e) => setSelectedSeason(e.target.value)} aria-label="Saison">
-                <option value="">Alle Saisons</option>
-                {seasonOptions.map((season) => (
-                  <option key={season} value={season}>{season}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </FilterSheet>
 
         <div className={styles.teamGrid}>
-          {teamData.map(team => {
-            const intensity = getAnalysisIntensity(team.count)
-            const tealSurface = getTealTileSurfaceStyle(team.count)
-            return (
-              <button
-                key={team.name}
-                type="button"
-                className={`${styles.teamTile}${selectedTeam === team.name ? ` ${styles.teamTileSelected}` : ''}`}
-                data-intensity={intensity}
-                style={tealSurface || undefined}
-                onClick={() => {
-                  setSelectedTeam(team.name)
-                  setSelectedMatchupKey('')
-                  setShouldScrollToDetails(true)
-                }}
-              >
-                <div className={styles.teamName}>{team.name}</div>
-                <div className={styles.teamCount}>{team.count} Analysen</div>
-                {team.lastSeen && (
-                  <div className={styles.teamNeverSeen}>Zuletzt: {new Date(team.lastSeen).toLocaleDateString('de-DE')}</div>
-                )}
-                {team.count === 0 && (
-                  <div className={styles.teamNeverSeen}>Noch nie analysiert</div>
-                )}
-              </button>
-            )
-          })}
+          {teamData.slice(0, 6).map((team) => (
+            <TeamTile
+              key={team.name}
+              team={team}
+              selected={selectedTeam === team.name}
+              onSelect={() => {
+                setSelectedTeam(team.name)
+                setSelectedMatchupKey('')
+                setShouldScrollToDetails(true)
+              }}
+            />
+          ))}
         </div>
+        {teamData.length > 6 ? (
+          <details className={`ui-more ui-more--flush ${styles.teamMore}`} open={teamData.slice(6).some((team) => team.name === selectedTeam)}>
+            <summary className="ui-more__summary">
+              <span>Weitere Teams · {teamData.length - 6}</span>
+              <span className="ui-more__chevron" aria-hidden="true" />
+            </summary>
+            <div className="ui-more__body">
+              <div className={styles.teamGrid}>
+                {teamData.slice(6).map((team) => (
+                  <TeamTile
+                    key={team.name}
+                    team={team}
+                    selected={selectedTeam === team.name}
+                    onSelect={() => {
+                      setSelectedTeam(team.name)
+                      setSelectedMatchupKey('')
+                      setShouldScrollToDetails(true)
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </details>
+        ) : null}
       </Card>
 
       {selectedTeamExposure && (
@@ -711,7 +711,7 @@ export default function Progress() {
       </details>
 
       <div id="learning-progress" className={styles.learningProgress}>
-        <DrillActivityHeatmap attempts={drillAttempts} days={56} />
+        <DrillActivityHeatmap attempts={drillAttempts} weeks={8} />
       </div>
     </div>
   )

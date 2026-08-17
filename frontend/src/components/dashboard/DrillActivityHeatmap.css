@@ -28,46 +28,48 @@
   margin: 20px 0;
 }
 
-.heatmap-scroll {
-  margin-bottom: 16px;
-}
-
-/* Custom scrollbar */
-.heatmap-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-
-.heatmap-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-.heatmap-scroll::-webkit-scrollbar-thumb {
-  background: rgba(81, 145, 162, 0.4);
-  border-radius: 4px;
-}
-
-.heatmap-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(81, 145, 162, 0.6);
-}
-
+.heatmap-axis,
 .drill-row {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.heatmap-axis {
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+
+.week-label {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(247, 247, 255, 0.45);
+}
+
+.heatmap-scroll {
+  margin-bottom: 16px;
+}
+
+.heatmap-more {
+  margin: 0 0 16px;
+}
+
+.heatmap-more .drill-row:last-child {
+  margin-bottom: 0;
+}
+
+.drill-row {
   margin-bottom: 14px;
   padding: 10px 8px;
   border-radius: 8px;
-  transition: background 0.2s ease;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .drill-row:last-child {
   border-bottom: none;
-}
-
-.drill-row:hover {
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .drill-info {
@@ -77,6 +79,10 @@
   max-width: 220px;
   gap: 6px;
   flex-shrink: 0;
+}
+
+.heatmap-axis .drill-info {
+  min-height: 0;
 }
 
 .drill-primary {
@@ -136,30 +142,21 @@
 }
 
 .activity-grid {
-  display: flex;
-  gap: 3px;
-  flex-wrap: wrap;
+  display: grid;
+  gap: 6px;
   flex: 1;
+  max-width: 280px;
 }
 
 .activity-cell {
-  width: 11px;
-  height: 11px;
-  border-radius: 2px;
+  aspect-ratio: 1;
+  width: 100%;
+  min-height: 18px;
+  border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
-  transition: all 0.2s ease;
-  cursor: pointer;
   border: 1px solid transparent;
 }
 
-.activity-cell:hover {
-  transform: scale(1.4);
-  border-color: rgba(255, 255, 255, 0.4);
-  z-index: 10;
-  position: relative;
-}
-
-/* Intensitätsstufen mit Glassmorphism & Accent Color */
 .activity-cell.intensity-0 {
   background: rgba(255, 255, 255, 0.05);
 }
@@ -196,55 +193,64 @@
 }
 
 .legend-cell {
-  width: 11px;
-  height: 11px;
-  border-radius: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
 }
 
-/* Mobile Responsiveness */
+@media (hover: hover) and (pointer: fine) {
+  .drill-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .activity-cell:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    z-index: 10;
+    position: relative;
+  }
+}
+
 @media (max-width: 768px) {
   .drill-activity-heatmap {
     padding: 16px;
   }
 
+  .heatmap-axis,
   .drill-row {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 10px;
   }
-  
+
+  .heatmap-axis {
+    padding: 0;
+  }
+
+  .heatmap-axis .drill-info {
+    display: none;
+  }
+
   .drill-info {
     min-width: 100%;
     max-width: 100%;
   }
 
-  .drill-meta {
-    font-size: 10px;
-  }
-
   .activity-grid {
-    max-width: 100%;
-    overflow: visible;
-    flex-wrap: wrap;
-  }
-  
-  .activity-cell {
-    width: 10px;
-    height: 10px;
+    max-width: none;
   }
 
-  .heatmap-scroll {
-    max-height: none;
+  .activity-cell {
+    min-height: 22px;
   }
 }
 
-/* Tablet */
 @media (max-width: 1024px) and (min-width: 769px) {
   .drill-info {
     min-width: 160px;
     max-width: 160px;
   }
-  
+
   .drill-name {
     font-size: 13px;
   }

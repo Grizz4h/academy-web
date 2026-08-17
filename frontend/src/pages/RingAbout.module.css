@@ -53,22 +53,11 @@
   color: #dcfce7;
 }
 
-.addBtn {
+.addBtnSlot {
   flex: 0 0 auto;
-  margin-left: auto;
+  margin-left: 0.15rem;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.42rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid rgba(129, 221, 245, 0.55);
-  background: linear-gradient(180deg, rgba(95, 210, 230, 0.95), rgba(81, 145, 162, 0.95));
-  color: #041018;
-  font-size: 0.88rem;
-  font-weight: 750;
-  cursor: pointer;
-  box-shadow: 0 0 18px rgba(56, 189, 248, 0.2);
-  white-space: nowrap;
 }
 
 .kpiGrid {
@@ -621,13 +610,12 @@
     gap: 0.7rem;
   }
 
-  .tab,
-  .addBtn {
+  .tab {
     padding: 0.38rem 0.7rem;
     font-size: 0.82rem;
   }
 
-  .addBtn {
+  .addBtnSlot {
     margin-left: 0.15rem;
   }
 
@@ -646,8 +634,7 @@
     justify-content: center;
   }
 
-  .emptyActions .addBtn {
+  .emptyActions :global(.ui-btn) {
     width: 100%;
-    margin-left: 0;
   }
 }

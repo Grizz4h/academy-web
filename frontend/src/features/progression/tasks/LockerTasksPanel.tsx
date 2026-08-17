@@ -4,10 +4,12 @@ import { api } from '../../../api'
 import { useUser } from '../../../context/UserContext'
 import { contentRegistry } from '../../../content/registry'
 import { getMatchdayGroup } from '../../../content/matchdays'
+import { getVenue } from '../../../data/venues'
 import { filterCatalogGamesForSeason } from '../../../components/game/gameCatalogUtils'
 import { UiButton, UiChip, UiPill, UiProgress, UiSheet, UiSheetActions } from '../../../components/ui'
 import { useRewards } from '../../rewards'
 import { resolveMatchdayContext } from '../challenges/matchdayContext'
+import { syncChallengeRotation } from '../challenges/challengeEngine'
 import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../../../stats/seasonNormalization'
 import {
   LANE_LABELS,
@@ -67,7 +69,7 @@ export function LockerTasksPanel({
   onSelect: (sourceId: string | null) => void
 }) {
   const { user } = useUser()
-  const { rewardState, syncChallengeBoard } = useRewards()
+  const { rewardState, rewardStateLoaded, syncChallengeBoard } = useRewards()
   const slateSeason = useMemo(
     () => normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate(),
     [],
@@ -85,24 +87,36 @@ export function LockerTasksPanel({
   const matchday = useMemo(() => resolveMatchdayContext(games), [games])
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !rewardStateLoaded) return
     void syncChallengeBoard({ matchday })
-  }, [user, matchday?.gameId, syncChallengeBoard])
+  }, [user, rewardStateLoaded, matchday?.gameId, syncChallengeBoard])
 
-  const views = useMemo(
-    () =>
-      selectLockerTaskViews({
-        state: rewardState,
-        definitions: contentRegistry.challenges,
-        pools: contentRegistry.pools,
-        campaigns: contentRegistry.campaigns,
-        progress: rewardState.challengeProgress || {},
-        rotation: rewardState.challengeRotation,
-        matchday,
-        userId: user || undefined,
-      }),
-    [rewardState, matchday, user],
-  )
+  const views = useMemo(() => {
+    if (!user) return []
+    const synced = rewardState.challengeRotation
+      ? null
+      : syncChallengeRotation({
+          definitions: contentRegistry.challenges,
+          pools: contentRegistry.pools,
+          campaigns: contentRegistry.campaigns,
+          progress: rewardState.challengeProgress || {},
+          rotation: null,
+          matchday,
+          userId: user,
+        })
+    const rotation = rewardState.challengeRotation || synced?.rotation
+    if (!rotation) return []
+    return selectLockerTaskViews({
+      state: rewardState,
+      definitions: contentRegistry.challenges,
+      pools: contentRegistry.pools,
+      campaigns: contentRegistry.campaigns,
+      progress: synced?.progress || rewardState.challengeProgress || {},
+      rotation,
+      matchday,
+      userId: user,
+    })
+  }, [rewardState, matchday, user])
 
   const filtered = useMemo(() => filterLockerTaskViews(views, lane, status), [views, lane, status])
   const selected = views.find((item) => item.sourceId === selectedId || item.id === selectedId) || null
@@ -203,6 +217,21 @@ export function LockerTasksPanel({
               <span>{selected.lane === 'permanent' ? 'Zeitraum' : 'Expires'}</span>
               <strong>{selected.windowLabel}</strong>
             </div>
+            {selected.challenge?.progress.boundVenueId ? (
+              <div className={styles.detailBlock}>
+                <span>Arena</span>
+                <strong>{getVenue(selected.challenge.progress.boundVenueId)?.name || selected.challenge.progress.boundVenueId}</strong>
+              </div>
+            ) : null}
+            {selected.challenge?.progress.boundGameId ? (
+              <div className={styles.detailBlock}>
+                <span>Spiel</span>
+                <strong>{selected.challenge.progress.boundGameId}</strong>
+                {selected.challenge.progress.completedAt ? (
+                  <em>{new Date(selected.challenge.progress.completedAt).toLocaleString('de-DE')}</em>
+                ) : null}
+              </div>
+            ) : null}
             {selected.matchdayGroupId ? (
               <div className={styles.detailBlock}>
                 <span>Matchday</span>

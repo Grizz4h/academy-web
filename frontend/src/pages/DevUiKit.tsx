@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Card from '../components/Card'
-import { MechanicGlyph } from '../components/visuals'
+import { CosmeticGlyph, MechanicGlyph } from '../components/visuals'
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard'
 import {
   TapReveal,
@@ -83,6 +83,11 @@ export default function DevUiKit() {
 
       <Card surface="section">
         <h2 className="ui-section-title">KPI + TapReveal</h2>
+        <p className="ui-page-lead">
+          Popovers über <code>AnchoredPopover</code>. Innenabstand global in{' '}
+          <code>styles/anchored-popover.css</code> — nicht lokal auf <code>padding: 0</code> setzen.
+          Glyph-Klick öffnet Erklärung (<code>stopPropagation</code>), damit umgebende Links nicht feuern.
+        </p>
         <div className={styles.kpiRow}>
           <KpiRevealCard
             title="Streak"
@@ -118,6 +123,15 @@ export default function DevUiKit() {
         <div className={styles.row}>
           <MechanicGlyph kind="paint" />
           <MechanicGlyph kind="path" />
+          <MechanicGlyph kind="profile" />
+          <CosmeticGlyph type="title" size="sm" />
+          <CosmeticGlyph type="tagline" size="sm" />
+          <CosmeticGlyph type="sticker" size="sm" />
+          <CosmeticGlyph type="emblem" size="sm" />
+          <CosmeticGlyph type="banner" size="sm" />
+          <CosmeticGlyph type="avatar" size="sm" />
+          <CosmeticGlyph type="frame" size="sm" />
+          <CosmeticGlyph type="masteryCoin" size="sm" />
           <TapReveal title="Beispiel" trigger={<UiButton variant="secondary" size="sm">Antippen</UiButton>}>
             <p>Kurzinfo + nächster Schritt.</p>
             <UiActionRow>
@@ -134,10 +148,51 @@ export default function DevUiKit() {
         </summary>
         <div className="ui-more__body">
           <p className="ui-page-lead">
-            Kanonisch für Home/Stats-„mehr“. Bestehende `.morePanel`-Kopien später hierher ziehen, nicht neu erfinden.
+            Eigene Fläche. Listen in einer Karte: <code>.ui-more--flush</code> — kein zweiter Rahmen.
           </p>
         </div>
       </details>
+
+      <Card surface="section">
+        <h2 className="ui-section-title">Liste, Rest einklappen</h2>
+        <p className="ui-page-lead">Erste 6 sichtbar, Rest bündig darunter — nicht schmaler, keine Extra-Karte.</p>
+        <div className={styles.listRow}><span>Kachel 1</span><span>sichtbar</span></div>
+        <div className={styles.listRow}><span>Kachel 2</span><span>sichtbar</span></div>
+        <details className="ui-more ui-more--flush">
+          <summary className="ui-more__summary">
+            <span>Weitere · 2</span>
+            <span className="ui-more__chevron" aria-hidden="true" />
+          </summary>
+          <div className="ui-more__body">
+            <div className={styles.listRow}><span>Kachel 3</span><span>eingeklappt</span></div>
+            <div className={styles.listRow}><span>Kachel 4</span><span>eingeklappt</span></div>
+          </div>
+        </details>
+      </Card>
+
+      <Card surface="section">
+        <h2 className="ui-section-title">Filter</h2>
+        <p className="ui-page-lead">
+          1–2 Felder: dieselben <code>appSelect</code> auf Desktop und Mobile.
+          Mehr Felder: <code>FilterSheet</code> / <code>UiSheet</code> — kein altes Overlay.
+        </p>
+        <div className={styles.filterRow}>
+          <label>
+            Liga
+            <select className="appSelect" defaultValue="DEL" aria-label="Demo Liga">
+              <option value="DEL">DEL</option>
+              <option value="NHL">NHL</option>
+            </select>
+          </label>
+          <label>
+            Saison
+            <select className="appSelect" defaultValue="2025/26" aria-label="Demo Saison">
+              <option value="2025/26">2025/26</option>
+              <option value="2024/25">2024/25</option>
+            </select>
+          </label>
+        </div>
+      </Card>
 
       <Card surface="section">
         <h2 className="ui-section-title">Liste vs. Karte</h2>

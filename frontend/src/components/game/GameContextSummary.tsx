@@ -21,6 +21,8 @@ type GameContextSummaryProps = {
   showImportChrome?: boolean
   /** Render as section inside a parent card (no nested box) */
   embedded?: boolean
+  /** Hide scores / H2H for past games */
+  hideSpoilers?: boolean
 }
 
 function formatDate(value?: string): string {
@@ -49,22 +51,23 @@ export default function GameContextSummary({
   perspectiveTeam,
   showImportChrome,
   embedded = false,
+  hideSpoilers = false,
 }: GameContextSummaryProps) {
   const home = game?.home_team_name || gameInfo?.team_home
   const away = game?.away_team_name || gameInfo?.team_away
   if (!home || !away) return null
 
-  const score = formatScore(game)
-  const status = game?.status || (score ? 'final' : 'scheduled')
+  const score = hideSpoilers ? null : formatScore(game)
+  const status = game?.status || (game?.score ? 'final' : 'scheduled')
   const date = formatDate(game?.date || gameInfo?.date)
   const phase = game?.phase_label || gameInfo?.competition_phase_label
   const matchday = game?.matchday || gameInfo?.competition_unit_value || gameInfo?.matchday
   const season = gameInfo?.season || game?.season_id
-  const periods = formatPeriods(game)
+  const periods = hideSpoilers ? null : formatPeriods(game)
   const detailsUrl = pennyDelSpieldetailsUrl(game)
   const staleResult = isGamePastWithoutScore(game)
   const meetings = catalogGames?.length ? pairingMeetings(catalogGames, home, away) : []
-  const h2h = pairingHeadToHeadSummary(meetings, perspectiveTeam || home)
+  const h2h = hideSpoilers ? null : pairingHeadToHeadSummary(meetings, perspectiveTeam || home)
   const isArchive = isCatalogArchiveGame(game)
   const isDummy = isDummyCatalogGame(game)
   const importChrome = isDummy
@@ -94,7 +97,7 @@ export default function GameContextSummary({
       {importChrome && (
         <div className={styles.sourceBar}>
           <span className={isArchive ? styles.badgeArchive : styles.badgePlan}>
-            {isArchive ? 'Archiv · Ergebnis' : 'Spielplan · Termin'}
+            {isArchive ? (hideSpoilers ? 'Archiv' : 'Archiv · Ergebnis') : 'Spielplan · Termin'}
           </span>
           <span className={styles.sourceProvider}>PENNY DEL Import</span>
         </div>
@@ -108,9 +111,9 @@ export default function GameContextSummary({
         <span>{away}</span>
       </div>
       <div className={styles.meta}>
-        {status === 'final' && <span className={styles.badge}>Final</span>}
+        {status === 'final' && !hideSpoilers && <span className={styles.badge}>Final</span>}
         {status === 'scheduled' && !staleResult && <span className={styles.badgeMuted}>Geplant</span>}
-        {staleResult && <span className={styles.badgeWarn}>Ergebnis fehlt</span>}
+        {staleResult && !hideSpoilers && <span className={styles.badgeWarn}>Ergebnis fehlt</span>}
         {game?.time && <span>{game.time.slice(0, 5)} Uhr</span>}
         {date && <span>{date}</span>}
         {season && <span>{gameInfo?.league || game?.league_id} · {season}</span>}
@@ -123,7 +126,7 @@ export default function GameContextSummary({
         )}
       </div>
       {periods && <div className={styles.periods}>{periods}</div>}
-      {staleResult && (
+      {staleResult && !hideSpoilers && (
         <p className={styles.hint}>
           Spieltermin liegt in der Vergangenheit — Spielplan in Dev neu synchronisieren für Ergebnis.
         </p>
@@ -141,7 +144,7 @@ export default function GameContextSummary({
                 <li key={meeting.id} className={isCurrent ? styles.meetingCurrent : undefined}>
                   <span>ST {meeting.matchday ?? '?'}</span>
                   <span>{formatDate(meeting.date)}</span>
-                  <span>{formatGameScoreShort(meeting)}</span>
+                  <span>{formatGameScoreShort(meeting, hideSpoilers)}</span>
                   {isCurrent && <span className={styles.meetingTag}>ausgewählt</span>}
                 </li>
               )

@@ -111,8 +111,8 @@
   scrollbar-width: none;
   scroll-padding-inline: 10px;
   /* Fade only on the right — left edge stays fully opaque for session chip glow */
-  mask-image: linear-gradient(90deg, #000 0%, #000 88%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
 }
 
 .navTabsWrapper::-webkit-scrollbar {
@@ -126,7 +126,7 @@
   width: max-content;
   min-width: 0;
   /* Room for session chip glow so overflow-x does not hard-clip the left edge */
-  padding: 4px 2px 4px 10px;
+  padding: 4px 2.4rem 4px 10px;
 }
 
 .navLink {
@@ -313,7 +313,7 @@
   gap: 10px;
   margin-left: auto;
   flex: 0 0 auto;
-  padding: 5px 7px 5px 6px;
+  padding: 5px 11px 5px 9px;
   border-radius: 999px;
   overflow: visible;
   background: rgba(12, 18, 32, 0.78);
@@ -344,7 +344,7 @@
   text-decoration: none;
   color: inherit;
   border-radius: 999px;
-  padding: 1px 4px 1px 1px;
+  padding: 1px 6px 1px 2px;
   transition:
     transform 160ms var(--motion-ease, ease),
     background 160ms var(--motion-ease, ease);
@@ -516,16 +516,14 @@
     margin-left: 0;
     padding-bottom: 2px;
     scroll-padding-inline-start: 10px;
-    mask-image: linear-gradient(90deg, #000 0%, #000 92%, transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 92%, transparent 100%);
-  }
-
-  .navTabs {
-    padding-inline-start: 10px;
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
   }
 
   .navTabs {
     gap: 6px;
+    padding-inline-start: 10px;
+    padding-inline-end: 2.4rem;
   }
 
   .navLink {
@@ -547,7 +545,7 @@
 
   .userSection {
     gap: 6px;
-    padding: 4px 6px 4px 5px;
+    padding: 4px 9px 4px 7px;
   }
 
   .userActions {

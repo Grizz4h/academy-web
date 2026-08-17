@@ -145,7 +145,7 @@
   "drafts": {
     "P1": {
       "__paintable_rink_observation_draft": {
-        "selectedLayerId": "protected_space",
+        "selectedLayerId": "danger_space",
         "rinkAnnotations": [],
         "note": ""
       },

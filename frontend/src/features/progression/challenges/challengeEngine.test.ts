@@ -234,11 +234,157 @@ function evalEvents(events: ReturnType<typeof buildObservationCreatedEvent>[], p
   assert(MVP_CAMPAIGNS.some((item) => item.enabled === false), 'campaign stub is inactive')
   const wasteland = MVP_CHALLENGES.find((item) => item.id === 'challenge_collection_survive_the_shift')
   assert(Boolean(wasteland), 'wasteland collection challenge exists')
-  assert(wasteland?.type === 'collection', 'survive the shift is collection type')
-  assert(
-    Boolean(wasteland?.rewards.some((reward) => reward.type === 'cosmetic' && reward.cosmeticId === 'puck_wasteland_scrap')),
-    'survive the shift grants scrap puck',
+  assert(wasteland?.enabled === false, 'wasteland collection is parked until the set is redesigned')
+}
+
+const homeIce = MVP_CHALLENGES.find((item) => item.id === 'challenge_matchday_home_ice')
+const onTheRoad = MVP_CHALLENGES.find((item) => item.id === 'challenge_matchday_on_the_road')
+const firstVisit = MVP_CHALLENGES.find((item) => item.id === 'challenge_matchday_first_visit')
+assert(Boolean(homeIce && onTheRoad && firstVisit), 'location matchday challenges exist')
+
+function evalLocation(events: ReturnType<typeof buildSessionCompletedEvent>[], progress = {}, processed = {}, rotation = undefined as any) {
+  return evaluateChallenges({
+    events,
+    definitions: [homeIce!, onTheRoad!, firstVisit!],
+    pools: [],
+    progress,
+    processedEvents: processed,
+    rotation,
+    matchday: matchdayCtx,
+    unlockedCosmetics: {},
+    now,
+    userId: 'christoph',
+  })
+}
+
+{
+  const homeEvent = buildSessionCompletedEvent({
+    sessionId: 'loc-home',
+    drillId: 'D1',
+    trackId: 'C1',
+    gameId: 'GAME_A',
+    venueId: 'venue.del.saturn_arena',
+    venueVerified: true,
+    homeAwayRole: 'home',
+    isFirstVenueVisit: true,
+    isDummy: false,
+    occurredAt: now.toISOString(),
+  })
+  const result = evalLocation([homeEvent])
+  const home = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_home_ice')
+  const away = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_on_the_road')
+  const first = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_first_visit')
+  assert(home?.status === 'completed', 'home role completes HOME ICE')
+  assert(away?.status !== 'completed', 'home role does not complete ON THE ROAD')
+  assert(first?.status === 'completed', 'first verified visit completes FIRST VISIT')
+}
+
+{
+  const awayEvent = buildSessionCompletedEvent({
+    sessionId: 'loc-away',
+    drillId: 'D1',
+    trackId: 'C1',
+    gameId: 'GAME_A',
+    venueId: 'venue.del.saturn_arena',
+    venueVerified: true,
+    homeAwayRole: 'away',
+    isFirstVenueVisit: false,
+    isDummy: false,
+    occurredAt: now.toISOString(),
+  })
+  const result = evalLocation([awayEvent])
+  const home = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_home_ice')
+  const away = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_on_the_road')
+  assert(away?.status === 'completed', 'away role completes ON THE ROAD')
+  assert(home?.status !== 'completed', 'away role does not complete HOME ICE')
+}
+
+{
+  const insideNoGame = buildSessionCompletedEvent({
+    sessionId: 'no-game',
+    drillId: 'D1',
+    trackId: 'C1',
+    venueId: 'venue.del.saturn_arena',
+    venueVerified: true,
+    homeAwayRole: 'home',
+    isDummy: false,
+    occurredAt: now.toISOString(),
+  })
+  const result = evalLocation([insideNoGame])
+  const home = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_home_ice')
+  assert(home?.status !== 'completed', 'inside venue without game context does not grant')
+}
+
+{
+  const wrongGame = buildSessionCompletedEvent({
+    sessionId: 'wrong-game',
+    drillId: 'D1',
+    trackId: 'C1',
+    gameId: 'GAME_B',
+    venueId: 'venue.del.saturn_arena',
+    venueVerified: true,
+    homeAwayRole: 'home',
+    isDummy: false,
+    occurredAt: now.toISOString(),
+  })
+  const result = evalLocation([wrongGame])
+  const home = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_home_ice')
+  assert(home?.status !== 'completed', 'wrong game does not grant')
+}
+
+{
+  const event = buildSessionCompletedEvent({
+    sessionId: 'idem',
+    drillId: 'D1',
+    trackId: 'C1',
+    gameId: 'GAME_A',
+    venueId: 'venue.del.saturn_arena',
+    venueVerified: true,
+    homeAwayRole: 'home',
+    isDummy: false,
+    occurredAt: now.toISOString(),
+  })
+  const first = evalLocation([event])
+  const replay = evalLocation(
+    [event],
+    first.progress,
+    Object.fromEntries(first.processedEventIds.map((id) => [id, true])),
+    first.rotation,
   )
+  assert(first.grantedPux > 0, 'first grant pays')
+  assert(replay.grantedPux === 0, 'same user+game does not double grant')
+}
+
+{
+  const dummy = buildSessionCompletedEvent({
+    sessionId: 'dummy-loc',
+    drillId: 'D1',
+    trackId: 'C1',
+    gameId: 'GAME_A',
+    venueId: 'venue.del.saturn_arena',
+    venueVerified: true,
+    homeAwayRole: 'home',
+    isDummy: true,
+    occurredAt: now.toISOString(),
+  })
+  const result = evalLocation([dummy])
+  assert(result.grantedPux === 0, 'dummy session does not earn location rewards')
+}
+
+{
+  const unverified = buildSessionCompletedEvent({
+    sessionId: 'denied',
+    drillId: 'D1',
+    trackId: 'C1',
+    gameId: 'GAME_A',
+    homeAwayRole: 'home',
+    venueVerified: false,
+    isDummy: false,
+    occurredAt: now.toISOString(),
+  })
+  const result = evalLocation([unverified])
+  const home = Object.values(result.progress).find((entry) => entry.challengeId === 'challenge_matchday_home_ice')
+  assert(home?.status !== 'completed', 'permission denied / unverified still allows the drill but no location reward')
 }
 
 console.log('challengeEngine.test.ts: all assertions passed')

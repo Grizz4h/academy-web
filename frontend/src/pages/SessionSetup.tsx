@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useUser } from '../context/UserContext'
@@ -7,10 +7,12 @@ import { makeGlossaryRenderer } from '../components/GlossaryTerm'
 import { DrillGuideCard } from '../components/DrillGuideCard'
 import type { DrillGuide } from '../components/DrillGuideCard'
 import { getTeamNamesForLeague } from '../data/teamsByLeague'
+import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
 import { type ObservationScope } from '../utils/observationScope'
 import {
+  defaultDelSetupSeason,
   isSplitSeasonLeague,
   normalizeSeasonValue,
   SEASON_OPTIONS,
@@ -21,10 +23,11 @@ import { createDummySessionForDrill } from '../dev/createDummySession'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { LiveObservationPanel } from '../components/game/LiveObservationPanel'
+import ArenaCheckPanel from '../components/game/ArenaCheckPanel'
 import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
 import { PastDrillSessions } from '../features/reflection/PastDrillSessions'
 import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
-import { inferSplitSeasonLabelForDate } from '../stats/seasonNormalization'
+import { readPendingVenuePresence } from '../features/location'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import { getFoundationModule, isAcademyLocked } from '../features/foundation/recommendations'
 import setupStyles from './SessionSetup.module.css'
@@ -77,6 +80,7 @@ const getTeamDivision = (teamName: string): string | undefined => {
 
 export default function SessionSetup() {
   const { moduleId } = useParams<{ moduleId: string }>()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user } = useUser()
@@ -84,6 +88,7 @@ export default function SessionSetup() {
   const [observedTeam, setObservedTeam] = useState<string>('')
   const [confidence, setConfidence] = useState<number>(3)
   const [selectedDrill, setSelectedDrill] = useState<string>('')
+  const appliedQueryDrillRef = useRef<string | null>(null)
   const [league, setLeague] = useState<string>('DEL')
   const [teamHome, setTeamHome] = useState<string>('')
   const [teamAway, setTeamAway] = useState<string>('')
@@ -117,10 +122,8 @@ export default function SessionSetup() {
 
   useEffect(() => {
     if (league !== 'DEL' || season) return
-    const inferred = inferSplitSeasonLabelForDate()
-    if (seasonOptions.includes(inferred)) {
-      setSeason(inferred)
-    }
+    const next = defaultDelSetupSeason(seasonOptions)
+    if (seasonOptions.includes(next)) setSeason(next)
   }, [league, season, seasonOptions])
 
   // Draft laden
@@ -139,7 +142,9 @@ export default function SessionSetup() {
       if (parsed.competitionPhase) setCompetitionPhase(parsed.competitionPhase)
       if (parsed.competitionValue) setCompetitionValue(parsed.competitionValue)
       if (!parsed.competitionValue && parsed.matchday) setCompetitionValue(parsed.matchday)
-      if (parsed.selectedDrill) setSelectedDrill(parsed.selectedDrill)
+      // URL ?drill= wins over draft when deep-linking from Home / Drills
+      const queryDrill = (searchParams.get('drill') || '').trim()
+      if (parsed.selectedDrill && !queryDrill) setSelectedDrill(parsed.selectedDrill)
       if (parsed.observationScope) setObservationScope(parsed.observationScope)
       if (parsed.selectedGameId) setSelectedGameId(parsed.selectedGameId)
     } catch (e) {
@@ -147,6 +152,11 @@ export default function SessionSetup() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftKey])
+
+  // Reset query-apply marker when module changes
+  useEffect(() => {
+    appliedQueryDrillRef.current = null
+  }, [moduleId])
 
   // Draft speichern bei Änderungen
   useEffect(() => {
@@ -173,6 +183,12 @@ export default function SessionSetup() {
     queryFn: () => api.getCurriculum()
   })
 
+  const { data: account } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+  })
+
   const { data: teamsResp } = useQuery({
     queryKey: ['teams', league, season],
     queryFn: () => api.getTeams(league, season || undefined),
@@ -188,6 +204,7 @@ export default function SessionSetup() {
     teamAway,
     competitionValue,
     selectedGameId,
+    competitionPhase,
   })
   const {
     matchedCatalogGame,
@@ -374,13 +391,22 @@ export default function SessionSetup() {
     })
   }, [moduleId, currentModule, selectedDrill])
 
-  // Ersten Drill standardmäßig vorauswählen (A1 UX: sofort startbar)
+  // Drill vorauswählen: ?drill= (Home/Drills) > Draft > erster Drill
   useEffect(() => {
     if (!currentModule?.drills?.length) return
-    if (!selectedDrill) {
-      setSelectedDrill(currentModule.drills[0].id)
+    const queryDrill = (searchParams.get('drill') || '').trim()
+    const queryValid = Boolean(
+      queryDrill && currentModule.drills.some((drill) => drill.id === queryDrill),
+    )
+
+    if (queryValid && queryDrill !== appliedQueryDrillRef.current) {
+      appliedQueryDrillRef.current = queryDrill
+      setSelectedDrill(queryDrill)
+      return
     }
-  }, [currentModule, selectedDrill])
+
+    setSelectedDrill((prev) => prev || currentModule.drills[0].id)
+  }, [currentModule, searchParams])
 
   const availableTeams = (() => {
     if (!league) return []
@@ -394,13 +420,16 @@ export default function SessionSetup() {
     if (!availableTeams.length) return
 
     if (teamHome && !availableTeams.includes(teamHome)) {
-      setTeamHome('')
+      const resolved = resolveCatalogTeamName(teamHome, league, season)
+      setTeamHome(availableTeams.includes(resolved) ? resolved : '')
     }
     if (teamAway && !availableTeams.includes(teamAway)) {
-      setTeamAway('')
+      const resolved = resolveCatalogTeamName(teamAway, league, season)
+      setTeamAway(availableTeams.includes(resolved) ? resolved : '')
     }
     if (observedTeam && !availableTeams.includes(observedTeam)) {
-      setObservedTeam('')
+      const resolved = resolveCatalogTeamName(observedTeam, league, season)
+      setObservedTeam(availableTeams.includes(resolved) ? resolved : '')
     }
   }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
 
@@ -458,6 +487,7 @@ export default function SessionSetup() {
       .filter((session) => String(session.state || '').toUpperCase() === 'COMPLETED')
       .map((session) => String(session.module_id || ''))
       .filter(Boolean),
+    hockeyExperience: account?.profile?.hockeyExperience,
   })
   const foundationModule = getFoundationModule(curriculum)
 
@@ -569,6 +599,8 @@ export default function SessionSetup() {
     const dummyGame = isDummyCatalogGame(matchedCatalogGame)
     if (matchedCatalogGame?.id && !dummyGame) {
       gameInfo.game_id = matchedCatalogGame.id
+      gameInfo.home_team_id = matchedCatalogGame.home_team_id
+      gameInfo.away_team_id = matchedCatalogGame.away_team_id
     }
     if (dummyGame) {
       gameInfo.is_dummy = true
@@ -597,6 +629,16 @@ export default function SessionSetup() {
     const effectiveGoal = goal.trim() || `Auto: ${currentModule.title}`
     const chosenDrill = selectedDrill || currentModule.drills[0]?.id
 
+    const observedTeamId =
+      matchedCatalogGame && observedTeam === (matchedCatalogGame.home_team_name || matchedCatalogGame.home_team_id)
+        ? matchedCatalogGame.home_team_id
+        : matchedCatalogGame && observedTeam === (matchedCatalogGame.away_team_name || matchedCatalogGame.away_team_id)
+          ? matchedCatalogGame.away_team_id
+          : undefined
+    const locationVerification = dummyGame || !matchedCatalogGame?.id
+      ? undefined
+      : readPendingVenuePresence(matchedCatalogGame.id) || undefined
+
     const payload = {
       user: user.trim(),
       module_id: moduleId!,
@@ -608,6 +650,10 @@ export default function SessionSetup() {
       drill_id: chosenDrill || undefined,
       game_info: gameInfo,
       game_id: dummyGame ? undefined : (matchedCatalogGame?.id || undefined),
+      observed_team: observedTeam,
+      observed_team_id: observedTeamId,
+      observed_team_name: observedTeam,
+      location_verification: locationVerification,
     }
     lastPayloadRef.current = payload
     creatingSessionRef.current = true
@@ -717,7 +763,7 @@ export default function SessionSetup() {
   }
 
   return (
-    <div className="ui-page-shell" style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="ui-page-shell" style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Session Setup</h1>
         <p className="ui-section-title-content" style={{ margin: 0 }}>{currentModule.title}</p>
@@ -1145,6 +1191,8 @@ export default function SessionSetup() {
           1 = sehr unsicher, 5 = sehr selbstbewusst
         </p>
       </div>
+
+      <ArenaCheckPanel game={isDummyCatalogGame(matchedCatalogGame) ? null : matchedCatalogGame} />
 
       <button
         onClick={handleCreateSession}

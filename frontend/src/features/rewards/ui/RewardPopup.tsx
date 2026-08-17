@@ -68,7 +68,7 @@ export default function RewardPopup({ event, isVisible, onClose }: RewardPopupPr
         <div className={`${styles.burstLayer} ${styles[`burst_${tier}`]}`} aria-hidden="true" />
       )}
 
-      <div className={containerClass}>
+      <div className={containerClass} onClick={onClose} role="presentation">
         <div className={`${panelClass} ${tierClass}`}>
           <Card className={styles.card}>
             <div className={styles.cardContent}>

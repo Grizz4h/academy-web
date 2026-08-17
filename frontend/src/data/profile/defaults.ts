@@ -18,6 +18,7 @@ export function createDefaultProfile(displayName: string): UserProfileCustomizat
     favoriteLeague: null,
     favoriteTeamName: null,
     profileTagline: null,
+    stickerIds: [],
     academyHelpLevel: 'guided',
     terminologyMode: 'direct',
     preferredAttackDirection: 'auto',

@@ -6,7 +6,12 @@ import re
 from datetime import datetime
 from html import unescape
 from typing import Any, Dict, List, Optional
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
+
+_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+)
 
 from .game_store import build_game_id
 from .season_utils import season_to_del_url_slug
@@ -32,7 +37,8 @@ GERMAN_MONTHS = {
 
 def fetch_html(url: str) -> Optional[str]:
     try:
-        with urlopen(url, timeout=15) as response:
+        request = Request(url, headers={"User-Agent": _USER_AGENT})
+        with urlopen(request, timeout=20) as response:
             return response.read().decode("utf-8", errors="ignore")
     except Exception as exc:
         print(f"[ScheduleImporter] fetch failed {url}: {exc}")
@@ -106,23 +112,26 @@ def parse_schedule_html(
         date_iso = _parse_german_date(date_text_match.group(1) if date_text_match else "")
         time_match = re.search(r'team-schedule__time">([^<]+)', row)
         matchday_match = re.search(r'team-schedule__compet">([^<]+)', row)
-        team_names = [
-            _strip_html(name)
-            for name in re.findall(r'team-meta__name[^>]*>\s*<a[^>]*>([^<]+)</a>', row, re.S | re.I)
-        ]
-        team_slugs = re.findall(r'href="/teams/([^/]+)/', row)
+        # Names may be plain text (no team page / no <a>) — e.g. Dresdner Eislöwen 2025/26.
+        # Slugs must stay paired with that name block; a single leftover href is not "away".
+        team_slots = []
+        for block in re.findall(r'<h6 class="team-meta__name[^"]*">([\s\S]*?)</h6>', row, re.I):
+            name = _strip_html(block)
+            if not name:
+                continue
+            slugs = re.findall(r'href="/teams/([^/]+)/', block)
+            team_slots.append((name, slugs[0] if slugs else None))
         detail_links = re.findall(r'href="(/statistik/spieldetails/[^"]+)"', row)
         status_cells = [
             _strip_html(cell)
             for cell in re.findall(r'team-schedule__status[^>]*>(.*?)</td>', row, re.S | re.I)
         ]
 
-        if len(team_names) < 2:
+        if len(team_slots) < 2:
             continue
 
-        home_name, away_name = team_names[0], team_names[1]
-        home_slug = team_slugs[0] if team_slugs else None
-        away_slug = team_slugs[1] if len(team_slugs) > 1 else None
+        home_name, home_slug = team_slots[0]
+        away_name, away_slug = team_slots[1]
         home_id = team_mapper.resolve(slug=home_slug, name=home_name)
         away_id = team_mapper.resolve(slug=away_slug, name=away_name)
         if not home_id or not away_id:
@@ -167,6 +176,126 @@ def parse_schedule_html(
                 },
             }
         )
+
+    return games
+
+
+PLAYOFF_ROUND_MAP = {
+    "finale": ("final", "Finale"),
+    "halbfinale": ("semifinal", "Halbfinale"),
+    "viertelfinale": ("quarterfinal", "Viertelfinale"),
+    "1. playoff-runde": ("playoff_round_1", "Erste Playoff-Runde"),
+    "playoff-runde": ("playoff_round_1", "Erste Playoff-Runde"),
+}
+
+
+def _playoff_round(label: str) -> Optional[tuple[str, str]]:
+    key = _strip_html(label).lower().replace("–", "-").replace("—", "-")
+    key = re.sub(r"\s+", " ", key).strip()
+    if key in PLAYOFF_ROUND_MAP:
+        return PLAYOFF_ROUND_MAP[key]
+    for prefix, mapped in PLAYOFF_ROUND_MAP.items():
+        if prefix in key:
+            return mapped
+    return None
+
+
+def _date_from_penny_id(external_id: str) -> Optional[str]:
+    match = re.match(r"^(\d{2})(\d{2})(\d{4})_", external_id or "")
+    if not match:
+        return None
+    day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+    if not (1 <= day <= 31 and 1 <= month <= 12):
+        return None
+    return f"{year:04d}-{month:02d}-{day:02d}"
+
+
+def parse_playoff_html(
+    html: str,
+    *,
+    league: str,
+    season: str,
+    team_mapper: TeamCatalogMapper,
+) -> List[Dict[str, Any]]:
+    """Bracket page: /statistik/saison-…/playoffs/spielplan."""
+    games: List[Dict[str, Any]] = []
+    if not html:
+        return games
+
+    markers: List[tuple[int, Optional[tuple[str, str]]]] = []
+    for match in re.finditer(r'alt="([^"]+)" class="pologo"', html, re.I):
+        mapped = _playoff_round(match.group(1))
+        if mapped:
+            markers.append((match.start(), mapped))
+    for match in re.finditer(r"<h[1-6][^>]*>\s*([^<]*Playoff-Runde[^<]*)", html, re.I):
+        mapped = _playoff_round(match.group(1))
+        if mapped:
+            markers.append((match.start(), mapped))
+    markers.sort()
+
+    series_starts = [match.start() for match in re.finditer(r'class="[^"]*singleseries', html, re.I)]
+    for index, start in enumerate(series_starts):
+        end = series_starts[index + 1] if index + 1 < len(series_starts) else len(html)
+        block = html[start:end]
+        current = None
+        for pos, mapped in markers:
+            if pos < start:
+                current = mapped
+            else:
+                break
+        if not current:
+            continue
+        phase_id, phase_label = current
+
+        series_games: List[Dict[str, Any]] = []
+        for match in re.finditer(
+            r'href="/statistik/spieldetails/((?:\d{8})_([^/_]+)_gg_([^/_]+)_([^"/]+))"[^>]*>\s*([^<]+)',
+            block,
+            re.I,
+        ):
+            external_id = match.group(1)
+            home_slug = match.group(2)
+            away_slug = match.group(3)
+            score_text = _strip_html(match.group(5))
+            tail = block[match.end() : match.end() + 180]
+            if re.search(r"\bOT\b", tail, re.I) and "OT" not in score_text.upper():
+                score_text = f"{score_text} OT"
+            home_id = team_mapper.resolve(slug=home_slug)
+            away_id = team_mapper.resolve(slug=away_slug)
+            home_name = team_mapper.team_name(home_id) if home_id else None
+            away_name = team_mapper.team_name(away_id) if away_id else None
+            if not home_id or not away_id:
+                continue
+            date_iso = _date_from_penny_id(external_id)
+            score = _parse_score_block(score_text)
+            series_games.append(
+                {
+                    "id": build_game_id(league, season, external_id),
+                    "league_id": league.upper(),
+                    "season_id": season,
+                    "phase_id": phase_id,
+                    "phase_label": phase_label,
+                    "matchday": 0,
+                    "date": date_iso,
+                    "time": None,
+                    "home_team_id": home_id,
+                    "away_team_id": away_id,
+                    "home_team_name": home_name or home_slug,
+                    "away_team_name": away_name or away_slug,
+                    "status": "final" if score else "scheduled",
+                    "score": score or None,
+                    "source": {
+                        "provider": "penny_del",
+                        "external_id": external_id,
+                        "imported_at": datetime.utcnow().isoformat() + "Z",
+                    },
+                }
+            )
+
+        series_games.sort(key=lambda item: (item.get("date") or "", item.get("id") or ""))
+        for game_number, game in enumerate(series_games, start=1):
+            game["matchday"] = game_number
+            games.append(game)
 
     return games
 
@@ -299,6 +428,33 @@ class PennyDelScheduleImporter:
             "errors": errors,
         }
 
+    def _import_playoffs(self, season: str, *, league: str = "DEL") -> Dict[str, Any]:
+        season_slug = season_to_del_url_slug(season)
+        url = f"https://www.penny-del.org/statistik/saison-{season_slug}/playoffs/spielplan"
+        errors: List[str] = []
+        html = fetch_html(url)
+        if not html or "singleseries" not in html:
+            errors.append(f"Playoff-Spielplan nicht abrufbar: {url}")
+            return {
+                "season": season,
+                "league": league,
+                "games": [],
+                "imported_count": 0,
+                "import_source": "playoffs",
+                "errors": errors,
+            }
+        parsed = parse_playoff_html(html, league=league, season=season, team_mapper=self.team_mapper)
+        if not parsed:
+            errors.append(f"Keine Playoff-Spiele geparst: {url}")
+        return {
+            "season": season,
+            "league": league,
+            "games": parsed,
+            "imported_count": len(parsed),
+            "import_source": "playoffs",
+            "errors": errors,
+        }
+
     def _import_spiele_months(self, season: str, *, league: str = "DEL") -> Dict[str, Any]:
         """Upcoming-season fallback: /spiele/monat/* (used before statistik pages exist)."""
         base_url = "https://www.penny-del.org/spiele"
@@ -373,8 +529,26 @@ class PennyDelScheduleImporter:
     ) -> Dict[str, Any]:
         # Hauptrunde: scrape month-by-month from statistik (past/current published seasons)
         hauptrunde = self._import_hauptrunde(season, league=league)
-        if hauptrunde.get("games"):
-            return hauptrunde
+        playoffs = self._import_playoffs(season, league=league)
+        merged: List[Dict[str, Any]] = []
+        seen_ids: set[str] = set()
+        _merge_games(merged, seen_ids, hauptrunde.get("games") or [])
+        _merge_games(merged, seen_ids, playoffs.get("games") or [])
+        if merged:
+            sources = []
+            if hauptrunde.get("games"):
+                sources.append("hauptrunde")
+            if playoffs.get("games"):
+                sources.append("playoffs")
+            return {
+                "season": season,
+                "league": league,
+                "games": merged,
+                "imported_count": len(merged),
+                "months_fetched": hauptrunde.get("months_fetched") or [],
+                "import_source": "+".join(sources),
+                "errors": list(hauptrunde.get("errors") or []) + list(playoffs.get("errors") or []),
+            }
 
         # Upcoming season: PENNY DEL often has no statistik URL yet — use /spiele/monat/*
         spiele = self._import_spiele_months(season, league=league)

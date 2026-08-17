@@ -18,6 +18,10 @@ Bestehende Pipeline wiederverwenden, nicht neu bauen:
 
 ```text
 penny-del.org → PennyDelScheduleImporter → data/games/del_*.json → /api/games → CatalogGame → UI
+  Hauptrunde: /statistik/saison-…/hauptrunde/spielplan
+  Playoffs:   /statistik/saison-…/playoffs/spielplan
+    Erste Runde = Spiel 1–3 · Viertel/Halb/Finale = Spiel 1–7
+penny-del.org/teams/…/uebersicht → logo_importer → frontend/public/teams/del + delTeamLogos.json
 ```
 
 ## Andere Ligen

@@ -54,22 +54,23 @@ function GlyphArt({ kind }: { kind: CosmeticGlyphKind }) {
     case 'title':
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.art}>
-          <path d="M5 9 L12 5 L19 9 V16 H5 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-          <line x1="8" y1="12.5" x2="16" y2="12.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <rect x="3.5" y="7.5" width="17" height="9" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 11.2 V16 M8 11.2 H12.2 M12.2 11.2 V16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       )
     case 'tagline':
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.art}>
-          <path d="M7 8 V15 H11 V11 H9 V8 Z" fill="currentColor" />
-          <path d="M13 8 V15 H17 V11 H15 V8 Z" fill="currentColor" opacity="0.72" />
+          <path d="M6 8.2 C6 6.6 7.4 5.5 9.2 5.5 V8 C8.4 8 7.9 8.5 7.9 9.3 H10.4 V16.5 H6 Z" fill="currentColor" />
+          <path d="M13.6 8.2 C13.6 6.6 15 5.5 16.8 5.5 V8 C16 8 15.5 8.5 15.5 9.3 H18 V16.5 H13.6 Z" fill="currentColor" opacity="0.72" />
         </svg>
       )
     case 'sticker':
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.art}>
-          <path d="M7 4.5 H15 L19.5 9 V19.5 H7 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-          <path d="M15 4.5 V9 H19.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M6.5 4.8 H14.8 L19.2 9.2 V19.2 H6.5 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M14.8 4.8 V9.2 H19.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+          <circle cx="11.2" cy="13.2" r="1.15" fill="currentColor" />
         </svg>
       )
     case 'masteryCoin':
@@ -120,7 +121,7 @@ function GlyphArt({ kind }: { kind: CosmeticGlyphKind }) {
 
 type CosmeticGlyphProps = {
   type: CosmeticType | string
-  size?: 'sm' | 'tile' | 'lg'
+  size?: 'meta' | 'sm' | 'tile' | 'lg'
   className?: string
 }
 

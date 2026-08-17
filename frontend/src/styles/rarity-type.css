@@ -1,0 +1,57 @@
+.rarity-type {
+  font-family: var(--font-body);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  font-style: normal;
+}
+
+.rarity-type[data-rarity='uncommon'] {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.rarity-type[data-rarity='rare'] {
+  font-family: var(--font-title-rare);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rarity-type[data-rarity='epic'] {
+  font-family: var(--font-title-rare);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rarity-type[data-rarity='legendary'] {
+  font-family: var(--font-title-legendary);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.rarity-type[data-rarity='mythic'] {
+  font-family: var(--font-title-mythic);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rarity-type--tagline {
+  font-style: italic;
+  font-weight: 600;
+}
+
+.rarity-type--tagline[data-rarity='uncommon'] {
+  font-style: italic;
+}
+
+.rarity-type--tagline[data-rarity='rare'],
+.rarity-type--tagline[data-rarity='epic'],
+.rarity-type--tagline[data-rarity='legendary'],
+.rarity-type--tagline[data-rarity='mythic'] {
+  font-style: normal;
+}

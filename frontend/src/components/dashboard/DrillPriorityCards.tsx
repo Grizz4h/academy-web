@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Card from '../Card';
 import { getDrillAccentLevel } from '../../utils/tealIntensity';
 import { MechanicGlyph } from '../visuals';
@@ -10,6 +11,8 @@ export type DrillWithCount = {
   drill_type?: string;
   count: number;
   moduleId?: string;
+  /** 1-based order within the module (didactic sequence). */
+  drillNumber?: number;
 };
 
 type DrillPriorityCardsProps = {
@@ -19,6 +22,44 @@ type DrillPriorityCardsProps = {
   currentScope: string;
   onScopeChange: (scope: string) => void;
 };
+
+function setupHref(drill: DrillWithCount): string | null {
+  if (!drill.moduleId) return null;
+  return `/setup/${encodeURIComponent(drill.moduleId)}?drill=${encodeURIComponent(drill.id)}`;
+}
+
+function DrillRow({ drill, accentType }: { drill: DrillWithCount; accentType: 'recommended' | 'trained' }) {
+  const accentLevel = getDrillAccentLevel(drill.count);
+  const displayTitle = drill.moduleId
+    ? `${drill.moduleId} · ${drill.title}`
+    : drill.title;
+  const href = setupHref(drill);
+
+  const body = (
+    <>
+      <div className={styles.itemAccent} data-level={accentLevel} data-type={accentType} />
+      <MechanicGlyph drillType={drill.drill_type} />
+      <span className={styles.drillTitle}>{displayTitle}</span>
+      <span className={styles.itemCount}>{drill.count}×</span>
+    </>
+  );
+
+  if (!href) {
+    return <li className={styles.drillItem}>{body}</li>;
+  }
+
+  return (
+    <li className={styles.drillItem}>
+      <Link
+        to={href}
+        className={styles.drillItemLink}
+        aria-label={`${displayTitle} — Session Setup öffnen`}
+      >
+        {body}
+      </Link>
+    </li>
+  );
+}
 
 export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
   recommendedNext,
@@ -58,20 +99,9 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
           <p className={styles.emptyState}>Keine Drills verfügbar.</p>
         ) : (
           <ul className={styles.drillList}>
-            {recommendedNext.map((drill) => {
-              const accentLevel = getDrillAccentLevel(drill.count);
-              const displayTitle = drill.moduleId 
-                ? `${drill.moduleId} · ${drill.title}` 
-                : drill.title;
-              return (
-                <li key={drill.id} className={styles.drillItem}>
-                  <div className={styles.itemAccent} data-level={accentLevel} data-type="recommended" />
-                  <MechanicGlyph drillType={drill.drill_type} />
-                  <span className={styles.drillTitle}>{displayTitle}</span>
-                  <span className={styles.itemCount}>{drill.count}×</span>
-                </li>
-              );
-            })}
+            {recommendedNext.map((drill) => (
+              <DrillRow key={drill.id} drill={drill} accentType="recommended" />
+            ))}
           </ul>
         )}
       </Card>
@@ -83,20 +113,9 @@ export const DrillPriorityCards: React.FC<DrillPriorityCardsProps> = ({
           <p className={styles.emptyState}>Noch keine Drills absolviert.</p>
         ) : (
           <ul className={styles.drillList}>
-            {mostTrained.map((drill) => {
-              const accentLevel = getDrillAccentLevel(drill.count);
-              const displayTitle = drill.moduleId 
-                ? `${drill.moduleId} · ${drill.title}` 
-                : drill.title;
-              return (
-                <li key={drill.id} className={styles.drillItem}>
-                  <div className={styles.itemAccent} data-level={accentLevel} data-type="trained" />
-                  <MechanicGlyph drillType={drill.drill_type} />
-                  <span className={styles.drillTitle}>{displayTitle}</span>
-                  <span className={styles.itemCount}>{drill.count}×</span>
-                </li>
-              );
-            })}
+            {mostTrained.map((drill) => (
+              <DrillRow key={drill.id} drill={drill} accentType="trained" />
+            ))}
           </ul>
         )}
         </Card>

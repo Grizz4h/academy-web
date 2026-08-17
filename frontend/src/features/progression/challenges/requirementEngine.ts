@@ -24,6 +24,11 @@ export type EventContext = {
   seasonId?: string
   sceneId?: string
   mechanicIds: string[]
+  venueId?: string
+  venueVerified?: boolean
+  homeAwayRole?: 'home' | 'away' | 'unknown'
+  isFirstVenueVisit?: boolean
+  locationVerificationDevSimulated?: boolean
 }
 
 export function readEventContext(event: RinkActivityEvent): EventContext {
@@ -42,6 +47,14 @@ export function readEventContext(event: RinkActivityEvent): EventContext {
     seasonId: typeof record.seasonId === 'string' ? record.seasonId : undefined,
     sceneId: typeof record.sceneId === 'string' ? record.sceneId : undefined,
     mechanicIds,
+    venueId: typeof record.venueId === 'string' ? record.venueId : undefined,
+    venueVerified: record.venueVerified === true,
+    homeAwayRole:
+      record.homeAwayRole === 'home' || record.homeAwayRole === 'away' || record.homeAwayRole === 'unknown'
+        ? record.homeAwayRole
+        : undefined,
+    isFirstVenueVisit: record.isFirstVenueVisit === true,
+    locationVerificationDevSimulated: record.locationVerificationDevSimulated === true,
   }
 }
 
@@ -80,6 +93,19 @@ export function eventMatchesRequirement(
     const hay = ctx.mechanicIds.join(' ').toLowerCase()
     const ok = filters.mechanicTypes.some((type) => hay.includes(type.toLowerCase()) || ctx.mechanicIds.includes(type))
     if (!ok) return false
+  }
+  if (filters.requireGameContext) {
+    if (!ctx.gameId) return false
+  }
+  if (filters.requireVenueVerification) {
+    if (ctx.locationVerificationDevSimulated) return false
+    if (ctx.venueVerified !== true) return false
+  }
+  if (filters.homeAwayRole) {
+    if (ctx.homeAwayRole !== filters.homeAwayRole) return false
+  }
+  if (filters.requireFirstVenueVisit) {
+    if (ctx.isFirstVenueVisit !== true) return false
   }
   return true
 }

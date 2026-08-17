@@ -1689,6 +1689,612 @@
       "processedAt": "2026-08-15T08:59:47.692Z",
       "grantedXp": 0,
       "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:02:45.964Z": {
+      "eventId": "challenge:sync:2026-08-15T09:02:45.964Z",
+      "processedAt": "2026-08-15T09:02:45.964Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:03:49.932Z": {
+      "eventId": "challenge:sync:2026-08-15T09:03:49.932Z",
+      "processedAt": "2026-08-15T09:03:49.932Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:07:12.960Z": {
+      "eventId": "challenge:sync:2026-08-15T09:07:12.960Z",
+      "processedAt": "2026-08-15T09:07:12.960Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:10:09.289Z": {
+      "eventId": "challenge:sync:2026-08-15T09:10:09.289Z",
+      "processedAt": "2026-08-15T09:10:09.289Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:20:32.362Z": {
+      "eventId": "challenge:sync:2026-08-15T09:20:32.362Z",
+      "processedAt": "2026-08-15T09:20:32.362Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:22:24.163Z": {
+      "eventId": "challenge:sync:2026-08-15T09:22:24.163Z",
+      "processedAt": "2026-08-15T09:22:24.163Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:23:09.018Z": {
+      "eventId": "challenge:sync:2026-08-15T09:23:09.018Z",
+      "processedAt": "2026-08-15T09:23:09.018Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:27:19.038Z": {
+      "eventId": "challenge:sync:2026-08-15T09:27:19.038Z",
+      "processedAt": "2026-08-15T09:27:19.038Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:32:00.293Z": {
+      "eventId": "challenge:sync:2026-08-15T09:32:00.293Z",
+      "processedAt": "2026-08-15T09:32:00.293Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:35:46.617Z": {
+      "eventId": "challenge:sync:2026-08-15T09:35:46.617Z",
+      "processedAt": "2026-08-15T09:35:46.617Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:35:49.812Z": {
+      "eventId": "challenge:sync:2026-08-15T09:35:49.812Z",
+      "processedAt": "2026-08-15T09:35:49.812Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:40:05.104Z": {
+      "eventId": "challenge:sync:2026-08-15T09:40:05.104Z",
+      "processedAt": "2026-08-15T09:40:05.104Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:40:07.739Z": {
+      "eventId": "challenge:sync:2026-08-15T09:40:07.739Z",
+      "processedAt": "2026-08-15T09:40:07.739Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:40:11.724Z": {
+      "eventId": "challenge:sync:2026-08-15T09:40:11.724Z",
+      "processedAt": "2026-08-15T09:40:11.724Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:40:55.213Z": {
+      "eventId": "challenge:sync:2026-08-15T09:40:55.213Z",
+      "processedAt": "2026-08-15T09:40:55.213Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:41:37.864Z": {
+      "eventId": "challenge:sync:2026-08-15T09:41:37.864Z",
+      "processedAt": "2026-08-15T09:41:37.864Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:41:44.448Z": {
+      "eventId": "challenge:sync:2026-08-15T09:41:44.448Z",
+      "processedAt": "2026-08-15T09:41:44.448Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:41:54.593Z": {
+      "eventId": "challenge:sync:2026-08-15T09:41:54.593Z",
+      "processedAt": "2026-08-15T09:41:54.593Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:47:32.452Z": {
+      "eventId": "challenge:sync:2026-08-15T09:47:32.452Z",
+      "processedAt": "2026-08-15T09:47:32.452Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:47:33.011Z": {
+      "eventId": "challenge:sync:2026-08-15T09:47:33.011Z",
+      "processedAt": "2026-08-15T09:47:33.011Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:47:33.703Z": {
+      "eventId": "challenge:sync:2026-08-15T09:47:33.703Z",
+      "processedAt": "2026-08-15T09:47:33.703Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:49:59.511Z": {
+      "eventId": "challenge:sync:2026-08-15T09:49:59.511Z",
+      "processedAt": "2026-08-15T09:49:59.511Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:50:23.967Z": {
+      "eventId": "challenge:sync:2026-08-15T09:50:23.967Z",
+      "processedAt": "2026-08-15T09:50:23.967Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:53:00.826Z": {
+      "eventId": "challenge:sync:2026-08-15T09:53:00.826Z",
+      "processedAt": "2026-08-15T09:53:00.826Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:54:30.396Z": {
+      "eventId": "challenge:sync:2026-08-15T09:54:30.396Z",
+      "processedAt": "2026-08-15T09:54:30.396Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:55:22.263Z": {
+      "eventId": "challenge:sync:2026-08-15T09:55:22.263Z",
+      "processedAt": "2026-08-15T09:55:22.263Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:55:47.848Z": {
+      "eventId": "challenge:sync:2026-08-15T09:55:47.848Z",
+      "processedAt": "2026-08-15T09:55:47.848Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:56:44.456Z": {
+      "eventId": "challenge:sync:2026-08-15T09:56:44.456Z",
+      "processedAt": "2026-08-15T09:56:44.456Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T09:59:31.074Z": {
+      "eventId": "challenge:sync:2026-08-15T09:59:31.074Z",
+      "processedAt": "2026-08-15T09:59:31.074Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T10:53:36.045Z": {
+      "eventId": "challenge:sync:2026-08-15T10:53:36.045Z",
+      "processedAt": "2026-08-15T10:53:36.045Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T10:54:42.705Z": {
+      "eventId": "challenge:sync:2026-08-15T10:54:42.705Z",
+      "processedAt": "2026-08-15T10:54:42.705Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T11:41:32.316Z": {
+      "eventId": "challenge:sync:2026-08-15T11:41:32.316Z",
+      "processedAt": "2026-08-15T11:41:32.316Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T17:18:19.593Z": {
+      "eventId": "challenge:sync:2026-08-15T17:18:19.593Z",
+      "processedAt": "2026-08-15T17:18:19.593Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T17:18:21.648Z": {
+      "eventId": "challenge:sync:2026-08-15T17:18:21.648Z",
+      "processedAt": "2026-08-15T17:18:21.648Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T21:51:57.193Z": {
+      "eventId": "challenge:sync:2026-08-15T21:51:57.193Z",
+      "processedAt": "2026-08-15T21:51:57.193Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T22:58:25.359Z": {
+      "eventId": "challenge:sync:2026-08-15T22:58:25.359Z",
+      "processedAt": "2026-08-15T22:58:25.359Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-15T23:18:53.031Z": {
+      "eventId": "challenge:sync:2026-08-15T23:18:53.031Z",
+      "processedAt": "2026-08-15T23:18:53.031Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T06:19:18.505Z": {
+      "eventId": "challenge:sync:2026-08-16T06:19:18.505Z",
+      "processedAt": "2026-08-16T06:19:18.505Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T06:33:34.319Z": {
+      "eventId": "challenge:sync:2026-08-16T06:33:34.319Z",
+      "processedAt": "2026-08-16T06:33:34.319Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T06:39:15.139Z": {
+      "eventId": "challenge:sync:2026-08-16T06:39:15.139Z",
+      "processedAt": "2026-08-16T06:39:15.139Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T06:44:28.488Z": {
+      "eventId": "challenge:sync:2026-08-16T06:44:28.488Z",
+      "processedAt": "2026-08-16T06:44:28.488Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T06:45:52.996Z": {
+      "eventId": "challenge:sync:2026-08-16T06:45:52.996Z",
+      "processedAt": "2026-08-16T06:45:52.996Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T06:58:21.247Z": {
+      "eventId": "challenge:sync:2026-08-16T06:58:21.247Z",
+      "processedAt": "2026-08-16T06:58:21.247Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:01:22.566Z": {
+      "eventId": "challenge:sync:2026-08-16T07:01:22.566Z",
+      "processedAt": "2026-08-16T07:01:22.566Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:03:36.559Z": {
+      "eventId": "challenge:sync:2026-08-16T07:03:36.559Z",
+      "processedAt": "2026-08-16T07:03:36.559Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:05:31.721Z": {
+      "eventId": "challenge:sync:2026-08-16T07:05:31.721Z",
+      "processedAt": "2026-08-16T07:05:31.721Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:11:48.983Z": {
+      "eventId": "challenge:sync:2026-08-16T07:11:48.983Z",
+      "processedAt": "2026-08-16T07:11:48.983Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:12:19.919Z": {
+      "eventId": "challenge:sync:2026-08-16T07:12:19.919Z",
+      "processedAt": "2026-08-16T07:12:19.919Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:18:28.414Z": {
+      "eventId": "challenge:sync:2026-08-16T07:18:28.414Z",
+      "processedAt": "2026-08-16T07:18:28.414Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:18:50.957Z": {
+      "eventId": "challenge:sync:2026-08-16T07:18:50.957Z",
+      "processedAt": "2026-08-16T07:18:50.957Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:21:22.504Z": {
+      "eventId": "challenge:sync:2026-08-16T07:21:22.504Z",
+      "processedAt": "2026-08-16T07:21:22.504Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:22:02.744Z": {
+      "eventId": "challenge:sync:2026-08-16T07:22:02.744Z",
+      "processedAt": "2026-08-16T07:22:02.744Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:27:13.062Z": {
+      "eventId": "challenge:sync:2026-08-16T07:27:13.062Z",
+      "processedAt": "2026-08-16T07:27:13.062Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:27:32.604Z": {
+      "eventId": "challenge:sync:2026-08-16T07:27:32.604Z",
+      "processedAt": "2026-08-16T07:27:32.604Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:46:28.421Z": {
+      "eventId": "challenge:sync:2026-08-16T07:46:28.421Z",
+      "processedAt": "2026-08-16T07:46:28.421Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:50:11.942Z": {
+      "eventId": "challenge:sync:2026-08-16T07:50:11.942Z",
+      "processedAt": "2026-08-16T07:50:11.942Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:56:22.137Z": {
+      "eventId": "challenge:sync:2026-08-16T07:56:22.137Z",
+      "processedAt": "2026-08-16T07:56:22.137Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T07:58:53.624Z": {
+      "eventId": "challenge:sync:2026-08-16T07:58:53.624Z",
+      "processedAt": "2026-08-16T07:58:53.624Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T08:08:14.795Z": {
+      "eventId": "challenge:sync:2026-08-16T08:08:14.795Z",
+      "processedAt": "2026-08-16T08:08:14.795Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T11:45:00.079Z": {
+      "eventId": "challenge:sync:2026-08-16T11:45:00.079Z",
+      "processedAt": "2026-08-16T11:45:00.079Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T12:28:28.443Z": {
+      "eventId": "challenge:sync:2026-08-16T12:28:28.443Z",
+      "processedAt": "2026-08-16T12:28:28.443Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T12:29:43.075Z": {
+      "eventId": "challenge:sync:2026-08-16T12:29:43.075Z",
+      "processedAt": "2026-08-16T12:29:43.075Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T12:32:23.209Z": {
+      "eventId": "challenge:sync:2026-08-16T12:32:23.209Z",
+      "processedAt": "2026-08-16T12:32:23.209Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T12:34:34.120Z": {
+      "eventId": "challenge:sync:2026-08-16T12:34:34.120Z",
+      "processedAt": "2026-08-16T12:34:34.120Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T12:39:33.765Z": {
+      "eventId": "challenge:sync:2026-08-16T12:39:33.765Z",
+      "processedAt": "2026-08-16T12:39:33.765Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T16:23:10.589Z": {
+      "eventId": "challenge:sync:2026-08-16T16:23:10.589Z",
+      "processedAt": "2026-08-16T16:23:10.589Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-16T21:47:57.210Z": {
+      "eventId": "challenge:sync:2026-08-16T21:47:57.210Z",
+      "processedAt": "2026-08-16T21:47:57.210Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T05:34:06.058Z": {
+      "eventId": "challenge:sync:2026-08-17T05:34:06.058Z",
+      "processedAt": "2026-08-17T05:34:06.058Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T08:01:12.408Z": {
+      "eventId": "challenge:sync:2026-08-17T08:01:12.408Z",
+      "processedAt": "2026-08-17T08:01:12.408Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T08:01:54.581Z": {
+      "eventId": "challenge:sync:2026-08-17T08:01:54.581Z",
+      "processedAt": "2026-08-17T08:01:54.581Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T14:09:20.255Z": {
+      "eventId": "challenge:sync:2026-08-17T14:09:20.255Z",
+      "processedAt": "2026-08-17T14:09:20.255Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:24:39.767Z": {
+      "eventId": "challenge:sync:2026-08-17T18:24:39.767Z",
+      "processedAt": "2026-08-17T18:24:39.767Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:28:44.088Z": {
+      "eventId": "challenge:sync:2026-08-17T18:28:44.088Z",
+      "processedAt": "2026-08-17T18:28:44.088Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:30:32.998Z": {
+      "eventId": "challenge:sync:2026-08-17T18:30:32.998Z",
+      "processedAt": "2026-08-17T18:30:32.998Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:33:38.199Z": {
+      "eventId": "challenge:sync:2026-08-17T18:33:38.199Z",
+      "processedAt": "2026-08-17T18:33:38.199Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:38:52.792Z": {
+      "eventId": "challenge:sync:2026-08-17T18:38:52.792Z",
+      "processedAt": "2026-08-17T18:38:52.792Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:41:42.078Z": {
+      "eventId": "challenge:sync:2026-08-17T18:41:42.078Z",
+      "processedAt": "2026-08-17T18:41:42.078Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:46:55.162Z": {
+      "eventId": "challenge:sync:2026-08-17T18:46:55.162Z",
+      "processedAt": "2026-08-17T18:46:55.162Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:47:55.597Z": {
+      "eventId": "challenge:sync:2026-08-17T18:47:55.597Z",
+      "processedAt": "2026-08-17T18:47:55.597Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T18:48:26.445Z": {
+      "eventId": "challenge:sync:2026-08-17T18:48:26.445Z",
+      "processedAt": "2026-08-17T18:48:26.445Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:21:58.961Z": {
+      "eventId": "challenge:sync:2026-08-17T19:21:58.961Z",
+      "processedAt": "2026-08-17T19:21:58.961Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:22:10.320Z": {
+      "eventId": "challenge:sync:2026-08-17T19:22:10.320Z",
+      "processedAt": "2026-08-17T19:22:10.320Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:26:05.250Z": {
+      "eventId": "challenge:sync:2026-08-17T19:26:05.250Z",
+      "processedAt": "2026-08-17T19:26:05.250Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:29:43.939Z": {
+      "eventId": "challenge:sync:2026-08-17T19:29:43.939Z",
+      "processedAt": "2026-08-17T19:29:43.939Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:30:08.090Z": {
+      "eventId": "challenge:sync:2026-08-17T19:30:08.090Z",
+      "processedAt": "2026-08-17T19:30:08.090Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:30:26.528Z": {
+      "eventId": "challenge:sync:2026-08-17T19:30:26.528Z",
+      "processedAt": "2026-08-17T19:30:26.528Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:30:34.280Z": {
+      "eventId": "challenge:sync:2026-08-17T19:30:34.280Z",
+      "processedAt": "2026-08-17T19:30:34.280Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:30:53.509Z": {
+      "eventId": "challenge:sync:2026-08-17T19:30:53.509Z",
+      "processedAt": "2026-08-17T19:30:53.509Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:31:15.537Z": {
+      "eventId": "challenge:sync:2026-08-17T19:31:15.537Z",
+      "processedAt": "2026-08-17T19:31:15.537Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:32:08.856Z": {
+      "eventId": "challenge:sync:2026-08-17T19:32:08.856Z",
+      "processedAt": "2026-08-17T19:32:08.856Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:32:27.044Z": {
+      "eventId": "challenge:sync:2026-08-17T19:32:27.044Z",
+      "processedAt": "2026-08-17T19:32:27.044Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:32:53.979Z": {
+      "eventId": "challenge:sync:2026-08-17T19:32:53.979Z",
+      "processedAt": "2026-08-17T19:32:53.979Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:33:31.780Z": {
+      "eventId": "challenge:sync:2026-08-17T19:33:31.780Z",
+      "processedAt": "2026-08-17T19:33:31.780Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:48:20.474Z": {
+      "eventId": "challenge:sync:2026-08-17T19:48:20.474Z",
+      "processedAt": "2026-08-17T19:48:20.474Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:51:24.524Z": {
+      "eventId": "challenge:sync:2026-08-17T19:51:24.524Z",
+      "processedAt": "2026-08-17T19:51:24.524Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:52:42.629Z": {
+      "eventId": "challenge:sync:2026-08-17T19:52:42.629Z",
+      "processedAt": "2026-08-17T19:52:42.629Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T19:55:04.094Z": {
+      "eventId": "challenge:sync:2026-08-17T19:55:04.094Z",
+      "processedAt": "2026-08-17T19:55:04.094Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T20:09:13.383Z": {
+      "eventId": "challenge:sync:2026-08-17T20:09:13.383Z",
+      "processedAt": "2026-08-17T20:09:13.383Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T20:22:44.799Z": {
+      "eventId": "challenge:sync:2026-08-17T20:22:44.799Z",
+      "processedAt": "2026-08-17T20:22:44.799Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T20:27:56.152Z": {
+      "eventId": "challenge:sync:2026-08-17T20:27:56.152Z",
+      "processedAt": "2026-08-17T20:27:56.152Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-17T20:38:28.670Z": {
+      "eventId": "challenge:sync:2026-08-17T20:38:28.670Z",
+      "processedAt": "2026-08-17T20:38:28.670Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -2390,7 +2996,7 @@
       "sessionId": "Christoph_1772897423",
       "drillId": "A2_D4",
       "trackId": "A2",
-      "observedTeamId": "ERC Ingolstadt",
+      "observedTeamId": "ERC Ingolstadt U20",
       "leagueId": "U20_DNL",
       "mechanicIds": [
         "period_checkin"
@@ -2530,7 +3136,7 @@
       "sessionId": "Christoph_1774713737",
       "drillId": "A3_D2",
       "trackId": "A3",
-      "observedTeamId": "ERC Ingolstadt",
+      "observedTeamId": "ERC Ingolstadt U20",
       "leagueId": "U20_DNL",
       "mechanicIds": [
         "period_checkin"
@@ -3588,7 +4194,7 @@
       "sessionId": "Christoph_1786640760",
       "drillId": "B3_D2",
       "trackId": "B3",
-      "observedTeamId": "ERC Ingolstadt",
+      "observedTeamId": "ERC Ingolstadt U20",
       "leagueId": "U20_DNL",
       "mechanicIds": [
         "impact_classification_observation"
@@ -3645,7 +4251,7 @@
       "sessionId": "Christoph_1786643514",
       "drillId": "B3_D3",
       "trackId": "B3",
-      "observedTeamId": "ERC Ingolstadt",
+      "observedTeamId": "ERC Ingolstadt U20",
       "leagueId": "U20_DNL",
       "mechanicIds": [
         "support_classification_observation"
@@ -3687,7 +4293,7 @@
     }
   ],
   "bootstrapCompletedAt": "2026-08-13T20:38:32.602Z",
-  "lastUpdatedAt": "2026-08-15T08:59:47.692Z",
+  "lastUpdatedAt": "2026-08-17T20:38:28.670Z",
   "favoriteCosmeticIds": [
     "avatar_goldpuck_01"
   ],

@@ -190,9 +190,9 @@
   },
   "game_info": {
     "league": "U20_DNL",
-    "team_home": "ERC Ingolstadt",
-    "team_away": "ESC Dresden",
-    "observed_team": "ERC Ingolstadt",
+    "team_home": "ERC Ingolstadt U20",
+    "team_away": "ESC Dresden U20",
+    "observed_team": "ERC Ingolstadt U20",
     "date": "2026-03-07T15:30:23.164Z",
     "season": "2025/26",
     "matchday": "Viertelfinale"

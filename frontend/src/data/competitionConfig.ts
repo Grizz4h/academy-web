@@ -23,7 +23,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     label: 'PENNY DEL',
     phases: [
       { id: 'regular_season', label: 'Hauptrunde', unit: { type: 'matchday', label: 'Spieltag', min: 1, max: 52 } },
-      { id: 'playoff_round_1', label: 'Erste Playoff-Runde', unit: { type: 'series_game', label: 'Spiel', min: 1, max: 7 } },
+      { id: 'playoff_round_1', label: 'Erste Playoff-Runde', unit: { type: 'series_game', label: 'Spiel', min: 1, max: 3 } },
       { id: 'quarterfinal', label: 'Viertelfinale', unit: { type: 'series_game', label: 'Spiel', min: 1, max: 7 } },
       { id: 'semifinal', label: 'Halbfinale', unit: { type: 'series_game', label: 'Spiel', min: 1, max: 7 } },
       { id: 'final', label: 'Finale', unit: { type: 'series_game', label: 'Spiel', min: 1, max: 7 } },

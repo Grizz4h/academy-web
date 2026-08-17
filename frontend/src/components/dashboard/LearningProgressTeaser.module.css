@@ -1,13 +1,13 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.85rem;
 }
 
 .cardLink {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.9rem;
   color: inherit;
   text-decoration: none;
   cursor: pointer;
@@ -35,37 +35,35 @@
 }
 
 .focus {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   gap: 0.55rem;
-  margin: 0;
-  font-size: 0.9rem;
 }
 
-@media (max-width: 640px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .link {
-    white-space: normal;
-  }
-
-  .focus {
-    grid-template-columns: 1fr;
-    gap: 0.15rem;
-  }
+.focusTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
-.focus strong {
-  letter-spacing: 0.04em;
+.focusTitle {
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+}
+
+.focusCount {
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .recent {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 
 .kicker {
@@ -81,6 +79,26 @@
   justify-content: space-between;
   gap: 0.75rem;
   margin: 0;
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
+}
+
+.recentName {
+  color: var(--text);
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .link {
+    white-space: normal;
+  }
 }

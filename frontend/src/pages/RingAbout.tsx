@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { api, type SceneMarker, type SceneMarkerUpdate, type Session } from '../api'
 import Card from '../components/Card'
-import FilterSheet from '../components/FilterSheet'
+import FilterSheet, { FilterSheetSection, FilterSheetStack } from '../components/FilterSheet'
 import { ManualSceneForm, type ManualSceneFormMode } from '../components/ManualSceneForm'
 import { PageSkeleton } from '../components/Skeleton'
 import { formatCompetitionContext, getCompetitionConfig } from '../data/competitionConfig'
@@ -24,6 +24,7 @@ import { useRewards } from '../features/rewards'
 import { computeScenePoolOverview } from '../stats/sceneOverview'
 import { ScenePoolOverviewKpis } from '../components/dashboard/ScenePoolOverviewKpis'
 import { SceneInsightsOverviewKpis } from '../components/dashboard/SceneInsightsOverviewKpis'
+import { UiButton } from '../components/ui'
 import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
@@ -806,16 +807,18 @@ export default function RingAbout() {
             >
               Insights
             </button>
-            <button
-              type="button"
-              className={styles.addBtn}
-              onClick={() => {
-                setManualFormScene(null)
-                setManualFormMode('create')
-              }}
-            >
-              Szene hinzufügen
-            </button>
+            <span className={styles.addBtnSlot}>
+              <UiButton
+                type="button"
+                size="sm"
+                onClick={() => {
+                  setManualFormScene(null)
+                  setManualFormMode('create')
+                }}
+              >
+                Szene hinzufügen
+              </UiButton>
+            </span>
           </div>
         </div>
       </header>
@@ -1084,10 +1087,8 @@ export default function RingAbout() {
                 setFilterEpisodeSeason('')
               }}
             >
-              <div className="stack">
-                <div className="sheetSection">
-                  <div className="sheetSectionTitle">Inhalt</div>
-                  <div className="stack">
+              <FilterSheetSection title="Inhalt">
+                <FilterSheetStack>
                     <select className="appSelect" value={filterMinRating} onChange={e => setFilterMinRating(e.target.value)} aria-label="Bewertung">
                       <option value="">Bewertung: Alle</option>
                       <option value="3">3★+</option>
@@ -1116,12 +1117,11 @@ export default function RingAbout() {
                         {drills.map(d => <option key={d} value={d}>{d}</option>)}
                       </select>
                     )}
-                  </div>
-                </div>
-                {(competitionPhases.length > 0 || episodeSeasons.length > 0) && (
-                  <div className="sheetSection">
-                    <div className="sheetSectionTitle">Wettbewerb</div>
-                    <div className="stack">
+                </FilterSheetStack>
+              </FilterSheetSection>
+              {(competitionPhases.length > 0 || episodeSeasons.length > 0) && (
+                <FilterSheetSection title="Wettbewerb">
+                  <FilterSheetStack>
                       {competitionPhases.length > 0 && (
                         <select
                           className="appSelect"
@@ -1160,10 +1160,9 @@ export default function RingAbout() {
                           {episodeSeasons.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       )}
-                    </div>
-                  </div>
-                )}
-              </div>
+                  </FilterSheetStack>
+                </FilterSheetSection>
+              )}
             </FilterSheet>
 
             {activeFilterChips.length > 0 && (
@@ -1190,16 +1189,16 @@ export default function RingAbout() {
                 Erfasse Momente live mit „Szene hinzufügen“ oder während eines Drills mit „Szene merken“.
               </p>
               <div className={styles.emptyActions}>
-                <button
+                <UiButton
                   type="button"
-                  className={styles.addBtn}
+                  block
                   onClick={() => {
                     setManualFormScene(null)
                     setManualFormMode('create')
                   }}
                 >
                   Szene hinzufügen
-                </button>
+                </UiButton>
               </div>
             </Card>
           )}

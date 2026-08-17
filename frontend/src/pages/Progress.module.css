@@ -232,17 +232,8 @@
   flex-wrap: wrap;
 }
 
-.filterOpenBtn {
-  display: none;
-  min-height: 44px;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(129, 196, 214, 0.45);
-  background: rgba(14, 165, 233, 0.14);
-  color: #e0f2fe;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
+.teamMore {
+  margin-top: 0.75rem;
 }
 
 .teamLeagueSelectWrap {
@@ -543,16 +534,9 @@
     flex-direction: column;
   }
 
-  .teamFilterSelects,
   .teamFilterSelectsDesktop {
-    display: none;
-  }
-
-  .filterOpenBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
+    flex-direction: column;
   }
 
   .teamFilterSelects {

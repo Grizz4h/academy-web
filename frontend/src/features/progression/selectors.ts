@@ -12,6 +12,7 @@ import type {
   CosmeticDefinition,
   CosmeticUnlock,
   EquippedCosmetics,
+  RewardRarity,
   RinkActivityEvent,
   UnlockHistoryEntry,
 } from './types'
@@ -137,18 +138,20 @@ export function resolveEquippedCosmetics(
   }
 }
 
-export function selectTitleOptions(state: ProgressionViewState): Array<{ id: string; label: string; cosmeticId: string }> {
+export function selectTitleOptions(state: ProgressionViewState): Array<{ id: string; label: string; cosmeticId: string; rarity: RewardRarity }> {
   return selectOwnedCosmetics(state, 'title').map((cosmetic) => ({
-    id: String(cosmetic.metadata?.profileTitleId || cosmetic.id),
+    id: cosmetic.id,
     label: cosmetic.text || cosmetic.name,
     cosmeticId: cosmetic.id,
+    rarity: cosmetic.rarity,
   }))
 }
 
-export function selectTaglineOptions(state: ProgressionViewState): Array<{ id: string; label: string }> {
+export function selectTaglineOptions(state: ProgressionViewState): Array<{ id: string; label: string; rarity: RewardRarity }> {
   return selectOwnedCosmetics(state, 'tagline').map((cosmetic) => ({
     id: cosmetic.id,
     label: cosmetic.text || cosmetic.name,
+    rarity: cosmetic.rarity,
   }))
 }
 

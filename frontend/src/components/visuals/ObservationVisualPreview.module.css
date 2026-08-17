@@ -5,6 +5,22 @@
   align-items: flex-start;
 }
 
+.rowFill {
+  flex-wrap: nowrap;
+  gap: 0.32rem;
+}
+
+.rowFill .item {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 7.5rem;
+}
+
+.fluidRink {
+  width: 100%;
+  height: auto;
+}
+
 .item {
   display: flex;
   flex-direction: column;

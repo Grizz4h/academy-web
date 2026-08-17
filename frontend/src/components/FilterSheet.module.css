@@ -1,17 +1,37 @@
-.overlay {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.panel {
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
-.content {
-  max-height: min(60vh, 520px);
+.sectionTitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 196, 214, 0.82);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
 }
 
 @media (min-width: 769px) {
-  .overlay {
+  .mobileOnly {
     display: none !important;
   }
 }

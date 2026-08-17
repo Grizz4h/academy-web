@@ -1,8 +1,10 @@
 .ui-anchored-popover {
   position: fixed;
   z-index: 200;
-  padding: 0.7rem 0.75rem 0.75rem;
-  border-radius: 10px;
+  box-sizing: border-box;
+  /* Canonical inner inset — consumers should not override to 0 */
+  padding: 1rem 1.05rem 1.05rem;
+  border-radius: 12px;
   border: 1px solid rgba(81, 145, 162, 0.42);
   background: linear-gradient(180deg, rgba(14, 22, 38, 0.98) 0%, rgba(8, 14, 26, 0.98) 100%);
   box-shadow:

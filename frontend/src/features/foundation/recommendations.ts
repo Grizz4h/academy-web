@@ -75,14 +75,23 @@ export function getAcademyEntryModule(curriculum: Curriculum | undefined | null)
   }
 }
 
-/** Outside Dev Mode, A1+ stays locked until the first Track-0 lesson is done. */
+/** Outside Dev Mode, A1+ stays locked until the first Track-0 lesson is done —
+ * unless the learner marked hockey basics as already known. */
 export function isAcademyLocked(
   curriculum: Curriculum | undefined | null,
   completedDrillIds: Set<string>,
-  options?: { devMode?: boolean; hasUsedAcademy?: boolean; completedModuleIds?: string[] },
+  options?: {
+    devMode?: boolean
+    hasUsedAcademy?: boolean
+    completedModuleIds?: string[]
+    hockeyExperience?: HockeyExperienceLevel | null
+  },
 ): boolean {
   if (options?.devMode) return false
   if (options?.hasUsedAcademy) return false
+  if (options?.hockeyExperience === 'familiar' || options?.hockeyExperience === 'advanced') {
+    return false
+  }
   const foundation = getFoundationModule(curriculum)
   if (!foundation) return false
   if (options?.completedModuleIds?.some((id) => id === foundation.id || id.startsWith('T0'))) return false

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img">
+  <defs>
+    <linearGradient id="wizBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07101c"/>
+      <stop offset="100%" stop-color="#122448"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="240" fill="url(#wizBg)"/>
+  <rect x="0" y="0" width="960" height="240" fill="none" stroke="#f5d07a" stroke-width="8"/>
+  <rect x="0" y="78" width="960" height="16" fill="#1e40af" opacity=".85"/>
+  <rect x="0" y="146" width="960" height="16" fill="#1e40af" opacity=".85"/>
+  <rect x="0" y="102" width="960" height="36" fill="#3b82f6"/>
+  <path d="M80 120 L200 48 L320 120 L440 40 L560 120 L680 36 L800 120 L900 52" fill="none" stroke="#fde68a" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+  <circle cx="480" cy="120" r="46" fill="none" stroke="#67e8f9" stroke-width="3"/>
+  <circle cx="480" cy="120" r="14" fill="#fde68a"/>
+  <path d="M480 86 L488 104 L508 106 L492 118 L498 138 L480 126 L462 138 L468 118 L452 106 L472 104 Z" fill="#e0f2fe"/>
+</svg>

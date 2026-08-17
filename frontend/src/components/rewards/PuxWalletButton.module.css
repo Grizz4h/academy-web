@@ -43,10 +43,10 @@
 }
 
 .popup {
-  /* Position via AnchoredPopover portal (fixed + viewport clamp). */
+  /* Position via AnchoredPopover portal (fixed + viewport clamp).
+     Outer padding from .ui-anchored-popover — do not set padding: 0. */
   width: 100%;
   box-sizing: border-box;
-  padding: 0.85rem 0.9rem 0.9rem;
   color: rgba(226, 232, 240, 0.92);
 }
 

@@ -193,6 +193,7 @@ class SessionCreate(BaseModel):
         default=None,
         validation_alias=AliasChoices("dev_seed_version", "devSeedVersion"),
     )
+    location_verification: Optional[dict] = None
 
 class MicroFeedbackData(BaseModel):
     phase: str  # P1, P2, P3
@@ -212,6 +213,33 @@ class PostData(BaseModel):
 class AbortData(BaseModel):
     reason: str  # "time", "wrong_game", "no_motivation", "bad_session", "other"
     note: Optional[str] = None
+
+
+_LOCATION_VERIFICATION_KEYS = (
+    "checkedAt",
+    "venueId",
+    "gameId",
+    "insideGeofence",
+    "distanceMeters",
+    "accuracyMeters",
+    "verificationType",
+    "reason",
+    "devSimulated",
+)
+
+
+def _sanitize_location_verification(value):
+    """Never persist exact user coordinates — only the presence result."""
+    if not isinstance(value, dict):
+        return None
+    cleaned = {key: value[key] for key in _LOCATION_VERIFICATION_KEYS if key in value}
+    if not cleaned.get("checkedAt") or not cleaned.get("venueId") or not cleaned.get("gameId"):
+        return None
+    cleaned.pop("latitude", None)
+    cleaned.pop("longitude", None)
+    cleaned.pop("lat", None)
+    cleaned.pop("lng", None)
+    return cleaned
 
 
 OBSERVATION_SCOPE_LABELS = {
@@ -265,6 +293,7 @@ class RewardApplyData(BaseModel):
     processed_event_ids: List[str] = Field(default_factory=list)  # mark many idempotency keys in one apply
     challenge_progress: Optional[dict] = None
     challenge_rotation: Optional[dict] = None
+    venue_visits: Optional[dict] = None
 
 
 class SceneSourcePayload(BaseModel):
@@ -509,6 +538,7 @@ def _create_default_reward_state() -> dict:
         "progressionPuxGranted": 0,
         "challengeProgress": {},
         "challengeRotation": None,
+        "venueVisits": {},
     }
 
 
@@ -541,6 +571,7 @@ def _load_reward_state(user: str) -> dict:
         "progressionPuxGranted": int(state.get("progressionPuxGranted") or 0),
         "challengeProgress": state.get("challengeProgress") or {},
         "challengeRotation": state.get("challengeRotation"),
+        "venueVisits": state.get("venueVisits") or {},
     }
     return merged
 
@@ -2005,6 +2036,10 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "is_dummy": bool(session.is_dummy),
     }
 
+    verification = _sanitize_location_verification(session.location_verification)
+    if verification:
+        session_data["location_verification"] = verification
+
     if session.dev_seed_version is not None:
         session_data["dev_seed_version"] = int(session.dev_seed_version)
     elif session.is_dummy:
@@ -2070,6 +2105,10 @@ async def update_session(session_id: str, updates: dict):
                     session["microfeedback"][phase].update(mf)
                 else:
                     session["microfeedback"][phase] = mf
+        elif key == "location_verification":
+            cleaned = _sanitize_location_verification(value)
+            if cleaned:
+                session["location_verification"] = cleaned
         else:
             session[key] = value
 
@@ -2547,6 +2586,7 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
         state["completedCollections"] = {}
         state["masteryMilestoneUnlocks"] = {}
         state["puxTransactions"] = preserved_txs
+        state["venueVisits"] = {}
         processed_events = state["processedEvents"]
 
     next_pux = int(state["currency"].get("PUX", 0)) + int(data.granted_pux or 0)
@@ -2703,6 +2743,9 @@ async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_c
 
     if data.challenge_rotation is not None:
         state["challengeRotation"] = data.challenge_rotation
+
+    if data.venue_visits is not None and isinstance(data.venue_visits, dict):
+        state["venueVisits"] = data.venue_visits
 
     if data.activity_events:
         existing_ids = {
@@ -3488,6 +3531,7 @@ def _default_user_profile(username: str) -> dict:
         "favoriteLeague": None,
         "favoriteTeamName": None,
         "profileTagline": None,
+        "stickerIds": [],
         "academyHelpLevel": "guided",
         "terminologyMode": "direct",
         "preferredAttackDirection": "auto",
@@ -3515,8 +3559,8 @@ def _load_user_profile(user: str) -> dict:
         merged["emblem"] = base["emblem"]
     if not isinstance(merged.get("customEmblems"), list):
         merged["customEmblems"] = []
-    if not isinstance(merged.get("dashboardPreferences"), dict):
-        merged["dashboardPreferences"] = {}
+    if merged.get("stickerIds") is None or not isinstance(merged.get("stickerIds"), list):
+        merged["stickerIds"] = []
     return merged
 
 
@@ -3547,6 +3591,7 @@ class ProfileUpdatePayload(BaseModel):
     favoriteLeague: Optional[str] = None
     favoriteTeamName: Optional[str] = None
     profileTagline: Optional[str] = None
+    stickerIds: Optional[list] = None
     academyHelpLevel: Optional[str] = None
     terminologyMode: Optional[str] = None
     preferredAttackDirection: Optional[str] = None
@@ -3662,6 +3707,20 @@ async def patch_my_profile(payload: ProfileUpdatePayload, current_user: str = De
             if len(text) > 120:
                 raise HTTPException(status_code=400, detail="Tagline ist zu lang (max. 120 Zeichen).")
             profile["profileTagline"] = text or None
+
+    if "stickerIds" in data:
+        raw_stickers = data["stickerIds"]
+        if raw_stickers is None:
+            profile["stickerIds"] = []
+        elif not isinstance(raw_stickers, list):
+            raise HTTPException(status_code=400, detail="stickerIds muss eine Liste sein.")
+        else:
+            cleaned = []
+            for item in raw_stickers:
+                value = str(item or "").strip()
+                if value and value not in cleaned:
+                    cleaned.append(value)
+            profile["stickerIds"] = cleaned[:3]
 
     if "academyHelpLevel" in data and data["academyHelpLevel"] is not None:
         if data["academyHelpLevel"] not in ("discover", "guided", "learning"):

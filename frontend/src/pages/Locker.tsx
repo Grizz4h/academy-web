@@ -11,6 +11,7 @@ import {
   isEquipableCosmetic,
   LOCKER_TYPE_CHIPS,
   RARITY_LABELS,
+  RARITY_RANK,
   selectCollectionProgress,
   selectLockerItems,
   selectLockerStats,
@@ -31,6 +32,9 @@ import { TUTORIAL_TARGET } from '../features/tutorial'
 import { AccountPillFrame } from '../components/profile/AccountPillFrame'
 import { CollectionArtwork, CosmeticArtwork, hasCosmeticArt } from '../assets/collections/collectionArtwork'
 import { LockerTasksPanel } from '../features/progression/tasks/LockerTasksPanel'
+import ArenaPassportList from '../components/game/ArenaPassportList'
+import { toggleProfileSticker } from '../data/profile/stickerCatalog'
+import type { UserProfileCustomization } from '../data/profile/types'
 import styles from './Locker.module.css'
 
 type LockerTab = 'home' | 'cosmetics' | 'collections' | 'shop' | 'mastery' | 'achievements'
@@ -49,6 +53,44 @@ function parseTaskLane(value: string | null): TaskLaneFilter {
 
 function parseTaskStatus(value: string | null): TaskStatusFilter {
   return TASK_STATUSES.includes(value as TaskStatusFilter) ? (value as TaskStatusFilter) : 'all'
+}
+
+function isCosmeticEquipped(profile: UserProfileCustomization | null | undefined, item: LockerItemView): boolean {
+  if (!profile) return false
+  const id = item.definition.id
+  const assetId = item.definition.assetId || id
+  const type = item.definition.type
+  if (type === 'avatar') return profile.avatar?.type === 'catalog' && profile.avatar.avatarId === assetId
+  if (type === 'banner') return profile.bannerId === assetId
+  if (type === 'emblem') return profile.emblem?.type === 'catalog' && profile.emblem.emblemId === assetId
+  if (type === 'frame') return profile.frameId === id
+  if (type === 'title') {
+    const stored = profile.profileTitle
+    if (!stored) return false
+    if (stored === id) return true
+    // Legacy profiles stored profileTitleId / display text — that maps to the starter, not the rarer twin.
+    if (stored === item.definition.metadata?.profileTitleId) return id === `title_catalog_${stored}`
+    return false
+  }
+  if (type === 'tagline') {
+    const stored = profile.profileTagline
+    return stored === id || stored === item.definition.text || stored === item.definition.name
+  }
+  if (type === 'sticker') return (profile.stickerIds || []).includes(id)
+  return false
+}
+
+function equipLabel(item: LockerItemView, equipped: boolean): string {
+  if (item.definition.type === 'sticker') return equipped ? 'Abziehen' : 'Aufkleben'
+  return equipped ? 'Ausgerüstet' : 'Ausrüsten'
+}
+
+function TypeMark({ type, size = 'meta' }: { type: string; size?: 'meta' | 'sm' }) {
+  return (
+    <span className={styles.typeMark}>
+      <CosmeticGlyph type={type} size={size} />
+    </span>
+  )
 }
 
 function LockMark() {
@@ -71,6 +113,7 @@ function LockerArt({
   frameId,
   rarity,
   cosmeticId,
+  previewText,
 }: {
   type: CosmeticType
   artworkUrl?: string
@@ -80,8 +123,9 @@ function LockerArt({
   frameId?: string
   rarity?: string
   cosmeticId?: string
+  previewText?: string
 }) {
-  const hasPhoto = Boolean(artworkUrl) && (type === 'banner' || type === 'avatar' || type === 'emblem')
+  const hasPhoto = Boolean(artworkUrl) && ['banner', 'avatar', 'emblem', 'sticker', 'masteryCoin'].includes(type)
   const artClass = variant === 'sheet' ? styles.sheetArt : styles.tileArt
   const shapeClass = type === 'banner' || type === 'frame'
     ? (variant === 'sheet' ? styles.sheetArtWide : styles.tileArtWide)
@@ -93,12 +137,19 @@ function LockerArt({
         <CosmeticArtwork cosmeticId={cosmeticId} variant={variant} title={undefined} />
       ) : type === 'frame' ? (
         <AccountPillFrame frameId={frameId} preview previewSize={variant} />
+      ) : type === 'title' || type === 'tagline' ? (
+        <span
+          className={`rarity-type ${type === 'tagline' ? 'rarity-type--tagline' : ''} ${styles.typePreview}`}
+          data-rarity={rarity || 'common'}
+        >
+          {previewText || (type === 'title' ? 'Titel' : 'Tagline')}
+        </span>
       ) : type === 'avatar' && artworkUrl ? (
         <span className={`${styles.avatarShape} ${variant === 'sheet' ? styles.avatarShapeSheet : ''}`} data-avatar-rarity={rarity || 'common'}>
           <img src={artworkUrl} alt="" />
         </span>
       ) : hasPhoto ? (
-        <img src={artworkUrl} alt="" />
+        <img className={type === 'sticker' ? styles.stickerPreview : undefined} src={artworkUrl} alt="" />
       ) : (
         <CosmeticGlyph type={type} size={variant === 'sheet' ? 'lg' : 'tile'} />
       )}
@@ -126,9 +177,12 @@ function LockerItemCard({
       {previewUnlocked && !item.owned && (
         <UiPill tone="warn" className={styles.devPreview}>DEV</UiPill>
       )}
-      {item.isNew && <UiPill tone="new" className={styles.badgeNew}>NEU</UiPill>}
       <span className={styles.corners} aria-hidden="true" />
-      <div className={styles.rarityRibbon}>{RARITY_LABELS[item.definition.rarity]}</div>
+      <div className={styles.tileChrome}>
+        <div className={styles.rarityRibbon}>{RARITY_LABELS[item.definition.rarity]}</div>
+        {item.isNew && <UiPill tone="new" className={styles.badgeNew}>NEU</UiPill>}
+        <TypeMark type={item.definition.type} />
+      </div>
       <LockerArt
         type={item.definition.type}
         artworkUrl={item.artworkUrl}
@@ -136,9 +190,9 @@ function LockerItemCard({
         frameId={item.definition.id}
         rarity={item.definition.rarity}
         cosmeticId={item.definition.id}
+        previewText={item.definition.text || item.displayName}
       />
       <div className={styles.tileName}>{item.displayName}</div>
-      <div className={styles.tileMeta}>{item.definition.type}</div>
       {locked && item.unlockHint && <p className={styles.unlockHow}>{item.unlockHint}</p>}
     </button>
   )
@@ -245,6 +299,20 @@ export default function LockerPage() {
     () => filterLockerItems(items, { type: typeFilter, ownership }),
     [items, typeFilter, ownership],
   )
+  const shopListings = useMemo(
+    () =>
+      [...SHOP_LISTINGS].sort((left, right) => {
+        const leftDef = getCosmetic(left.cosmeticId)
+        const rightDef = getCosmetic(right.cosmeticId)
+        const rarity =
+          (leftDef ? RARITY_RANK[leftDef.rarity] : 99) - (rightDef ? RARITY_RANK[rightDef.rarity] : 99)
+        if (rarity !== 0) return rarity
+        const category = (left.category || '').localeCompare(right.category || '', 'de')
+        if (category !== 0) return category
+        return (leftDef?.name || left.cosmeticId).localeCompare(rightDef?.name || right.cosmeticId, 'de')
+      }),
+    [],
+  )
   const collections = useMemo(
     () =>
       selectCollectionProgress(rewardState.unlockedCosmetics || {}, (id) =>
@@ -270,7 +338,7 @@ export default function LockerPage() {
   }
 
   const handleEquip = async (item: LockerItemView) => {
-    const canEquip = item.owned || (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline'].includes(item.definition.type))
+    const canEquip = item.owned || (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline', 'sticker'].includes(item.definition.type))
     if (!me?.profile || !canEquip || !isEquipableCosmetic(item.definition)) return
     const slot = COSMETIC_TYPE_TO_SLOT[item.definition.type]
     if (!slot) return
@@ -286,9 +354,11 @@ export default function LockerPage() {
     } else if (slot === 'frame') {
       profile.frameId = cosmeticId
     } else if (slot === 'title') {
-      profile.profileTitle = String(item.definition.metadata?.profileTitleId || item.definition.text || item.definition.name)
+      profile.profileTitle = cosmeticId
     } else if (slot === 'tagline') {
-      profile.profileTagline = item.definition.text || item.definition.name
+      profile.profileTagline = cosmeticId
+    } else if (slot === 'sticker') {
+      profile.stickerIds = toggleProfileSticker(profile.stickerIds, cosmeticId)
     }
     try {
       const saved = await api.updateMyProfile(profile)
@@ -479,6 +549,9 @@ export default function LockerPage() {
                 <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
                 <div className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Collection Complete' : ''}</div>
               </header>
+              {entry.collection.id === 'arena_passport' ? (
+                <ArenaPassportList visits={rewardState.venueVisits} />
+              ) : null}
               <div className={styles.grid}>
                 {entry.collection.itemIds.map((id) => {
                   const item = items.find((entryItem) => entryItem.definition.id === id)
@@ -513,15 +586,17 @@ export default function LockerPage() {
           <p className={styles.muted}>Evergreen Pux Shop · keine Timer, keine Echtgeldkäufe. Balance: {stats.pux} Pux</p>
           {shopError && <p className={styles.error}>{shopError}</p>}
           <div className={styles.grid}>
-            {SHOP_LISTINGS.map((listing) => {
+            {shopListings.map((listing) => {
               const def = getCosmetic(listing.cosmeticId)
               const owned = Boolean(rewardState.unlockedCosmetics?.[listing.cosmeticId] || isStarterCosmetic(listing.cosmeticId))
               return (
                 <article key={listing.id} className={`${styles.shopCard} ${def ? styles[`rarity_${def.rarity}`] : ''}`}>
-                  {def && <div className={styles.rarityRibbon}>{RARITY_LABELS[def.rarity]}</div>}
+                  <div className={styles.tileChrome}>
+                    {def && <div className={styles.rarityRibbon}>{RARITY_LABELS[def.rarity]}</div>}
+                    {def ? <TypeMark type={def.type} /> : <div className={styles.tileMeta}>{listing.category}</div>}
+                  </div>
                   <LockerArt type={def?.type || 'title'} />
                   <div className={styles.tileName}>{def?.name || listing.cosmeticId}</div>
-                  <div className={styles.tileMeta}>{listing.category}</div>
                   <div className={styles.price}>{listing.pricePux} Pux</div>
                   <UiButton
                     type="button"
@@ -579,7 +654,7 @@ export default function LockerPage() {
           <div
             key={selected.definition.id}
             className={`${styles.sheet} ${styles[`rarity_${selected.definition.rarity}`]}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setSelected(null)}
             role="dialog"
             aria-modal="true"
           >
@@ -589,7 +664,10 @@ export default function LockerPage() {
             <UiButton type="button" variant="ghost" size="sm" className={styles.sheetClose} onClick={() => setSelected(null)}>
               Schließen
             </UiButton>
-            <div className={styles.rarityRibbon}>{RARITY_LABELS[selected.definition.rarity]}</div>
+            <div className={styles.tileChrome}>
+              <div className={styles.rarityRibbon}>{RARITY_LABELS[selected.definition.rarity]}</div>
+              <TypeMark type={selected.definition.type} size="sm" />
+            </div>
             <LockerArt
               type={selected.definition.type}
               artworkUrl={selected.artworkUrl}
@@ -598,9 +676,9 @@ export default function LockerPage() {
               frameId={selected.definition.id}
               rarity={selected.definition.rarity}
               cosmeticId={selected.definition.id}
+              previewText={selected.definition.text || selected.displayName}
             />
             <h2 className={styles.sheetTitle}>{selected.displayName}</h2>
-            <div className={styles.tileMeta}>{selected.definition.type}</div>
             {selected.definition.flavorText && !selected.mystery && (
               <p className={styles.flavor}>“{selected.definition.flavorText}”</p>
             )}
@@ -615,14 +693,17 @@ export default function LockerPage() {
             {(() => {
               const canEquip =
                 (selected.owned ||
-                  (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline'].includes(selected.definition.type))) &&
+                  (devMode && ['frame', 'avatar', 'banner', 'emblem', 'title', 'tagline', 'sticker'].includes(selected.definition.type))) &&
                 isEquipableCosmetic(selected.definition)
               const favoriteButton = (
                 <UiButton
                   type="button"
                   size="sm"
                   variant="secondary"
-                  onClick={() => toggleFavoriteCosmetic(selected.definition.id)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    toggleFavoriteCosmetic(selected.definition.id)
+                  }}
                 >
                   {selected.isFavorite ? '★ Favorit' : '☆ Favorit'}
                 </UiButton>
@@ -632,8 +713,15 @@ export default function LockerPage() {
               }
               return (
                 <UiActionRow className={styles.sheetActions}>
-                  <UiButton type="button" size="sm" onClick={() => handleEquip(selected)}>
-                    {me?.profile?.frameId === selected.definition.id ? 'Ausgerüstet' : 'Ausrüsten'}
+                  <UiButton
+                    type="button"
+                    size="sm"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleEquip(selected)
+                    }}
+                  >
+                    {equipLabel(selected, isCosmeticEquipped(me?.profile, selected))}
                   </UiButton>
                   {favoriteButton}
                 </UiActionRow>

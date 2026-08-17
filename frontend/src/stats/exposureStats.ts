@@ -58,14 +58,36 @@ export function normalizeTeamName(name?: string): string {
     .replace(/\s+/g, '_')
 }
 
+const YOUTH_NAME_RE = /\b(u\s*-?\s*20|u\s*-?\s*18|juniors?|jung|nachwuchs)/i
+
+/**
+ * Ensure youth-league teams are not conflated with identically named senior clubs.
+ * Catalog names should already carry "U20" / Juniors / Jung-; this is a safety net
+ * for legacy stored sessions that still use the bare club name under U20_DNL.
+ */
+export function canonicalTeamDisplayName(
+  name?: string | null,
+  league?: string | null,
+): string {
+  const trimmed = String(name || '').trim()
+  if (!trimmed) return trimmed
+
+  const leagueKey = String(league || '').trim().toUpperCase()
+  if (leagueKey === 'U20_DNL' || leagueKey === 'U20') {
+    if (YOUTH_NAME_RE.test(trimmed)) return trimmed
+    return `${trimmed} U20`
+  }
+  return trimmed
+}
+
 export function makeMatchupKey(sessionOrGameInfo: SessionLikeGameInfo): string | null {
   const g = sessionOrGameInfo?.game_info ?? sessionOrGameInfo
   const normalizedSeason = normalizeSeasonValue(g?.season, g?.league)
   if (!g?.league || !normalizedSeason || !g?.team_home || !g?.team_away) {
     return null
   }
-  const home = normalizeTeamName(g.team_home)
-  const away = normalizeTeamName(g.team_away)
+  const home = normalizeTeamName(canonicalTeamDisplayName(g.team_home, g.league))
+  const away = normalizeTeamName(canonicalTeamDisplayName(g.team_away, g.league))
   return `${g.league}_${normalizedSeason}_${home}_vs_${away}`
 }
 
@@ -99,10 +121,13 @@ function updateLastSeen(current: string | undefined, next: string | undefined): 
 
 function resolveObservedTeams(session: Session): string[] {
   const gameInfo = session.game_info
+  const league = gameInfo?.league
   const observedTeam = gameInfo?.observed_team || session.observed_team
-  if (observedTeam) return [observedTeam]
+  if (observedTeam) return [canonicalTeamDisplayName(observedTeam, league)]
 
-  return [gameInfo?.team_home, gameInfo?.team_away].filter((team): team is string => Boolean(team))
+  return [gameInfo?.team_home, gameInfo?.team_away]
+    .filter((team): team is string => Boolean(team))
+    .map((team) => canonicalTeamDisplayName(team, league))
 }
 
 export function computeObservedTeamStats(sessions: Session[]): ObservedTeamStat[] {
@@ -139,6 +164,13 @@ export function computeMatchupExposure(sessions: Session[]): MatchupExposure[] {
     const matchupKey = makeMatchupKey(session)
     const gameInfo = session.game_info
     if (!matchupKey || !gameInfo?.team_home || !gameInfo?.team_away) continue
+    const league = gameInfo.league
+    const homeTeam = canonicalTeamDisplayName(gameInfo.team_home, league)
+    const awayTeam = canonicalTeamDisplayName(gameInfo.team_away, league)
+    const observedTeam = canonicalTeamDisplayName(
+      gameInfo.observed_team || session.observed_team,
+      league,
+    )
 
     const existing = byKey.get(matchupKey)
     if (!existing) {
@@ -148,8 +180,8 @@ export function computeMatchupExposure(sessions: Session[]): MatchupExposure[] {
         league: gameInfo.league,
         season: normalizedSeason || gameInfo.season,
         matchday: gameInfo.matchday,
-        homeTeam: gameInfo.team_home,
-        awayTeam: gameInfo.team_away,
+        homeTeam,
+        awayTeam,
         sessionCount: 0,
         completedCount: 0,
         lastSeen: undefined,
@@ -168,7 +200,7 @@ export function computeMatchupExposure(sessions: Session[]): MatchupExposure[] {
 
     bump(row.modules, session.module_id)
     bump(row.drills, resolveDrillId(session))
-    bump(row.observedTeams, session.game_info?.observed_team || session.observed_team)
+    bump(row.observedTeams, observedTeam || undefined)
   }
 
   return Array.from(byKey.values())
@@ -203,8 +235,14 @@ export function computeTeamExposure(sessions: Session[]): TeamExposure[] {
 
   for (const session of getRealSessions(sessions)) {
     const gameInfo = session.game_info
-    const observedTeam = gameInfo?.observed_team || session.observed_team
-    const teamsInGame = [gameInfo?.team_home, gameInfo?.team_away].filter((name): name is string => Boolean(name))
+    const league = gameInfo?.league
+    const observedTeam = canonicalTeamDisplayName(
+      gameInfo?.observed_team || session.observed_team,
+      league,
+    )
+    const teamsInGame = [gameInfo?.team_home, gameInfo?.team_away]
+      .filter((name): name is string => Boolean(name))
+      .map((name) => canonicalTeamDisplayName(name, league))
 
     const targets = new Set<string>()
     if (observedTeam) {
@@ -212,7 +250,6 @@ export function computeTeamExposure(sessions: Session[]): TeamExposure[] {
     } else {
       teamsInGame.forEach((team) => targets.add(team))
     }
-    if (!targets.size && observedTeam) targets.add(observedTeam)
 
     for (const team of targets) {
       const row = ensureTeam(team)

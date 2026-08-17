@@ -16,6 +16,10 @@ export type RequirementFilters = {
   seasonId?: string
   mechanicTypes?: string[]
   requireRealSession?: boolean
+  requireGameContext?: boolean
+  requireVenueVerification?: boolean
+  homeAwayRole?: 'home' | 'away'
+  requireFirstVenueVisit?: boolean
 }
 
 export type RequirementDefinition = {
@@ -56,11 +60,14 @@ export type ChallengeDefinition = {
     icon?: string
     category?: string
     difficulty?: 'easy' | 'medium' | 'hard'
+    celebration?: 'popup' | 'hero'
   }
   collectionId?: string
   campaignId?: string
   /** Lightweight matchday set, e.g. AEV–STR 1/3. Not a second progression system. */
   matchdayGroupId?: string
+  /** Matchday default is per game. Venue scope = once per arena (First Visit). */
+  rotationScope?: 'game' | 'venue' | 'once'
   enabled: boolean
 }
 
@@ -100,6 +107,7 @@ export type ChallengeProgress = {
   requirements: RequirementProgress[]
   countedEventIds: string[]
   boundGameId?: string
+  boundVenueId?: string
   rewardClaimed?: boolean
   devSimulated?: boolean
 }
@@ -145,7 +153,7 @@ export type ContentIssue = {
   severity: 'error' | 'warning'
   code: string
   message: string
-  entityType: 'challenge' | 'reward' | 'collection' | 'campaign' | 'pool' | 'event'
+  entityType: 'challenge' | 'reward' | 'collection' | 'campaign' | 'pool' | 'event' | 'venue'
   entityId?: string
 }
 

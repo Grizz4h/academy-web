@@ -43,6 +43,9 @@
   /* Type */
   --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-title-rare: "Oswald", var(--font-display), sans-serif;
+  --font-title-legendary: "Bungee", var(--font-display), sans-serif;
+  --font-title-mythic: "Orbitron", var(--font-display), sans-serif;
   --type-eyebrow: 0.72rem;
   --type-title: clamp(1.15rem, 2vw, 1.35rem);
   --type-section: 1.1rem;

@@ -70,6 +70,13 @@ export type SessionCompletedEvent = ActivityEventBase & {
   tags?: string[]
   isDummy?: boolean
   isFirstSessionOfDrill?: boolean
+  venueId?: string
+  venueVerified?: boolean
+  homeAwayRole?: 'home' | 'away' | 'unknown'
+  isFirstVenueVisit?: boolean
+  distanceMeters?: number
+  accuracyMeters?: number
+  locationVerificationDevSimulated?: boolean
 }
 
 export type SceneCreatedEvent = ActivityEventBase & {
@@ -310,6 +317,7 @@ export type EquipmentSlot =
   | 'frame'
   | 'title'
   | 'tagline'
+  | 'sticker'
   | 'stickModel'
   | 'stickSkin'
   | 'puckModel'
@@ -440,6 +448,7 @@ export const EQUIPABLE_COSMETIC_TYPES: CosmeticType[] = [
   'frame',
   'title',
   'tagline',
+  'sticker',
 ]
 
 export const COSMETIC_TYPE_TO_SLOT: Partial<Record<CosmeticType, EquipmentSlot>> = {
@@ -449,6 +458,7 @@ export const COSMETIC_TYPE_TO_SLOT: Partial<Record<CosmeticType, EquipmentSlot>>
   frame: 'frame',
   title: 'title',
   tagline: 'tagline',
+  sticker: 'sticker',
   stickModel: 'stickModel',
   stickSkin: 'stickSkin',
   puckModel: 'puckModel',

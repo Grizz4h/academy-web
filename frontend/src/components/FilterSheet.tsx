@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { UiButton, UiSheet, UiSheetActions } from './ui'
 import styles from './FilterSheet.module.css'
 
 type FilterSheetProps = {
@@ -22,44 +23,56 @@ export default function FilterSheet({
   applyLabel = 'Übernehmen',
   resetLabel = 'Zurücksetzen',
 }: FilterSheetProps) {
-  if (!open) return null
-
   return (
-    <div
-      className={`sheetOverlay ${styles.overlay}`}
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
-    >
-      <div className={`sheetPanel ${styles.panel}`}>
-        <div className="sheetHeader">
-          <div className="sheetTitle">{title}</div>
-          <button type="button" className="sheetClose" onClick={onClose}>
-            Schließen
-          </button>
-        </div>
-        <div className={`sheetContent ${styles.content}`}>{children}</div>
-        <div className="sheetFooter">
-          {onReset && (
-            <button type="button" className="sheetReset" onClick={onReset}>
+    <UiSheet open={open} onClose={onClose} title={title} overlayClassName={styles.mobileOnly}>
+      <div className={styles.fields}>{children}</div>
+      <UiSheetActions
+        secondary={
+          onReset ? (
+            <UiButton type="button" variant="ghost" onClick={onReset}>
               {resetLabel}
-            </button>
-          )}
-          <button
+            </UiButton>
+          ) : (
+            <UiButton type="button" variant="secondary" onClick={onClose}>
+              Abbrechen
+            </UiButton>
+          )
+        }
+        primary={
+          <UiButton
             type="button"
-            className="sheetApply"
             onClick={() => {
               onApply?.()
               onClose()
             }}
           >
             {applyLabel}
-          </button>
-        </div>
-      </div>
+          </UiButton>
+        }
+      />
+    </UiSheet>
+  )
+}
+
+export function FilterSheetSection({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <div className={styles.section}>
+      <div className={styles.sectionTitle}>{title}</div>
+      {children}
     </div>
   )
+}
+
+export function FilterSheetRow({ children }: { children: ReactNode }) {
+  return <div className={styles.row}>{children}</div>
+}
+
+export function FilterSheetStack({ children }: { children: ReactNode }) {
+  return <div className={styles.stack}>{children}</div>
 }

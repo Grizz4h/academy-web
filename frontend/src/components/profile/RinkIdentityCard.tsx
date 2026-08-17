@@ -1,8 +1,9 @@
 import { getAvatarAsset, DEFAULT_AVATAR_ID } from '../../data/profile/avatarCatalog'
 import { getBannerAsset, DEFAULT_BANNER_ID } from '../../data/profile/bannerCatalog'
+import { getCoinAsset } from '../../data/profile/coinCatalog'
 import { getEmblemAsset, DEFAULT_EMBLEM_ID } from '../../data/profile/emblemCatalog'
-import { getProfileTitle } from '../../data/profile/profileTitleCatalog'
-import { resolveAvatarRarity } from '../../features/progression'
+import { getStickerAsset } from '../../data/profile/stickerCatalog'
+import { resolveAvatarRarity, resolveEquippedTagline, resolveEquippedTitle } from '../../features/progression'
 import type { UserProfileCustomization } from '../../data/profile/types'
 import { resolveUploadUrl } from '../../api'
 import styles from './RinkIdentityCard.module.css'
@@ -21,6 +22,7 @@ type RinkIdentityCardProps = {
   profile: UserProfileCustomization
   stats?: RinkIdentityStats
   className?: string
+  coinIds?: string[]
 }
 
 function formatJersey(value: number | null | undefined): string | null {
@@ -28,9 +30,10 @@ function formatJersey(value: number | null | undefined): string | null {
   return String(Math.max(0, Math.min(99, value))).padStart(2, '0')
 }
 
-export default function RinkIdentityCard({ profile, stats, className = '' }: RinkIdentityCardProps) {
+export default function RinkIdentityCard({ profile, stats, className = '', coinIds = [] }: RinkIdentityCardProps) {
   const banner = getBannerAsset(profile.bannerId || DEFAULT_BANNER_ID) || getBannerAsset(DEFAULT_BANNER_ID)
-  const title = getProfileTitle(profile.profileTitle)
+  const title = resolveEquippedTitle(profile.profileTitle)
+  const tagline = resolveEquippedTagline(profile.profileTagline)
 
   let avatarSrc = getAvatarAsset(DEFAULT_AVATAR_ID)?.src || ''
   let avatarRarity = resolveAvatarRarity(DEFAULT_AVATAR_ID)
@@ -52,11 +55,8 @@ export default function RinkIdentityCard({ profile, stats, className = '' }: Rin
 
   const jersey = formatJersey(profile.jerseyNumber)
   const displayName = (profile.displayName || 'Spieler').trim() || 'Spieler'
-
-  const metaBits = [
-    jersey ? `#${jersey}` : null,
-    title?.label || null,
-  ].filter(Boolean)
+  const stickers = (profile.stickerIds || []).map((id) => getStickerAsset(id)).filter(Boolean)
+  const coins = coinIds.map((id) => getCoinAsset(id)).filter(Boolean)
 
   const activityBits = [
     typeof stats?.level === 'number' ? `Level ${stats.level}` : null,
@@ -75,6 +75,15 @@ export default function RinkIdentityCard({ profile, stats, className = '' }: Rin
             <img src={emblemSrc} alt="" />
           </div>
         )}
+        {stickers.map((sticker, index) => (
+          <img
+            key={sticker!.id}
+            className={styles.sticker}
+            data-slot={index}
+            src={sticker!.src}
+            alt=""
+          />
+        ))}
       </div>
 
       <div className={styles.body}>
@@ -84,12 +93,29 @@ export default function RinkIdentityCard({ profile, stats, className = '' }: Rin
 
         <div className={styles.identity}>
           <h2 className={styles.name}>{displayName}</h2>
-          {metaBits.length > 0 && <p className={styles.meta}>{metaBits.join(' · ')}</p>}
+          {(jersey || title) && (
+            <p className={styles.meta}>
+              {jersey ? <span>#{jersey}</span> : null}
+              {jersey && title ? ' · ' : null}
+              {title ? (
+                <span className="rarity-type" data-rarity={title.rarity}>{title.label}</span>
+              ) : null}
+            </p>
+          )}
           {profile.favoriteTeamName && (
             <p className={styles.team}>{profile.favoriteTeamName}</p>
           )}
-          {profile.profileTagline && (
-            <p className={styles.tagline}>„{profile.profileTagline}“</p>
+          {tagline && (
+            <p className={`${styles.tagline} rarity-type rarity-type--tagline`} data-rarity={tagline.rarity}>
+              „{tagline.label}“
+            </p>
+          )}
+          {coins.length > 0 && (
+            <div className={styles.coinTray} aria-label="Mastery Coins">
+              {coins.map((coin) => (
+                <img key={coin!.id} src={coin!.src} alt={coin!.label} title={coin!.label} />
+              ))}
+            </div>
           )}
           {activityBits.length > 0 && (
             <p className={styles.activity}>{activityBits.join(' · ')}</p>

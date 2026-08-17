@@ -171,7 +171,7 @@ const REWARD_COSMETICS: CosmeticDefinition[] = [
     type: 'banner',
     name: 'Level 10 Blue Line',
     rarity: 'rare',
-    assetId: 'banner_blue_line_01',
+    assetId: 'banner_level_10',
     origin: { type: 'level', level: 10 },
   },
   {
@@ -179,7 +179,7 @@ const REWARD_COSMETICS: CosmeticDefinition[] = [
     type: 'emblem',
     name: 'Level 20 Crest',
     rarity: 'epic',
-    assetId: 'emblem_blue_line_01',
+    assetId: 'emblem_level_20',
     origin: { type: 'level', level: 20 },
   },
   {
@@ -187,7 +187,7 @@ const REWARD_COSMETICS: CosmeticDefinition[] = [
     type: 'emblem',
     name: 'Follow The Arrow',
     rarity: 'uncommon',
-    assetId: 'emblem_arrow_01',
+    assetId: 'emblem_arrow_unlock',
     origin: { type: 'achievement', achievementId: 'follow_the_arrow' },
   },
   ...TAGLINE_PRESETS.map((preset) => ({
@@ -264,4 +264,14 @@ export const RARITY_LABELS: Record<CosmeticDefinition['rarity'], string> = {
   epic: 'Epic',
   legendary: 'Legendary',
   mythic: 'Mythic',
+}
+
+/** Common → mythic. Used for locker/shop lists. */
+export const RARITY_RANK: Record<CosmeticDefinition['rarity'], number> = {
+  common: 0,
+  uncommon: 1,
+  rare: 2,
+  epic: 3,
+  legendary: 4,
+  mythic: 5,
 }

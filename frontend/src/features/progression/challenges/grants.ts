@@ -1,4 +1,5 @@
 import { getCosmetic } from '../cosmetics/cosmeticCatalog'
+import { getVenue } from '../../../data/venues'
 import type { CosmeticUnlock, PuxTransaction, UnlockHistoryEntry } from '../types'
 import type { ChallengeDefinition, ChallengeProgress } from './types'
 import { challengeCompletionEventId } from './ids'
@@ -88,16 +89,25 @@ export function applyChallengeRewards(input: {
     cosmetics[0] ? getCosmetic(cosmetics[0].cosmeticId)?.name || cosmetics[0].cosmeticId : '',
   ].filter(Boolean)
 
+  const hero = input.definition.presentation?.celebration === 'hero'
+  const venueName = input.progress.boundVenueId ? getVenue(input.progress.boundVenueId)?.name : undefined
   rewardEvents.push({
     id: eventId,
-    kind: 'system',
-    title: 'Challenge complete',
-    description: `${input.definition.title}${rewardBits.length ? ` · ${rewardBits.join(' · ')}` : ''}`,
+    kind: hero ? 'achievement' : 'system',
+    title: hero ? input.definition.title : 'Challenge complete',
+    description: hero
+      ? ['Matchday verified', venueName].filter(Boolean).join(' · ')
+      : `${input.definition.title}${rewardBits.length ? ` · ${rewardBits.join(' · ')}` : ''}`,
     amountPux: pux || undefined,
-    variant: 'popup',
-    visualTier: 'gold',
+    variant: hero ? 'hero' : 'popup',
+    visualTier: hero && input.definition.presentation?.difficulty === 'hard' ? 'mastery' : 'gold',
     icon: input.definition.presentation?.icon || '🎯',
-    meta: { challengeId: input.definition.id, amountXp: xp },
+    meta: {
+      challengeId: input.definition.id,
+      amountXp: xp,
+      boundGameId: input.progress.boundGameId,
+      boundVenueId: input.progress.boundVenueId,
+    },
   })
 
   return { xp, pux, cosmetics, history, puxTransactions, rewardEvents }

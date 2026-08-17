@@ -477,6 +477,24 @@
   gap: 0.9rem;
 }
 
+/* In einer bestehenden Fläche: gleiche Breite wie die Liste, kein zweiter Rahmen */
+.ui-more--flush {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.ui-more--flush .ui-more__summary {
+  padding: 0.7rem 0;
+}
+
+.ui-more--flush .ui-more__body {
+  padding: 0 0 0.15rem;
+  border-top: none;
+  gap: 0.75rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ui-btn,
   .ui-chip,

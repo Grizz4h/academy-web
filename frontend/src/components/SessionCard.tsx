@@ -3,6 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
 import { useMemo, useState } from 'react'
 import styles from './SessionCard.module.css'
+import Card from './Card'
+import { TeamCrest } from './game/TeamCrest'
+import { UiPill, type UiPillTone } from './ui'
 import { getObservationScopeLabel } from '../utils/observationScope'
 import { getSessionRoute } from '../features/lab/sessionRouting'
 import { isDummySession } from '../utils/sessionEligibility'
@@ -72,58 +75,12 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
     setExpandedPhases(next)
   }
 
-  const getStatusBadge = (status: string) => {
-    const badges = {
-      COMPLETED: {
-        bg: 'rgba(34, 197, 94, 0.1)',
-        border: 'rgba(34, 197, 94, 0.3)',
-        text: 'rgba(134, 239, 172, 1)',
-        label: 'Abgeschlossen'
-      },
-      ABORTED: {
-        bg: 'rgba(239, 68, 68, 0.1)',
-        border: 'rgba(239, 68, 68, 0.3)',
-        text: 'rgba(252, 165, 165, 1)',
-        label: 'Abgebrochen'
-      },
-      IN_PROGRESS: {
-        bg: 'rgba(245, 158, 11, 0.1)',
-        border: 'rgba(245, 158, 11, 0.3)',
-        text: 'rgba(253, 186, 116, 1)',
-        label: 'In Bearbeitung'
-      },
-      PRE: {
-        bg: 'rgba(245, 158, 11, 0.1)',
-        border: 'rgba(245, 158, 11, 0.3)',
-        text: 'rgba(253, 186, 116, 1)',
-        label: 'In Bearbeitung'
-      },
-      P1: {
-        bg: 'rgba(245, 158, 11, 0.1)',
-        border: 'rgba(245, 158, 11, 0.3)',
-        text: 'rgba(253, 186, 116, 1)',
-        label: 'In Bearbeitung'
-      },
-      P2: {
-        bg: 'rgba(245, 158, 11, 0.1)',
-        border: 'rgba(245, 158, 11, 0.3)',
-        text: 'rgba(253, 186, 116, 1)',
-        label: 'In Bearbeitung'
-      },
-      P3: {
-        bg: 'rgba(245, 158, 11, 0.1)',
-        border: 'rgba(245, 158, 11, 0.3)',
-        text: 'rgba(253, 186, 116, 1)',
-        label: 'In Bearbeitung'
-      },
-      POST: {
-        bg: 'rgba(96, 165, 250, 0.1)',
-        border: 'rgba(96, 165, 250, 0.3)',
-        text: 'rgba(147, 197, 253, 1)',
-        label: 'Debrief'
-      }
-    }
-    return badges[status as keyof typeof badges] || badges.IN_PROGRESS
+  const getStatusMeta = (status: string): { tone: UiPillTone; label: string } => {
+    const normalized = String(status || '').toUpperCase()
+    if (normalized === 'COMPLETED') return { tone: 'ok', label: 'Abgeschlossen' }
+    if (normalized === 'ABORTED') return { tone: 'danger', label: 'Abgebrochen' }
+    if (normalized === 'POST') return { tone: 'accent', label: 'Debrief' }
+    return { tone: 'warn', label: 'In Bearbeitung' }
   }
 
   const getPhaseLabel = (phase: string) => {
@@ -137,9 +94,20 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
     return labels[phase as keyof typeof labels] || phase
   }
 
-  const statusBadge = getStatusBadge(session.state)
+  const statusMeta = getStatusMeta(session.state)
   const isDummy = isDummySession(session)
   const isLabPredict = session.learning_area === 'lab' && session.lab_mode === 'predict'
+  const teamHome = session.game_info?.team_home || ''
+  const teamAway = session.game_info?.team_away || ''
+  const observedTeam = session.observed_team || ''
+  const opponentTeam =
+    observedTeam && teamHome && teamAway
+      ? observedTeam === teamHome
+        ? teamAway
+        : observedTeam === teamAway
+          ? teamHome
+          : ''
+      : ''
 
   const gameDate = session.game_info?.date
     ? new Date(session.game_info.date).toLocaleDateString('de-DE', {
@@ -186,80 +154,69 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: 'rgba(17, 24, 39, 0.6)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
-        cursor: 'default'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
-    >
-      {/* Header */}
+    <Card surface="primary" className={styles.card}>
       <div
-        style={{
-          padding: '1.5rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          gap: '1rem',
-          cursor: 'pointer'
-        }}
+        className={styles.header}
         onClick={() => setIsExpanded((v) => !v)}
       >
-        <div style={{ flex: 1 }}>
-        <h3
-          style={{
-            margin: '0 0 0.25rem 0',
-            fontSize: '1.25rem',
-            fontWeight: '600',
-            color: 'rgba(255, 255, 255, 0.92)',
-            lineHeight: '1.4',
-            wordWrap: 'break-word',
-            overflowWrap: 'break-word'
-          }}
-        >
-          {title}
-        </h3>
-
-        {session.observed_team && (
-          <div className={styles.observedBadge}>
-            Beobachtet: {session.observed_team}
+        <div className={styles.topRow}>
+          <div className={styles.identity}>
+            {observedTeam ? (
+              <>
+                <TeamCrest name={observedTeam} size="md" />
+                <div className={styles.identityText}>
+                  <span className={styles.observedKicker}>Beobachtet</span>
+                  <h3 className={styles.observedName}>{observedTeam}</h3>
+                  {opponentTeam ? (
+                    <p className={styles.vsLine}>
+                      vs <span>{opponentTeam}</span>
+                    </p>
+                  ) : teamHome && teamAway ? (
+                    <p className={styles.vsLine}>
+                      {teamHome} vs {teamAway}
+                    </p>
+                  ) : null}
+                </div>
+              </>
+            ) : (
+              <>
+                {teamHome ? <TeamCrest name={teamHome} size="sm" /> : null}
+                <div className={styles.identityText}>
+                  <h3 className={styles.sessionTitle}>{title}</h3>
+                </div>
+              </>
+            )}
           </div>
-        )}
-
-        {isLabPredict && (
-          <div className={styles.observedBadge} style={{ marginTop: '0.4rem', background: 'rgba(129,196,214,0.2)', borderColor: 'rgba(129,196,214,0.45)' }}>
-            Lab · Predict
+          <div className={styles.aside}>
+            <UiPill tone={statusMeta.tone}>{statusMeta.label}</UiPill>
+            <span className={`${styles.chevron} ${isExpanded ? styles.chevronOpen : ''}`} aria-hidden="true">
+              ▼
+            </span>
           </div>
-        )}
+        </div>
 
-        {session.ai_reflection && (
-          <div
-            className={styles.observedBadge}
-            style={{ marginTop: '0.4rem', background: 'rgba(56,189,248,0.12)', borderColor: 'rgba(56,189,248,0.35)' }}
-          >
-            🤖 Reflection
+        {(isDummy || isLabPredict || session.ai_reflection) && (
+          <div className={styles.flags}>
+            {isDummy && (
+              <UiPill tone="warn" title="Dev Dummy-Session — zählt nicht in Stats">
+                DEV · DUMMY
+              </UiPill>
+            )}
+            {isLabPredict && <UiPill tone="accent">Lab · Predict</UiPill>}
+            {session.ai_reflection && <UiPill tone="ok">Reflection</UiPill>}
           </div>
         )}
 
         {sessionSpatialSnapshots.length > 0 && (
-          <div style={{ marginTop: '0.65rem' }} onClick={(e) => e.stopPropagation()}>
-            <ObservationVisualPreview snapshots={sessionSpatialSnapshots} max={3} size="sm" />
-          </div>
+          <ObservationVisualPreview
+            snapshots={sessionSpatialSnapshots}
+            max={3}
+            size="sm"
+            layout="row"
+          />
         )}
 
-          {/* Meta Grid */}
-          <div className={styles.metaGrid}>
+        <div className={styles.metaGrid}>
             {session.game_info?.league && (
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Liga</span>
@@ -298,57 +255,6 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
                 <span className={styles.metaValue}>{session.game_info.matchday}</span>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Right side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
-          {isDummy && (
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '0.375rem 0.65rem',
-                borderRadius: '6px',
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                letterSpacing: '0.04em',
-                backgroundColor: 'rgba(245, 158, 11, 0.15)',
-                border: '1px solid rgba(245, 158, 11, 0.45)',
-                color: 'rgba(253, 186, 116, 1)',
-              }}
-              title="Dev Dummy-Session — zählt nicht in Stats"
-            >
-              DEV · DUMMY
-            </div>
-          )}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.375rem 0.75rem',
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
-              fontWeight: '500',
-              backgroundColor: statusBadge.bg,
-              border: `1px solid ${statusBadge.border}`,
-              color: statusBadge.text
-            }}
-          >
-            {statusBadge.label}
-          </div>
-
-          <span
-            style={{
-              fontSize: '1rem',
-              color: 'rgba(255, 255, 255, 0.6)',
-              transition: 'transform 0.2s',
-              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
-            }}
-          >
-            ▼
-          </span>
         </div>
       </div>
 
@@ -938,6 +844,6 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -3,6 +3,7 @@ import type { ProfileAsset } from './types'
 /**
  * Data-driven banner pool.
  * Workflow: add file under /public/profile/banners/ → add entry here.
+ * Rarity variants of the same motif need their own SVG — do not alias a starter file.
  */
 export const bannerCatalog: ProfileAsset[] = [
   {
@@ -32,6 +33,62 @@ export const bannerCatalog: ProfileAsset[] = [
     src: '/profile/banners/banner_crease_01.svg',
     category: 'rink',
     tags: ['crease', 'goal'],
+  },
+  {
+    id: 'banner_property_of_the_slot',
+    label: 'Property of the Slot',
+    src: '/profile/banners/banner_property_of_the_slot.svg',
+    category: 'rink',
+    tags: ['crease', 'slot'],
+    starter: false,
+  },
+  {
+    id: 'banner_level_10',
+    label: 'Level 10 Blue Line',
+    src: '/profile/banners/banner_level_10.svg',
+    category: 'rink',
+    tags: ['blue-line'],
+    starter: false,
+  },
+  {
+    id: 'banner_blue_line_wizard',
+    label: 'Blue Line Wizard',
+    src: '/profile/banners/banner_blue_line_wizard.svg',
+    category: 'rink',
+    tags: ['blue-line'],
+    starter: false,
+  },
+  {
+    id: 'banner_neutral_zone_goblin_shop',
+    label: 'Neutral Zone Goblin',
+    src: '/profile/banners/banner_neutral_zone_goblin_shop.svg',
+    category: 'rink',
+    tags: ['neutral', 'goblin'],
+    starter: false,
+  },
+  {
+    id: 'banner_shop_soft_ice',
+    label: 'Soft Ice',
+    src: '/profile/banners/banner_shop_soft_ice.svg',
+    category: 'rink',
+    tags: ['neutral', 'ice'],
+    starter: false,
+  },
+  {
+    id: 'banner_shop_night_rink',
+    label: 'Night Rink',
+    src: '/profile/banners/banner_shop_night_rink.svg',
+    category: 'rink',
+    tags: ['rink', 'night'],
+    starter: false,
+  },
+  {
+    id: 'banner_neutral_zone_goblin_legend',
+    label: 'Neutral Zone Goblin (Legendary)',
+    src: '/profile/banners/banner_neutral_zone_goblin_legend.svg',
+    category: 'rink',
+    tags: ['neutral', 'goblin'],
+    starter: false,
   },
   {
     id: 'banner_night_circuit',

@@ -103,6 +103,97 @@ export const MVP_CHALLENGES: ChallengeDefinition[] = [
     enabled: true,
   },
   {
+    id: 'challenge_matchday_home_ice',
+    type: 'matchday',
+    title: 'HOME ICE',
+    description:
+      'Begleite ein Heimspiel vor Ort mit RINK Tank und schließe dort eine qualifizierende Session ab.',
+    requirements: [
+      {
+        id: 'verified_home_session',
+        eventType: 'session_completed',
+        target: 1,
+        label: 'Verifizierte Heim-Session',
+        filters: {
+          gameId: '$matchday',
+          requireRealSession: true,
+          requireGameContext: true,
+          requireVenueVerification: true,
+          homeAwayRole: 'home',
+        },
+      },
+    ],
+    rewards: [
+      { type: 'pux', amount: 50 },
+      { type: 'cosmetic', cosmeticId: 'title_home_ice' },
+    ],
+    context: { bindGame: 'today', phase: 'in_game' },
+    collectionId: 'arena_passport',
+    presentation: { icon: '🏠', category: 'matchday', difficulty: 'medium', celebration: 'hero' },
+    enabled: true,
+  },
+  {
+    id: 'challenge_matchday_on_the_road',
+    type: 'matchday',
+    title: 'ON THE ROAD',
+    description:
+      'Besuche mit RINK Tank ein Auswärtsspiel und schließe dort eine qualifizierende Session ab.',
+    requirements: [
+      {
+        id: 'verified_away_session',
+        eventType: 'session_completed',
+        target: 1,
+        label: 'Verifizierte Auswärts-Session',
+        filters: {
+          gameId: '$matchday',
+          requireRealSession: true,
+          requireGameContext: true,
+          requireVenueVerification: true,
+          homeAwayRole: 'away',
+        },
+      },
+    ],
+    rewards: [
+      { type: 'pux', amount: 100 },
+      { type: 'cosmetic', cosmeticId: 'title_on_the_road' },
+    ],
+    context: { bindGame: 'today', phase: 'in_game' },
+    collectionId: 'arena_passport',
+    presentation: { icon: '🚌', category: 'matchday', difficulty: 'hard', celebration: 'hero' },
+    enabled: true,
+  },
+  {
+    id: 'challenge_matchday_first_visit',
+    type: 'matchday',
+    title: 'FIRST VISIT',
+    description:
+      'Erstes verifiziertes RINK-Tank-Erlebnis in dieser Arena. Einmal pro Halle.',
+    requirements: [
+      {
+        id: 'first_verified_venue_session',
+        eventType: 'session_completed',
+        target: 1,
+        label: 'Erste Arena-Session',
+        filters: {
+          gameId: '$matchday',
+          requireRealSession: true,
+          requireGameContext: true,
+          requireVenueVerification: true,
+          requireFirstVenueVisit: true,
+        },
+      },
+    ],
+    rewards: [
+      { type: 'pux', amount: 40 },
+      { type: 'cosmetic', cosmeticId: 'title_first_visit' },
+    ],
+    context: { bindGame: 'today', phase: 'in_game' },
+    collectionId: 'arena_passport',
+    rotationScope: 'venue',
+    presentation: { icon: '🎟️', category: 'matchday', difficulty: 'medium', celebration: 'hero' },
+    enabled: true,
+  },
+  {
     id: 'challenge_collection_survive_the_shift',
     type: 'collection',
     title: 'Survive the Shift',
@@ -122,6 +213,6 @@ export const MVP_CHALLENGES: ChallengeDefinition[] = [
     ],
     collectionId: 'wasteland',
     presentation: { icon: '⚙️', category: 'collection', difficulty: 'medium' },
-    enabled: true,
+    enabled: false,
   },
 ]

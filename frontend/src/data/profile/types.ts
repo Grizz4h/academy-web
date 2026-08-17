@@ -94,6 +94,8 @@ export type UserProfileCustomization = {
   favoriteLeague: string | null
   favoriteTeamName: string | null
   profileTagline: string | null
+  /** Up to 3 sticker cosmetic ids, stuck onto the identity card. */
+  stickerIds?: string[]
   academyHelpLevel: AcademyHelpLevel
   terminologyMode: TerminologyMode
   preferredAttackDirection: PreferredAttackDirection

@@ -1,9 +1,11 @@
 import { getAvatarAsset } from '../../data/profile/avatarCatalog'
 import { getBannerAsset } from '../../data/profile/bannerCatalog'
+import { getCoinAsset } from '../../data/profile/coinCatalog'
 import { getEmblemAsset } from '../../data/profile/emblemCatalog'
+import { getStickerAsset } from '../../data/profile/stickerCatalog'
 import { COLLECTIONS } from './collections/collectionCatalog'
 import { selectCollectionProgress } from './collections/collectionEngine'
-import { COSMETIC_CATALOG, getCosmetic, isStarterCosmetic, RARITY_LABELS } from './cosmetics/cosmeticCatalog'
+import { COSMETIC_CATALOG, getCosmetic, isStarterCosmetic, RARITY_LABELS, RARITY_RANK } from './cosmetics/cosmeticCatalog'
 import { selectLevelProgress, isCosmeticOwned, type ProgressionViewState } from './selectors'
 import { SHOP_LISTINGS } from './shop/shopCatalog'
 import type {
@@ -101,6 +103,8 @@ function artworkFor(def: CosmeticDefinition): string | undefined {
   if (def.type === 'avatar') return getAvatarAsset(assetId)?.src
   if (def.type === 'banner') return getBannerAsset(assetId)?.src
   if (def.type === 'emblem') return getEmblemAsset(assetId)?.src
+  if (def.type === 'sticker') return getStickerAsset(assetId)?.src
+  if (def.type === 'masteryCoin') return getCoinAsset(assetId)?.src
   return undefined
 }
 
@@ -163,22 +167,32 @@ export function filterLockerItems(
   const originType = filters.originType || 'all'
   const query = (filters.query || '').trim().toLowerCase()
 
-  return items.filter((item) => {
-    // Hide empty future categories with zero catalog entries of that type already handled by catalog
-    if (type !== 'all' && item.definition.type !== type) return false
-    if (ownership === 'unlocked' && !item.owned) return false
-    if (ownership === 'locked' && item.owned) return false
-    if (ownership === 'new' && !item.isNew) return false
-    if (ownership === 'favorites' && !item.isFavorite) return false
-    if (rarity !== 'all' && item.definition.rarity !== rarity) return false
-    if (collectionId !== 'all' && item.definition.collectionId !== collectionId) return false
-    if (originType !== 'all' && item.definition.origin.type !== originType) return false
-    if (query) {
-      const hay = `${item.displayName} ${item.definition.type} ${item.originLabel}`.toLowerCase()
-      if (!hay.includes(query)) return false
-    }
-    return true
-  })
+  return items
+    .filter((item) => {
+      // Hide empty future categories with zero catalog entries of that type already handled by catalog
+      if (type !== 'all' && item.definition.type !== type) return false
+      if (ownership === 'unlocked' && !item.owned) return false
+      if (ownership === 'locked' && item.owned) return false
+      if (ownership === 'new' && !item.isNew) return false
+      if (ownership === 'favorites' && !item.isFavorite) return false
+      if (rarity !== 'all' && item.definition.rarity !== rarity) return false
+      if (collectionId !== 'all' && item.definition.collectionId !== collectionId) return false
+      if (originType !== 'all' && item.definition.origin.type !== originType) return false
+      if (query) {
+        const hay = `${item.displayName} ${item.definition.type} ${item.originLabel}`.toLowerCase()
+        if (!hay.includes(query)) return false
+      }
+      return true
+    })
+    .sort(compareLockerItems)
+}
+
+function compareLockerItems(left: LockerItemView, right: LockerItemView): number {
+  const rarity = RARITY_RANK[left.definition.rarity] - RARITY_RANK[right.definition.rarity]
+  if (rarity !== 0) return rarity
+  const type = left.definition.type.localeCompare(right.definition.type)
+  if (type !== 0) return type
+  return left.displayName.localeCompare(right.displayName, 'de')
 }
 
 export function selectLockerStats(state: ProgressionViewState & { favoriteCosmeticIds?: string[] }) {

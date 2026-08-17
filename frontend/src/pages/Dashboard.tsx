@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
@@ -52,7 +52,20 @@ export default function Dashboard() {
   const { user, setUser } = useUser();
   const { rewardState } = useRewards();
   const tutorial = useTutorialOptional();
+  const queryClient = useQueryClient();
   const devMode = useDevNavEnabled();
+
+  const skipBasicsMutation = useMutation({
+    mutationFn: () =>
+      api.updateMyProfile({
+        hockeyExperience: 'familiar',
+        experiencePromptDismissed: true,
+      } as any),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['me'] })
+      tutorial?.dismiss()
+    },
+  })
 
   const [nameInput, setNameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -142,23 +155,31 @@ export default function Dashboard() {
   }, [user]);
 
   // Scope einmalig auf zuletzt verwendetes Modul setzen, sobald Daten geladen sind.
-  useEffect(() => {
-    if (!user || scopeInitialized || !curriculum || !sessions) return;
-
+  const lastUsedModuleId = useMemo(() => {
+    if (!curriculum || !sessions) return null
     const validModuleIds = new Set(
       curriculum.tracks.flatMap((track) =>
-        track.modules.filter((module) => module.active !== false).map((module) => module.id)
-      )
-    );
-
-    const lastUsedModule = [...sessions]
+        track.modules.filter((module) => module.active !== false).map((module) => module.id),
+      ),
+    )
+    return [...sessions]
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .map((s) => s.module_id)
-      .find((moduleId) => validModuleIds.has(moduleId));
+      .find((moduleId) => moduleId && validModuleIds.has(moduleId)) || null
+  }, [curriculum, sessions])
 
-    setCurrentScope(lastUsedModule ?? "Gesamt");
-    setScopeInitialized(true);
-  }, [user, scopeInitialized, curriculum, sessions]);
+  useEffect(() => {
+    if (!user || scopeInitialized || !curriculum || !sessions) return
+    setCurrentScope(lastUsedModuleId ?? 'Gesamt')
+    setScopeInitialized(true)
+  }, [user, scopeInitialized, curriculum, sessions, lastUsedModuleId])
+
+  // Until the one-shot init lands, prefer last-used module so Next Step / Recommended
+  // do not briefly rank against the whole curriculum (e.g. show A1/C1 instead of B3).
+  const activeScope =
+    !scopeInitialized && currentScope === 'Gesamt' && lastUsedModuleId
+      ? lastUsedModuleId
+      : currentScope
 
   const handleLogin = async () => {
     const name = nameInput.trim();
@@ -270,15 +291,17 @@ export default function Dashboard() {
     // Lookup Maps
     const drillById = new Map(allDrills.map((d) => [d.id, d]));
     const drillToModuleMap = new Map<string, string>();
+    const drillNumberMap = new Map<string, number>();
     
     // Drill-zu-Modul-Zuordnung erstellen
     if (curriculum) {
       for (const track of curriculum.tracks) {
         for (const module of track.modules) {
           if (module.active === false) continue;
-          for (const drill of module.drills) {
+          module.drills.forEach((drill, index) => {
             drillToModuleMap.set(drill.id, module.id);
-          }
+            drillNumberMap.set(drill.id, index + 1);
+          });
         }
       }
     }
@@ -305,6 +328,7 @@ export default function Dashboard() {
       drill_type: drillById.get(id)?.drill_type,
       count,
       moduleId: drillToModuleMap.get(id),
+      drillNumber: drillNumberMap.get(id),
     }));
     
     // Available Scopes generieren
@@ -319,13 +343,19 @@ export default function Dashboard() {
     }
 
     // Scope-basierte Filterung
-    const scopedCountsArray = currentScope === "Gesamt" || currentScope === "Global"
+    const scopedCountsArray = activeScope === "Gesamt" || activeScope === "Global"
       ? countsArray
-      : countsArray.filter(d => d.moduleId === currentScope);
+      : countsArray.filter(d => d.moduleId === activeScope);
     
-    // Recommended Next (niedrigste Counts zuerst, bei Gleichstand alphabetisch)
+    // Recommended Next: lowest count first, then didactic drill order (1→5), then title
     const recommendedNext = [...scopedCountsArray]
-      .sort((a, b) => a.count - b.count || a.title.localeCompare(b.title))
+      .sort((a, b) => {
+        if (a.count !== b.count) return a.count - b.count
+        const aNum = a.drillNumber ?? Number.POSITIVE_INFINITY
+        const bNum = b.drillNumber ?? Number.POSITIVE_INFINITY
+        if (aNum !== bNum) return aNum - bNum
+        return a.title.localeCompare(b.title)
+      })
       .slice(0, 5);
     
     // Most Trained (höchste Counts zuerst, nur count > 0)
@@ -433,7 +463,7 @@ export default function Dashboard() {
     const recentSessions = list
       .slice()
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 5);
+      .slice(0, 3);
 
     const observedTeamStats = computeObservedTeamStats(list);
     const mostObservedTeams = [...observedTeamStats]
@@ -464,7 +494,7 @@ export default function Dashboard() {
       mostObservedTeams,
       leastObservedTeams,
     };
-  }, [sessions, curriculum, currentScope]);
+  }, [sessions, curriculum, activeScope]);
 
   const resumeSession = useMemo(() => {
     return (sessions || [])
@@ -650,7 +680,85 @@ export default function Dashboard() {
     devMode,
     hasUsedAcademy,
     completedModuleIds,
+    hockeyExperience: account?.profile?.hockeyExperience,
   })
+  const showBasicsStep = Boolean(
+    !resumeSession
+    && !track0Done
+    && foundationModule
+    && (showFoundationEntry || academyLocked),
+  )
+  const canSkipBasics = showBasicsStep
+  const continueModuleMeta = (() => {
+    if (!curriculum || !nextDrill?.moduleId) return null
+    for (const track of curriculum.tracks) {
+      const mod = track.modules.find((m) => m.id === nextDrill.moduleId && m.active !== false)
+      if (!mod) continue
+      return {
+        trackId: track.id,
+        moduleId: mod.id,
+        title: mod.title,
+        subtitle: mod.summary || track.goal || '',
+      }
+    }
+    return null
+  })()
+  // Fresh academy start only when the learner has not trained A1+ yet.
+  // Otherwise continue from the scoped next drill (e.g. B3), not A1.
+  const showAcademyEntryCta = Boolean(
+    !showBasicsStep
+    && !hasUsedAcademy
+    && academyEntry
+    && !academyLocked,
+  )
+  const showContinueCta = Boolean(
+    !showBasicsStep
+    && !showAcademyEntryCta
+    && nextDrill?.moduleId
+    && !academyLocked,
+  )
+  const foundationSetupHref = foundationRecommendation?.kind === 'foundation_entry'
+    ? `/setup/${foundationRecommendation.moduleId}?drill=${encodeURIComponent(foundationRecommendation.drillId)}`
+    : foundationModule?.id
+      ? `/setup/${foundationModule.id}`
+      : '/curriculum'
+  const academySetupHref = academyEntry
+    ? `/setup/${academyEntry.moduleId}`
+    : '/curriculum'
+  const continueSetupHref = nextDrill?.moduleId
+    ? `/setup/${nextDrill.moduleId}?drill=${encodeURIComponent(nextDrill.id)}`
+    : '/curriculum'
+  const nextStepTitle = resumeSession ? 'Weiter geht’s' : 'Nächster Schritt'
+  const nextStepLead = resumeSession
+    ? `Aktive Session offen${derived.streak > 0 ? ` · Streak ${derived.streak}` : ''}. Mach weiter, bevor der Faden reißt.`
+    : showBasicsStep
+      ? (
+        foundationRecommendation?.kind === 'foundation_entry'
+          ? (foundationRecommendation.subtitle || 'Hockey Basics — Spielfeld, Regeln, Rollen und Begriffe.')
+          : 'Zuerst Track 0 — oder Basics überspringen, wenn du Hockey schon kennst.'
+      )
+      : showContinueCta && continueModuleMeta
+        ? (continueModuleMeta.subtitle || `${continueModuleMeta.moduleId} · ${nextDrill?.title || 'Weiter trainieren.'}`)
+        : showAcademyEntryCta && academyEntry
+          ? (academyEntry.subtitle || 'Weiter in der Akademie beobachten und trainieren.')
+          : nextDrill
+            ? `${nextDrill.moduleId} · ${nextDrill.title}`
+            : 'Wähle in der Akademie den nächsten Track.'
+  const nextStepFocus = resumeSession
+    ? null
+    : showBasicsStep
+      ? (
+        foundationRecommendation?.kind === 'foundation_entry'
+          ? foundationRecommendation.title
+          : (foundationModule?.title || 'Hockey Basics')
+      )
+      : showContinueCta && continueModuleMeta
+        ? `${continueModuleMeta.moduleId} · ${nextDrill?.title || continueModuleMeta.title}`
+        : showAcademyEntryCta && academyEntry
+          ? academyEntry.title
+          : nextDrill
+            ? nextDrill.title
+            : null
   const drillProgressPct = derived.totalDrills
     ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
     : 0;
@@ -684,6 +792,109 @@ export default function Dashboard() {
       ) : null}
 
       {user ? <TodayChallenges games={slateCatalogGames} /> : null}
+
+      <div data-tutorial-id={TUTORIAL_TARGET.homeNextStep}>
+      <Card className={styles.nextStepCard} elevation="featured" surface="primary">
+        <div className={styles.nextStepCopy}>
+          <h2 className={styles.nextStepTitle}>{nextStepTitle}</h2>
+          <p className={styles.nextStepText}>{nextStepLead}</p>
+          {nextStepFocus && (
+            <p className={styles.nextStepDrillName}>{nextStepFocus}</p>
+          )}
+          {derived.lastSession && !resumeSession && !showBasicsStep && (
+            <p className={styles.nextStepMeta}>
+              Letzte Session: {new Date(derived.lastSession.created_at).toLocaleDateString('de-DE')}
+              {' · '}
+              {derived.lastSession.module_id}
+              {' · '}
+              {formatSessionState(derived.lastSession.state)}
+            </p>
+          )}
+          {resumeSession && (
+            <p className={styles.nextStepMeta}>
+              {resumeSession.module_id}
+              {resumeSession.game_info?.team_home && resumeSession.game_info?.team_away
+                ? ` · ${resumeSession.game_info.team_home} vs ${resumeSession.game_info.team_away}`
+                : ''}
+            </p>
+          )}
+        </div>
+        <div className={styles.nextStepActions}>
+          {resumeSession ? (
+            <UiActionRow>
+              <UiButtonLink to={getSessionRoute(resumeSession)}>
+                Session fortsetzen
+              </UiButtonLink>
+              <UiButtonLink to="/curriculum" variant="secondary">
+                Zur Akademie
+              </UiButtonLink>
+            </UiActionRow>
+          ) : showBasicsStep ? (
+            <UiActionRow>
+              <UiButtonLink to={foundationSetupHref} data-tutorial-id={TUTORIAL_TARGET.homeStartT0}>
+                Track 0 starten
+              </UiButtonLink>
+              {canSkipBasics ? (
+                <UiButton
+                  type="button"
+                  variant="secondary"
+                  disabled={skipBasicsMutation.isPending}
+                  onClick={() => skipBasicsMutation.mutate()}
+                >
+                  {skipBasicsMutation.isPending ? '…' : 'Basics überspringen'}
+                </UiButton>
+              ) : null}
+            </UiActionRow>
+          ) : (
+            <UiActionRow>
+              {showContinueCta && nextDrill?.moduleId ? (
+                <UiButtonLink
+                  to={continueSetupHref}
+                  data-tutorial-id={TUTORIAL_TARGET.homeStartA1}
+                >
+                  {continueModuleMeta?.moduleId
+                    ? `${continueModuleMeta.moduleId} starten`
+                    : 'Session starten'}
+                </UiButtonLink>
+              ) : showAcademyEntryCta && academyEntry ? (
+                <UiButtonLink
+                  to={academySetupHref}
+                  data-tutorial-id={TUTORIAL_TARGET.homeStartA1}
+                >
+                  {academyEntry.moduleId === 'A1' || academyEntry.trackId === 'A'
+                    ? 'Track A1 starten'
+                    : `${academyEntry.moduleId} starten`}
+                </UiButtonLink>
+              ) : nextDrill?.moduleId ? (
+                <UiButtonLink to={continueSetupHref}>
+                  Session starten
+                </UiButtonLink>
+              ) : (
+                <UiButtonLink to="/curriculum">Zur Akademie</UiButtonLink>
+              )}
+              {foundationModule?.id && !track0Done ? (
+                <UiButtonLink
+                  to={foundationSetupHref}
+                  variant="secondary"
+                  data-tutorial-id={TUTORIAL_TARGET.homeStartT0}
+                >
+                  Track 0 optional
+                </UiButtonLink>
+              ) : (
+                <UiButtonLink to="/curriculum" variant="secondary">
+                  Lehrplan
+                </UiButtonLink>
+              )}
+            </UiActionRow>
+          )}
+          {skipBasicsMutation.isError && (
+            <p className={styles.nextStepMeta} style={{ color: '#f87171', margin: '0.35rem 0 0' }}>
+              Überspringen fehlgeschlagen. Bitte erneut versuchen.
+            </p>
+          )}
+        </div>
+      </Card>
+      </div>
 
       <div className={styles.kpiGrid}>
         <KpiRevealCard
@@ -798,97 +1009,6 @@ export default function Dashboard() {
         />
       </div>
 
-      <div data-tutorial-id={TUTORIAL_TARGET.homeNextStep}>
-      <Card className={styles.nextStepCard} elevation="featured" surface="primary">
-        <div className={styles.nextStepCopy}>
-          <h2 className={styles.nextStepTitle}>
-            {resumeSession
-              ? 'Weiter geht’s'
-              : track0Done
-                ? 'Nächster Schritt'
-                : 'Dein Einstieg'}
-          </h2>
-          {resumeSession ? (
-            <p className={styles.nextStepText}>
-              Aktive Session offen
-              {derived.streak > 0 ? ` · Streak ${derived.streak}` : ''}.
-              {' '}Mach weiter, bevor der Faden reißt.
-            </p>
-          ) : (
-            <p className={styles.nextStepText}>
-              {track0Done
-                ? 'Track 0 ist erledigt. Als Nächstes kannst du Track A1 starten.'
-                : 'Zuerst Track 0. Danach wird Track A1 freigeschaltet.'}
-            </p>
-          )}
-          {derived.lastSession && !resumeSession && !showFoundationEntry && (
-            <p className={styles.nextStepMeta}>
-              Letzte Session: {new Date(derived.lastSession.created_at).toLocaleDateString('de-DE')}
-              {' · '}
-              {derived.lastSession.module_id}
-              {' · '}
-              {formatSessionState(derived.lastSession.state)}
-            </p>
-          )}
-          {resumeSession && (
-            <p className={styles.nextStepMeta}>
-              {resumeSession.module_id}
-              {resumeSession.game_info?.team_home && resumeSession.game_info?.team_away
-                ? ` · ${resumeSession.game_info.team_home} vs ${resumeSession.game_info.team_away}`
-                : ''}
-            </p>
-          )}
-        </div>
-        <div className={styles.nextStepActions}>
-          {resumeSession ? (
-            <>
-              <UiButtonLink to={getSessionRoute(resumeSession)}>
-                Session fortsetzen
-              </UiButtonLink>
-              {foundationModule?.id ? (
-                <UiButtonLink to={`/setup/${foundationModule.id}`} variant="secondary" data-tutorial-id={TUTORIAL_TARGET.homeStartT0}>
-                  {track0Done ? 'Track 0 weiter' : 'Track 0 starten'}
-                </UiButtonLink>
-              ) : null}
-            </>
-          ) : (
-            <>
-              {foundationModule?.id ? (
-                <UiButtonLink
-                  to={`/setup/${foundationModule.id}`}
-                  variant={track0Done ? 'secondary' : 'primary'}
-                  data-tutorial-id={TUTORIAL_TARGET.homeStartT0}
-                >
-                  {track0Done ? '✓ Track 0' : 'Track 0 starten'}
-                </UiButtonLink>
-              ) : null}
-              {academyEntry ? (
-                academyLocked ? (
-                  <UiButton type="button" variant="secondary" disabled data-tutorial-id={TUTORIAL_TARGET.homeStartA1}>
-                    Track A1 · zuerst Track 0
-                  </UiButton>
-                ) : (
-                  <UiButtonLink
-                    to={`/setup/${academyEntry.moduleId}`}
-                    variant={track0Done ? 'primary' : 'secondary'}
-                    data-tutorial-id={TUTORIAL_TARGET.homeStartA1}
-                  >
-                    Track A1 starten
-                  </UiButtonLink>
-                )
-              ) : nextDrill?.moduleId ? (
-                <UiButtonLink to={`/setup/${nextDrill.moduleId}`}>
-                  Session starten
-                </UiButtonLink>
-              ) : (
-                <UiButtonLink to="/curriculum">Zur Akademie</UiButtonLink>
-              )}
-            </>
-          )}
-        </div>
-      </Card>
-      </div>
-
       <HockeyExperiencePrompt
         open={experiencePromptOpen && !tutorial?.isSurfaceOpen}
         onDone={() => setExperiencePromptOpen(false)}
@@ -898,8 +1018,11 @@ export default function Dashboard() {
         recommendedNext={derived.recommendedNext}
         mostTrained={derived.mostTrained}
         availableScopes={derived.availableScopes}
-        currentScope={currentScope}
-        onScopeChange={setCurrentScope}
+        currentScope={activeScope}
+        onScopeChange={(scope) => {
+          setCurrentScope(scope)
+          setScopeInitialized(true)
+        }}
       />
 
       <Card surface="section">

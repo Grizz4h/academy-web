@@ -16,6 +16,11 @@
   height: 18px;
 }
 
+.meta .art {
+  width: 15px;
+  height: 15px;
+}
+
 .tile .art {
   width: 46px;
   height: 46px;
