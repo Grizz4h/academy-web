@@ -1,0 +1,34 @@
+.label {
+  display: block;
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.65));
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font: inherit;
+}
+
+.input:focus {
+  outline: 2px solid rgba(45, 212, 191, 0.45);
+  outline-offset: 1px;
+}
+
+.error {
+  margin: 0.55rem 0 0;
+  color: #f87171;
+  font-size: 0.9rem;
+}
+
+.hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.55));
+}

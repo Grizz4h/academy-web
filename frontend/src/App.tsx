@@ -24,6 +24,7 @@ import LockerPage from './pages/Locker'
 import AuthCallbackPage from './pages/AuthCallback'
 import TopNav from './components/TopNav'
 import { DevRouteGuard } from './components/DevRouteGuard'
+import { DisplayNameSetupSheet } from './components/DisplayNameSetupSheet'
 import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 import { TutorialHost } from './features/tutorial'
 
@@ -59,6 +60,7 @@ function App() {
           </Routes>
         </main>
       </div>
+      <DisplayNameSetupSheet />
       <RewardHost />
       <RewardDevTools />
       <TutorialHost />

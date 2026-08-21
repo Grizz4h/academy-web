@@ -15,9 +15,13 @@ type UserContextValue = {
   /** Stable RinQ UUID when known. */
   userId: string | null
   authMode: AuthMode
+  /** Managed-auth user must pick a profile name (first Google login). */
+  needsDisplayName: boolean
   setUser: (username: string | null, password?: string) => Promise<LoginResult>
   /** After Supabase OAuth callback — store token and load /api/me. */
   completeSupabaseSession: (accessToken: string) => Promise<LoginResult>
+  /** After display-name sheet saves successfully. */
+  applyDisplayName: (displayName: string) => void
   logout: () => void
 }
 
@@ -34,6 +38,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<string | null>(null)
   const [userId, setUserIdState] = useState<string | null>(null)
   const [authMode, setAuthMode] = useState<AuthMode>(null)
+  const [needsDisplayName, setNeedsDisplayName] = useState(false)
 
   const applyMe = useCallback(async (token: string, mode: AuthMode) => {
     localStorage.setItem('academy.token', token)
@@ -44,6 +49,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserState(display)
     setUserIdState(rid)
     setAuthMode(mode)
+    setNeedsDisplayName(Boolean(me.needs_display_name))
     localStorage.setItem('academy.user', display)
     if (rid) localStorage.setItem('academy.userId', rid)
     else localStorage.removeItem('academy.userId')
@@ -53,7 +59,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false
     ;(async () => {
-      // Prefer live Supabase session if present
       const supabaseToken = await getSupabaseAccessToken()
       if (cancelled) return
       if (supabaseToken) {
@@ -63,6 +68,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         } catch {
           await signOutSupabase()
           clearLocalAuth()
+          setNeedsDisplayName(false)
         }
       }
       const storedToken = localStorage.getItem('academy.token')
@@ -73,7 +79,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setUserState(storedUser)
         if (storedId) setUserIdState(storedId)
         setAuthMode(storedMode)
-        // Refresh me in background
         try {
           await applyMe(storedToken, storedMode)
         } catch {
@@ -91,6 +96,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUserState(null)
       setUserIdState(null)
       setAuthMode(null)
+      setNeedsDisplayName(false)
       clearLocalAuth()
       return { ok: true }
     }
@@ -103,6 +109,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUserState(resolved)
       setUserIdState(rid)
       setAuthMode('legacy')
+      setNeedsDisplayName(false)
       localStorage.setItem('academy.user', resolved)
       localStorage.setItem('academy.authMode', 'legacy')
       if (rid) localStorage.setItem('academy.userId', rid)
@@ -113,6 +120,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUserState(null)
       setUserIdState(null)
       setAuthMode(null)
+      setNeedsDisplayName(false)
       clearLocalAuth()
       return { ok: false, error: e?.message || 'Login fehlgeschlagen' }
     }
@@ -128,23 +136,42 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setUserState(null)
         setUserIdState(null)
         setAuthMode(null)
+        setNeedsDisplayName(false)
         return { ok: false, error: e?.message || 'Google Login fehlgeschlagen' }
       }
     },
     [applyMe],
   )
 
+  const applyDisplayName = useCallback((displayName: string) => {
+    const name = displayName.trim()
+    if (!name) return
+    setUserState(name)
+    localStorage.setItem('academy.user', name)
+    setNeedsDisplayName(false)
+  }, [])
+
   const logout = () => {
     void signOutSupabase()
     setUserState(null)
     setUserIdState(null)
     setAuthMode(null)
+    setNeedsDisplayName(false)
     clearLocalAuth()
   }
 
   const value = useMemo(
-    () => ({ user, userId, authMode, setUser, completeSupabaseSession, logout }),
-    [user, userId, authMode, completeSupabaseSession],
+    () => ({
+      user,
+      userId,
+      authMode,
+      needsDisplayName,
+      setUser,
+      completeSupabaseSession,
+      applyDisplayName,
+      logout,
+    }),
+    [user, userId, authMode, needsDisplayName, completeSupabaseSession, applyDisplayName],
   )
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>

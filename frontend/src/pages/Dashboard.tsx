@@ -51,7 +51,7 @@ const formatSessionState = (state: string): string => {
 };
 
 export default function Dashboard() {
-  const { user, setUser } = useUser();
+  const { user, setUser, needsDisplayName } = useUser();
   const { rewardState } = useRewards();
   const tutorial = useTutorialOptional();
   const queryClient = useQueryClient();
@@ -1053,7 +1053,7 @@ export default function Dashboard() {
       </div>
 
       <HockeyExperiencePrompt
-        open={experiencePromptOpen && !tutorial?.isSurfaceOpen}
+        open={experiencePromptOpen && !tutorial?.isSurfaceOpen && !needsDisplayName}
         onDone={() => setExperiencePromptOpen(false)}
       />
 
