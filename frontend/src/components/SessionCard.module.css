@@ -4,6 +4,14 @@
   overflow: hidden;
 }
 
+.cardSelecting:global(.card) {
+  overflow: visible;
+}
+
+.cardSelecting .header {
+  padding-left: 2.55rem;
+}
+
 .header {
   display: flex;
   flex-direction: column;

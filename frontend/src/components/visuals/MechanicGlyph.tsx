@@ -1,158 +1,16 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import type { Ref } from 'react'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
+import { useExclusivePopover } from '../ui/useExclusivePopover'
+import {
+  LABELS,
+  MECHANIC_INFO,
+  resolveMechanicKind,
+  type MechanicKind,
+} from './mechanicGlyphKind'
 import styles from './MechanicGlyph.module.css'
 
-export type MechanicKind =
-  | 'paint'
-  | 'path'
-  | 'placement'
-  | 'marker'
-  | 'zone'
-  | 'choice'
-  | 'profile'
-  | 'log'
-  | 'sidequest'
-  | 'generic'
-
-type MechanicInfo = {
-  label: string
-  summary: string
-  detail: string
-}
-
-const MECHANIC_INFO: Record<MechanicKind, MechanicInfo> = {
-  paint: {
-    label: 'Paint',
-    summary: 'Auf dem Rink zeichnen.',
-    detail: 'Du markierst Räume oder Muster mit Strichen auf dem Eis — z. B. geschützte und gefährliche Flächen.',
-  },
-  path: {
-    label: 'Pfad',
-    summary: 'Richtung mit Start und Ziel setzen.',
-    detail: 'Du setzt zuerst einen Ausgangspunkt und danach einen Endpunkt. Der Pfeil zeigt die beobachtete Richtung oder Lenkung.',
-  },
-  placement: {
-    label: 'Placement',
-    summary: 'Spieler oder Struktur positionieren.',
-    detail: 'Du verschiebst Bubbles auf dem Rink, um Formationen, Rollen oder defensive Strukturen abzubilden.',
-  },
-  marker: {
-    label: 'Marker',
-    summary: 'Einen einzelnen Ort setzen.',
-    detail: 'Du tippst einen Punkt auf dem Eis — z. B. wo Druck entsteht oder eine Situation kippt.',
-  },
-  zone: {
-    label: 'Zone',
-    summary: 'Bereich oder Korridor wählen.',
-    detail: 'Du wählst eine Zone, einen Korridor oder einen semantischen Raum auf dem Rink aus.',
-  },
-  choice: {
-    label: 'Auswahl',
-    summary: 'Aus Optionen entscheiden.',
-    detail: 'Klassifikation, Diagnose oder Period-Checkin: Du wählst die passende Antwort aus vorgegebenen Optionen.',
-  },
-  profile: {
-    label: 'Profil',
-    summary: 'Muster einordnen und bündeln.',
-    detail: 'Du ordnest Beobachtungen vorsichtig ein oder fasst sie zu einem Tendenzprofil zusammen — weniger Zeichnen, mehr Synthese.',
-  },
-  log: {
-    label: 'Log',
-    summary: 'Ereignisse erfassen.',
-    detail: 'Du protokollierst Samples, Shifts oder Events in einer Liste statt auf dem Rink.',
-  },
-  sidequest: {
-    label: 'Sidequest',
-    summary: 'Nebenaufgabe neben dem Hauptdrill.',
-    detail: 'Kurze Zusatzbeobachtung (z. B. Special Teams), parallel zur laufenden Session.',
-  },
-  generic: {
-    label: 'Drill',
-    summary: 'Allgemeine Drill-Mechanik.',
-    detail: 'Für diesen Drill ist keine spezielle Rink-Mechanik hinterlegt.',
-  },
-}
-
-const LABELS: Record<MechanicKind, string> = Object.fromEntries(
-  Object.entries(MECHANIC_INFO).map(([key, value]) => [key, value.label]),
-) as Record<MechanicKind, string>
-
-/** Map drill_type + optional config.mode / config.mechanic to a mechanic kind. */
-export function resolveMechanicKind(
-  drillType?: string | null,
-  mode?: string | null,
-  mechanic?: string | null,
-): MechanicKind {
-  const type = [drillType, mode, mechanic].filter(Boolean).join(' ').toLowerCase()
-
-  if (type.includes('paintable') || type.includes('paint')) return 'paint'
-  if (type.includes('directional_path') || type.includes('path_observation') || type.includes('path')) return 'path'
-  if (type.includes('defensive_structure') || type.includes('formation') || type.includes('placement')) return 'placement'
-  if (type.includes('single_marker') || type.includes('marker')) return 'marker'
-  if (
-    type.includes('zone')
-    || type.includes('corridor')
-    || type.includes('semantic_zone')
-    || type.includes('blue_line')
-  ) {
-    return 'zone'
-  }
-  if (
-    type.includes('opportunity_rate')
-    || type.includes('rate_definition')
-    || type.includes('opportunity_tracker')
-    || type.includes('cohort_rate_compare')
-    || type.includes('sample_compare')
-    || type.includes('conditional_outcome')
-    || type.includes('condition_outcome_matrix')
-  ) {
-    return 'log'
-  }
-  if (type.includes('claim_ladder') || type.includes('evidence_profile')) {
-    return 'profile'
-  }
-  if (type.includes('evidence_assessment') || type.includes('assessment')) {
-    return 'choice'
-  }
-  if (
-    type.includes('classification')
-    || type.includes('period_checkin')
-    || type.includes('role_identification')
-    || type.includes('triangle')
-    || type.includes('diagnosis')
-  ) {
-    return 'choice'
-  }
-  if (
-    type.includes('pattern_reflection')
-    || type.includes('meta_scan')
-    || type.includes('pattern_attribution')
-    || type.includes('tendency_profile')
-    || type.includes('before_after_compare')
-    || type.includes('state_compare')
-    || type.includes('trigger_hypothesis')
-    || type.includes('adjustment_attribution')
-    || type.includes('interaction_chain')
-    || type.includes('problem_adjustment_response')
-    || type.includes('adjustment_profile')
-    || type.includes('multi_change_synthesis')
-  ) {
-    return 'profile'
-  }
-  if (
-    type.includes('pattern_log')
-    || type.includes('multi_observation_pattern')
-    || type.includes('pattern_condition')
-    || type.includes('pattern_invariant')
-    || type.includes('change_timeline')
-    || type.includes('change_point_observation')
-  ) return 'log'
-  if (type.includes('event_log') || type.includes('sample_log') || type.includes('shift_tracker') || type.includes('observation_log')) return 'log'
-  if (type.includes('foundation') || type.includes('micro_quiz')) return 'choice'
-  if (type.includes('sidequest')) return 'sidequest'
-  if (type.includes('rink') || type.includes('clickable') || type.includes('draggable')) return 'marker'
-  return 'generic'
-}
+export type { MechanicKind }
+export { LABELS, MECHANIC_INFO, resolveMechanicKind }
 
 type MechanicGlyphProps = {
   kind?: MechanicKind
@@ -258,33 +116,7 @@ export function MechanicGlyph({
 }: MechanicGlyphProps) {
   const resolved = kind || resolveMechanicKind(drillType, mode, mechanic)
   const info = MECHANIC_INFO[resolved]
-  const [open, setOpen] = useState(false)
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const popoverRef = useRef<HTMLDivElement>(null)
-  const panelId = useId()
-
-  useEffect(() => {
-    if (!open) return
-
-    const onPointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null
-      if (triggerRef.current?.contains(target)) return
-      if (popoverRef.current?.contains(target)) return
-      setOpen(false)
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
-    document.addEventListener('mousedown', onPointerDown)
-    document.addEventListener('touchstart', onPointerDown)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', onPointerDown)
-      document.removeEventListener('touchstart', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [open])
+  const { open, toggle, close, triggerRef, popoverRef, panelId } = useExclusivePopover()
 
   if (!explainable) {
     return (
@@ -303,7 +135,7 @@ export function MechanicGlyph({
   return (
     <span className={styles.wrap}>
       <button
-        ref={triggerRef}
+        ref={triggerRef as Ref<HTMLButtonElement>}
         type="button"
         className={[styles.glyph, styles.clickable, styles[size], className].filter(Boolean).join(' ')}
         data-kind={resolved}
@@ -313,7 +145,7 @@ export function MechanicGlyph({
         onClick={(event) => {
           event.preventDefault()
           event.stopPropagation()
-          setOpen((value) => !value)
+          toggle()
         }}
       >
         <GlyphArt kind={resolved} />
@@ -322,7 +154,7 @@ export function MechanicGlyph({
 
       {open && (
         <AnchoredPopover
-          ref={popoverRef}
+          ref={popoverRef as Ref<HTMLDivElement>}
           open={open}
           anchorRef={triggerRef}
           id={panelId}
@@ -342,7 +174,7 @@ export function MechanicGlyph({
               onClick={(event) => {
                 event.preventDefault()
                 event.stopPropagation()
-                setOpen(false)
+                close()
               }}
             >
               ×
@@ -355,5 +187,3 @@ export function MechanicGlyph({
     </span>
   )
 }
-
-export { LABELS, MECHANIC_INFO }

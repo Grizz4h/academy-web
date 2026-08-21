@@ -1,0 +1,368 @@
+{
+  "id": "Christoph_1787294055",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "T0",
+  "goal": "Foundation: Hockey Basics",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "self_paced",
+  "drill_id": "T0_D5",
+  "learning_area": "academy",
+  "lab_mode": null,
+  "lab_template_id": null,
+  "observation_scope": "LESSON",
+  "state": "COMPLETED",
+  "current_phase": "P1",
+  "created_at": "2026-08-21T08:34:15.003007",
+  "drills": [
+    {
+      "id": "T0_D5",
+      "title": "Ein Spiel lesen",
+      "sceneSlug": "Foundation-Read",
+      "drill_type": "foundation_lesson",
+      "description": "Zone, Besitz, Druck und Aktion zusammen lesen — ohne taktische Tiefe.",
+      "config": {
+        "trackStep": 5,
+        "trackStepLabel": "Spiel lesen",
+        "trackStepTotal": 5,
+        "learningMode": true,
+        "steps": [
+          {
+            "id": "d5_zone",
+            "type": "scenario_choice",
+            "prompt": "In welcher Zone liegt der Puck?",
+            "attackDirection": "right",
+            "showMarkers": [
+              "puck_carrier"
+            ],
+            "options": [
+              {
+                "id": "dz",
+                "label": "Defensive Zone"
+              },
+              {
+                "id": "nz",
+                "label": "Neutral Zone"
+              },
+              {
+                "id": "oz",
+                "label": "Offensive Zone"
+              },
+              {
+                "id": "unclear",
+                "label": "Unklar"
+              }
+            ],
+            "correctOptionId": "nz",
+            "explanation": "Der Puck liegt in der Neutral Zone — zwischen den Blue Lines.",
+            "gentleWrong": "Schau auf die Zone-Markierung: Der Puck ist in der Neutral Zone.",
+            "hideAttackArrow": true,
+            "markerOverrides": {
+              "puck_carrier": {
+                "cx": 200,
+                "cy": 120,
+                "label": "Puck",
+                "team": "blue"
+              }
+            }
+          },
+          {
+            "id": "d5_possession",
+            "type": "scenario_choice",
+            "prompt": "Welches Team hat den Puck?",
+            "showMarkers": [
+              "puck_carrier",
+              "defense_left"
+            ],
+            "options": [
+              {
+                "id": "blue",
+                "label": "Team Blau"
+              },
+              {
+                "id": "red",
+                "label": "Team Rot"
+              },
+              {
+                "id": "contested",
+                "label": "Umkämpft"
+              },
+              {
+                "id": "unclear",
+                "label": "Unklar"
+              }
+            ],
+            "correctOptionId": "blue",
+            "explanation": "Der gelbe Puck sitzt beim blauen Spieler — Team Blau hat Besitz. Rot steht ohne Puck dagegen.",
+            "gentleWrong": "Schau, bei wem der gelbe Puck liegt — nicht nur die Teamfarbe.",
+            "hideAttackArrow": true,
+            "markerOverrides": {
+              "puck_carrier": {
+                "cx": 235,
+                "cy": 120,
+                "label": "Blau",
+                "team": "blue"
+              },
+              "defense_left": {
+                "cx": 155,
+                "cy": 95,
+                "label": "Rot",
+                "team": "red"
+              }
+            }
+          },
+          {
+            "id": "d5_pressure",
+            "type": "scenario_choice",
+            "prompt": "Wer übt Druck auf den Spieler mit dem Puck aus?",
+            "showMarkers": [
+              "puck_carrier",
+              "defense_left"
+            ],
+            "options": [
+              {
+                "id": "red",
+                "label": "Team Rot"
+              },
+              {
+                "id": "blue",
+                "label": "Team Blau"
+              },
+              {
+                "id": "low",
+                "label": "Wenig klarer Druck"
+              },
+              {
+                "id": "unclear",
+                "label": "Unklar"
+              }
+            ],
+            "correctOptionId": "red",
+            "explanation": "Der rote Spieler steht nah am Puckführer und geht darauf zu — Team Rot übt Druck aus.",
+            "gentleWrong": "Druck kommt vom Gegner nah am Puck — hier vom roten Spieler.",
+            "hideAttackArrow": true,
+            "markerOverrides": {
+              "puck_carrier": {
+                "cx": 245,
+                "cy": 125,
+                "label": "Blau",
+                "team": "blue"
+              },
+              "defense_left": {
+                "cx": 210,
+                "cy": 108,
+                "label": "Rot",
+                "team": "red"
+              }
+            }
+          },
+          {
+            "id": "d5_action",
+            "type": "scenario_choice",
+            "prompt": "Blau hat den Puck in der Neutralzone. Ein Mitspieler steht schon näher an der offensiven Blue Line. Was versucht Blau wahrscheinlich?",
+            "attackDirection": "right",
+            "showMarkers": [
+              "puck_carrier",
+              "support_player"
+            ],
+            "options": [
+              {
+                "id": "transition",
+                "label": "Transition / Zone Entry vorbereiten"
+              },
+              {
+                "id": "forecheck",
+                "label": "Forecheck in der gegnerischen Zone"
+              },
+              {
+                "id": "breakout",
+                "label": "Breakout aus der eigenen Zone"
+              },
+              {
+                "id": "reset",
+                "label": "Reset in der Defensive"
+              },
+              {
+                "id": "unclear",
+                "label": "Unklar"
+              }
+            ],
+            "correctOptionId": "transition",
+            "explanation": "Puck in der Neutralzone + Mitspieler Richtung Offensivzone: typisch Transition / Vorbereitung auf den Zone Entry — nicht Breakout (eigene Zone) und nicht Forecheck (ohne eigenen Puck).",
+            "gentleWrong": "Puck ist in der Mitte, Mitspieler voraus Richtung Angriffszone — eher Transition/Entry als Breakout oder Forecheck.",
+            "hideAttackArrow": false,
+            "markerOverrides": {
+              "puck_carrier": {
+                "cx": 210,
+                "cy": 130,
+                "label": "Puckführer",
+                "team": "blue"
+              },
+              "support_player": {
+                "cx": 268,
+                "cy": 95,
+                "label": "Mitspieler voraus",
+                "team": "blue"
+              }
+            }
+          },
+          {
+            "id": "d5_complete",
+            "type": "completion_summary",
+            "prompt": "Hockey Basics abgeschlossen",
+            "summaryItems": [
+              "Spielfeld",
+              "Rollen",
+              "Grundregeln",
+              "Hockeybegriffe",
+              "Spielsituation lesen"
+            ],
+            "learnedTermsCount": 30,
+            "explanation": "Du kennst jetzt die wichtigsten Zonen, Regeln, Rollen und Begriffe, die wir in der Academy verwenden. Jetzt kannst du Hockey bewusst beobachten — nicht nur dem Puck folgen."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P1",
+      "answers": {
+        "optionOrderByStep": {
+          "d5_zone": [
+            "nz",
+            "unclear",
+            "dz",
+            "oz"
+          ],
+          "d5_possession": [
+            "unclear",
+            "blue",
+            "red",
+            "contested"
+          ],
+          "d5_pressure": [
+            "blue",
+            "unclear",
+            "low",
+            "red"
+          ],
+          "d5_action": [
+            "reset",
+            "unclear",
+            "forecheck",
+            "breakout",
+            "transition"
+          ]
+        },
+        "stepIndex": 4,
+        "stepStates": {
+          "d5_zone": {
+            "selectedOptionId": "nz",
+            "revealed": true,
+            "correct": true
+          },
+          "d5_possession": {
+            "selectedOptionId": "blue",
+            "revealed": true,
+            "correct": true
+          },
+          "d5_pressure": {
+            "selectedOptionId": "red",
+            "revealed": true,
+            "correct": true
+          },
+          "d5_action": {
+            "selectedOptionId": "transition",
+            "revealed": true,
+            "correct": true
+          },
+          "d5_complete": {
+            "revealed": true,
+            "correct": true
+          }
+        },
+        "foundationComplete": true
+      },
+      "timestamp": "2026-08-21T08:35:55.780311"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "optionOrderByStep": {
+        "d5_zone": [
+          "nz",
+          "unclear",
+          "dz",
+          "oz"
+        ],
+        "d5_possession": [
+          "unclear",
+          "blue",
+          "red",
+          "contested"
+        ],
+        "d5_pressure": [
+          "blue",
+          "unclear",
+          "low",
+          "red"
+        ],
+        "d5_action": [
+          "reset",
+          "unclear",
+          "forecheck",
+          "breakout",
+          "transition"
+        ]
+      },
+      "stepIndex": 4,
+      "stepStates": {
+        "d5_zone": {
+          "selectedOptionId": "nz",
+          "revealed": true,
+          "correct": true
+        },
+        "d5_possession": {
+          "selectedOptionId": "blue",
+          "revealed": true,
+          "correct": true
+        },
+        "d5_pressure": {
+          "selectedOptionId": "red",
+          "revealed": true,
+          "correct": true
+        },
+        "d5_action": {
+          "selectedOptionId": "transition",
+          "revealed": true,
+          "correct": true
+        },
+        "d5_complete": {
+          "revealed": true,
+          "correct": true
+        }
+      },
+      "foundationComplete": true
+    }
+  },
+  "post": {
+    "summary": "Foundation-Lektion abgeschlossen",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 5,
+    "completed_at": "2026-08-21T08:35:55.851237"
+  },
+  "game_info": null,
+  "game_id": null,
+  "observed_team": null,
+  "observed_team_id": null,
+  "observed_team_name": null,
+  "microfeedback": {},
+  "is_dummy": false
+}

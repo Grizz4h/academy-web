@@ -1,4 +1,4 @@
-// ✅ ACTIVE: Renderer v2 for A2+ (UI-only, no Buttons, no API, no onComplete)
+// Product drill renderer (V2). New mechanics live in feature modules + curriculum config.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Drill } from "../../api";
@@ -14,6 +14,18 @@ import { CohortRateCompareDrill } from "../../features/cohortRateCompare/CohortR
 import { ConditionalOutcomeDrill } from "../../features/conditionalOutcome/ConditionalOutcomeDrill";
 import { EvidenceAssessmentDrill } from "../../features/evidenceAssessment/EvidenceAssessmentDrill";
 import { ClaimLadderDrill } from "../../features/claimLadder/ClaimLadderDrill";
+import { AnticipationReadDrill } from "../../features/anticipationRead/AnticipationReadDrill";
+import { AnticipationProfileDrill } from "../../features/anticipationProfile/AnticipationProfileDrill";
+import { RoleIdentificationDrill } from "../../features/roleIdentification/RoleIdentificationDrill";
+import { resolveRoleIdentificationConfig } from "../../features/roleIdentification/roleLogic";
+import { ShiftTrackerDrill } from "../../features/shiftTracker/ShiftTrackerDrill";
+import { resolveShiftTrackerConfig } from "../../features/shiftTracker/shiftLogic";
+import { PlayerRelationDrill } from "../../features/playerRelation/PlayerRelationDrill";
+import { resolvePlayerRelationConfig } from "../../features/playerRelation/relationLogic";
+import { SimpleStructureDrill } from "../../features/simpleStructure/SimpleStructureDrill";
+import { resolveSimpleStructureConfig } from "../../features/simpleStructure/structureLogic";
+import { TacticalObservationDrill } from "../../features/tacticalObservation/TacticalObservationDrill";
+import { resolveTacticalObservationConfig } from "../../features/tacticalObservation/tacticalLogic";
 import FoundationLessonDrill from "../../features/foundation/FoundationLessonDrill";
 
 interface DrillRendererV2Props {
@@ -335,93 +347,192 @@ function computeSampleAggregation(samples: any[] = [], fields: any[] = [], check
 }
 
 export default function DrillRendererV2({ drill, answers, setAnswers, session, phase }: DrillRendererV2Props) {
-	switch (drill.drill_type) {
+	const safeAnswers = answers || {}
+	const drillType = String(drill?.drill_type || drill?.config?.mechanic || "").toLowerCase()
+	switch (drillType) {
 		case "rink_corridor_observation":
 		case "rink_segmented_zone_observation":
-			return <RinkSegmentedZoneObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
+			return <RinkSegmentedZoneObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "rink_zone_priority_observation":
-			return <RinkZonePriorityObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <RinkZonePriorityObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "paintable_rink_observation":
-			return <PaintableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PaintableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "system_observation": {
+			const layers = drill?.config?.observationLayers || []
+			const primary = String(layers[0] || "")
+			if (primary === "space_priority") {
+				return <PaintableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			}
+			if (primary === "entry_route_control" || primary === "space_distribution") {
+				return <RinkSegmentedZoneObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
+			}
+			if (primary === "advantage_conversion") {
+				const mode = String(drill?.config?.mode || "")
+				if (
+					mode === "pressure_diagnosis"
+					|| mode === "solution_type_diagnosis"
+					|| mode === "decision_cause_diagnosis"
+					|| mode === "transition_followup_assessment"
+				) {
+					return <PressureDiagnosisCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+				}
+				return <PeriodCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			}
+			if (primary === "system_stability" || primary === "system_profile" || primary === "offensive_profile") {
+				return <PeriodCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			}
+			// C1 structure/pressure/responsibility; C2 spacing/steering/recovery; C3 connections/movement
+			return <DraggableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
+		}
 		case "draggable_rink_observation":
-			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
+			return <DraggableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "clickable_rink_observation":
-			return <DraggableRinkObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} session={session} phase={phase} />;
+			return <DraggableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
+		case "defensive_observation": {
+			const layer = String((drill?.config?.observationLayers || [])[0] || "")
+			if (layer === "pressure_initiation") {
+				return <DraggableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
+			}
+			if (layer === "pattern_recognition") {
+				return <PatternReflectionObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			}
+			// pressure_effect / support_structure / sequence_analysis
+			return <ObservationLogDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		}
 		case "pattern_log":
 		case "multi_observation_pattern":
-			return <PatternLogDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PatternLogDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "pattern_condition":
 		case "pattern_condition_matrix":
-			return <PatternConditionDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PatternConditionDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "pattern_invariant":
 		case "pattern_invariant_map":
-			return <PatternInvariantDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PatternInvariantDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "pattern_attribution":
 		case "pattern_attribution_board":
-			return <PatternAttributionDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PatternAttributionDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "tendency_profile":
 		case "pattern_tendency_profile":
-			return <TendencyProfileDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <TendencyProfileDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "before_after_compare":
 		case "state_compare":
-			return <BeforeAfterCompareDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <BeforeAfterCompareDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "change_timeline":
 		case "change_point_observation":
-			return <ChangeTimelineDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <ChangeTimelineDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "trigger_hypothesis":
 		case "adjustment_attribution":
-			return <TriggerHypothesisDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <TriggerHypothesisDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "interaction_chain":
 		case "problem_adjustment_response":
-			return <InteractionChainDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <InteractionChainDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "adjustment_profile":
 		case "multi_change_synthesis":
-			return <AdjustmentProfileDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <AdjustmentProfileDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "opportunity_rate":
 		case "rate_definition":
 		case "opportunity_tracker":
-			return <OpportunityRateDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <OpportunityRateDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "cohort_rate_compare":
 		case "sample_compare":
-			return <CohortRateCompareDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <CohortRateCompareDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "conditional_outcome_compare":
 		case "condition_outcome_matrix":
-			return <ConditionalOutcomeDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <ConditionalOutcomeDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "evidence_assessment":
-			return <EvidenceAssessmentDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <EvidenceAssessmentDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "claim_ladder":
 		case "evidence_profile":
-			return <ClaimLadderDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <ClaimLadderDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "anticipation_read":
+		case "next_action_prediction":
+		case "cue_priority":
+		case "cue_ranking":
+		case "scenario_branches":
+		case "prediction_update":
+		case "belief_update":
+			return <AnticipationReadDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "anticipation_profile":
+			return <AnticipationProfileDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "observation_log_drill":
 		case "impact_classification_observation":
 		case "support_classification_observation":
 		case "sequence_classification_observation":
-			return <ObservationLogDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <ObservationLogDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "pattern_reflection_observation":
-			return <PatternReflectionObservationDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "period_checkin":
-			if (drill?.config?.mode === "pressure_diagnosis" || drill?.config?.mode === "solution_type_diagnosis" || drill?.config?.mode === "decision_cause_diagnosis" || drill?.config?.mode === "transition_followup_assessment") {
-				return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PatternReflectionObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "period_checkin": {
+			const decisionMode = String(drill?.config?.mode || "")
+			const isSampleDecisionAnalysis =
+				decisionMode === "pressure_diagnosis"
+				|| decisionMode === "solution_type_diagnosis"
+				|| decisionMode === "decision_cause_diagnosis"
+				|| decisionMode === "transition_followup_assessment"
+				|| (
+					drill?.config?.mechanic === "decision_analysis"
+					&& Boolean(decisionMode)
+				)
+			if (isSampleDecisionAnalysis) {
+				return <PressureDiagnosisCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 			}
-			return <PeriodCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PeriodCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		}
 		case "pressure_diagnosis":
-			return <PressureDiagnosisCheckin drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <PressureDiagnosisCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "decision_analysis": {
+			const decisionMode = String(drill?.config?.mode || "")
+			if (decisionMode) {
+				return <PressureDiagnosisCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			}
+			return <PeriodCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		}
 		case "sample_log":
-			return <SampleLog drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <SampleLog drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "micro_quiz":
-			return <MicroQuiz drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <MicroQuiz drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "foundation_lesson":
-			return <FoundationLessonDrill drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "shift_tracker":
-			return <ShiftTracker drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <FoundationLessonDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "shift_tracker": {
+			const shiftCfg = resolveShiftTrackerConfig(drill?.config || {})
+			if (shiftCfg.required) {
+				return <ShiftTrackerDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} />;
+			}
+			return <ShiftTracker drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		}
+		case "player_relation": {
+			const relationCfg = resolvePlayerRelationConfig(drill?.config || {})
+			if (relationCfg.required) {
+				return <PlayerRelationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} />;
+			}
+			return <div>Unbekannter Drill-Typ: {drillType || drill.drill_type || "(leer)"}</div>;
+		}
+		case "simple_structure": {
+			const structureCfg = resolveSimpleStructureConfig(drill?.config || {})
+			if (structureCfg.required) {
+				return <SimpleStructureDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
+			}
+			return <div>Unbekannter Drill-Typ: {drillType || drill.drill_type || "(leer)"}</div>;
+		}
+		case "tactical_observation": {
+			const tacticalCfg = resolveTacticalObservationConfig(drill?.config || {})
+			if (tacticalCfg.required) {
+				return <TacticalObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
+			}
+			return <div>Unbekannter Drill-Typ: {drillType || drill.drill_type || "(leer)"}</div>;
+		}
 		case "triangle_spotting":
-			return <TriangleSpotting drill={drill} answers={answers} setAnswers={setAnswers} />;
-		case "role_identification":
-			return <RoleIdentification drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <TriangleSpotting drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		case "role_identification": {
+			const roleCfg = resolveRoleIdentificationConfig(drill?.config || {})
+			if (roleCfg.required) {
+				return <RoleIdentificationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} />;
+			}
+			return <RoleIdentification drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+		}
 		case "event_log":
-			return <EventLog drill={drill} answers={answers} setAnswers={setAnswers} />;
+			return <EventLog drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		default:
-			return <div>Unbekannter Drill-Typ: {drill.drill_type}</div>;
+			return <div>Unbekannter Drill-Typ: {drillType || drill.drill_type || "(leer)"}</div>;
 	}
 }
 
@@ -5278,16 +5389,17 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 	const observationPhaseText = config?.observation_phase?.text || "Beobachte mehrere Situationen und suche wiederkehrende Muster.";
 	const observationPhaseHint = config?.observation_phase?.hint || "Achte darauf, wie das Team Druck erzeugt, Räume kontrolliert und auf gegnerische Aktionen reagiert.";
 
-	const analysisPhaseTitle = config?.analysis_phase?.title || "Defensive Identität";
-	const analysisPhaseText = config?.analysis_phase?.text || "Welche Beschreibung passt am besten zu diesem Team?";
+	const analysisPhaseTitle = config?.analysis_phase?.title || "Defensive Muster";
+	const analysisPhaseText = config?.analysis_phase?.text || "Welches wiederkehrende Muster passt am besten zu deinen Beobachtungen?";
 
 	const reflectionPhaseTitle = config?.reflection_phase?.title || "Warum?";
 	const reflectionPhaseText = config?.reflection_phase?.text || "Welche Beobachtungen unterstützen deine Einschätzung?";
 
 	const identityConfig = config?.identity || {};
 	const identityKey = identityConfig?.key || "patternIdentity";
-	const identityLabel = identityConfig?.label || "Welche defensive Identität beschreibt das Team am besten?";
+	const identityLabel = identityConfig?.label || "Welches defensive Muster beschreibt deine Beobachtungen am besten?";
 	const identityOptions = Array.isArray(identityConfig?.options) ? identityConfig.options : [];
+	const summaryPatternLabel = config?.summary_pattern_label || "Defensives Muster";
 
 	const supportConfig = config?.supporting_observations || {};
 	const supportKey = supportConfig?.key || "supportingObservations";
@@ -5466,7 +5578,7 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 					<section style={{ marginTop: "0.7rem", padding: "0.7rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
 						<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {summaryTitle}</h4>
 						<div style={{ marginBottom: "0.35rem", color: "rgba(240,253,250,0.92)", lineHeight: 1.4 }}>
-							<strong>Defensive Identität:</strong><br />
+							<strong>{summaryPatternLabel}:</strong><br />
 							{selectedIdentity?.label || identityValue}
 						</div>
 						<div style={{ color: "rgba(240,253,250,0.9)", lineHeight: 1.4 }}>
@@ -6858,6 +6970,7 @@ function TriangleSpotting({ drill, answers, setAnswers }: any) {
 // --------------------------- ROLE IDENTIFICATION ---------------------------
 function RoleIdentification({ drill, answers, setAnswers }: any) {
 	const questions = drill?.config?.questions || [];
+	const safeAnswers = answers || {};
 	return (
 		<div className="card">
 			<h3>{drill.title}</h3>
@@ -6884,6 +6997,11 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 				</section>
 			)}
 			<ObservationGuide drill={drill} />
+			{questions.length === 0 && (
+				<p style={{ opacity: 0.8 }}>
+					Dieser Drill braucht die neue Rollen-Suche (`mechanic: role_identification`). Bitte Seite neu laden.
+				</p>
+			)}
 			<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 				{questions.map((q: any) => (
 					<div key={q.key}>
@@ -6896,8 +7014,8 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 											type="radio"
 											name={q.key}
 											value={opt}
-											checked={answers[q.key] === opt}
-											onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+											checked={safeAnswers[q.key] === opt}
+											onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 										/>
 										{formatOptionText(opt)}
 									</label>
@@ -6907,8 +7025,8 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 						{q.type === "text" && (
 							<input
 								type="text"
-								value={answers[q.key] || ""}
-								onChange={(e) => setAnswers({ ...answers, [q.key]: e.target.value })}
+								value={safeAnswers[q.key] || ""}
+								onChange={(e) => setAnswers({ ...safeAnswers, [q.key]: e.target.value })}
 								maxLength={q.max_chars || 1500}
 								style={{ width: "100%", padding: "0.5rem" }}
 								placeholder={q.placeholder || "Beschreibe die Rolle (z. B. absichernd, verbindend, antreibend). Kein Name."}

@@ -75,6 +75,23 @@ function assert(cond: boolean, label: string) {
   assert((second.completedCollections || []).length === 0, 'collection reward once')
 }
 
+{
+  const owned = {
+    sticker_fresh_sheet: { cosmeticId: 'sticker_fresh_sheet', unlockedAt: 't', sourceType: 'x' },
+    title_ice_captain: { cosmeticId: 'title_ice_captain', unlockedAt: 't', sourceType: 'x' },
+    emblem_zamboni: { cosmeticId: 'emblem_zamboni', unlockedAt: 't', sourceType: 'x' },
+    banner_zamboni_shift: { cosmeticId: 'banner_zamboni_shift', unlockedAt: 't', sourceType: 'x' },
+    avatar_zamboni: { cosmeticId: 'avatar_zamboni', unlockedAt: 't', sourceType: 'x' },
+  }
+  const first = evaluateCollectionCompletions({
+    unlockedCosmetics: owned,
+    processedEvents: {},
+    starterOwned: isStarterCosmetic,
+  })
+  assert(first.completedCollections?.includes('zamboni') === true, 'zamboni collection complete')
+  assert(first.unlockedCosmetics.some((c) => c.cosmeticId === 'tagline_fresh_ice_incoming'), 'zamboni completion tagline')
+}
+
 // Dummy sessions do not count for mastery
 {
   const sessions = [

@@ -106,6 +106,14 @@ export const emblemCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
+  {
+    id: 'emblem_zamboni',
+    label: 'Ice Crew',
+    src: '/profile/emblems/emblem_zamboni.svg',
+    category: 'equipment',
+    tags: ['zamboni', 'ice-crew'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_EMBLEM_ID = 'emblem_puck_01'

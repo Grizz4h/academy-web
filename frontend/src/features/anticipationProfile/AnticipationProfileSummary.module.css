@@ -1,0 +1,64 @@
+.stack {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.block {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.hero,
+.line {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 750;
+  color: #f8fafc;
+  overflow-wrap: anywhere;
+}
+
+.lead {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.item {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #e2e8f0;
+  overflow-wrap: anywhere;
+}
+
+.hint {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  color: rgba(253, 230, 138, 0.95);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}

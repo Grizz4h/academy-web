@@ -49,8 +49,14 @@
 .popupGlyph[data-kind='zone'] { color: #93c5fd; border-color: rgba(96, 165, 250, 0.4); background: rgba(96, 165, 250, 0.1); }
 .glyph[data-kind='choice'],
 .popupGlyph[data-kind='choice'] { color: #c4b5fd; border-color: rgba(167, 139, 250, 0.35); background: rgba(167, 139, 250, 0.1); }
+.glyph[data-kind='profile'],
+.popupGlyph[data-kind='profile'] { color: #f0abfc; border-color: rgba(232, 121, 249, 0.35); background: rgba(232, 121, 249, 0.1); }
+.glyph[data-kind='log'],
+.popupGlyph[data-kind='log'] { color: #67e8f9; border-color: rgba(34, 211, 238, 0.4); background: rgba(34, 211, 238, 0.1); }
 .glyph[data-kind='sidequest'],
 .popupGlyph[data-kind='sidequest'] { color: #fde68a; border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.1); }
+.glyph[data-kind='generic'],
+.popupGlyph[data-kind='generic'] { color: #94a3b8; border-color: rgba(148, 163, 184, 0.35); background: rgba(148, 163, 184, 0.08); }
 
 .sm .art {
   width: 22px;

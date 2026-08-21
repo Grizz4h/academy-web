@@ -2,6 +2,25 @@ import type { CollectionDefinition } from '../types'
 
 export const COLLECTIONS: CollectionDefinition[] = [
   {
+    id: 'zamboni',
+    name: 'Zamboni',
+    description: 'Die heiligste Maschine der Arena. Frisches Eis, keine Ausreden. RT-81.',
+    artworkAssetId: 'zamboni',
+    itemIds: [
+      'sticker_fresh_sheet',
+      'title_ice_captain',
+      'emblem_zamboni',
+      'banner_zamboni_shift',
+      'avatar_zamboni',
+    ],
+    completionRewards: [
+      { type: 'xp', amount: 350 },
+      { type: 'pux', amount: 180 },
+      { type: 'cosmetic', cosmeticId: 'tagline_fresh_ice_incoming' },
+    ],
+    visibility: 'visible',
+  },
+  {
     id: 'the_slot',
     name: 'The Slot',
     description: 'Wohnen im gefährlichsten Raum der Rink.',

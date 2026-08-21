@@ -1,0 +1,305 @@
+{
+  "id": "Christoph_1787055217",
+  "user": "Christoph",
+  "created_by": "Christoph",
+  "module_id": "T0",
+  "goal": "Foundation: Hockey Basics",
+  "confidence": 3,
+  "focus": null,
+  "session_method": "self_paced",
+  "drill_id": "T0_D1",
+  "learning_area": "academy",
+  "lab_mode": null,
+  "lab_template_id": null,
+  "observation_scope": "LESSON",
+  "state": "COMPLETED",
+  "current_phase": "P1",
+  "created_at": "2026-08-18T14:13:37.449636",
+  "drills": [
+    {
+      "id": "T0_D1",
+      "title": "Das Spielfeld verstehen",
+      "sceneSlug": "Foundation-Rink",
+      "drill_type": "foundation_lesson",
+      "description": "Zonen, Linien und wichtige Bereiche auf dem Eis — visuell und interaktiv.",
+      "config": {
+        "trackStep": 1,
+        "trackStepLabel": "Spielfeld",
+        "trackStepTotal": 5,
+        "learningMode": true,
+        "steps": [
+          {
+            "id": "d1_neutral",
+            "type": "identify_region",
+            "prompt": "Tippe auf die Neutral Zone.",
+            "termId": "neutral_zone",
+            "correctRegions": [
+              "neutral_zone"
+            ],
+            "highlightRegions": [
+              "neutral_zone"
+            ],
+            "attackDirection": "right",
+            "explanation": "Die Neutral Zone liegt zwischen den beiden Blue Lines.",
+            "gentleWrong": "Fast. Die Neutral Zone ist der mittlere Bereich zwischen den blauen Linien."
+          },
+          {
+            "id": "d1_offensive",
+            "type": "identify_region",
+            "prompt": "Dein Team greift nach rechts an. Welche Zone ist die offensive Zone?",
+            "termId": "offensive_zone",
+            "correctRegions": [
+              "offensive_zone"
+            ],
+            "attackDirection": "right",
+            "explanation": "Die offensive Zone ist das Drittel vor dem gegnerischen Tor — hier greifst du an.",
+            "gentleWrong": "Schau, wohin der Pfeil zeigt: Die offensive Zone liegt vor dem gegnerischen Tor."
+          },
+          {
+            "id": "d1_defensive",
+            "type": "identify_region",
+            "prompt": "Und welche Zone verteidigst du?",
+            "termId": "defensive_zone",
+            "correctRegions": [
+              "defensive_zone"
+            ],
+            "attackDirection": "right",
+            "explanation": "Die Defensive Zone ist das Drittel vor deinem eigenen Tor.",
+            "gentleWrong": "Die Defensive Zone liegt vor deinem eigenen Tor — links, wenn du nach rechts angreifst."
+          },
+          {
+            "id": "d1_slot",
+            "type": "identify_region",
+            "prompt": "Wo liegt der Slot?",
+            "termId": "slot",
+            "correctRegions": [
+              "slot"
+            ],
+            "highlightRegions": [
+              "slot"
+            ],
+            "attackDirection": "right",
+            "explanation": "Der Slot ist der zentrale gefährliche Raum direkt vor dem Tor.",
+            "gentleWrong": "Der Slot liegt zentral vor dem Tor — einer der gefährlichsten Bereiche."
+          },
+          {
+            "id": "d1_net_front",
+            "type": "identify_region",
+            "prompt": "Markiere den Net Front — direkt vor dem Tor.",
+            "termId": "net_front",
+            "correctRegions": [
+              "net_front"
+            ],
+            "attackDirection": "right",
+            "explanation": "Net Front (Torraum) ist der Bereich unmittelbar vor dem Tor — Screens und Rebounds entstehen hier.",
+            "gentleWrong": "Net Front liegt noch näher am Tor als der Slot — direkt vor dem Goalie."
+          },
+          {
+            "id": "d1_blue_line",
+            "type": "scenario_choice",
+            "prompt": "Was markieren die blauen Linien auf dem Eis?",
+            "termId": "blue_line",
+            "options": [
+              {
+                "id": "zones",
+                "label": "Zonengrenzen zwischen Defensive, Neutral und Offensive"
+              },
+              {
+                "id": "offside",
+                "label": "Nur die Abseitslinie"
+              },
+              {
+                "id": "penalty",
+                "label": "Strafzonen"
+              },
+              {
+                "id": "center",
+                "label": "Die Mittellinie"
+              }
+            ],
+            "correctOptionId": "zones",
+            "explanation": "Die Blue Lines teilen das Eis in drei Zonen. Sie sind zentrale Übergangspunkte im Spiel.",
+            "gentleWrong": "Die blauen Linien sind Zonengrenzen — nicht die rote Mittellinie."
+          },
+          {
+            "id": "d1_faceoff",
+            "type": "scenario_choice",
+            "prompt": "Was passiert an den Faceoff Dots (Bullypunkten)?",
+            "termId": "faceoff",
+            "options": [
+              {
+                "id": "faceoff",
+                "label": "Ein Faceoff — Spielbeginn oder -unterbrechung"
+              },
+              {
+                "id": "goal",
+                "label": "Ein Tor wird gezählt"
+              },
+              {
+                "id": "icing",
+                "label": "Icing wird gepfiffen"
+              },
+              {
+                "id": "penalty",
+                "label": "Eine Strafe beginnt"
+              }
+            ],
+            "correctOptionId": "faceoff",
+            "explanation": "An den Bullypunkten startet das Spiel neu — nach Toren, Verstößen oder Pausen.",
+            "gentleWrong": "An den Bullypunkten gibt es einen Faceoff — kein Tor und keine automatische Strafe."
+          }
+        ]
+      }
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P1",
+      "answers": {
+        "stepIndex": 6,
+        "stepStates": {
+          "d1_neutral": {
+            "selectedRegion": "neutral_zone",
+            "revealed": true,
+            "correct": true
+          },
+          "d1_offensive": {
+            "selectedRegion": "offensive_zone",
+            "revealed": true,
+            "correct": true
+          },
+          "d1_defensive": {
+            "selectedRegion": "defensive_zone",
+            "revealed": true,
+            "correct": true
+          },
+          "d1_slot": {
+            "selectedRegion": "slot",
+            "revealed": true,
+            "correct": true
+          },
+          "d1_net_front": {
+            "selectedRegion": "net_front",
+            "revealed": true,
+            "correct": true
+          },
+          "d1_blue_line": {
+            "selectedOptionId": "zones",
+            "revealed": true,
+            "correct": true
+          },
+          "d1_faceoff": {
+            "selectedOptionId": "faceoff",
+            "revealed": true,
+            "correct": true
+          }
+        },
+        "foundationComplete": true
+      },
+      "timestamp": "2026-08-18T14:14:34.888754"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "stepIndex": 6,
+      "stepStates": {
+        "d1_neutral": {
+          "selectedRegion": "neutral_zone",
+          "revealed": true,
+          "correct": true
+        },
+        "d1_offensive": {
+          "selectedRegion": "offensive_zone",
+          "revealed": true,
+          "correct": true
+        },
+        "d1_defensive": {
+          "selectedRegion": "defensive_zone",
+          "revealed": true,
+          "correct": true
+        },
+        "d1_slot": {
+          "selectedRegion": "slot",
+          "revealed": true,
+          "correct": true
+        },
+        "d1_net_front": {
+          "selectedRegion": "net_front",
+          "revealed": true,
+          "correct": true
+        },
+        "d1_blue_line": {
+          "selectedOptionId": "zones",
+          "revealed": true,
+          "correct": true
+        },
+        "d1_faceoff": {
+          "selectedOptionId": "faceoff",
+          "revealed": true,
+          "correct": true
+        }
+      },
+      "foundationComplete": true
+    }
+  },
+  "post": {
+    "summary": "Foundation-Lektion abgeschlossen",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 5,
+    "completed_at": "2026-08-18T14:14:34.989926"
+  },
+  "game_info": null,
+  "game_id": null,
+  "observed_team": null,
+  "observed_team_id": null,
+  "observed_team_name": null,
+  "microfeedback": {
+    "P1": {
+      "done": false,
+      "text": ""
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  },
+  "is_dummy": false,
+  "ai_reflection": {
+    "id": "refl_aea16a3477bb",
+    "sessionId": "Christoph_1787055217",
+    "createdAt": "2026-08-18T14:14:52.414495",
+    "provider": "openai",
+    "model": "gpt-5.6-luna",
+    "promptVersion": "v1",
+    "content": {
+      "strengths": [
+        "Alle abgefragten Spielfeldbereiche wurden im Lernschritt eindeutig zugeordnet.",
+        "Die Antworten decken neutrale, offensive und defensive Zone sowie Slot und Torraum ab.",
+        "Die Foundation-Lektion wurde vollständig abgeschlossen."
+      ],
+      "cautions": [
+        "Es liegen noch keine eigenen Beobachtungen oder taktischen Schlussfolgerungen aus einer Spielsituation vor.",
+        "Daher ist noch nicht erkennbar, ob Zonenwissen sicher auf laufende Spielszenen übertragen wird.",
+        "Aus dem abgeschlossenen Quiz sollte noch keine allgemeine Aussage über taktisches Spielverständnis abgeleitet werden."
+      ],
+      "alternativeInterpretation": null,
+      "nextObservationFocus": "Beobachte in einer kurzen Spielsituation wiederholt, in welcher Zone sich der Puck befindet und welche Spieler sich gleichzeitig im Slot oder vor dem Tor positionieren. Trenne dabei jeweils die sichtbare Position von deiner vermuteten Funktion.",
+      "reflectionQuestion": "Woran würdest du erkennen, dass eine Spielerposition tatsächlich eine bestimmte Funktion erfüllt und nicht nur zufällig eingenommen wurde?",
+      "summary": "Die grundlegenden Spielfeldbereiche wurden im Lernschritt sicher bearbeitet. Für die nächste Phase sollte geprüft werden, wie zuverlässig dieses begriffliche Wissen bei der Beobachtung dynamischer Spielsituationen angewendet wird."
+    },
+    "usage": {
+      "inputTokens": 959,
+      "outputTokens": 374,
+      "totalTokens": 1333
+    }
+  }
+}

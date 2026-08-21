@@ -38,9 +38,31 @@
 
 .prompt {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1.35;
   color: rgba(248, 250, 252, 0.96);
+}
+
+.termHint {
+  margin: 0;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  background: rgba(14, 40, 64, 0.55);
+  color: rgba(226, 232, 240, 0.9);
+  font-size: 0.86rem;
+}
+
+.termHint summary {
+  cursor: pointer;
+  font-weight: 650;
+  color: rgba(186, 230, 253, 0.95);
+}
+
+.termHint p {
+  margin: 0.35rem 0 0;
+  line-height: 1.4;
+  color: rgba(203, 213, 225, 0.92);
 }
 
 .options {

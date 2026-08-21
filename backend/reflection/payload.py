@@ -83,6 +83,34 @@ def _sanitize_answers(answers: Dict[str, Any], drill: Dict[str, Any]) -> Dict[st
     return cleaned
 
 
+ACCOUNT_PII_KEYS = {"user", "userId", "userid", "username", "email", "name", "account"}
+
+
+def _is_anticipation_profile_drill(drill: Dict[str, Any]) -> bool:
+    drill_type = str(drill.get("drill_type") or "").strip()
+    mechanic = str((drill.get("config") or {}).get("mechanic") or "").strip()
+    return drill_type == "anticipation_profile" or mechanic == "anticipation_profile"
+
+
+def _strip_account_keys(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: _strip_account_keys(child)
+            for key, child in value.items()
+            if key not in ACCOUNT_PII_KEYS
+        }
+    if isinstance(value, list):
+        return [_strip_account_keys(item) for item in value]
+    return value
+
+
+def _compact_anticipation_profile_answers(answers: Dict[str, Any]) -> Dict[str, Any]:
+    payload = answers.get("anticipation_profile_payload")
+    if isinstance(payload, dict):
+        return {"anticipation_profile_payload": _strip_account_keys(payload)}
+    return {}
+
+
 def _extract_reflection_guidance(drill: Dict[str, Any]) -> List[str]:
     config = drill.get("config") or {}
     didactics = drill.get("didactics") or {}
@@ -279,7 +307,7 @@ def build_reflection_payload(
     observations = _collect_observations(session, drill)
     observations.extend(_prediction_observations(session))
 
-    return {
+    payload = {
         "drill": {
             "id": drill.get("id"),
             "title": drill.get("title"),
@@ -300,3 +328,16 @@ def build_reflection_payload(
             "microfeedback": _compact_microfeedback(session),
         },
     }
+
+    if _is_anticipation_profile_drill(drill):
+        compact_observations = []
+        for item in observations:
+            compact_observations.append(
+                {
+                    "phase": item.get("phase"),
+                    "answers": _compact_anticipation_profile_answers(item.get("answers") or {}),
+                }
+            )
+        payload["session"] = {"observations": compact_observations}
+
+    return payload

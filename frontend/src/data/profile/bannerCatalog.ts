@@ -98,6 +98,14 @@ export const bannerCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
+  {
+    id: 'banner_zamboni_shift',
+    label: 'Night Cut',
+    src: '/profile/banners/banner_zamboni_shift.svg',
+    category: 'rink',
+    tags: ['zamboni', 'ice-crew'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_BANNER_ID = 'banner_neutral_01'

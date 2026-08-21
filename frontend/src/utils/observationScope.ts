@@ -48,3 +48,34 @@ export function getActivePeriodsForScope(scope?: string | null): PeriodPhase[] {
 export function isLessonScope(scope?: string | null): boolean {
   return (scope || '').trim().toUpperCase() === 'LESSON'
 }
+
+/** Next live phase for this observation scope. P1-only sessions go P1 → POST, never P2/P3. */
+export function getNextPhaseForScope(
+  phase: string | null | undefined,
+  scope?: string | null,
+): PeriodPhase | 'POST' | null {
+  const periods = getActivePeriodsForScope(scope)
+  const first = periods[0] || 'P1'
+  const normalized = String(phase || '').trim().toUpperCase()
+  if (normalized === 'POST') return null
+  if (normalized === 'PRE' || normalized === '') return first
+  if (normalized === 'P1' || normalized === 'P2' || normalized === 'P3') {
+    const currentIndex = periods.indexOf(normalized as PeriodPhase)
+    if (currentIndex === -1) return first
+    if (currentIndex === periods.length - 1) return 'POST'
+    return periods[currentIndex + 1]
+  }
+  return first
+}
+
+export function getPreviousPhaseForScope(
+  phase: string | null | undefined,
+  scope?: string | null,
+): PeriodPhase | null {
+  const periods = getActivePeriodsForScope(scope)
+  const normalized = String(phase || '').trim().toUpperCase()
+  if (normalized !== 'P1' && normalized !== 'P2' && normalized !== 'P3') return null
+  const currentIndex = periods.indexOf(normalized as PeriodPhase)
+  if (currentIndex <= 0) return null
+  return periods[currentIndex - 1]
+}

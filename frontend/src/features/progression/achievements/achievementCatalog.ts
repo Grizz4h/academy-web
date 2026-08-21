@@ -138,6 +138,21 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     progression: { target: 2 },
   },
   {
+    id: 'ice_reader',
+    name: 'Ice Reader',
+    description:
+      'Du hast gelernt, Spielsituationen nicht nur vorherzusagen, sondern Wahrscheinlichkeiten und Veränderungen zu lesen.',
+    category: 'curriculum',
+    visibility: 'visible',
+    rarity: 'rare',
+    conditions: [{ type: 'mechanic_usage', mechanicId: 'anticipation_profile', target: 1 }],
+    rewards: [
+      { type: 'xp', amount: 250 },
+      { type: 'pux', amount: 100 },
+    ],
+    progression: { target: 1 },
+  },
+  {
     id: 'ice_cartographer',
     name: 'Ice Cartographer',
     description: '10 räumliche Rink-Observations (Corridor / Paintable / Path).',

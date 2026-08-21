@@ -1,0 +1,229 @@
+.drillRoot {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.title,
+.panelTitle {
+  margin: 0;
+}
+
+.lead,
+.rule,
+.hint,
+.fieldHelp,
+.disclaimer,
+.anchorHint {
+  margin: 0;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.fieldHelp,
+.anchorHint,
+.disclaimer {
+  font-size: 0.8rem;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.rule {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 116, 144, 0.12);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.hint {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  color: rgba(253, 230, 138, 0.95);
+  font-size: 0.88rem;
+}
+
+.panel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.85rem 0;
+}
+
+.fieldBlock {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: #e2e8f0;
+}
+
+.reminderList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.reminderItem {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.reminderTitle {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.progress {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.observationList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.observationRow {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.observationMeta {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: #e2e8f0;
+}
+
+.rowActions,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 5.5rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  color: #f8fafc;
+  font: inherit;
+  resize: vertical;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  appearance: none;
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  min-height: 44px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryBtn {
+  border: 1px solid rgba(45, 212, 191, 0.45);
+  background: rgba(20, 184, 166, 0.18);
+  color: #ccfbf1;
+}
+
+.secondaryBtn {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: transparent;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.completeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(20, 184, 166, 0.14);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  color: #99f6e4;
+  font-size: 0.78rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.sketch {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.sketchNode,
+.sketchArrow,
+.sketchRelation {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.sketchNode {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.sketchArrow {
+  padding-left: 0.15rem;
+  color: rgba(148, 163, 184, 0.95);
+  font-size: 0.82rem;
+}
+
+.sketchRelation {
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: #ccfbf1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .secondaryBtn:hover {
+    border-color: rgba(45, 212, 191, 0.4);
+  }
+}

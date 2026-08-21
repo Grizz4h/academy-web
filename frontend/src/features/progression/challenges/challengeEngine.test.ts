@@ -235,6 +235,10 @@ function evalEvents(events: ReturnType<typeof buildObservationCreatedEvent>[], p
   const wasteland = MVP_CHALLENGES.find((item) => item.id === 'challenge_collection_survive_the_shift')
   assert(Boolean(wasteland), 'wasteland collection challenge exists')
   assert(wasteland?.enabled === false, 'wasteland collection is parked until the set is redesigned')
+  const iceCut = MVP_CHALLENGES.find((item) => item.id === 'challenge_collection_ice_cut')
+  assert(Boolean(iceCut), 'zamboni ice cut challenge exists')
+  assert(iceCut?.enabled === true, 'zamboni ice cut is live')
+  assert(iceCut?.collectionId === 'zamboni', 'ice cut belongs to zamboni')
 }
 
 const homeIce = MVP_CHALLENGES.find((item) => item.id === 'challenge_matchday_home_ice')

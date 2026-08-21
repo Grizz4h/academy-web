@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import type { CurriculumTrack, CurriculumModule, Session } from '../api'
 import theoryData from '../data/theoryData.json'
+import { getLastActivityTrackId } from '../utils/curriculumActivity'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { UiActionRow, UiButton } from '../components/ui'
@@ -72,7 +73,7 @@ export default function Curriculum() {
     queryKey: ['curriculum'],
     queryFn: () => api.getCurriculum()
   })
-  const { data: sessions } = useQuery({
+  const { data: sessions, isFetched: sessionsFetched } = useQuery({
     queryKey: ['sessions'],
     queryFn: () => api.getSessions(),
   })
@@ -110,6 +111,41 @@ export default function Curriculum() {
       .filter(Boolean),
     hockeyExperience: account?.profile?.hockeyExperience,
   })
+  const lastActivityTrackId = useMemo(
+    () => getLastActivityTrackId(sessions, curriculum),
+    [sessions, curriculum],
+  )
+  const defaultOpenTrackId = useMemo(() => {
+    if (!sessionsFetched) return null
+    if (tutorial?.active && entryTrackId) return entryTrackId
+    if (lastActivityTrackId) return lastActivityTrackId
+    if (foundationTrack && !foundationDone) return foundationTrack.id
+    return null
+  }, [
+    sessionsFetched,
+    tutorial?.active,
+    entryTrackId,
+    lastActivityTrackId,
+    foundationTrack,
+    foundationDone,
+  ])
+  const [openOverride, setOpenOverride] = useState<Record<string, boolean> | null>(null)
+  const trackIsOpen = (trackId: string) => (
+    openOverride && Object.prototype.hasOwnProperty.call(openOverride, trackId)
+      ? openOverride[trackId]
+      : defaultOpenTrackId === trackId
+  )
+  const toggleTrack = (trackId: string) => {
+    setOpenOverride((prev) => {
+      const wasOpen = prev && Object.prototype.hasOwnProperty.call(prev, trackId)
+        ? prev[trackId]
+        : defaultOpenTrackId === trackId
+      return {
+        ...(prev ?? (defaultOpenTrackId ? { [defaultOpenTrackId]: true } : {})),
+        [trackId]: !wasOpen,
+      }
+    })
+  }
 
   if (isLoading) return <div className="card">Lade Lehrplan...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
@@ -137,13 +173,15 @@ export default function Curriculum() {
         <details
           key={track.id}
           className={`${styles.track} ${foundation ? styles.trackFoundation : ''}`}
-          open={
-            (foundation && track === foundationTrack && !foundationDone)
-            || (tutorial?.active && isEntryTrack)
-            || undefined
-          }
+          open={trackIsOpen(track.id)}
         >
-          <summary className={styles.trackSummary}>
+          <summary
+            className={styles.trackSummary}
+            onClick={(event) => {
+              event.preventDefault()
+              toggleTrack(track.id)
+            }}
+          >
             <div className={styles.trackSummaryMain}>
               {foundation && (
                 <div className={styles.foundationLabel}>

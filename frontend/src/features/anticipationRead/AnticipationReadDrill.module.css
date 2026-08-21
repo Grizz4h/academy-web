@@ -1,0 +1,369 @@
+.drillRoot {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.title,
+.panelTitle {
+  margin: 0;
+}
+
+.lead,
+.hint,
+.rule,
+.fieldHelp {
+  margin: 0;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.fieldHelp {
+  font-size: 0.8rem;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.hint {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  color: rgba(253, 230, 138, 0.95);
+  font-size: 0.88rem;
+}
+
+.rule {
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 116, 144, 0.12);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.panel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.85rem 0;
+}
+
+.fieldBlock {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: #e2e8f0;
+}
+
+.textarea,
+.input,
+.select {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  color: #f8fafc;
+  font: inherit;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.row2,
+.expectGrid,
+.actualGrid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 900px) {
+  .row2,
+  .expectGrid,
+  .actualGrid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.progress {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.progressBar {
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: rgba(45, 212, 191, 0.75);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.primaryBtn,
+.secondaryBtn,
+.actionBtn {
+  appearance: none;
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  min-height: 44px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryBtn {
+  border: 1px solid rgba(45, 212, 191, 0.45);
+  background: rgba(20, 184, 166, 0.18);
+  color: #ccfbf1;
+}
+
+.secondaryBtn,
+.actionBtn {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: transparent;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.actionBtn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .secondaryBtn:hover,
+  .actionBtn:hover {
+    border-color: rgba(45, 212, 191, 0.4);
+  }
+}
+
+.locked {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lockedLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.lockedValue {
+  margin: 0;
+  color: #f1f5f9;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.cueList {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.cueRow {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.cueActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.readList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.readRow {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.readRow:last-child {
+  border-bottom: 0;
+}
+
+.readMeta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.readTitle {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #f1f5f9;
+  overflow-wrap: anywhere;
+}
+
+.readNote {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: rgba(226, 232, 240, 0.68);
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.completeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(20, 184, 166, 0.14);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  color: #99f6e4;
+  font-size: 0.78rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.examplesHelp {
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+}
+
+.examplesSummary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: #e2e8f0;
+}
+
+.examplesSummary::-webkit-details-marker {
+  display: none;
+}
+
+.examplesSummary::before {
+  content: '▸ ';
+  color: rgba(125, 211, 252, 0.95);
+}
+
+.examplesHelp[open] .examplesSummary::before {
+  content: '▾ ';
+}
+
+.examplesBody {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0 0.9rem 0.9rem;
+}
+
+.examplesIntro,
+.examplesFooter {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.examplesList,
+.unsuitableList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.unsuitableList {
+  padding-left: 1.1rem;
+  list-style: disc;
+  color: rgba(226, 232, 240, 0.75);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.exampleItem {
+  padding: 0.65rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.exampleTitle {
+  margin: 0 0 0.25rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.exampleDescription {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.unsuitableTitle {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(253, 230, 138, 0.95);
+}

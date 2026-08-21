@@ -49,8 +49,8 @@ export function TutorialSpotlight({
   }, [targetId])
 
   if (!rect) {
-    if (allowPageInteraction) return null
-    return <div className={styles.dimPane} style={{ inset: 0 }} />
+    // Don't hard-block the whole page while the next target mounts (e.g. session-result after complete)
+    return null
   }
 
   const top = Math.max(0, rect.top)

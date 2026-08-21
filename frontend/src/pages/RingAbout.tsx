@@ -25,6 +25,8 @@ import { computeScenePoolOverview } from '../stats/sceneOverview'
 import { ScenePoolOverviewKpis } from '../components/dashboard/ScenePoolOverviewKpis'
 import { SceneInsightsOverviewKpis } from '../components/dashboard/SceneInsightsOverviewKpis'
 import { UiButton } from '../components/ui'
+import { SelectionToolbar, useMultiSelect } from '../components/selection'
+import selectStyles from '../components/selection/selectableTile.module.css'
 import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
@@ -211,9 +213,29 @@ export default function RingAbout() {
     queryFn: () => api.getSessions(),
   })
 
+  const selection = useMultiSelect()
+
   const deleteMutation = useMutation({
     mutationFn: (sceneId: string) => api.deleteScene(sceneId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['scenes'] }),
+  })
+
+  const batchDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const results = await Promise.allSettled(ids.map((id) => api.deleteScene(id)))
+      const failed = results.filter((r) => r.status === 'rejected').length
+      if (failed > 0) {
+        throw new Error(`${failed} von ${ids.length} Szenen konnten nicht gelöscht werden.`)
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scenes'] })
+      selection.exit()
+    },
+    onError: (err: any) => {
+      alert(`Löschen fehlgeschlagen: ${err?.message || err}`)
+      queryClient.invalidateQueries({ queryKey: ['scenes'] })
+    },
   })
 
   const updateMutation = useMutation({
@@ -508,7 +530,7 @@ export default function RingAbout() {
   const [filterLeague, setFilterLeague] = useState('')
   const [filterSeason, setFilterSeason] = useState('')
   const [filterTeam, setFilterTeam] = useState('')
-  const [filterStatus, setFilterStatus] = useState('')
+  const [filterStatus, setFilterStatus] = useState('PIPELINE')
   const [filterMinRating, setFilterMinRating] = useState('')
   const [sortMode, setSortMode] = useState<'created' | 'rating_desc'>('created')
   const [filterTrack, setFilterTrack] = useState('')
@@ -626,13 +648,13 @@ export default function RingAbout() {
     return result
   }, [scenes, sessionFilter, filterSource, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterContextKey, sortMode])
 
-  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || filterStatus || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterContextKey
+  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || (filterStatus && filterStatus !== 'PIPELINE') || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterContextKey
 
   const resetFilters = () => {
     setFilterLeague('')
     setFilterSeason('')
     setFilterTeam('')
-    setFilterStatus('')
+    setFilterStatus('PIPELINE')
     setFilterMinRating('')
     setSortMode('created')
     setFilterTrack('')
@@ -1222,10 +1244,31 @@ export default function RingAbout() {
           {!isLoading && filtered.length > 0 && (
             <>
               <div className={styles.resultsBar}>
-                <h2 className={styles.resultsTitle}>Szenen</h2>
-                <p className={styles.resultsMeta}>
-                  {filtered.length} von {scenes.length} Szene{scenes.length !== 1 ? 'n' : ''}
-                </p>
+                <div className={styles.resultsHead}>
+                  <h2 className={styles.resultsTitle}>Szenen</h2>
+                  <p className={styles.resultsMeta}>
+                    {filtered.length} von {scenes.length} Szene{scenes.length !== 1 ? 'n' : ''}
+                  </p>
+                </div>
+                <SelectionToolbar
+                  active={selection.active}
+                  selectedCount={selection.count}
+                  totalCount={filtered.length}
+                  itemLabelSingular="Szene"
+                  itemLabelPlural="Szenen"
+                  onEnter={selection.enter}
+                  onExit={selection.exit}
+                  onSelectAll={() => selection.selectAll(filtered.map((s) => s.id))}
+                  onClear={selection.clear}
+                  deletePending={batchDeleteMutation.isPending}
+                  onDeleteSelected={() => {
+                    const ids = selection.selectedIds
+                    if (ids.length === 0) return
+                    const label = ids.length === 1 ? 'diese Szene' : `diese ${ids.length} Szenen`
+                    if (!window.confirm(`${label} wirklich löschen?`)) return
+                    batchDeleteMutation.mutate(ids)
+                  }}
+                />
               </div>
               <div className={styles.sceneGrid}>
                 {filtered.map(scene => (
@@ -1240,6 +1283,9 @@ export default function RingAbout() {
                     onRatingChange={handleRatingChange}
                     onPipelineToggle={handlePipelineToggle}
                     celebrate={celebratedSceneId === scene.id}
+                    selectionMode={selection.active}
+                    selected={selection.isSelected(scene.id)}
+                    onToggleSelect={selection.toggle}
                   />
                 ))}
               </div>
@@ -1604,7 +1650,7 @@ function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onC
   )
 }
 
-function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false }: {
+function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false, selectionMode = false, selected = false, onToggleSelect }: {
   scene: SceneMarker
   observedTeam: string
   drillSceneSlugById: Map<string, string>
@@ -1614,6 +1660,9 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
   onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void
   onPipelineToggle: (scene: SceneMarker) => void
   celebrate?: boolean
+  selectionMode?: boolean
+  selected?: boolean
+  onToggleSelect?: (id: string) => void
 }) {
   const [copyFeedback, setCopyFeedback] = useState<string>('')
   const gameLabel = scene.team_home && scene.team_away
@@ -1653,25 +1702,51 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
       ? 'linear-gradient(145deg, rgba(69,26,3,0.45) 0%, rgba(15,23,42,0.92) 55%)'
       : undefined
 
+  const shellClass = [
+    'card',
+    selectStyles.shell,
+    selectionMode ? selectStyles.shellSelecting : '',
+    selectionMode && !selected ? selectStyles.shellDimmed : '',
+    selectionMode && selected ? selectStyles.shellSelected : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <div
       id={`scene-${scene.id}`}
-      className="card"
+      className={shellClass}
+      role={selectionMode ? 'button' : undefined}
+      aria-pressed={selectionMode ? selected : undefined}
+      onClick={() => {
+        if (selectionMode) onToggleSelect?.(scene.id)
+      }}
       style={{
-        padding: '1rem 1.1rem',
+        padding: selectionMode ? '1rem 1.1rem 1rem 2.55rem' : '1rem 1.1rem',
         borderLeft: `3px solid ${borderColor}`,
         borderColor: isAssigned ? 'rgba(45,212,191,0.36)' : isPipeline ? 'rgba(251,191,36,0.28)' : undefined,
         background: cardBackground,
-        boxShadow: isAssigned
-          ? '0 0 0 1px rgba(45,212,191,0.22), 0 18px 42px rgba(6,78,59,0.16)'
-          : isPipeline
-            ? '0 0 0 1px rgba(251,191,36,0.16)'
-            : undefined,
+        boxShadow:
+          selectionMode && selected
+            ? undefined
+            : isAssigned
+              ? '0 0 0 1px rgba(45,212,191,0.22), 0 18px 42px rgba(6,78,59,0.16)'
+              : isPipeline
+                ? '0 0 0 1px rgba(251,191,36,0.16)'
+                : undefined,
         position: 'relative', overflow: 'hidden',
         animation: celebrate ? 'ringAboutAssignedGlow 720ms cubic-bezier(0.18, 0.9, 0.28, 1)' : undefined,
         display: 'flex', flexDirection: 'column', gap: '0.6rem',
       }}
     >
+      {selectionMode ? (
+        <span
+          className={`${selectStyles.checkbox} ${selected ? selectStyles.checkboxOn : ''}`}
+          aria-hidden="true"
+        >
+          {selected ? <span className={selectStyles.checkMark} /> : null}
+        </span>
+      ) : null}
       {isAssigned && (
         <div
           aria-hidden="true"
@@ -1688,6 +1763,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
         <div style={{ fontWeight: 700, fontSize: '1rem', color: '#e2e8f0', lineHeight: 1.3 }}>
           {gameLabel}
         </div>
+        {!selectionMode ? (
         <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <button
             type="button"
@@ -1793,6 +1869,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
             ✕
           </button>
         </div>
+        ) : null}
       </div>
 
       {copyFeedback && (

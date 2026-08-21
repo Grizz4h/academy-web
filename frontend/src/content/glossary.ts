@@ -227,23 +227,23 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   },
   low: {
     label: "Low",
-    short: "Center tief, nahe eigenes Tor/untere Zone.",
+    short: "Eher unter / hinter dem aktuellen Spiel.",
     long:
-      "Low bedeutet: Center arbeitet tief in der Defensivzone (unterhalb Bullypunkte/nahe Slot), unterstützt die Defense, bietet kurze Outlet-Option und sichert die Mitte gegen Cuts.",
+      "Low ist keine gemalte Zone auf dem Eis. Es beschreibt, wo ein Spieler relativ zur Szene steht: eher hinter oder unter dem aktuellen Spiel. Warum er dort steht, kommt später.",
     tags: ["A1"],
   },
   middle: {
     label: "Middle",
-    short: "Center in der Mitte als Verbindung und Sicherung.",
+    short: "Eher auf Verbindungshöhe zwischen tiefem und hohem Spiel.",
     long:
-      "Middle bedeutet: Center hält zentrale Position zwischen tief und hoch – er ist Passdrehscheibe, unterstützt Breakout-Lanes und ist primär dafür da, die Mitte zu kontrollieren (defensiv) und spielbar zu bleiben (offensiv).",
+      "Middle heißt: der Spieler steht ungefähr auf der Höhe des Spiels — zwischen dem, was hinter dem Puck passiert, und dem, was davor passiert. Nicht automatisch die geometrische Eisflächenmitte.",
     tags: ["A1"],
   },
   high: {
     label: "High",
-    short: "Center hoch, näher zur Blue Line/Neutral Zone.",
+    short: "Eher vor / oberhalb des aktuellen Spiels.",
     long:
-      "High bedeutet: Center steht höher (näher Blue Line), oft als schnelle Exit-/Transition-Option. Risiko: Mitte wird defensiv offen, wenn er zu früh hoch geht. Vorteil: schnelle Konter/Tempo im Exit.",
+      "High heißt: der Spieler steht eher vor dem aktuellen Spiel, weiter in Angriffsrichtung. Wieder relativ zur Szene, nicht fest an der Blue Line.",
     tags: ["A1"],
   },
     Aktionen: {

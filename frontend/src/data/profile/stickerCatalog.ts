@@ -9,6 +9,7 @@ export const stickerCatalog: ProfileAsset[] = [
   { id: 'sticker_tape', label: 'Tape Sticker', src: '/profile/stickers/sticker_tape.svg', category: 'sticker', tags: ['tape'], starter: false },
   { id: 'sticker_watch_the_center', label: 'Watch The Center', src: '/profile/stickers/sticker_watch_the_center.svg', category: 'sticker', tags: ['neutral'], starter: false },
   { id: 'sticker_matchday_first_read', label: 'First Read', src: '/profile/stickers/sticker_matchday_first_read.svg', category: 'sticker', tags: ['matchday'], starter: false },
+  { id: 'sticker_fresh_sheet', label: 'Fresh Sheet', src: '/profile/stickers/sticker_fresh_sheet.svg', category: 'sticker', tags: ['zamboni', 'ice'], starter: false },
 ]
 
 export function getStickerAsset(id: string | null | undefined): ProfileAsset | undefined {

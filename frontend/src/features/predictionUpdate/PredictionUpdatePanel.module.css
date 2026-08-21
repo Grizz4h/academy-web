@@ -1,0 +1,61 @@
+.root {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.stop {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.stopLabel {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(253, 230, 138, 0.95);
+}
+
+.stopTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 750;
+  color: #fef3c7;
+  overflow-wrap: anywhere;
+}
+
+.locked,
+.block {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.lockedLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.lockedValue {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #f8fafc;
+  overflow-wrap: anywhere;
+}
+
+.help {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.72);
+}

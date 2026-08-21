@@ -1,15 +1,94 @@
 {
   "currency": {
-    "PUX": 0
+    "PUX": 130
   },
-  "unlockedAchievements": {},
-  "unlockedMasteries": {},
-  "processedSessions": {},
-  "xp": 0,
+  "unlockedAchievements": {
+    "first-drill-complete": {
+      "id": "first-drill-complete",
+      "unlockedAt": "2026-08-19T22:17:32.301379"
+    },
+    "prime-time-scout": {
+      "id": "prime-time-scout",
+      "unlockedAt": "2026-08-19T22:17:32.301379"
+    },
+    "mobile-scout": {
+      "id": "mobile-scout",
+      "unlockedAt": "2026-08-19T22:17:32.301379"
+    },
+    "first_shift": {
+      "id": "first_shift",
+      "unlockedAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "session_completed:tobi_1787169699"
+    }
+  },
+  "unlockedMasteries": {
+    "A1_D1:bronze": {
+      "key": "A1_D1:bronze",
+      "drillId": "A1_D1",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-19T22:17:32.301379",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    }
+  },
+  "processedSessions": {
+    "tobi_1787169699": {
+      "sessionId": "tobi_1787169699",
+      "grantedAt": "2026-08-19T22:17:32.301379",
+      "pux": 55
+    }
+  },
+  "xp": 175,
   "processedEvents": {
     "bootstrap:v1": {
       "eventId": "bootstrap:v1",
       "processedAt": "2026-08-09T18:13:35.908Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T19:23:52.952Z": {
+      "eventId": "challenge:sync:2026-08-19T19:23:52.952Z",
+      "processedAt": "2026-08-19T19:23:52.952Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:tobi_1787169699": {
+      "eventId": "session_completed:tobi_1787169699",
+      "processedAt": "2026-08-19T20:17:32.738Z",
+      "grantedXp": 175,
+      "grantedPux": 75
+    },
+    "challenge_completed:challenge_daily_one_more_read::daily:2026-08-19": {
+      "eventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-19",
+      "processedAt": "2026-08-19T20:17:32.738Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut": {
+      "eventId": "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "processedAt": "2026-08-19T20:17:32.738Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "observation_created:tobi_1787169699": {
+      "eventId": "observation_created:tobi_1787169699",
+      "processedAt": "2026-08-19T20:17:32.738Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "game_observation_completed:tobi_1787169699:del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282": {
+      "eventId": "game_observation_completed:tobi_1787169699:del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+      "processedAt": "2026-08-19T20:17:32.738Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T20:57:23.689Z": {
+      "eventId": "challenge:sync:2026-08-19T20:57:23.689Z",
+      "processedAt": "2026-08-19T20:57:23.689Z",
       "grantedXp": 0,
       "grantedPux": 0
     }
@@ -134,9 +213,69 @@
       "cosmeticId": "tagline_starter",
       "unlockedAt": "2026-08-09T18:13:35.908Z",
       "sourceType": "starter"
+    },
+    "title_first_shift": {
+      "cosmeticId": "title_first_shift",
+      "unlockedAt": "2026-08-19T22:17:32.301379",
+      "sourceType": "achievement",
+      "sourceId": "first_shift",
+      "seenAt": null,
+      "earnKind": null
+    },
+    "sticker_fresh_sheet": {
+      "cosmeticId": "sticker_fresh_sheet",
+      "unlockedAt": "2026-08-19T22:17:32.301379",
+      "sourceType": "challenge",
+      "sourceId": "challenge_collection_ice_cut",
+      "seenAt": null,
+      "earnKind": "derived"
     }
   },
-  "activityLog": [],
+  "activityLog": [
+    {
+      "id": "session_completed:tobi_1787169699",
+      "type": "session_completed",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sessionId": "tobi_1787169699",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "observedTeamId": "straubing_tigers",
+      "leagueId": "DEL",
+      "gameId": "del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "home",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:tobi_1787169699",
+      "type": "observation_created",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sessionId": "tobi_1787169699",
+      "drillId": "A1_D1",
+      "trackId": "A1",
+      "gameId": "del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+      "teamId": "straubing_tigers",
+      "mechanicIds": [
+        "period_checkin"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "game_observation_completed:tobi_1787169699:del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+      "type": "game_observation_completed",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sessionId": "tobi_1787169699",
+      "gameId": "del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+      "teamId": "straubing_tigers",
+      "isDummy": false
+    }
+  ],
   "unlockHistory": [
     {
       "id": "bootstrap:2026-08-09T18:13:35.908Z",
@@ -148,9 +287,90 @@
       "amountXp": 0,
       "amountPux": 0,
       "level": 1
+    },
+    {
+      "id": "achievement:first_shift:session_completed:tobi_1787169699",
+      "kind": "achievement",
+      "title": "First Shift",
+      "description": "Erste echte Academy-Session abschließen.",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "session_completed:tobi_1787169699",
+      "achievementId": "first_shift"
+    },
+    {
+      "id": "cosmetic:title_first_shift:session_completed:tobi_1787169699",
+      "kind": "cosmetic",
+      "title": "First Shift",
+      "description": "title · common",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "session_completed:tobi_1787169699",
+      "cosmeticId": "title_first_shift"
+    },
+    {
+      "id": "level:2:session_completed:tobi_1787169699",
+      "kind": "level",
+      "title": "Level 2",
+      "description": "Account-Level erreicht",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "session_completed:tobi_1787169699",
+      "level": 2
+    },
+    {
+      "id": "challenge:challenge_daily_one_more_read::daily:2026-08-19",
+      "kind": "challenge",
+      "title": "One More Read",
+      "description": "Challenge abgeschlossen",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-19",
+      "challengeId": "challenge_daily_one_more_read",
+      "amountPux": 25
+    },
+    {
+      "id": "challenge:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "kind": "challenge",
+      "title": "Ice Cut",
+      "description": "Challenge abgeschlossen",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "challengeId": "challenge_collection_ice_cut",
+      "amountPux": 25
+    },
+    {
+      "id": "cosmetic:sticker_fresh_sheet:challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "kind": "cosmetic",
+      "title": "Fresh Sheet",
+      "description": "sticker · uncommon",
+      "occurredAt": "2026-08-19T22:17:32.301379",
+      "sourceEventId": "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "cosmeticId": "sticker_fresh_sheet",
+      "challengeId": "challenge_collection_ice_cut",
+      "collectionId": "zamboni"
     }
   ],
   "bootstrapCompletedAt": "2026-08-09T18:13:35.908Z",
-  "progressionPuxGranted": 0,
-  "lastUpdatedAt": "2026-08-09T18:13:35.908Z"
+  "lastUpdatedAt": "2026-08-19T20:57:23.689Z",
+  "favoriteCosmeticIds": [],
+  "puxTransactions": [
+    {
+      "id": "pux:challenge:challenge_daily_one_more_read::daily:2026-08-19",
+      "type": "earn",
+      "amount": 25,
+      "sourceType": "challenge",
+      "sourceId": "challenge_daily_one_more_read",
+      "occurredAt": "2026-08-19T22:17:32.301379"
+    },
+    {
+      "id": "pux:challenge:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "type": "earn",
+      "amount": 25,
+      "sourceType": "challenge",
+      "sourceId": "challenge_collection_ice_cut",
+      "occurredAt": "2026-08-19T22:17:32.301379"
+    }
+  ],
+  "completedCollections": {},
+  "masteryMilestoneUnlocks": {},
+  "featuredAchievementId": null,
+  "featuredMasteryCoinId": null,
+  "progressionPuxGranted": 0
 }

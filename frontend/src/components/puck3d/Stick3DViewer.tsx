@@ -7,6 +7,7 @@ import {
   type StickSkinDefinition,
 } from '../../features/progression/cosmetics/stickSkins'
 import { ProceduralStick } from './ProceduralStick'
+import { ShowcaseLighting } from '../collectible3d/ShowcaseLighting'
 import { UiChip } from '../ui'
 import styles from './Puck3DViewer.module.css'
 
@@ -40,13 +41,7 @@ function StickScene({
 }) {
   return (
     <>
-      <color attach="background" args={['#121a28']} />
-      <hemisphereLight args={['#e8f2ff', '#2a3344', 0.9]} />
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[3.2, 4.8, 2.4]} intensity={1.6} color="#fff7ea" />
-      <directionalLight position={[-3.5, 2.2, -2]} intensity={0.55} color="#9fd4ff" />
-      <directionalLight position={[1, 2, 4]} intensity={0.35} color="#ffffff" />
-      <spotLight position={[0, 5, 2]} angle={0.5} penumbra={0.75} intensity={0.45} />
+      <ShowcaseLighting />
 
       {/* Present stick diagonally — showcase pose */}
       <group position={[0.05, -1.15, 0]} rotation={[0.15, 0.55, -0.55]}>

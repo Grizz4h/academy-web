@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
 import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrackCompletionEvents } from '../features/progression'
 import { isDummySession, isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
+import { isDevNavEnabled } from '../config/featureFlags'
+import { UiButton } from '../components/ui'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
@@ -13,7 +15,8 @@ import SyncStatusChip, { type SyncStatus } from '../components/SyncStatusChip';
 import { formatCompetitionContext } from '../data/competitionConfig';
 import { shareOrCopy } from '../utils/share';
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { getActivePeriodsForScope, getObservationScopeLabel, isLessonScope } from '../utils/observationScope'
+import { getActivePeriodsForScope, getObservationScopeLabel, isLessonScope, getNextPhaseForScope, getPreviousPhaseForScope } from '../utils/observationScope'
+import { sessionExpectsPeriodMicrofeedback } from '../utils/sessionMicrofeedback'
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import type { StoredAiReflection } from '../features/reflection/types'
 import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial'
@@ -58,6 +61,39 @@ import {
   resolveClaimLadderConfig,
   validateClaimLadderAnswers,
 } from '../features/claimLadder/claimLogic'
+import {
+  resolveAnticipationReadConfig,
+  validateAnticipationReadAnswers,
+} from '../features/anticipationRead/readLogic'
+import {
+  resolveAnticipationProfileConfig,
+  validateAnticipationProfileAnswers,
+} from '../features/anticipationProfile/profileLogic'
+import {
+  isRoleIdentificationComplete,
+  resolveRoleIdentificationConfig,
+  validateRoleIdentificationAnswers,
+} from '../features/roleIdentification/roleLogic'
+import {
+  isShiftTrackerComplete,
+  resolveShiftTrackerConfig,
+  validateShiftTrackerAnswers,
+} from '../features/shiftTracker/shiftLogic'
+import {
+  isPlayerRelationComplete,
+  resolvePlayerRelationConfig,
+  validatePlayerRelationAnswers,
+} from '../features/playerRelation/relationLogic'
+import {
+  isSimpleStructureComplete,
+  resolveSimpleStructureConfig,
+  validateSimpleStructureAnswers,
+} from '../features/simpleStructure/structureLogic'
+import {
+  isTacticalObservationComplete,
+  resolveTacticalObservationConfig,
+  validateTacticalObservationAnswers,
+} from '../features/tacticalObservation/tacticalLogic'
 
 // Patch: Checkin type ohne microfeedback_done
 type CheckinWithMicro = {
@@ -72,6 +108,7 @@ export default function SessionPage() {
   // Notizfeld für Session-Info
   const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user } = useUser()
   const tutorial = useTutorialOptional()
@@ -83,6 +120,8 @@ export default function SessionPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>('P1')
   const [drillCompleted, setDrillCompleted] = useState(false)
   const [isAdvancing, setIsAdvancing] = useState(false)
+  /** Prevents sticky chrome from covering the post-complete CTA during refetch races */
+  const [sessionFinished, setSessionFinished] = useState(false)
 
   const [answersByPhase, setAnswersByPhase] = useState<Record<Phase, any>>({
     PRE: {},
@@ -165,30 +204,16 @@ export default function SessionPage() {
   }
 
   const getNextPhaseForFlow = (phase: Phase): Phase | null => {
-    if (phase === 'PRE') return firstActivePeriod
-    if (phase === 'POST') return null
-    if (phase === 'P1' || phase === 'P2' || phase === 'P3') {
-      const currentIndex = activePeriods.indexOf(phase)
-      if (currentIndex === -1) return firstActivePeriod
-      if (currentIndex === activePeriods.length - 1) return 'POST'
-      return activePeriods[currentIndex + 1]
-    }
-    return null
+    return getNextPhaseForScope(phase, session?.observation_scope)
   }
 
   const getPreviousPhaseForFlow = (phase: Phase): Phase | null => {
-    if (phase !== 'P1' && phase !== 'P2' && phase !== 'P3') return null
-    const currentIndex = activePeriods.indexOf(phase)
-    if (currentIndex <= 0) return null
-    return activePeriods[currentIndex - 1]
+    return getPreviousPhaseForScope(phase, session?.observation_scope)
   }
 
   useEffect(() => {
     remoteDraftsRef.current = session?.drafts || {}
   }, [session?.drafts])
-
-  // Renderer switch based on moduleId (A1 = v1, else v2)
-  // const moduleId = session?.module_id
 
   // Session Continuation: nur initial Phase aus Session übernehmen
   const firstLoadRef = useRef(true)
@@ -437,12 +462,20 @@ export default function SessionPage() {
   }
 
   function needsMicrofeedback(phase: string, sessionObj: any, drill: any, answers?: any): boolean {
-    if (isFoundationSession) return false
+    if (!sessionExpectsPeriodMicrofeedback(sessionObj, curriculum)) return false
     if (!['P1', 'P2', 'P3'].includes(phase)) return false
     if (!drill) return false
     if (sessionObj?.microfeedback?.[phase]?.done === true) return false
     return !!resolveMicrofeedbackContent(drill, answers || {})
   }
+
+  useEffect(() => {
+    setSessionFinished(false)
+  }, [id])
+
+  useEffect(() => {
+    if (session?.state === 'COMPLETED') setSessionFinished(true)
+  }, [session?.state])
 
   useEffect(() => {
     if (drillCompleted) {
@@ -543,16 +576,15 @@ export default function SessionPage() {
               helpfulness: 0
             })
             if (completedSession) {
+              setSessionFinished(true)
               queryClient.setQueryData(['session', id], completedSession)
             }
             window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
               detail: { sessionId: id, moduleId: completedSession?.module_id },
             }))
-            try {
-              await finalizeSessionRewards(completedSession)
-            } catch (rewardError) {
+            void finalizeSessionRewards(completedSession).catch((rewardError) => {
               console.error('Reward evaluation failed', rewardError)
-            }
+            })
           } catch (e) {}
         }
       }
@@ -844,7 +876,18 @@ export default function SessionPage() {
       }
     }
 
-    if (drill.drill_type === 'observation_log_drill' || drill.drill_type === 'impact_classification_observation' || drill.drill_type === 'support_classification_observation' || drill.drill_type === 'sequence_classification_observation') {
+    const defensiveLayer = String((drill?.config?.observationLayers || [])[0] || '')
+    const isDefensiveObservationLog =
+      drill.drill_type === 'observation_log_drill'
+      || drill.drill_type === 'impact_classification_observation'
+      || drill.drill_type === 'support_classification_observation'
+      || drill.drill_type === 'sequence_classification_observation'
+      || (
+        drill?.config?.mechanic === 'defensive_observation'
+        && ['pressure_effect', 'support_structure', 'sequence_analysis'].includes(defensiveLayer)
+      )
+
+    if (isDefensiveObservationLog) {
       const logsKey = drill?.config?.logs_key || 'logs'
       const requiredLogs = Number(drill?.config?.log_count || 3)
       const completionReflectionKey = drill?.config?.completion_reflection?.key
@@ -859,14 +902,21 @@ export default function SessionPage() {
       }
     }
 
-    if (drill.drill_type === 'pattern_reflection_observation') {
+    const isDefensivePatternReflection =
+      drill.drill_type === 'pattern_reflection_observation'
+      || (
+        drill?.config?.mechanic === 'defensive_observation'
+        && defensiveLayer === 'pattern_recognition'
+      )
+
+    if (isDefensivePatternReflection) {
       const identityKey = drill?.config?.identity?.key || 'patternIdentity'
       const supportKey = drill?.config?.supporting_observations?.key || 'supportingObservations'
       const changedKey = drill?.config?.changed_during_observation?.key || 'changedDuringObservation'
       const supportValues = Array.isArray(answers?.[supportKey]) ? answers[supportKey] : []
 
       if (!answers?.[identityKey]) {
-        return 'Bitte wähle eine defensive Identität aus, bevor du weitergehst.'
+        return 'Bitte wähle ein defensives Muster aus, bevor du weitergehst.'
       }
 
       if (supportValues.length === 0) {
@@ -963,6 +1013,88 @@ export default function SessionPage() {
       return validateClaimLadderAnswers(cfg, answers || {})
     }
 
+    if (
+      drill.drill_type === 'anticipation_read'
+      || drill.drill_type === 'next_action_prediction'
+      || drill.drill_type === 'cue_priority'
+      || drill.drill_type === 'cue_ranking'
+      || drill.drill_type === 'scenario_branches'
+      || drill.drill_type === 'prediction_update'
+      || drill.drill_type === 'belief_update'
+    ) {
+      const cfg = resolveAnticipationReadConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Anticipation-Reads vollständig ab.'
+      }
+      return validateAnticipationReadAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'anticipation_profile') {
+      const cfg = resolveAnticipationProfileConfig(drill?.config || {})
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe dein Anticipation Profile vollständig ab.'
+      }
+      return validateAnticipationProfileAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'role_identification') {
+      const cfg = resolveRoleIdentificationConfig(drill?.config || {})
+      if (!cfg.required) return null
+      if (isRoleIdentificationComplete(cfg, answers || {})) return null
+      const completedEarlier = (['P1', 'P2', 'P3'] as const).some((priorPhase) => (
+        priorPhase !== phase && isRoleIdentificationComplete(cfg, answersByPhase[priorPhase] || {})
+      ))
+      if (completedEarlier) return null
+      if (answers?.[cfg.stageKey] !== 'complete') {
+        return 'Bitte schließe die Rollenidentifikation vollständig ab.'
+      }
+      return validateRoleIdentificationAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'shift_tracker') {
+      const cfg = resolveShiftTrackerConfig(drill?.config || {})
+      if (!cfg.required) return null
+      if (isShiftTrackerComplete(cfg, answers || {})) return null
+      const completedEarlier = (['P1', 'P2', 'P3'] as const).some((priorPhase) => (
+        priorPhase !== phase && isShiftTrackerComplete(cfg, answersByPhase[priorPhase] || {})
+      ))
+      if (completedEarlier) return null
+      return validateShiftTrackerAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'player_relation') {
+      const cfg = resolvePlayerRelationConfig(drill?.config || {})
+      if (!cfg.required) return null
+      if (isPlayerRelationComplete(cfg, answers || {})) return null
+      const completedEarlier = (['P1', 'P2', 'P3'] as const).some((priorPhase) => (
+        priorPhase !== phase && isPlayerRelationComplete(cfg, answersByPhase[priorPhase] || {})
+      ))
+      if (completedEarlier) return null
+      return validatePlayerRelationAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'simple_structure') {
+      const cfg = resolveSimpleStructureConfig(drill?.config || {})
+      if (!cfg.required) return null
+      if (isSimpleStructureComplete(cfg, answers || {})) return null
+      const completedEarlier = (['P1', 'P2', 'P3'] as const).some((priorPhase) => (
+        priorPhase !== phase && isSimpleStructureComplete(cfg, answersByPhase[priorPhase] || {})
+      ))
+      if (completedEarlier) return null
+      return validateSimpleStructureAnswers(cfg, answers || {})
+    }
+
+    if (drill.drill_type === 'tactical_observation') {
+      const cfg = resolveTacticalObservationConfig(drill?.config || {})
+      if (!cfg.required) return null
+      if (isTacticalObservationComplete(cfg, answers || {})) return null
+      const completedEarlier = (['P1', 'P2', 'P3'] as const).some((priorPhase) => (
+        priorPhase !== phase && isTacticalObservationComplete(cfg, answersByPhase[priorPhase] || {})
+      ))
+      if (completedEarlier) return null
+      return validateTacticalObservationAnswers(cfg, answers || {})
+    }
+
     if (drill.drill_type === 'period_checkin' && drill?.config?.validate_answers === true) {
       const questions = Array.isArray(drill?.config?.questions) ? drill.config.questions : []
       for (const question of questions) {
@@ -993,33 +1125,56 @@ export default function SessionPage() {
       }
     }
 
-    if (drill.id === 'B2_D1' || drill.id === 'B2_D2' || drill.drill_type === 'pressure_diagnosis' || drill?.config?.mode === 'pressure_diagnosis' || drill?.config?.mode === 'solution_type_diagnosis' || drill?.config?.mode === 'decision_cause_diagnosis' || drill?.config?.mode === 'transition_followup_assessment') {
+    const isDecisionAnalysis =
+      drill?.config?.mechanic === 'decision_analysis'
+      || drill.drill_type === 'pressure_diagnosis'
+      || drill.drill_type === 'decision_analysis'
+      || drill?.config?.mode === 'pressure_diagnosis'
+      || drill?.config?.mode === 'solution_type_diagnosis'
+      || drill?.config?.mode === 'decision_cause_diagnosis'
+      || drill?.config?.mode === 'transition_followup_assessment'
+
+    if (isDecisionAnalysis) {
       const sampleKey = drill?.config?.sample_key || 'pressure_samples'
       const requiredSamples = Number(drill?.config?.required_samples || drill?.config?.max_samples_per_phase || 3)
       const checkinKey = drill?.config?.checkin?.key || 'dominant_source'
-      const requiresCheckin = drill?.config?.enable_checkin !== false && drill?.config?.mode !== 'decision_cause_diagnosis' && drill?.config?.mode !== 'transition_followup_assessment'
+      const requiresCheckin = drill?.config?.enable_checkin !== false
+        && drill?.config?.mode !== 'decision_cause_diagnosis'
+        && drill?.config?.mode !== 'transition_followup_assessment'
+        && !((drill?.config?.observationLayers || []).includes('pattern_synthesis'))
       const samples = Array.isArray(answers?.[sampleKey]) ? answers[sampleKey] : []
       const sampleFields = Array.isArray(drill?.config?.sample_fields) && drill.config.sample_fields.length > 0
         ? drill.config.sample_fields
-        : [
-            { key: 'zeitdruck' },
-            { key: 'raumdruck' },
-            { key: 'gegnerdruck' },
-            { key: 'optionsdruck' }
-          ]
+        : Array.isArray(drill?.config?.diagnosis_fields) && drill.config.diagnosis_fields.length > 0
+          ? drill.config.diagnosis_fields
+          : [
+              { key: 'zeitdruck' },
+              { key: 'raumdruck' },
+              { key: 'gegnerdruck' },
+              { key: 'optionsdruck' },
+            ]
       const sampleLabel = drill?.config?.sample_label || 'Situation'
 
-      if (samples.length < requiredSamples) {
-        return 'Bitte erfasse mindestens ' + requiredSamples + ' ' + sampleLabel + 'en, bevor du weitergehst.'
-      }
+      // D5 pattern synthesis uses period questions, not sample logs.
+      if ((drill?.config?.observationLayers || []).includes('pattern_synthesis') || (!drill?.config?.mode && Array.isArray(drill?.config?.questions))) {
+        // fall through to question validation below when validate_answers is set
+      } else {
+        if (samples.length < requiredSamples) {
+          return 'Bitte erfasse mindestens ' + requiredSamples + ' ' + sampleLabel + 'en, bevor du weitergehst.'
+        }
 
-      const hasAllFields = samples.every((sample: any) => sampleFields.every((field: any) => sample?.[field.key]))
-      if (!hasAllFields) {
-        return 'Bitte vervollständige jede gespeicherte Situation.'
-      }
+        const hasAllFields = samples.every((sample: any) => sampleFields.every((field: any) => {
+          const key = field.key
+          const value = sample?.[key]
+          return value !== undefined && value !== null && String(value).trim() !== ''
+        }))
+        if (!hasAllFields) {
+          return 'Bitte vervollständige jede gespeicherte Situation.'
+        }
 
-      if (requiresCheckin && !answers?.[checkinKey]) {
-        return 'Bitte waehle die haeufigste Option aus, bevor du weitergehst.'
+        if (requiresCheckin && !answers?.[checkinKey]) {
+          return 'Bitte wähle die häufigste Option aus, bevor du weitergehst.'
+        }
       }
     }
 
@@ -1027,15 +1182,20 @@ export default function SessionPage() {
   }
 
   // Save + Advance-Flow
-  const handleAdvanceToNext = async (e?: React.SyntheticEvent) => {
+  const handleAdvanceToNext = async (
+    e?: React.SyntheticEvent,
+    opts?: { skipGates?: boolean },
+  ) => {
     e?.preventDefault?.()
     setAdvanceError('')
 
+    const skipGates = Boolean(opts?.skipGates)
     const clickId = crypto.randomUUID().slice(0, 8)
     console.group(`[ADVANCE ${clickId}] CLICK`)
     console.log("phase_before:", currentPhase)
     console.log("isAdvancing_before:", isAdvancing)
     console.log("lock_before:", advanceLockRef.current)
+    console.log("skipGates:", skipGates)
 
     if (advanceLockRef.current) {
       console.warn(`[ADVANCE ${clickId}] ABORT: lock active`)
@@ -1051,10 +1211,12 @@ export default function SessionPage() {
       const phase = currentPhase
       const next = getNextPhaseForFlow(phase)
 
-      const validationError = validateDrillBeforeAdvance(phase, activeDrill, answersByPhase[currentPhase])
-      if (validationError) {
-        setAdvanceError(validationError)
-        return
+      if (!skipGates) {
+        const validationError = validateDrillBeforeAdvance(phase, activeDrill, answersByPhase[currentPhase])
+        if (validationError) {
+          setAdvanceError(validationError)
+          return
+        }
       }
 
       // 1) Checkin speichern
@@ -1070,7 +1232,7 @@ export default function SessionPage() {
       const drill = activeDrill || sessionObj?.drills?.[0]
 
       // 3) Microfeedback-Guard
-      if (needsMicrofeedback(phase, sessionObj, drill, answersByPhase[currentPhase])) {
+      if (!skipGates && needsMicrofeedback(phase, sessionObj, drill, answersByPhase[currentPhase])) {
         // FIX: microPhase ist die Phase, für die Feedback abgegeben wird
         setMicroPhase(phase)
         // nextPhase ist wohin wir danach wechseln
@@ -1095,6 +1257,7 @@ export default function SessionPage() {
           next_module: '',
           helpfulness: 5,
         })
+        setSessionFinished(true)
         if (completedSession) {
           queryClient.setQueryData(['session', id], completedSession)
         }
@@ -1103,11 +1266,10 @@ export default function SessionPage() {
         window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
           detail: { sessionId: id, moduleId: session?.module_id },
         }))
-        try {
-          await finalizeSessionRewards(completedSession)
-        } catch (rewardError) {
+        // Rewards/progression must not block "Zurück zur Übersicht"
+        void finalizeSessionRewards(completedSession).catch((rewardError) => {
           console.error('Reward evaluation failed', rewardError)
-        }
+        })
         console.log(`[ADVANCE ${clickId}] FOUNDATION COMPLETE`)
         console.groupEnd()
         return
@@ -1178,7 +1340,7 @@ export default function SessionPage() {
     }
   }
 
-  const isCompleted = session?.state === 'COMPLETED'
+  const isCompleted = session?.state === 'COMPLETED' || sessionFinished
   const activeReflection = localReflection ?? session?.ai_reflection ?? null
   const tutorialWaitingForComplete = Boolean(
     tutorial?.active
@@ -1192,6 +1354,18 @@ export default function SessionPage() {
       detail: { sessionId: session.id, moduleId: session.module_id },
     }))
   }, [isCompleted, session?.id, session?.module_id, tutorialWaitingForComplete])
+
+  // Keep completion CTA reachable; sticky/reward overlays previously ate the first taps
+  useEffect(() => {
+    if (!isCompleted) return
+    const timer = window.setTimeout(() => {
+      const node =
+        document.querySelector<HTMLElement>('[data-session-complete-cta="true"]')
+        || document.querySelector<HTMLElement>('[data-tutorial-id="session-result"]')
+      node?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }, 80)
+    return () => window.clearTimeout(timer)
+  }, [isCompleted])
 
   const getPhaseTitle = (phase: string) => {
     if (isFoundationSession || isLessonScope(session?.observation_scope)) {
@@ -1207,6 +1381,12 @@ export default function SessionPage() {
   }
 
   const foundationReady = Boolean(answersByPhase[currentPhase]?.foundationComplete)
+  const showDevSkip =
+    Boolean(session) &&
+    !isCompleted &&
+    session?.state !== 'ABORTED' &&
+    (isDummySession(session) || isDevNavEnabled()) &&
+    Boolean(getNextPhaseForFlow(currentPhase) || isFoundationSession)
   const advanceCtaLabel = (() => {
     if (isAdvancing) return 'Speichere…'
     if (isFoundationSession) return 'Session abschließen'
@@ -1218,6 +1398,11 @@ export default function SessionPage() {
     if (isFoundationSession) return 'Session abschließen'
     if (getNextPhaseForFlow(currentPhase) === 'POST') return 'Abschließen'
     return 'Weiter →'
+  })()
+  const devSkipLabel = (() => {
+    if (isAdvancing) return 'Skip…'
+    if (isFoundationSession || getNextPhaseForFlow(currentPhase) === 'POST') return 'DEV: Skip → Abschluss'
+    return 'DEV: Weiter (Skip)'
   })()
 
   function handleDraftChange(answers: any): void {
@@ -1260,6 +1445,9 @@ export default function SessionPage() {
               <p><strong>Wettbewerb:</strong> {formatCompetitionContext(session.game_info) || session.game_info.matchday}</p>
             )}
             <p><strong>Beobachtungsumfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
+            {activeDrill && (
+              <p><strong>Drill:</strong> {activeDrill.title || activeDrill.id}{activeDrill.id ? ` (${activeDrill.id})` : ''}</p>
+            )}
           </>
         ) : (
           <>
@@ -1318,10 +1506,8 @@ export default function SessionPage() {
               {activeDrill ? (
                 <DrillRendererRouter
                   drill={activeDrill}
-                  answers={answersByPhase[currentPhase]}
-                  setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers }))}
-                  initialAnswers={answersByPhase[currentPhase]}
-                  onChangeAnswers={handleDraftChange}
+                  answers={answersByPhase[currentPhase] || {}}
+                  setAnswers={(newAnswers) => setAnswersByPhase(prev => ({ ...prev, [currentPhase]: newAnswers || {} }))}
                   session={session}
                   phase={currentPhase}
                 />
@@ -1368,6 +1554,18 @@ export default function SessionPage() {
                       {advanceCtaLabel}
                     </button>
                   )}
+                  {showDevSkip ? (
+                    <UiButton
+                      type="button"
+                      variant="dev"
+                      size="sm"
+                      disabled={isAdvancing}
+                      onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
+                      title="Überspringt Drill-Pflicht und Microfeedback"
+                    >
+                      {devSkipLabel}
+                    </UiButton>
+                  ) : null}
                 </div>
                 <SyncStatusChip status={syncStatus} />
               </div>
@@ -1395,6 +1593,22 @@ export default function SessionPage() {
                         {stickyCtaLabel}
                       </button>
                     )}
+                    {showDevSkip ? (
+                      <button
+                        type="button"
+                        className={stickyStyles.stickyBtn}
+                        disabled={isAdvancing}
+                        onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
+                        title="Überspringt Drill-Pflicht und Microfeedback"
+                        style={{
+                          borderColor: 'rgba(245, 158, 11, 0.55)',
+                          color: 'rgba(253, 186, 116, 1)',
+                          background: 'rgba(245, 158, 11, 0.12)',
+                        }}
+                      >
+                        {devSkipLabel}
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               )}
@@ -1430,11 +1644,17 @@ export default function SessionPage() {
       )}
 
       {isCompleted && (
-        <div className="card" data-tutorial-id={TUTORIAL_TARGET.sessionResult}>
+        <div className="card" data-tutorial-id={TUTORIAL_TARGET.sessionResult} style={{ position: 'relative', zIndex: 2 }}>
           <h2>Session abgeschlossen! 🎉</h2>
           <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.85rem' }}>
-            <a href="/" className="btn">Zurück zur Übersicht</a>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => navigate('/')}
+            >
+              Zurück zur Übersicht
+            </button>
             <button
               type="button"
               className="btn"
@@ -1458,8 +1678,21 @@ export default function SessionPage() {
             </button>
           </div>
           {shareNote && <p style={{ marginTop: '0.55rem', color: '#99f6e4', fontSize: '0.85rem' }}>{shareNote}</p>}
+          <div className={stickyStyles.completeClearance} aria-hidden="true" />
         </div>
       )}
+
+      {isCompleted ? (
+        <div className={stickyStyles.completeBar} data-session-complete-cta="true">
+          <button
+            type="button"
+            className={`${stickyStyles.stickyBtn} ${stickyStyles.stickyBtnPrimary}`}
+            onClick={() => navigate('/')}
+          >
+            Zurück zur Übersicht
+          </button>
+        </div>
+      ) : null}
 
       {isCompleted && session && (
         <SessionReflectionPanel
@@ -1493,7 +1726,9 @@ export default function SessionPage() {
           <p><strong>Grund:</strong> {session.abort?.reason}</p>
           {session.abort?.note && <p><strong>Notiz:</strong> {session.abort.note}</p>}
           <p><strong>Abgebrochen am:</strong> {session.abort?.aborted_at ? new Date(session.abort.aborted_at).toLocaleString() : 'Unbekannt'}</p>
-          <a href="/" className="btn">Zurück zur Übersicht</a>
+          <button type="button" className="btn" onClick={() => navigate('/')}>
+            Zurück zur Übersicht
+          </button>
         </div>
       )}
 

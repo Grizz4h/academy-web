@@ -2027,11 +2027,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
         "observed_team": session.observed_team,
         "observed_team_id": session.observed_team_id,
         "observed_team_name": session.observed_team_name,
-        "microfeedback": {
-            "P1": {"done": False, "text": ""},
-            "P2": {"done": False, "text": ""},
-            "P3": {"done": False, "text": ""}
-        },
+        "microfeedback": _empty_microfeedback_for_scope(session.observation_scope),
         # Persist explicitly so list/delete eligibility never depends on missing keys.
         "is_dummy": bool(session.is_dummy),
     }
@@ -2099,7 +2095,7 @@ async def update_session(session_id: str, updates: dict):
     for key, value in updates.items():
         if key == "microfeedback":
             if "microfeedback" not in session:
-                session["microfeedback"] = {"P1": {"done": False, "text": ""}, "P2": {"done": False, "text": ""}, "P3": {"done": False, "text": ""}}
+                session["microfeedback"] = _empty_microfeedback_for_scope(session.get("observation_scope"))
             for phase, mf in value.items():
                 if phase in session["microfeedback"]:
                     session["microfeedback"][phase].update(mf)
@@ -2820,6 +2816,17 @@ def _build_scene_path(scene_id: str, created_at: Optional[str]) -> str:
     year = f"{dt.year:04d}"
     month = f"{dt.month:02d}"
     return os.path.join(SCENES_DIR, year, month, f"{scene_id}.json")
+
+
+def _empty_microfeedback_for_scope(scope: Optional[str]) -> dict:
+    """Foundation lessons (LESSON) do not collect period microfeedback."""
+    if _normalize_observation_scope(scope) == "LESSON":
+        return {}
+    return {
+        "P1": {"done": False, "text": ""},
+        "P2": {"done": False, "text": ""},
+        "P3": {"done": False, "text": ""},
+    }
 
 
 def _normalize_observation_scope(scope: Optional[str]) -> str:

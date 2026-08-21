@@ -1,0 +1,191 @@
+{
+  "id": "tobi_1787169699",
+  "user": "tobi",
+  "created_by": "tobi",
+  "module_id": "A1",
+  "goal": "Auto: A1 – Rink IQ & Rollenverständnis",
+  "confidence": 1,
+  "focus": null,
+  "session_method": "live_watch",
+  "drill_id": "A1_D1",
+  "learning_area": "academy",
+  "lab_mode": null,
+  "lab_template_id": null,
+  "observation_scope": "P1",
+  "state": "COMPLETED",
+  "current_phase": "POST",
+  "created_at": "2026-08-19T22:01:39.223601",
+  "drills": [
+    {
+      "id": "A1_D1",
+      "title": "Period Check-in: Center & Struktur",
+      "drill_type": "period_checkin",
+      "description": "Drittelweise Kurzbeobachtung. Einsatz: Live-Spiel, Drittelpause. Dauer: ~2–3 Minuten.",
+      "didactics": {
+        "explanation": "Du trainierst hier den Überblick über die Center-Position und die Gesamtstruktur des Teams. Fokus auf grobe Ordnung, nicht auf Details oder Fehler.\n\nErst Position einschätzen, dann Strukturgefühl festhalten.\nDetails nur, wenn sie wirklich herausstechen.\n\nDenkabfolge für diesen Drill:\n\n1. Wo ist der Center meistens?\n2. Wie fühlt sich die Struktur an?\n3. Gibt es eine Auffälligkeit?\n\nErst grob einordnen, dann optional präzisieren.",
+        "observation_guide": {
+          "what_to_watch": [
+            "Center-Position (Low / Middle / High)",
+            "Dreiecke / Anspielstationen",
+            "Abstände zwischen den Linien",
+            "Strukturgefühl: Wirkt das Team kompakt, verbunden und anspielbar – oder auseinandergezogen und reaktiv?"
+          ],
+          "how_to_decide": [
+            "Gesamteindruck zählt",
+            "Erste Intuition ist valide",
+            "Unsicher → Mitte wählen",
+            "Ankerfrage: Was war die wichtigste Aufgabe des Centers in dieser Szene?",
+            "Low – Musste er zuerst absichern oder verteidigen? (Gegnerdeckung, Passwege schließen, Verteidiger unterstützen)",
+            "Middle – Musste er zuerst das Spiel unterstützen? (Anspielstation werden, Verbindung zwischen Mitspielern herstellen, Passoption schaffen)",
+            "High – Musste er zuerst Angriffsdruck erzeugen? (Freien Raum attackieren, Torchance vorbereiten, offensive Aktion starten)"
+          ],
+          "ignore": [
+            "Torchancen",
+            "Einzelne Fehlpässe",
+            "Emotionale Narrative"
+          ]
+        },
+        "learning_hint": "Wenn sich das unscharf anfühlt: genau darum geht es hier."
+      },
+      "miniFeedback": {
+        "trigger": "onNext",
+        "oncePerSection": true,
+        "groups": [
+          {
+            "when": {
+              "center_mostly": "low"
+            },
+            "questions": [
+              "Welche Aufgabe hat der Center in dieser Tiefe primär erfüllt – Absicherung oder Spielaufbau?",
+              "Hat seine tiefe Position eher Ruhe oder Enge ins Spiel gebracht?",
+              "War der Center anspielbar oder nur absichernd präsent?",
+              "Wie hätte sich das Spiel verändert, wenn er früher nach Middle geschoben hätte?"
+            ]
+          },
+          {
+            "when": {
+              "center_mostly": "middle"
+            },
+            "questions": [
+              "Welche Vorteile entstehen, wenn der Center das Middle kontrolliert?",
+              "War seine Position eher verbindend oder passiv?",
+              "Hat er Passoptionen geschaffen oder nur Raum besetzt?"
+            ]
+          },
+          {
+            "when": {
+              "center_mostly": "high"
+            },
+            "questions": [
+              "Warum konnte sich der Center so hoch positionieren – Struktur oder Spielsituation?",
+              "Hat seine Höhe das Spiel beschleunigt oder risikoreicher gemacht?",
+              "Wer hat dann die Absicherung übernommen?"
+            ]
+          }
+        ]
+      },
+      "config": {
+        "questions": [
+          {
+            "key": "center_mostly",
+            "type": "radio",
+            "label": "Center meist:",
+            "options": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          {
+            "key": "structure_feeling",
+            "type": "radio",
+            "label": "Strukturgefühl:",
+            "options": [
+              "geordnet",
+              "chaotisch",
+              "mixed"
+            ]
+          },
+          {
+            "key": "note",
+            "type": "text",
+            "label": "Auffälligkeit (optional, 1 Satz)",
+            "max_chars": 1500
+          }
+        ]
+      },
+      "sceneSlug": "Period-Checkin"
+    }
+  ],
+  "progress": {
+    "current_drill_index": 0,
+    "completed_drills": []
+  },
+  "checkins": [
+    {
+      "phase": "P1",
+      "answers": {
+        "note": "93 = Center? ",
+        "structure_feeling": "chaotisch",
+        "center_mostly": "high"
+      },
+      "timestamp": "2026-08-19T22:17:12.904517"
+    },
+    {
+      "phase": "POST",
+      "answers": {},
+      "timestamp": "2026-08-19T22:17:32.099747"
+    }
+  ],
+  "drafts": {
+    "P1": {
+      "note": "93 = Center? ",
+      "structure_feeling": "chaotisch",
+      "center_mostly": "high"
+    }
+  },
+  "post": {
+    "summary": "",
+    "unclear": "",
+    "next_module": "",
+    "helpfulness": 0,
+    "completed_at": "2026-08-19T22:17:32.301379"
+  },
+  "game_info": {
+    "league": "DEL",
+    "team_home": "Straubing Tigers",
+    "team_away": "Schwenninger Wild Wings",
+    "observed_team": "Straubing Tigers",
+    "date": "2026-03-06T19:30:00",
+    "season": "2025/26",
+    "game_id": "del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+    "home_team_id": "straubing_tigers",
+    "away_team_id": "schwenninger_wild_wings",
+    "competition_phase": "regular_season",
+    "competition_phase_label": "Hauptrunde",
+    "competition_unit_type": "matchday",
+    "competition_unit_label": "Spieltag",
+    "competition_unit_value": "49",
+    "matchday": "DEL · 2025/26 · Hauptrunde · Spieltag 49"
+  },
+  "game_id": "del:2025_2026:06032026_straubing-tigers_gg_schwenninger-wild-wings_4282",
+  "observed_team": "Straubing Tigers",
+  "observed_team_id": "straubing_tigers",
+  "observed_team_name": "Straubing Tigers",
+  "microfeedback": {
+    "P1": {
+      "done": true,
+      "text": "Spielsituation",
+      "ts": "2026-08-19T22:17:22.243584"
+    },
+    "P2": {
+      "done": false,
+      "text": ""
+    },
+    "P3": {
+      "done": false,
+      "text": ""
+    }
+  },
+  "is_dummy": false
+}

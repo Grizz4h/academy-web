@@ -7,6 +7,7 @@ import SessionCard from '../components/SessionCard'
 import Card from '../components/Card'
 import FilterSheet, { FilterSheetRow, FilterSheetSection, FilterSheetStack } from '../components/FilterSheet'
 import { PageSkeleton } from '../components/Skeleton'
+import { SelectionToolbar, useMultiSelect } from '../components/selection'
 import { isDevNavEnabled } from '../config/featureFlags'
 import { deleteAllDummySessions } from '../dev/createDummySession'
 import { countDummySessions } from '../utils/sessionEligibility'
@@ -47,6 +48,8 @@ export default function History() {
     return map
   }, [labContent])
 
+  const selection = useMultiSelect()
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.deleteSession(id),
     onSuccess: () => {
@@ -55,6 +58,24 @@ export default function History() {
     onError: (err: any) => {
       alert(`Löschen fehlgeschlagen: ${err?.message || err}`)
     }
+  })
+
+  const batchDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const results = await Promise.allSettled(ids.map((id) => api.deleteSession(id)))
+      const failed = results.filter((r) => r.status === 'rejected').length
+      if (failed > 0) {
+        throw new Error(`${failed} von ${ids.length} Sessions konnten nicht gelöscht werden.`)
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessions', user] })
+      selection.exit()
+    },
+    onError: (err: any) => {
+      alert(`Löschen fehlgeschlagen: ${err?.message || err}`)
+      queryClient.invalidateQueries({ queryKey: ['sessions', user] })
+    },
   })
 
   const [devMode, setDevMode] = useState(() => isDevNavEnabled())
@@ -524,14 +545,35 @@ export default function History() {
       </FilterSheet>
 
       <div className={styles.resultsBar}>
-        <h2 className={styles.resultsTitle}>
-          {sortedSessions.length === 1 ? '1 Session' : `${sortedSessions.length} Sessions`}
-        </h2>
-        <p className={styles.resultsMeta}>
-          {hasActiveFilters
-            ? `gefiltert aus ${overview.total} insgesamt`
-            : 'alle Sessions, neueste zuerst'}
-        </p>
+        <div className={styles.resultsHead}>
+          <h2 className={styles.resultsTitle}>
+            {sortedSessions.length === 1 ? '1 Session' : `${sortedSessions.length} Sessions`}
+          </h2>
+          <p className={styles.resultsMeta}>
+            {hasActiveFilters
+              ? `gefiltert aus ${overview.total} insgesamt`
+              : 'alle Sessions, neueste zuerst'}
+          </p>
+        </div>
+        <SelectionToolbar
+          active={selection.active}
+          selectedCount={selection.count}
+          totalCount={sortedSessions.length}
+          itemLabelSingular="Session"
+          itemLabelPlural="Sessions"
+          onEnter={selection.enter}
+          onExit={selection.exit}
+          onSelectAll={() => selection.selectAll(sortedSessions.map((s) => s.id))}
+          onClear={selection.clear}
+          deletePending={batchDeleteMutation.isPending}
+          onDeleteSelected={() => {
+            const ids = selection.selectedIds
+            if (ids.length === 0) return
+            const label = ids.length === 1 ? 'diese Session' : `diese ${ids.length} Sessions`
+            if (!window.confirm(`${label} wirklich löschen?`)) return
+            batchDeleteMutation.mutate(ids)
+          }}
+        />
       </div>
 
       <div className={styles.sessionList}>
@@ -564,12 +606,15 @@ export default function History() {
                   : session.lab_template_id
               }}
               sceneEntries={scenesBySession.get(session.id) || []}
-              onDelete={(id) => deleteMutation.mutate(id)}
+              onDelete={selection.active ? undefined : (id) => deleteMutation.mutate(id)}
               isDeletingId={
                 deleteMutation.isPending
                   ? deleteMutation.variables
                   : undefined
               }
+              selectionMode={selection.active}
+              selected={selection.isSelected(session.id)}
+              onToggleSelect={selection.toggle}
             />
           ))
         )}

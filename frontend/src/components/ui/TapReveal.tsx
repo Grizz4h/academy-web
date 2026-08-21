@@ -1,5 +1,6 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { type ReactNode, type Ref } from 'react'
 import { AnchoredPopover, type AnchoredPopoverAlign } from './AnchoredPopover'
+import { useExclusivePopover } from './useExclusivePopover'
 
 export type TapRevealAlign = AnchoredPopoverAlign
 
@@ -22,40 +23,12 @@ export function TapReveal({
   triggerClassName,
   ariaLabel,
 }: TapRevealProps) {
-  const [open, setOpen] = useState(false)
-  const triggerRef = useRef<HTMLDivElement>(null)
-  const popoverRef = useRef<HTMLDivElement>(null)
-  const panelId = useId()
-
-  useEffect(() => {
-    if (!open) return
-
-    const onPointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null
-      if (triggerRef.current?.contains(target)) return
-      if (popoverRef.current?.contains(target)) return
-      setOpen(false)
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
-    document.addEventListener('mousedown', onPointerDown)
-    document.addEventListener('touchstart', onPointerDown)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', onPointerDown)
-      document.removeEventListener('touchstart', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [open])
-
-  const toggle = () => setOpen((value) => !value)
+  const { open, toggle, close, triggerRef, popoverRef, panelId } = useExclusivePopover()
 
   return (
     <span className={['ui-tap-reveal-wrap', className].filter(Boolean).join(' ')}>
       <div
-        ref={triggerRef}
+        ref={triggerRef as Ref<HTMLDivElement>}
         role="button"
         tabIndex={0}
         className={['ui-tap-reveal-trigger', triggerClassName].filter(Boolean).join(' ')}
@@ -79,7 +52,7 @@ export function TapReveal({
       </div>
 
       <AnchoredPopover
-        ref={popoverRef}
+        ref={popoverRef as Ref<HTMLDivElement>}
         open={open}
         anchorRef={triggerRef}
         align={align}
@@ -98,7 +71,7 @@ export function TapReveal({
             onClick={(event) => {
               event.preventDefault()
               event.stopPropagation()
-              setOpen(false)
+              close()
             }}
           >
             ×

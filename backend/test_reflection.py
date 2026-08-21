@@ -132,6 +132,63 @@ class ReflectionPayloadTests(unittest.TestCase):
             "possession_lost",
         )
 
+    def test_anticipation_profile_sends_only_aggregated_payload(self):
+        session = {
+            "id": "e4d5",
+            "user": "Christoph",
+            "module_id": "E4",
+            "observed_team": "Augsburg",
+            "goal": "private-goal",
+            "checkins": [
+                {
+                    "phase": "P1",
+                    "answers": {
+                        "anticipation_profile_payload": {
+                            "reads": 35,
+                            "cuePatterns": {"frequentlyUsed": ["support"], "rarelyUsed": ["timing"]},
+                            "updatePatterns": {"keepCount": 4, "changeCount": 2, "commonTriggers": ["Pressure steigt"]},
+                            "branchPatterns": {"commonBranches": ["Pass → Carry"]},
+                            "reflectionAnswers": {"mostHelpfulCueCategory": "support"},
+                            "userId": "should-not-leak",
+                            "email": "hidden@example.com",
+                        },
+                        "anticipation_read_observations": [{"note": "raw read"}],
+                    },
+                }
+            ],
+            "drills": [
+                {
+                    "id": "E4_D5",
+                    "title": "Mein Anticipation Profile",
+                    "drill_type": "anticipation_profile",
+                    "config": {
+                        "mechanic": "anticipation_profile",
+                        "reflectionGuidance": [
+                            "Beschreibe beobachtete Muster aus den Reads.",
+                            "Keine Bewertung des Hockey-Niveaus.",
+                        ],
+                    },
+                }
+            ],
+        }
+
+        payload = build_reflection_payload(session)
+        encoded = json.dumps(payload)
+        self.assertNotIn("Christoph", encoded)
+        self.assertNotIn("hidden@example.com", encoded)
+        self.assertNotIn("should-not-leak", encoded)
+        self.assertNotIn("Augsburg", encoded)
+        self.assertNotIn("private-goal", encoded)
+        self.assertNotIn("anticipation_read_observations", encoded)
+        answers = payload["session"]["observations"][0]["answers"]
+        self.assertEqual(list(answers.keys()), ["anticipation_profile_payload"])
+        self.assertEqual(answers["anticipation_profile_payload"]["reads"], 35)
+        self.assertNotIn("userId", answers["anticipation_profile_payload"])
+        self.assertNotIn("email", answers["anticipation_profile_payload"])
+        self.assertTrue(
+            any("Hockey-Niveaus" in item for item in payload["drill"]["reflectionGuidance"])
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { type Ref } from 'react'
 import { DISPLAY_CURRENCY_LABEL, formatPux, useRewards } from '../../features/rewards'
 import { AnchoredPopover, UiButtonLink } from '../ui'
+import { useExclusivePopover } from '../ui/useExclusivePopover'
 import { selectNextShopTarget, selectRecentPuxActivity } from './puxWalletHelpers'
 import styles from './PuxWalletButton.module.css'
 
@@ -13,42 +14,15 @@ function formatActivityDate(iso: string): string {
 export default function PuxWalletButton() {
   const { rewardState } = useRewards()
   const balance = rewardState.currency.PUX || 0
-  const [open, setOpen] = useState(false)
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const popoverRef = useRef<HTMLDivElement>(null)
-  const panelId = useId()
+  const { open, toggle, close, triggerRef, popoverRef, panelId } = useExclusivePopover()
 
   const recentActivity = selectRecentPuxActivity(rewardState, 5)
   const nextShop = selectNextShopTarget(rewardState)
 
-  useEffect(() => {
-    if (!open) return
-
-    const onPointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null
-      if (!target) return
-      if (triggerRef.current?.contains(target)) return
-      if (popoverRef.current?.contains(target)) return
-      setOpen(false)
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
-    document.addEventListener('mousedown', onPointerDown)
-    document.addEventListener('touchstart', onPointerDown)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', onPointerDown)
-      document.removeEventListener('touchstart', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [open])
-
   return (
     <span className={styles.wrap}>
       <button
-        ref={triggerRef}
+        ref={triggerRef as Ref<HTMLButtonElement>}
         type="button"
         className={styles.trigger}
         aria-label={`${DISPLAY_CURRENCY_LABEL}: ${balance}. Wallet öffnen`}
@@ -57,14 +31,14 @@ export default function PuxWalletButton() {
         onClick={(event) => {
           event.preventDefault()
           event.stopPropagation()
-          setOpen((value) => !value)
+          toggle()
         }}
       >
         {formatPux(balance)}
       </button>
 
       <AnchoredPopover
-        ref={popoverRef}
+        ref={popoverRef as Ref<HTMLDivElement>}
         open={open}
         anchorRef={triggerRef}
         id={panelId}
@@ -85,7 +59,7 @@ export default function PuxWalletButton() {
             onClick={(event) => {
               event.preventDefault()
               event.stopPropagation()
-              setOpen(false)
+              close()
             }}
           >
             ×
@@ -140,7 +114,7 @@ export default function PuxWalletButton() {
             variant="primary"
             size="sm"
             className={styles.actionLink}
-            onClick={() => setOpen(false)}
+            onClick={() => close()}
           >
             Zum Locker
           </UiButtonLink>
@@ -149,7 +123,7 @@ export default function PuxWalletButton() {
             variant="secondary"
             size="sm"
             className={styles.actionLink}
-            onClick={() => setOpen(false)}
+            onClick={() => close()}
           >
             Belohnungen
           </UiButtonLink>

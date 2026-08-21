@@ -18,6 +18,7 @@ import { lockerTaskHref } from '../features/progression/tasks';
 import { computeObservedTeamStats } from '../stats/exposureStats';
 import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { getActivePeriodsForScope } from '../utils/observationScope';
+import { sessionExpectsPeriodMicrofeedback } from '../utils/sessionMicrofeedback';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
 import { UiActionRow, UiButton, UiButtonLink, UiProgress } from '../components/ui';
@@ -446,6 +447,8 @@ export default function Dashboard() {
         : s.id;
 
       // Scope-aware: Nur aktive Drittel mit Checkin auf Microfeedback prüfen.
+      // Track 0 / LESSON sessions have no period microfeedback.
+      if (!sessionExpectsPeriodMicrofeedback(s, curriculum)) continue;
       const checkedPhases = new Set(
         (s.checkins || [])
           .map((c: any) => String(c.phase || '').toUpperCase())

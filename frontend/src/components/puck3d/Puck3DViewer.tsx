@@ -7,6 +7,7 @@ import {
   type PuckSkinDefinition,
 } from '../../features/progression/cosmetics/puckSkins'
 import { ProceduralPuck } from './ProceduralPuck'
+import { ShowcaseLighting } from '../collectible3d/ShowcaseLighting'
 import { UiChip } from '../ui'
 import styles from './Puck3DViewer.module.css'
 
@@ -44,19 +45,7 @@ function PuckScene({
 }) {
   return (
     <>
-      <color attach="background" args={['#121a28']} />
-      <hemisphereLight args={['#e8f2ff', '#2a3344', 0.85]} />
-      <ambientLight intensity={0.55} />
-      <directionalLight position={[2.4, 5.2, 3.1]} intensity={1.55} color="#fff7ea" />
-      <directionalLight position={[-3.2, 2.8, -1.6]} intensity={0.55} color="#9fd4ff" />
-      <directionalLight position={[0.5, 1.2, 4]} intensity={0.4} color="#ffffff" />
-      <spotLight
-        position={[0, 4.5, 1.5]}
-        angle={0.55}
-        penumbra={0.8}
-        intensity={0.55}
-        color="#ffffff"
-      />
+      <ShowcaseLighting />
 
       <group position={[0, 0.02, 0]}>
         <ProceduralPuck material={skin.material} />

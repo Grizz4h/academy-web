@@ -12993,3 +12993,252 @@ INFO:     141.78.159.27:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS 
 INFO:     141.78.159.27:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
 [scene] updated scene_id=scene_1786644600_dee844 user=christoph
 [scene] updated scene_id=scene_1786644600_dee844 user=christoph
+[checkin:35c6a443] session=Christoph_1787055217 phase_raw='P1' phase_norm='P1' action=append trace_id=9aac2115-aa5d-4c07-ae51-12852120643c trace_action=saveCheckin counts_before={}
+[checkin:35c6a443] session=Christoph_1787055217 counts_after={'P1': 1}
+HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+[reflection] OpenAI call completed in 8.33s model=gpt-5.6-luna
+[reflection] session=Christoph_1787055217 model=gpt-5.6-luna prompt=v1 cached=false
+[checkin:905ecb3b] session=Christoph_1787055321 phase_raw='P1' phase_norm='P1' action=append trace_id=0ce28a97-50e0-4e2c-8ad9-d1bac29fff0f trace_action=saveCheckin counts_before={}
+[checkin:905ecb3b] session=Christoph_1787055321 counts_after={'P1': 1}
+[checkin:47f1bda5] session=Christoph_1787055400 phase_raw='P1' phase_norm='P1' action=append trace_id=914c4133-4b11-40f1-89ba-a7f5af25f862 trace_action=saveCheckin counts_before={}
+[checkin:47f1bda5] session=Christoph_1787055400 counts_after={'P1': 1}
+[checkin:7c93b200] session=Christoph_1787055486 phase_raw='P1' phase_norm='P1' action=append trace_id=67665aca-ef46-45f8-a61f-0c8b3abcdb7c trace_action=saveCheckin counts_before={}
+[checkin:7c93b200] session=Christoph_1787055486 counts_after={'P1': 1}
+[checkin:e905a47e] session=Christoph_1787055564 phase_raw='P1' phase_norm='P1' action=append trace_id=11e4789d-7e82-4a12-a08c-fbc213f40255 trace_action=saveCheckin counts_before={}
+[checkin:e905a47e] session=Christoph_1787055564 counts_after={'P1': 1}
+[checkin:f162094b] session=tobi_1787169699 phase_raw='P1' phase_norm='P1' action=append trace_id=117a2e1a-75ce-4940-8e3c-b04de217358a trace_action=saveCheckin counts_before={}
+[checkin:f162094b] session=tobi_1787169699 counts_after={'P1': 1}
+[microfeedback] session=tobi_1787169699 phase=P1 trace_id=7e91b99f-e177-4b9a-97cb-1ce1e84a019c trace_action=submitMicrofeedback text_len=14
+[checkin:07933bc1] session=tobi_1787169699 phase_raw='POST' phase_norm='POST' action=append trace_id=169e54da-1ca8-4c81-b2d5-d9843ee07df9 trace_action=saveCheckin counts_before={'P1': 1}
+[checkin:07933bc1] session=tobi_1787169699 counts_after={'P1': 1, 'POST': 1}
+[checkin:8ec1be38] session=Christoph_1787170614 phase_raw='P1' phase_norm='P1' action=append trace_id=fc4344f9-9a21-4237-8fbf-10cb84bbe01e trace_action=saveCheckin counts_before={}
+[checkin:8ec1be38] session=Christoph_1787170614 counts_after={'P1': 1}
+[microfeedback] session=Christoph_1787170614 phase=P1 trace_id=5b8b6bc8-c4c8-475a-9a79-55fd8f127642 trace_action=submitMicrofeedback text_len=6
+[checkin:1fe85489] session=Christoph_1787170714 phase_raw='P1' phase_norm='P1' action=append trace_id=11e10a5b-88ad-413f-b9b6-44e407da3807 trace_action=saveCheckin counts_before={}
+[checkin:1fe85489] session=Christoph_1787170714 counts_after={'P1': 1}
+[microfeedback] session=Christoph_1787170714 phase=P1 trace_id=f1fe297e-e308-44a9-b11e-483a0f1eaff9 trace_action=submitMicrofeedback text_len=6
+[checkin:ef43c672] session=Christoph_1787260216 phase_raw='P1' phase_norm='P1' action=append trace_id=cbd4c9f6-6404-49d9-8d3c-127f7c13af21 trace_action=saveCheckin counts_before={}
+[checkin:ef43c672] session=Christoph_1787260216 counts_after={'P1': 1}
+[checkin:22427d21] session=Christoph_1787260350 phase_raw='P1' phase_norm='P1' action=append trace_id=f1f3494f-43a5-4bcb-9cc4-73a72b5d8b6f trace_action=saveCheckin counts_before={}
+[checkin:22427d21] session=Christoph_1787260350 counts_after={'P1': 1}
+[checkin:99845007] session=Christoph_1787260557 phase_raw='P1' phase_norm='P1' action=append trace_id=90825f35-3104-458f-a3f3-58a6f794670c trace_action=saveCheckin counts_before={}
+[checkin:99845007] session=Christoph_1787260557 counts_after={'P1': 1}
+[checkin:2d4fdc08] session=Christoph_1787260717 phase_raw='P1' phase_norm='P1' action=append trace_id=bb4a4a0d-ed03-4505-b13b-91089ca1c39a trace_action=saveCheckin counts_before={}
+[checkin:2d4fdc08] session=Christoph_1787260717 counts_after={'P1': 1}
+[checkin:7a642ae5] session=Christoph_1787260898 phase_raw='P1' phase_norm='P1' action=append trace_id=8f189d67-55ff-4584-a682-34978a214cce trace_action=saveCheckin counts_before={}
+[checkin:7a642ae5] session=Christoph_1787260898 counts_after={'P1': 1}
+[checkin:1b044e05] session=Christoph_1787262141 phase_raw='P1' phase_norm='P1' action=append trace_id=3d14a2db-6ffa-4da8-ab7a-3df336957d90 trace_action=saveCheckin counts_before={}
+[checkin:1b044e05] session=Christoph_1787262141 counts_after={'P1': 1}
+[checkin:76a29f3d] session=Christoph_1787262331 phase_raw='P1' phase_norm='P1' action=append trace_id=9a0dc818-e2e6-4f72-932c-b162e48fa635 trace_action=saveCheckin counts_before={}
+[checkin:76a29f3d] session=Christoph_1787262331 counts_after={'P1': 1}
+[checkin:6ec5bad8] session=Christoph_1787262427 phase_raw='P1' phase_norm='P1' action=append trace_id=4c5f043a-310d-415c-a5e0-9d2ed50dad1a trace_action=saveCheckin counts_before={}
+[checkin:6ec5bad8] session=Christoph_1787262427 counts_after={'P1': 1}
+[checkin:a642b604] session=Christoph_1787262493 phase_raw='P1' phase_norm='P1' action=append trace_id=396c6596-e246-46f1-a0f5-0b9166bde458 trace_action=saveCheckin counts_before={}
+[checkin:a642b604] session=Christoph_1787262493 counts_after={'P1': 1}
+[checkin:f8b5dbdc] session=Christoph_1787262578 phase_raw='P1' phase_norm='P1' action=append trace_id=878827be-d751-41ef-931e-908e275f433c trace_action=saveCheckin counts_before={}
+[checkin:f8b5dbdc] session=Christoph_1787262578 counts_after={'P1': 1}
+[checkin:5715286a] session=Christoph_1787262708 phase_raw='P1' phase_norm='P1' action=append trace_id=9edee42a-5cff-4b51-91d6-b2fc91e6ed32 trace_action=saveCheckin counts_before={}
+[checkin:5715286a] session=Christoph_1787262708 counts_after={'P1': 1}
+nohup: failed to run command 'main.py': No such file or directory
+INFO:     Started server process [24565]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52724 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /api/health HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions HTTP/1.0" 200 OK
+/opt/academy-web/backend/main.py:3496: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
+/opt/academy-web/backend/.venv/lib/python3.12/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 10 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+[AUTH] login attempt user=christoph pw_len=12
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] login ok user=Christoph
+INFO:     141.78.165.123:0 - "POST /api/auth/login HTTP/1.0" 200 OK
+/opt/academy-web/backend/.venv/lib/python3.12/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 10 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/rewards/state HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "POST /api/rewards/apply HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/teams?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] request by user=christoph path=/api/sessions
+INFO:     141.78.165.123:0 - "POST /api/sessions HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions/Christoph_1787294055 HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+[checkin:66903369] session=Christoph_1787294055 phase_raw='P1' phase_norm='P1' action=append trace_id=07b7d999-c703-43ef-869d-076c6a509eb8 trace_action=saveCheckin counts_before={}
+[checkin:66903369] session=Christoph_1787294055 phase_raw='P1' phase_norm='P1' action=append trace_id=07b7d999-c703-43ef-869d-076c6a509eb8 trace_action=saveCheckin counts_before={}
+[checkin:66903369] session=Christoph_1787294055 counts_after={'P1': 1}
+[checkin:66903369] session=Christoph_1787294055 counts_after={'P1': 1}
+INFO:     141.78.165.123:0 - "POST /api/sessions/Christoph_1787294055/checkins HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions/Christoph_1787294055 HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "POST /api/sessions/Christoph_1787294055/post HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions/Christoph_1787294055 HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions/Christoph_1787294055 HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "PUT /api/sessions/Christoph_1787294055/drafts HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "POST /api/rewards/apply HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "POST /api/rewards/apply HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     106.75.188.200:60860 - "POST /token HTTP/1.1" 404 Not Found
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/curriculum HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/games?league=DEL&season=2026%2F27 HTTP/1.0" 200 OK
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+[AUTH] USERS_FILE = /opt/academy-web/backend/../data/academy/users.json
+INFO:     141.78.165.123:0 - "GET /api/me HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+INFO:     141.78.165.123:0 - "GET /api/sessions?user=Christoph&state=IN_PROGRESS HTTP/1.0" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     118.194.234.29:45060 - "GET / HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:50018 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:50026 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:50034 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:50044 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:50056 - "GET /mcp HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:50068 - "GET /mcp-sse HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:48170 - "GET /get_server_info HTTP/1.1" 404 Not Found
+INFO:     118.194.234.29:48174 - "POST /update_weights_from_tensor HTTP/1.1" 404 Not Found
+INFO:     213.209.159.223:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     198.235.24.120:58600 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     93.123.109.228:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     65.49.1.232:36282 - "GET / HTTP/1.1" 404 Not Found
+INFO:     65.49.1.241:56181 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     65.49.1.238:10719 - "GET /?format=json HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     71.6.146.186:40860 - "GET / HTTP/1.1" 404 Not Found
+INFO:     71.6.146.186:41716 - "GET /favicon.ico HTTP/1.1" 404 Not Found

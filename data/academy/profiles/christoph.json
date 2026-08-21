@@ -2,13 +2,13 @@
   "displayName": "Christoph",
   "avatar": {
     "type": "catalog",
-    "avatarId": "avatar_night_circuit"
+    "avatarId": "avatar_goldpuck_01"
   },
   "bannerId": "banner_level_10",
-  "frameId": "frame_slot",
+  "frameId": "frame_rink_rat",
   "emblem": {
     "type": "catalog",
-    "emblemId": "emblem_arrow_01"
+    "emblemId": "emblem_goblin"
   },
   "customEmblemId": null,
   "customEmblems": [],
@@ -40,5 +40,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-17T22:19:39.101815"
+  "updatedAt": "2026-08-20T17:17:25.031640"
 }

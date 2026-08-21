@@ -33,6 +33,19 @@ export type FoundationScenarioOption = {
   label: string
 }
 
+export type FoundationMarkerTeam = 'blue' | 'red' | 'neutral'
+
+export type FoundationMarkerOverride = {
+  cx?: number
+  cy?: number
+  label?: string
+  team?: FoundationMarkerTeam
+  /** Lone puck vs player body */
+  kind?: 'player' | 'puck'
+  /** Player marker with a visible puck attached (recognition cue, not a role label) */
+  hasPuck?: boolean
+}
+
 export type FoundationLessonStep = {
   id: string
   type: FoundationStepType
@@ -44,6 +57,12 @@ export type FoundationLessonStep = {
   highlightRegions?: FoundationRinkRegionId[]
   attackDirection?: FoundationAttackDirection
   showMarkers?: FoundationRinkRegionId[]
+  /** Optional per-step marker placement / labels / team colors */
+  markerOverrides?: Partial<Record<FoundationRinkRegionId, FoundationMarkerOverride>>
+  /** Weak-side half of the ice (top/bottom in horizontal attack view) */
+  weakSideBand?: 'top' | 'bottom'
+  /** Hide the global attack-direction arrow (avoids “Pfeil = Spieler”) */
+  hideAttackArrow?: boolean
   /** Quiz */
   options?: FoundationScenarioOption[]
   correctOptionId?: string

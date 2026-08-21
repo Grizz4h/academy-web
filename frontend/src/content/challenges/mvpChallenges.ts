@@ -215,4 +215,26 @@ export const MVP_CHALLENGES: ChallengeDefinition[] = [
     presentation: { icon: '⚙️', category: 'collection', difficulty: 'medium' },
     enabled: false,
   },
+  {
+    id: 'challenge_collection_ice_cut',
+    type: 'collection',
+    title: 'Ice Cut',
+    description: 'Schließe eine echte Observation ab. Danach ist die Bahn bereit — Fresh Sheet für die Zamboni-Collection.',
+    requirements: [
+      {
+        id: 'ice_cut_session',
+        eventType: 'session_completed',
+        target: 1,
+        label: 'Echte Session',
+        filters: { requireRealSession: true },
+      },
+    ],
+    rewards: [
+      { type: 'pux', amount: 25 },
+      { type: 'cosmetic', cosmeticId: 'sticker_fresh_sheet' },
+    ],
+    collectionId: 'zamboni',
+    presentation: { icon: '🧊', category: 'collection', difficulty: 'easy' },
+    enabled: true,
+  },
 ]

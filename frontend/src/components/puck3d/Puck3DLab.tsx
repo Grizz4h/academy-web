@@ -8,9 +8,15 @@ const Puck3DViewer = lazy(() =>
 const Stick3DViewer = lazy(() =>
   import('./Stick3DViewer').then((mod) => ({ default: mod.Stick3DViewer })),
 )
+const Zamboni3DViewer = lazy(() =>
+  import('../zamboni3d/Zamboni3DViewer').then((mod) => ({ default: mod.Zamboni3DViewer })),
+)
+const GoalieMaskViewer = lazy(() =>
+  import('../collectible3d/GoalieMaskViewer').then((mod) => ({ default: mod.GoalieMaskViewer })),
+)
 
 type BoundaryState = { hasError: boolean }
-type GearTab = 'puck' | 'stick'
+type GearTab = 'puck' | 'stick' | 'zamboni' | 'mask'
 
 class GearErrorBoundary extends Component<{ children: ReactNode }, BoundaryState> {
   state: BoundaryState = { hasError: false }
@@ -36,11 +42,11 @@ class GearErrorBoundary extends Component<{ children: ReactNode }, BoundaryState
   }
 }
 
-/** Dev-only Locker section for 3D gear PoCs (puck + stick). */
+/** Dev-only Locker section for 3D gear PoCs (puck, stick, zamboni, goalie mask). */
 export function Puck3DLab() {
   const [devMode, setDevMode] = useState(() => isDevNavEnabled())
   const [mounted, setMounted] = useState(false)
-  const [gear, setGear] = useState<GearTab>('stick')
+  const [gear, setGear] = useState<GearTab>('mask')
 
   useEffect(() => {
     const sync = () => setDevMode(isDevNavEnabled())
@@ -65,7 +71,7 @@ export function Puck3DLab() {
           <p className={styles.eyebrow}>DEV · 3D LAB</p>
           <h2 className={styles.title}>Gear Prototype</h2>
           <p className={styles.lead}>
-            Proof of Concept: drehbare 3D-Collectibles mit austauschbaren Skins. Noch kein GLB-Asset-System.
+            Proof of Concept: Puck/Stick/Zamboni prozedural, Goalie-Maske als erstes externes GLB plus Mystic-Layer zur Laufzeit.
           </p>
         </div>
       </div>
@@ -89,6 +95,24 @@ export function Puck3DLab() {
         >
           Stick
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={gear === 'zamboni'}
+          className={`ui-tab ${gear === 'zamboni' ? 'is-active' : ''}`}
+          onClick={() => setGear('zamboni')}
+        >
+          Zamboni
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={gear === 'mask'}
+          className={`ui-tab ${gear === 'mask' ? 'is-active' : ''}`}
+          onClick={() => setGear('mask')}
+        >
+          Goalie Mask
+        </button>
       </div>
 
       {mounted && (
@@ -96,8 +120,12 @@ export function Puck3DLab() {
           <Suspense fallback={<div className={styles.loading}>Lade 3D-Viewer…</div>}>
             {gear === 'puck' ? (
               <Puck3DViewer idleRotate showSkinPicker />
-            ) : (
+            ) : gear === 'stick' ? (
               <Stick3DViewer idleRotate showSkinPicker />
+            ) : gear === 'zamboni' ? (
+              <Zamboni3DViewer idleRotate />
+            ) : (
+              <GoalieMaskViewer />
             )}
           </Suspense>
         </GearErrorBoundary>

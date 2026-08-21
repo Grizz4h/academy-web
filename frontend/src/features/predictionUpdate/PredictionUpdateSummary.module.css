@@ -1,0 +1,77 @@
+.stack {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.block {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.heading {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.hero,
+.pair {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #f8fafc;
+  overflow-wrap: anywhere;
+}
+
+.lead {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.triggers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.triggerRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.triggerRow strong {
+  font-weight: 650;
+  color: #ccfbf1;
+}
+
+.preview {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.previewTitle {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ccfbf1;
+}
+
+.previewLine {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.82);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}

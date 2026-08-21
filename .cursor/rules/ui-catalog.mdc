@@ -86,6 +86,8 @@ Klick = Antwort auf die Frage beim Ansehen. Tote Zahlen vermeiden.
 
 `TapReveal` / `KpiRevealCard`: Outside-Click + Escape schließen. Hinweis `.ui-tap-hint`. Kein `<button>` mit Block-`div`-Kindern.
 
+**Exclusive open:** Nur eine Explain-Box gleichzeitig (`useExclusivePopover`) — Glyphs, TapReveal, Track-Map, PUX.
+
 ## Popovers (Viewport — schon 3× schiefgegangen)
 
 Schwebende Panels **immer** `AnchoredPopover`: Portal auf `document.body`, `position: fixed`, an den Viewport klemmen (links/rechts/oben/unten + max-height scroll).

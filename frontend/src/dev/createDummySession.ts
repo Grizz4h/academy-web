@@ -4,6 +4,7 @@ import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { defaultDelSetupSeason } from '../stats/seasonNormalization'
 import { getSessionRoute } from '../features/lab/sessionRouting'
+import { DEFAULT_OBSERVATION_SCOPE } from '../utils/observationScope'
 import { isDummySession } from '../utils/sessionEligibility'
 
 export const DEV_SEED_VERSION = 1
@@ -115,7 +116,7 @@ export function buildDummySessionPayload(input: CreateDummySessionInput & { dril
 		observation_scope:
 			drillRef.trackType === 'foundation' || drillRef.drillType === 'foundation_lesson'
 				? 'LESSON'
-				: 'FULL_GAME',
+				: DEFAULT_OBSERVATION_SCOPE,
 		focus: drillRef.defaultFocus,
 		session_method: drillRef.recommendedSessionMethod || 'live_watch',
 		drill_id: drillRef.drillId,

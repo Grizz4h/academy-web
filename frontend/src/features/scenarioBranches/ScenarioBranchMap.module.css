@@ -1,0 +1,88 @@
+.stack {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.situation,
+.primary,
+.arm {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.primary {
+  border-color: rgba(45, 212, 191, 0.35);
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.armAlt {
+  border-color: rgba(125, 211, 252, 0.35);
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.value {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: #f1f5f9;
+  overflow-wrap: anywhere;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: rgba(226, 232, 240, 0.72);
+  overflow-wrap: anywhere;
+}
+
+.trunk {
+  display: none;
+}
+
+.fork {
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .fork {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .situation,
+  .primary {
+    grid-column: 1 / -1;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .trunk {
+    display: block;
+    grid-column: 1 / -1;
+    height: 18px;
+    border-left: 1px solid rgba(148, 163, 184, 0.35);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .fork {
+    grid-template-columns: 1fr;
+  }
+}

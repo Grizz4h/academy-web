@@ -88,6 +88,14 @@ export const avatarCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
+  {
+    id: 'avatar_zamboni',
+    label: 'RT-81',
+    src: '/profile/avatars/avatar_zamboni.svg',
+    category: 'equipment',
+    tags: ['zamboni', 'ice-crew'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_AVATAR_ID = 'avatar_ice_01'

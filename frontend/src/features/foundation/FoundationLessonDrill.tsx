@@ -2,10 +2,12 @@ import { useEffect, useMemo } from 'react'
 import type { Drill } from '../../api'
 import { getHockeyTermDefinition } from './hockeyTerms'
 import FoundationRink from './FoundationRink'
+import { resolveStableOptionOrder } from './optionOrder'
 import type {
   FoundationLessonConfig,
   FoundationLessonStep,
   FoundationRinkRegionId,
+  FoundationScenarioOption,
 } from './types'
 import styles from './FoundationLessonDrill.module.css'
 
@@ -62,6 +64,7 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
   const step = steps[clampedIndex]
   const stepStates = (answers.stepStates as Record<string, StepState> | undefined) || {}
   const currentState = step ? stepStates[step.id] || {} : {}
+  const optionOrderByStep = (answers.optionOrderByStep as Record<string, string[]> | undefined) || {}
 
   const updateState = (patch: Partial<StepState>) => {
     if (!step) return
@@ -71,6 +74,28 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
     }
     setAnswers({ ...answers, stepIndex: clampedIndex, stepStates: nextStates })
   }
+
+  const scenarioOptions = useMemo(() => {
+    if (!step || step.type !== 'scenario_choice') {
+      return { ordered: [] as FoundationScenarioOption[], ids: [] as string[], created: false }
+    }
+    const options = step.options || []
+    return resolveStableOptionOrder(options, optionOrderByStep[step.id])
+  }, [optionOrderByStep, step])
+
+  useEffect(() => {
+    if (!step || step.type !== 'scenario_choice') return
+    if (!scenarioOptions.created) return
+    setAnswers({
+      ...answers,
+      optionOrderByStep: {
+        ...optionOrderByStep,
+        [step.id]: scenarioOptions.ids,
+      },
+    })
+    // Persist shuffle once per step for this session draft
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step?.id, scenarioOptions.created, scenarioOptions.ids.join('|')])
 
   useEffect(() => {
     if (!step || step.type !== 'completion_summary') return
@@ -88,6 +113,21 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
     // intentionally only when landing on summary step
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step?.id, step?.type])
+
+  // D1–D4 end without completion_summary: unlock Session-CTA once last step is correct
+  useEffect(() => {
+    if (!step || steps.length === 0) return
+    if (clampedIndex !== steps.length - 1) return
+    if (!isStepComplete(step, currentState)) return
+    if (answers.foundationComplete) return
+    setAnswers({
+      ...answers,
+      stepIndex: clampedIndex,
+      stepStates,
+      foundationComplete: true,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step?.id, clampedIndex, steps.length, currentState.revealed, currentState.correct, answers.foundationComplete])
 
   const goNext = () => {
     if (clampedIndex >= steps.length - 1) {
@@ -150,9 +190,6 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
       : []
 
   const canAdvance = isStepComplete(step, currentState)
-  const allDone = Boolean(answers.foundationComplete) || (
-    clampedIndex === steps.length - 1 && canAdvance
-  )
 
   return (
     <div className={styles.wrap}>
@@ -166,17 +203,27 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
 
       <h3 className={styles.prompt}>{step.prompt}</h3>
 
+      {term && step.type !== 'completion_summary' && (
+        <details className={styles.termHint}>
+          <summary>Begriff: {term.term}</summary>
+          <p>{term.short}</p>
+        </details>
+      )}
+
       {(step.type === 'identify_region' || Boolean(step.showMarkers?.length) || Boolean(step.highlightRegions?.length)) && (
         <FoundationRink
           attackDirection={step.attackDirection || 'right'}
           highlightRegions={
             currentState.revealed && currentState.correct
               ? (step.highlightRegions || step.correctRegions || [])
-              : (step.highlightRegions || [])
+              : []
           }
           interactiveRegions={interactiveRegions}
           selectedRegion={currentState.selectedRegion || null}
           showMarkers={step.showMarkers || []}
+          markerOverrides={step.markerOverrides || {}}
+          weakSideBand={step.weakSideBand || 'top'}
+          hideAttackArrow={Boolean(step.hideAttackArrow)}
           onSelectRegion={step.type === 'identify_region' ? handleRegion : undefined}
           disabled={Boolean(currentState.correct)}
         />
@@ -184,7 +231,7 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
 
       {step.type === 'scenario_choice' && (
         <div className={styles.options} role="listbox" aria-label="Antwortoptionen">
-          {(step.options || []).map((opt) => {
+          {scenarioOptions.ordered.map((opt) => {
             const selected = currentState.selectedOptionId === opt.id
             const showResult = currentState.revealed && selected
             return (
@@ -261,16 +308,23 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
           <button
             type="button"
             className={`${styles.navBtn} ${styles.navPrimary}`}
-            onClick={() => setAnswers({ ...answers, foundationComplete: true, stepStates, stepIndex: clampedIndex })}
+            onClick={() => {
+              setAnswers({
+                ...answers,
+                stepIndex: clampedIndex,
+                stepStates,
+                foundationComplete: true,
+              })
+            }}
             disabled={!canAdvance}
           >
-            {allDone ? '✓ Lektion fertig' : 'Lektion fertig markieren'}
+            {answers.foundationComplete ? '✓ Bereit zum Speichern' : 'Lektion abschließen'}
           </button>
         )}
       </div>
-      {allDone && (
+      {Boolean(answers.foundationComplete) && (
         <p className={styles.completeHint}>
-          Fertig. Tippe unten auf <strong>Session abschließen</strong>, um die Lektion zu speichern.
+          Unten auf <strong>Session abschließen</strong> tippen — das speichert den Fortschritt.
         </p>
       )}
     </div>

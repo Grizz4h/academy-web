@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
+import { claimExclusivePopover, subscribeExclusivePopover } from '../ui/useExclusivePopover'
 import styles from './TrackProgressMap.module.css'
 
 export type TrackProgressNode = {
@@ -29,11 +30,14 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
+  const exclusiveId = `${panelId}:track-map`
+
+  useEffect(() => subscribeExclusivePopover(exclusiveId, () => setOpenId(null)), [exclusiveId])
 
   useEffect(() => {
     if (!openId) return
 
-    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node | null
       if (triggerRef.current?.contains(target)) return
       if (popoverRef.current?.contains(target)) return
@@ -43,12 +47,10 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
       if (event.key === 'Escape') setOpenId(null)
     }
 
-    document.addEventListener('mousedown', onPointerDown)
-    document.addEventListener('touchstart', onPointerDown)
+    document.addEventListener('pointerdown', onPointerDown, true)
     document.addEventListener('keydown', onKeyDown)
     return () => {
-      document.removeEventListener('mousedown', onPointerDown)
-      document.removeEventListener('touchstart', onPointerDown)
+      document.removeEventListener('pointerdown', onPointerDown, true)
       document.removeEventListener('keydown', onKeyDown)
     }
   }, [openId])
@@ -69,8 +71,8 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
             {index > 0 && <span className={styles.connector} aria-hidden="true" />}
             <span className={styles.wrap}>
               <button
-                ref={(node) => {
-                  if (open) triggerRef.current = node
+                ref={(el) => {
+                  if (open) triggerRef.current = el
                 }}
                 type="button"
                 className={styles.node}
@@ -81,7 +83,11 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
                 onClick={(event) => {
                   event.preventDefault()
                   event.stopPropagation()
-                  setOpenId((current) => (current === node.id ? null : node.id))
+                  setOpenId((current) => {
+                    const next = current === node.id ? null : node.id
+                    if (next) claimExclusivePopover(exclusiveId)
+                    return next
+                  })
                 }}
               >
                 <span className={styles.dot} aria-hidden="true" />

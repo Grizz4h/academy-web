@@ -181,12 +181,13 @@
   -webkit-backdrop-filter: blur(5px);
   opacity: 0;
   transition: opacity 210ms ease;
-  pointer-events: auto;
+  pointer-events: none;
   border: 0;
 }
 
 .rootVisible .overlay {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* Gold/Mastery get stronger dim */
@@ -204,8 +205,12 @@
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  pointer-events: auto;
+  pointer-events: none;
   cursor: pointer;
+}
+
+.rootVisible .stack {
+  pointer-events: auto;
 }
 
 .toastStack {
@@ -220,8 +225,14 @@
 .toastPanel,
 .heroPanel {
   opacity: 0;
-  pointer-events: auto;
+  pointer-events: none;
   will-change: transform, opacity;
+}
+
+.rootVisible .panel,
+.rootVisible .toastPanel,
+.rootVisible .heroPanel {
+  pointer-events: auto;
 }
 
 .panel,

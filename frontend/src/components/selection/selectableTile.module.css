@@ -1,0 +1,77 @@
+/* iOS Photos–style multi-select chrome for list/grid tiles */
+
+.shell {
+  position: relative;
+  transition:
+    opacity 160ms ease,
+    filter 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.shellSelecting {
+  cursor: pointer;
+}
+
+.shellSelecting :global(button),
+.shellSelecting :global(a),
+.shellSelecting :global(input),
+.shellSelecting :global(textarea),
+.shellSelecting :global(select) {
+  pointer-events: none;
+}
+
+.shellDimmed {
+  opacity: 0.48;
+  filter: grayscale(0.35) brightness(0.72);
+}
+
+.shellSelected {
+  opacity: 1;
+  filter: none;
+  transform: translateY(-1px);
+  outline: 1.5px solid rgba(45, 212, 191, 0.72);
+  outline-offset: 2px;
+  box-shadow: 0 12px 28px rgba(8, 24, 40, 0.35);
+}
+
+.checkbox {
+  position: absolute;
+  top: 0.65rem;
+  left: 0.65rem;
+  z-index: 3;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(226, 232, 240, 0.55);
+  background: rgba(8, 16, 32, 0.55);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.checkboxOn {
+  border-color: rgba(45, 212, 191, 0.95);
+  background: rgba(20, 184, 166, 0.95);
+}
+
+.checkMark {
+  width: 0.42rem;
+  height: 0.7rem;
+  border: solid rgba(4, 16, 24, 0.95);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .shellSelecting:hover {
+    opacity: 0.72;
+    filter: grayscale(0.15) brightness(0.88);
+  }
+
+  .shellSelected:hover {
+    opacity: 1;
+    filter: none;
+  }
+}

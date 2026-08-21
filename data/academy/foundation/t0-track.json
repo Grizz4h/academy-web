@@ -6,6 +6,7 @@
     "description": "Foundation-Track für absolute Anfänger. Optional — kein Zwang für erfahrene Spieler.",
     "trackType": "foundation",
     "supportsMastery": false,
+    "requiresMicrofeedback": false,
     "foundationLabel": "FOUNDATION · TRACK 0",
     "modules": [
       {
@@ -41,8 +42,9 @@
                   "type": "identify_region",
                   "prompt": "Tippe auf die Neutral Zone.",
                   "termId": "neutral_zone",
-                  "correctRegions": ["neutral_zone"],
-                  "highlightRegions": ["neutral_zone"],
+                  "correctRegions": [
+                    "neutral_zone"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Die Neutral Zone liegt zwischen den beiden Blue Lines.",
                   "gentleWrong": "Fast. Die Neutral Zone ist der mittlere Bereich zwischen den blauen Linien."
@@ -52,7 +54,9 @@
                   "type": "identify_region",
                   "prompt": "Dein Team greift nach rechts an. Welche Zone ist die offensive Zone?",
                   "termId": "offensive_zone",
-                  "correctRegions": ["offensive_zone"],
+                  "correctRegions": [
+                    "offensive_zone"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Die offensive Zone ist das Drittel vor dem gegnerischen Tor — hier greifst du an.",
                   "gentleWrong": "Schau, wohin der Pfeil zeigt: Die offensive Zone liegt vor dem gegnerischen Tor."
@@ -62,7 +66,9 @@
                   "type": "identify_region",
                   "prompt": "Und welche Zone verteidigst du?",
                   "termId": "defensive_zone",
-                  "correctRegions": ["defensive_zone"],
+                  "correctRegions": [
+                    "defensive_zone"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Die Defensive Zone ist das Drittel vor deinem eigenen Tor.",
                   "gentleWrong": "Die Defensive Zone liegt vor deinem eigenen Tor — links, wenn du nach rechts angreifst."
@@ -72,8 +78,9 @@
                   "type": "identify_region",
                   "prompt": "Wo liegt der Slot?",
                   "termId": "slot",
-                  "correctRegions": ["slot"],
-                  "highlightRegions": ["slot"],
+                  "correctRegions": [
+                    "slot"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Der Slot ist der zentrale gefährliche Raum direkt vor dem Tor.",
                   "gentleWrong": "Der Slot liegt zentral vor dem Tor — einer der gefährlichsten Bereiche."
@@ -83,7 +90,9 @@
                   "type": "identify_region",
                   "prompt": "Markiere den Net Front — direkt vor dem Tor.",
                   "termId": "net_front",
-                  "correctRegions": ["net_front"],
+                  "correctRegions": [
+                    "net_front"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Net Front (Torraum) ist der Bereich unmittelbar vor dem Tor — Screens und Rebounds entstehen hier.",
                   "gentleWrong": "Net Front liegt noch näher am Tor als der Slot — direkt vor dem Goalie."
@@ -94,10 +103,22 @@
                   "prompt": "Was markieren die blauen Linien auf dem Eis?",
                   "termId": "blue_line",
                   "options": [
-                    { "id": "zones", "label": "Zonengrenzen zwischen Defensive, Neutral und Offensive" },
-                    { "id": "offside", "label": "Nur die Abseitslinie" },
-                    { "id": "penalty", "label": "Strafzonen" },
-                    { "id": "center", "label": "Die Mittellinie" }
+                    {
+                      "id": "zones",
+                      "label": "Zonengrenzen zwischen Defensive, Neutral und Offensive"
+                    },
+                    {
+                      "id": "offside",
+                      "label": "Nur die Abseitslinie"
+                    },
+                    {
+                      "id": "penalty",
+                      "label": "Strafzonen"
+                    },
+                    {
+                      "id": "center",
+                      "label": "Die Mittellinie"
+                    }
                   ],
                   "correctOptionId": "zones",
                   "explanation": "Die Blue Lines teilen das Eis in drei Zonen. Sie sind zentrale Übergangspunkte im Spiel.",
@@ -109,10 +130,22 @@
                   "prompt": "Was passiert an den Faceoff Dots (Bullypunkten)?",
                   "termId": "faceoff",
                   "options": [
-                    { "id": "faceoff", "label": "Ein Faceoff — Spielbeginn oder -unterbrechung" },
-                    { "id": "goal", "label": "Ein Tor wird gezählt" },
-                    { "id": "icing", "label": "Icing wird gepfiffen" },
-                    { "id": "penalty", "label": "Eine Strafe beginnt" }
+                    {
+                      "id": "faceoff",
+                      "label": "Ein Faceoff — Spielbeginn oder -unterbrechung"
+                    },
+                    {
+                      "id": "goal",
+                      "label": "Ein Tor wird gezählt"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing wird gepfiffen"
+                    },
+                    {
+                      "id": "penalty",
+                      "label": "Eine Strafe beginnt"
+                    }
                   ],
                   "correctOptionId": "faceoff",
                   "explanation": "An den Bullypunkten startet das Spiel neu — nach Toren, Verstößen oder Pausen.",
@@ -138,8 +171,12 @@
                   "type": "identify_region",
                   "prompt": "Tippe auf den Goalie — wer schützt das Tor?",
                   "termId": "goalie",
-                  "correctRegions": ["goalie_spot"],
-                  "showMarkers": ["goalie_spot"],
+                  "correctRegions": [
+                    "goalie_spot"
+                  ],
+                  "showMarkers": [
+                    "goalie_spot"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Der Goalie ist die letzte Verteidigungslinie und schützt das Tor.",
                   "gentleWrong": "Der Goalie steht im Tor — er ist der einzige Spieler, der den Puck mit der Hand stoppen darf."
@@ -150,10 +187,22 @@
                   "prompt": "Wo stehen die Verteidiger bei einem normalen Anspiel ungefähr?",
                   "termId": "defense",
                   "options": [
-                    { "id": "behind", "label": "Näher am eigenen Tor, etwas hinter den Stürmern" },
-                    { "id": "net_front", "label": "Immer direkt vor dem gegnerischen Tor" },
-                    { "id": "neutral", "label": "Nur in der Neutral Zone" },
-                    { "id": "bench", "label": "Auf der Bank" }
+                    {
+                      "id": "behind",
+                      "label": "Näher am eigenen Tor, etwas hinter den Stürmern"
+                    },
+                    {
+                      "id": "net_front",
+                      "label": "Immer direkt vor dem gegnerischen Tor"
+                    },
+                    {
+                      "id": "neutral",
+                      "label": "Nur in der Neutral Zone"
+                    },
+                    {
+                      "id": "bench",
+                      "label": "Auf der Bank"
+                    }
                   ],
                   "correctOptionId": "behind",
                   "explanation": "Defensemen spielen näher am eigenen Tor und unterstützen Aufbau und Verteidigung von hinten.",
@@ -165,10 +214,22 @@
                   "prompt": "Was macht ein Center typischerweise?",
                   "termId": "center",
                   "options": [
-                    { "id": "connect", "label": "Verbindet Angriff und Defensive, spielt oft zentral" },
-                    { "id": "only_goal", "label": "Steht nur vor dem gegnerischen Tor" },
-                    { "id": "never_defend", "label": "Verteidigt nie" },
-                    { "id": "goalie_backup", "label": "Ist der zweite Goalie" }
+                    {
+                      "id": "connect",
+                      "label": "Verbindet Angriff und Defensive, spielt oft zentral"
+                    },
+                    {
+                      "id": "only_goal",
+                      "label": "Steht nur vor dem gegnerischen Tor"
+                    },
+                    {
+                      "id": "never_defend",
+                      "label": "Verteidigt nie"
+                    },
+                    {
+                      "id": "goalie_backup",
+                      "label": "Ist der zweite Goalie"
+                    }
                   ],
                   "correctOptionId": "connect",
                   "explanation": "Der Center ist flexibel — er verbindet Mitspieler und wechselt zwischen Support und Absicherung.",
@@ -180,10 +241,22 @@
                   "prompt": "Was ist die typische Aufgabe eines Wing?",
                   "termId": "wing",
                   "options": [
-                    { "id": "width", "label": "Breite und Tiefe über die Seiten bringen" },
-                    { "id": "center_only", "label": "Nur in der Mitte spielen" },
-                    { "id": "referee", "label": "Schiedsrichter assistieren" },
-                    { "id": "goalie_train", "label": "Den Goalie trainieren" }
+                    {
+                      "id": "width",
+                      "label": "Breite und Tiefe über die Seiten bringen"
+                    },
+                    {
+                      "id": "center_only",
+                      "label": "Nur in der Mitte spielen"
+                    },
+                    {
+                      "id": "referee",
+                      "label": "Schiedsrichter assistieren"
+                    },
+                    {
+                      "id": "goalie_train",
+                      "label": "Den Goalie trainieren"
+                    }
                   ],
                   "correctOptionId": "width",
                   "explanation": "Wings spielen an den Seiten und bringen Breite ins Spiel — oft erste Anspielstation am Board.",
@@ -194,23 +267,67 @@
                   "type": "identify_region",
                   "prompt": "Welcher Spieler ist hier der Puckführer?",
                   "termId": "puck_carrier",
-                  "correctRegions": ["puck_carrier"],
-                  "showMarkers": ["puck_carrier", "support_player", "defense_left"],
+                  "correctRegions": [
+                    "puck_carrier"
+                  ],
+                  "showMarkers": [
+                    "puck_carrier",
+                    "support_player",
+                    "defense_left"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Der Puckführer kontrolliert den Puck — alle anderen reagieren auf seine Bewegung.",
-                  "gentleWrong": "Der Puckführer hat den Puck — hier ist der markierte Spieler mit dem Puck."
+                  "gentleWrong": "Der Puckführer hat den Puck — hier ist der markierte Spieler mit dem Puck.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "label": "Blau",
+                      "team": "blue",
+                      "hasPuck": true
+                    },
+                    "support_player": {
+                      "label": "Blau",
+                      "team": "blue"
+                    },
+                    "defense_left": {
+                      "label": "Rot",
+                      "team": "red"
+                    }
+                  }
                 },
                 {
                   "id": "d2_support",
                   "type": "identify_region",
-                  "prompt": "Wer bietet dem Puckführer die unmittelbarste Unterstützung?",
+                  "prompt": "Wer ist der Support — die nahe Anspielstation für den Puckführer?",
                   "termId": "support",
-                  "correctRegions": ["support_player"],
-                  "showMarkers": ["puck_carrier", "support_player", "defense_left"],
+                  "correctRegions": [
+                    "support_player"
+                  ],
+                  "showMarkers": [
+                    "puck_carrier",
+                    "support_player",
+                    "defense_left"
+                  ],
                   "attackDirection": "right",
                   "explanation": "Support bedeutet: eine sichere Anspieloption in Pucknähe — nicht zu nah, nicht zu weit.",
                   "gentleWrong": "Support ist der Mitspieler, der dem Puckführer eine Passoption bietet.",
-                  "whyImportant": "Ohne Support hat der Puckführer keine sichere Ausweichoption unter Druck."
+                  "whyImportant": "Ohne Support hat der Puckführer keine sichere Ausweichoption unter Druck.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "label": "Blau",
+                      "team": "blue",
+                      "hasPuck": true
+                    },
+                    "support_player": {
+                      "label": "Blau",
+                      "team": "blue"
+                    },
+                    "defense_left": {
+                      "label": "Rot",
+                      "team": "red"
+                    }
+                  }
                 }
               ]
             }
@@ -230,35 +347,92 @@
                 {
                   "id": "d3_offside_yes",
                   "type": "scenario_choice",
-                  "prompt": "Der Angreifer (Pfeil) betritt die Zone vor dem Puck. Abseits oder kein Abseits?",
+                  "prompt": "Der Angreifer ist schon in der Offensivzone, der Puck noch davor. Abseits oder kein Abseits?",
                   "termId": "offside",
                   "attackDirection": "right",
-                  "showMarkers": ["puck_carrier"],
-                  "highlightRegions": ["offensive_zone", "blue_line_far"],
+                  "showMarkers": [
+                    "puck_carrier",
+                    "support_player"
+                  ],
                   "options": [
-                    { "id": "offside", "label": "Offside (Abseits)" },
-                    { "id": "no", "label": "Kein Offside" },
-                    { "id": "icing", "label": "Icing" },
-                    { "id": "penalty", "label": "Strafe" }
+                    {
+                      "id": "offside",
+                      "label": "Offside (Abseits)"
+                    },
+                    {
+                      "id": "no",
+                      "label": "Kein Offside"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    },
+                    {
+                      "id": "penalty",
+                      "label": "Strafe"
+                    }
                   ],
                   "correctOptionId": "offside",
-                  "explanation": "Offside: Ein Angreifer betritt die offensive Zone, bevor der Puck die Blue Line überquert hat.",
-                  "gentleWrong": "Hier ist Offside — der Spieler war in der Zone, bevor der Puck ankam."
+                  "explanation": "Offside: Der Angreifer ist in der Offensivzone, bevor der Puck die Blue Line überquert hat.",
+                  "gentleWrong": "Hier ist Offside — Angreifer schon in der Zone, Puck noch davor.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 248,
+                      "cy": 120,
+                      "label": "Puck",
+                      "team": "blue"
+                    },
+                    "support_player": {
+                      "cx": 300,
+                      "cy": 100,
+                      "label": "Angreifer",
+                      "team": "blue"
+                    }
+                  }
                 },
                 {
                   "id": "d3_offside_no",
                   "type": "scenario_choice",
-                  "prompt": "Der Puck überquert die Blue Line zuerst, dann folgt der Angreifer. Abseits?",
+                  "prompt": "Der Puck ist zuerst über die Blue Line, der Angreifer folgt danach. Abseits?",
                   "termId": "offside",
                   "attackDirection": "right",
                   "options": [
-                    { "id": "offside", "label": "Offside" },
-                    { "id": "no", "label": "Kein Offside — legaler Entry" },
-                    { "id": "icing", "label": "Icing" }
+                    {
+                      "id": "offside",
+                      "label": "Offside"
+                    },
+                    {
+                      "id": "no",
+                      "label": "Kein Offside — legaler Entry"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    }
                   ],
                   "correctOptionId": "no",
                   "explanation": "Kein Offside — der Puck war zuerst in der Zone. Das ist ein legaler Zone Entry.",
-                  "gentleWrong": "Kein Offside hier — entscheidend ist, dass der Puck die Linie vor dem Spieler überquert."
+                  "gentleWrong": "Kein Offside hier — entscheidend ist, dass der Puck die Linie vor dem Spieler überquert.",
+                  "showMarkers": [
+                    "puck_carrier",
+                    "support_player"
+                  ],
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 295,
+                      "cy": 120,
+                      "label": "Puck",
+                      "team": "blue"
+                    },
+                    "support_player": {
+                      "cx": 255,
+                      "cy": 110,
+                      "label": "Angreifer",
+                      "team": "blue"
+                    }
+                  }
                 },
                 {
                   "id": "d3_icing",
@@ -267,10 +441,22 @@
                   "termId": "icing",
                   "attackDirection": "right",
                   "options": [
-                    { "id": "icing", "label": "Icing" },
-                    { "id": "offside", "label": "Offside" },
-                    { "id": "penalty", "label": "Strafe" },
-                    { "id": "nothing", "label": "Nichts" }
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    },
+                    {
+                      "id": "offside",
+                      "label": "Offside"
+                    },
+                    {
+                      "id": "penalty",
+                      "label": "Strafe"
+                    },
+                    {
+                      "id": "nothing",
+                      "label": "Nichts"
+                    }
                   ],
                   "correctOptionId": "icing",
                   "explanation": "Icing: Puck aus der eigenen Hälfte unberührt über die gegnerische Goal Line — Spiel wird unterbrochen.",
@@ -282,10 +468,22 @@
                   "prompt": "Eine Mannschaft erhält eine Strafe. Was verändert sich?",
                   "termId": "penalty",
                   "options": [
-                    { "id": "pp", "label": "Der Gegner spielt vorübergehend mit einem Spieler mehr" },
-                    { "id": "same", "label": "Nichts — es bleiben 5 gegen 5" },
-                    { "id": "stop", "label": "Das Spiel endet sofort" },
-                    { "id": "goal", "label": "Automatisch ein Tor" }
+                    {
+                      "id": "pp",
+                      "label": "Der Gegner spielt vorübergehend mit einem Spieler mehr"
+                    },
+                    {
+                      "id": "same",
+                      "label": "Nichts — es bleiben 5 gegen 5"
+                    },
+                    {
+                      "id": "stop",
+                      "label": "Das Spiel endet sofort"
+                    },
+                    {
+                      "id": "goal",
+                      "label": "Automatisch ein Tor"
+                    }
                   ],
                   "correctOptionId": "pp",
                   "explanation": "Bei einer Strafe spielt das andere Team im Powerplay (5 gegen 4) — Unterzahl heißt Penalty Kill.",
@@ -297,10 +495,22 @@
                   "prompt": "Dein Team hat einen Spieler mehr. Wie heißt diese Situation?",
                   "termId": "powerplay",
                   "options": [
-                    { "id": "pp", "label": "Powerplay" },
-                    { "id": "pk", "label": "Penalty Kill" },
-                    { "id": "icing", "label": "Icing" },
-                    { "id": "faceoff", "label": "Faceoff" }
+                    {
+                      "id": "pp",
+                      "label": "Powerplay"
+                    },
+                    {
+                      "id": "pk",
+                      "label": "Penalty Kill"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    },
+                    {
+                      "id": "faceoff",
+                      "label": "Faceoff"
+                    }
                   ],
                   "correctOptionId": "pp",
                   "explanation": "Powerplay = Überzahl. Penalty Kill = Unterzahl. Im MVP reicht 5v4 als Grundfall.",
@@ -312,10 +522,22 @@
                   "prompt": "Eine Strafe wird angezeigt, aber noch nicht gepfiffen — der Gegner hat noch den Puck. Was ist das?",
                   "termId": "delayed_penalty",
                   "options": [
-                    { "id": "delayed", "label": "Delayed Penalty — Pfiff kommt, wenn die bestrafte Mannschaft den Puck erlangt" },
-                    { "id": "offside", "label": "Offside" },
-                    { "id": "goal", "label": "Tor sofort gültig" },
-                    { "id": "nothing", "label": "Keine Regel — freies Spiel" }
+                    {
+                      "id": "delayed",
+                      "label": "Delayed Penalty — Pfiff kommt, wenn die bestrafte Mannschaft den Puck erlangt"
+                    },
+                    {
+                      "id": "offside",
+                      "label": "Offside"
+                    },
+                    {
+                      "id": "goal",
+                      "label": "Tor sofort gültig"
+                    },
+                    {
+                      "id": "nothing",
+                      "label": "Keine Regel — freies Spiel"
+                    }
                   ],
                   "correctOptionId": "delayed",
                   "explanation": "Delayed Penalty: Die bestrafte Mannschaft darf den Puck noch halten — der Pfiff kommt erst bei Puckkontrolle.",
@@ -327,10 +549,22 @@
                   "prompt": "Am Ende eines Spiels zieht ein Team den Goalie vom Eis. Wie heißt das?",
                   "termId": "empty_net",
                   "options": [
-                    { "id": "empty", "label": "Empty Net — Extra-Stürmer für mehr Offensivdruck" },
-                    { "id": "penalty", "label": "Automatische Strafe" },
-                    { "id": "icing", "label": "Icing" },
-                    { "id": "injury", "label": "Verletzungspflicht" }
+                    {
+                      "id": "empty",
+                      "label": "Empty Net — Extra-Stürmer für mehr Offensivdruck"
+                    },
+                    {
+                      "id": "penalty",
+                      "label": "Automatische Strafe"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    },
+                    {
+                      "id": "injury",
+                      "label": "Verletzungspflicht"
+                    }
                   ],
                   "correctOptionId": "empty",
                   "explanation": "Empty Net: Tor bleibt leer für einen sechsten Feldspieler — meist in den letzten Minuten bei Rückstand.",
@@ -357,16 +591,39 @@
                   "prompt": "Ein Spieler trägt den Puck über die offensive Blue Line. Was passiert hier?",
                   "termId": "entry",
                   "attackDirection": "right",
-                  "highlightRegions": ["offensive_zone", "blue_line_far"],
                   "options": [
-                    { "id": "entry", "label": "Entry — Puck kommt in die offensive Zone" },
-                    { "id": "exit", "label": "Exit — Team verlässt die Zone" },
-                    { "id": "icing", "label": "Icing" },
-                    { "id": "faceoff", "label": "Faceoff" }
+                    {
+                      "id": "entry",
+                      "label": "Entry — Puck kommt in die offensive Zone"
+                    },
+                    {
+                      "id": "exit",
+                      "label": "Exit — Team verlässt die Zone"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    },
+                    {
+                      "id": "faceoff",
+                      "label": "Faceoff"
+                    }
                   ],
                   "correctOptionId": "entry",
                   "explanation": "Entry: Ein Team bringt den Puck kontrolliert in die offensive Zone.",
-                  "gentleWrong": "Hier geht es um einen Entry — der Puck betritt die offensive Zone."
+                  "gentleWrong": "Hier geht es um einen Entry — der Puck betritt die offensive Zone.",
+                  "showMarkers": [
+                    "puck_carrier"
+                  ],
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 285,
+                      "cy": 120,
+                      "label": "Puck",
+                      "team": "blue"
+                    }
+                  }
                 },
                 {
                   "id": "d4_exit",
@@ -374,12 +631,23 @@
                   "prompt": "Das Team versucht kontrolliert aus der eigenen Zone herauszukommen. Was ist das?",
                   "termId": "exit",
                   "attackDirection": "right",
-                  "highlightRegions": ["defensive_zone"],
                   "options": [
-                    { "id": "exit", "label": "Exit / Breakout-Vorbereitung" },
-                    { "id": "forecheck", "label": "Forecheck" },
-                    { "id": "entry", "label": "Entry" },
-                    { "id": "offside", "label": "Offside" }
+                    {
+                      "id": "exit",
+                      "label": "Exit / Breakout-Vorbereitung"
+                    },
+                    {
+                      "id": "forecheck",
+                      "label": "Forecheck"
+                    },
+                    {
+                      "id": "entry",
+                      "label": "Entry"
+                    },
+                    {
+                      "id": "offside",
+                      "label": "Offside"
+                    }
                   ],
                   "correctOptionId": "exit",
                   "explanation": "Exit: Kontrolliertes Verlassen der eigenen Zone — oft Teil eines Breakouts.",
@@ -388,13 +656,29 @@
                 {
                   "id": "d4_weak_side",
                   "type": "identify_region",
-                  "prompt": "Der Puck liegt rechts (Pfeil). Welche Seite ist die Weak Side?",
+                  "prompt": "Der Puckführer steht unten (Puck-Seite). Tippe die Weak Side — die Seite ohne Puck.",
                   "termId": "weak_side",
-                  "correctRegions": ["weak_side"],
-                  "showMarkers": ["puck_carrier"],
+                  "correctRegions": [
+                    "weak_side"
+                  ],
+                  "showMarkers": [
+                    "puck_carrier"
+                  ],
                   "attackDirection": "right",
-                  "explanation": "Weak Side = die Seite ohne Puck. Dort ist oft mehr freier Raum für Umleitungen.",
-                  "gentleWrong": "Weak Side ist die Seite ohne Puck — hier links, wenn der Puck rechts liegt."
+                  "explanation": "Weak Side = die Seite ohne Puck. Hier liegt der Puck unten → Weak Side ist oben.",
+                  "gentleWrong": "Weak Side ist die freie Seite ohne Puck — nicht die Seite, auf der der Puckführer steht.",
+                  "hideAttackArrow": true,
+                  "weakSideBand": "top",
+                  "highlightRegions": [],
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 255,
+                      "cy": 185,
+                      "label": "Blau · Puck",
+                      "team": "blue",
+                      "hasPuck": true
+                    }
+                  }
                 },
                 {
                   "id": "d4_gap",
@@ -402,10 +686,22 @@
                   "prompt": "Was beschreibt „Gap“ zwischen Puckführer und Verteidiger?",
                   "termId": "gap",
                   "options": [
-                    { "id": "distance", "label": "Den Abstand zwischen Puckführer und Verteidiger" },
-                    { "id": "goal", "label": "Die Torlinie" },
-                    { "id": "bench", "label": "Die Auswechselbank" },
-                    { "id": "faceoff", "label": "Den Bullypunkt" }
+                    {
+                      "id": "distance",
+                      "label": "Den Abstand zwischen Puckführer und Verteidiger"
+                    },
+                    {
+                      "id": "goal",
+                      "label": "Die Torlinie"
+                    },
+                    {
+                      "id": "bench",
+                      "label": "Die Auswechselbank"
+                    },
+                    {
+                      "id": "faceoff",
+                      "label": "Den Bullypunkt"
+                    }
                   ],
                   "correctOptionId": "distance",
                   "explanation": "Gap = Abstand zwischen Angreifer und Verteidiger.",
@@ -413,15 +709,71 @@
                   "whyImportant": "Der Gap beeinflusst, wie viel Raum und Zeit der Angreifer hat."
                 },
                 {
+                  "id": "d4_height",
+                  "type": "scenario_choice",
+                  "prompt": "Was meinen Low, Middle und High bei einem Spieler?",
+                  "termId": "low_middle_high",
+                  "options": [
+                    {
+                      "id": "relative",
+                      "label": "Wo er relativ zum aktuellen Spiel steht — hinter, dazwischen oder davor"
+                    },
+                    {
+                      "id": "stripes",
+                      "label": "Drei feste horizontale Streifen auf dem Eis"
+                    },
+                    {
+                      "id": "zones",
+                      "label": "Ob er in der Defensive, Neutral oder Offensive Zone ist"
+                    },
+                    {
+                      "id": "score",
+                      "label": "Ob das Team führt, unentschieden oder zurückliegt"
+                    }
+                  ],
+                  "correctOptionId": "relative",
+                  "explanation": "Low / Middle / High beschreibt die Höhe relativ zum aktuellen Spiel, nicht eine gemalte Zone auf dem Eis.",
+                  "gentleWrong": "Nicht drei Streifen und nicht die drei Zonen — sondern: steht der Spieler eher hinter, in oder vor dem aktuellen Spiel?",
+                  "whyImportant": "Später suchst du den Center genau so: hinter dem Spiel (Low), auf Verbindungshöhe (Middle) oder davor (High)."
+                },
+                {
                   "id": "d4_support",
                   "type": "identify_region",
-                  "prompt": "Welcher Spieler bietet die unmittelbarste Unterstützung?",
+                  "prompt": "Wer bietet dem Puckführer die unmittelbarste Anspielstation (Support)?",
                   "termId": "support",
-                  "correctRegions": ["support_player"],
-                  "showMarkers": ["puck_carrier", "support_player", "wing_left"],
+                  "correctRegions": [
+                    "support_player"
+                  ],
+                  "showMarkers": [
+                    "puck_carrier",
+                    "support_player",
+                    "wing_left"
+                  ],
                   "attackDirection": "right",
-                  "explanation": "Support = sichere Anspieloption für den Puckführer.",
-                  "gentleWrong": "Support ist der Mitspieler mit der besten Passoption — nicht der Verteidiger."
+                  "explanation": "Support = Mitspieler mit der besten, nahen Passoption für den Puckführer — nicht der Puckführer selbst.",
+                  "gentleWrong": "Nicht den Puckführer tippen — Support ist die nahe Anspielstation daneben.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 250,
+                      "cy": 130,
+                      "label": "Blau",
+                      "team": "blue",
+                      "hasPuck": true
+                    },
+                    "support_player": {
+                      "cx": 225,
+                      "cy": 85,
+                      "label": "Blau",
+                      "team": "blue"
+                    },
+                    "wing_left": {
+                      "cx": 270,
+                      "cy": 45,
+                      "label": "Blau (weiter)",
+                      "team": "blue"
+                    }
+                  }
                 },
                 {
                   "id": "d4_forecheck",
@@ -429,10 +781,22 @@
                   "prompt": "Nach Besitzverlust übt das Team Druck auf den Gegner im gegnerischen Drittel aus. Was ist das?",
                   "termId": "forecheck",
                   "options": [
-                    { "id": "forecheck", "label": "Forecheck" },
-                    { "id": "breakout", "label": "Breakout" },
-                    { "id": "reset", "label": "Reset" },
-                    { "id": "icing", "label": "Icing" }
+                    {
+                      "id": "forecheck",
+                      "label": "Forecheck"
+                    },
+                    {
+                      "id": "breakout",
+                      "label": "Breakout"
+                    },
+                    {
+                      "id": "reset",
+                      "label": "Reset"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    }
                   ],
                   "correctOptionId": "forecheck",
                   "explanation": "Forecheck: Aktiver Druck nach Ballverlust, um den Puck schnell zurückzugewinnen.",
@@ -444,12 +808,23 @@
                   "prompt": "Puck in der eigenen Zone — das Team versucht strukturiert herauszukommen. Was versucht es?",
                   "termId": "breakout",
                   "attackDirection": "right",
-                  "highlightRegions": ["defensive_zone"],
                   "options": [
-                    { "id": "breakout", "label": "Breakout — kontrolliert aus der eigenen Zone" },
-                    { "id": "forecheck", "label": "Forecheck" },
-                    { "id": "entry", "label": "Entry in die offensive Zone" },
-                    { "id": "empty_net", "label": "Empty Net" }
+                    {
+                      "id": "breakout",
+                      "label": "Breakout — kontrolliert aus der eigenen Zone"
+                    },
+                    {
+                      "id": "forecheck",
+                      "label": "Forecheck"
+                    },
+                    {
+                      "id": "entry",
+                      "label": "Entry in die offensive Zone"
+                    },
+                    {
+                      "id": "empty_net",
+                      "label": "Empty Net"
+                    }
                   ],
                   "correctOptionId": "breakout",
                   "explanation": "Breakout: Organisierter Aufbau und Exit aus der Defensive Zone.",
@@ -461,10 +836,22 @@
                   "prompt": "Nach einem Puckgewinn in der Neutral Zone geht es sofort nach vorne. Was ist das?",
                   "termId": "transition",
                   "options": [
-                    { "id": "transition", "label": "Transition — schneller Phasenwechsel" },
-                    { "id": "icing", "label": "Icing" },
-                    { "id": "faceoff", "label": "Faceoff" },
-                    { "id": "penalty", "label": "Strafe" }
+                    {
+                      "id": "transition",
+                      "label": "Transition — schneller Phasenwechsel"
+                    },
+                    {
+                      "id": "icing",
+                      "label": "Icing"
+                    },
+                    {
+                      "id": "faceoff",
+                      "label": "Faceoff"
+                    },
+                    {
+                      "id": "penalty",
+                      "label": "Strafe"
+                    }
                   ],
                   "correctOptionId": "transition",
                   "explanation": "Transition: Schneller Wechsel von Defensive zu Offensive (oder umgekehrt).",
@@ -490,65 +877,182 @@
                   "type": "scenario_choice",
                   "prompt": "In welcher Zone liegt der Puck?",
                   "attackDirection": "right",
-                  "showMarkers": ["puck_carrier"],
-                  "highlightRegions": ["neutral_zone"],
+                  "showMarkers": [
+                    "puck_carrier"
+                  ],
                   "options": [
-                    { "id": "dz", "label": "Defensive Zone" },
-                    { "id": "nz", "label": "Neutral Zone" },
-                    { "id": "oz", "label": "Offensive Zone" },
-                    { "id": "unclear", "label": "Unklar" }
+                    {
+                      "id": "dz",
+                      "label": "Defensive Zone"
+                    },
+                    {
+                      "id": "nz",
+                      "label": "Neutral Zone"
+                    },
+                    {
+                      "id": "oz",
+                      "label": "Offensive Zone"
+                    },
+                    {
+                      "id": "unclear",
+                      "label": "Unklar"
+                    }
                   ],
                   "correctOptionId": "nz",
                   "explanation": "Der Puck liegt in der Neutral Zone — zwischen den Blue Lines.",
-                  "gentleWrong": "Schau auf die Zone-Markierung: Der Puck ist in der Neutral Zone."
+                  "gentleWrong": "Schau auf die Zone-Markierung: Der Puck ist in der Neutral Zone.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 200,
+                      "cy": 120,
+                      "label": "Puck",
+                      "kind": "puck"
+                    }
+                  }
                 },
                 {
                   "id": "d5_possession",
                   "type": "scenario_choice",
-                  "prompt": "Welches Team (blau) hat den Puck?",
-                  "showMarkers": ["puck_carrier", "defense_left"],
+                  "prompt": "Welches Team hat den Puck?",
+                  "showMarkers": [
+                    "puck_carrier",
+                    "defense_left"
+                  ],
                   "options": [
-                    { "id": "blue", "label": "Team Blau" },
-                    { "id": "red", "label": "Team Rot" },
-                    { "id": "contested", "label": "Umkämpft" },
-                    { "id": "unclear", "label": "Unklar" }
+                    {
+                      "id": "blue",
+                      "label": "Team Blau"
+                    },
+                    {
+                      "id": "red",
+                      "label": "Team Rot"
+                    },
+                    {
+                      "id": "contested",
+                      "label": "Umkämpft"
+                    },
+                    {
+                      "id": "unclear",
+                      "label": "Unklar"
+                    }
                   ],
                   "correctOptionId": "blue",
-                  "explanation": "Team Blau kontrolliert den Puck — der markierte Spieler führt.",
-                  "gentleWrong": "Der Puck ist beim blauen Spieler — Team Blau hat Besitz."
+                  "explanation": "Der gelbe Puck sitzt beim blauen Spieler — Team Blau hat Besitz. Rot steht ohne Puck dagegen.",
+                  "gentleWrong": "Schau, bei wem der gelbe Puck liegt — nicht nur die Teamfarbe.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 235,
+                      "cy": 120,
+                      "label": "Blau",
+                      "team": "blue",
+                      "hasPuck": true
+                    },
+                    "defense_left": {
+                      "cx": 155,
+                      "cy": 95,
+                      "label": "Rot",
+                      "team": "red"
+                    }
+                  }
                 },
                 {
                   "id": "d5_pressure",
                   "type": "scenario_choice",
-                  "prompt": "Wer übt Druck auf den Puckführer aus?",
-                  "showMarkers": ["puck_carrier", "defense_left"],
+                  "prompt": "Wer übt Druck auf den Spieler mit dem Puck aus?",
+                  "showMarkers": [
+                    "puck_carrier",
+                    "defense_left"
+                  ],
                   "options": [
-                    { "id": "red", "label": "Team Rot" },
-                    { "id": "blue", "label": "Team Blau" },
-                    { "id": "low", "label": "Wenig klarer Druck" },
-                    { "id": "unclear", "label": "Unklar" }
+                    {
+                      "id": "red",
+                      "label": "Team Rot"
+                    },
+                    {
+                      "id": "blue",
+                      "label": "Team Blau"
+                    },
+                    {
+                      "id": "low",
+                      "label": "Wenig klarer Druck"
+                    },
+                    {
+                      "id": "unclear",
+                      "label": "Unklar"
+                    }
                   ],
                   "correctOptionId": "red",
-                  "explanation": "Der rote Verteidiger geht auf den Puckführer zu — Team Rot übt Druck aus.",
-                  "gentleWrong": "Druck kommt vom Gegner — hier vom roten Verteidiger."
+                  "explanation": "Der rote Spieler steht nah am Spieler mit dem Puck und geht darauf zu — Team Rot übt Druck aus.",
+                  "gentleWrong": "Druck kommt vom Gegner nah am Puck — hier vom roten Spieler.",
+                  "hideAttackArrow": true,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 245,
+                      "cy": 125,
+                      "label": "Blau",
+                      "team": "blue",
+                      "hasPuck": true
+                    },
+                    "defense_left": {
+                      "cx": 210,
+                      "cy": 108,
+                      "label": "Rot",
+                      "team": "red"
+                    }
+                  }
                 },
                 {
                   "id": "d5_action",
                   "type": "scenario_choice",
-                  "prompt": "Was versucht Team Blau wahrscheinlich gerade?",
+                  "prompt": "Blau hat den Puck in der Neutralzone. Ein Mitspieler steht schon näher an der offensiven Blue Line. Was versucht Blau wahrscheinlich?",
                   "attackDirection": "right",
-                  "showMarkers": ["puck_carrier", "support_player"],
-                  "highlightRegions": ["neutral_zone", "offensive_zone"],
+                  "showMarkers": [
+                    "puck_carrier",
+                    "support_player"
+                  ],
                   "options": [
-                    { "id": "transition", "label": "Transition / Zone Entry vorbereiten" },
-                    { "id": "forecheck", "label": "Forecheck in der gegnerischen Zone" },
-                    { "id": "breakout", "label": "Breakout aus der eigenen Zone" },
-                    { "id": "reset", "label": "Reset in der Defensive" },
-                    { "id": "unclear", "label": "Unklar" }
+                    {
+                      "id": "transition",
+                      "label": "Transition / Zone Entry vorbereiten"
+                    },
+                    {
+                      "id": "forecheck",
+                      "label": "Forecheck in der gegnerischen Zone"
+                    },
+                    {
+                      "id": "breakout",
+                      "label": "Breakout aus der eigenen Zone"
+                    },
+                    {
+                      "id": "reset",
+                      "label": "Reset in der Defensive"
+                    },
+                    {
+                      "id": "unclear",
+                      "label": "Unklar"
+                    }
                   ],
                   "correctOptionId": "transition",
-                  "explanation": "Mit Puck in der Neutral Zone und Support nach vorne: wahrscheinlich Transition Richtung Entry.",
-                  "gentleWrong": "Puck in der Mitte mit Vorwärtsdrang — eher Transition als Breakout oder Forecheck."
+                  "explanation": "Puck in der Neutralzone + Mitspieler Richtung Offensivzone: typisch Transition / Vorbereitung auf den Zone Entry — nicht Breakout (eigene Zone) und nicht Forecheck (ohne eigenen Puck).",
+                  "gentleWrong": "Puck ist in der Mitte, Mitspieler voraus Richtung Angriffszone — eher Transition/Entry als Breakout oder Forecheck.",
+                  "hideAttackArrow": false,
+                  "markerOverrides": {
+                    "puck_carrier": {
+                      "cx": 210,
+                      "cy": 130,
+                      "label": "Blau",
+                      "team": "blue",
+                      "hasPuck": true
+                    },
+                    "support_player": {
+                      "cx": 268,
+                      "cy": 95,
+                      "label": "Blau voraus",
+                      "team": "blue"
+                    }
+                  }
                 },
                 {
                   "id": "d5_complete",

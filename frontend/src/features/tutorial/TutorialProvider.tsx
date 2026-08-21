@@ -46,7 +46,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const definition = getTutorialDefinition(MAIN_ID)
   const features = useMemo(() => getTutorialFeatures(), [])
 
-  const { data: account } = useQuery({
+  const { data: account, isFetched: accountFetched } = useQuery({
     queryKey: ['me', user],
     queryFn: () => api.getMe(),
     enabled: Boolean(user),
@@ -60,7 +60,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     staleTime: 60_000,
   })
 
-  const { data: sessions } = useQuery({
+  const { data: sessions, isFetched: sessionsFetched } = useQuery({
     queryKey: ['sessions', user],
     queryFn: () => api.getSessions(user || undefined),
     enabled: Boolean(user),
@@ -119,6 +119,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
       setSurfaceOverride(null)
       return
     }
+    if (!accountFetched) return
     const local = readLocalProgress(user, MAIN_ID, definition.version)
     const remote = progressFromPreferences(
       account?.profile?.dashboardPreferences as Record<string, unknown> | undefined,
@@ -137,7 +138,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     setShowComplete(false)
     setSurfaceOverride(null)
     setHydrated(true)
-  }, [user, account?.profile?.updatedAt, definition.version])
+  }, [user, accountFetched, account?.profile?.updatedAt, definition.version])
 
   const persist = useCallback((next: TutorialProgress) => {
     if (!user) return
@@ -175,6 +176,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const surface: TutorialSurface = useMemo(() => {
     if (!user || !hydrated) return 'none'
+    if (!sessionsFetched) return 'none'
     if (surfaceOverride === 'end-confirm') return 'end-confirm'
     if (showComplete) return 'complete'
     if (active) return 'active'
@@ -182,7 +184,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     if (progress.status === 'in_progress') return 'resume'
     if (progress.status === 'not_started' && completedSessionCount === 0) return 'welcome'
     return 'none'
-  }, [user, hydrated, surfaceOverride, showComplete, active, snoozed, progress.status, completedSessionCount])
+  }, [user, hydrated, sessionsFetched, surfaceOverride, showComplete, active, snoozed, progress.status, completedSessionCount])
 
   const resolveStepRoute = useCallback((step: TutorialStep): string | undefined => {
     if (!step.route) return undefined

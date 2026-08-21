@@ -149,6 +149,29 @@ assert(progress.xpToNextLevel > 0, 'xp to next level positive')
   assertEqual(progressSecret.met, true, 'unclear achievement met')
 }
 
+{
+  const def = getTankAchievement('ice_reader')!
+  assert(Boolean(def), 'ice_reader catalog entry exists')
+  const locked = evaluateAchievementProgress(def, [
+    buildSessionCompletedEvent({
+      sessionId: 'e4-d1',
+      drillId: 'E4_D1',
+      trackId: 'E4',
+      mechanicIds: ['anticipation_read'],
+    }),
+  ])
+  assertEqual(locked.met, false, 'ice_reader locked without profile mechanic')
+  const unlocked = evaluateAchievementProgress(def, [
+    buildSessionCompletedEvent({
+      sessionId: 'e4-d5',
+      drillId: 'E4_D5',
+      trackId: 'E4',
+      mechanicIds: ['anticipation_profile'],
+    }),
+  ])
+  assertEqual(unlocked.met, true, 'ice_reader unlocks from anticipation_profile')
+}
+
 // Bootstrap from historical sessions excludes dummy
 {
   const sessions = [

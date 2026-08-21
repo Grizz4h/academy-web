@@ -1,4 +1,4 @@
-export type DrillRendererVersion = 'v1' | 'v2' | 'v3' | 'v4'
+export type DrillRendererVersion = 'v2' | 'v4'
 
 type DrillLike = {
   drill_type?: string
@@ -9,23 +9,17 @@ type DrillLike = {
 }
 
 /**
- * Renderer selection is mechanic-driven, not track-letter-driven.
+ * Product rendering is V2 + feature modules + curriculum config.
+ * Track letters do not select a renderer.
  *
- * - V4: Meta-Scan
- * - V1: A1 legacy only
- * - V2: everything else (including Track E period_checkin + modern mechanics)
- * - V3: deprecated leftover from piece-wise ChatGPT iteration; no longer selected
+ * - V4: Meta-Scan only (parked; may later fold into V2 + config)
+ * - V2: every other drill, including A1–E and Track 0
  */
 export function pickRendererVersion(moduleId?: string, drill?: DrillLike | null): DrillRendererVersion {
   const type = String(drill?.drill_type || '').toLowerCase()
 
   if (type === 'meta_scan' || moduleId?.startsWith('M') || moduleId?.includes('META')) {
     return 'v4'
-  }
-
-  // A1 remains on the frozen legacy renderer.
-  if (moduleId === 'A1') {
-    return 'v1'
   }
 
   return 'v2'

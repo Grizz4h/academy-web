@@ -1,0 +1,58 @@
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.block {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.heading {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.hero {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+
+.insight {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 116, 144, 0.12);
+  color: rgba(226, 232, 240, 0.95);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.preview {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.previewTitle {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ccfbf1;
+}
+
+.previewLine {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.82);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}

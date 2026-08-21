@@ -1,6 +1,6 @@
 .ui-anchored-popover {
   position: fixed;
-  z-index: 200;
+  z-index: 220;
   box-sizing: border-box;
   /* Canonical inner inset — consumers should not override to 0 */
   padding: 1rem 1.05rem 1.05rem;
@@ -11,4 +11,22 @@
     0 12px 28px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
   color: rgba(226, 232, 240, 0.92);
+  opacity: 0;
+  transform: translate3d(0, 6px, 0);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+  will-change: opacity, transform;
+}
+
+.ui-anchored-popover--placed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-anchored-popover {
+    transition: none;
+    transform: none;
+  }
 }

@@ -35,6 +35,10 @@ export const SHOP_LISTINGS: ShopListing[] = [
   { id: 'shop_banner_nz_goblin', cosmeticId: 'banner_neutral_zone_goblin_shop', pricePux: 300, availability: 'evergreen', category: 'Banners' },
   { id: 'shop_tagline_structure', cosmeticId: 'tagline_shop_structure_lite', pricePux: 110, availability: 'evergreen', category: 'Taglines' },
   { id: 'shop_title_observer', cosmeticId: 'title_shop_quiet_observer', pricePux: 170, availability: 'evergreen', category: 'Titles' },
+  { id: 'shop_title_ice_captain', cosmeticId: 'title_ice_captain', pricePux: 420, availability: 'evergreen', category: 'Titles' },
+  { id: 'shop_emblem_zamboni', cosmeticId: 'emblem_zamboni', pricePux: 480, availability: 'evergreen', category: 'Emblems' },
+  { id: 'shop_banner_zamboni', cosmeticId: 'banner_zamboni_shift', pricePux: 720, availability: 'evergreen', category: 'Banners' },
+  { id: 'shop_avatar_zamboni', cosmeticId: 'avatar_zamboni', pricePux: 1100, availability: 'evergreen', category: 'Avatare' },
 ]
 
 export const SHOP_BY_ID: Record<string, ShopListing> = Object.fromEntries(

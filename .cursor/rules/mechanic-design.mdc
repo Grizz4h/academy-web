@@ -1,0 +1,20 @@
+---
+description: Drill-Mechaniken modular, wiederverwendbar, config-driven — nie pro Drill-ID hardcoden
+globs: frontend/src/features/**/*.{ts,tsx},frontend/src/renderers/**/*.{ts,tsx},frontend/src/components/DrillRenderer*.tsx,frontend/src/components/drillRendererRouting.ts
+alwaysApply: false
+---
+
+# Mechanic Design
+
+Vor neuer Drill-UI oder neuem Scoring:
+
+1. **Zuerst lesen:** `docs/ai-rules/mechanic-design.md`.
+2. Bestehende `frontend/src/features/` und `config.mechanic` prüfen.
+3. Wiederverwenden oder erweitern. Nur dann ein neues generisches Modul.
+4. Kein `if (drill.id === 'A1_D3')`. Kein neuer Renderer für einen Track. Produkt-Renderer ist V2 + Config; V4 nur Meta-Scan.
+5. Verhalten in Code, Instanz in Curriculum-JSON.
+6. `decision_analysis`: Druck-/Lösungs-/Ursachen-/Anschluss-Proben + Mustersynthese — config über `observationLayers` / Mode, kein B2-Sonder-Renderer.
+7. `defensive_observation`: Zugriff/Wirkung/Support/Sequenz/Muster — Layers routen bestehende UIs; kein B3-Sonder-Renderer, keine Systemlehre.
+8. `system_observation`: C1 eigene Zone, C2 Neutral Zone, C3 Offensive Zone — Layers routen bestehende UIs; Zweck/Struktur vor Namen; Zonen und spätere Tracks nicht vermischen.
+
+**Abschlussbericht:** reused / extended / created + mechanic id + welche anderen Drills es nutzen können.

@@ -54,6 +54,8 @@ export interface Track {
   description?: string
   /** e.g. "foundation" for Track 0 — prefer metadata over id hardcodes */
   trackType?: string
+  /** When false, live period microfeedback is not part of this track (Track 0 lessons). */
+  requiresMicrofeedback?: boolean
   supportsMastery?: boolean
   foundationLabel?: string
   modules: Module[]

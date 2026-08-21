@@ -1,4 +1,9 @@
-import type { FoundationAttackDirection, FoundationRinkRegionId } from './types'
+import type {
+  FoundationAttackDirection,
+  FoundationMarkerOverride,
+  FoundationMarkerTeam,
+  FoundationRinkRegionId,
+} from './types'
 import styles from './FoundationRink.module.css'
 
 type MarkerSpec = {
@@ -7,17 +12,20 @@ type MarkerSpec = {
   cy: number
   label: string
   kind: 'player' | 'puck' | 'zone'
+  team?: FoundationMarkerTeam
+  hasPuck?: boolean
 }
 
 const MARKERS: Record<string, MarkerSpec> = {
-  goalie_spot: { id: 'goalie_spot', cx: 48, cy: 120, label: 'G', kind: 'player' },
-  defense_left: { id: 'defense_left', cx: 110, cy: 85, label: 'LD', kind: 'player' },
-  defense_right: { id: 'defense_right', cx: 110, cy: 155, label: 'RD', kind: 'player' },
-  center_spot: { id: 'center_spot', cx: 200, cy: 120, label: 'C', kind: 'player' },
-  wing_left: { id: 'wing_left', cx: 240, cy: 55, label: 'LW', kind: 'player' },
-  wing_right: { id: 'wing_right', cx: 240, cy: 185, label: 'RW', kind: 'player' },
-  puck_carrier: { id: 'puck_carrier', cx: 250, cy: 120, label: 'P', kind: 'puck' },
-  support_player: { id: 'support_player', cx: 220, cy: 75, label: 'S', kind: 'player' },
+  goalie_spot: { id: 'goalie_spot', cx: 48, cy: 120, label: 'Torwart', kind: 'player', team: 'blue' },
+  defense_left: { id: 'defense_left', cx: 110, cy: 85, label: 'Verteidiger', kind: 'player', team: 'red' },
+  defense_right: { id: 'defense_right', cx: 110, cy: 155, label: 'Verteidiger', kind: 'player', team: 'red' },
+  center_spot: { id: 'center_spot', cx: 200, cy: 120, label: 'Center', kind: 'player', team: 'blue' },
+  wing_left: { id: 'wing_left', cx: 240, cy: 55, label: 'Flügel', kind: 'player', team: 'blue' },
+  wing_right: { id: 'wing_right', cx: 240, cy: 185, label: 'Flügel', kind: 'player', team: 'blue' },
+  // Recognition cue = attached puck, not the word "Puckführer"
+  puck_carrier: { id: 'puck_carrier', cx: 250, cy: 120, label: 'Spieler', kind: 'player', team: 'blue', hasPuck: true },
+  support_player: { id: 'support_player', cx: 220, cy: 75, label: 'Mitspieler', kind: 'player', team: 'blue' },
 }
 
 /** Zone edges meet exactly at the blue lines — no gap, no overlap. */
@@ -34,6 +42,9 @@ type FoundationRinkProps = {
   interactiveRegions?: FoundationRinkRegionId[]
   selectedRegion?: FoundationRinkRegionId | null
   showMarkers?: FoundationRinkRegionId[]
+  markerOverrides?: Partial<Record<FoundationRinkRegionId, FoundationMarkerOverride>>
+  weakSideBand?: 'top' | 'bottom'
+  hideAttackArrow?: boolean
   onSelectRegion?: (region: FoundationRinkRegionId) => void
   disabled?: boolean
 }
@@ -42,12 +53,22 @@ function flipX(x: number, attack: FoundationAttackDirection): number {
   return attack === 'left' ? 400 - x : x
 }
 
+function teamClass(team: FoundationMarkerTeam | undefined, kind: MarkerSpec['kind']): string {
+  if (kind === 'puck') return styles.puck
+  if (team === 'red') return styles.playerRed
+  if (team === 'blue') return styles.playerBlue
+  return styles.player
+}
+
 export default function FoundationRink({
   attackDirection = 'right',
   highlightRegions = [],
   interactiveRegions = [],
   selectedRegion = null,
   showMarkers = [],
+  markerOverrides = {},
+  weakSideBand = 'top',
+  hideAttackArrow = false,
   onSelectRegion,
   disabled = false,
 }: FoundationRinkProps) {
@@ -68,11 +89,33 @@ export default function FoundationRink({
     onSelectRegion(id)
   }
 
-  // Weak side is a half-rink overlay — only when that step actually needs it
+  // Only reveal weak-side overlay after selection / correct feedback — never while merely tappable
   const weakSideActive =
     selectedRegion === 'weak_side'
     || highlightRegions.includes('weak_side')
-    || isInteractive('weak_side')
+
+  const weakY = weakSideBand === 'bottom' ? ZONE_Y + ZONE_H / 2 : ZONE_Y
+  const showDirectionArrow = !hideAttackArrow && showMarkers.length === 0
+
+  const resolvedMarkers = showMarkers.map((id) => {
+    const base = MARKERS[id]
+    if (!base) return null
+    const override = markerOverrides[id] || {}
+    const kind = override.kind ?? base.kind
+    const hasPuck = override.hasPuck ?? base.hasPuck ?? kind === 'puck'
+    return {
+      ...base,
+      cx: override.cx ?? base.cx,
+      cy: override.cy ?? base.cy,
+      label: override.label ?? base.label,
+      team: override.team ?? base.team,
+      kind,
+      hasPuck: kind === 'puck' ? true : Boolean(hasPuck),
+    }
+  }).filter(Boolean) as MarkerSpec[]
+
+  const hasTeams = resolvedMarkers.some((m) => m.team === 'blue' || m.team === 'red')
+  const hasPuckLegend = resolvedMarkers.some((m) => m.hasPuck)
 
   return (
     <div className={styles.wrap}>
@@ -85,7 +128,6 @@ export default function FoundationRink({
         <g transform={attack === 'left' ? 'translate(400,0) scale(-1,1)' : undefined}>
           <rect className={styles.board} x="12" y="12" width="376" height="216" rx="36" />
 
-          {/* Zones: DZ | NZ | OZ — abut at blue lines */}
           <rect
             className={regionClass('defensive_zone')}
             x={ICE_LEFT}
@@ -111,7 +153,6 @@ export default function FoundationRink({
             onClick={() => handle('offensive_zone')}
           />
 
-          {/* Lines on top of zone fills */}
           <line
             className={`${styles.blueLine} ${regionClass('blue_line_near')}`}
             x1={BLUE_NEAR}
@@ -146,7 +187,6 @@ export default function FoundationRink({
           />
           <line className={styles.goalLine} x1="352" y1="70" x2="352" y2="170" />
 
-          {/* Slot + net front (offensive end) */}
           <rect
             className={regionClass('slot')}
             x="300"
@@ -166,11 +206,9 @@ export default function FoundationRink({
             onClick={() => handle('net_front')}
           />
 
-          {/* Goals */}
           <rect className={styles.goal} x="36" y="105" width="12" height="30" rx="2" />
           <rect className={styles.goal} x="352" y="105" width="12" height="30" rx="2" />
 
-          {/* Faceoff dots */}
           <circle
             className={regionClass('faceoff_dot')}
             cx="85"
@@ -187,36 +225,48 @@ export default function FoundationRink({
             <rect
               className={`${regionClass('weak_side')} ${styles.weakSide}`}
               x={ICE_LEFT}
-              y={ZONE_Y}
-              width={200 - ICE_LEFT}
-              height={ZONE_H}
+              y={weakY}
+              width={ICE_RIGHT - ICE_LEFT}
+              height={ZONE_H / 2}
               onClick={() => handle('weak_side')}
             />
           )}
 
-          {/* Attack arrow hint */}
-          <path
-            className={styles.attackArrow}
-            d="M175 30 L225 30 L215 22 M225 30 L215 38"
-            fill="none"
-          />
+          {showDirectionArrow && (
+            <path
+              className={styles.attackArrow}
+              d="M175 30 L225 30 L215 22 M225 30 L215 38"
+              fill="none"
+            />
+          )}
         </g>
 
-        {showMarkers.map((id) => {
-          const m = MARKERS[id]
-          if (!m) return null
+        {resolvedMarkers.map((m) => {
           const cx = flipX(m.cx, attack)
           const cy = m.cy
-          const interactive = isInteractive(id)
+          const interactive = isInteractive(m.id)
+          const lonePuck = m.kind === 'puck'
+          const showPlayer = !lonePuck
+          const showPuck = Boolean(m.hasPuck)
           return (
             <g
-              key={id}
-              className={`${styles.marker} ${selectedRegion === id ? styles.markerSelected : ''} ${interactive ? styles.interactive : ''}`}
-              onClick={() => handle(id)}
+              key={m.id}
+              className={`${styles.marker} ${selectedRegion === m.id ? styles.markerSelected : ''} ${interactive ? styles.interactive : ''}`}
+              onClick={() => handle(m.id)}
               transform={`translate(${cx}, ${cy})`}
             >
-              <circle r={m.kind === 'puck' ? 10 : 14} className={m.kind === 'puck' ? styles.puck : styles.player} />
-              <text y={4} textAnchor="middle" className={styles.markerLabel}>
+              {showPlayer ? (
+                <circle r={12} className={teamClass(m.team, 'player')} />
+              ) : null}
+              {showPuck ? (
+                <circle
+                  className={styles.puck}
+                  r={lonePuck ? 9 : 5}
+                  cx={lonePuck ? 0 : 9}
+                  cy={lonePuck ? 0 : 7}
+                />
+              ) : null}
+              <text y={showPlayer ? 24 : 18} textAnchor="middle" className={styles.markerCaption}>
                 {m.label}
               </text>
             </g>
@@ -224,10 +274,17 @@ export default function FoundationRink({
         })}
       </svg>
 
-      <div className={styles.legend} aria-hidden="true">
-        <span>DZ</span>
-        <span>NZ</span>
-        <span>OZ</span>
+      <div className={styles.legend}>
+        <span>Defensivzone</span>
+        <span>Neutralzone</span>
+        <span>Offensivzone</span>
+        {hasTeams && (
+          <>
+            <span className={styles.legendBlue}>Blau</span>
+            <span className={styles.legendRed}>Rot</span>
+          </>
+        )}
+        {hasPuckLegend ? <span className={styles.legendPuck}>gelber Punkt = Puck</span> : null}
         <span className={styles.legendAttack}>
           Angriff {attack === 'right' ? '→' : '←'}
         </span>

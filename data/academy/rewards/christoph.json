@@ -1,6 +1,6 @@
 {
   "currency": {
-    "PUX": 1935
+    "PUX": 2475
   },
   "unlockedAchievements": {
     "first-drill-complete": {
@@ -155,6 +155,11 @@
       "id": "powerplay_regular",
       "unlockedAt": "2026-08-08T09:41:31.589Z",
       "sourceEventId": "sidequest_completed:34b5e231-56b4-435e-8724-9cc44d48442a"
+    },
+    "two_way_student": {
+      "id": "two_way_student",
+      "unlockedAt": "2026-08-18T14:19:56.224710",
+      "sourceEventId": "track_completed:T0:v1"
     }
   },
   "unlockedMasteries": {
@@ -505,6 +510,66 @@
         "averageAccuracy": null,
         "perfectRuns": 0
       }
+    },
+    "T0_D1:bronze": {
+      "key": "T0_D1:bronze",
+      "drillId": "T0_D1",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-18T14:14:34.989926",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "T0_D2:bronze": {
+      "key": "T0_D2:bronze",
+      "drillId": "T0_D2",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-18T14:16:22.358244",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "T0_D3:bronze": {
+      "key": "T0_D3:bronze",
+      "drillId": "T0_D3",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-18T14:17:50.155053",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "T0_D4:bronze": {
+      "key": "T0_D4:bronze",
+      "drillId": "T0_D4",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-18T14:19:05.273416",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
+    },
+    "T0_D5:bronze": {
+      "key": "T0_D5:bronze",
+      "drillId": "T0_D5",
+      "tier": "bronze",
+      "unlockedAt": "2026-08-18T14:19:56.224710",
+      "rewardPux": 10,
+      "statsSnapshot": {
+        "runs": 1,
+        "averageAccuracy": null,
+        "perfectRuns": 0
+      }
     }
   },
   "processedSessions": {
@@ -702,9 +767,94 @@
       "sessionId": "Christoph_1786643514",
       "grantedAt": "2026-08-13T20:10:39.374861",
       "pux": 20
+    },
+    "Christoph_1787055217": {
+      "sessionId": "Christoph_1787055217",
+      "grantedAt": "2026-08-18T14:14:34.989926",
+      "pux": 20
+    },
+    "Christoph_1787055321": {
+      "sessionId": "Christoph_1787055321",
+      "grantedAt": "2026-08-18T14:16:22.358244",
+      "pux": 20
+    },
+    "Christoph_1787055400": {
+      "sessionId": "Christoph_1787055400",
+      "grantedAt": "2026-08-18T14:17:50.155053",
+      "pux": 20
+    },
+    "Christoph_1787055486": {
+      "sessionId": "Christoph_1787055486",
+      "grantedAt": "2026-08-18T14:19:05.273416",
+      "pux": 20
+    },
+    "Christoph_1787055564": {
+      "sessionId": "Christoph_1787055564",
+      "grantedAt": "2026-08-18T14:19:56.224710",
+      "pux": 20
+    },
+    "Christoph_1787260216": {
+      "sessionId": "Christoph_1787260216",
+      "grantedAt": "2026-08-20T23:11:26.396502",
+      "pux": 10
+    },
+    "Christoph_1787260350": {
+      "sessionId": "Christoph_1787260350",
+      "grantedAt": "2026-08-20T23:15:46.452157",
+      "pux": 10
+    },
+    "Christoph_1787260557": {
+      "sessionId": "Christoph_1787260557",
+      "grantedAt": "2026-08-20T23:18:25.966540",
+      "pux": 10
+    },
+    "Christoph_1787260717": {
+      "sessionId": "Christoph_1787260717",
+      "grantedAt": "2026-08-20T23:21:32.085036",
+      "pux": 10
+    },
+    "Christoph_1787260898": {
+      "sessionId": "Christoph_1787260898",
+      "grantedAt": "2026-08-20T23:23:03.617900",
+      "pux": 10
+    },
+    "Christoph_1787262141": {
+      "sessionId": "Christoph_1787262141",
+      "grantedAt": "2026-08-20T23:42:50.497553",
+      "pux": 10
+    },
+    "Christoph_1787262331": {
+      "sessionId": "Christoph_1787262331",
+      "grantedAt": "2026-08-20T23:46:09.154938",
+      "pux": 10
+    },
+    "Christoph_1787262427": {
+      "sessionId": "Christoph_1787262427",
+      "grantedAt": "2026-08-20T23:47:58.977590",
+      "pux": 10
+    },
+    "Christoph_1787262493": {
+      "sessionId": "Christoph_1787262493",
+      "grantedAt": "2026-08-20T23:49:24.253327",
+      "pux": 10
+    },
+    "Christoph_1787262578": {
+      "sessionId": "Christoph_1787262578",
+      "grantedAt": "2026-08-20T23:51:35.953326",
+      "pux": 10
+    },
+    "Christoph_1787262708": {
+      "sessionId": "Christoph_1787262708",
+      "grantedAt": "2026-08-20T23:54:08.923045",
+      "pux": 10
+    },
+    "Christoph_1787294055": {
+      "sessionId": "Christoph_1787294055",
+      "grantedAt": "2026-08-21T08:35:55.851237",
+      "pux": 10
     }
   },
-  "xp": 8150,
+  "xp": 10850,
   "processedEvents": {
     "bootstrap:v1": {
       "eventId": "bootstrap:v1",
@@ -2319,6 +2469,600 @@
       "processedAt": "2026-08-17T22:27:39.795Z",
       "grantedXp": 0,
       "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T08:55:55.319Z": {
+      "eventId": "challenge:sync:2026-08-18T08:55:55.319Z",
+      "processedAt": "2026-08-18T08:55:55.319Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T10:21:09.240Z": {
+      "eventId": "challenge:sync:2026-08-18T10:21:09.240Z",
+      "processedAt": "2026-08-18T10:21:09.240Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T10:44:42.588Z": {
+      "eventId": "challenge:sync:2026-08-18T10:44:42.588Z",
+      "processedAt": "2026-08-18T10:44:42.588Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:13:23.478Z": {
+      "eventId": "challenge:sync:2026-08-18T12:13:23.478Z",
+      "processedAt": "2026-08-18T12:13:23.478Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787055217": {
+      "eventId": "session_completed:Christoph_1787055217",
+      "processedAt": "2026-08-18T12:14:36.086Z",
+      "grantedXp": 125,
+      "grantedPux": 25
+    },
+    "challenge_completed:challenge_daily_one_more_read::daily:2026-08-18": {
+      "eventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-18",
+      "processedAt": "2026-08-18T12:14:36.086Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787055217": {
+      "eventId": "observation_created:Christoph_1787055217",
+      "processedAt": "2026-08-18T12:14:36.086Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:15:09.382Z": {
+      "eventId": "challenge:sync:2026-08-18T12:15:09.382Z",
+      "processedAt": "2026-08-18T12:15:09.382Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787055321": {
+      "eventId": "session_completed:Christoph_1787055321",
+      "processedAt": "2026-08-18T12:16:23.531Z",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787055321": {
+      "eventId": "observation_created:Christoph_1787055321",
+      "processedAt": "2026-08-18T12:16:23.531Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:16:29.708Z": {
+      "eventId": "challenge:sync:2026-08-18T12:16:29.708Z",
+      "processedAt": "2026-08-18T12:16:29.708Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787055400": {
+      "eventId": "session_completed:Christoph_1787055400",
+      "processedAt": "2026-08-18T12:17:51.091Z",
+      "grantedXp": 125,
+      "grantedPux": 100
+    },
+    "observation_created:Christoph_1787055400": {
+      "eventId": "observation_created:Christoph_1787055400",
+      "processedAt": "2026-08-18T12:17:51.091Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:18:00.556Z": {
+      "eventId": "challenge:sync:2026-08-18T12:18:00.556Z",
+      "processedAt": "2026-08-18T12:18:00.556Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787055486": {
+      "eventId": "session_completed:Christoph_1787055486",
+      "processedAt": "2026-08-18T12:19:06.503Z",
+      "grantedXp": 125,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787055486": {
+      "eventId": "observation_created:Christoph_1787055486",
+      "processedAt": "2026-08-18T12:19:06.503Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:19:19.317Z": {
+      "eventId": "challenge:sync:2026-08-18T12:19:19.317Z",
+      "processedAt": "2026-08-18T12:19:19.317Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787055564": {
+      "eventId": "session_completed:Christoph_1787055564",
+      "processedAt": "2026-08-18T12:19:57.393Z",
+      "grantedXp": 975,
+      "grantedPux": 120
+    },
+    "observation_created:Christoph_1787055564": {
+      "eventId": "observation_created:Christoph_1787055564",
+      "processedAt": "2026-08-18T12:19:57.393Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "track_completed:T0:v1": {
+      "eventId": "track_completed:T0:v1",
+      "processedAt": "2026-08-18T12:19:57.393Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:20:19.078Z": {
+      "eventId": "challenge:sync:2026-08-18T12:20:19.078Z",
+      "processedAt": "2026-08-18T12:20:19.078Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:21:21.024Z": {
+      "eventId": "challenge:sync:2026-08-18T12:21:21.024Z",
+      "processedAt": "2026-08-18T12:21:21.024Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T12:22:16.941Z": {
+      "eventId": "challenge:sync:2026-08-18T12:22:16.941Z",
+      "processedAt": "2026-08-18T12:22:16.941Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T13:49:49.610Z": {
+      "eventId": "challenge:sync:2026-08-18T13:49:49.610Z",
+      "processedAt": "2026-08-18T13:49:49.610Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:20:27.225Z": {
+      "eventId": "challenge:sync:2026-08-18T18:20:27.225Z",
+      "processedAt": "2026-08-18T18:20:27.225Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:25:46.666Z": {
+      "eventId": "challenge:sync:2026-08-18T18:25:46.666Z",
+      "processedAt": "2026-08-18T18:25:46.666Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:26:49.934Z": {
+      "eventId": "challenge:sync:2026-08-18T18:26:49.934Z",
+      "processedAt": "2026-08-18T18:26:49.934Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:27:18.304Z": {
+      "eventId": "challenge:sync:2026-08-18T18:27:18.304Z",
+      "processedAt": "2026-08-18T18:27:18.304Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:49:48.889Z": {
+      "eventId": "challenge:sync:2026-08-18T18:49:48.889Z",
+      "processedAt": "2026-08-18T18:49:48.889Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:49:56.228Z": {
+      "eventId": "challenge:sync:2026-08-18T18:49:56.228Z",
+      "processedAt": "2026-08-18T18:49:56.228Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T18:50:05.636Z": {
+      "eventId": "challenge:sync:2026-08-18T18:50:05.636Z",
+      "processedAt": "2026-08-18T18:50:05.636Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T19:03:48.243Z": {
+      "eventId": "challenge:sync:2026-08-18T19:03:48.243Z",
+      "processedAt": "2026-08-18T19:03:48.243Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T19:44:28.669Z": {
+      "eventId": "challenge:sync:2026-08-18T19:44:28.669Z",
+      "processedAt": "2026-08-18T19:44:28.669Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T19:49:29.625Z": {
+      "eventId": "challenge:sync:2026-08-18T19:49:29.625Z",
+      "processedAt": "2026-08-18T19:49:29.625Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T20:38:26.261Z": {
+      "eventId": "challenge:sync:2026-08-18T20:38:26.261Z",
+      "processedAt": "2026-08-18T20:38:26.261Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T21:03:01.866Z": {
+      "eventId": "challenge:sync:2026-08-18T21:03:01.866Z",
+      "processedAt": "2026-08-18T21:03:01.866Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T21:20:58.754Z": {
+      "eventId": "challenge:sync:2026-08-18T21:20:58.754Z",
+      "processedAt": "2026-08-18T21:20:58.754Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-18T21:26:01.235Z": {
+      "eventId": "challenge:sync:2026-08-18T21:26:01.235Z",
+      "processedAt": "2026-08-18T21:26:01.235Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T04:34:38.743Z": {
+      "eventId": "challenge:sync:2026-08-19T04:34:38.743Z",
+      "processedAt": "2026-08-19T04:34:38.743Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T04:34:49.577Z": {
+      "eventId": "challenge:sync:2026-08-19T04:34:49.577Z",
+      "processedAt": "2026-08-19T04:34:49.577Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T08:17:07.969Z": {
+      "eventId": "challenge:sync:2026-08-19T08:17:07.969Z",
+      "processedAt": "2026-08-19T08:17:07.969Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T17:53:12.951Z": {
+      "eventId": "challenge:sync:2026-08-19T17:53:12.951Z",
+      "processedAt": "2026-08-19T17:53:12.951Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T17:59:47.854Z": {
+      "eventId": "challenge:sync:2026-08-19T17:59:47.854Z",
+      "processedAt": "2026-08-19T17:59:47.854Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T18:49:14.889Z": {
+      "eventId": "challenge:sync:2026-08-19T18:49:14.889Z",
+      "processedAt": "2026-08-19T18:49:14.889Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T19:26:13.637Z": {
+      "eventId": "challenge:sync:2026-08-19T19:26:13.637Z",
+      "processedAt": "2026-08-19T19:26:13.637Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T19:30:16.227Z": {
+      "eventId": "challenge:sync:2026-08-19T19:30:16.227Z",
+      "processedAt": "2026-08-19T19:30:16.227Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T20:15:53.603Z": {
+      "eventId": "challenge:sync:2026-08-19T20:15:53.603Z",
+      "processedAt": "2026-08-19T20:15:53.603Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T20:20:41.967Z": {
+      "eventId": "challenge:sync:2026-08-19T20:20:41.967Z",
+      "processedAt": "2026-08-19T20:20:41.967Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-19T23:02:05.640Z": {
+      "eventId": "challenge:sync:2026-08-19T23:02:05.640Z",
+      "processedAt": "2026-08-19T23:02:05.640Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T06:11:34.907Z": {
+      "eventId": "challenge:sync:2026-08-20T06:11:34.907Z",
+      "processedAt": "2026-08-20T06:11:34.907Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T08:06:42.748Z": {
+      "eventId": "challenge:sync:2026-08-20T08:06:42.748Z",
+      "processedAt": "2026-08-20T08:06:42.748Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T08:55:55.511Z": {
+      "eventId": "challenge:sync:2026-08-20T08:55:55.511Z",
+      "processedAt": "2026-08-20T08:55:55.511Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T09:04:59.460Z": {
+      "eventId": "challenge:sync:2026-08-20T09:04:59.460Z",
+      "processedAt": "2026-08-20T09:04:59.460Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T09:18:23.720Z": {
+      "eventId": "challenge:sync:2026-08-20T09:18:23.720Z",
+      "processedAt": "2026-08-20T09:18:23.720Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T17:16:54.990Z": {
+      "eventId": "challenge:sync:2026-08-20T17:16:54.990Z",
+      "processedAt": "2026-08-20T17:16:54.990Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T17:18:27.000Z": {
+      "eventId": "challenge:sync:2026-08-20T17:18:27.000Z",
+      "processedAt": "2026-08-20T17:18:27.000Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T18:31:14.564Z": {
+      "eventId": "challenge:sync:2026-08-20T18:31:14.564Z",
+      "processedAt": "2026-08-20T18:31:14.564Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T18:58:17.562Z": {
+      "eventId": "challenge:sync:2026-08-20T18:58:17.562Z",
+      "processedAt": "2026-08-20T18:58:17.562Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T19:01:00.363Z": {
+      "eventId": "challenge:sync:2026-08-20T19:01:00.363Z",
+      "processedAt": "2026-08-20T19:01:00.363Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T19:36:32.542Z": {
+      "eventId": "challenge:sync:2026-08-20T19:36:32.542Z",
+      "processedAt": "2026-08-20T19:36:32.542Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787260216": {
+      "eventId": "session_completed:Christoph_1787260216",
+      "processedAt": "2026-08-20T21:11:27.552Z",
+      "grantedXp": 100,
+      "grantedPux": 50
+    },
+    "challenge_completed:challenge_daily_one_more_read::daily:2026-08-20": {
+      "eventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-20",
+      "processedAt": "2026-08-20T21:11:27.552Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut": {
+      "eventId": "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "processedAt": "2026-08-20T21:11:27.552Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787260216": {
+      "eventId": "observation_created:Christoph_1787260216",
+      "processedAt": "2026-08-20T21:11:27.552Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T21:12:20.833Z": {
+      "eventId": "challenge:sync:2026-08-20T21:12:20.833Z",
+      "processedAt": "2026-08-20T21:12:20.833Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787260350": {
+      "eventId": "session_completed:Christoph_1787260350",
+      "processedAt": "2026-08-20T21:15:47.476Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787260350": {
+      "eventId": "observation_created:Christoph_1787260350",
+      "processedAt": "2026-08-20T21:15:47.476Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787260557": {
+      "eventId": "session_completed:Christoph_1787260557",
+      "processedAt": "2026-08-20T21:18:26.900Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787260557": {
+      "eventId": "observation_created:Christoph_1787260557",
+      "processedAt": "2026-08-20T21:18:26.900Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787260717": {
+      "eventId": "session_completed:Christoph_1787260717",
+      "processedAt": "2026-08-20T21:21:33.099Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787260717": {
+      "eventId": "observation_created:Christoph_1787260717",
+      "processedAt": "2026-08-20T21:21:33.099Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787260898": {
+      "eventId": "session_completed:Christoph_1787260898",
+      "processedAt": "2026-08-20T21:23:04.657Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787260898": {
+      "eventId": "observation_created:Christoph_1787260898",
+      "processedAt": "2026-08-20T21:23:04.657Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T21:27:01.908Z": {
+      "eventId": "challenge:sync:2026-08-20T21:27:01.908Z",
+      "processedAt": "2026-08-20T21:27:01.908Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T21:33:15.739Z": {
+      "eventId": "challenge:sync:2026-08-20T21:33:15.739Z",
+      "processedAt": "2026-08-20T21:33:15.739Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T21:41:57.439Z": {
+      "eventId": "challenge:sync:2026-08-20T21:41:57.439Z",
+      "processedAt": "2026-08-20T21:41:57.439Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T21:42:15.761Z": {
+      "eventId": "challenge:sync:2026-08-20T21:42:15.761Z",
+      "processedAt": "2026-08-20T21:42:15.761Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787262141": {
+      "eventId": "session_completed:Christoph_1787262141",
+      "processedAt": "2026-08-20T21:42:51.252Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787262141": {
+      "eventId": "observation_created:Christoph_1787262141",
+      "processedAt": "2026-08-20T21:42:51.252Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T21:45:24.443Z": {
+      "eventId": "challenge:sync:2026-08-20T21:45:24.443Z",
+      "processedAt": "2026-08-20T21:45:24.443Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787262331": {
+      "eventId": "session_completed:Christoph_1787262331",
+      "processedAt": "2026-08-20T21:46:09.993Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787262331": {
+      "eventId": "observation_created:Christoph_1787262331",
+      "processedAt": "2026-08-20T21:46:09.993Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787262427": {
+      "eventId": "session_completed:Christoph_1787262427",
+      "processedAt": "2026-08-20T21:47:59.737Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787262427": {
+      "eventId": "observation_created:Christoph_1787262427",
+      "processedAt": "2026-08-20T21:47:59.737Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787262493": {
+      "eventId": "session_completed:Christoph_1787262493",
+      "processedAt": "2026-08-20T21:49:25.022Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787262493": {
+      "eventId": "observation_created:Christoph_1787262493",
+      "processedAt": "2026-08-20T21:49:25.022Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787262578": {
+      "eventId": "session_completed:Christoph_1787262578",
+      "processedAt": "2026-08-20T21:51:36.672Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787262578": {
+      "eventId": "observation_created:Christoph_1787262578",
+      "processedAt": "2026-08-20T21:51:36.672Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787262708": {
+      "eventId": "session_completed:Christoph_1787262708",
+      "processedAt": "2026-08-20T21:54:09.741Z",
+      "grantedXp": 100,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787262708": {
+      "eventId": "observation_created:Christoph_1787262708",
+      "processedAt": "2026-08-20T21:54:09.741Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T22:02:38.429Z": {
+      "eventId": "challenge:sync:2026-08-20T22:02:38.429Z",
+      "processedAt": "2026-08-20T22:02:38.429Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T22:07:18.807Z": {
+      "eventId": "challenge:sync:2026-08-20T22:07:18.807Z",
+      "processedAt": "2026-08-20T22:07:18.807Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T22:09:28.983Z": {
+      "eventId": "challenge:sync:2026-08-20T22:09:28.983Z",
+      "processedAt": "2026-08-20T22:09:28.983Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T22:11:35.142Z": {
+      "eventId": "challenge:sync:2026-08-20T22:11:35.142Z",
+      "processedAt": "2026-08-20T22:11:35.142Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-20T22:33:05.873Z": {
+      "eventId": "challenge:sync:2026-08-20T22:33:05.873Z",
+      "processedAt": "2026-08-20T22:33:05.873Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "challenge:sync:2026-08-21T06:34:02.583Z": {
+      "eventId": "challenge:sync:2026-08-21T06:34:02.583Z",
+      "processedAt": "2026-08-21T06:34:02.583Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "session_completed:Christoph_1787294055": {
+      "eventId": "session_completed:Christoph_1787294055",
+      "processedAt": "2026-08-21T06:35:56.689Z",
+      "grantedXp": 125,
+      "grantedPux": 25
+    },
+    "challenge_completed:challenge_daily_one_more_read::daily:2026-08-21": {
+      "eventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-21",
+      "processedAt": "2026-08-21T06:35:56.689Z",
+      "grantedXp": 0,
+      "grantedPux": 0
+    },
+    "observation_created:Christoph_1787294055": {
+      "eventId": "observation_created:Christoph_1787294055",
+      "processedAt": "2026-08-21T06:35:56.689Z",
+      "grantedXp": 0,
+      "grantedPux": 0
     }
   },
   "unlockedCosmetics": {
@@ -2673,6 +3417,14 @@
       "sourceId": "powerplay_regular",
       "seenAt": "2026-08-10T19:47:07.360Z",
       "earnKind": null
+    },
+    "sticker_fresh_sheet": {
+      "cosmeticId": "sticker_fresh_sheet",
+      "unlockedAt": "2026-08-20T23:11:26.396502",
+      "sourceType": "challenge",
+      "sourceId": "challenge_collection_ice_cut",
+      "seenAt": null,
+      "earnKind": "derived"
     }
   },
   "activityLog": [
@@ -4301,6 +5053,524 @@
       "sceneId": "scene_1786644297_93d30c",
       "rating": 4,
       "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787055217",
+      "type": "session_completed",
+      "occurredAt": "2026-08-18T14:14:34.989926",
+      "sessionId": "Christoph_1787055217",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787055217",
+      "type": "observation_created",
+      "occurredAt": "2026-08-18T14:14:34.989926",
+      "sessionId": "Christoph_1787055217",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787055321",
+      "type": "session_completed",
+      "occurredAt": "2026-08-18T14:16:22.358244",
+      "sessionId": "Christoph_1787055321",
+      "drillId": "T0_D2",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787055321",
+      "type": "observation_created",
+      "occurredAt": "2026-08-18T14:16:22.358244",
+      "sessionId": "Christoph_1787055321",
+      "drillId": "T0_D2",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787055400",
+      "type": "session_completed",
+      "occurredAt": "2026-08-18T14:17:50.155053",
+      "sessionId": "Christoph_1787055400",
+      "drillId": "T0_D3",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787055400",
+      "type": "observation_created",
+      "occurredAt": "2026-08-18T14:17:50.155053",
+      "sessionId": "Christoph_1787055400",
+      "drillId": "T0_D3",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787055486",
+      "type": "session_completed",
+      "occurredAt": "2026-08-18T14:19:05.273416",
+      "sessionId": "Christoph_1787055486",
+      "drillId": "T0_D4",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787055486",
+      "type": "observation_created",
+      "occurredAt": "2026-08-18T14:19:05.273416",
+      "sessionId": "Christoph_1787055486",
+      "drillId": "T0_D4",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787055564",
+      "type": "session_completed",
+      "occurredAt": "2026-08-18T14:19:56.224710",
+      "sessionId": "Christoph_1787055564",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787055564",
+      "type": "observation_created",
+      "occurredAt": "2026-08-18T14:19:56.224710",
+      "sessionId": "Christoph_1787055564",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "track_completed:T0:v1",
+      "type": "track_completed",
+      "occurredAt": "2026-08-18T14:19:56.224710",
+      "trackId": "T0",
+      "completionVersion": "v1"
+    },
+    {
+      "id": "session_completed:Christoph_1787260216",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:11:26.396502",
+      "sessionId": "Christoph_1787260216",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787260216",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:11:26.396502",
+      "sessionId": "Christoph_1787260216",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787260350",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:15:46.452157",
+      "sessionId": "Christoph_1787260350",
+      "drillId": "T0_D2",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787260350",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:15:46.452157",
+      "sessionId": "Christoph_1787260350",
+      "drillId": "T0_D2",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787260557",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:18:25.966540",
+      "sessionId": "Christoph_1787260557",
+      "drillId": "T0_D3",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787260557",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:18:25.966540",
+      "sessionId": "Christoph_1787260557",
+      "drillId": "T0_D3",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787260717",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:21:32.085036",
+      "sessionId": "Christoph_1787260717",
+      "drillId": "T0_D4",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787260717",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:21:32.085036",
+      "sessionId": "Christoph_1787260717",
+      "drillId": "T0_D4",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787260898",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:23:03.617900",
+      "sessionId": "Christoph_1787260898",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787260898",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:23:03.617900",
+      "sessionId": "Christoph_1787260898",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787262141",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:42:50.497553",
+      "sessionId": "Christoph_1787262141",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787262141",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:42:50.497553",
+      "sessionId": "Christoph_1787262141",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787262331",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:46:09.154938",
+      "sessionId": "Christoph_1787262331",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "defensive_zone",
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787262331",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:46:09.154938",
+      "sessionId": "Christoph_1787262331",
+      "drillId": "T0_D1",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787262427",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:47:58.977590",
+      "sessionId": "Christoph_1787262427",
+      "drillId": "T0_D2",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "neutral_zone"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787262427",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:47:58.977590",
+      "sessionId": "Christoph_1787262427",
+      "drillId": "T0_D2",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787262493",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:49:24.253327",
+      "sessionId": "Christoph_1787262493",
+      "drillId": "T0_D3",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787262493",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:49:24.253327",
+      "sessionId": "Christoph_1787262493",
+      "drillId": "T0_D3",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787262578",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:51:35.953326",
+      "sessionId": "Christoph_1787262578",
+      "drillId": "T0_D4",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787262578",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:51:35.953326",
+      "sessionId": "Christoph_1787262578",
+      "drillId": "T0_D4",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787262708",
+      "type": "session_completed",
+      "occurredAt": "2026-08-20T23:54:08.923045",
+      "sessionId": "Christoph_1787262708",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "unclear"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": false,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787262708",
+      "type": "observation_created",
+      "occurredAt": "2026-08-20T23:54:08.923045",
+      "sessionId": "Christoph_1787262708",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
+    },
+    {
+      "id": "session_completed:Christoph_1787294055",
+      "type": "session_completed",
+      "occurredAt": "2026-08-21T08:35:55.851237",
+      "sessionId": "Christoph_1787294055",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "tags": [
+        "unclear"
+      ],
+      "isDummy": false,
+      "isFirstSessionOfDrill": true,
+      "venueVerified": false,
+      "homeAwayRole": "unknown",
+      "locationVerificationDevSimulated": false
+    },
+    {
+      "id": "observation_created:Christoph_1787294055",
+      "type": "observation_created",
+      "occurredAt": "2026-08-21T08:35:55.851237",
+      "sessionId": "Christoph_1787294055",
+      "drillId": "T0_D5",
+      "trackId": "T0",
+      "mechanicIds": [
+        "foundation_lesson"
+      ],
+      "isDummy": false
     }
   ],
   "unlockHistory": [
@@ -4314,17 +5584,292 @@
       "amountXp": 8150,
       "amountPux": 50,
       "level": 9
+    },
+    {
+      "id": "challenge:challenge_daily_one_more_read::daily:2026-08-18",
+      "kind": "challenge",
+      "title": "One More Read",
+      "description": "Challenge abgeschlossen",
+      "occurredAt": "2026-08-18T14:14:34.989926",
+      "sourceEventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-18",
+      "challengeId": "challenge_daily_one_more_read",
+      "amountPux": 25
+    },
+    {
+      "id": "level:10:session_completed:Christoph_1787055400",
+      "kind": "level",
+      "title": "Level 10",
+      "description": "Account-Level erreicht",
+      "occurredAt": "2026-08-18T14:17:50.155053",
+      "sourceEventId": "session_completed:Christoph_1787055400",
+      "level": 10
+    },
+    {
+      "id": "achievement:two_way_student:track_completed:T0:v1",
+      "kind": "achievement",
+      "title": "Two-Way Student",
+      "description": "Zwei Tracks vollständig abschließen.",
+      "occurredAt": "2026-08-18T14:19:56.224710",
+      "sourceEventId": "track_completed:T0:v1",
+      "achievementId": "two_way_student"
+    },
+    {
+      "id": "challenge:challenge_daily_one_more_read::daily:2026-08-20",
+      "kind": "challenge",
+      "title": "One More Read",
+      "description": "Challenge abgeschlossen",
+      "occurredAt": "2026-08-20T23:11:26.396502",
+      "sourceEventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-20",
+      "challengeId": "challenge_daily_one_more_read",
+      "amountPux": 25
+    },
+    {
+      "id": "challenge:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "kind": "challenge",
+      "title": "Ice Cut",
+      "description": "Challenge abgeschlossen",
+      "occurredAt": "2026-08-20T23:11:26.396502",
+      "sourceEventId": "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "challengeId": "challenge_collection_ice_cut",
+      "amountPux": 25
+    },
+    {
+      "id": "cosmetic:sticker_fresh_sheet:challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "kind": "cosmetic",
+      "title": "Fresh Sheet",
+      "description": "sticker · uncommon",
+      "occurredAt": "2026-08-20T23:11:26.396502",
+      "sourceEventId": "challenge_completed:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "cosmeticId": "sticker_fresh_sheet",
+      "challengeId": "challenge_collection_ice_cut",
+      "collectionId": "zamboni"
+    },
+    {
+      "id": "level:11:session_completed:Christoph_1787262708",
+      "kind": "level",
+      "title": "Level 11",
+      "description": "Account-Level erreicht",
+      "occurredAt": "2026-08-20T23:54:08.923045",
+      "sourceEventId": "session_completed:Christoph_1787262708",
+      "level": 11
+    },
+    {
+      "id": "challenge:challenge_daily_one_more_read::daily:2026-08-21",
+      "kind": "challenge",
+      "title": "One More Read",
+      "description": "Challenge abgeschlossen",
+      "occurredAt": "2026-08-21T08:35:55.851237",
+      "sourceEventId": "challenge_completed:challenge_daily_one_more_read::daily:2026-08-21",
+      "challengeId": "challenge_daily_one_more_read",
+      "amountPux": 25
     }
   ],
   "bootstrapCompletedAt": "2026-08-13T20:38:32.602Z",
-  "lastUpdatedAt": "2026-08-17T22:27:39.795Z",
+  "lastUpdatedAt": "2026-08-21T06:35:56.689Z",
   "favoriteCosmeticIds": [
     "avatar_goldpuck_01"
   ],
-  "puxTransactions": [],
+  "puxTransactions": [
+    {
+      "id": "pux:challenge:challenge_daily_one_more_read::daily:2026-08-18",
+      "type": "earn",
+      "amount": 25,
+      "sourceType": "challenge",
+      "sourceId": "challenge_daily_one_more_read",
+      "occurredAt": "2026-08-18T14:14:34.989926"
+    },
+    {
+      "id": "pux:challenge:challenge_daily_one_more_read::daily:2026-08-20",
+      "type": "earn",
+      "amount": 25,
+      "sourceType": "challenge",
+      "sourceId": "challenge_daily_one_more_read",
+      "occurredAt": "2026-08-20T23:11:26.396502"
+    },
+    {
+      "id": "pux:challenge:challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "type": "earn",
+      "amount": 25,
+      "sourceType": "challenge",
+      "sourceId": "challenge_collection_ice_cut",
+      "occurredAt": "2026-08-20T23:11:26.396502"
+    },
+    {
+      "id": "pux:challenge:challenge_daily_one_more_read::daily:2026-08-21",
+      "type": "earn",
+      "amount": 25,
+      "sourceType": "challenge",
+      "sourceId": "challenge_daily_one_more_read",
+      "occurredAt": "2026-08-21T08:35:55.851237"
+    }
+  ],
   "completedCollections": {},
   "masteryMilestoneUnlocks": {},
   "featuredAchievementId": null,
   "featuredMasteryCoinId": null,
-  "progressionPuxGranted": 920
+  "progressionPuxGranted": 920,
+  "challengeProgress": {
+    "challenge_daily_one_more_read::daily:2026-08-21": {
+      "instanceKey": "challenge_daily_one_more_read::daily:2026-08-21",
+      "challengeId": "challenge_daily_one_more_read",
+      "rotationKey": "daily:2026-08-21",
+      "status": "completed",
+      "requirements": [
+        {
+          "requirementId": "real_observation",
+          "current": 1,
+          "target": 1,
+          "completed": true
+        }
+      ],
+      "countedEventIds": [
+        "session_completed:Christoph_1787294055"
+      ],
+      "rewardClaimed": true,
+      "startedAt": "2026-08-21T08:35:55.851237",
+      "completedAt": "2026-08-21T08:35:55.851237"
+    },
+    "challenge_daily_look_again::daily:2026-08-21": {
+      "instanceKey": "challenge_daily_look_again::daily:2026-08-21",
+      "challengeId": "challenge_daily_look_again",
+      "rotationKey": "daily:2026-08-21",
+      "status": "active",
+      "requirements": [
+        {
+          "requirementId": "save_scene",
+          "current": 0,
+          "target": 1,
+          "completed": false
+        }
+      ],
+      "countedEventIds": [],
+      "rewardClaimed": false
+    },
+    "challenge_weekly_read_the_game::weekly:2026-W34": {
+      "instanceKey": "challenge_weekly_read_the_game::weekly:2026-W34",
+      "challengeId": "challenge_weekly_read_the_game",
+      "rotationKey": "weekly:2026-W34",
+      "status": "active",
+      "requirements": [
+        {
+          "requirementId": "sessions_this_week",
+          "current": 1,
+          "target": 3,
+          "completed": false
+        }
+      ],
+      "countedEventIds": [
+        "session_completed:Christoph_1787294055"
+      ],
+      "rewardClaimed": false,
+      "startedAt": "2026-08-21T08:35:55.851237"
+    },
+    "challenge_weekly_pattern_hunter::weekly:2026-W34": {
+      "instanceKey": "challenge_weekly_pattern_hunter::weekly:2026-W34",
+      "challengeId": "challenge_weekly_pattern_hunter",
+      "rotationKey": "weekly:2026-W34",
+      "status": "active",
+      "requirements": [
+        {
+          "requirementId": "scenes_this_week",
+          "current": 0,
+          "target": 3,
+          "completed": false
+        }
+      ],
+      "countedEventIds": [],
+      "rewardClaimed": false
+    },
+    "challenge_collection_ice_cut::once:challenge_collection_ice_cut": {
+      "instanceKey": "challenge_collection_ice_cut::once:challenge_collection_ice_cut",
+      "challengeId": "challenge_collection_ice_cut",
+      "rotationKey": "once:challenge_collection_ice_cut",
+      "status": "completed",
+      "requirements": [
+        {
+          "requirementId": "ice_cut_session",
+          "current": 1,
+          "target": 1,
+          "completed": true
+        }
+      ],
+      "countedEventIds": [
+        "session_completed:Christoph_1787294055"
+      ],
+      "rewardClaimed": false,
+      "startedAt": "2026-08-21T08:35:55.851237",
+      "completedAt": "2026-08-21T08:35:55.851237"
+    },
+    "challenge_matchday_aev_str_20251221_form_check::matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151": {
+      "instanceKey": "challenge_matchday_aev_str_20251221_form_check::matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "challengeId": "challenge_matchday_aev_str_20251221_form_check",
+      "rotationKey": "matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "status": "active",
+      "requirements": [
+        {
+          "requirementId": "pregame_read",
+          "current": 0,
+          "target": 1,
+          "completed": false
+        }
+      ],
+      "countedEventIds": [],
+      "boundGameId": "del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "rewardClaimed": false
+    },
+    "challenge_matchday_aev_str_20251221_pressure_watch::matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151": {
+      "instanceKey": "challenge_matchday_aev_str_20251221_pressure_watch::matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "challengeId": "challenge_matchday_aev_str_20251221_pressure_watch",
+      "rotationKey": "matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "status": "active",
+      "requirements": [
+        {
+          "requirementId": "pressure_scenes",
+          "current": 0,
+          "target": 2,
+          "completed": false
+        }
+      ],
+      "countedEventIds": [],
+      "boundGameId": "del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "rewardClaimed": false
+    },
+    "challenge_matchday_aev_str_20251221_read_it_back::matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151": {
+      "instanceKey": "challenge_matchday_aev_str_20251221_read_it_back::matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "challengeId": "challenge_matchday_aev_str_20251221_read_it_back",
+      "rotationKey": "matchday:del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "status": "active",
+      "requirements": [
+        {
+          "requirementId": "postgame_reflection",
+          "current": 0,
+          "target": 1,
+          "completed": false
+        }
+      ],
+      "countedEventIds": [],
+      "boundGameId": "del:2025_2026:21122025_augsburger-panther_gg_straubing-tigers_4151",
+      "rewardClaimed": false
+    }
+  },
+  "challengeRotation": {
+    "dailyKey": "daily:2026-08-21",
+    "weeklyKey": "weekly:2026-W34",
+    "dailyIds": [
+      "challenge_daily_one_more_read",
+      "challenge_daily_look_again"
+    ],
+    "weeklyIds": [
+      "challenge_weekly_read_the_game",
+      "challenge_weekly_pattern_hunter"
+    ],
+    "matchdayGameId": null,
+    "matchdayChallengeIds": [
+      "challenge_matchday_aev_str_20251221_form_check",
+      "challenge_matchday_aev_str_20251221_pressure_watch",
+      "challenge_matchday_aev_str_20251221_read_it_back"
+    ],
+    "campaignIds": []
+  },
+  "venueVisits": {}
 }

@@ -1,0 +1,36 @@
+---
+description: Curriculum-Rework — Tracks nie isoliert, Capabilities erhalten, erst Boundary-Check dann Code
+globs: data/academy/**/*.json,frontend/src/pages/Curriculum.tsx,frontend/src/pages/Session.tsx,frontend/src/content/**/*.ts
+alwaysApply: false
+---
+
+# Curriculum Rework
+
+Vor jeder Änderung an Track 0, A1, A2, A3 oder einem späteren Academy-Track:
+
+1. **Zuerst lesen:** `docs/ai-rules/curriculum-rework.md`
+2. Mechaniken: `docs/ai-rules/mechanic-design.md`
+3. Nicht intern optimieren. Immer: vorheriger Track → dieser Track → nächster Track.
+
+## Vor Implementation
+
+1. Incoming Skills
+2. Outgoing Skills
+3. Displaced **Capabilities** (nicht Drills konservieren)
+4. Complexity Budget — eine neue Beobachtungsschicht pro Drill
+5. Was absichtlich noch nicht gelehrt wird
+6. Prerequisites des Folgetracks prüfen
+7. Erst sehen („Was sehe ich?“), dann Bedeutung, dann Bewertung — und Outcome/Qualität erst später
+8. **Phase Boundary:** Tracks unterscheiden sich auch nach Spielphase (A1 Rollen/Beziehungen · A2 Strukturen/Optionen · A3 Transition/Tempo). Die Phase des Folgetracks nicht vorwegnehmen.
+9. **Observation Before Outcome:** Situation ändern → Reaktionen → Optionen → Folgen; Qualität erst in späteren Tracks
+10. **Role Deep Dive:** Nach Track A keine allgemeinen Taktiken wiederholen — Frage: Wie beeinflusst *diese* Rolle die Situation?
+11. **Decision Evaluation:** Situation → Optionen → Lösung → Ursache → Outcome trennen; nicht nur nach Ergebnis urteilen; gut/schlecht erst später
+12. **B3 vs C:** B3 liest defensives Teamverhalten (Zugriff/Unterstützung/Sequenz/Muster); C erklärt Systeme/Zonen — kein 1-2-2 / Box+1 in B3
+13. **System Understanding:** Zweck vor Labels — geschützte Räume → Beziehungen → Verantwortlichkeiten → wiederholte Strukturen → Terminologie
+14. **Zone Boundary:** C1 = eigene Zone (Schutz/Struktur); C2 = Neutral Zone (Eintritt/Lenkung/Tempo) — nicht vermischen
+15. **Offensive Systems:** Struktur vor Spielzügen — Raum → Beziehungen → Rotation → Vorteil → Terminologie; kein Gameplan/Special Teams in C3
+16. **Beginner Visuals (Track 0):** Erkennbarkeit vor Fachkürzeln — keine ungeklärten LD/S/P; Begriffe erklären, nicht testen. Identify-Fragen nicht spoilen (kein „Puckführer“-Label auf dem gesuchten Marker); Puckführer = Spieler + sichtbarer Puck.
+
+Kein Track isoliert umbauen. Keine Fähigkeit still löschen. Schlechte alte Drills nicht aus Angst behalten.
+
+**Abschlussbericht:** Boundary Check; Incoming/Outgoing; Capability-Tabelle (blieb / verschoben / neu / unassigned); Budget; was nicht gelehrt wird; Folgetrack-Lücke benennen statt still füllen; Mechanik reused / extended / new.

@@ -1,8 +1,9 @@
 import type { Session, Checkin } from '../api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styles from './SessionCard.module.css'
+import selectStyles from './selection/selectableTile.module.css'
 import Card from './Card'
 import { TeamCrest } from './game/TeamCrest'
 import { UiPill, type UiPillTone } from './ui'
@@ -26,14 +27,29 @@ interface SessionCardProps {
   sceneEntries?: Array<{ id: string; game_time: string; period?: string; created_at: string }>
   onDelete?: (id: string) => void
   isDeletingId?: string
+  selectionMode?: boolean
+  selected?: boolean
+  onToggleSelect?: (id: string) => void
 }
 
-export default function SessionCard({ session, sceneEntries = [], onDelete, isDeletingId }: SessionCardProps) {
+export default function SessionCard({
+  session,
+  sceneEntries = [],
+  onDelete,
+  isDeletingId,
+  selectionMode = false,
+  selected = false,
+  onToggleSelect,
+}: SessionCardProps) {
   const queryClient = useQueryClient()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [expandedPhases, setExpandedPhases] = useState<Set<number>>(new Set())
   const [isEditingSeason, setIsEditingSeason] = useState<boolean>(false)
   const [seasonDraft, setSeasonDraft] = useState<string>(session.game_info?.season || '')
+
+  useEffect(() => {
+    if (selectionMode) setIsExpanded(false)
+  }, [selectionMode])
 
   const updateSessionMutation = useMutation({
     mutationFn: (nextSeason: string) => {
@@ -153,11 +169,41 @@ export default function SessionCard({ session, sceneEntries = [], onDelete, isDe
     }
   }
 
+  const shellClass = [
+    styles.card,
+    selectionMode ? styles.cardSelecting : '',
+    selectStyles.shell,
+    selectionMode ? selectStyles.shellSelecting : '',
+    selectionMode && !selected ? selectStyles.shellDimmed : '',
+    selectionMode && selected ? selectStyles.shellSelected : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <Card surface="primary" className={styles.card}>
+    <Card
+      surface="primary"
+      className={shellClass}
+    >
+      {selectionMode ? (
+        <span
+          className={`${selectStyles.checkbox} ${selected ? selectStyles.checkboxOn : ''}`}
+          aria-hidden="true"
+        >
+          {selected ? <span className={selectStyles.checkMark} /> : null}
+        </span>
+      ) : null}
       <div
         className={styles.header}
-        onClick={() => setIsExpanded((v) => !v)}
+        role={selectionMode ? 'button' : undefined}
+        aria-pressed={selectionMode ? selected : undefined}
+        onClick={() => {
+          if (selectionMode) {
+            onToggleSelect?.(session.id)
+            return
+          }
+          setIsExpanded((v) => !v)
+        }}
       >
         <div className={styles.topRow}>
           <div className={styles.identity}>

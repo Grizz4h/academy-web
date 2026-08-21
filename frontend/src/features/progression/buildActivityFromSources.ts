@@ -99,6 +99,12 @@ export function deriveMechanicIdsFromSession(session: Session): string[] {
       if (key.includes('defensive_structure') || key.includes('player_placement')) {
         ids.add('defensive_structure')
       }
+      if (key.includes('anticipation_profile')) ids.add('anticipation_profile')
+      if (key.includes('role_identification')) ids.add('role_identification')
+      if (key.includes('shift_tracker')) ids.add('shift_tracker')
+      if (key.includes('player_relation')) ids.add('player_relation')
+      if (key.includes('simple_structure')) ids.add('simple_structure')
+      if (key.includes('tactical_observation')) ids.add('tactical_observation')
     }
   }
 
