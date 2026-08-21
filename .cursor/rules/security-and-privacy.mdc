@@ -1,0 +1,25 @@
+---
+description: Security & Privacy — Secrets, Authz, Userdaten, Payments, Uploads, Admin/Dev; vor Änderungen Manifest lesen
+alwaysApply: true
+---
+
+# Security & Privacy
+
+Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbezogenen Daten, Payments, Subscriptions, Premium, Uploads, externen Providern, Admin/Dev, Logging oder API-Exposure:
+
+1. **Zuerst lesen:** `docs/ai-rules/security-and-privacy.md`
+2. Geplante Lösung gegen die beschlossenen Regeln prüfen
+3. Bei Konflikt: nicht still umgehen — melden, sicherere Architektur vorschlagen; Prinzip nur explizit ändern und dokumentieren
+
+## Kurz-Guardrails (Details im Manifest)
+
+- Secrets nur serverseitig (`.env.local`); nie `VITE_*` / Frontend / Git; kein unsicherer Default
+- FastAPI nur hinter Nginx auf `127.0.0.1:8000`
+- Ownership serverseitig aus Auth-Kontext; keine Client-User-ID als Autorisierung
+- Runtime-Userdaten nicht in Git
+- Keine Payment-Rohdaten; Entitlements nicht nur im Frontend
+- Versteckte UI ≠ Autorisierung (`/dev`, Admin, Import)
+- Client Rewards/XP/PUX nicht vertrauenswürdig für kritische Mutationen
+- HTTPS in Production; Datenminimierung; neue Provider im Manifest dokumentieren
+
+Neue Security-/Privacy-Entscheidung → Manifest aktualisieren (Living Document).
