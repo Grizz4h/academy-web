@@ -22,6 +22,7 @@ if BACKEND_DIR not in sys.path:
 
 import jwt
 from fastapi.testclient import TestClient
+from security_guards import reset_rate_limiter_for_tests
 
 import main as backend_main
 from security_guards import SlidingWindowRateLimiter, is_admin_auth, legacy_signup_allowed
@@ -83,6 +84,7 @@ class SecurityGuardUnitTests(unittest.TestCase):
 
 class HardeningApiTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         root = Path(self._tmp.name)
         academy = root / "academy"

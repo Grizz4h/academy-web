@@ -138,11 +138,13 @@ export async function verifyEmailOtp(
   return { accessToken }
 }
 
-export async function signOutSupabase(): Promise<void> {
+export async function signOutSupabase(options?: { global?: boolean }): Promise<void> {
   const supabase = getSupabase()
   if (!supabase) return
   try {
-    await supabase.auth.signOut()
+    await supabase.auth.signOut({
+      scope: options?.global ? 'global' : 'local',
+    })
   } catch {
     // ignore — local state still cleared by caller
   }

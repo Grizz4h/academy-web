@@ -23,6 +23,7 @@ if BACKEND_DIR not in sys.path:
 
 import jwt
 from fastapi.testclient import TestClient
+from security_guards import reset_rate_limiter_for_tests
 
 import main as backend_main
 from identity.context import SUPABASE_GOOGLE_PROVIDER
@@ -45,6 +46,7 @@ def _legacy_token(sub: str) -> str:
 
 class ProviderIdentityTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         self.store = IdentityStore(str(Path(self._tmp.name) / "identity_store.json"))
 
@@ -70,6 +72,7 @@ class ProviderIdentityTests(unittest.TestCase):
 
 class SupabaseApiTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         root = Path(self._tmp.name)
         academy = root / "academy"

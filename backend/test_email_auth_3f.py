@@ -22,6 +22,7 @@ if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
 from fastapi.testclient import TestClient
+from security_guards import reset_rate_limiter_for_tests
 
 import main as backend_main
 from identity.context import SUPABASE_EMAIL_PROVIDER, SUPABASE_GOOGLE_PROVIDER
@@ -29,6 +30,7 @@ from identity.context import SUPABASE_EMAIL_PROVIDER, SUPABASE_GOOGLE_PROVIDER
 
 class EmailOtpAuthTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         root = Path(self._tmp.name)
         academy = root / "academy"

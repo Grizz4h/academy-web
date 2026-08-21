@@ -85,6 +85,16 @@ Rate limits: Supabase Auth rate limits apply to OTP send/verify. RinQ does not p
 
 Login UI: Dashboard → **Mit E-Mail anmelden** → E-Mail → Code bestätigen. Magic-Link return uses `/auth/callback` like Google.
 
+## Account deletion (Phase 3G)
+
+To delete Google/Email-linked accounts via Admin API, set **server-only**:
+
+```text
+SUPABASE_SERVICE_ROLE_KEY=…   # Supabase → Project Settings → API → service_role
+```
+
+in `/opt/academy-web/.env.local` (never `VITE_*`, never Git). Legacy-only accounts can be deleted without this key.
+
 ### Supabase Auth → Providers → Google
 
 Enabled with Google Client ID + Client Secret from Google Cloud.

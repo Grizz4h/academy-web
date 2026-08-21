@@ -22,7 +22,7 @@ type UserContextValue = {
   completeSupabaseSession: (accessToken: string) => Promise<LoginResult>
   /** After display-name sheet saves successfully. */
   applyDisplayName: (displayName: string) => void
-  logout: () => void
+  logout: (options?: { global?: boolean }) => void
 }
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
@@ -151,8 +151,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setNeedsDisplayName(false)
   }, [])
 
-  const logout = () => {
-    void signOutSupabase()
+  const logout = (options?: { global?: boolean }) => {
+    void signOutSupabase({ global: Boolean(options?.global) })
     setUserState(null)
     setUserIdState(null)
     setAuthMode(null)

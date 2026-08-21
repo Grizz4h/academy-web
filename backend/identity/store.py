@@ -248,6 +248,70 @@ class IdentityStore:
                 }
             )
 
+    def list_links_for_user(self, rinq_user_id: str) -> List[Dict[str, Any]]:
+        with self._exclusive():
+            data = self._read_unlocked()
+            return [
+                dict(link)
+                for link in data.get("auth_links") or []
+                if link.get("rinq_user_id") == rinq_user_id
+            ]
+
+    def unlink_provider(self, rinq_user_id: str, provider: str) -> Dict[str, Any]:
+        """Remove one auth_link. Refuses to remove the last login method."""
+        if not provider:
+            raise ValueError("provider required")
+        with self._exclusive():
+            data = self._read_unlocked()
+            identity = self.get_identity(rinq_user_id, data)
+            if not identity:
+                raise KeyError(f"unknown rinq_user_id={rinq_user_id}")
+            links = [
+                link
+                for link in data.get("auth_links") or []
+                if link.get("rinq_user_id") == rinq_user_id
+            ]
+            if len(links) <= 1:
+                raise ValueError("cannot_unlink_last_login_method")
+            match = next((link for link in links if link.get("provider") == provider), None)
+            if not match:
+                raise KeyError(f"no link for provider={provider}")
+            data["auth_links"] = [
+                link
+                for link in data["auth_links"]
+                if not (
+                    link.get("rinq_user_id") == rinq_user_id
+                    and link.get("provider") == provider
+                )
+            ]
+            self._write_unlocked(data)
+            return match
+
+    def delete_identity_cascade(self, rinq_user_id: str) -> Dict[str, Any]:
+        """Remove identity row and all auth_links for this UUID. Returns removed snapshot."""
+        with self._exclusive():
+            data = self._read_unlocked()
+            identity = self.get_identity(rinq_user_id, data)
+            if not identity:
+                raise KeyError(f"unknown rinq_user_id={rinq_user_id}")
+            removed_links = [
+                link
+                for link in data.get("auth_links") or []
+                if link.get("rinq_user_id") == rinq_user_id
+            ]
+            data["auth_links"] = [
+                link
+                for link in data.get("auth_links") or []
+                if link.get("rinq_user_id") != rinq_user_id
+            ]
+            data["identities"] = [
+                row
+                for row in data.get("identities") or []
+                if row.get("rinq_user_id") != rinq_user_id
+            ]
+            self._write_unlocked(data)
+            return {"identity": identity, "auth_links": removed_links}
+
     def link_provider(
         self,
         rinq_user_id: str,

@@ -18,6 +18,7 @@ Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbez
 - Auth-Subject ≠ App-ID: JWT/`provider` subject → `auth_links` → `rinq_user_id` (Ownership nur über RinQ-UUID)
 - Managed Auth: Supabase + Google (`supabase_google`) + E-Mail OTP (`supabase_email`); JWKS-Verify serverseitig; kein E-Mail-Merge
 - Account-Linking Legacy↔Google nur verifiziert unter bestehender Session (`/api/me/auth/link/google`)
+- Account Lifecycle: Self-Service Export/Löschung/Unlink; `SUPABASE_SERVICE_ROLE_KEY` nur Backend für Managed-Auth-Delete
 - Ownership serverseitig aus Auth-Kontext; keine Client-User-ID als Autorisierung
 - Import/Admin-APIs: `require_admin` (`ACADEMY_ADMIN_USERNAMES` und/oder `role=admin`); `/dev` in Production nur für Admins
 - Legacy-Signup steuerbar via `ACADEMY_ALLOW_LEGACY_SIGNUP` (Production: `0`)

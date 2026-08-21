@@ -255,13 +255,11 @@ Für jeden neuen externen Anbieter prüfen:
 **Eingetragen (Phase 3C):** Supabase Auth (Managed Auth); Google als OAuth-IdP hinter Supabase. Frontend nur Publishable/Anon Key (`VITE_*`). Service Role / JWT-Secret nie im Client.
 ### 20. Löschung und Export
 
-Vor Public Launch muss es ein Konzept geben für:
-
-- Account löschen
-- personenbezogene Daten löschen
-- relevante Daten exportieren
-
-Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
+- Nutzer können eigene Daten **exportieren** (`GET /api/me/export`, JSON, nur `rinq_user_id`-Ownership).
+- Nutzer können den Account **vollständig löschen** (`POST /api/me/delete`, Bestätigung `LÖSCHEN`).
+- Löschung umfasst app-interne Runtime-Daten (Profil, Sessions, Rewards, Observations, Scenes, Uploads), alle `auth_links`, Identity und — sofern konfiguriert — den Managed-Auth-User (Supabase Admin API via `SUPABASE_SERVICE_ROLE_KEY`, nur Backend).
+- Keine unnötige Aufbewahrung gelöschter Accounts in der Live-Runtime.
+- **Backups:** Gelöschte Daten können für eine begrenzte Zeit in bestehenden Server-Backups enthalten sein; keine neuen Backup-Jobs nur wegen Account-Löschung. Retention der Ops-Backups separat dokumentieren.
 
 ---
 
@@ -278,6 +276,7 @@ Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
 - [x] Account Linking Legacy↔Google (Phase 3D) — verifiziert unter bestehender Session, kein E-Mail-Merge
 - [x] First-Login Display-Name Onboarding (Phase 3E) — `needs_display_name` / `displayNameChosen`, kein E-Mail-Bezug
 - [x] Passwordless E-Mail via Supabase (Phase 3F) — `supabase_email`, OTP/Magic Link, kein E-Mail-Merge
+- [x] Account Lifecycle (Phase 3G) — Export, Unlink, Logout/Global Logout, vollständige Self-Service-Löschung
 
 ### Vor Payment
 
@@ -296,7 +295,7 @@ Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
 - [ ] HTTPS / HSTS prüfen
 - [ ] Backup- / Restore-Konzept
 - [ ] Datenschutz-Dokumentation
-- [ ] Lösch- / Export-Prozess
+- [x] Lösch- / Export-Prozess (Phase 3G Self-Service; Backup-Retention weiterhin ops-seitig)
 - [ ] strukturierter Security Review
 
 ### Später / High Assurance

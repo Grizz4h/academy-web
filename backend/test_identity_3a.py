@@ -21,6 +21,7 @@ if BACKEND_DIR not in sys.path:
 
 import jwt
 from fastapi.testclient import TestClient
+from security_guards import reset_rate_limiter_for_tests
 
 import main as backend_main
 from identity.context import LEGACY_PASSWORD_PROVIDER
@@ -48,6 +49,7 @@ def _auth(sub: str) -> dict:
 
 class IdentityStoreTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         self.store = IdentityStore(str(Path(self._tmp.name) / "identity_store.json"))
 
@@ -94,6 +96,7 @@ class IdentityStoreTests(unittest.TestCase):
 
 class IdentityMigrationTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         root = Path(self._tmp.name)
         self.academy = root / "academy"
@@ -198,6 +201,7 @@ class IdentityMigrationTests(unittest.TestCase):
 
 class AuthContextApiTests(unittest.TestCase):
     def setUp(self):
+        reset_rate_limiter_for_tests()
         self._tmp = tempfile.TemporaryDirectory()
         root = Path(self._tmp.name)
         self.academy = root / "academy"

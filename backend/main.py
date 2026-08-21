@@ -4007,6 +4007,161 @@ async def link_google_account(
     }
 
 
+class UnlinkAuthPayload(BaseModel):
+    provider: str
+
+
+@app.delete("/api/me/auth/links/{provider}")
+async def unlink_auth_provider(
+    provider: str,
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Detach one login method. Refuses removing the last method."""
+    rate_limit(request, "auth_unlink", limit=20, window_sec=60.0)
+    key = (provider or "").strip()
+    try:
+        removed = _identity_store.unlink_provider(current_user.rinq_user_id, key)
+    except ValueError as exc:
+        if str(exc) == "cannot_unlink_last_login_method":
+            raise HTTPException(
+                status_code=400,
+                detail="Die letzte Login-Methode kann nicht entfernt werden.",
+            )
+        raise HTTPException(status_code=400, detail="Trennen fehlgeschlagen")
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Login-Methode nicht verknüpft")
+    logging.info(
+        "[SEC] auth_link_removed rinq=%s provider=%s",
+        current_user.rinq_user_id,
+        key,
+    )
+    providers = _identity_store.list_providers_for_user(current_user.rinq_user_id)
+    return {
+        "ok": True,
+        "removed_provider": removed.get("provider"),
+        "auth_providers": providers,
+        "google_linked": SUPABASE_GOOGLE_PROVIDER in providers,
+    }
+
+
+@app.get("/api/me/export")
+async def export_my_data(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Download a JSON export of the caller's own runtime data (no secrets)."""
+    rate_limit(request, "account_export", limit=10, window_sec=60.0)
+    from account_lifecycle import collect_export, export_filename
+    from fastapi.responses import Response
+
+    payload = collect_export(
+        current_user,
+        profiles_dir=PROFILES_DIR,
+        rewards_dir=REWARDS_DIR,
+        sessions_dir=SESSIONS_DIR,
+        scenes_dir=SCENES_DIR,
+        obs_runs_dir=OBS_RUNS_DIR,
+        obs_entries_dir=OBS_ENTRIES_DIR,
+        obs_players_dir=OBS_PLAYERS_DIR,
+        avatars_dir=AVATAR_UPLOADS_DIR,
+        identity_store=_identity_store,
+    )
+    body = json.dumps(payload, indent=2, ensure_ascii=False)
+    logging.info("[SEC] account_export rinq=%s", current_user.rinq_user_id)
+    return Response(
+        content=body,
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename="{export_filename()}"',
+        },
+    )
+
+
+class DeleteAccountPayload(BaseModel):
+    confirm: str
+    password: Optional[str] = None
+
+
+@app.post("/api/me/delete")
+async def delete_my_account(
+    payload: DeleteAccountPayload,
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Irreversible self-service account deletion."""
+    rate_limit(request, "account_delete", limit=5, window_sec=60.0)
+    logging.warning("[SEC] account_delete_requested rinq=%s", current_user.rinq_user_id)
+
+    if (payload.confirm or "").strip() != "LÖSCHEN":
+        raise HTTPException(
+            status_code=400,
+            detail='Bestätigung ungültig — bitte exakt „LÖSCHEN“ eingeben.',
+        )
+
+    # Reauth: legacy password when available
+    if current_user.legacy_username or current_user.auth_provider == LEGACY_PASSWORD_PROVIDER:
+        if not payload.password:
+            raise HTTPException(status_code=400, detail="Passwort zur Bestätigung erforderlich.")
+        record = _find_user_record(current_user)
+        if not record or not verify_password(payload.password, record.get("password_hash") or ""):
+            raise HTTPException(status_code=401, detail="Passwort falsch.")
+
+    from account_lifecycle import delete_account as lifecycle_delete
+
+    def _remove_legacy_row(username: str) -> bool:
+        users = load_users()
+        key = normalize_subject(username)
+        before = len(users.get("users") or [])
+        users["users"] = [
+            u
+            for u in users.get("users") or []
+            if normalize_subject(u.get("username") or "") != key
+        ]
+        if len(users["users"]) == before:
+            return False
+        save_users(users)
+        return True
+
+    try:
+        summary = lifecycle_delete(
+            current_user,
+            identity_store=_identity_store,
+            profiles_dir=PROFILES_DIR,
+            rewards_dir=REWARDS_DIR,
+            sessions_dir=SESSIONS_DIR,
+            scenes_dir=SCENES_DIR,
+            obs_runs_dir=OBS_RUNS_DIR,
+            obs_entries_dir=OBS_ENTRIES_DIR,
+            obs_players_dir=OBS_PLAYERS_DIR,
+            avatars_dir=AVATAR_UPLOADS_DIR,
+            users_file=USERS_FILE,
+            remove_legacy_user_row=_remove_legacy_row,
+        )
+    except RuntimeError as exc:
+        msg = str(exc)
+        if msg == "supabase_service_role_required":
+            logging.error("[SEC] account_delete_failed rinq=%s reason=missing_service_role", current_user.rinq_user_id)
+            raise HTTPException(
+                status_code=503,
+                detail="Account-Löschung benötigt serverseitig SUPABASE_SERVICE_ROLE_KEY.",
+            )
+        if msg == "supabase_cleanup_incomplete":
+            logging.error("[SEC] account_delete_failed rinq=%s reason=supabase_cleanup", current_user.rinq_user_id)
+            raise HTTPException(
+                status_code=500,
+                detail="Lokale Daten entfernt, Supabase-Cleanup unvollständig — Support prüfen.",
+            )
+        logging.error("[SEC] account_delete_failed rinq=%s reason=%s", current_user.rinq_user_id, type(exc).__name__)
+        raise HTTPException(status_code=500, detail="Account-Löschung fehlgeschlagen")
+    except Exception:
+        logging.exception("[SEC] account_delete_failed rinq=%s", current_user.rinq_user_id)
+        raise HTTPException(status_code=500, detail="Account-Löschung fehlgeschlagen")
+
+    logging.warning("[SEC] account_delete_completed rinq=%s", current_user.rinq_user_id)
+    return {"ok": True, "deleted": summary}
+
+
 @app.patch("/api/me/profile")
 async def patch_my_profile(payload: ProfileUpdatePayload, current_user: AuthContext = Depends(get_current_user)):
     profile = _load_user_profile(current_user)

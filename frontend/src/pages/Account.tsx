@@ -25,10 +25,16 @@ import type {
 } from '../data/profile/types'
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { getRealSessions } from '../utils/sessionEligibility'
-import { UiButton, UiPill } from '../components/ui'
+import { UiButton, UiPill, UiSheet, UiSheetActions } from '../components/ui'
 import { useTutorialOptional } from '../features/tutorial'
 import { isSupabaseConfigured, signInWithGoogle } from '../lib/supabase'
 import styles from './Account.module.css'
+
+const PROVIDER_LABELS: Record<string, string> = {
+  legacy_password: 'Legacy Password',
+  supabase_google: 'Google',
+  supabase_email: 'Email OTP',
+}
 
 function formatMemberSince(iso: string | null | undefined): string | null {
   if (!iso) return null
@@ -52,13 +58,21 @@ function deriveTopTrack(sessions: Array<{ module_id?: string; state?: string }>)
 }
 
 export default function AccountPage() {
-  const { user, authMode } = useUser()
+  const { user, authMode, logout } = useUser()
   const { rewardState } = useRewards()
   const tutorial = useTutorialOptional()
   const [searchParams, setSearchParams] = useSearchParams()
   const [linkBusy, setLinkBusy] = useState(false)
   const [linkError, setLinkError] = useState('')
   const [linkSuccess, setLinkSuccess] = useState('')
+  const [unlinkBusy, setUnlinkBusy] = useState<string | null>(null)
+  const [exportBusy, setExportBusy] = useState(false)
+  const [lifecycleError, setLifecycleError] = useState('')
+  const [lifecycleInfo, setLifecycleInfo] = useState('')
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState('')
+  const [deletePassword, setDeletePassword] = useState('')
+  const [deleteBusy, setDeleteBusy] = useState(false)
   const googleConfigured = isSupabaseConfigured()
 
   const { data: account, isLoading, error, refetch } = useQuery({
@@ -275,17 +289,47 @@ export default function AccountPage() {
         </Card>
       ) : null}
 
-      {googleConfigured ? (
+      {googleConfigured || (account?.auth_providers && account.auth_providers.length > 0) ? (
         <Card surface="section" className={styles.sectionCard}>
-          <h2 className="ui-section-title">Anmelden mit</h2>
+          <h2 className="ui-section-title">Login-Methoden</h2>
           <p className={styles.sectionLead}>
-            Verbinde Google mit diesem RinQ-Account. Kein automatischer Merge über die E-Mail — du bestätigst die
-            Verknüpfung eingeloggt.
+            Verknüpfte Anmeldewege für diesen RinQ-Account. Die letzte Methode kann nicht entfernt werden.
           </p>
-          <div className={styles.field}>
-            {account?.google_linked || account?.auth_providers?.includes('supabase_google') ? (
-              <UiPill tone="ok">Google verbunden</UiPill>
-            ) : (
+          <ul className={styles.providerList}>
+            {(account?.auth_providers || []).map((provider) => {
+              const canUnlink = (account?.auth_providers?.length || 0) > 1
+              return (
+                <li key={provider} className={styles.providerRow}>
+                  <UiPill tone="ok">{PROVIDER_LABELS[provider] || provider} verbunden</UiPill>
+                  {canUnlink ? (
+                    <UiButton
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={unlinkBusy === provider}
+                      onClick={async () => {
+                        setLifecycleError('')
+                        setUnlinkBusy(provider)
+                        try {
+                          await api.unlinkAuthProvider(provider)
+                          setLinkSuccess(`${PROVIDER_LABELS[provider] || provider} getrennt.`)
+                          await refetch()
+                        } catch (e: any) {
+                          setLifecycleError(e?.message || 'Trennen fehlgeschlagen')
+                        } finally {
+                          setUnlinkBusy(null)
+                        }
+                      }}
+                    >
+                      Trennen
+                    </UiButton>
+                  ) : null}
+                </li>
+              )
+            })}
+          </ul>
+          {googleConfigured && !account?.auth_providers?.includes('supabase_google') ? (
+            <div className={styles.field}>
               <UiButton
                 type="button"
                 variant="secondary"
@@ -304,18 +348,148 @@ export default function AccountPage() {
               >
                 {linkBusy ? 'Weiterleitung…' : 'Google-Konto verbinden'}
               </UiButton>
-            )}
-            {authMode === 'supabase' && !account?.google_linked ? (
-              <p className={styles.hint}>
-                Du bist bereits per Google angemeldet. Zum Verknüpfen zuerst mit dem Legacy-Account (Name/Passwort)
-                einloggen.
-              </p>
-            ) : null}
-            {linkSuccess ? <p className={styles.hint}>{linkSuccess}</p> : null}
-            {linkError ? <p className={styles.error}>{linkError}</p> : null}
-          </div>
+              {authMode === 'supabase' ? (
+                <p className={styles.hint}>
+                  Zum Verknüpfen mit Legacy zuerst mit Name/Passwort einloggen.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          {linkSuccess ? <p className={styles.hint}>{linkSuccess}</p> : null}
+          {linkError ? <p className={styles.error}>{linkError}</p> : null}
+          {lifecycleError ? <p className={styles.error}>{lifecycleError}</p> : null}
         </Card>
       ) : null}
+
+      <Card surface="section" className={styles.sectionCard}>
+        <h2 className="ui-section-title">Daten & Sessions</h2>
+        <p className={styles.sectionLead}>
+          Export enthält deine Runtime-Daten als JSON. Keine Passwort-Hashes oder Tokens.
+        </p>
+        <div className={styles.lifecycleActions}>
+          <UiButton
+            type="button"
+            variant="secondary"
+            disabled={exportBusy}
+            onClick={async () => {
+              setLifecycleError('')
+              setLifecycleInfo('')
+              setExportBusy(true)
+              try {
+                const blob = await api.exportMyData()
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `rinq-user-export-${new Date().toISOString().slice(0, 10)}.json`
+                a.click()
+                URL.revokeObjectURL(url)
+                setLifecycleInfo('Export gestartet.')
+              } catch (e: any) {
+                setLifecycleError(e?.message || 'Export fehlgeschlagen')
+              } finally {
+                setExportBusy(false)
+              }
+            }}
+          >
+            {exportBusy ? 'Exportiere…' : 'Daten exportieren'}
+          </UiButton>
+          <UiButton type="button" variant="secondary" onClick={() => logout()}>
+            Abmelden
+          </UiButton>
+          {authMode === 'supabase' || googleConfigured ? (
+            <UiButton
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                logout({ global: true })
+              }}
+            >
+              Auf allen Geräten abmelden
+            </UiButton>
+          ) : null}
+        </div>
+        {authMode === 'legacy' ? (
+          <p className={styles.hint}>
+            Legacy-JWTs können ohne Session-Registry nicht global widerrufen werden — nur dieses Gerät wird abgemeldet.
+          </p>
+        ) : null}
+        {lifecycleInfo ? <p className={styles.hint}>{lifecycleInfo}</p> : null}
+      </Card>
+
+      <Card surface="section" className={styles.sectionCard}>
+        <h2 className="ui-section-title">Account löschen</h2>
+        <p className={styles.sectionLead}>
+          Unwiderruflich: Profil, Sessions, Rewards, Observations, Scenes, Uploads, Login-Wege und Managed-Auth-User.
+        </p>
+        <UiButton type="button" variant="secondary" onClick={() => setDeleteOpen(true)}>
+          Account löschen…
+        </UiButton>
+      </Card>
+
+      <UiSheet
+        open={deleteOpen}
+        onClose={() => {
+          if (!deleteBusy) setDeleteOpen(false)
+        }}
+        title="Account wirklich löschen?"
+        meta="Diese Aktion kann nicht rückgängig gemacht werden. Tippe LÖSCHEN zur Bestätigung."
+      >
+        <label className={styles.field}>
+          <span className={styles.label}>Bestätigung</span>
+          <input
+            className={styles.input}
+            value={deleteConfirm}
+            placeholder="LÖSCHEN"
+            disabled={deleteBusy}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+          />
+        </label>
+        {authMode === 'legacy' || account?.auth_providers?.includes('legacy_password') ? (
+          <label className={styles.field}>
+            <span className={styles.label}>Passwort</span>
+            <input
+              className={styles.input}
+              type="password"
+              autoComplete="current-password"
+              value={deletePassword}
+              disabled={deleteBusy}
+              onChange={(e) => setDeletePassword(e.target.value)}
+            />
+          </label>
+        ) : null}
+        {lifecycleError ? <p className={styles.error}>{lifecycleError}</p> : null}
+        <UiSheetActions
+          secondary={
+            <UiButton type="button" variant="ghost" disabled={deleteBusy} onClick={() => setDeleteOpen(false)}>
+              Abbrechen
+            </UiButton>
+          }
+          primary={
+            <UiButton
+              type="button"
+              disabled={deleteBusy || deleteConfirm.trim() !== 'LÖSCHEN'}
+              onClick={async () => {
+                setLifecycleError('')
+                setDeleteBusy(true)
+                try {
+                  await api.deleteMyAccount({
+                    confirm: deleteConfirm.trim(),
+                    password: deletePassword || undefined,
+                  })
+                  setDeleteOpen(false)
+                  logout({ global: true })
+                } catch (e: any) {
+                  setLifecycleError(e?.message || 'Löschen fehlgeschlagen')
+                } finally {
+                  setDeleteBusy(false)
+                }
+              }}
+            >
+              {deleteBusy ? 'Lösche…' : 'Endgültig löschen'}
+            </UiButton>
+          }
+        />
+      </UiSheet>
 
       <section className={styles.section}>
         <h2 className="ui-section-title">RINK ID</h2>

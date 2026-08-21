@@ -68,6 +68,12 @@ class SlidingWindowRateLimiter:
 _rate_limiter = SlidingWindowRateLimiter()
 
 
+def reset_rate_limiter_for_tests() -> None:
+    """Clear in-memory buckets (unit tests only)."""
+    with _rate_limiter._lock:
+        _rate_limiter._hits.clear()
+
+
 def client_ip(request: Request) -> str:
     forwarded = (request.headers.get("x-forwarded-for") or "").split(",")[0].strip()
     if forwarded:

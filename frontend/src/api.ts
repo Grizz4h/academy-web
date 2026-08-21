@@ -1639,6 +1639,40 @@ export const api = {
     return res.json()
   },
 
+  unlinkAuthProvider: async (provider: string): Promise<{
+    ok: boolean
+    auth_providers: string[]
+    google_linked: boolean
+  }> => {
+    const res = await fetch(buildUrl(`/me/auth/links/${encodeURIComponent(provider)}`), {
+      method: 'DELETE',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Login-Methode konnte nicht getrennt werden')
+    return res.json()
+  },
+
+  exportMyData: async (): Promise<Blob> => {
+    const res = await fetch(buildUrl('/me/export'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Export fehlgeschlagen')
+    return res.blob()
+  },
+
+  deleteMyAccount: async (payload: { confirm: string; password?: string }): Promise<{ ok: boolean }> => {
+    const res = await fetch(buildUrl('/me/delete'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw await readApiError(res, 'Account konnte nicht gelöscht werden')
+    return res.json()
+  },
+
   getMyProfile: async (): Promise<UserProfileCustomization> => {
     const res = await fetch(buildUrl('/me/profile'), {
       headers: { ...authHeaders() },
