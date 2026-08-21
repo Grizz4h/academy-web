@@ -28,29 +28,62 @@ export function isSupabaseConfigured(): boolean {
 }
 
 /** Canonical production OAuth redirect (also works for www via same SPA). */
-export function oauthRedirectTo(): string {
-  if (typeof window === 'undefined') return 'https://rinq-tank.de/auth/callback'
-  return `${window.location.origin}/auth/callback`
+export function oauthRedirectTo(intent?: 'login' | 'link'): string {
+  if (typeof window === 'undefined') {
+    const base = 'https://rinq-tank.de/auth/callback'
+    return intent === 'link' ? `${base}?intent=link` : base
+  }
+  const url = new URL('/auth/callback', window.location.origin)
+  if (intent === 'link') url.searchParams.set('intent', 'link')
+  return url.toString()
 }
 
-export async function signInWithGoogle(): Promise<{ error?: string }> {
+const LINK_LEGACY_TOKEN_KEY = 'academy.linkLegacyToken'
+const LINK_INTENT_KEY = 'academy.authLinkIntent'
+
+export function beginGoogleLinkFlow(): void {
+  const token = localStorage.getItem('academy.token')
+  if (token) localStorage.setItem(LINK_LEGACY_TOKEN_KEY, token)
+  localStorage.setItem(LINK_INTENT_KEY, 'google')
+}
+
+export function peekGoogleLinkLegacyToken(): string | null {
+  return localStorage.getItem(LINK_LEGACY_TOKEN_KEY)
+}
+
+export function clearGoogleLinkFlow(): void {
+  localStorage.removeItem(LINK_LEGACY_TOKEN_KEY)
+  localStorage.removeItem(LINK_INTENT_KEY)
+}
+
+export function isGoogleLinkIntent(): boolean {
+  if (typeof window === 'undefined') return false
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('intent') === 'link') return true
+  return localStorage.getItem(LINK_INTENT_KEY) === 'google'
+}
+
+export async function signInWithGoogle(options?: { intent?: 'login' | 'link' }): Promise<{ error?: string }> {
   const supabase = getSupabase()
   if (!supabase) {
     return { error: 'Google Login ist noch nicht konfiguriert.' }
   }
+  const intent = options?.intent || 'login'
+  if (intent === 'link') beginGoogleLinkFlow()
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: oauthRedirectTo(),
-      // Minimal scopes — Supabase/Google defaults (openid profile email).
-      // We do not persist email/name in RinQ identity.
+      redirectTo: oauthRedirectTo(intent),
       queryParams: {
         access_type: 'online',
         prompt: 'select_account',
       },
     },
   })
-  if (error) return { error: error.message }
+  if (error) {
+    if (intent === 'link') clearGoogleLinkFlow()
+    return { error: error.message }
+  }
   return {}
 }
 

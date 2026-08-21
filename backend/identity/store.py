@@ -237,13 +237,31 @@ class IdentityStore:
             self._write_unlocked(data)
             return self._to_context(identity, link, display_name)
 
+    def list_providers_for_user(self, rinq_user_id: str) -> List[str]:
+        with self._exclusive():
+            data = self._read_unlocked()
+            return sorted(
+                {
+                    str(link.get("provider") or "")
+                    for link in data.get("auth_links") or []
+                    if link.get("rinq_user_id") == rinq_user_id and link.get("provider")
+                }
+            )
+
     def link_provider(
         self,
         rinq_user_id: str,
         provider: str,
         provider_subject: str,
+        *,
+        allow_reclaim_orphan: bool = False,
     ) -> Dict[str, Any]:
-        """Attach provider subject to an existing identity. Enforces uniqueness."""
+        """Attach provider subject to an existing identity. Enforces uniqueness.
+
+        If allow_reclaim_orphan and the subject is already linked to a different
+        identity that has no legacy_username (Google-only throwaway), reassign
+        the link to rinq_user_id. Never merges by email.
+        """
         subject = normalize_subject(provider_subject)
         if not provider or not subject:
             raise ValueError("provider and provider_subject required")
@@ -256,10 +274,34 @@ class IdentityStore:
 
             existing = self.find_link(provider, subject, data)
             if existing:
-                if existing.get("rinq_user_id") != rinq_user_id:
+                if existing.get("rinq_user_id") == rinq_user_id:
+                    return existing
+                other_id = existing.get("rinq_user_id")
+                other = self.get_identity(other_id, data) if other_id else None
+                can_reclaim = (
+                    allow_reclaim_orphan
+                    and other is not None
+                    and not other.get("legacy_username")
+                )
+                if not can_reclaim:
                     raise ValueError(
                         f"provider subject already linked to another user: {provider}:{subject}"
                     )
+                # Reassign link; drop orphan identity if it has no remaining links
+                existing["rinq_user_id"] = rinq_user_id
+                existing["linked_at"] = _utc_now_iso()
+                remaining = [
+                    link
+                    for link in data["auth_links"]
+                    if link.get("rinq_user_id") == other_id
+                ]
+                if not remaining:
+                    data["identities"] = [
+                        row
+                        for row in data["identities"]
+                        if row.get("rinq_user_id") != other_id
+                    ]
+                self._write_unlocked(data)
                 return existing
 
             link = {

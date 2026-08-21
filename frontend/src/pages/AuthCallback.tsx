@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getSupabase } from '../lib/supabase'
+import { Link, useNavigate } from 'react-router-dom'
+import {
+  clearGoogleLinkFlow,
+  getSupabase,
+  isGoogleLinkIntent,
+  peekGoogleLinkLegacyToken,
+  signOutSupabase,
+} from '../lib/supabase'
 import { useUser } from '../context/UserContext'
+import { api } from '../api'
 import Card from '../components/Card'
 import styles from '../pages/Dashboard.module.css'
 
 /**
- * OAuth return URL for Supabase Google login.
- * Exchanges the session from the URL hash/query, then hydrates RinQ auth via /api/me.
+ * OAuth return URL for Supabase Google login / account linking.
  */
 export default function AuthCallbackPage() {
   const navigate = useNavigate()
   const { completeSupabaseSession } = useUser()
   const [error, setError] = useState('')
+  const [status, setStatus] = useState('Google wird abgeschlossen…')
 
   useEffect(() => {
     let cancelled = false
@@ -23,27 +30,39 @@ export default function AuthCallbackPage() {
         return
       }
       try {
-        // PKCE / detectSessionInUrl: session should be available after redirect
         const { data, error: sessionError } = await supabase.auth.getSession()
         if (sessionError) throw sessionError
-        const token = data.session?.access_token
+        let token = data.session?.access_token
         if (!token) {
-          // Some flows need getSession after a tick
           await new Promise((r) => setTimeout(r, 50))
           const again = await supabase.auth.getSession()
-          if (!again.data.session?.access_token) {
-            throw new Error('Keine Session nach Google Login.')
-          }
-          if (cancelled) return
-          const ok = await completeSupabaseSession(again.data.session.access_token)
-          if (!ok.ok) throw new Error(ok.error || 'Anmeldung fehlgeschlagen')
-        } else {
-          if (cancelled) return
-          const ok = await completeSupabaseSession(token)
-          if (!ok.ok) throw new Error(ok.error || 'Anmeldung fehlgeschlagen')
+          token = again.data.session?.access_token
         }
+        if (!token) throw new Error('Keine Session nach Google Login.')
+        if (cancelled) return
+
+        if (isGoogleLinkIntent()) {
+          setStatus('Google-Konto wird verknüpft…')
+          const legacyToken = peekGoogleLinkLegacyToken()
+          if (!legacyToken) {
+            clearGoogleLinkFlow()
+            throw new Error('Verknüpfung abgebrochen — bitte erneut als bestehender Account anmelden.')
+          }
+          // Keep legacy session as the authorizing identity for the link call
+          localStorage.setItem('academy.token', legacyToken)
+          localStorage.setItem('academy.authMode', 'legacy')
+          await api.linkGoogleAccount(token)
+          clearGoogleLinkFlow()
+          await signOutSupabase()
+          if (!cancelled) navigate('/account?google=linked', { replace: true })
+          return
+        }
+
+        const ok = await completeSupabaseSession(token)
+        if (!ok.ok) throw new Error(ok.error || 'Anmeldung fehlgeschlagen')
         if (!cancelled) navigate('/', { replace: true })
       } catch (e: any) {
+        clearGoogleLinkFlow()
         if (!cancelled) setError(e?.message || 'Google Login fehlgeschlagen')
       }
     })()
@@ -57,9 +76,16 @@ export default function AuthCallbackPage() {
       <Card>
         <h1 className="ui-page-title">Anmeldung</h1>
         {error ? (
-          <p className={styles.errorMsg}>{error}</p>
+          <>
+            <p className={styles.errorMsg}>{error}</p>
+            <p className="ui-page-lead">
+              <Link to="/account">Zurück zum Account</Link>
+              {' · '}
+              <Link to="/">Zum Dashboard</Link>
+            </p>
+          </>
         ) : (
-          <p className="ui-page-lead">Google Login wird abgeschlossen…</p>
+          <p className="ui-page-lead">{status}</p>
         )}
       </Card>
     </div>

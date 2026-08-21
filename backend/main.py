@@ -140,10 +140,11 @@ def resolve_auth_context_from_supabase_claims(claims: dict) -> AuthContext:
         # Phase 3C: Google only — reject other Supabase providers (e.g. email)
         raise HTTPException(status_code=401, detail="Google sign-in required")
     # Stable subject = Supabase auth user id (JWT sub). Never email.
+    # display_name=None → identity.legacy_username or "Spieler"; profile overrides in /api/me.
     return _identity_store.ensure_provider_identity(
         SUPABASE_GOOGLE_PROVIDER,
         sub,
-        display_name="Spieler",
+        display_name=None,
     )
 
 
@@ -3769,6 +3770,57 @@ def _default_user_profile(username: str) -> dict:
     }
 
 
+def _needs_display_name_setup(user) -> bool:
+    """True for new managed-auth users who have not yet chosen a profile display name.
+
+    Legacy users and linked accounts (identity has legacy_username) are never prompted.
+    """
+    if not isinstance(user, AuthContext):
+        return False
+    if user.auth_provider != SUPABASE_GOOGLE_PROVIDER:
+        return False
+    # Account-linking: Google login on a legacy-backed identity keeps the existing name.
+    if user.legacy_username:
+        return False
+    path = _profile_path(user)
+    if not os.path.exists(path):
+        legacy = _legacy_profile_path(user)
+        if legacy and os.path.exists(legacy):
+            path = legacy
+        else:
+            return True
+    try:
+        stored = load_json(path) or {}
+    except Exception:
+        return True
+    return not bool(stored.get("displayNameChosen"))
+
+
+_DISPLAY_NAME_RE = re.compile(
+    r"^[\w\s\-'.]+$",
+    re.UNICODE,
+)
+
+
+def _validate_display_name(raw: str) -> str:
+    """Normalize and validate a user-chosen display name (not a unique username)."""
+    name = (raw or "").strip()
+    if len(name) < 2:
+        raise HTTPException(status_code=400, detail="Anzeigename: mindestens 2 Zeichen.")
+    if len(name) > 40:
+        raise HTTPException(status_code=400, detail="Anzeigename ist zu lang (max. 40 Zeichen).")
+    if "@" in name or "://" in name:
+        raise HTTPException(status_code=400, detail="Anzeigename darf keine E-Mail oder URL sein.")
+    if not _DISPLAY_NAME_RE.match(name):
+        raise HTTPException(
+            status_code=400,
+            detail="Anzeigename: nur Buchstaben, Zahlen, Leerzeichen und - ' .",
+        )
+    # Collapse internal whitespace
+    name = re.sub(r"\s+", " ", name)
+    return name
+
+
 def _load_user_profile(user) -> dict:
     display_seed = _resolve_user_cased(user)
     path = _profile_path(user)
@@ -3851,6 +3903,10 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "role": role,
         "is_admin": is_admin_auth(current_user, role_from_record=role),
         "profile": profile,
+        "needs_display_name": _needs_display_name_setup(current_user),
+        "auth_providers": _identity_store.list_providers_for_user(current_user.rinq_user_id),
+        "google_linked": SUPABASE_GOOGLE_PROVIDER
+        in _identity_store.list_providers_for_user(current_user.rinq_user_id),
     }
 
 
@@ -3859,18 +3915,93 @@ async def get_my_profile(current_user: AuthContext = Depends(get_current_user)):
     return _load_user_profile(current_user)
 
 
+class LinkGooglePayload(BaseModel):
+    """Supabase access token from OAuth — verified server-side. Never trust client user ids."""
+
+    access_token: str
+
+
+@app.post("/api/me/auth/link/google")
+async def link_google_account(
+    payload: LinkGooglePayload,
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Link a verified Google/Supabase identity to the currently authenticated RinQ user.
+
+    Requires an existing session (typically legacy). Does not merge by email.
+    """
+    rate_limit(request, "auth_link", limit=20, window_sec=60.0)
+    if not supabase_configured():
+        raise HTTPException(status_code=503, detail="Google Login ist nicht konfiguriert")
+
+    token = (payload.access_token or "").strip()
+    if not token:
+        raise HTTPException(status_code=400, detail="access_token required")
+
+    try:
+        claims = verify_supabase_access_token(token)
+    except Exception:
+        logging.warning("[SEC] auth_link_google_token_invalid subject=%s", current_user.auth_subject)
+        raise HTTPException(status_code=401, detail="Invalid Google token")
+
+    sub = str(claims.get("sub") or "").strip()
+    if not sub:
+        raise HTTPException(status_code=401, detail="Invalid Google token")
+
+    app_meta = claims.get("app_metadata") if isinstance(claims.get("app_metadata"), dict) else {}
+    provider = str((app_meta or {}).get("provider") or "").strip().lower()
+    providers = (app_meta or {}).get("providers") or []
+    if isinstance(providers, str):
+        providers = [providers]
+    is_google = provider == "google" or "google" in [str(p).lower() for p in providers]
+    if not is_google:
+        raise HTTPException(status_code=400, detail="Nur Google-Konten können verknüpft werden")
+
+    try:
+        link = _identity_store.link_provider(
+            current_user.rinq_user_id,
+            SUPABASE_GOOGLE_PROVIDER,
+            sub,
+            allow_reclaim_orphan=True,
+        )
+    except ValueError as exc:
+        logging.warning(
+            "[SEC] auth_link_google_conflict rinq=%s detail=%s",
+            current_user.rinq_user_id,
+            type(exc).__name__,
+        )
+        raise HTTPException(
+            status_code=409,
+            detail="Dieses Google-Konto ist bereits mit einem anderen RinQ-Account verknüpft.",
+        )
+    except KeyError:
+        raise HTTPException(status_code=401, detail="Invalid session")
+
+    logging.info(
+        "[SEC] auth_link_google_ok rinq=%s provider=%s",
+        current_user.rinq_user_id,
+        SUPABASE_GOOGLE_PROVIDER,
+    )
+    return {
+        "ok": True,
+        "rinq_user_id": current_user.rinq_user_id,
+        "provider": SUPABASE_GOOGLE_PROVIDER,
+        "linked_at": link.get("linked_at"),
+        "auth_providers": _identity_store.list_providers_for_user(current_user.rinq_user_id),
+        "google_linked": True,
+    }
+
+
 @app.patch("/api/me/profile")
 async def patch_my_profile(payload: ProfileUpdatePayload, current_user: AuthContext = Depends(get_current_user)):
     profile = _load_user_profile(current_user)
     data = payload.model_dump(exclude_unset=True) if hasattr(payload, "model_dump") else payload.dict(exclude_unset=True)
 
     if "displayName" in data and data["displayName"] is not None:
-        name = str(data["displayName"]).strip()
-        if not name:
-            raise HTTPException(status_code=400, detail="Anzeigename darf nicht leer sein.")
-        if len(name) > 40:
-            raise HTTPException(status_code=400, detail="Anzeigename ist zu lang (max. 40 Zeichen).")
+        name = _validate_display_name(str(data["displayName"]))
         profile["displayName"] = name
+        profile["displayNameChosen"] = True
 
     if "avatar" in data and data["avatar"] is not None:
         avatar = data["avatar"]

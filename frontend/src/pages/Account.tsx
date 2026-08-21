@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import Card from '../components/Card'
@@ -25,8 +25,9 @@ import type {
 } from '../data/profile/types'
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { getRealSessions } from '../utils/sessionEligibility'
-import { UiButton } from '../components/ui'
+import { UiButton, UiPill } from '../components/ui'
 import { useTutorialOptional } from '../features/tutorial'
+import { isSupabaseConfigured, signInWithGoogle } from '../lib/supabase'
 import styles from './Account.module.css'
 
 function formatMemberSince(iso: string | null | undefined): string | null {
@@ -51,15 +52,28 @@ function deriveTopTrack(sessions: Array<{ module_id?: string; state?: string }>)
 }
 
 export default function AccountPage() {
-  const { user } = useUser()
+  const { user, authMode } = useUser()
   const { rewardState } = useRewards()
   const tutorial = useTutorialOptional()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [linkBusy, setLinkBusy] = useState(false)
+  const [linkError, setLinkError] = useState('')
+  const [linkSuccess, setLinkSuccess] = useState('')
+  const googleConfigured = isSupabaseConfigured()
 
   const { data: account, isLoading, error, refetch } = useQuery({
     queryKey: ['me', user],
     queryFn: () => api.getMe(),
     enabled: Boolean(user),
   })
+
+  useEffect(() => {
+    if (searchParams.get('google') === 'linked') {
+      setLinkSuccess('Google-Konto ist jetzt mit diesem Account verknüpft.')
+      setSearchParams({}, { replace: true })
+      void refetch()
+    }
+  }, [searchParams, setSearchParams, refetch])
 
   const { data: sessions = [] } = useQuery({
     queryKey: ['sessions', user, 'account'],
@@ -258,6 +272,48 @@ export default function AccountPage() {
           <UiButton type="button" onClick={tutorial.restart}>
             Tutorial erneut starten
           </UiButton>
+        </Card>
+      ) : null}
+
+      {googleConfigured ? (
+        <Card surface="section" className={styles.sectionCard}>
+          <h2 className="ui-section-title">Anmelden mit</h2>
+          <p className={styles.sectionLead}>
+            Verbinde Google mit diesem RinQ-Account. Kein automatischer Merge über die E-Mail — du bestätigst die
+            Verknüpfung eingeloggt.
+          </p>
+          <div className={styles.field}>
+            {account?.google_linked || account?.auth_providers?.includes('supabase_google') ? (
+              <UiPill tone="ok">Google verbunden</UiPill>
+            ) : (
+              <UiButton
+                type="button"
+                variant="secondary"
+                disabled={linkBusy || authMode === 'supabase'}
+                onClick={async () => {
+                  setLinkError('')
+                  setLinkSuccess('')
+                  setLinkBusy(true)
+                  try {
+                    const result = await signInWithGoogle({ intent: 'link' })
+                    if (result.error) setLinkError(result.error)
+                  } finally {
+                    setLinkBusy(false)
+                  }
+                }}
+              >
+                {linkBusy ? 'Weiterleitung…' : 'Google-Konto verbinden'}
+              </UiButton>
+            )}
+            {authMode === 'supabase' && !account?.google_linked ? (
+              <p className={styles.hint}>
+                Du bist bereits per Google angemeldet. Zum Verknüpfen zuerst mit dem Legacy-Account (Name/Passwort)
+                einloggen.
+              </p>
+            ) : null}
+            {linkSuccess ? <p className={styles.hint}>{linkSuccess}</p> : null}
+            {linkError ? <p className={styles.error}>{linkError}</p> : null}
+          </div>
         </Card>
       ) : null}
 

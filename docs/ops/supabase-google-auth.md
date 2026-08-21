@@ -63,9 +63,19 @@ Redirect URLs allow-list:
 
 ```text
 https://rinq-tank.de/auth/callback
+https://rinq-tank.de/auth/callback?intent=link
 https://www.rinq-tank.de/auth/callback
+https://www.rinq-tank.de/auth/callback?intent=link
 http://localhost:5173/auth/callback
+http://localhost:5173/auth/callback?intent=link
 ```
+
+### Account Linking (Phase 3D)
+
+1. Legacy einloggen (z. B. Christoph).
+2. Account → **Google-Konto verbinden**.
+3. OAuth → Callback `?intent=link` → Backend `POST /api/me/auth/link/google` mit Legacy-Bearer + Supabase Access Token.
+4. Danach Legacy **oder** Google → dieselbe `rinq_user_id`.
 
 ### Supabase Auth → Providers → Google
 

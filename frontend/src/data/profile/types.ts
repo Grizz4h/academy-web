@@ -113,6 +113,12 @@ export type UserAccountPayload = {
   rinq_user_id?: string
   user_id?: string
   display_name?: string | null
+  auth_provider?: string | null
+  /** Linked auth providers for this RinQ user (e.g. legacy_password, supabase_google). */
+  auth_providers?: string[]
+  google_linked?: boolean
+  /** Google/managed auth: user must pick a display name once. */
+  needs_display_name?: boolean
   createdAt: string | null
   role: string | null
   /** Server-confirmed admin (env allowlist and/or role=admin). */

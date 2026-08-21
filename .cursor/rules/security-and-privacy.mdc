@@ -17,6 +17,7 @@ Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbez
 - FastAPI nur hinter Nginx auf `127.0.0.1:8000`
 - Auth-Subject ≠ App-ID: JWT/`provider` subject → `auth_links` → `rinq_user_id` (Ownership nur über RinQ-UUID)
 - Managed Auth: Supabase + Google (`supabase_google`); JWKS-Verify serverseitig; kein E-Mail-Merge
+- Account-Linking Legacy↔Google nur verifiziert unter bestehender Session (`/api/me/auth/link/google`)
 - Ownership serverseitig aus Auth-Kontext; keine Client-User-ID als Autorisierung
 - Import/Admin-APIs: `require_admin` (`ACADEMY_ADMIN_USERNAMES` und/oder `role=admin`); `/dev` in Production nur für Admins
 - Legacy-Signup steuerbar via `ACADEMY_ALLOW_LEGACY_SIGNUP` (Production: `0`)

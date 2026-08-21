@@ -1621,6 +1621,24 @@ export const api = {
     return res.json()
   },
 
+  linkGoogleAccount: async (accessToken: string): Promise<{
+    ok: boolean
+    rinq_user_id: string
+    google_linked: boolean
+    auth_providers: string[]
+  }> => {
+    const res = await fetch(buildUrl('/me/auth/link/google'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ access_token: accessToken }),
+    })
+    if (!res.ok) throw await readApiError(res, 'Google-Konto konnte nicht verknüpft werden')
+    return res.json()
+  },
+
   getMyProfile: async (): Promise<UserProfileCustomization> => {
     const res = await fetch(buildUrl('/me/profile'), {
       headers: { ...authHeaders() },
