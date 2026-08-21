@@ -90,23 +90,26 @@ from supabase_auth import (
     supabase_configured,
     verify_supabase_access_token,
 )
+from repositories import (
+    NotFoundError,
+    configure_repositories,
+    get_repos,
+)
 
 _identity_store = configure_identity_store(IDENTITY_STORE_FILE)
 
 
 def load_users():
+    """Legacy credential bundle. Prefer get_repos().credentials for new code."""
     if not os.path.exists(USERS_FILE):
         print("[AUTH] USERS_FILE (not found):", USERS_FILE)
         return {"users": []}
     print("[AUTH] USERS_FILE =", USERS_FILE)
-    with open(USERS_FILE, "r") as f:
-        return json.load(f)
+    return get_repos().credentials.load_bundle()
+
 
 def save_users(data):
-    tmp = USERS_FILE + ".tmp"
-    with open(tmp, "w") as f:
-        json.dump(data, f, indent=2)
-    os.replace(tmp, USERS_FILE)
+    get_repos().credentials.save_bundle(data)
 
 
 def _display_name_for_username(username: str) -> str:
@@ -313,6 +316,7 @@ async def health():
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
+PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
 ROOT_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 ROSTERS_DIR = os.path.join(ROOT_DATA_DIR, "rosters")
 GAMES_DIR = os.path.join(ROOT_DATA_DIR, "games")
@@ -324,6 +328,15 @@ OBS_PLAYERS_DIR = os.path.join(OBSERVATIONS_DIR, "players")
 SCENES_DIR = os.path.join(ROOT_DATA_DIR, "scenes")
 SCENE_CODE_COUNTER_FILE = os.path.join(ROOT_DATA_DIR, "scene_code_counter.json")
 PENNY_DEL_IMPORT_CONFIG_FILE = os.path.join(DATA_DIR, "penny_del_import_teams.json")
+
+# Runtime repositories (JSON today; swap implementations in repositories.wiring later)
+configure_repositories(
+    get_identity_store=lambda: _identity_store,
+    get_users_file=lambda: USERS_FILE,
+    get_profiles_dir=lambda: PROFILES_DIR,
+    get_rewards_dir=lambda: REWARDS_DIR,
+    get_sessions_dir=lambda: SESSIONS_DIR,
+)
 
 # Pydantic Models
 class SessionCreate(BaseModel):
@@ -625,37 +638,15 @@ def _parse_created_at(created_at: Optional[str]) -> datetime:
 
 
 def build_session_storage_path(session_id: str, created_at: Optional[str]) -> str:
-    dt = _parse_created_at(created_at)
-    year = f"{dt.year:04d}"
-    month = f"{dt.month:02d}"
-    return os.path.join(SESSIONS_DIR, year, month, f"{session_id}.json")
+    return get_repos().sessions.build_storage_path(session_id, created_at)
 
 
 def iter_session_files():
-    if not os.path.exists(SESSIONS_DIR):
-        return
-    for root, _, files in os.walk(SESSIONS_DIR):
-        for file in files:
-            if file.endswith('.json'):
-                yield os.path.join(root, file)
+    yield from get_repos().sessions.iter_session_paths() or []
 
 
 def find_session_file(session_id: str) -> Optional[str]:
-    target = f"{session_id}.json"
-    legacy_path = os.path.join(SESSIONS_DIR, target)
-    if os.path.exists(legacy_path):
-        return legacy_path
-
-    matches = []
-    for root, _, files in os.walk(SESSIONS_DIR):
-        if target in files:
-            matches.append(os.path.join(root, target))
-
-    if not matches:
-        return None
-    if len(matches) == 1:
-        return matches[0]
-    return max(matches, key=os.path.getmtime)
+    return get_repos().sessions.find_session_path(session_id)
 
 
 def get_session_path_or_404(session_id: str) -> str:
@@ -691,93 +682,33 @@ def _require_session_owner(session_id: str, current_user) -> tuple:
 
     Uses 404 (not 403) for non-owners so session IDs of other users are not confirmed.
     """
-    session_path = find_session_file(session_id)
-    if not session_path:
+    try:
+        session = get_repos().sessions.get_session_for_user(session_id, current_user)
+        session_path = get_repos().sessions.find_session_path(session_id)
+    except NotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
-    session = load_json(session_path)
-    if not _owners_match(session.get("user") or "", current_user):
+    if not session_path:
         raise HTTPException(status_code=404, detail="Session not found")
     return session_path, session
 
 
-def _reward_state_path(user) -> str:
-    user_key = _normalize_user_key(user)
-    return os.path.join(REWARDS_DIR, f"{user_key}.json")
-
-
-def _legacy_reward_state_path(user) -> Optional[str]:
-    if isinstance(user, AuthContext) and user.legacy_username:
-        return os.path.join(REWARDS_DIR, f"{normalize_subject(user.legacy_username)}.json")
-    return None
+def _persist_session(session: dict) -> dict:
+    """Persist session document via SessionRepository (atomic write)."""
+    return get_repos().sessions.save_session(session)
 
 
 def _create_default_reward_state() -> dict:
-    return {
-        "currency": {"PUX": 0},
-        "unlockedAchievements": {},
-        "unlockedMasteries": {},
-        "processedSessions": {},
-        "xp": 0,
-        "processedEvents": {},
-        "unlockedCosmetics": {},
-        "activityLog": [],
-        "unlockHistory": [],
-        "bootstrapCompletedAt": None,
-        "lastUpdatedAt": None,
-        "favoriteCosmeticIds": [],
-        "puxTransactions": [],
-        "completedCollections": {},
-        "masteryMilestoneUnlocks": {},
-        "featuredAchievementId": None,
-        "featuredMasteryCoinId": None,
-        "progressionPuxGranted": 0,
-        "challengeProgress": {},
-        "challengeRotation": None,
-        "venueVisits": {},
-    }
+    from repositories.json_reward import create_default_reward_state
+
+    return create_default_reward_state()
 
 
 def _load_reward_state(user) -> dict:
-    path = _reward_state_path(user)
-    if not os.path.exists(path):
-        legacy = _legacy_reward_state_path(user)
-        if legacy and os.path.exists(legacy):
-            path = legacy
-        else:
-            return _create_default_reward_state()
-
-    state = load_json(path)
-    base = _create_default_reward_state()
-    merged = {
-        **base,
-        **state,
-        "currency": {**base["currency"], **(state.get("currency") or {})},
-        "unlockedAchievements": state.get("unlockedAchievements") or {},
-        "unlockedMasteries": state.get("unlockedMasteries") or {},
-        "processedSessions": state.get("processedSessions") or {},
-        "xp": int(state.get("xp") or 0),
-        "processedEvents": state.get("processedEvents") or {},
-        "unlockedCosmetics": state.get("unlockedCosmetics") or {},
-        "activityLog": state.get("activityLog") or [],
-        "unlockHistory": state.get("unlockHistory") or [],
-        "bootstrapCompletedAt": state.get("bootstrapCompletedAt"),
-        "favoriteCosmeticIds": state.get("favoriteCosmeticIds") or [],
-        "puxTransactions": state.get("puxTransactions") or [],
-        "completedCollections": state.get("completedCollections") or {},
-        "masteryMilestoneUnlocks": state.get("masteryMilestoneUnlocks") or {},
-        "featuredAchievementId": state.get("featuredAchievementId"),
-        "featuredMasteryCoinId": state.get("featuredMasteryCoinId"),
-        "progressionPuxGranted": int(state.get("progressionPuxGranted") or 0),
-        "challengeProgress": state.get("challengeProgress") or {},
-        "challengeRotation": state.get("challengeRotation"),
-        "venueVisits": state.get("venueVisits") or {},
-    }
-    return merged
+    return get_repos().rewards.get_reward_state(user)
 
 
 def _save_reward_state(user, state: dict) -> None:
-    # Always persist under rinq_user_id path
-    save_json(_reward_state_path(user), state)
+    get_repos().rewards.save_reward_state(user, state)
 
 
 def _resolve_user_cased(user) -> str:
@@ -2141,22 +2072,13 @@ async def get_sessions(
     current_user: AuthContext = Depends(get_current_user),
 ):
     """List sessions for the authenticated user only (ignores client-supplied user filters)."""
-    if not os.path.exists(SESSIONS_DIR):
-        return []
-
-    sessions = []
-    for session_path in iter_session_files():
-        session = load_json(session_path)
-        if not _owners_match(session.get('user', ''), current_user):
-            continue
-        if state and session.get('state') != state:
-            continue
+    sessions = get_repos().sessions.list_sessions_for_user(current_user, state=state)
+    for session in sessions:
         if not session.get('created_by'):
             session['created_by'] = session.get('user', 'Unbekannt')
         if not session.get('learning_area'):
             session['learning_area'] = 'academy'
         session['observation_scope'] = _normalize_observation_scope(session.get('observation_scope'))
-        sessions.append(session)
     return sessions
 
 @app.post("/api/sessions")
@@ -2251,9 +2173,7 @@ async def create_session(session: SessionCreate, user: AuthContext = Depends(get
         session_data["prediction_summary"] = None
 
     print(f"[AUTH] request by user={user} path=/api/sessions")
-    session_path = build_session_storage_path(session_id, session_data.get("created_at"))
-    save_json(session_path, session_data)
-    return session_data
+    return get_repos().sessions.create_session(session_data)
 
 @app.get("/api/sessions/{session_id}")
 async def get_session(session_id: str, current_user: AuthContext = Depends(get_current_user)):
@@ -2282,7 +2202,7 @@ async def get_session(session_id: str, current_user: AuthContext = Depends(get_c
             should_save = True
 
     if should_save:
-        save_json(session_path, session)
+        _persist_session(session)
     return session
 
 @app.patch("/api/sessions/{session_id}")
@@ -2312,7 +2232,7 @@ async def update_session(session_id: str, updates: dict, current_user: AuthConte
         else:
             session[key] = value
 
-    save_json(session_path, session)
+    _persist_session(session)
     return session
 
 @app.post("/api/sessions/{session_id}/checkins")
@@ -2326,7 +2246,7 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
     session_path, session = _require_session_owner(session_id, current_user)
     if phase_norm == "PRE":
         session["current_phase"] = _initial_phase_for_scope(session.get("observation_scope"))
-        save_json(session_path, session)
+        _persist_session(session)
         return session
 
     counts_before = Counter((c.get("phase") or "") for c in session.get("checkins", []))
@@ -2389,7 +2309,7 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
     # Phase nur aktualisieren wenn es ein echter Checkin ist (nicht nur Speicherung)
     # Für Continuation wird die Phase separat über die phase-Route aktualisiert
 
-    save_json(session_path, session)
+    _persist_session(session)
     counts_after = Counter((c.get("phase") or "") for c in session.get("checkins", []))
     logging.info(f"[checkin:{req_id}] session={session_id} counts_after={dict(counts_after)}")
     return session
@@ -2412,7 +2332,7 @@ async def complete_session(session_id: str, post: PostData, current_user: AuthCo
     }
     session["state"] = "COMPLETED"
 
-    save_json(session_path, session)
+    _persist_session(session)
     return session
 
 @app.post("/api/sessions/{session_id}/abort")
@@ -2429,7 +2349,7 @@ async def abort_session(session_id: str, abort: AbortData, current_user: AuthCon
     }
     session["state"] = "ABORTED"
 
-    save_json(session_path, session)
+    _persist_session(session)
     return session
 
 @app.delete("/api/sessions/{session_id}/checkins/{checkin_index}")
@@ -2441,7 +2361,7 @@ async def delete_checkin(session_id: str, checkin_index: int, current_user: Auth
         raise HTTPException(status_code=400, detail="Invalid checkin index")
 
     session["checkins"].pop(checkin_index)
-    save_json(session_path, session)
+    _persist_session(session)
     return session
 
 def _scene_session_id(scene: dict) -> Optional[str]:
@@ -2495,7 +2415,7 @@ async def save_drafts(session_id: str, drafts: dict, current_user: AuthContext =
     enforce_max_text_length(drafts, "drafts")
 
     session["drafts"] = drafts
-    save_json(session_path, session)
+    _persist_session(session)
     return {"status": "saved"}
 
 @app.put("/api/sessions/{session_id}/phase")
@@ -2510,7 +2430,7 @@ async def update_session_phase(session_id: str, phase_data: dict, current_user: 
     if "state" in phase_data:
         session["state"] = phase_data["state"]
 
-    save_json(session_path, session)
+    _persist_session(session)
     return session
 
 @app.get("/api/sessions/{session_id}/download")
@@ -2653,7 +2573,7 @@ async def add_microfeedback(
     trace_id = request.headers.get("X-Trace-Id")
     trace_action = request.headers.get("X-Trace-Action")
     logging.info(f"[microfeedback] session={session_id} phase={phase} trace_id={trace_id} trace_action={trace_action} text_len={len(data.text)}")
-    save_json(session_path, session)
+    _persist_session(session)
     return {"status": "ok", "microfeedback": session["microfeedback"][phase]}
 
 
@@ -2688,7 +2608,7 @@ async def create_session_reflection(session_id: str, current_user: AuthContext =
         lab_content = None
     reflection = generate_session_reflection(session, curriculum, lab_content)
     session["ai_reflection"] = reflection.model_dump()
-    save_json(session_path, session)
+    _persist_session(session)
     logging.info(
         "[reflection] session=%s model=%s prompt=%s cached=false",
         session_id,
@@ -2706,8 +2626,6 @@ async def get_rewards_state(current_user: AuthContext = Depends(get_current_user
 
 @app.post("/api/rewards/apply")
 async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depends(get_current_user)):
-    state = _load_reward_state(current_user)
-
     enforce_max_text_length(data.reward_events, "reward_events")
     enforce_max_text_length(data.unlocked_achievements, "unlocked_achievements")
     enforce_max_text_length(data.unlocked_masteries, "unlocked_masteries")
@@ -2720,27 +2638,31 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
 
     # Hard stop: dummy/dev sessions must never mutate reward state.
     if session_id:
-        session_path = find_session_file(session_id)
-        if session_path:
-            try:
-                session_doc = load_json(session_path)
-            except Exception:
-                session_doc = None
-            if isinstance(session_doc, dict) and session_doc.get("is_dummy") is True:
-                return {
-                    "state": state,
-                    "applied": False,
-                    "granted_pux": 0,
-                    "granted_xp": 0,
-                    "reward_events": [],
-                    "reason": "dummy_session",
-                }
+        session_doc = get_repos().sessions.find_session_raw(session_id)
+        if isinstance(session_doc, dict) and session_doc.get("is_dummy") is True:
+            state = _load_reward_state(current_user)
+            return {
+                "state": state,
+                "applied": False,
+                "granted_pux": 0,
+                "granted_xp": 0,
+                "reward_events": [],
+                "reason": "dummy_session",
+            }
 
+    def _mutator(state: dict):
+        return _compute_reward_apply(state, data, event_id=event_id, session_id=session_id)
+
+    return get_repos().rewards.apply_reward_delta(current_user, _mutator)
+
+
+def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, session_id):
+    """Business rules for rewards/apply. Called under RewardRepository lock."""
     processed_events = state.get("processedEvents") or {}
     processed_sessions = state.get("processedSessions") or {}
 
     if event_id and event_id in processed_events and not data.replace_derived and not data.skip_idempotency:
-        return {
+        return None, {
             "state": state,
             "applied": False,
             "granted_pux": 0,
@@ -2750,7 +2672,7 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
         }
 
     if session_id and session_id in processed_sessions and not event_id and not data.replace_derived:
-        return {
+        return None, {
             "state": state,
             "applied": False,
             "granted_pux": 0,
@@ -2791,7 +2713,7 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
 
     next_pux = int(state["currency"].get("PUX", 0)) + int(data.granted_pux or 0)
     if next_pux < 0:
-        return {
+        return None, {
             "state": state,
             "applied": False,
             "granted_pux": 0,
@@ -3002,9 +2924,7 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
         state["bootstrapCompletedAt"] = data.bootstrap_completed_at
 
     state["lastUpdatedAt"] = data.evaluated_at
-    _save_reward_state(current_user, state)
-
-    return {
+    return state, {
         "state": state,
         "applied": True,
         "granted_pux": int(data.granted_pux or 0),
@@ -3731,7 +3651,6 @@ async def login(payload: dict, request: Request):
 # ---- Account / RINK ID profile ----
 from fastapi.staticfiles import StaticFiles
 
-PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
 UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 AVATAR_UPLOADS_DIR = os.path.join(UPLOADS_DIR, "avatars")
 os.makedirs(PROFILES_DIR, exist_ok=True)
@@ -3757,31 +3676,9 @@ def _legacy_profile_path(user) -> Optional[str]:
 
 
 def _default_user_profile(username: str) -> dict:
-    display = (username or "Spieler").strip()
-    if display:
-        display = display[0].upper() + display[1:]
-    return {
-        "displayName": display or "Spieler",
-        "avatar": {"type": "catalog", "avatarId": "avatar_ice_01"},
-        "bannerId": "banner_neutral_01",
-        "frameId": None,
-        "emblem": {"type": "catalog", "emblemId": "emblem_puck_01"},
-        "customEmblemId": None,
-        "customEmblems": [],
-        "profileTitle": "rink_rat",
-        "jerseyNumber": None,
-        "favoriteLeague": None,
-        "favoriteTeamName": None,
-        "profileTagline": None,
-        "stickerIds": [],
-        "academyHelpLevel": "guided",
-        "terminologyMode": "direct",
-        "preferredAttackDirection": "auto",
-        "hockeyExperience": None,
-        "experiencePromptDismissed": False,
-        "dashboardPreferences": {},
-        "updatedAt": None,
-    }
+    from repositories.json_profile import default_user_profile
+
+    return default_user_profile(username)
 
 
 def _needs_display_name_setup(user) -> bool:
@@ -3836,47 +3733,40 @@ def _validate_display_name(raw: str) -> str:
 
 
 def _load_user_profile(user) -> dict:
+    if isinstance(user, AuthContext):
+        return get_repos().profiles.get_profile(user)
     display_seed = _resolve_user_cased(user)
-    path = _profile_path(user)
-    if not os.path.exists(path):
-        legacy = _legacy_profile_path(user)
-        if legacy and os.path.exists(legacy):
-            path = legacy
-    base = _default_user_profile(display_seed)
-    if not os.path.exists(path):
-        return base
-    try:
-        stored = load_json(path) or {}
-    except Exception:
-        return base
-    merged = {**base, **stored}
-    # Keep nested defaults stable for older profile files.
-    if not isinstance(merged.get("avatar"), dict):
-        merged["avatar"] = base["avatar"]
-    if merged.get("emblem") is not None and not isinstance(merged.get("emblem"), dict):
-        merged["emblem"] = base["emblem"]
-    if not isinstance(merged.get("customEmblems"), list):
-        merged["customEmblems"] = []
-    if merged.get("stickerIds") is None or not isinstance(merged.get("stickerIds"), list):
-        merged["stickerIds"] = []
-    return merged
+    # Rare non-AuthContext callers: build a transient context for the repo.
+    transient = AuthContext(
+        rinq_user_id=_normalize_user_key(user),
+        auth_provider=LEGACY_PASSWORD_PROVIDER,
+        auth_subject=_normalize_user_key(user),
+        display_name=display_seed,
+        legacy_username=_normalize_user_key(user),
+    )
+    return get_repos().profiles.get_profile(transient)
 
 
 def _save_user_profile(user, profile: dict) -> dict:
-    path = _profile_path(user)
-    profile = dict(profile or {})
-    profile["updatedAt"] = datetime.utcnow().isoformat()
-    save_json(path, profile)
-    return profile
+    if isinstance(user, AuthContext):
+        return get_repos().profiles.save_profile(user, profile)
+    display_seed = _resolve_user_cased(user)
+    transient = AuthContext(
+        rinq_user_id=_normalize_user_key(user),
+        auth_provider=LEGACY_PASSWORD_PROVIDER,
+        auth_subject=_normalize_user_key(user),
+        display_name=display_seed,
+        legacy_username=_normalize_user_key(user),
+    )
+    return get_repos().profiles.save_profile(transient, profile)
 
 
 def _find_user_record(user) -> Optional[dict]:
-    users = load_users()
     if isinstance(user, AuthContext):
         key = normalize_subject(user.legacy_username or user.auth_subject)
     else:
         key = normalize_subject(str(user))
-    return next((u for u in users.get("users", []) if normalize_subject(u.get("username") or "") == key), None)
+    return get_repos().credentials.get_by_username(key)
 
 
 class ProfileUpdatePayload(BaseModel):
