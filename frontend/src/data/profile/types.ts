@@ -115,5 +115,7 @@ export type UserAccountPayload = {
   display_name?: string | null
   createdAt: string | null
   role: string | null
+  /** Server-confirmed admin (env allowlist and/or role=admin). */
+  is_admin?: boolean
   profile: UserProfileCustomization
 }

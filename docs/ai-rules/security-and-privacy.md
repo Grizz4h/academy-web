@@ -257,10 +257,11 @@ Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
 
 ### Vor OAuth
 
-- [ ] `/dev` und interne Navigation absichern
-- [ ] Import-Endpunkte mit echter Admin-Rolle schützen
-- [ ] offenen Signup- / Legacy-Login bewerten
+- [x] `/dev` und interne Navigation absichern (Phase 3B — Production: Admin/`is_admin`, Vite DEV frei)
+- [x] Import-Endpunkte mit echter Admin-Rolle schützen (`require_admin` + `ACADEMY_ADMIN_USERNAMES` / `role=admin`)
+- [x] offenen Signup- / Legacy-Login bewerten (`ACADEMY_ALLOW_LEGACY_SIGNUP`, Login bleibt)
 - [x] UUID-Foundation / Identity-Layer (Phase 3A) — Auth≠App-ID; Ownership über `rinq_user_id`
+- [x] Rate Limits MVP für Login/Signup/Admin-APIs + Security-Logging ohne Secrets
 
 ### Vor Payment
 

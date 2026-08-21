@@ -17,7 +17,7 @@ _load_env_files()
 import json
 import jwt
 from datetime import datetime, timedelta
-from fastapi import Header, HTTPException, Depends
+from fastapi import Header, HTTPException, Depends, Request
 from auth_utils import hash_password, verify_password
 from player_importer import PennyDelImporter
 from del_data.season_utils import season_to_display, season_to_file_key
@@ -74,6 +74,12 @@ IDENTITY_BACKUP_ROOT = os.path.join(ROOT_DATA_DIR_EARLY, "backups")
 from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER
 from identity.store import configure_identity_store, normalize_subject
 from identity.migrate import owners_match as _identity_owners_match
+from security_guards import (
+    is_admin_auth,
+    legacy_signup_allowed,
+    rate_limit,
+    client_ip,
+)
 
 _identity_store = configure_identity_store(IDENTITY_STORE_FILE)
 
@@ -131,6 +137,34 @@ def get_current_user(authorization: str = Header(None)) -> AuthContext:
         raise
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def require_admin(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+) -> AuthContext:
+    """Server-side admin gate for import/dev mutation endpoints."""
+    rate_limit(request, "admin_api", limit=120, window_sec=60.0)
+    users = load_users()
+    key = normalize_subject(current_user.legacy_username or current_user.auth_subject)
+    record = next(
+        (u for u in users.get("users", []) if normalize_subject(u.get("username") or "") == key),
+        None,
+    )
+    role = (record or {}).get("role") if isinstance(record, dict) else None
+    if not is_admin_auth(current_user, role_from_record=role):
+        # logging may not be configured yet at first import; use print fallback
+        try:
+            logging.warning(
+                "[SEC] admin_denied subject=%s path=%s ip=%s",
+                current_user.auth_subject,
+                request.url.path,
+                client_ip(request),
+            )
+        except Exception:
+            print(f"[SEC] admin_denied subject={current_user.auth_subject}")
+        raise HTTPException(status_code=403, detail="Admin required")
+    return current_user
 
 
 # --- AUTH ENDPOINTS ---
@@ -1609,7 +1643,7 @@ async def import_players(
     team_id: Optional[str] = None,
     season: Optional[str] = Query(default=None),
     league: Optional[str] = Query(default="DEL"),
-    current_user: AuthContext = Depends(get_current_user)
+    current_user: AuthContext = Depends(require_admin)
 ):
     """
     Importiert Spieler für ein Team (optional saisonbezogen).
@@ -1689,7 +1723,7 @@ async def import_players(
 async def import_all_players(
     season: Optional[str] = Query(default=None),
     league: Optional[str] = Query(default="DEL"),
-    current_user: AuthContext = Depends(get_current_user),
+    current_user: AuthContext = Depends(require_admin),
 ):
     importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
     target_season = season or "2025/26"
@@ -1796,7 +1830,7 @@ async def get_team_players(
 
 
 @app.post("/api/players/{player_id}/refresh-profile")
-async def refresh_player_profile_placeholder(player_id: str, current_user: AuthContext = Depends(get_current_user)):
+async def refresh_player_profile_placeholder(player_id: str, current_user: AuthContext = Depends(require_admin)):
     """Platzhalter für spätere KI-Profilaktualisierung (noch nicht implementiert)."""
     return {
         "player_id": player_id,
@@ -1846,7 +1880,7 @@ async def get_game_by_id(game_id: str, current_user: AuthContext = Depends(get_c
 async def import_del_schedule(
     season: str = Query(default="2025/26"),
     league: str = Query(default="DEL"),
-    current_user: AuthContext = Depends(get_current_user),
+    current_user: AuthContext = Depends(require_admin),
 ):
     mapper = _team_catalog_mapper()
     importer = PennyDelScheduleImporter(mapper)
@@ -1876,7 +1910,7 @@ async def import_del_schedule(
 async def migrate_del_rosters(
     season: str = Query(default="2025/26"),
     league: str = Query(default="DEL"),
-    current_user: AuthContext = Depends(get_current_user),
+    current_user: AuthContext = Depends(require_admin),
 ):
     mapper = _team_catalog_mapper()
     return migrate_legacy_team_players_to_season(
@@ -1934,7 +1968,7 @@ def _build_game_stats_payload(fetch_result: dict) -> dict:
 @app.post("/api/del-data/import-game-stats")
 async def import_del_game_stats(
     game_id: str = Query(...),
-    current_user: AuthContext = Depends(get_current_user),
+    current_user: AuthContext = Depends(require_admin),
 ):
     game = get_game(GAMES_DIR, game_id)
     if not game:
@@ -1986,7 +2020,7 @@ async def import_del_game_stats_batch(
     league: str = Query(default="DEL"),
     limit: int = Query(default=5, ge=1, le=25),
     skip_existing: bool = Query(default=True),
-    current_user: AuthContext = Depends(get_current_user),
+    current_user: AuthContext = Depends(require_admin),
 ):
     games = list_games(GAMES_DIR, league=league, season=season, status="final")
     if not games:
@@ -3573,8 +3607,20 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
 
 
 # Auth Endpoints nach finaler app-Definition (jetzt immer registriert)
+@app.get("/api/auth/registration")
+async def registration_status():
+    return {"allow_legacy_signup": legacy_signup_allowed()}
+
+
 @app.post("/api/auth/signup")
-async def signup(payload: dict):
+async def signup(payload: dict, request: Request):
+    rate_limit(request, "signup", limit=5, window_sec=60.0)
+    if not legacy_signup_allowed():
+        logging.warning("[SEC] signup_disabled ip=%s", client_ip(request))
+        raise HTTPException(
+            status_code=403,
+            detail="Legacy signup is disabled. Use managed login when available.",
+        )
     username = payload["username"].strip().lower()
     password = payload["password"].strip()
     users = load_users()
@@ -3589,17 +3635,19 @@ async def signup(payload: dict):
     })
     save_users(users)
     ctx = _identity_store.ensure_legacy_identity(username, display_name=username, created_at=created_at)
-    print(f"[AUTH] signup ok user={username} rinq_user_id={ctx.rinq_user_id}")
+    logging.info("[AUTH] signup ok subject=%s rinq_user_id=%s", username, ctx.rinq_user_id)
     return {"ok": True}
 
 @app.post("/api/auth/login")
-async def login(payload: dict):
+async def login(payload: dict, request: Request):
+    rate_limit(request, "login", limit=20, window_sec=60.0)
     username = payload["username"].strip().lower()
     password = payload["password"].strip()
-    print(f"[AUTH] login attempt user={username}")
+    logging.info("[AUTH] login attempt subject=%s ip=%s", username, client_ip(request))
     users = load_users()
     user = next((u for u in users["users"] if u["username"].strip().lower() == username), None)
     if not user or not verify_password(password, user["password_hash"]):
+        logging.warning("[SEC] login_failed subject=%s ip=%s", username, client_ip(request))
         raise HTTPException(status_code=401, detail="Invalid credentials")
     user_cased = user.get("username") or username
     ctx = _identity_store.ensure_legacy_identity(
@@ -3612,7 +3660,7 @@ async def login(payload: dict):
         "sub": username,
         "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
     }, JWT_SECRET, algorithm=JWT_ALGO)
-    print(f"[AUTH] login ok user={user_cased} rinq_user_id={ctx.rinq_user_id}")
+    logging.info("[AUTH] login ok subject=%s rinq_user_id=%s", username, ctx.rinq_user_id)
     return {
         "token": token,
         "username": user_cased,
@@ -3748,6 +3796,7 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
     record = _find_user_record(current_user)
     profile = _load_user_profile(current_user)
     display = (profile or {}).get("displayName") or _resolve_user_cased(current_user)
+    role = (record or {}).get("role")
     return {
         "username": _resolve_user_cased(current_user),
         "rinq_user_id": current_user.rinq_user_id,
@@ -3755,7 +3804,8 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "display_name": display,
         "auth_provider": current_user.auth_provider,
         "createdAt": (record or {}).get("created_at"),
-        "role": (record or {}).get("role"),
+        "role": role,
+        "is_admin": is_admin_auth(current_user, role_from_record=role),
         "profile": profile,
     }
 

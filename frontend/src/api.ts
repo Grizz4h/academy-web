@@ -15,6 +15,13 @@ export async function signup(username: string, password: string): Promise<{ ok: 
   }
   return res.json();
 }
+
+export async function getRegistrationStatus(): Promise<{ allow_legacy_signup: boolean }> {
+  const res = await fetch(buildUrl('/auth/registration'))
+  if (!res.ok) return { allow_legacy_signup: false }
+  return res.json()
+}
+
 // --- Auth-Header Helper ---
 function authHeaders(): Record<string, string> {
   const token = localStorage.getItem('academy.token');

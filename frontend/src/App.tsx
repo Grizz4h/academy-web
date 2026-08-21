@@ -22,6 +22,7 @@ import DevContent from './pages/DevContent'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
 import TopNav from './components/TopNav'
+import { DevRouteGuard } from './components/DevRouteGuard'
 import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 import { TutorialHost } from './features/tutorial'
 
@@ -50,9 +51,9 @@ function App() {
             <Route path="/observation/run/:runId" element={<ObservationRun />} />
             <Route path="/observation/stats" element={<ObservationStats />} />
             <Route path="/ringabout" element={<RingAbout />} />
-            <Route path="/dev" element={<DevLab />} />
-            <Route path="/dev/ui" element={<DevUiKit />} />
-            <Route path="/dev/content" element={<DevContent />} />
+            <Route path="/dev" element={<DevRouteGuard><DevLab /></DevRouteGuard>} />
+            <Route path="/dev/ui" element={<DevRouteGuard><DevUiKit /></DevRouteGuard>} />
+            <Route path="/dev/content" element={<DevRouteGuard><DevContent /></DevRouteGuard>} />
           </Routes>
         </main>
       </div>

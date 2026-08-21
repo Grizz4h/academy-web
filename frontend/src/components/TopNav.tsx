@@ -78,7 +78,12 @@ const TopNav: React.FC = () => {
     wrapper.scrollLeft = 0
   }, [activeSession?.id])
 
+  const isAdmin = Boolean(account?.is_admin);
+
   const handleLogoClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    // Production: only server-confirmed admins may enable Dev chrome via gesture.
+    if (import.meta.env.PROD && !isAdmin) return;
+
     const state = logoClicksRef.current;
     state.count += 1;
 
@@ -102,11 +107,12 @@ const TopNav: React.FC = () => {
     setDevNav(next);
     setDevHint(next ? 'Dev-Nav an' : 'Dev-Nav aus');
     window.setTimeout(() => setDevHint(''), 1600);
-  }, []);
+  }, [isAdmin]);
 
   const publicTabs = getPublicNavTabs();
   const hiddenTabs = getHiddenNavTabs();
-  const navTabs = devNav ? [...publicTabs, ...hiddenTabs] : publicTabs;
+  const showDevChrome = devNav && (import.meta.env.DEV || isAdmin);
+  const navTabs = showDevChrome ? [...publicTabs, ...hiddenTabs] : publicTabs;
 
   return (
     <nav className={styles.navbar} data-top-nav="true">

@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../api";
+import { api, getRegistrationStatus } from "../api";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
 import Card from '../components/Card';
@@ -79,6 +79,21 @@ export default function Dashboard() {
   const [signupPassword2, setSignupPassword2] = useState("");
   const [signupError, setSignupError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
+  const [allowLegacySignup, setAllowLegacySignup] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false
+    getRegistrationStatus()
+      .then((status) => {
+        if (!cancelled) setAllowLegacySignup(Boolean(status.allow_legacy_signup))
+      })
+      .catch(() => {
+        if (!cancelled) setAllowLegacySignup(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
   
   // Scope State für modulbasierte Filterung
   const [currentScope, setCurrentScope] = useState<string>("Gesamt");
@@ -572,10 +587,12 @@ export default function Dashboard() {
                 </button>
               </div>
               <UiButton type="button" onClick={handleLogin}>Anmelden</UiButton>
-              <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
+              {allowLegacySignup ? (
+                <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
+              ) : null}
               {loginError && <span className={styles.errorMsg}>{loginError}</span>}
             </div>
-          ) : (
+          ) : allowLegacySignup ? (
             <div className={styles.formColumn}>
               <input
                 autoComplete="username"
@@ -617,7 +634,7 @@ export default function Dashboard() {
               {signupError && <span className={styles.errorMsg}>{signupError}</span>}
               {signupSuccess && <span className={styles.successMsg}>{signupSuccess}</span>}
             </div>
-          )}
+          ) : null}
         </Card>
       </div>
     );

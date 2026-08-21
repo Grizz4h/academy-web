@@ -1,0 +1,82 @@
+"""Minimal admin auth + in-memory rate limiting for Phase 3B."""
+
+from __future__ import annotations
+
+import os
+import threading
+import time
+from collections import defaultdict, deque
+from typing import Deque, Dict, Iterable, Optional, Set
+
+from fastapi import HTTPException, Request
+
+from identity.context import AuthContext
+from identity.store import normalize_subject
+
+
+def _env_flag(name: str, default: str = "0") -> bool:
+    raw = (os.environ.get(name) or default).strip().lower()
+    return raw in ("1", "true", "yes", "on")
+
+
+def legacy_signup_allowed() -> bool:
+    """Public legacy signup. Production should set ACADEMY_ALLOW_LEGACY_SIGNUP=0."""
+    return _env_flag("ACADEMY_ALLOW_LEGACY_SIGNUP", default="1")
+
+
+def admin_username_allowlist() -> Set[str]:
+    raw = (os.environ.get("ACADEMY_ADMIN_USERNAMES") or "").strip()
+    if not raw:
+        return set()
+    return {normalize_subject(part) for part in raw.split(",") if part.strip()}
+
+
+def is_admin_auth(
+    auth: AuthContext,
+    *,
+    role_from_record: Optional[str] = None,
+) -> bool:
+    """Server-side admin check: env allowlist and/or users.json role=admin."""
+    allow = admin_username_allowlist()
+    subject = normalize_subject(auth.legacy_username or auth.auth_subject)
+    if subject and subject in allow:
+        return True
+    if (role_from_record or "").strip().lower() == "admin":
+        return True
+    return False
+
+
+class SlidingWindowRateLimiter:
+    """Process-local sliding window. Good enough for single-process FastAPI MVP."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._hits: Dict[str, Deque[float]] = defaultdict(deque)
+
+    def check(self, key: str, *, limit: int, window_sec: float) -> None:
+        now = time.monotonic()
+        with self._lock:
+            bucket = self._hits[key]
+            cutoff = now - window_sec
+            while bucket and bucket[0] < cutoff:
+                bucket.popleft()
+            if len(bucket) >= limit:
+                raise HTTPException(status_code=429, detail="Too many requests. Try again later.")
+            bucket.append(now)
+
+
+_rate_limiter = SlidingWindowRateLimiter()
+
+
+def client_ip(request: Request) -> str:
+    forwarded = (request.headers.get("x-forwarded-for") or "").split(",")[0].strip()
+    if forwarded:
+        return forwarded
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+
+def rate_limit(request: Request, scope: str, *, limit: int, window_sec: float) -> None:
+    ip = client_ip(request)
+    _rate_limiter.check(f"{scope}:{ip}", limit=limit, window_sec=window_sec)

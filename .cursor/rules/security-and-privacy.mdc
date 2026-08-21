@@ -17,6 +17,8 @@ Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbez
 - FastAPI nur hinter Nginx auf `127.0.0.1:8000`
 - Auth-Subject ≠ App-ID: JWT/`provider` subject → `auth_links` → `rinq_user_id` (Ownership nur über RinQ-UUID)
 - Ownership serverseitig aus Auth-Kontext; keine Client-User-ID als Autorisierung
+- Import/Admin-APIs: `require_admin` (`ACADEMY_ADMIN_USERNAMES` und/oder `role=admin`); `/dev` in Production nur für Admins
+- Legacy-Signup steuerbar via `ACADEMY_ALLOW_LEGACY_SIGNUP` (Production: `0`)
 - Runtime-Userdaten nicht in Git
 - Keine Payment-Rohdaten; Entitlements nicht nur im Frontend
 - Versteckte UI ≠ Autorisierung (`/dev`, Admin, Import)
