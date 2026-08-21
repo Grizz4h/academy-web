@@ -12,3 +12,26 @@ backend/backend.log
 *.log
 __pycache__/
 *.pyc
+
+# --- Runtime user data (never commit) ---
+# Accounts + password hashes
+data/academy/users.json
+
+# Per-user profiles / rewards / sessions / uploads
+data/academy/profiles/**
+!data/academy/profiles/.gitkeep
+data/academy/rewards/**
+!data/academy/rewards/.gitkeep
+data/academy/sessions/**
+!data/academy/sessions/.gitkeep
+data/academy/uploads/**
+!data/academy/uploads/.gitkeep
+!data/academy/uploads/avatars/
+!data/academy/uploads/avatars/.gitkeep
+
+# User-generated scenes & observation runs
+data/scenes/**
+!data/scenes/.gitkeep
+data/observations/**
+!data/observations/.gitkeep
+data/scene_code_counter.json
