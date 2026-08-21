@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import FrozenSet, Optional
 
 LEGACY_PASSWORD_PROVIDER = "legacy_password"
 SUPABASE_GOOGLE_PROVIDER = "supabase_google"
+SUPABASE_EMAIL_PROVIDER = "supabase_email"
+
+# Managed Auth providers that create RinQ identities without legacy username
+MANAGED_AUTH_PROVIDERS: FrozenSet[str] = frozenset(
+    {SUPABASE_GOOGLE_PROVIDER, SUPABASE_EMAIL_PROVIDER}
+)
 
 
 @dataclass(frozen=True)

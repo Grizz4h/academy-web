@@ -19,11 +19,11 @@ function validateClientName(raw: string): string | null {
 }
 
 /**
- * First-login onboarding for new Google/OAuth users.
+ * First-login onboarding for new managed-auth users (Google / Email).
  * Legacy and already-configured users are never prompted (server: needs_display_name).
  */
 export function DisplayNameSetupSheet() {
-  const { needsDisplayName, applyDisplayName } = useUser()
+  const { needsDisplayName, applyDisplayName, authMode } = useUser()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
@@ -41,7 +41,7 @@ export function DisplayNameSetupSheet() {
     setError('')
     let cancelled = false
     ;(async () => {
-      // Ephemeral Google display name as suggestion only — never as identity, never email.
+      // Ephemeral Google display name as suggestion only — never email, never as identity.
       let seed = ''
       try {
         const supabase = getSupabase()
@@ -92,7 +92,7 @@ export function DisplayNameSetupSheet() {
     <UiSheet
       open={open}
       onClose={() => {
-        /* Pflicht beim ersten OAuth-Login — nicht wegklicken */
+        /* Pflicht beim ersten OAuth/Email-Login — nicht wegklicken */
       }}
       title="Wie heißt du?"
       meta="Dein Anzeigename in RinQ Tank. Später jederzeit im Account änderbar."
@@ -119,7 +119,11 @@ export function DisplayNameSetupSheet() {
         }}
       />
       {suggestion && name === suggestion ? (
-        <p className={styles.hint}>Vorschlag aus Google — du kannst ihn ändern. Wird nicht als Login-ID genutzt.</p>
+        <p className={styles.hint}>
+          {authMode === 'supabase'
+            ? 'Vorschlag — du kannst ihn ändern. Wird nicht als Login-ID genutzt.'
+            : 'Vorschlag — du kannst ihn ändern.'}
+        </p>
       ) : null}
       {error ? <p className={styles.error}>{error}</p> : null}
       <UiSheetActions

@@ -77,10 +77,10 @@ Google → Supabase Auth → provider_subject (Supabase user id)
 ```
 
 - Managed Auth: **Supabase Auth** (EU-Projekt empfohlen)
-- Erster OAuth-Provider: **Google**
+- OAuth-Provider: **Google**; Passwordless: **E-Mail OTP / Magic Link** (`supabase_email`)
 - Backend verifiziert Supabase Access Tokens via **JWKS** (`/auth/v1/.well-known/jwks.json`); optional Legacy-HS256 nur serverseitig (`SUPABASE_JWT_SECRET`)
-- Kein automatisches Account-Merging anhand E-Mail
-- Google-User werden nicht automatisch Admin
+- Kein automatisches Account-Merging anhand E-Mail (Google- und E-Mail-Login mit gleicher Adresse bleiben getrennte RinQ-UUIDs, bis bewusst verknüpft)
+- Google-/E-Mail-User werden nicht automatisch Admin
 - **Phase 3D — Account Linking:** Bestehenden RinQ-Account (Legacy-Session) bewusst mit Google verknüpfen via `POST /api/me/auth/link/google` (verifiziertes Supabase-Token + aktuelle Auth). Ergebnis: mehrere `auth_links` → dieselbe `rinq_user_id`. Kein E-Mail-Merge.
 
 **Langfristig**
@@ -241,7 +241,7 @@ Nginx + Certbot / Let's Encrypt sind der bestehende Standard.
 - Keine Datensammlung „für später vielleicht“.
 - Kein Tracking/Analytics ohne bewusste Entscheidung.
 - Kein Newsletter-/Marketing-Profil standardmäßig.
-- **OAuth (Google via Supabase):** RinQ persistiert nicht Google-E-Mail, Name oder Avatar als Identity. `provider_subject` = Supabase Auth User-ID. **Phase 3E:** neue OAuth-User wählen einmal einen Anzeigenamen (`displayNameChosen` am Profil unter `rinq_user_id`); Google-Name höchstens ephemeral als UI-Vorschlag. Legacy- und verknüpfte Accounts werden nicht erneut gefragt. Kein Account-Merge über E-Mail.
+- **OAuth / Passwordless (Supabase):** RinQ persistiert nicht Provider-E-Mail, Google-Name oder Avatar als Identity. `provider_subject` = Supabase Auth User-ID. **Phase 3E:** neue Managed-Auth-User wählen einmal einen Anzeigenamen (`displayNameChosen` am Profil unter `rinq_user_id`); Google-Name höchstens ephemeral als UI-Vorschlag. Legacy- und verknüpfte Accounts werden nicht erneut gefragt. Kein Account-Merge über E-Mail.
 
 ### 19. Externe Provider
 
@@ -277,6 +277,7 @@ Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
 - [x] Managed Auth / Google via Supabase (Phase 3C) — JWKS-Verify, `supabase_google` auth_links, kein E-Mail-Merge
 - [x] Account Linking Legacy↔Google (Phase 3D) — verifiziert unter bestehender Session, kein E-Mail-Merge
 - [x] First-Login Display-Name Onboarding (Phase 3E) — `needs_display_name` / `displayNameChosen`, kein E-Mail-Bezug
+- [x] Passwordless E-Mail via Supabase (Phase 3F) — `supabase_email`, OTP/Magic Link, kein E-Mail-Merge
 
 ### Vor Payment
 

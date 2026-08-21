@@ -514,6 +514,24 @@ a.rewardListItem:hover {
   color: var(--ok);
 }
 
+.authDivider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.35rem 0 0.15rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+  text-transform: lowercase;
+}
+
+.authDivider::before,
+.authDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
 @media (max-width: 900px) {
   .kpiGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

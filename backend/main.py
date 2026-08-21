@@ -71,7 +71,13 @@ IDENTITY_STORE_FILE = os.path.join(DATA_DIR, "identity_store.json")
 ROOT_DATA_DIR_EARLY = os.path.abspath(os.path.join(DATA_DIR, ".."))
 IDENTITY_BACKUP_ROOT = os.path.join(ROOT_DATA_DIR_EARLY, "backups")
 
-from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER, SUPABASE_GOOGLE_PROVIDER
+from identity.context import (
+    AuthContext,
+    LEGACY_PASSWORD_PROVIDER,
+    MANAGED_AUTH_PROVIDERS,
+    SUPABASE_EMAIL_PROVIDER,
+    SUPABASE_GOOGLE_PROVIDER,
+)
 from identity.store import configure_identity_store, normalize_subject
 from identity.migrate import owners_match as _identity_owners_match
 from security_guards import (
@@ -125,24 +131,32 @@ def resolve_auth_context_from_legacy_sub(sub: str) -> AuthContext:
     return _identity_store.ensure_legacy_identity(subject, display_name=display)
 
 
-def resolve_auth_context_from_supabase_claims(claims: dict) -> AuthContext:
-    """Map verified Supabase JWT → AuthContext. Creates identity on first login (no email merge)."""
-    sub = str(claims.get("sub") or "").strip()
-    if not sub:
-        raise HTTPException(status_code=401, detail="Invalid token")
+def _supabase_link_provider(claims: dict):
+    """Map Supabase app_metadata → RinQ auth_link provider. Never uses email as subject."""
     app_meta = claims.get("app_metadata") if isinstance(claims.get("app_metadata"), dict) else {}
     provider = str((app_meta or {}).get("provider") or "").strip().lower()
     providers = (app_meta or {}).get("providers") or []
     if isinstance(providers, str):
         providers = [providers]
-    is_google = provider == "google" or "google" in [str(p).lower() for p in providers]
-    if not is_google:
-        # Phase 3C: Google only — reject other Supabase providers (e.g. email)
-        raise HTTPException(status_code=401, detail="Google sign-in required")
-    # Stable subject = Supabase auth user id (JWT sub). Never email.
-    # display_name=None → identity.legacy_username or "Spieler"; profile overrides in /api/me.
+    providers_l = [str(p).lower() for p in providers]
+    if provider == "google" or "google" in providers_l:
+        return SUPABASE_GOOGLE_PROVIDER
+    if provider == "email" or "email" in providers_l:
+        return SUPABASE_EMAIL_PROVIDER
+    return None
+
+
+def resolve_auth_context_from_supabase_claims(claims: dict) -> AuthContext:
+    """Map verified Supabase JWT → AuthContext. Creates identity on first login (no email merge)."""
+    sub = str(claims.get("sub") or "").strip()
+    if not sub:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    link_provider = _supabase_link_provider(claims)
+    if not link_provider:
+        raise HTTPException(status_code=401, detail="Unsupported sign-in method")
+    # Stable subject = Supabase auth user id (JWT sub). Never email address.
     return _identity_store.ensure_provider_identity(
-        SUPABASE_GOOGLE_PROVIDER,
+        link_provider,
         sub,
         display_name=None,
     )
@@ -3777,9 +3791,9 @@ def _needs_display_name_setup(user) -> bool:
     """
     if not isinstance(user, AuthContext):
         return False
-    if user.auth_provider != SUPABASE_GOOGLE_PROVIDER:
+    if user.auth_provider not in MANAGED_AUTH_PROVIDERS:
         return False
-    # Account-linking: Google login on a legacy-backed identity keeps the existing name.
+    # Account-linking: Google/email login on a legacy-backed identity keeps the existing name.
     if user.legacy_username:
         return False
     path = _profile_path(user)

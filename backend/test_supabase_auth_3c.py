@@ -181,7 +181,7 @@ class SupabaseApiTests(unittest.TestCase):
         claims = {
             "sub": str(uuid4()),
             "role": "authenticated",
-            "app_metadata": {"provider": "email", "providers": ["email"]},
+            "app_metadata": {"provider": "phone", "providers": ["phone"]},
             "exp": int((datetime.utcnow() + timedelta(hours=1)).timestamp()),
         }
         with mock.patch("main.verify_supabase_access_token", return_value=claims):

@@ -87,6 +87,57 @@ export async function signInWithGoogle(options?: { intent?: 'login' | 'link' }):
   return {}
 }
 
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase()
+}
+
+/** Send passwordless email OTP (Supabase Auth). Does not touch RinQ identity. */
+export async function sendEmailOtp(email: string): Promise<{ error?: string }> {
+  const supabase = getSupabase()
+  if (!supabase) {
+    return { error: 'E-Mail-Login ist noch nicht konfiguriert.' }
+  }
+  const normalized = normalizeEmail(email)
+  if (!normalized || !normalized.includes('@')) {
+    return { error: 'Bitte eine gültige E-Mail eingeben.' }
+  }
+  const { error } = await supabase.auth.signInWithOtp({
+    email: normalized,
+    options: {
+      shouldCreateUser: true,
+      // OTP code in mail; magic link also works via /auth/callback if user clicks it.
+      emailRedirectTo: oauthRedirectTo('login'),
+    },
+  })
+  if (error) return { error: error.message }
+  return {}
+}
+
+/** Verify email OTP and return the Supabase access token. */
+export async function verifyEmailOtp(
+  email: string,
+  token: string,
+): Promise<{ accessToken?: string; error?: string }> {
+  const supabase = getSupabase()
+  if (!supabase) {
+    return { error: 'E-Mail-Login ist noch nicht konfiguriert.' }
+  }
+  const normalized = normalizeEmail(email)
+  const code = token.trim()
+  if (!normalized || !code) {
+    return { error: 'E-Mail und Code erforderlich.' }
+  }
+  const { data, error } = await supabase.auth.verifyOtp({
+    email: normalized,
+    token: code,
+    type: 'email',
+  })
+  if (error) return { error: error.message }
+  const accessToken = data.session?.access_token
+  if (!accessToken) return { error: 'Keine Session nach Code-Bestätigung.' }
+  return { accessToken }
+}
+
 export async function signOutSupabase(): Promise<void> {
   const supabase = getSupabase()
   if (!supabase) return

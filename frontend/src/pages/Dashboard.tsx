@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, getRegistrationStatus } from "../api";
 import { isSupabaseConfigured, signInWithGoogle } from "../lib/supabase";
+import { EmailOtpLogin } from "../components/EmailOtpLogin";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
 import Card from '../components/Card';
@@ -591,9 +592,15 @@ export default function Dashboard() {
               </div>
               <UiActionRow>
                 <UiButton type="button" onClick={handleLogin}>Anmelden</UiButton>
-                {googleConfigured ? (
+              </UiActionRow>
+              {googleConfigured ? (
+                <>
+                  <div className={styles.authDivider} role="separator">
+                    <span>oder</span>
+                  </div>
                   <UiButton
                     type="button"
+                    variant="secondary"
                     onClick={async () => {
                       setLoginError('')
                       setGoogleBusy(true)
@@ -608,8 +615,12 @@ export default function Dashboard() {
                   >
                     {googleBusy ? 'Weiterleitung…' : 'Mit Google anmelden'}
                   </UiButton>
-                ) : null}
-              </UiActionRow>
+                  <div className={styles.authDivider} role="separator">
+                    <span>oder</span>
+                  </div>
+                  <EmailOtpLogin />
+                </>
+              ) : null}
               {allowLegacySignup ? (
                 <UiButton type="button" variant="ghost" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
               ) : null}

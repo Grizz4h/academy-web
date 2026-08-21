@@ -77,6 +77,14 @@ http://localhost:5173/auth/callback?intent=link
 3. OAuth → Callback `?intent=link` → Backend `POST /api/me/auth/link/google` mit Legacy-Bearer + Supabase Access Token.
 4. Danach Legacy **oder** Google → dieselbe `rinq_user_id`.
 
+## Email OTP / Magic Link (Phase 3F)
+
+In Supabase → Authentication → Providers → **Email**: enabled (OTP and/or Magic Link).
+
+Rate limits: Supabase Auth rate limits apply to OTP send/verify. RinQ does not proxy the OTP mailer (no email stored in RinQ profiles).
+
+Login UI: Dashboard → **Mit E-Mail anmelden** → E-Mail → Code bestätigen. Magic-Link return uses `/auth/callback` like Google.
+
 ### Supabase Auth → Providers → Google
 
 Enabled with Google Client ID + Client Secret from Google Cloud.
