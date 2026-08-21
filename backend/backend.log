@@ -13242,3 +13242,2270 @@ INFO:     65.49.1.238:10719 - "GET /?format=json HTTP/1.1" 404 Not Found
 WARNING:  Invalid HTTP request received.
 INFO:     71.6.146.186:40860 - "GET / HTTP/1.1" 404 Not Found
 INFO:     71.6.146.186:41716 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+[identity] ensure_identities users=5
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=890bdb27-48bd-4fec-948a-e3330517fc21
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=44688810-2b7c-4f20-bca7-93e0c97a209f
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+[identity] ensure_identities users=5
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=5012fdb1-2a41-46f9-ae46-817f3dcc0248
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=cc6fb091-afa2-4965-b465-b26e90d0b442
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=cc6fb091-afa2-4965-b465-b26e90d0b442
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=5e3b05c8-1f6b-4277-98f0-5e84e1400d28
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=bcc68d52-512c-4f34-901a-b33bc43c4c78
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=c7697f8e-1d16-4646-8817-c4496e07cc13
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=c7697f8e-1d16-4646-8817-c4496e07cc13
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=c91baa4c-18a1-44a3-838a-5e5493073db6
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+[identity] ensure_identities users=5
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[identity] ensure_identities users=5
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[identity] ensure_identities users=5
+[identity] ensure_identities users=5
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=15616718-9e80-4761-9bc1-8869b8c688ca
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=15616718-9e80-4761-9bc1-8869b8c688ca detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=894c1684-a521-469a-8da3-e271ac37cf4e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=894c1684-a521-469a-8da3-e271ac37cf4e provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=b84db484-b158-4a4f-bab0-3d24127770b4
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=d96e93af-9d58-4b8b-b6d1-6ee318959899
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=d96e93af-9d58-4b8b-b6d1-6ee318959899 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=1fc609e7-0505-4a1d-91ef-29de4283ff41
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[identity] ensure_identities users=5
+[identity] ensure_identities users=5
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[SEC] auth_link_google_ok rinq=30de6c03-3f4d-4617-8a2c-bb5786b688c0 provider=supabase_google
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=6e836f8c-0ac0-46b1-ac0b-c322b81e2a4b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=e1082d28-94b0-4c24-aaa2-89afdb278ee6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=022eccca-e53d-4456-a78b-ecadc40fea81
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=022eccca-e53d-4456-a78b-ecadc40fea81 detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=9ceb4471-b3d3-4338-b2ab-ea3f9026d501
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=9ceb4471-b3d3-4338-b2ab-ea3f9026d501 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=139314ac-c53f-475b-8c38-2d1af54ca567
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=1a5dcc50-6ee3-4b6e-83f5-280ab49300e7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=1a5dcc50-6ee3-4b6e-83f5-280ab49300e7 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=06c7cc65-c745-401d-b3fd-fbb619988b49
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=81ea6999-7783-430d-a5bf-ea420b7264db
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=ef7228d5-1a9e-4564-a6c0-a7f31f6a0465
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=a08ae08f-cc60-419c-b11c-d7a40554c6e6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=51280898-6fa4-4f30-a59d-b54aed5ee984
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=51280898-6fa4-4f30-a59d-b54aed5ee984 detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=739e76b9-2b08-4fdc-b35b-05bfc336dbae
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=739e76b9-2b08-4fdc-b35b-05bfc336dbae provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=56cbbfac-722b-4a74-b658-9746b35b0ad1
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=d1614283-7640-4b8a-a35c-acdbb88a49be
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=d1614283-7640-4b8a-a35c-acdbb88a49be provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=65d065ed-1470-4b7d-93d6-3b69ec2d6afe
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[SEC] supabase_auth_failed
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=0e6961c2-e4a9-4b71-8fc9-3ea9ae074ac5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=86bea689-9144-41c4-8d92-b5ba6518994e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=86bea689-9144-41c4-8d92-b5ba6518994e
+[SEC] account_delete_completed rinq=86bea689-9144-41c4-8d92-b5ba6518994e
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=0e6961c2-e4a9-4b71-8fc9-3ea9ae074ac5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=29f5e902-da7c-4448-a3cb-b442c5dfb51f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=30a69c8b-1039-4efc-ad7e-844e43cd9ee1
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=f04e0349-17dd-4aa0-ab46-af4302ef0181
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=16b6fa2a-0c63-42d6-91a5-92e7bcba12fc
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=f04e0349-17dd-4aa0-ab46-af4302ef0181
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=f04e0349-17dd-4aa0-ab46-af4302ef0181
+[SEC] account_delete_failed rinq=f04e0349-17dd-4aa0-ab46-af4302ef0181
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/main.py", line 4127, in delete_my_account
+    summary = lifecycle_delete(
+              ^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/account_lifecycle.py", line 256, in delete_account
+    owned(str(data.get("user") or "")) or owned(str(data.get("created_by") or ""))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/account_lifecycle.py", line 236, in owned
+    return owners_match(resource_user, user)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: owners_match() missing 1 required positional argument: 'legacy_username'
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 500 Internal Server Error"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=f261b79f-a0cd-47e5-8714-5f88224845e1
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=80be484a-002e-47a3-bf5b-67fc75707991
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=f261b79f-a0cd-47e5-8714-5f88224845e1
+[SEC] account_delete_completed rinq=f261b79f-a0cd-47e5-8714-5f88224845e1
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=b6224fbd-af93-48f4-b8bb-cbd3d66df047
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=566cf8f7-8a7f-4c03-bb54-adbdd2ad711f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=b6224fbd-af93-48f4-b8bb-cbd3d66df047
+[SEC] account_delete_failed rinq=b6224fbd-af93-48f4-b8bb-cbd3d66df047 reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=a123a054-a959-4bd6-8312-f31b8b582855
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=a9a2fbb7-c08e-49dc-a682-e37ad6891369
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=5b124cc6-eb18-4828-a088-78598eea1ee0
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=283be89f-e743-4dbc-93ba-d18ea563dda1
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=a2286d09-9edf-44c9-9373-fec5127e6dc0
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=e54e6e9e-c4ed-4628-ae75-79788e2be9d2
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=a2286d09-9edf-44c9-9373-fec5127e6dc0 provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=a0bfbf98-acd1-4543-9029-5632dcf6a837
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=cdc965f8-4dd3-4c7e-9ba3-cc3916e0ec72
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=938ea18b-2b77-4842-8777-458c069412d7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=868f007f-08c6-46d0-a388-0059b20a191a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=4f240539-44be-4e63-9b37-a44b109c9714
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=4f240539-44be-4e63-9b37-a44b109c9714
+[SEC] account_delete_completed rinq=4f240539-44be-4e63-9b37-a44b109c9714
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=868f007f-08c6-46d0-a388-0059b20a191a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=98e65b9c-c83c-48bd-af0b-ef425accd562
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=079dadf6-6ba7-4aca-8c12-9d542091e5c0
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=94b5b611-5ef2-4a0d-b9f1-c473eb484667
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=36450394-d330-4590-9fbe-24203e06e6a3
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=94b5b611-5ef2-4a0d-b9f1-c473eb484667
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=94b5b611-5ef2-4a0d-b9f1-c473eb484667
+[SEC] account_delete_failed rinq=94b5b611-5ef2-4a0d-b9f1-c473eb484667
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/main.py", line 4127, in delete_my_account
+    summary = lifecycle_delete(
+              ^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/account_lifecycle.py", line 256, in delete_account
+    owned(str(data.get("user") or "")) or owned(str(data.get("created_by") or ""))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/account_lifecycle.py", line 236, in owned
+    return owners_match(resource_user, user)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: owners_match() missing 1 required positional argument: 'legacy_username'
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 500 Internal Server Error"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=bb620076-2ca5-43a8-859e-211154dceca5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=ef992de6-3da5-4335-8e9a-a6b16b179aa0
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=bb620076-2ca5-43a8-859e-211154dceca5
+[SEC] account_delete_completed rinq=bb620076-2ca5-43a8-859e-211154dceca5
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=ad2474a7-3ccc-40a1-9c1b-a1a0cac78829
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=f702f0d3-3507-407e-bc69-b0d8e8aefe43
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=ad2474a7-3ccc-40a1-9c1b-a1a0cac78829
+[SEC] account_delete_failed rinq=ad2474a7-3ccc-40a1-9c1b-a1a0cac78829 reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=b5a39d12-311f-4214-9847-e2e1500a657e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=636b3e03-3e33-46dc-8783-2f8035eb2b7f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=8a9accd1-b6cd-425d-9957-934a6d1dfd81
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=de719939-0294-46bb-8305-04dadec067f5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=c8ae65ac-70f3-4ad4-8118-aac3ad95cdfb
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=88d9b770-50ce-486a-b5ea-562a29c7adeb
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=c8ae65ac-70f3-4ad4-8118-aac3ad95cdfb provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=32be650a-f1c1-4d37-a5b0-5206da62855f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=3153ab28-6f6a-4c2e-a4e4-fd156eae7c0f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=075645a4-4d59-49c1-96a9-f849ac24636e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=e19edda8-cc83-40ac-9732-730a46b142db
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=6d3ecb08-69d2-4588-bd40-3a25614753e5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=b218aef2-601a-4655-83a9-05da2f0c61ae
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=993dafe2-1abf-4506-be2b-6601e4cf2b2e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=b218aef2-601a-4655-83a9-05da2f0c61ae
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=b218aef2-601a-4655-83a9-05da2f0c61ae
+[SEC] account_delete_failed rinq=b218aef2-601a-4655-83a9-05da2f0c61ae
+Traceback (most recent call last):
+  File "/opt/academy-web/backend/main.py", line 4127, in delete_my_account
+    summary = lifecycle_delete(
+              ^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/account_lifecycle.py", line 256, in delete_account
+    owned(str(data.get("user") or "")) or owned(str(data.get("created_by") or ""))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/academy-web/backend/account_lifecycle.py", line 236, in owned
+    return owners_match(resource_user, user)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: owners_match() missing 1 required positional argument: 'legacy_username'
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 500 Internal Server Error"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=cf7e866d-79dc-4c0f-b5f9-63be40865afa
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=ba1ae000-9cf3-44b0-a30e-3d33068d6b2b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=ba1ae000-9cf3-44b0-a30e-3d33068d6b2b
+[SEC] account_delete_completed rinq=ba1ae000-9cf3-44b0-a30e-3d33068d6b2b
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=cf7e866d-79dc-4c0f-b5f9-63be40865afa
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=abe89832-473e-46e5-a65b-921411247904
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=092b9f02-9afa-45ad-8827-29c4d431f813
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=15378993-21f4-47c6-a496-cf0e9920dfe5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=dd56de64-5f9b-4be0-9d71-33da97a5e398
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=15378993-21f4-47c6-a496-cf0e9920dfe5
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=15378993-21f4-47c6-a496-cf0e9920dfe5
+[SEC] account_delete_completed rinq=15378993-21f4-47c6-a496-cf0e9920dfe5
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=3f0d0bdb-026d-44e5-a3f3-94e8138c0cac
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=1dc628cf-5d33-45fa-b224-aafc709954a2
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=3f0d0bdb-026d-44e5-a3f3-94e8138c0cac
+[SEC] account_delete_completed rinq=3f0d0bdb-026d-44e5-a3f3-94e8138c0cac
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=c52a78d4-54da-4733-81f6-9af815a5e2d8
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d11354aa-9252-4890-a87c-5421256ee99b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=c52a78d4-54da-4733-81f6-9af815a5e2d8
+[SEC] account_delete_failed rinq=c52a78d4-54da-4733-81f6-9af815a5e2d8 reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=3e4edacf-7c38-46c3-b54b-a6d427c22bdc
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=9113e0e7-71c6-4de8-ae1c-c4aa8d3a66cf
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=b4c474dc-3d06-4ffe-b050-b853542a5a96
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d2238653-4155-405e-8f70-16503d7c453c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=b4c474dc-3d06-4ffe-b050-b853542a5a96
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=d2238653-4155-405e-8f70-16503d7c453c
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=683b11ab-a399-4e95-b3b7-0ec30ca68209
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=a0c0fc64-2527-4a1e-bebf-802b5c39d5c2
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=683b11ab-a399-4e95-b3b7-0ec30ca68209 provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=f748cf45-dc6e-4d92-8d21-0c5211f7d46a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=015353e2-1344-44e2-add5-f78faf9768b7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=015353e2-1344-44e2-add5-f78faf9768b7
+[SEC] account_delete_completed rinq=015353e2-1344-44e2-add5-f78faf9768b7
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=f748cf45-dc6e-4d92-8d21-0c5211f7d46a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=84f55eb8-a54b-498c-adb2-e740a0c69c15
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=c4764df6-a421-4f26-8a19-998dde6dc403
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=92d29f19-e45d-4b04-9f42-217b0da69005
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=27334a49-3514-4247-bfc3-307a6edd0641
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=92d29f19-e45d-4b04-9f42-217b0da69005
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=92d29f19-e45d-4b04-9f42-217b0da69005
+[SEC] account_delete_completed rinq=92d29f19-e45d-4b04-9f42-217b0da69005
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=9f1e4934-97cb-43f4-b09a-177e69a04492
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=48f4eb4b-b95d-4596-8397-2cc0d0e06f87
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=9f1e4934-97cb-43f4-b09a-177e69a04492
+[SEC] account_delete_completed rinq=9f1e4934-97cb-43f4-b09a-177e69a04492
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=fa002cd6-bdd9-4532-a288-b1875b32dc1a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=c0fb4b85-b5b5-4500-9b4c-387762324a26
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=fa002cd6-bdd9-4532-a288-b1875b32dc1a
+[SEC] account_delete_failed rinq=fa002cd6-bdd9-4532-a288-b1875b32dc1a reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=b4476074-e98d-443d-a284-369a060c58b3
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=9752775b-126f-4f7c-a909-8933cf6c10e8
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=b2051b26-b7bc-4c4f-b6ab-d6002cfa505b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=f4a37fef-472b-4b1f-8758-2ded5fb9229d
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=b2051b26-b7bc-4c4f-b6ab-d6002cfa505b
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=f4a37fef-472b-4b1f-8758-2ded5fb9229d
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=84ad914d-eaa2-4f26-b9de-e729c8268683
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=9431b9f0-af3d-4b35-99a4-42893d3b1c9c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=84ad914d-eaa2-4f26-b9de-e729c8268683 provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=7fc66ead-0d1a-4f06-8441-ee20fb45ba7a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=98a8b9c5-d85b-4871-8dcd-cd2b32631d1e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=874fa347-8e99-420b-b0fa-9be5178a2264
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=30328cee-153e-47e4-a9dc-b0a31c1f7902
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=9908d6c0-0cde-4fbd-8486-ea5f4cabb968
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=9908d6c0-0cde-4fbd-8486-ea5f4cabb968
+[SEC] account_delete_completed rinq=9908d6c0-0cde-4fbd-8486-ea5f4cabb968
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=30328cee-153e-47e4-a9dc-b0a31c1f7902
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=3199ac3a-bbf0-4bfe-8e12-dd852f7880b2
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=349fe56d-38d3-4389-89b4-e4aa922810cb
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=6997bebc-bedb-4948-b9a7-330d9a0bcb80
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=1466cf6b-c370-4f3c-a8fc-cac9aa5be8e7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=6997bebc-bedb-4948-b9a7-330d9a0bcb80
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=6997bebc-bedb-4948-b9a7-330d9a0bcb80
+[SEC] account_delete_completed rinq=6997bebc-bedb-4948-b9a7-330d9a0bcb80
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=8c1da945-7755-408e-85bf-9cc108be4802
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=9c3d4410-9330-4365-818f-25eeb7181e4f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=8c1da945-7755-408e-85bf-9cc108be4802
+[SEC] account_delete_completed rinq=8c1da945-7755-408e-85bf-9cc108be4802
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=84f914df-8abf-48bb-90ba-bdeb0f5b5d8e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=c5aab08b-6e39-4d5d-af8b-215c782167c4
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=84f914df-8abf-48bb-90ba-bdeb0f5b5d8e
+[SEC] account_delete_failed rinq=84f914df-8abf-48bb-90ba-bdeb0f5b5d8e reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=492089ae-b5aa-46a4-8ac9-ec02ad068240
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=a3bba9fe-7f32-4611-bdc7-6d9133d19ef6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=f02a6858-a302-4327-8afd-d2cf96455d6a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=659958db-86f7-404b-9475-8ff61d3995be
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=f02a6858-a302-4327-8afd-d2cf96455d6a
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=659958db-86f7-404b-9475-8ff61d3995be
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=ab4780f8-8664-4a12-a7fb-c55dcedc29ad
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=485d4b0d-2639-452c-9383-05924d73ed8c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=ab4780f8-8664-4a12-a7fb-c55dcedc29ad provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=300f66b0-1e62-4cba-93f1-c5a785136209
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=300f66b0-1e62-4cba-93f1-c5a785136209 detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=53872c3e-143e-46f8-96dd-e588eab6dc2c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=53872c3e-143e-46f8-96dd-e588eab6dc2c provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=145b73cd-5345-446a-bfdb-7c76d8715e9b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=a030cd26-2245-4812-ba6f-9c2b18e80757
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=62a6872c-6d89-40f8-8288-3a65bf44de48
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=62a6872c-6d89-40f8-8288-3a65bf44de48
+[SEC] account_delete_completed rinq=62a6872c-6d89-40f8-8288-3a65bf44de48
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=a030cd26-2245-4812-ba6f-9c2b18e80757
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=d9d30f27-c17c-43ff-b9fa-92112a35410a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d08d6a01-d3c3-4b6d-87ad-f783b1c37fef
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=480c3ad5-09f1-4b75-b5e5-62a6ae30dcf6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=a40be9c0-ee61-4f4b-8092-47d2474f14a1
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=480c3ad5-09f1-4b75-b5e5-62a6ae30dcf6
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=480c3ad5-09f1-4b75-b5e5-62a6ae30dcf6
+[SEC] account_delete_completed rinq=480c3ad5-09f1-4b75-b5e5-62a6ae30dcf6
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=6a40bdaa-dd5e-4f63-a7c1-6b47a084617e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d5df68f2-5ef8-475d-b4d8-34b3ab05b4e7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=6a40bdaa-dd5e-4f63-a7c1-6b47a084617e
+[SEC] account_delete_completed rinq=6a40bdaa-dd5e-4f63-a7c1-6b47a084617e
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=83b96714-0b84-42bc-b7ec-6aea82175e41
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=2e7a04ab-3268-4ad2-a229-e289eda803ba
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=83b96714-0b84-42bc-b7ec-6aea82175e41
+[SEC] account_delete_failed rinq=83b96714-0b84-42bc-b7ec-6aea82175e41 reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=ddd897c5-9b34-4d7e-a29b-b2ad51faa78b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=cc3e3fa4-6cdc-45b2-9e44-61ffa3224fe6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=11ba92b8-6905-4f2a-ada3-003695dd2fb7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=53710148-a538-48fb-b31d-0db7ea1c6b22
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=11ba92b8-6905-4f2a-ada3-003695dd2fb7
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=53710148-a538-48fb-b31d-0db7ea1c6b22
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=db830026-6e50-4e35-b9d1-eb80a17e3bff
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=1057a4e4-d56d-4633-93f1-b0e637d0b3c6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=db830026-6e50-4e35-b9d1-eb80a17e3bff provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=7ac91cb0-3c97-44a4-b011-b3f3c622673f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=7ac91cb0-3c97-44a4-b011-b3f3c622673f detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=00a0cbdb-7dc7-49f9-b150-d30237837aed
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=00a0cbdb-7dc7-49f9-b150-d30237837aed provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=813a5ab0-dd36-4595-a481-19e4e244a8cd
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=41e92b1e-d529-4282-8f90-249e0a52e3fc
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=41e92b1e-d529-4282-8f90-249e0a52e3fc provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=dc88c126-7445-48e1-aaae-c2615fd04c09
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=238debcb-69b4-4a91-87df-37b34da2b6b7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=136a0fa3-eace-4b76-b9be-ec2ed52ab69f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=f8b2fbb2-108b-4acb-9d0c-365aa876752a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=45d221af-9632-4545-848e-6cfa883cd49e
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=29073a70-3abd-4786-9377-68a543f39515
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=29073a70-3abd-4786-9377-68a543f39515
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=67423fb0-bf08-4bdf-8512-54fbc448e356
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=71a3d3a2-3808-4490-9c02-328ec64aad53
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=71a3d3a2-3808-4490-9c02-328ec64aad53
+[SEC] account_delete_completed rinq=71a3d3a2-3808-4490-9c02-328ec64aad53
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=67423fb0-bf08-4bdf-8512-54fbc448e356
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=413cb58d-70b3-49a0-a0f1-249eae565f82
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=59a078c8-ef8c-47a7-a435-85f2226e791f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=e482b4e5-76b9-45b4-b318-de6eabd2c9e5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=6c6a10eb-c2b2-4254-a889-1d989f3acb09
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=e482b4e5-76b9-45b4-b318-de6eabd2c9e5
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=e482b4e5-76b9-45b4-b318-de6eabd2c9e5
+[SEC] account_delete_completed rinq=e482b4e5-76b9-45b4-b318-de6eabd2c9e5
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=585e4265-5e57-4d77-897c-e0dcc4e42591
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=b3c90dfa-adb9-4c34-a154-52466c201396
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=585e4265-5e57-4d77-897c-e0dcc4e42591
+[SEC] account_delete_completed rinq=585e4265-5e57-4d77-897c-e0dcc4e42591
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=41cea65c-e5c4-49d7-ae8b-3c43d6662001
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=0b07f7b4-0b69-4f20-aef4-e59088e5ab8c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=41cea65c-e5c4-49d7-ae8b-3c43d6662001
+[SEC] account_delete_failed rinq=41cea65c-e5c4-49d7-ae8b-3c43d6662001 reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=265d1722-0988-47b4-99f1-b9ad44a9b72f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=51dfe1fa-7e1a-4711-a8b0-2837a2c5f2b8
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=05c68148-73b6-4a7e-b6cb-7a589068ec74
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=08b52907-8480-4621-9227-b72789a48a04
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=05c68148-73b6-4a7e-b6cb-7a589068ec74
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=08b52907-8480-4621-9227-b72789a48a04
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=71e78da2-270b-4aff-826c-68d780d25547
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d31112f3-b3da-4b50-a41b-dd1459d3cbf5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=71e78da2-270b-4aff-826c-68d780d25547 provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=5e79916b-3e8e-473a-aaa1-950b06f4ccf4
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=5e79916b-3e8e-473a-aaa1-950b06f4ccf4 detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=df25b825-e39b-4bed-912b-38c2bd7e07f3
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=df25b825-e39b-4bed-912b-38c2bd7e07f3 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=03df45cd-098a-4d6c-8923-75dbb81044bf
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=12cfbe66-ca54-4406-8366-159fe9617d44
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=12cfbe66-ca54-4406-8366-159fe9617d44 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=6f886227-81fa-40db-9694-4e503e2783d4
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=98e4b5bd-68b9-40a6-8db5-a5a29f0a3257
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=14be30a0-eecb-4487-8e93-d2027193e8e5
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=7060e136-38f0-4e3c-98d4-ffc273f0effd
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=deb83cc4-68d9-4a4b-8edb-396e55855c36
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=41822391-600d-4ce6-87d7-3e8e9523e656
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=41822391-600d-4ce6-87d7-3e8e9523e656
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+[AUTH] login attempt subject=christoph ip=141.78.165.123
+[AUTH] login ok subject=christoph rinq_user_id=30de6c03-3f4d-4617-8a2c-bb5786b688c0
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=5c4c6e00-7086-470a-904b-65a2eab371e6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=5c4c6e00-7086-470a-904b-65a2eab371e6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=25cd3150-c237-4cc3-b7b8-d40f0604cde0
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=e446fcb7-acf0-49e9-828a-9bfe46874530
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=55edc7d6-8396-4254-8f80-d459b46e842f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=55edc7d6-8396-4254-8f80-d459b46e842f
+[SEC] account_delete_completed rinq=55edc7d6-8396-4254-8f80-d459b46e842f
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=e446fcb7-acf0-49e9-828a-9bfe46874530
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=9f83c6e0-1e9b-4a7d-9e90-6c062ee42939
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=0ac6e194-60df-4a3f-88ff-85a4b0381157
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=5e8dcda3-8613-4a09-9c73-3a29c2b7d87d
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=f8160b3d-f148-4453-a8ca-22cdea93faef
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=5e8dcda3-8613-4a09-9c73-3a29c2b7d87d
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=5e8dcda3-8613-4a09-9c73-3a29c2b7d87d
+[SEC] account_delete_completed rinq=5e8dcda3-8613-4a09-9c73-3a29c2b7d87d
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=ffe21c29-1e99-4523-9d0d-e18587aa99a7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=9e6aeda4-f8ee-4e75-a6bc-7f01c0542708
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=ffe21c29-1e99-4523-9d0d-e18587aa99a7
+[SEC] account_delete_completed rinq=ffe21c29-1e99-4523-9d0d-e18587aa99a7
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=352f8be4-6b81-4604-9afa-aeb986e75a3c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=3759ed9d-8f61-43c9-81af-9d3ad52f9b46
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=352f8be4-6b81-4604-9afa-aeb986e75a3c
+[SEC] account_delete_failed rinq=352f8be4-6b81-4604-9afa-aeb986e75a3c reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=80f5de56-8467-4e3e-862d-4c8d65aa3199
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=e2865fd5-6702-46f9-bfc2-ef8f39113a7c
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=1e6e2268-a454-44e7-b336-5e7d96ddd69f
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=2d058f47-c5bf-4f65-9dce-2d7cd41794fd
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=1e6e2268-a454-44e7-b336-5e7d96ddd69f
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=2d058f47-c5bf-4f65-9dce-2d7cd41794fd
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=7b7f157f-a40f-41b7-bd24-9b822a18efc7
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=4465aaa0-3495-40c8-81c3-f5d1a21f1e4b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=7b7f157f-a40f-41b7-bd24-9b822a18efc7 provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=1e7521bd-be8b-4172-adee-d2198edd18f6
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=b7579e60-00a6-40df-8cf0-c1ce254d0a5d
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=3cc5f997-7f26-4741-8f66-86b6b93c2b8b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=3cc5f997-7f26-4741-8f66-86b6b93c2b8b detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=007db8df-f33c-4f84-b810-8d829a32a56e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=007db8df-f33c-4f84-b810-8d829a32a56e provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=f57ad796-cd07-4056-b55a-7f6605ebbb51
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=f893fc90-c351-426c-b794-1e5888ed0c4d
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=f893fc90-c351-426c-b794-1e5888ed0c4d provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=57aa05ed-acb2-467e-a993-7f033ea3d7d4
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=eede4e84-7120-4e7b-9983-e445d2532f32
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions?user=bob "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: PATCH http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions "HTTP/1.1 401 Unauthorized"
+HTTP Request: PATCH http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=93320ff2-675f-47a8-9d11-083e7d877784
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=93320ff2-675f-47a8-9d11-083e7d877784
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/sessions/bob_200 "HTTP/1.1 404 Not Found"
+HTTP Request: GET http://testserver/api/sessions/alice_100 "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 429 Too Many Requests"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] admin_denied subject=alice path=/api/players/import ip=testclient
+HTTP Request: POST http://testserver/api/players/import "HTTP/1.1 403 Forbidden"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+[SEC] signup_disabled ip=testclient
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 403 Forbidden"
+[AUTH] signup ok subject=newbie rinq_user_id=3c612f58-4b01-453a-a238-46cbb5fd61fa
+HTTP Request: POST http://testserver/api/auth/signup "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=773470a8-9c60-4dc0-955e-231edc9f300e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d5bcc848-0ba1-4eb3-b30f-91594a651cf9
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=d5bcc848-0ba1-4eb3-b30f-91594a651cf9
+[SEC] account_delete_completed rinq=d5bcc848-0ba1-4eb3-b30f-91594a651cf9
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=773470a8-9c60-4dc0-955e-231edc9f300e
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=e7b93ff0-a746-4a9e-bf06-41131baf6d6b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d11260df-b2d3-469e-acee-9ababc63c9cf
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: DELETE http://testserver/api/me/auth/links/legacy_password "HTTP/1.1 400 Bad Request"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=685a741a-8a94-4248-8360-17c91b768a06
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=b899a519-248e-43a6-9bac-ddb84aa1db59
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=685a741a-8a94-4248-8360-17c91b768a06
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 400 Bad Request"
+[SEC] account_delete_requested rinq=685a741a-8a94-4248-8360-17c91b768a06
+[SEC] account_delete_completed rinq=685a741a-8a94-4248-8360-17c91b768a06
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[SEC] login_failed subject=alice ip=testclient
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=3a92df09-e098-47b5-87e9-c77e10092429
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=d011c952-e147-4b55-a4cb-125c98b97d3a
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=3a92df09-e098-47b5-87e9-c77e10092429
+[SEC] account_delete_completed rinq=3a92df09-e098-47b5-87e9-c77e10092429
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=1122acac-316e-48d2-8fa4-cab83ec703af
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=ba1c5a26-2c4d-42f6-8d8e-5d0ba525bdbd
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_delete_requested rinq=1122acac-316e-48d2-8fa4-cab83ec703af
+[SEC] account_delete_failed rinq=1122acac-316e-48d2-8fa4-cab83ec703af reason=missing_service_role
+HTTP Request: POST http://testserver/api/me/delete "HTTP/1.1 503 Service Unavailable"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=cccba04b-832c-44da-ac6c-b1d3397cf509
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=5569d845-d0d2-46d6-8cf6-2f96e94e0d4d
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=935699d1-b4db-4687-9431-86b5d2a43bdb
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=86c2ab4a-7361-4cfe-a4f8-d335be810136
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] account_export rinq=935699d1-b4db-4687-9431-86b5d2a43bdb
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[SEC] account_export rinq=86c2ab4a-7361-4cfe-a4f8-d335be810136
+HTTP Request: GET http://testserver/api/me/export "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=ba727f21-1c69-44fe-9b27-fb463a9817d4
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=bob ip=testclient
+[AUTH] login ok subject=bob rinq_user_id=de4e5ce6-d202-440d-baa3-8feba696a05b
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] auth_link_removed rinq=ba727f21-1c69-44fe-9b27-fb463a9817d4 provider=supabase_google
+HTTP Request: DELETE http://testserver/api/me/auth/links/supabase_google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 400 Bad Request"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=2f9ec832-4751-4096-8025-cf7c2049aca0
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=7b90ca88-73b7-48b0-8062-e036654bea42
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=6bccc2c0-4f23-444c-8d38-1419a15a0248
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_conflict rinq=6bccc2c0-4f23-444c-8d38-1419a15a0248 detail=ValueError
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 409 Conflict"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=e468976f-8c6f-4e84-8787-c18aa68a5409
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=e468976f-8c6f-4e84-8787-c18aa68a5409 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=ff4ac57f-1be7-457c-b63e-452667600a02
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=26c6c702-f8ff-42c4-959f-c26da51fc851
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+[SEC] auth_link_google_ok rinq=26c6c702-f8ff-42c4-959f-c26da51fc851 provider=supabase_google
+HTTP Request: POST http://testserver/api/me/auth/link/google "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[SEC] supabase_auth_failed
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+[AUTH] login attempt subject=alice ip=testclient
+[AUTH] login ok subject=alice rinq_user_id=96a51a52-abba-4415-bbe0-a125c07d2454
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"
+HTTP Request: GET http://testserver/api/auth/registration "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: PATCH http://testserver/api/me/profile "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+[AUTH] login attempt subject=christoph ip=testclient
+[AUTH] login ok subject=christoph rinq_user_id=a616a969-278f-4cf4-a291-dacd1715b662
+HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 200 OK"
+HTTP Request: GET http://testserver/api/me "HTTP/1.1 401 Unauthorized"

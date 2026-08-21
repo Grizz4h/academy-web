@@ -906,11 +906,12 @@
         }
       ],
       "snapshot": {
-        "imported_at": "2026-08-11T08:24:35.579597Z",
+        "imported_at": "2026-08-21T19:25:07.052698Z",
         "source": {
-          "provider": "legacy_migration",
-          "sourceTeamFile": "erc_ingolstadt_players.json",
-          "importedAt": "2026-08-11T08:24:35.578468Z"
+          "provider": "penny_del",
+          "externalTeamId": "erc_ingolstadt",
+          "sourceUrl": "https://www.penny-del.org/teams/erc-ingolstadt/kader",
+          "importedAt": "2026-08-21T19:25:07.050885Z"
         },
         "quality": "plausible",
         "warnings": [],
