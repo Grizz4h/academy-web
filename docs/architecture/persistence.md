@@ -48,6 +48,8 @@ JSON impl: load + mutator + optional write under one per-user flock. Concurrent 
 
 Same contracts; swap in `wiring.py` only. No dual-write in 4B.
 
+**Phase 4C (this branch):** relational schema + versioned SQL migration prepared — see `docs/architecture/database-schema.md` and `backend/migrations/001_runtime_schema.sql`. Runtime still uses JSON repositories; do not point production at Postgres until 4D.
+
 Methods that should become SQL transactions (or row locks):
 
 - `IdentityRepository.create_auth_link` / ensure_* (UNIQUE `(provider, provider_subject)`)
@@ -55,16 +57,20 @@ Methods that should become SQL transactions (or row locks):
 - Session create/update/delete under ownership predicates
 - Credential upsert/delete
 
-Constraints / FKs to design in 4C:
+Constraints / FKs designed in 4C:
 
-- `identities.rinq_user_id` PK
-- `auth_links` UNIQUE `(provider, provider_subject)`, FK → identities
-- `profiles`, `rewards`, `sessions.user` → `rinq_user_id`
-- Legacy credentials optional table keyed by username, linked to identity
+- `app_users.rinq_user_id` PK
+- `auth_links` UNIQUE `(provider, provider_subject)`, FK → `app_users`
+- `profiles`, `reward_states`, `sessions.rinq_user_id` → `app_users`
+- `legacy_credentials` keyed by username + `rinq_user_id`
 
 ## Abstractions already vs later
 
 **Done (4B):** identities, auth_links, legacy credentials, profiles, rewards, sessions.
+
+**Done (4C design only):** Postgres schema + migration + docs — not connected.
+
+**Later (4D+):** Postgres repositories, controlled JSON import, cutover.
 
 **Later:** scenes, observations, other non-payment runtime domains.
 
