@@ -1,4 +1,4 @@
-"""Session API auth + owner enforcement tests (Phase 1 hardening)."""
+"""Session API auth + owner enforcement tests (Phase 1 hardening + 3A identity)."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from pathlib import Path
 
 # Must be set before importing backend.main (JWT is resolved at import time).
 os.environ["ACADEMY_JWT_SECRET"] = "test-jwt-secret-phase1-hardening-32chars-min"
+os.environ["ACADEMY_SKIP_IDENTITY_MIGRATION"] = "1"
 
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 if BACKEND_DIR not in sys.path:
@@ -42,23 +43,59 @@ class SessionAuthTests(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         root = Path(self._tmp.name)
-        sessions_dir = root / "sessions"
+        academy = root / "academy"
+        sessions_dir = academy / "sessions"
         scenes_dir = root / "scenes"
-        sessions_dir.mkdir()
+        sessions_dir.mkdir(parents=True)
         scenes_dir.mkdir()
+        (academy / "profiles").mkdir()
+        (academy / "rewards").mkdir()
+        (academy / "uploads" / "avatars").mkdir(parents=True)
 
-        self._prev_sessions = backend_main.SESSIONS_DIR
-        self._prev_scenes = backend_main.SCENES_DIR
+        self._prev = {
+            "SESSIONS_DIR": backend_main.SESSIONS_DIR,
+            "SCENES_DIR": backend_main.SCENES_DIR,
+            "USERS_FILE": backend_main.USERS_FILE,
+            "DATA_DIR": backend_main.DATA_DIR,
+            "PROFILES_DIR": backend_main.PROFILES_DIR,
+            "REWARDS_DIR": backend_main.REWARDS_DIR,
+            "IDENTITY_STORE_FILE": backend_main.IDENTITY_STORE_FILE,
+        }
+
+        users_file = academy / "users.json"
+        users_file.write_text(
+            json.dumps(
+                {
+                    "users": [
+                        {"username": "alice", "password_hash": "x", "created_at": "2026-01-01", "role": "user"},
+                        {"username": "bob", "password_hash": "x", "created_at": "2026-01-01", "role": "user"},
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
         backend_main.SESSIONS_DIR = str(sessions_dir)
         backend_main.SCENES_DIR = str(scenes_dir)
+        backend_main.USERS_FILE = str(users_file)
+        backend_main.DATA_DIR = str(academy)
+        backend_main.PROFILES_DIR = str(academy / "profiles")
+        backend_main.REWARDS_DIR = str(academy / "rewards")
+        backend_main.IDENTITY_STORE_FILE = str(academy / "identity_store.json")
+        backend_main._identity_store = backend_main.configure_identity_store(
+            backend_main.IDENTITY_STORE_FILE
+        )
 
-        def write_session(session_id: str, user: str) -> None:
+        alice = backend_main._identity_store.ensure_legacy_identity("alice")
+        bob = backend_main._identity_store.ensure_legacy_identity("bob")
+
+        def write_session(session_id: str, owner_id: str) -> None:
             folder = sessions_dir / "2026" / "08"
             folder.mkdir(parents=True, exist_ok=True)
             doc = {
                 "id": session_id,
-                "user": user,
-                "created_by": user,
+                "user": owner_id,
+                "created_by": owner_id,
                 "module_id": "A1",
                 "state": "IN_PROGRESS",
                 "created_at": datetime.utcnow().isoformat(),
@@ -70,13 +107,16 @@ class SessionAuthTests(unittest.TestCase):
             }
             (folder / f"{session_id}.json").write_text(json.dumps(doc), encoding="utf-8")
 
-        write_session("alice_100", "alice")
-        write_session("bob_200", "bob")
+        write_session("alice_100", alice.rinq_user_id)
+        write_session("bob_200", bob.rinq_user_id)
         self.client = TestClient(backend_main.app)
 
     def tearDown(self):
-        backend_main.SESSIONS_DIR = self._prev_sessions
-        backend_main.SCENES_DIR = self._prev_scenes
+        for key, value in self._prev.items():
+            setattr(backend_main, key, value)
+        backend_main._identity_store = backend_main.configure_identity_store(
+            backend_main.IDENTITY_STORE_FILE
+        )
         self.client.close()
         self._tmp.cleanup()
 

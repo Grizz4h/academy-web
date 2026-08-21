@@ -17,6 +17,12 @@ __pycache__/
 # Accounts + password hashes
 data/academy/users.json
 
+# RinQ identity store (UUID + auth_links)
+data/academy/identity_store.json
+data/academy/identity_store.json.lock
+data/academy/.identity_migration_3a_done
+data/backups/
+
 # Per-user profiles / rewards / sessions / uploads
 data/academy/profiles/**
 !data/academy/profiles/.gitkeep

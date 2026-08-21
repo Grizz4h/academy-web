@@ -67,6 +67,17 @@ def _resolve_jwt_secret() -> str:
 
 JWT_SECRET = _resolve_jwt_secret()
 
+IDENTITY_STORE_FILE = os.path.join(DATA_DIR, "identity_store.json")
+ROOT_DATA_DIR_EARLY = os.path.abspath(os.path.join(DATA_DIR, ".."))
+IDENTITY_BACKUP_ROOT = os.path.join(ROOT_DATA_DIR_EARLY, "backups")
+
+from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER
+from identity.store import configure_identity_store, normalize_subject
+from identity.migrate import owners_match as _identity_owners_match
+
+_identity_store = configure_identity_store(IDENTITY_STORE_FILE)
+
+
 def load_users():
     if not os.path.exists(USERS_FILE):
         print("[AUTH] USERS_FILE (not found):", USERS_FILE)
@@ -81,7 +92,31 @@ def save_users(data):
         json.dump(data, f, indent=2)
     os.replace(tmp, USERS_FILE)
 
-def get_current_user(authorization: str = Header(None)):
+
+def _display_name_for_username(username: str) -> str:
+    users = load_users()
+    key = normalize_subject(username)
+    for row in users.get("users") or []:
+        if normalize_subject(row.get("username") or "") == key:
+            return row.get("username") or username
+    return username
+
+
+def resolve_auth_context_from_legacy_sub(sub: str) -> AuthContext:
+    """Map JWT sub (legacy username) → AuthContext via identity store. Never treats sub as rinq_user_id."""
+    subject = normalize_subject(sub)
+    if not subject:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    display = _display_name_for_username(subject)
+    # Must exist in users.json for legacy password auth
+    users = load_users()
+    if not any(normalize_subject(u.get("username") or "") == subject for u in users.get("users") or []):
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return _identity_store.ensure_legacy_identity(subject, display_name=display)
+
+
+def get_current_user(authorization: str = Header(None)) -> AuthContext:
+    """Authenticate legacy JWT; return AuthContext (rinq_user_id is app identity, not JWT sub)."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Not authenticated")
     token = authorization.split(" ")[1]
@@ -90,11 +125,14 @@ def get_current_user(authorization: str = Header(None)):
         sub = payload.get("sub")
         if not sub or not str(sub).strip():
             raise HTTPException(status_code=401, detail="Invalid token")
-        return str(sub).strip()
+        # Reject client attempts to use UUID-as-sub as a shortcut: sub must be legacy username.
+        return resolve_auth_context_from_legacy_sub(str(sub).strip())
     except HTTPException:
         raise
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
 # --- AUTH ENDPOINTS ---
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -534,15 +572,28 @@ def get_session_path_or_404(session_id: str) -> str:
     return session_path
 
 
-def _normalize_user_key(user: str) -> str:
+def _normalize_user_key(user) -> str:
+    """Canonical file/owner key. AuthContext → rinq_user_id; strings stay normalized."""
+    if isinstance(user, AuthContext):
+        return user.rinq_user_id
     return (user or "guest").strip().lower()
+
+
+def _owners_match(resource_user: str, auth) -> bool:
+    if isinstance(auth, AuthContext):
+        return _identity_owners_match(
+            resource_user or "",
+            auth.rinq_user_id,
+            auth.legacy_username,
+        )
+    return _normalize_user_key(resource_user) == _normalize_user_key(auth)
 
 
 def _session_owner_key(session: dict) -> str:
     return _normalize_user_key(session.get("user") or "")
 
 
-def _require_session_owner(session_id: str, current_user: str) -> tuple:
+def _require_session_owner(session_id: str, current_user) -> tuple:
     """Load session path + document; 404 if missing or not owned by current_user.
 
     Uses 404 (not 403) for non-owners so session IDs of other users are not confirmed.
@@ -551,14 +602,20 @@ def _require_session_owner(session_id: str, current_user: str) -> tuple:
     if not session_path:
         raise HTTPException(status_code=404, detail="Session not found")
     session = load_json(session_path)
-    if _session_owner_key(session) != _normalize_user_key(current_user):
+    if not _owners_match(session.get("user") or "", current_user):
         raise HTTPException(status_code=404, detail="Session not found")
     return session_path, session
 
 
-def _reward_state_path(user: str) -> str:
+def _reward_state_path(user) -> str:
     user_key = _normalize_user_key(user)
     return os.path.join(REWARDS_DIR, f"{user_key}.json")
+
+
+def _legacy_reward_state_path(user) -> Optional[str]:
+    if isinstance(user, AuthContext) and user.legacy_username:
+        return os.path.join(REWARDS_DIR, f"{normalize_subject(user.legacy_username)}.json")
+    return None
 
 
 def _create_default_reward_state() -> dict:
@@ -587,10 +644,14 @@ def _create_default_reward_state() -> dict:
     }
 
 
-def _load_reward_state(user: str) -> dict:
+def _load_reward_state(user) -> dict:
     path = _reward_state_path(user)
     if not os.path.exists(path):
-        return _create_default_reward_state()
+        legacy = _legacy_reward_state_path(user)
+        if legacy and os.path.exists(legacy):
+            path = legacy
+        else:
+            return _create_default_reward_state()
 
     state = load_json(path)
     base = _create_default_reward_state()
@@ -621,14 +682,21 @@ def _load_reward_state(user: str) -> dict:
     return merged
 
 
-def _save_reward_state(user: str, state: dict) -> None:
+def _save_reward_state(user, state: dict) -> None:
+    # Always persist under rinq_user_id path
     save_json(_reward_state_path(user), state)
 
 
-def _resolve_user_cased(user: str) -> str:
+def _resolve_user_cased(user) -> str:
+    if isinstance(user, AuthContext):
+        return user.display_name or user.legacy_username or user.rinq_user_id
     users = load_users()
     user_obj = next((u for u in users["users"] if u["username"].strip().lower() == user.strip().lower()), None)
     return user_obj["username"] if user_obj else user
+
+
+def _auth_owner_id(user) -> str:
+    return user.rinq_user_id if isinstance(user, AuthContext) else _normalize_user_key(user)
 
 
 def _build_observation_storage_path(base_dir: str, item_id: str, created_at: Optional[str]) -> str:
@@ -702,11 +770,10 @@ def _default_integrations() -> dict:
     }
 
 
-def _iter_user_observation_profiles(user: str):
-    user_norm = _normalize_user_key(user)
+def _iter_user_observation_profiles(user):
     for path in _iter_json_files(OBS_PLAYERS_DIR) or []:
         profile = load_json(path)
-        if _normalize_user_key(profile.get("user", "")) != user_norm:
+        if not _owners_match(profile.get("user", ""), user):
             continue
         yield profile
 
@@ -1039,11 +1106,10 @@ def _find_latest_roster_season(league: str, team_id: str) -> Optional[dict]:
     return latest
 
 
-def _iter_user_observation_entries(user: str):
-    user_norm = _normalize_user_key(user)
+def _iter_user_observation_entries(user):
     for path in _iter_json_files(OBS_ENTRIES_DIR) or []:
         entry = load_json(path)
-        if _normalize_user_key(entry.get("user", "")) != user_norm:
+        if not _owners_match(entry.get("user", ""), user):
             continue
         yield entry
 
@@ -1242,8 +1308,8 @@ async def get_roster_for_league(league: str, season: str):
 
 
 @app.post("/api/observation-runs")
-async def create_observation_run(payload: ObservationRunCreate, current_user: str = Depends(get_current_user)):
-    user_cased = _resolve_user_cased(current_user)
+async def create_observation_run(payload: ObservationRunCreate, current_user: AuthContext = Depends(get_current_user)):
+    owner_id = current_user.rinq_user_id
     now_iso = datetime.now().isoformat()
     run_id = f"obs_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
 
@@ -1253,7 +1319,7 @@ async def create_observation_run(payload: ObservationRunCreate, current_user: st
 
     run = {
         "run_id": run_id,
-        "user": user_cased,
+        "user": owner_id,
         "league": payload.league,
         "season": payload.season,
         "team_id": payload.team_id,
@@ -1279,25 +1345,25 @@ async def create_observation_run(payload: ObservationRunCreate, current_user: st
 
 
 @app.get("/api/observation-runs/{run_id}")
-async def get_observation_run(run_id: str, current_user: str = Depends(get_current_user)):
+async def get_observation_run(run_id: str, current_user: AuthContext = Depends(get_current_user)):
     run_path = _find_json_file_by_id(OBS_RUNS_DIR, run_id)
     if not run_path:
         raise HTTPException(status_code=404, detail="Observation run not found")
 
     run = load_json(run_path)
-    if _normalize_user_key(run.get("user", "")) != _normalize_user_key(current_user):
+    if not _owners_match(run.get("user", ""), current_user):
         raise HTTPException(status_code=403, detail="Forbidden")
     return run
 
 
 @app.post("/api/observations")
-async def create_observation_entry(payload: ObservationEntryCreate, current_user: str = Depends(get_current_user)):
+async def create_observation_entry(payload: ObservationEntryCreate, current_user: AuthContext = Depends(get_current_user)):
     run_path = _find_json_file_by_id(OBS_RUNS_DIR, payload.run_id)
     if not run_path:
         raise HTTPException(status_code=404, detail="Observation run not found")
 
     run = load_json(run_path)
-    if _normalize_user_key(run.get("user", "")) != _normalize_user_key(current_user):
+    if not _owners_match(run.get("user", ""), current_user):
         raise HTTPException(status_code=403, detail="Forbidden")
 
     now_iso = datetime.now().isoformat()
@@ -1339,7 +1405,7 @@ async def get_observation_entries(
     season: Optional[str] = None,
     team_id: Optional[str] = None,
     player_id: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     entries = []
     for entry in _iter_user_observation_entries(current_user):
@@ -1365,7 +1431,7 @@ async def get_observation_stats(
     season: Optional[str] = None,
     team_id: Optional[str] = None,
     player_id: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     entries = []
     for entry in _iter_user_observation_entries(current_user):
@@ -1405,7 +1471,7 @@ async def get_observation_stats_player(
     league: Optional[str] = None,
     season: Optional[str] = None,
     team_id: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     entries = []
     for entry in _iter_user_observation_entries(current_user):
@@ -1443,7 +1509,7 @@ async def get_observation_profiles(
     season: Optional[str] = None,
     team_id: Optional[str] = None,
     player_id: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     profiles = []
     for profile in _iter_user_observation_profiles(current_user):
@@ -1465,7 +1531,7 @@ async def get_observation_profiles(
 async def get_observation_profile(
     player_id: str,
     league: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     profile = _find_observation_profile(current_user, player_id, league)
     if not profile:
@@ -1478,7 +1544,7 @@ async def patch_observation_profile(
     player_id: str,
     payload: ObservationProfileUpdate,
     league: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     profile = _find_observation_profile(current_user, player_id, league)
     if not profile:
@@ -1513,7 +1579,7 @@ async def patch_observation_profile(
 # ---- Kaderimport Endpoints ----
 
 @app.get("/api/players/importable-teams")
-async def list_importable_teams(current_user: str = Depends(get_current_user)):
+async def list_importable_teams(current_user: AuthContext = Depends(get_current_user)):
     """Gibt Liste der Teams aus Konfigurationsdatei zurück."""
     importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
     teams = importer.list_teams(enabled_only=False)
@@ -1543,7 +1609,7 @@ async def import_players(
     team_id: Optional[str] = None,
     season: Optional[str] = Query(default=None),
     league: Optional[str] = Query(default="DEL"),
-    current_user: str = Depends(get_current_user)
+    current_user: AuthContext = Depends(get_current_user)
 ):
     """
     Importiert Spieler für ein Team (optional saisonbezogen).
@@ -1623,7 +1689,7 @@ async def import_players(
 async def import_all_players(
     season: Optional[str] = Query(default=None),
     league: Optional[str] = Query(default="DEL"),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     importer = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE)
     target_season = season or "2025/26"
@@ -1671,7 +1737,7 @@ async def get_team_players(
     league: Optional[str] = Query(default="DEL"),
     active_only: bool = Query(default=True),
     allow_fallback: bool = Query(default=False),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     """Gibt Spieler eines Teams zurück — optional saisonbezogen aus Roster Snapshot."""
     catalog_id = _resolve_catalog_team_id(team_id)
@@ -1730,7 +1796,7 @@ async def get_team_players(
 
 
 @app.post("/api/players/{player_id}/refresh-profile")
-async def refresh_player_profile_placeholder(player_id: str, current_user: str = Depends(get_current_user)):
+async def refresh_player_profile_placeholder(player_id: str, current_user: AuthContext = Depends(get_current_user)):
     """Platzhalter für spätere KI-Profilaktualisierung (noch nicht implementiert)."""
     return {
         "player_id": player_id,
@@ -1748,7 +1814,7 @@ async def get_games(
     team_id: Optional[str] = Query(default=None),
     phase_id: Optional[str] = Query(default=None),
     status: Optional[str] = Query(default=None),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     games = list_games(
         GAMES_DIR,
@@ -1766,7 +1832,7 @@ async def get_games(
 
 
 @app.get("/api/games/{game_id:path}")
-async def get_game_by_id(game_id: str, current_user: str = Depends(get_current_user)):
+async def get_game_by_id(game_id: str, current_user: AuthContext = Depends(get_current_user)):
     game = get_game(GAMES_DIR, game_id)
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
@@ -1780,7 +1846,7 @@ async def get_game_by_id(game_id: str, current_user: str = Depends(get_current_u
 async def import_del_schedule(
     season: str = Query(default="2025/26"),
     league: str = Query(default="DEL"),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     mapper = _team_catalog_mapper()
     importer = PennyDelScheduleImporter(mapper)
@@ -1810,7 +1876,7 @@ async def import_del_schedule(
 async def migrate_del_rosters(
     season: str = Query(default="2025/26"),
     league: str = Query(default="DEL"),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     mapper = _team_catalog_mapper()
     return migrate_legacy_team_players_to_season(
@@ -1827,7 +1893,7 @@ async def migrate_del_rosters(
 async def get_del_data_status(
     season: str = Query(default="2025/26"),
     league: str = Query(default="DEL"),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     roster_status = roster_status_summary(ROSTERS_DIR, league, season)
     games_status = games_status_summary(GAMES_DIR, league, season)
@@ -1868,7 +1934,7 @@ def _build_game_stats_payload(fetch_result: dict) -> dict:
 @app.post("/api/del-data/import-game-stats")
 async def import_del_game_stats(
     game_id: str = Query(...),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     game = get_game(GAMES_DIR, game_id)
     if not game:
@@ -1920,7 +1986,7 @@ async def import_del_game_stats_batch(
     league: str = Query(default="DEL"),
     limit: int = Query(default=5, ge=1, le=25),
     skip_existing: bool = Query(default=True),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     games = list_games(GAMES_DIR, league=league, season=season, status="final")
     if not games:
@@ -1979,17 +2045,16 @@ async def import_del_game_stats_batch(
 @app.get("/api/sessions")
 async def get_sessions(
     state: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     """List sessions for the authenticated user only (ignores client-supplied user filters)."""
     if not os.path.exists(SESSIONS_DIR):
         return []
 
-    user_norm = _normalize_user_key(current_user)
     sessions = []
     for session_path in iter_session_files():
         session = load_json(session_path)
-        if _normalize_user_key(session.get('user', '')) != user_norm:
+        if not _owners_match(session.get('user', ''), current_user):
             continue
         if state and session.get('state') != state:
             continue
@@ -2002,16 +2067,13 @@ async def get_sessions(
     return sessions
 
 @app.post("/api/sessions")
-async def create_session(session: SessionCreate, user=Depends(get_current_user)):
-    # Username wie in users.json (korrekt groß) verwenden
-    users = load_users()
-    user_obj = next((u for u in users["users"] if u["username"].strip().lower() == user.strip().lower()), None)
-    user_cased = user_obj["username"] if user_obj else user
-    """Neue Session erstellen (auth required)"""
+async def create_session(session: SessionCreate, user: AuthContext = Depends(get_current_user)):
+    """Neue Session erstellen (auth required). Ownership = rinq_user_id."""
     os.makedirs(SESSIONS_DIR, exist_ok=True)
 
     now = datetime.now()
-    session_id = f"{user_cased}_{int(now.timestamp())}"
+    owner_id = user.rinq_user_id
+    session_id = f"{owner_id}_{int(now.timestamp())}"
 
     # Lade Module-Drills aus Curriculum (inkl. Foundation-Tracks wie T0)
     curriculum = _merge_foundation_tracks(load_json(os.path.join(DATA_DIR, "curriculum.json")))
@@ -2047,8 +2109,9 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
 
     session_data = {
         "id": session_id,
-        "user": user_cased,
-        "created_by": user_cased,  # Track who created the session
+        "user": owner_id,
+        "created_by": owner_id,
+        "display_name": user.display_name,
         "module_id": session.module_id,
         "goal": session.goal,
         "confidence": session.confidence,
@@ -2100,7 +2163,7 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
     return session_data
 
 @app.get("/api/sessions/{session_id}")
-async def get_session(session_id: str, current_user: str = Depends(get_current_user)):
+async def get_session(session_id: str, current_user: AuthContext = Depends(get_current_user)):
     """Session Details (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
     if not session.get("learning_area"):
@@ -2130,7 +2193,7 @@ async def get_session(session_id: str, current_user: str = Depends(get_current_u
     return session
 
 @app.patch("/api/sessions/{session_id}")
-async def update_session(session_id: str, updates: dict, current_user: str = Depends(get_current_user)):
+async def update_session(session_id: str, updates: dict, current_user: AuthContext = Depends(get_current_user)):
     """Session aktualisieren (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2160,7 +2223,7 @@ async def update_session(session_id: str, updates: dict, current_user: str = Dep
     return session
 
 @app.post("/api/sessions/{session_id}/checkins")
-async def save_checkin(session_id: str, checkin: CheckinData, request: Request, current_user: str = Depends(get_current_user)):
+async def save_checkin(session_id: str, checkin: CheckinData, request: Request, current_user: AuthContext = Depends(get_current_user)):
     """Checkin speichern (owner only)"""
     req_id = uuid4().hex[:8]
     phase_raw = checkin.phase
@@ -2239,7 +2302,7 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
     return session
 
 @app.post("/api/sessions/{session_id}/post")
-async def complete_session(session_id: str, post: PostData, current_user: str = Depends(get_current_user)):
+async def complete_session(session_id: str, post: PostData, current_user: AuthContext = Depends(get_current_user)):
     """Session abschließen (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2260,7 +2323,7 @@ async def complete_session(session_id: str, post: PostData, current_user: str = 
     return session
 
 @app.post("/api/sessions/{session_id}/abort")
-async def abort_session(session_id: str, abort: AbortData, current_user: str = Depends(get_current_user)):
+async def abort_session(session_id: str, abort: AbortData, current_user: AuthContext = Depends(get_current_user)):
     """Session abbrechen (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2277,7 +2340,7 @@ async def abort_session(session_id: str, abort: AbortData, current_user: str = D
     return session
 
 @app.delete("/api/sessions/{session_id}/checkins/{checkin_index}")
-async def delete_checkin(session_id: str, checkin_index: int, current_user: str = Depends(get_current_user)):
+async def delete_checkin(session_id: str, checkin_index: int, current_user: AuthContext = Depends(get_current_user)):
     """Checkin (Phase) löschen (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2321,7 +2384,7 @@ def _delete_scenes_linked_to_session(session_id: str) -> int:
 
 
 @app.delete("/api/sessions/{session_id}")
-async def delete_session(session_id: str, current_user: str = Depends(get_current_user)):
+async def delete_session(session_id: str, current_user: AuthContext = Depends(get_current_user)):
     """Session löschen inkl. klar verknüpfter Szenen (owner only)."""
     session_path, _session = _require_session_owner(session_id, current_user)
     try:
@@ -2332,7 +2395,7 @@ async def delete_session(session_id: str, current_user: str = Depends(get_curren
         raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")
 
 @app.put("/api/sessions/{session_id}/drafts")
-async def save_drafts(session_id: str, drafts: dict, current_user: str = Depends(get_current_user)):
+async def save_drafts(session_id: str, drafts: dict, current_user: AuthContext = Depends(get_current_user)):
     """Draft-Eingaben speichern für Session Continuation (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2343,7 +2406,7 @@ async def save_drafts(session_id: str, drafts: dict, current_user: str = Depends
     return {"status": "saved"}
 
 @app.put("/api/sessions/{session_id}/phase")
-async def update_session_phase(session_id: str, phase_data: dict, current_user: str = Depends(get_current_user)):
+async def update_session_phase(session_id: str, phase_data: dict, current_user: AuthContext = Depends(get_current_user)):
     """Aktuelle Phase der Session aktualisieren (owner only)"""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2361,7 +2424,7 @@ async def update_session_phase(session_id: str, phase_data: dict, current_user: 
 async def download_session(
     session_id: str,
     phase: Optional[str] = Query(None),
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     """Session als komplette JSON herunterladen mit allen Fragen und Antworten (owner only)"""
     from fastapi.responses import StreamingResponse
@@ -2479,7 +2542,7 @@ async def add_microfeedback(
     session_id: str,
     data: MicroFeedbackData,
     request: Request,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     """Microfeedback für P1/P2/P3 speichern (Session-Block, nicht Checkin; owner only)"""
     valid_phases = {"P1", "P2", "P3"}
@@ -2505,7 +2568,7 @@ from reflection import generate_session_reflection
 
 
 @app.post("/api/sessions/{session_id}/reflection")
-async def create_session_reflection(session_id: str, current_user: str = Depends(get_current_user)):
+async def create_session_reflection(session_id: str, current_user: AuthContext = Depends(get_current_user)):
     """Generate or return cached AI reflection for a completed session (owner only)."""
     session_path, session = _require_session_owner(session_id, current_user)
 
@@ -2543,13 +2606,13 @@ async def create_session_reflection(session_id: str, current_user: str = Depends
 
 
 @app.get("/api/rewards/state")
-async def get_rewards_state(current_user: str = Depends(get_current_user)):
+async def get_rewards_state(current_user: AuthContext = Depends(get_current_user)):
     state = _load_reward_state(current_user)
     return state
 
 
 @app.post("/api/rewards/apply")
-async def apply_rewards(data: RewardApplyData, current_user: str = Depends(get_current_user)):
+async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depends(get_current_user)):
     state = _load_reward_state(current_user)
 
     enforce_max_text_length(data.reward_events, "reward_events")
@@ -3073,8 +3136,7 @@ def _scene_track_key(scene: dict) -> str:
     return module_id.split("_")[0] if module_id else ""
 
 
-def _find_episode_conflict(episode_season: str, episode_number: str, current_user: str, exclude_scene_id: Optional[str] = None) -> Optional[dict]:
-    user_key = _normalize_user_key(current_user)
+def _find_episode_conflict(episode_season: str, episode_number: str, current_user, exclude_scene_id: Optional[str] = None) -> Optional[dict]:
     for path in _iter_json_files(SCENES_DIR):
         try:
             scene = load_json(path)
@@ -3082,7 +3144,7 @@ def _find_episode_conflict(episode_season: str, episode_number: str, current_use
             continue
         if exclude_scene_id and scene.get("id") == exclude_scene_id:
             continue
-        if _normalize_user_key(scene.get("user", "")) != user_key:
+        if not _owners_match(scene.get("user", ""), current_user):
             continue
         if _scene_episode_season(scene) != episode_season:
             continue
@@ -3198,7 +3260,7 @@ def _find_scene_path_by_identifier(identifier: str) -> Optional[str]:
 
 
 @app.post("/api/scenes")
-async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(get_current_user)):
+async def create_scene(payload: SceneMarkerCreate, current_user: AuthContext = Depends(get_current_user)):
     import re
     if not re.match(r"^\d{1,2}(:\d{1,2})?$", (payload.game_time or "").strip()):
         raise HTTPException(status_code=400, detail="game_time must be a valid time, e.g. 13:42 or 13")
@@ -3220,7 +3282,7 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
         module_id = None
         track_id = None
 
-    user_cased = _resolve_user_cased(current_user)
+    owner_id = current_user.rinq_user_id
     now_iso = datetime.now().isoformat()
     scene_id = f"scene_{int(datetime.now().timestamp())}_{uuid4().hex[:6]}"
     episode_season = _normalize_episode_season_input(payload.season_code or payload.episode_season)
@@ -3244,7 +3306,7 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
     scene = {
         "id": scene_id,
         "scene_code": scene_code,
-        "user": user_cased,
+        "user": owner_id,
         "session_id": session_id,
         "module_id": module_id,
         "drill_id": drill_id,
@@ -3286,7 +3348,7 @@ async def create_scene(payload: SceneMarkerCreate, current_user: str = Depends(g
 
     scene_path = _build_scene_path(scene_id, now_iso)
     save_json(scene_path, scene)
-    logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={user_cased} source={source.get('type')} game_time={scene['game_time']}")
+    logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={owner_id} source={source.get('type')} game_time={scene['game_time']}")
     return scene
 
 
@@ -3303,9 +3365,8 @@ async def get_scenes(
     competition_unit_value: Optional[str] = None,
     episode_season: Optional[str] = None,
     source_type: Optional[str] = None,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
-    user_norm = _normalize_user_key(current_user)
     scenes = []
     source_type_norm = (source_type or "").strip().lower() or None
     with SCENE_CODE_LOCK:
@@ -3315,7 +3376,7 @@ async def get_scenes(
             scene = load_json(path)
         except Exception:
             continue
-        if _normalize_user_key(scene.get("user", "")) != user_norm:
+        if not _owners_match(scene.get("user", ""), current_user):
             continue
         if league and scene.get("league") != league:
             continue
@@ -3361,25 +3422,25 @@ async def get_scenes(
 
 
 @app.delete("/api/scenes/{scene_id}")
-async def delete_scene(scene_id: str, current_user: str = Depends(get_current_user)):
+async def delete_scene(scene_id: str, current_user: AuthContext = Depends(get_current_user)):
     scene_path = _find_scene_path_by_identifier(scene_id)
     if not scene_path:
         raise HTTPException(status_code=404, detail="Scene not found")
     scene = load_json(scene_path)
-    if _normalize_user_key(scene.get("user", "")) != _normalize_user_key(current_user):
+    if not _owners_match(scene.get("user", ""), current_user):
         raise HTTPException(status_code=403, detail="Forbidden")
     os.remove(scene_path)
-    logging.info(f"[scene] deleted scene_id={scene_id} user={current_user}")
+    logging.info(f"[scene] deleted scene_id={scene_id} user={current_user.rinq_user_id}")
     return {"status": "deleted", "id": scene_id}
 
 
 @app.put("/api/scenes/{scene_id}")
-async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: str = Depends(get_current_user)):
+async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: AuthContext = Depends(get_current_user)):
     scene_path = _find_scene_path_by_identifier(scene_id)
     if not scene_path:
         raise HTTPException(status_code=404, detail="Scene not found")
     scene = load_json(scene_path)
-    if _normalize_user_key(scene.get("user", "")) != _normalize_user_key(current_user):
+    if not _owners_match(scene.get("user", ""), current_user):
         raise HTTPException(status_code=403, detail="Forbidden")
     
     # Update game_time if provided
@@ -3519,32 +3580,45 @@ async def signup(payload: dict):
     users = load_users()
     if any(u["username"].strip().lower() == username for u in users["users"]):
         raise HTTPException(status_code=400, detail="User exists")
+    created_at = datetime.utcnow().isoformat()
     users["users"].append({
         "username": username,
         "password_hash": hash_password(password),
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": created_at,
         "role": "user"
     })
     save_users(users)
-    print(f"[AUTH] signup ok user={username}")
+    ctx = _identity_store.ensure_legacy_identity(username, display_name=username, created_at=created_at)
+    print(f"[AUTH] signup ok user={username} rinq_user_id={ctx.rinq_user_id}")
     return {"ok": True}
 
 @app.post("/api/auth/login")
 async def login(payload: dict):
     username = payload["username"].strip().lower()
     password = payload["password"].strip()
-    print(f"[AUTH] login attempt user={username} pw_len={len(password)}")
+    print(f"[AUTH] login attempt user={username}")
     users = load_users()
     user = next((u for u in users["users"] if u["username"].strip().lower() == username), None)
     if not user or not verify_password(password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     user_cased = user.get("username") or username
+    ctx = _identity_store.ensure_legacy_identity(
+        username,
+        display_name=user_cased,
+        created_at=user.get("created_at"),
+    )
+    # Legacy JWT: sub remains normalized username — NOT rinq_user_id
     token = jwt.encode({
         "sub": username,
         "exp": (datetime.utcnow() + timedelta(days=JWT_EXP_DAYS)).timestamp()
     }, JWT_SECRET, algorithm=JWT_ALGO)
-    print(f"[AUTH] login ok user={user_cased}")
-    return {"token": token, "username": user_cased}
+    print(f"[AUTH] login ok user={user_cased} rinq_user_id={ctx.rinq_user_id}")
+    return {
+        "token": token,
+        "username": user_cased,
+        "rinq_user_id": ctx.rinq_user_id,
+        "user_id": ctx.rinq_user_id,
+    }
 
 
 # ---- Account / RINK ID profile ----
@@ -3565,8 +3639,14 @@ ALLOWED_AVATAR_CONTENT_TYPES = {
 MAX_AVATAR_BYTES = 2 * 1024 * 1024
 
 
-def _profile_path(user: str) -> str:
+def _profile_path(user) -> str:
     return os.path.join(PROFILES_DIR, f"{_normalize_user_key(user)}.json")
+
+
+def _legacy_profile_path(user) -> Optional[str]:
+    if isinstance(user, AuthContext) and user.legacy_username:
+        return os.path.join(PROFILES_DIR, f"{normalize_subject(user.legacy_username)}.json")
+    return None
 
 
 def _default_user_profile(username: str) -> dict:
@@ -3597,9 +3677,14 @@ def _default_user_profile(username: str) -> dict:
     }
 
 
-def _load_user_profile(user: str) -> dict:
+def _load_user_profile(user) -> dict:
+    display_seed = _resolve_user_cased(user)
     path = _profile_path(user)
-    base = _default_user_profile(user)
+    if not os.path.exists(path):
+        legacy = _legacy_profile_path(user)
+        if legacy and os.path.exists(legacy):
+            path = legacy
+    base = _default_user_profile(display_seed)
     if not os.path.exists(path):
         return base
     try:
@@ -3619,7 +3704,7 @@ def _load_user_profile(user: str) -> dict:
     return merged
 
 
-def _save_user_profile(user: str, profile: dict) -> dict:
+def _save_user_profile(user, profile: dict) -> dict:
     path = _profile_path(user)
     profile = dict(profile or {})
     profile["updatedAt"] = datetime.utcnow().isoformat()
@@ -3627,10 +3712,13 @@ def _save_user_profile(user: str, profile: dict) -> dict:
     return profile
 
 
-def _find_user_record(user: str) -> Optional[dict]:
+def _find_user_record(user) -> Optional[dict]:
     users = load_users()
-    key = _normalize_user_key(user)
-    return next((u for u in users.get("users", []) if u.get("username", "").strip().lower() == key), None)
+    if isinstance(user, AuthContext):
+        key = normalize_subject(user.legacy_username or user.auth_subject)
+    else:
+        key = normalize_subject(str(user))
+    return next((u for u in users.get("users", []) if normalize_subject(u.get("username") or "") == key), None)
 
 
 class ProfileUpdatePayload(BaseModel):
@@ -3656,11 +3744,16 @@ class ProfileUpdatePayload(BaseModel):
 
 
 @app.get("/api/me")
-async def get_me(current_user: str = Depends(get_current_user)):
+async def get_me(current_user: AuthContext = Depends(get_current_user)):
     record = _find_user_record(current_user)
     profile = _load_user_profile(current_user)
+    display = (profile or {}).get("displayName") or _resolve_user_cased(current_user)
     return {
         "username": _resolve_user_cased(current_user),
+        "rinq_user_id": current_user.rinq_user_id,
+        "user_id": current_user.rinq_user_id,
+        "display_name": display,
+        "auth_provider": current_user.auth_provider,
         "createdAt": (record or {}).get("created_at"),
         "role": (record or {}).get("role"),
         "profile": profile,
@@ -3668,12 +3761,12 @@ async def get_me(current_user: str = Depends(get_current_user)):
 
 
 @app.get("/api/me/profile")
-async def get_my_profile(current_user: str = Depends(get_current_user)):
+async def get_my_profile(current_user: AuthContext = Depends(get_current_user)):
     return _load_user_profile(current_user)
 
 
 @app.patch("/api/me/profile")
-async def patch_my_profile(payload: ProfileUpdatePayload, current_user: str = Depends(get_current_user)):
+async def patch_my_profile(payload: ProfileUpdatePayload, current_user: AuthContext = Depends(get_current_user)):
     profile = _load_user_profile(current_user)
     data = payload.model_dump(exclude_unset=True) if hasattr(payload, "model_dump") else payload.dict(exclude_unset=True)
 
@@ -3823,7 +3916,7 @@ class AvatarUploadPayload(BaseModel):
 @app.post("/api/me/avatar")
 async def upload_my_avatar(
     payload: AvatarUploadPayload,
-    current_user: str = Depends(get_current_user),
+    current_user: AuthContext = Depends(get_current_user),
 ):
     content_type = (payload.content_type or "").split(";")[0].strip().lower()
     extension = ALLOWED_AVATAR_CONTENT_TYPES.get(content_type)
@@ -3859,6 +3952,20 @@ async def upload_my_avatar(
 
 # Serve uploaded avatars (account assets; filename includes random suffix).
 app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+
+
+@app.on_event("startup")
+def _identity_startup_ensure() -> None:
+    """Ensure legacy users have identity rows. Full file migration: `python -m identity.migrate_cli`."""
+    if os.environ.get("ACADEMY_SKIP_IDENTITY_MIGRATION") == "1":
+        return
+    try:
+        from identity.migrate import ensure_identities_for_users
+
+        mapping = ensure_identities_for_users(_identity_store, USERS_FILE)
+        logging.info("[identity] ensure_identities users=%s", len(mapping))
+    except Exception:
+        logging.exception("[identity] startup ensure failed")
 
 
 if __name__ == "__main__":

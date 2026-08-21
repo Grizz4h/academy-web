@@ -21,7 +21,10 @@ function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 // --- Auth ---
-export async function login(username: string, password: string): Promise<{ token: string; username: string }> {
+export async function login(
+  username: string,
+  password: string,
+): Promise<{ token: string; username: string; rinq_user_id?: string; user_id?: string }> {
   const res = await fetch(buildUrl('/auth/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

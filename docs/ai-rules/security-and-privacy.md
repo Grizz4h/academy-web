@@ -82,11 +82,24 @@ Google / Apple → Managed OAuth / Managed Auth → interne pseudonyme UUID
 
 ### 4. User Identity
 
-Alle persistenten Userdaten werden langfristig über eine interne UUID verknüpft.
+**Auth identity ≠ App identity.**
 
 ```text
-Nicht:  email@example.com als Schlüssel
-Sondern: user_id = opaque UUID
+Provider / Legacy JWT subject
+      ↓
+auth_links  UNIQUE(provider, provider_subject)
+      ↓
+rinq_user_id  (opaque UUID — sole ownership key)
+```
+
+- Legacy JWT: `sub` = normalized username (nicht die RinQ-UUID).
+- Nach Auth-Auflösung arbeitet das Backend mit `AuthContext` (`rinq_user_id`, `auth_provider`, `auth_subject`, `display_name`).
+- Persistenz der Identity-Schicht: `data/academy/identity_store.json` (atomar + File-Lock).
+- JSON-Persistenz der App-Daten ist für OAuth-MVP akzeptabel; **spätestens vor Payment/Webhooks/Subscription-Entitlements** erneut bewerten und voraussichtlich durch transaktionale Persistenz ersetzen.
+
+```text
+Nicht:  email@example.com / username / provider sub als App-Primärschlüssel
+Sondern: rinq_user_id = opaque UUID
 ```
 
 ### 5. Authorization / Ownership
@@ -247,7 +260,7 @@ Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
 - [ ] `/dev` und interne Navigation absichern
 - [ ] Import-Endpunkte mit echter Admin-Rolle schützen
 - [ ] offenen Signup- / Legacy-Login bewerten
-- [ ] UUID-Migration planen
+- [x] UUID-Foundation / Identity-Layer (Phase 3A) — Auth≠App-ID; Ownership über `rinq_user_id`
 
 ### Vor Payment
 

@@ -1,0 +1,17 @@
+"""RinQ identity layer: AuthContext, identity store, legacy→UUID resolution.
+
+Auth token subject ≠ app identity:
+  legacy JWT sub / future provider sub → auth_links → rinq_user_id
+"""
+
+from __future__ import annotations
+
+from .context import AuthContext, LEGACY_PASSWORD_PROVIDER
+from .store import IdentityStore, get_identity_store
+
+__all__ = [
+    "AuthContext",
+    "LEGACY_PASSWORD_PROVIDER",
+    "IdentityStore",
+    "get_identity_store",
+]

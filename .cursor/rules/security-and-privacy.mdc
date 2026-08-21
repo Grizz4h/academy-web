@@ -15,11 +15,13 @@ Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbez
 
 - Secrets nur serverseitig (`.env.local`); nie `VITE_*` / Frontend / Git; kein unsicherer Default
 - FastAPI nur hinter Nginx auf `127.0.0.1:8000`
+- Auth-Subject ≠ App-ID: JWT/`provider` subject → `auth_links` → `rinq_user_id` (Ownership nur über RinQ-UUID)
 - Ownership serverseitig aus Auth-Kontext; keine Client-User-ID als Autorisierung
 - Runtime-Userdaten nicht in Git
 - Keine Payment-Rohdaten; Entitlements nicht nur im Frontend
 - Versteckte UI ≠ Autorisierung (`/dev`, Admin, Import)
 - Client Rewards/XP/PUX nicht vertrauenswürdig für kritische Mutationen
 - HTTPS in Production; Datenminimierung; neue Provider im Manifest dokumentieren
+- JSON-Persistenz nur bis vor Payment/Webhooks erneut bewertbar — dann voraussichtlich transaktional ersetzen
 
 Neue Security-/Privacy-Entscheidung → Manifest aktualisieren (Living Document).

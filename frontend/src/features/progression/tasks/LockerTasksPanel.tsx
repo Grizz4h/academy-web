@@ -68,7 +68,8 @@ export function LockerTasksPanel({
   onStatusChange: (status: TaskStatusFilter) => void
   onSelect: (sourceId: string | null) => void
 }) {
-  const { user } = useUser()
+  const { user, userId } = useUser()
+  const seedId = userId || user
   const { rewardState, rewardStateLoaded, syncChallengeBoard } = useRewards()
   const slateSeason = useMemo(
     () => normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate(),
@@ -92,7 +93,7 @@ export function LockerTasksPanel({
   }, [user, rewardStateLoaded, matchday?.gameId, syncChallengeBoard])
 
   const views = useMemo(() => {
-    if (!user) return []
+    if (!seedId) return []
     const synced = rewardState.challengeRotation
       ? null
       : syncChallengeRotation({
@@ -102,7 +103,7 @@ export function LockerTasksPanel({
           progress: rewardState.challengeProgress || {},
           rotation: null,
           matchday,
-          userId: user,
+          userId: seedId,
         })
     const rotation = rewardState.challengeRotation || synced?.rotation
     if (!rotation) return []
@@ -114,9 +115,9 @@ export function LockerTasksPanel({
       progress: synced?.progress || rewardState.challengeProgress || {},
       rotation,
       matchday,
-      userId: user,
+      userId: seedId,
     })
-  }, [rewardState, matchday, user])
+  }, [rewardState, matchday, seedId])
 
   const filtered = useMemo(() => filterLockerTaskViews(views, lane, status), [views, lane, status])
   const selected = views.find((item) => item.sourceId === selectedId || item.id === selectedId) || null

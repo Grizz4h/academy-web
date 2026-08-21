@@ -109,6 +109,10 @@ export type UserProfileCustomization = {
 
 export type UserAccountPayload = {
   username: string
+  /** Stable RinQ app identity (opaque UUID). Not the JWT sub. */
+  rinq_user_id?: string
+  user_id?: string
+  display_name?: string | null
   createdAt: string | null
   role: string | null
   profile: UserProfileCustomization

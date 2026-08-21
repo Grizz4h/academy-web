@@ -45,7 +45,8 @@ function LaneTile({ title, value, hint, to, tone = 'default' }: LaneTileProps) {
 }
 
 export default function TodayChallenges({ games = [] }: { games?: CatalogGame[] }) {
-  const { user } = useUser()
+  const { user, userId } = useUser()
+  const seedId = userId || user
   const { rewardState, rewardStateLoaded, syncChallengeBoard } = useRewards()
   const matchday = useMemo(() => resolveMatchdayContext(games), [games])
 
@@ -55,7 +56,7 @@ export default function TodayChallenges({ games = [] }: { games?: CatalogGame[] 
   }, [user, rewardStateLoaded, matchday?.gameId, syncChallengeBoard])
 
   const views = useMemo(() => {
-    if (!user) return []
+    if (!seedId) return []
     // While reward state is still loading, derive a provisional board so tiles
     // are not empty on the first paint (sync persists once loaded).
     const synced = rewardState.challengeRotation
@@ -67,7 +68,7 @@ export default function TodayChallenges({ games = [] }: { games?: CatalogGame[] 
           progress: rewardState.challengeProgress || {},
           rotation: null,
           matchday,
-          userId: user,
+          userId: seedId,
         })
     const rotation = rewardState.challengeRotation || synced?.rotation
     if (!rotation) return []
@@ -79,9 +80,9 @@ export default function TodayChallenges({ games = [] }: { games?: CatalogGame[] 
       progress: synced?.progress || rewardState.challengeProgress || {},
       rotation,
       matchday,
-      userId: user,
+      userId: seedId,
     })
-  }, [rewardState, matchday, user])
+  }, [rewardState, matchday, seedId])
 
   const summary = useMemo(() => selectHomeTodaySummary(views, matchday), [views, matchday])
 
