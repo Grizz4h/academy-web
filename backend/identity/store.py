@@ -190,6 +190,53 @@ class IdentityStore:
             self._write_unlocked(data)
             return self._to_context(identity, link, display_name)
 
+    def ensure_provider_identity(
+        self,
+        provider: str,
+        provider_subject: str,
+        *,
+        display_name: Optional[str] = None,
+        created_at: Optional[str] = None,
+    ) -> AuthContext:
+        """Idempotently create identity + auth_link for a managed-auth provider subject.
+
+        Does not attach legacy_username. Never merges by email.
+        Enforces UNIQUE(provider, provider_subject).
+        """
+        subject = normalize_subject(provider_subject)
+        if not provider or not subject:
+            raise ValueError("provider and provider_subject required")
+
+        with self._exclusive():
+            data = self._read_unlocked()
+            existing = self.find_link(provider, subject, data)
+            if existing:
+                identity = self.get_identity(existing["rinq_user_id"], data)
+                if not identity:
+                    raise RuntimeError(f"auth_link without identity for {provider}:{subject}")
+                return self._to_context(identity, existing, display_name)
+
+            rinq_user_id = str(uuid4())
+            identity = {
+                "rinq_user_id": rinq_user_id,
+                "created_at": created_at or _utc_now_iso(),
+                "status": "active",
+                # No legacy_username — managed auth only
+            }
+            link = {
+                "rinq_user_id": rinq_user_id,
+                "provider": provider,
+                "provider_subject": subject,
+                "linked_at": _utc_now_iso(),
+            }
+            # Re-check uniqueness under lock before write
+            if self.find_link(provider, subject, data):
+                raise RuntimeError(f"Duplicate auth_link race for {provider}:{subject}")
+            data["identities"].append(identity)
+            data["auth_links"].append(link)
+            self._write_unlocked(data)
+            return self._to_context(identity, link, display_name)
+
     def link_provider(
         self,
         rinq_user_id: str,
@@ -248,7 +295,7 @@ class IdentityStore:
         display_name: Optional[str],
     ) -> AuthContext:
         legacy = identity.get("legacy_username")
-        name = (display_name or legacy or identity.get("rinq_user_id") or "").strip()
+        name = (display_name or legacy or "Spieler").strip() or "Spieler"
         return AuthContext(
             rinq_user_id=identity["rinq_user_id"],
             auth_provider=link.get("provider") or LEGACY_PASSWORD_PROVIDER,

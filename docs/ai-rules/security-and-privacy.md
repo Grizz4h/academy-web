@@ -66,13 +66,21 @@ Nicht:      Internet → SERVER_IP:8000
 
 ### 3. Authentication
 
-Aktueller Passwort-Login ist Übergangslösung.
+Aktueller Passwort-Login ist Übergangslösung (Legacy bleibt für Migration).
 
-**Zielarchitektur**
+**Zielarchitektur / Phase 3C**
 
 ```text
-Google / Apple → Managed OAuth / Managed Auth → interne pseudonyme UUID
+Google → Supabase Auth → provider_subject (Supabase user id)
+      → auth_links (provider=supabase_google)
+      → rinq_user_id
 ```
+
+- Managed Auth: **Supabase Auth** (EU-Projekt empfohlen)
+- Erster OAuth-Provider: **Google**
+- Backend verifiziert Supabase Access Tokens via **JWKS** (`/auth/v1/.well-known/jwks.json`); optional Legacy-HS256 nur serverseitig (`SUPABASE_JWT_SECRET`)
+- Kein automatisches Account-Merging anhand E-Mail
+- Google-User werden nicht automatisch Admin
 
 **Langfristig**
 
@@ -80,6 +88,7 @@ Google / Apple → Managed OAuth / Managed Auth → interne pseudonyme UUID
 - keine E-Mail als primäre App-Identität
 - kein Vertrauen auf vom Client gelieferte User-ID
 
+Ops-Doku: `docs/ops/supabase-google-auth.md`
 ### 4. User Identity
 
 **Auth identity ≠ App identity.**
@@ -231,6 +240,7 @@ Nginx + Certbot / Let's Encrypt sind der bestehende Standard.
 - Keine Datensammlung „für später vielleicht“.
 - Kein Tracking/Analytics ohne bewusste Entscheidung.
 - Kein Newsletter-/Marketing-Profil standardmäßig.
+- **OAuth (Google via Supabase):** RinQ persistiert nicht Google-E-Mail, Name oder Avatar als Identity. `provider_subject` = Supabase Auth User-ID. Display-Name default `"Spieler"` (änderbar im App-Profil). Kein Account-Merge über E-Mail.
 
 ### 19. Externe Provider
 
@@ -241,6 +251,7 @@ Für jeden neuen externen Anbieter prüfen:
 - Region / Datenverarbeitung
 - Datenschutz- / DPA-Relevanz
 
+**Eingetragen (Phase 3C):** Supabase Auth (Managed Auth); Google als OAuth-IdP hinter Supabase. Frontend nur Publishable/Anon Key (`VITE_*`). Service Role / JWT-Secret nie im Client.
 ### 20. Löschung und Export
 
 Vor Public Launch muss es ein Konzept geben für:
@@ -262,6 +273,7 @@ Keine Daten dauerhaft behalten, wenn sie nicht mehr benötigt werden.
 - [x] offenen Signup- / Legacy-Login bewerten (`ACADEMY_ALLOW_LEGACY_SIGNUP`, Login bleibt)
 - [x] UUID-Foundation / Identity-Layer (Phase 3A) — Auth≠App-ID; Ownership über `rinq_user_id`
 - [x] Rate Limits MVP für Login/Signup/Admin-APIs + Security-Logging ohne Secrets
+- [x] Managed Auth / Google via Supabase (Phase 3C) — JWKS-Verify, `supabase_google` auth_links, kein E-Mail-Merge
 
 ### Vor Payment
 

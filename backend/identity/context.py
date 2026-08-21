@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 LEGACY_PASSWORD_PROVIDER = "legacy_password"
+SUPABASE_GOOGLE_PROVIDER = "supabase_google"
 
 
 @dataclass(frozen=True)

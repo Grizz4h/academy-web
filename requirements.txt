@@ -3,6 +3,7 @@ fastapi
 uvicorn
 pydantic
 PyJWT
+cryptography
 python-dotenv
 openai
 bcrypt

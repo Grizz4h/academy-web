@@ -13,6 +13,7 @@
     "@floating-ui/react": "^0.27.16",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
+    "@supabase/supabase-js": "^2.112.3",
     "@tanstack/react-query": "^5.90.16",
     "@types/three": "^0.185.4",
     "react": "^19.2.0",

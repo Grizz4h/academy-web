@@ -2,6 +2,7 @@ import { useMemo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, getRegistrationStatus } from "../api";
+import { isSupabaseConfigured, signInWithGoogle } from "../lib/supabase";
 import type { Session, Curriculum, Drill } from "../api";
 import { useUser } from "../context/UserContext";
 import Card from '../components/Card';
@@ -80,6 +81,8 @@ export default function Dashboard() {
   const [signupError, setSignupError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
   const [allowLegacySignup, setAllowLegacySignup] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const googleConfigured = isSupabaseConfigured();
 
   useEffect(() => {
     let cancelled = false
@@ -586,9 +589,29 @@ export default function Dashboard() {
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-              <UiButton type="button" onClick={handleLogin}>Anmelden</UiButton>
+              <UiActionRow>
+                <UiButton type="button" onClick={handleLogin}>Anmelden</UiButton>
+                {googleConfigured ? (
+                  <UiButton
+                    type="button"
+                    onClick={async () => {
+                      setLoginError('')
+                      setGoogleBusy(true)
+                      try {
+                        const result = await signInWithGoogle()
+                        if (result.error) setLoginError(result.error)
+                      } finally {
+                        setGoogleBusy(false)
+                      }
+                    }}
+                    disabled={googleBusy}
+                  >
+                    {googleBusy ? 'Weiterleitung…' : 'Mit Google anmelden'}
+                  </UiButton>
+                ) : null}
+              </UiActionRow>
               {allowLegacySignup ? (
-                <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
+                <UiButton type="button" variant="ghost" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
               ) : null}
               {loginError && <span className={styles.errorMsg}>{loginError}</span>}
             </div>

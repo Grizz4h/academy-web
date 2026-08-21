@@ -6,12 +6,13 @@ Auth token subject ≠ app identity:
 
 from __future__ import annotations
 
-from .context import AuthContext, LEGACY_PASSWORD_PROVIDER
+from .context import AuthContext, LEGACY_PASSWORD_PROVIDER, SUPABASE_GOOGLE_PROVIDER
 from .store import IdentityStore, get_identity_store
 
 __all__ = [
     "AuthContext",
     "LEGACY_PASSWORD_PROVIDER",
+    "SUPABASE_GOOGLE_PROVIDER",
     "IdentityStore",
     "get_identity_store",
 ]

@@ -21,6 +21,7 @@ import DevUiKit from './pages/DevUiKit'
 import DevContent from './pages/DevContent'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
+import AuthCallbackPage from './pages/AuthCallback'
 import TopNav from './components/TopNav'
 import { DevRouteGuard } from './components/DevRouteGuard'
 import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
@@ -34,6 +35,7 @@ function App() {
         <main className="container">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/locker" element={<LockerPage />} />
             <Route path="/curriculum" element={<Curriculum />} />

@@ -81,8 +81,10 @@ const TopNav: React.FC = () => {
   const isAdmin = Boolean(account?.is_admin);
 
   const handleLogoClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
-    // Production: only server-confirmed admins may enable Dev chrome via gesture.
-    if (import.meta.env.PROD && !isAdmin) return;
+    const currentlyOn = isDevNavEnabled();
+    // Production: only admins may turn Dev chrome ON. Turning OFF stays allowed
+    // (otherwise a stuck localStorage flag cannot be cleared).
+    if (import.meta.env.PROD && !isAdmin && !currentlyOn) return;
 
     const state = logoClicksRef.current;
     state.count += 1;
@@ -102,7 +104,7 @@ const TopNav: React.FC = () => {
       state.timer = null;
     }
 
-    const next = !isDevNavEnabled();
+    const next = !currentlyOn;
     setDevNavEnabled(next);
     setDevNav(next);
     setDevHint(next ? 'Dev-Nav an' : 'Dev-Nav aus');

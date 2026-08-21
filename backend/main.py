@@ -71,7 +71,7 @@ IDENTITY_STORE_FILE = os.path.join(DATA_DIR, "identity_store.json")
 ROOT_DATA_DIR_EARLY = os.path.abspath(os.path.join(DATA_DIR, ".."))
 IDENTITY_BACKUP_ROOT = os.path.join(ROOT_DATA_DIR_EARLY, "backups")
 
-from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER
+from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER, SUPABASE_GOOGLE_PROVIDER
 from identity.store import configure_identity_store, normalize_subject
 from identity.migrate import owners_match as _identity_owners_match
 from security_guards import (
@@ -79,6 +79,10 @@ from security_guards import (
     legacy_signup_allowed,
     rate_limit,
     client_ip,
+)
+from supabase_auth import (
+    supabase_configured,
+    verify_supabase_access_token,
 )
 
 _identity_store = configure_identity_store(IDENTITY_STORE_FILE)
@@ -121,22 +125,62 @@ def resolve_auth_context_from_legacy_sub(sub: str) -> AuthContext:
     return _identity_store.ensure_legacy_identity(subject, display_name=display)
 
 
+def resolve_auth_context_from_supabase_claims(claims: dict) -> AuthContext:
+    """Map verified Supabase JWT → AuthContext. Creates identity on first login (no email merge)."""
+    sub = str(claims.get("sub") or "").strip()
+    if not sub:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    app_meta = claims.get("app_metadata") if isinstance(claims.get("app_metadata"), dict) else {}
+    provider = str((app_meta or {}).get("provider") or "").strip().lower()
+    providers = (app_meta or {}).get("providers") or []
+    if isinstance(providers, str):
+        providers = [providers]
+    is_google = provider == "google" or "google" in [str(p).lower() for p in providers]
+    if not is_google:
+        # Phase 3C: Google only — reject other Supabase providers (e.g. email)
+        raise HTTPException(status_code=401, detail="Google sign-in required")
+    # Stable subject = Supabase auth user id (JWT sub). Never email.
+    return _identity_store.ensure_provider_identity(
+        SUPABASE_GOOGLE_PROVIDER,
+        sub,
+        display_name="Spieler",
+    )
+
+
 def get_current_user(authorization: str = Header(None)) -> AuthContext:
-    """Authenticate legacy JWT; return AuthContext (rinq_user_id is app identity, not JWT sub)."""
+    """Authenticate legacy academy JWT or Supabase access token → AuthContext."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.split(" ")[1]
+    token = authorization.split(" ", 1)[1].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    # 1) Legacy academy JWT (HS256 / ACADEMY_JWT_SECRET)
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
         sub = payload.get("sub")
         if not sub or not str(sub).strip():
             raise HTTPException(status_code=401, detail="Invalid token")
-        # Reject client attempts to use UUID-as-sub as a shortcut: sub must be legacy username.
         return resolve_auth_context_from_legacy_sub(str(sub).strip())
     except HTTPException:
         raise
+    except jwt.PyJWTError:
+        pass
     except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        pass
+
+    # 2) Supabase access token (JWKS / optional SUPABASE_JWT_SECRET)
+    if supabase_configured():
+        try:
+            claims = verify_supabase_access_token(token)
+            return resolve_auth_context_from_supabase_claims(claims)
+        except HTTPException:
+            raise
+        except Exception:
+            logging.warning("[SEC] supabase_auth_failed")
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+    raise HTTPException(status_code=401, detail="Invalid token")
 
 
 def require_admin(
