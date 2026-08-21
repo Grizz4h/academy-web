@@ -41,9 +41,31 @@ from del_data.spieldetails_importer import PennyDelSpieldetailsImporter
 # JWT config
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 USERS_FILE = os.path.join(DATA_DIR, "users.json")
-JWT_SECRET = os.environ.get("ACADEMY_JWT_SECRET") or "dev-secret"
 JWT_ALGO = "HS256"
 JWT_EXP_DAYS = 7
+_MIN_JWT_SECRET_LEN = 32
+
+
+def _resolve_jwt_secret() -> str:
+    """Require a real secret — never fall back to a hardcoded default."""
+    secret = (os.environ.get("ACADEMY_JWT_SECRET") or "").strip()
+    if not secret:
+        raise RuntimeError(
+            "ACADEMY_JWT_SECRET is missing. Set it in the server environment "
+            "(.env / .env.local). Do not commit the value."
+        )
+    if secret == "dev-secret":
+        raise RuntimeError(
+            "ACADEMY_JWT_SECRET must not be the insecure default value 'dev-secret'."
+        )
+    if len(secret) < _MIN_JWT_SECRET_LEN:
+        raise RuntimeError(
+            f"ACADEMY_JWT_SECRET must be at least {_MIN_JWT_SECRET_LEN} characters."
+        )
+    return secret
+
+
+JWT_SECRET = _resolve_jwt_secret()
 
 def load_users():
     if not os.path.exists(USERS_FILE):
@@ -61,13 +83,18 @@ def save_users(data):
 
 def get_current_user(authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401)
+        raise HTTPException(status_code=401, detail="Not authenticated")
     token = authorization.split(" ")[1]
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
-        return payload["sub"]
-    except:
-        raise HTTPException(status_code=401)
+        sub = payload.get("sub")
+        if not sub or not str(sub).strip():
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return str(sub).strip()
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
 # --- AUTH ENDPOINTS ---
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -509,6 +536,24 @@ def get_session_path_or_404(session_id: str) -> str:
 
 def _normalize_user_key(user: str) -> str:
     return (user or "guest").strip().lower()
+
+
+def _session_owner_key(session: dict) -> str:
+    return _normalize_user_key(session.get("user") or "")
+
+
+def _require_session_owner(session_id: str, current_user: str) -> tuple:
+    """Load session path + document; 404 if missing or not owned by current_user.
+
+    Uses 404 (not 403) for non-owners so session IDs of other users are not confirmed.
+    """
+    session_path = find_session_file(session_id)
+    if not session_path:
+        raise HTTPException(status_code=404, detail="Session not found")
+    session = load_json(session_path)
+    if _session_owner_key(session) != _normalize_user_key(current_user):
+        raise HTTPException(status_code=404, detail="Session not found")
+    return session_path, session
 
 
 def _reward_state_path(user: str) -> str:
@@ -1932,16 +1977,19 @@ async def import_del_game_stats_batch(
 
 
 @app.get("/api/sessions")
-async def get_sessions(user: Optional[str] = None, state: Optional[str] = None):
-    """Sessions filtern"""
+async def get_sessions(
+    state: Optional[str] = None,
+    current_user: str = Depends(get_current_user),
+):
+    """List sessions for the authenticated user only (ignores client-supplied user filters)."""
     if not os.path.exists(SESSIONS_DIR):
         return []
 
-    user_norm = _normalize_user_key(user) if user else None
+    user_norm = _normalize_user_key(current_user)
     sessions = []
     for session_path in iter_session_files():
         session = load_json(session_path)
-        if user_norm and _normalize_user_key(session.get('user', '')) != user_norm:
+        if _normalize_user_key(session.get('user', '')) != user_norm:
             continue
         if state and session.get('state') != state:
             continue
@@ -2052,10 +2100,9 @@ async def create_session(session: SessionCreate, user=Depends(get_current_user))
     return session_data
 
 @app.get("/api/sessions/{session_id}")
-async def get_session(session_id: str):
-    """Session Details"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def get_session(session_id: str, current_user: str = Depends(get_current_user)):
+    """Session Details (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
     if not session.get("learning_area"):
         session["learning_area"] = "academy"
     if session.get("learning_area") == "lab" and session.get("lab_mode") == "predict":
@@ -2083,11 +2130,9 @@ async def get_session(session_id: str):
     return session
 
 @app.patch("/api/sessions/{session_id}")
-async def update_session(session_id: str, updates: dict):
-    """Session aktualisieren"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
-
+async def update_session(session_id: str, updates: dict, current_user: str = Depends(get_current_user)):
+    """Session aktualisieren (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     enforce_max_text_length(updates, "updates")
 
@@ -2105,6 +2150,9 @@ async def update_session(session_id: str, updates: dict):
             cleaned = _sanitize_location_verification(value)
             if cleaned:
                 session["location_verification"] = cleaned
+        elif key in {"user", "created_by", "id"}:
+            # Never allow client to reassign ownership or identity.
+            continue
         else:
             session[key] = value
 
@@ -2112,15 +2160,14 @@ async def update_session(session_id: str, updates: dict):
     return session
 
 @app.post("/api/sessions/{session_id}/checkins")
-async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
-    """Checkin speichern"""
+async def save_checkin(session_id: str, checkin: CheckinData, request: Request, current_user: str = Depends(get_current_user)):
+    """Checkin speichern (owner only)"""
     req_id = uuid4().hex[:8]
     phase_raw = checkin.phase
     phase_norm = checkin.phase.strip().upper()
     trace_id = request.headers.get("X-Trace-Id")
     trace_action = request.headers.get("X-Trace-Action")
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+    session_path, session = _require_session_owner(session_id, current_user)
     if phase_norm == "PRE":
         session["current_phase"] = _initial_phase_for_scope(session.get("observation_scope"))
         save_json(session_path, session)
@@ -2192,10 +2239,9 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request):
     return session
 
 @app.post("/api/sessions/{session_id}/post")
-async def complete_session(session_id: str, post: PostData):
-    """Session abschließen"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def complete_session(session_id: str, post: PostData, current_user: str = Depends(get_current_user)):
+    """Session abschließen (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     enforce_max_text_length(post.summary, "post.summary")
     enforce_max_text_length(post.unclear, "post.unclear")
@@ -2214,10 +2260,9 @@ async def complete_session(session_id: str, post: PostData):
     return session
 
 @app.post("/api/sessions/{session_id}/abort")
-async def abort_session(session_id: str, abort: AbortData):
-    """Session abbrechen"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def abort_session(session_id: str, abort: AbortData, current_user: str = Depends(get_current_user)):
+    """Session abbrechen (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     enforce_max_text_length(abort.note, "abort.note")
 
@@ -2232,10 +2277,9 @@ async def abort_session(session_id: str, abort: AbortData):
     return session
 
 @app.delete("/api/sessions/{session_id}/checkins/{checkin_index}")
-async def delete_checkin(session_id: str, checkin_index: int):
-    """Checkin (Phase) löschen"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def delete_checkin(session_id: str, checkin_index: int, current_user: str = Depends(get_current_user)):
+    """Checkin (Phase) löschen (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     if checkin_index < 0 or checkin_index >= len(session.get("checkins", [])):
         raise HTTPException(status_code=400, detail="Invalid checkin index")
@@ -2277,9 +2321,9 @@ def _delete_scenes_linked_to_session(session_id: str) -> int:
 
 
 @app.delete("/api/sessions/{session_id}")
-async def delete_session(session_id: str):
-    """Session löschen inkl. klar verknüpfter Szenen."""
-    session_path = get_session_path_or_404(session_id)
+async def delete_session(session_id: str, current_user: str = Depends(get_current_user)):
+    """Session löschen inkl. klar verknüpfter Szenen (owner only)."""
+    session_path, _session = _require_session_owner(session_id, current_user)
     try:
         deleted_scenes = _delete_scenes_linked_to_session(session_id)
         os.remove(session_path)
@@ -2288,10 +2332,9 @@ async def delete_session(session_id: str):
         raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")
 
 @app.put("/api/sessions/{session_id}/drafts")
-async def save_drafts(session_id: str, drafts: dict):
-    """Draft-Eingaben speichern für Session Continuation"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def save_drafts(session_id: str, drafts: dict, current_user: str = Depends(get_current_user)):
+    """Draft-Eingaben speichern für Session Continuation (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     enforce_max_text_length(drafts, "drafts")
 
@@ -2300,10 +2343,9 @@ async def save_drafts(session_id: str, drafts: dict):
     return {"status": "saved"}
 
 @app.put("/api/sessions/{session_id}/phase")
-async def update_session_phase(session_id: str, phase_data: dict):
-    """Aktuelle Phase der Session aktualisieren"""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def update_session_phase(session_id: str, phase_data: dict, current_user: str = Depends(get_current_user)):
+    """Aktuelle Phase der Session aktualisieren (owner only)"""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     enforce_max_text_length(phase_data, "phase_data")
 
@@ -2316,13 +2358,16 @@ async def update_session_phase(session_id: str, phase_data: dict):
     return session
 
 @app.get("/api/sessions/{session_id}/download")
-async def download_session(session_id: str, phase: Optional[str] = Query(None)):
-    """Session als komplette JSON herunterladen mit allen Fragen und Antworten"""
+async def download_session(
+    session_id: str,
+    phase: Optional[str] = Query(None),
+    current_user: str = Depends(get_current_user),
+):
+    """Session als komplette JSON herunterladen mit allen Fragen und Antworten (owner only)"""
     from fastapi.responses import StreamingResponse
     from io import BytesIO
     
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+    _session_path, session = _require_session_owner(session_id, current_user)
     
     phase_norm = phase.strip().upper() if phase else None
     if phase_norm:
@@ -2430,15 +2475,19 @@ async def download_session(session_id: str, phase: Optional[str] = Query(None)):
 # Microfeedback-Endpoint muss nach app = FastAPI(...) deklariert werden
 
 @app.post("/api/sessions/{session_id}/microfeedback")
-async def add_microfeedback(session_id: str, data: MicroFeedbackData, request: Request):
-    """Microfeedback für P1/P2/P3 speichern (Session-Block, nicht Checkin)"""
+async def add_microfeedback(
+    session_id: str,
+    data: MicroFeedbackData,
+    request: Request,
+    current_user: str = Depends(get_current_user),
+):
+    """Microfeedback für P1/P2/P3 speichern (Session-Block, nicht Checkin; owner only)"""
     valid_phases = {"P1", "P2", "P3"}
     phase = data.phase.strip().upper()
     if phase not in valid_phases:
         raise HTTPException(status_code=400, detail="Invalid phase for microfeedback")
     enforce_max_text_length(data.text, "microfeedback.text")
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+    session_path, session = _require_session_owner(session_id, current_user)
     if "microfeedback" not in session:
         session["microfeedback"] = {p: {"done": False, "text": ""} for p in valid_phases}
     session["microfeedback"][phase]["done"] = True
@@ -2456,10 +2505,9 @@ from reflection import generate_session_reflection
 
 
 @app.post("/api/sessions/{session_id}/reflection")
-async def create_session_reflection(session_id: str):
-    """Generate or return cached AI reflection for a completed session."""
-    session_path = get_session_path_or_404(session_id)
-    session = load_json(session_path)
+async def create_session_reflection(session_id: str, current_user: str = Depends(get_current_user)):
+    """Generate or return cached AI reflection for a completed session (owner only)."""
+    session_path, session = _require_session_owner(session_id, current_user)
 
     if session.get("state") != "COMPLETED":
         raise HTTPException(status_code=400, detail="Session must be COMPLETED")
@@ -3815,4 +3863,5 @@ app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Bind loopback only — Nginx proxies from the public internet.
+    uvicorn.run(app, host="127.0.0.1", port=8000)

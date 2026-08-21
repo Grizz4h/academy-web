@@ -12,5 +12,7 @@ if [ -x .venv/bin/python ]; then
 elif [ -x venv/bin/python ]; then
 	PYTHON_BIN="venv/bin/python"
 fi
+# main.py binds 127.0.0.1:8000 (loopback only; Nginx proxies publicly)
+# Requires ACADEMY_JWT_SECRET in ../.env or ../.env.local (min 32 chars).
 nohup "$PYTHON_BIN" main.py >> backend.log 2>&1 &
-echo "Backend started in background (PID: $!)"
+echo "Backend started in background on 127.0.0.1:8000 (PID: $!)"
