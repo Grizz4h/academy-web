@@ -9,3 +9,4 @@ openai
 bcrypt
 httpx
 requests
+psycopg[binary,pool]>=3.1

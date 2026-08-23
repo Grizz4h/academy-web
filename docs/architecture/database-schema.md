@@ -1,11 +1,8 @@
 # Database Schema (Phase 4C)
 
-**Status:** designed + versioned SQL migration; **not** wired to production runtime.  
-**Migration:** `backend/migrations/001_runtime_schema.sql`  
-**Contracts:** `backend/repositories/contracts.py` (Phase 4B)  
-**Security:** `docs/ai-rules/security-and-privacy.md`
-
-JSON under `data/academy/` remains source of truth until Phase 4D cutover.
+**Status:** schema (4C) + repositories/migration tooling (4D) in repo.  
+**Runtime default:** JSON until `STORAGE_BACKEND=postgres` is explicitly enabled.  
+**Ops:** `docs/ops/postgres-migration.md`
 
 ---
 

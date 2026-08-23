@@ -1,7 +1,8 @@
-"""Central repository wiring. Today: JSON; later: swap implementations here only."""
+"""Central repository wiring. Default JSON; STORAGE_BACKEND=postgres selects PG impls."""
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -28,6 +29,7 @@ class Repositories:
     profiles: ProfileRepository
     rewards: RewardRepository
     sessions: SessionRepository
+    backend: str = "json"
 
 
 _repos: Optional[Repositories] = None
@@ -40,17 +42,48 @@ def configure_repositories(
     get_profiles_dir: Callable[[], str],
     get_rewards_dir: Callable[[], str],
     get_sessions_dir: Callable[[], str],
+    storage_backend: Optional[str] = None,
 ) -> Repositories:
-    """Bind JSON repositories. Callables keep tests' path monkeypatches live."""
+    """Bind repositories. Callables keep tests' path monkeypatches live for JSON."""
     global _repos
-    _repos = Repositories(
-        identity=JsonIdentityRepository(get_identity_store),
-        credentials=JsonUserCredentialRepository(get_users_file),
-        profiles=JsonProfileRepository(get_profiles_dir),
-        rewards=JsonRewardRepository(get_rewards_dir),
-        sessions=JsonSessionRepository(get_sessions_dir),
+    backend = (storage_backend or os.environ.get("STORAGE_BACKEND") or "json").strip().lower()
+    if backend == "json":
+        _repos = Repositories(
+            identity=JsonIdentityRepository(get_identity_store),
+            credentials=JsonUserCredentialRepository(get_users_file),
+            profiles=JsonProfileRepository(get_profiles_dir),
+            rewards=JsonRewardRepository(get_rewards_dir),
+            sessions=JsonSessionRepository(get_sessions_dir),
+            backend="json",
+        )
+        return _repos
+
+    if backend == "postgres":
+        from db.pool import configure_pool
+        from db.settings import database_url
+
+        # Fail fast — no silent fallback to JSON (avoid split-brain).
+        database_url()
+        configure_pool()
+        from .pg_credentials import PostgresUserCredentialRepository
+        from .pg_identity import PostgresIdentityRepository
+        from .pg_profile import PostgresProfileRepository
+        from .pg_reward import PostgresRewardRepository
+        from .pg_session import PostgresSessionRepository
+
+        _repos = Repositories(
+            identity=PostgresIdentityRepository(),
+            credentials=PostgresUserCredentialRepository(),
+            profiles=PostgresProfileRepository(),
+            rewards=PostgresRewardRepository(),
+            sessions=PostgresSessionRepository(),
+            backend="postgres",
+        )
+        return _repos
+
+    raise RuntimeError(
+        f"Invalid STORAGE_BACKEND={backend!r}; expected 'json' or 'postgres'"
     )
-    return _repos
 
 
 def get_repos() -> Repositories:

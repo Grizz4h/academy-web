@@ -91,6 +91,8 @@ from supabase_auth import (
     verify_supabase_access_token,
 )
 from repositories import (
+    ConflictError,
+    DuplicateAuthLinkError,
     NotFoundError,
     configure_repositories,
     get_repos,
@@ -121,6 +123,14 @@ def _display_name_for_username(username: str) -> str:
     return username
 
 
+def _identity_repo():
+    """Prefer repository wiring (JSON or Postgres). Fallback: legacy IdentityStore."""
+    try:
+        return get_repos().identity
+    except RuntimeError:
+        return _identity_store
+
+
 def resolve_auth_context_from_legacy_sub(sub: str) -> AuthContext:
     """Map JWT sub (legacy username) → AuthContext via identity store. Never treats sub as rinq_user_id."""
     subject = normalize_subject(sub)
@@ -131,7 +141,7 @@ def resolve_auth_context_from_legacy_sub(sub: str) -> AuthContext:
     users = load_users()
     if not any(normalize_subject(u.get("username") or "") == subject for u in users.get("users") or []):
         raise HTTPException(status_code=401, detail="Invalid token")
-    return _identity_store.ensure_legacy_identity(subject, display_name=display)
+    return _identity_repo().ensure_legacy_identity(subject, display_name=display)
 
 
 def _supabase_link_provider(claims: dict):
@@ -158,7 +168,7 @@ def resolve_auth_context_from_supabase_claims(claims: dict) -> AuthContext:
     if not link_provider:
         raise HTTPException(status_code=401, detail="Unsupported sign-in method")
     # Stable subject = Supabase auth user id (JWT sub). Never email address.
-    return _identity_store.ensure_provider_identity(
+    return _identity_repo().ensure_provider_identity(
         link_provider,
         sub,
         display_name=None,
@@ -678,16 +688,16 @@ def _session_owner_key(session: dict) -> str:
 
 
 def _require_session_owner(session_id: str, current_user) -> tuple:
-    """Load session path + document; 404 if missing or not owned by current_user.
+    """Load session document; 404 if missing or not owned by current_user.
 
     Uses 404 (not 403) for non-owners so session IDs of other users are not confirmed.
+    Optional filesystem path is returned for JSON backends; Postgres uses a synthetic marker.
     """
     try:
         session = get_repos().sessions.get_session_for_user(session_id, current_user)
-        session_path = get_repos().sessions.find_session_path(session_id)
+        find_path = getattr(get_repos().sessions, "find_session_path", None)
+        session_path = find_path(session_id) if callable(find_path) else None
     except NotFoundError:
-        raise HTTPException(status_code=404, detail="Session not found")
-    if not session_path:
         raise HTTPException(status_code=404, detail="Session not found")
     return session_path, session
 
@@ -2399,11 +2409,13 @@ def _delete_scenes_linked_to_session(session_id: str) -> int:
 @app.delete("/api/sessions/{session_id}")
 async def delete_session(session_id: str, current_user: AuthContext = Depends(get_current_user)):
     """Session löschen inkl. klar verknüpfter Szenen (owner only)."""
-    session_path, _session = _require_session_owner(session_id, current_user)
+    _session_path, _session = _require_session_owner(session_id, current_user)
     try:
         deleted_scenes = _delete_scenes_linked_to_session(session_id)
-        os.remove(session_path)
+        get_repos().sessions.delete_session_for_user(session_id, current_user)
         return {"status": "deleted", "id": session_id, "deleted_scenes": deleted_scenes}
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")
 
@@ -3613,7 +3625,7 @@ async def signup(payload: dict, request: Request):
         "role": "user"
     })
     save_users(users)
-    ctx = _identity_store.ensure_legacy_identity(username, display_name=username, created_at=created_at)
+    ctx = _identity_repo().ensure_legacy_identity(username, display_name=username, created_at=created_at)
     logging.info("[AUTH] signup ok subject=%s rinq_user_id=%s", username, ctx.rinq_user_id)
     return {"ok": True}
 
@@ -3629,7 +3641,7 @@ async def login(payload: dict, request: Request):
         logging.warning("[SEC] login_failed subject=%s ip=%s", username, client_ip(request))
         raise HTTPException(status_code=401, detail="Invalid credentials")
     user_cased = user.get("username") or username
-    ctx = _identity_store.ensure_legacy_identity(
+    ctx = _identity_repo().ensure_legacy_identity(
         username,
         display_name=user_cased,
         created_at=user.get("created_at"),
@@ -3808,9 +3820,9 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "is_admin": is_admin_auth(current_user, role_from_record=role),
         "profile": profile,
         "needs_display_name": _needs_display_name_setup(current_user),
-        "auth_providers": _identity_store.list_providers_for_user(current_user.rinq_user_id),
+        "auth_providers": _identity_repo().list_providers_for_user(current_user.rinq_user_id),
         "google_linked": SUPABASE_GOOGLE_PROVIDER
-        in _identity_store.list_providers_for_user(current_user.rinq_user_id),
+        in _identity_repo().list_providers_for_user(current_user.rinq_user_id),
     }
 
 
@@ -3863,13 +3875,13 @@ async def link_google_account(
         raise HTTPException(status_code=400, detail="Nur Google-Konten können verknüpft werden")
 
     try:
-        link = _identity_store.link_provider(
+        link = _identity_repo().create_auth_link(
             current_user.rinq_user_id,
             SUPABASE_GOOGLE_PROVIDER,
             sub,
             allow_reclaim_orphan=True,
         )
-    except ValueError as exc:
+    except (ValueError, DuplicateAuthLinkError, ConflictError) as exc:
         logging.warning(
             "[SEC] auth_link_google_conflict rinq=%s detail=%s",
             current_user.rinq_user_id,
@@ -3879,7 +3891,7 @@ async def link_google_account(
             status_code=409,
             detail="Dieses Google-Konto ist bereits mit einem anderen RinQ-Account verknüpft.",
         )
-    except KeyError:
+    except (KeyError, NotFoundError):
         raise HTTPException(status_code=401, detail="Invalid session")
 
     logging.info(
@@ -3892,7 +3904,7 @@ async def link_google_account(
         "rinq_user_id": current_user.rinq_user_id,
         "provider": SUPABASE_GOOGLE_PROVIDER,
         "linked_at": link.get("linked_at"),
-        "auth_providers": _identity_store.list_providers_for_user(current_user.rinq_user_id),
+        "auth_providers": _identity_repo().list_providers_for_user(current_user.rinq_user_id),
         "google_linked": True,
     }
 
@@ -3911,22 +3923,22 @@ async def unlink_auth_provider(
     rate_limit(request, "auth_unlink", limit=20, window_sec=60.0)
     key = (provider or "").strip()
     try:
-        removed = _identity_store.unlink_provider(current_user.rinq_user_id, key)
-    except ValueError as exc:
+        removed = _identity_repo().remove_auth_link(current_user.rinq_user_id, key)
+    except (ValueError, ConflictError) as exc:
         if str(exc) == "cannot_unlink_last_login_method":
             raise HTTPException(
                 status_code=400,
                 detail="Die letzte Login-Methode kann nicht entfernt werden.",
             )
         raise HTTPException(status_code=400, detail="Trennen fehlgeschlagen")
-    except KeyError:
+    except (KeyError, NotFoundError):
         raise HTTPException(status_code=404, detail="Login-Methode nicht verknüpft")
     logging.info(
         "[SEC] auth_link_removed rinq=%s provider=%s",
         current_user.rinq_user_id,
         key,
     )
-    providers = _identity_store.list_providers_for_user(current_user.rinq_user_id)
+    providers = _identity_repo().list_providers_for_user(current_user.rinq_user_id)
     return {
         "ok": True,
         "removed_provider": removed.get("provider"),
@@ -3955,7 +3967,7 @@ async def export_my_data(
         obs_entries_dir=OBS_ENTRIES_DIR,
         obs_players_dir=OBS_PLAYERS_DIR,
         avatars_dir=AVATAR_UPLOADS_DIR,
-        identity_store=_identity_store,
+        identity_store=_identity_repo(),
     )
     body = json.dumps(payload, indent=2, ensure_ascii=False)
     logging.info("[SEC] account_export rinq=%s", current_user.rinq_user_id)
@@ -4016,7 +4028,7 @@ async def delete_my_account(
     try:
         summary = lifecycle_delete(
             current_user,
-            identity_store=_identity_store,
+            identity_store=_identity_repo(),
             profiles_dir=PROFILES_DIR,
             rewards_dir=REWARDS_DIR,
             sessions_dir=SESSIONS_DIR,

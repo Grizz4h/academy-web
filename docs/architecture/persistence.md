@@ -22,15 +22,19 @@ Later the same contracts can be implemented by Postgres without rewriting route 
 
 Central wiring: `backend/repositories/wiring.py` (`configure_repositories` / `get_repos`).
 
-| Domain | Contract | JSON impl | On disk |
-|--------|----------|-----------|---------|
-| Identities + auth_links | `IdentityRepository` | `JsonIdentityRepository` → `IdentityStore` | `identity_store.json` (+ flock) |
-| Legacy passwords | `UserCredentialRepository` | `JsonUserCredentialRepository` | `users.json` |
-| Profiles | `ProfileRepository` | `JsonProfileRepository` | `profiles/{rinq_user_id}.json` |
-| Rewards | `RewardRepository` | `JsonRewardRepository` | `rewards/{rinq_user_id}.json` |
-| Sessions | `SessionRepository` | `JsonSessionRepository` | `sessions/YYYY/MM/{id}.json` |
+`STORAGE_BACKEND=json` (default) or `postgres`. No silent fallback between backends.
 
-Shared helpers: `repositories/json_io.py` (exclusive lock + atomic tmp/replace).
+| Domain | Contract | JSON impl | Postgres impl (4D) | On disk / table |
+|--------|----------|-----------|--------------------|-----------------|
+| Identities + auth_links | `IdentityRepository` | `JsonIdentityRepository` | `PostgresIdentityRepository` | `identity_store.json` / `app_users`+`auth_links` |
+| Legacy passwords | `UserCredentialRepository` | `JsonUserCredentialRepository` | `PostgresUserCredentialRepository` | `users.json` / `legacy_credentials` |
+| Profiles | `ProfileRepository` | `JsonProfileRepository` | `PostgresProfileRepository` | `profiles/…` / `profiles` |
+| Rewards | `RewardRepository` | `JsonRewardRepository` | `PostgresRewardRepository` | `rewards/…` / `reward_states` |
+| Sessions | `SessionRepository` | `JsonSessionRepository` | `PostgresSessionRepository` | `sessions/…` / `sessions` |
+
+Shared helpers: `repositories/json_io.py` (exclusive lock + atomic tmp/replace); `db/pool.py` (psycopg3 pool).
+
+Migration tooling: `python -m migration.cli` — see `docs/ops/postgres-migration.md`.
 
 Ownership remains **server-side** via `AuthContext.rinq_user_id` (never client-supplied user id, never email as app key).
 
@@ -48,7 +52,9 @@ JSON impl: load + mutator + optional write under one per-user flock. Concurrent 
 
 Same contracts; swap in `wiring.py` only. No dual-write in 4B.
 
-**Phase 4C (this branch):** relational schema + versioned SQL migration prepared — see `docs/architecture/database-schema.md` and `backend/migrations/001_runtime_schema.sql`. Runtime still uses JSON repositories; do not point production at Postgres until 4D.
+**Phase 4C (this branch):** relational schema + versioned SQL migration prepared — see `docs/architecture/database-schema.md` and `backend/migrations/001_runtime_schema.sql`.
+
+**Phase 4D (this branch):** Postgres repository implementations + migration CLI + `STORAGE_BACKEND` switch. Runtime default remains JSON until explicit cutover. Ops: `docs/ops/postgres-migration.md`.
 
 Methods that should become SQL transactions (or row locks):
 
@@ -68,11 +74,11 @@ Constraints / FKs designed in 4C:
 
 **Done (4B):** identities, auth_links, legacy credentials, profiles, rewards, sessions.
 
-**Done (4C design only):** Postgres schema + migration + docs — not connected.
+**Done (4C design):** Postgres schema + migration SQL + docs.
 
-**Later (4D+):** Postgres repositories, controlled JSON import, cutover.
+**Done (4D code):** Postgres repositories + migration CLI + verification; default runtime still JSON.
 
-**Later:** scenes, observations, other non-payment runtime domains.
+**Later:** controlled cutover (`STORAGE_BACKEND=postgres`), scenes/observations tables.
 
 **Out of scope forever for this layer (static content):** curriculum, foundation, teams, rosters, games, sidequests — stay file/catalog based unless product needs otherwise.
 

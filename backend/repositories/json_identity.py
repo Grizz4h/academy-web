@@ -60,6 +60,10 @@ class JsonIdentityRepository:
     def list_auth_links_for_user(self, rinq_user_id: str) -> List[Dict[str, Any]]:
         return self.store.list_links_for_user(rinq_user_id)
 
+    def list_links_for_user(self, rinq_user_id: str) -> List[Dict[str, Any]]:
+        """Alias matching IdentityStore (account_lifecycle)."""
+        return self.list_auth_links_for_user(rinq_user_id)
+
     def list_providers_for_user(self, rinq_user_id: str) -> List[str]:
         return self.store.list_providers_for_user(rinq_user_id)
 
