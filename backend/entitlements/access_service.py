@@ -20,6 +20,7 @@ class AccessResource:
     kind: Literal["module", "feature"]
     module_id: Optional[str] = None
     feature_key: Optional[str] = None
+    learning_area: Optional[str] = None
 
 
 def can_access(
@@ -32,8 +33,13 @@ def can_access(
     from repositories.wiring import get_repos
 
     if resource.kind == "module":
+        if resource.learning_area and resource.learning_area.strip().lower() == "lab":
+            return True
         module_id = normalize_module_id(resource.module_id)
-        required = required_feature_for_module(module_id)
+        required = required_feature_for_module(
+            module_id,
+            learning_area=resource.learning_area,
+        )
         if required is None:
             return True
         if is_admin_auth(user, role_from_record=role_from_record):

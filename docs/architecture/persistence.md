@@ -79,9 +79,11 @@ Constraints / FKs designed in 4C:
 
 **Done (4D code):** Postgres repositories + migration CLI + verification; default runtime still JSON.
 
-**Done (5A):** Entitlement domain — `entitlement_grants` table + `EntitlementRepository` + `can_access()` access service. Manual admin grants only (no Stripe). Route gates wired in 5B.
+**Done (5A):** Entitlement domain — `entitlement_grants` table + `EntitlementRepository` + `can_access()` access service. Manual admin grants only (no Stripe).
 
-**Later:** scenes/observations tables.
+**Done (5B):** Route gates — `POST /api/sessions`, filtered `GET /api/curriculum`, defense-in-depth on `GET /api/sessions/{id}`, download + reflection. Lab sessions exempt.
+
+**Later:** scenes/observations tables; frontend premium UX (5C); Stripe (5D).
 
 **Out of scope forever for this layer (static content):** curriculum, foundation, teams, rosters, games, sidequests — stay file/catalog based unless product needs otherwise.
 
@@ -107,3 +109,16 @@ Subscription (billing)   → subscriptions + entitlements (001 prep) — not pro
 - Admin manual grants: `POST /api/admin/entitlements/grant|revoke` (`require_admin`).
 - User read-only: `GET /api/me/entitlements` (active grants only).
 - Apply migration `002_entitlement_grants.sql` before Postgres entitlement checks.
+
+**Phase 5B (route gates):**
+
+| Route | Gate |
+|-------|------|
+| `GET /api/curriculum` | Premium module `drills[]` stripped; `premium_locked: true` without grant |
+| `POST /api/sessions` | `require_access` on `module_id` before drill embed |
+| `GET /api/sessions/{id}` | Re-check module entitlement (revoked grant → 403) |
+| `GET /api/sessions/{id}/download` | Same |
+| `POST /api/sessions/{id}/reflection` | Same |
+| Lab (`learning_area=lab`) | Exempt from `academy_premium` |
+
+HTTP mapping: entitlement denial → **403** `"Premium access required"` (session cross-owner remains **404**).

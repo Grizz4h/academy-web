@@ -32,12 +32,30 @@ PREMIUM_MODULE_IDS: FrozenSet[str] = frozenset(
 ALL_KNOWN_MODULE_IDS: FrozenSet[str] = FREE_MODULE_IDS | PREMIUM_MODULE_IDS
 
 
+def is_lab_learning_area(learning_area: Optional[str]) -> bool:
+    return (learning_area or "").strip().lower() == "lab"
+
+
+def resolve_academy_module_id(module_id: Optional[str]) -> str:
+    """Map session/drill ids to academy module id (e.g. A2_D1 → A2)."""
+    key = normalize_module_id(module_id)
+    if not key:
+        return key
+    if key in ALL_KNOWN_MODULE_IDS:
+        return key
+    if "_" in key:
+        prefix = key.split("_", 1)[0]
+        if prefix in ALL_KNOWN_MODULE_IDS:
+            return prefix
+    return key
+
+
 def normalize_module_id(raw: Optional[str]) -> str:
     return (raw or "").strip().upper()
 
 
 def module_requires_premium(module_id: Optional[str]) -> bool:
-    key = normalize_module_id(module_id)
+    key = resolve_academy_module_id(module_id)
     if not key:
         return True
     if key in FREE_MODULE_IDS:
@@ -48,8 +66,14 @@ def module_requires_premium(module_id: Optional[str]) -> bool:
     return True
 
 
-def required_feature_for_module(module_id: Optional[str]) -> Optional[str]:
+def required_feature_for_module(
+    module_id: Optional[str],
+    *,
+    learning_area: Optional[str] = None,
+) -> Optional[str]:
     """None = free module; otherwise feature_key required."""
+    if is_lab_learning_area(learning_area):
+        return None
     if not module_requires_premium(module_id):
         return None
     return ACADEMY_PREMIUM

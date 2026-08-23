@@ -97,6 +97,7 @@ from repositories import (
     configure_repositories,
     get_repos,
 )
+from entitlements.curriculum_filter import assert_session_module_access, filter_curriculum_for_user
 from entitlements.feature_keys import validate_feature_key, validate_grant_source
 
 _identity_store = configure_identity_store(IDENTITY_STORE_FILE)
@@ -178,21 +179,26 @@ def resolve_auth_context_from_supabase_claims(claims: dict) -> AuthContext:
 
 def get_current_user(authorization: str = Header(None)) -> AuthContext:
     """Authenticate legacy academy JWT or Supabase access token → AuthContext."""
-    if not authorization or not authorization.startswith("Bearer "):
+    user = resolve_user_from_authorization(authorization)
+    if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    return user
+
+
+def resolve_user_from_authorization(authorization: str | None) -> AuthContext | None:
+    """Best-effort auth resolution; None when header missing or token invalid."""
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
     token = authorization.split(" ", 1)[1].strip()
     if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        return None
 
     # 1) Legacy academy JWT (HS256 / ACADEMY_JWT_SECRET)
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
         sub = payload.get("sub")
-        if not sub or not str(sub).strip():
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return resolve_auth_context_from_legacy_sub(str(sub).strip())
-    except HTTPException:
-        raise
+        if sub and str(sub).strip():
+            return resolve_auth_context_from_legacy_sub(str(sub).strip())
     except jwt.PyJWTError:
         pass
     except Exception:
@@ -204,12 +210,60 @@ def get_current_user(authorization: str = Header(None)) -> AuthContext:
             claims = verify_supabase_access_token(token)
             return resolve_auth_context_from_supabase_claims(claims)
         except HTTPException:
-            raise
+            return None
         except Exception:
             logging.warning("[SEC] supabase_auth_failed")
-            raise HTTPException(status_code=401, detail="Invalid token")
+            return None
 
-    raise HTTPException(status_code=401, detail="Invalid token")
+    return None
+
+
+def _role_from_auth(user: AuthContext) -> str | None:
+    record = _find_user_record(user)
+    return (record or {}).get("role") if isinstance(record, dict) else None
+
+
+def _raise_entitlement_denied(exc: PermissionError) -> None:
+    detail = "Premium access required"
+    msg = str(exc)
+    if msg.startswith("entitlement_required:"):
+        module = msg.split(":", 1)[1].strip()
+        if module:
+            detail = f"Premium access required for module {module}"
+    raise HTTPException(status_code=403, detail=detail)
+
+
+def _require_module_access(
+    user: AuthContext,
+    module_id: str | None,
+    *,
+    learning_area: str | None = None,
+) -> None:
+    from entitlements.access_service import AccessResource, require_access
+
+    try:
+        require_access(
+            user,
+            AccessResource(
+                kind="module",
+                module_id=module_id,
+                learning_area=learning_area,
+            ),
+            role_from_record=_role_from_auth(user),
+        )
+    except PermissionError as exc:
+        _raise_entitlement_denied(exc)
+
+
+def _require_session_module_access(user: AuthContext, session: dict) -> None:
+    try:
+        assert_session_module_access(
+            user,
+            session,
+            role_from_record=_role_from_auth(user),
+        )
+    except PermissionError as exc:
+        _raise_entitlement_denied(exc)
 
 
 def require_admin(
@@ -1238,11 +1292,14 @@ def _merge_foundation_tracks(curriculum: dict) -> dict:
 
 
 @app.get("/api/curriculum")
-async def get_curriculum():
-    """Curriculum laden"""
+async def get_curriculum(authorization: str | None = Header(None)):
+    """Curriculum laden — premium drill configs filtered server-side by entitlement."""
     try:
         curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
-        return _merge_foundation_tracks(curriculum)
+        merged = _merge_foundation_tracks(curriculum)
+        user = resolve_user_from_authorization(authorization)
+        role = _role_from_auth(user) if user else None
+        return filter_curriculum_for_user(merged, user, role_from_record=role)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
@@ -2102,6 +2159,11 @@ async def get_sessions(
 @app.post("/api/sessions")
 async def create_session(session: SessionCreate, user: AuthContext = Depends(get_current_user)):
     """Neue Session erstellen (auth required). Ownership = rinq_user_id."""
+    _require_module_access(
+        user,
+        session.module_id,
+        learning_area=session.learning_area,
+    )
     os.makedirs(SESSIONS_DIR, exist_ok=True)
 
     now = datetime.now()
@@ -2221,6 +2283,7 @@ async def get_session(session_id: str, current_user: AuthContext = Depends(get_c
 
     if should_save:
         _persist_session(session)
+    _require_session_module_access(current_user, session)
     return session
 
 @app.patch("/api/sessions/{session_id}")
@@ -2464,6 +2527,7 @@ async def download_session(
     from io import BytesIO
     
     _session_path, session = _require_session_owner(session_id, current_user)
+    _require_session_module_access(current_user, session)
     
     phase_norm = phase.strip().upper() if phase else None
     if phase_norm:
@@ -2604,6 +2668,7 @@ from reflection import generate_session_reflection
 async def create_session_reflection(session_id: str, current_user: AuthContext = Depends(get_current_user)):
     """Generate or return cached AI reflection for a completed session (owner only)."""
     session_path, session = _require_session_owner(session_id, current_user)
+    _require_session_module_access(current_user, session)
 
     if session.get("state") != "COMPLETED":
         raise HTTPException(status_code=400, detail="Session must be COMPLETED")

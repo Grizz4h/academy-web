@@ -171,7 +171,7 @@ Phase **5A (implementiert):**
 - Manuelle Admin-Grants (`source`: manual / promo / system) für Dev & Beta; Stripe erst später.
 - Frontend darf Premium-Status **nicht** setzen; Client Claims / localStorage nicht vertrauen.
 
-Noch offen (5B+): Curriculum-/Session-Routen an `can_access()` koppeln; Stripe-Webhooks → Grant-Sync.
+Noch offen (5C+): Frontend Premium UX; Stripe-Webhooks → Grant-Sync.
 
 ### 9. Premium Content
 
@@ -295,7 +295,8 @@ Für jeden neuen externen Anbieter prüfen:
 ### Vor Payment
 
 - [ ] Rewards / XP / PUX serverseitig härten
-- [x] Entitlement-System (Phase 5A — `entitlement_grants`, Repository, `can_access()`; Route-Gates 5B; Stripe 5D)
+- [x] Entitlement-System (Phase 5A — `entitlement_grants`, Repository, `can_access()`)
+- [x] Premium route gates (Phase 5B — curriculum filter + session gates; Frontend 5C; Stripe 5D)
 - [ ] Premium-Content serverseitig schützen
 - [ ] Rate Limits
 - [ ] Input-Validation-Audit
