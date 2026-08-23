@@ -31,6 +31,7 @@ Central wiring: `backend/repositories/wiring.py` (`configure_repositories` / `ge
 | Profiles | `ProfileRepository` | `JsonProfileRepository` | `PostgresProfileRepository` | `profiles/…` / `profiles` |
 | Rewards | `RewardRepository` | `JsonRewardRepository` | `PostgresRewardRepository` | `rewards/…` / `reward_states` |
 | Sessions | `SessionRepository` | `JsonSessionRepository` | `PostgresSessionRepository` | `sessions/…` / `sessions` |
+| Feature grants | `EntitlementRepository` | `JsonEntitlementRepository` | `PostgresEntitlementRepository` | `entitlement_grants.json` / `entitlement_grants` |
 
 Shared helpers: `repositories/json_io.py` (exclusive lock + atomic tmp/replace); `db/pool.py` (psycopg3 pool).
 
@@ -78,7 +79,9 @@ Constraints / FKs designed in 4C:
 
 **Done (4D code):** Postgres repositories + migration CLI + verification; default runtime still JSON.
 
-**Later:** controlled cutover (`STORAGE_BACKEND=postgres`), scenes/observations tables.
+**Done (5A):** Entitlement domain — `entitlement_grants` table + `EntitlementRepository` + `can_access()` access service. Manual admin grants only (no Stripe). Route gates wired in 5B.
+
+**Later:** scenes/observations tables.
 
 **Out of scope forever for this layer (static content):** curriculum, foundation, teams, rosters, games, sidequests — stay file/catalog based unless product needs otherwise.
 
@@ -88,3 +91,19 @@ Constraints / FKs designed in 4C:
 - No secrets in repository config (paths only).
 - Storage layer raises domain errors (`NotFoundError`, `DuplicateAuthLinkError`, …); HTTP mapping stays in the API.
 - JSON remains source of truth until a later migration cutover (4C+).
+
+## Entitlement domain (Phase 5A)
+
+```text
+Authentication (who)     → AuthContext / JWT / auth_links
+Authorization (what)     → entitlement_grants + can_access()
+Subscription (billing)   → subscriptions + entitlements (001 prep) — not product gates yet
+```
+
+- **Authentication ≠ Authorization** — a valid session does not imply premium.
+- **Subscription ≠ Entitlement** — Stripe/subscription rows are billing state; product access uses `entitlement_grants` (grant/revoke, expiry, source).
+- Feature keys are server-defined (`backend/entitlements/feature_keys.py`); no free client strings.
+- Module mapping: free `T0`/`A1`; premium `A2+` via `academy_premium` (`access_config.py`).
+- Admin manual grants: `POST /api/admin/entitlements/grant|revoke` (`require_admin`).
+- User read-only: `GET /api/me/entitlements` (active grants only).
+- Apply migration `002_entitlement_grants.sql` before Postgres entitlement checks.

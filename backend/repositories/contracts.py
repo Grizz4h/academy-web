@@ -150,3 +150,30 @@ class SessionRepository(Protocol):
     def find_session_raw(self, session_id: str) -> Optional[Dict[str, Any]]:
         """Load by id without ownership check (e.g. dummy-session guard)."""
         ...
+
+
+class EntitlementRepository(Protocol):
+    """Feature grants per rinq_user_id (entitlement_grants)."""
+
+    def has_access(self, rinq_user_id: str, feature_key: str) -> bool:
+        ...
+
+    def grant_entitlement(
+        self,
+        rinq_user_id: str,
+        feature_key: str,
+        *,
+        source: str,
+        expires_at: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        ...
+
+    def revoke_entitlement(self, rinq_user_id: str, feature_key: str) -> bool:
+        ...
+
+    def list_user_entitlements(self, rinq_user_id: str) -> List[Dict[str, Any]]:
+        ...
+
+    def get_active_entitlements(self, rinq_user_id: str) -> List[Dict[str, Any]]:
+        ...

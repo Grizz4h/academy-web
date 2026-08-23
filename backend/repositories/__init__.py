@@ -1,6 +1,7 @@
 """Runtime persistence repositories (contracts + JSON implementations)."""
 
 from .contracts import (
+    EntitlementRepository,
     IdentityRepository,
     ProfileRepository,
     RewardRepository,
@@ -21,6 +22,7 @@ from .wiring import Repositories, configure_repositories, get_repos
 __all__ = [
     "ConflictError",
     "DuplicateAuthLinkError",
+    "EntitlementRepository",
     "IdentityRepository",
     "InsufficientFundsError",
     "NotFoundError",

@@ -154,10 +154,24 @@ RinQ Tank speichert höchstens Provider-Referenzen und Subscription-Status.
 
 Zahlungsstatus niemals ausschließlich im Frontend bestimmen.
 
+**Authentication ≠ Authorization.** Ein gültiger Login beweist Identität, nicht Premium-Zugang.
+
+**Subscription ≠ Entitlement.** Billing-Status (`subscriptions`, legacy `entitlements`-Tabelle) ist getrennt von Produkt-Feature-Grants (`entitlement_grants`).
+
 ```text
 Nicht:  localStorage.premium = true
-Ziel:   Provider → verifizierter serverseitiger Webhook → Subscription → Entitlement → Access Control
+Ziel:   Provider → verifizierter serverseitiger Webhook → Subscription → Entitlement Grant → Access Control
 ```
+
+Phase **5A (implementiert):**
+
+- Tabelle `entitlement_grants` — ein Grant pro `(rinq_user_id, feature_key)`; FK → `app_users` CASCADE.
+- Kanonische Feature Keys serverseitig (`academy_premium`, …) — keine freien Client-Strings.
+- `EntitlementRepository` + `can_access()` — Backend Source of Truth.
+- Manuelle Admin-Grants (`source`: manual / promo / system) für Dev & Beta; Stripe erst später.
+- Frontend darf Premium-Status **nicht** setzen; Client Claims / localStorage nicht vertrauen.
+
+Noch offen (5B+): Curriculum-/Session-Routen an `can_access()` koppeln; Stripe-Webhooks → Grant-Sync.
 
 ### 9. Premium Content
 
@@ -281,7 +295,7 @@ Für jeden neuen externen Anbieter prüfen:
 ### Vor Payment
 
 - [ ] Rewards / XP / PUX serverseitig härten
-- [ ] Entitlement-System
+- [x] Entitlement-System (Phase 5A — `entitlement_grants`, Repository, `can_access()`; Route-Gates 5B; Stripe 5D)
 - [ ] Premium-Content serverseitig schützen
 - [ ] Rate Limits
 - [ ] Input-Validation-Audit

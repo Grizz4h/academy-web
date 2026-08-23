@@ -97,6 +97,7 @@ from repositories import (
     configure_repositories,
     get_repos,
 )
+from entitlements.feature_keys import validate_feature_key, validate_grant_source
 
 _identity_store = configure_identity_store(IDENTITY_STORE_FILE)
 
@@ -332,6 +333,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
 PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
+ENTITLEMENTS_FILE = os.path.join(DATA_DIR, "entitlement_grants.json")
 ROOT_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 ROSTERS_DIR = os.path.join(ROOT_DATA_DIR, "rosters")
 GAMES_DIR = os.path.join(ROOT_DATA_DIR, "games")
@@ -351,6 +353,7 @@ configure_repositories(
     get_profiles_dir=lambda: PROFILES_DIR,
     get_rewards_dir=lambda: REWARDS_DIR,
     get_sessions_dir=lambda: SESSIONS_DIR,
+    get_entitlements_file=lambda: ENTITLEMENTS_FILE,
 )
 
 # Pydantic Models
@@ -3806,6 +3809,75 @@ class ProfileUpdatePayload(BaseModel):
     hockeyExperience: Optional[str] = None
     experiencePromptDismissed: Optional[bool] = None
     dashboardPreferences: Optional[dict] = None
+
+
+class EntitlementGrantPayload(BaseModel):
+    rinq_user_id: str
+    feature_key: str
+    source: str = "manual"
+    expires_at: Optional[str] = None
+    metadata: Optional[dict] = None
+
+
+class EntitlementRevokePayload(BaseModel):
+    rinq_user_id: str
+    feature_key: str
+
+
+@app.get("/api/me/entitlements")
+async def get_my_entitlements(current_user: AuthContext = Depends(get_current_user)):
+    """Active feature grants for the authenticated user (server source of truth)."""
+    grants = get_repos().entitlements.get_active_entitlements(current_user.rinq_user_id)
+    return {"rinq_user_id": current_user.rinq_user_id, "entitlements": grants}
+
+
+@app.post("/api/admin/entitlements/grant")
+async def admin_grant_entitlement(
+    payload: EntitlementGrantPayload,
+    current_user: AuthContext = Depends(require_admin),
+):
+    """Manual / beta / ops grants — admin only; never callable by normal users."""
+    try:
+        validate_feature_key(payload.feature_key)
+        validate_grant_source(payload.source)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    try:
+        grant = get_repos().entitlements.grant_entitlement(
+            payload.rinq_user_id,
+            payload.feature_key,
+            source=payload.source,
+            expires_at=payload.expires_at,
+            metadata=payload.metadata,
+        )
+    except NotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        logging.exception("[entitlements] admin grant failed")
+        raise HTTPException(status_code=500, detail="Grant failed") from exc
+    return {"ok": True, "grant": grant}
+
+
+@app.post("/api/admin/entitlements/revoke")
+async def admin_revoke_entitlement(
+    payload: EntitlementRevokePayload,
+    current_user: AuthContext = Depends(require_admin),
+):
+    try:
+        validate_feature_key(payload.feature_key)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    try:
+        revoked = get_repos().entitlements.revoke_entitlement(
+            payload.rinq_user_id,
+            payload.feature_key,
+        )
+    except Exception as exc:
+        logging.exception("[entitlements] admin revoke failed")
+        raise HTTPException(status_code=500, detail="Revoke failed") from exc
+    if not revoked:
+        raise HTTPException(status_code=404, detail="No active grant to revoke")
+    return {"ok": True, "revoked": True}
 
 
 @app.get("/api/me")

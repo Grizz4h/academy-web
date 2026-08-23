@@ -22,6 +22,12 @@ WAVE1_TABLES = (
     "sessions",
 )
 
+PHASE5A_TABLES = (
+    "entitlement_grants",
+)
+
+ALL_RUNTIME_TABLES = WAVE1_TABLES + PHASE5A_TABLES
+
 
 def run_healthcheck() -> Dict[str, Any]:
     report: Dict[str, Any] = {
@@ -59,16 +65,16 @@ def run_healthcheck() -> Dict[str, Any]:
                   AND table_name = ANY(%s)
                 ORDER BY table_name
                 """,
-                (list(WAVE1_TABLES),),
+                (list(ALL_RUNTIME_TABLES),),
             ).fetchall()
             present = {r["table_name"] for r in rows}
-            for table in WAVE1_TABLES:
+            for table in ALL_RUNTIME_TABLES:
                 report["tables"][table] = table in present
                 if table not in present:
                     report["errors"].append(f"missing table: {table}")
                     report["ok"] = False
 
-            for table in WAVE1_TABLES:
+            for table in ALL_RUNTIME_TABLES:
                 if table not in present:
                     continue
                 count_row = conn.execute(f"SELECT COUNT(*) AS n FROM {table}").fetchone()

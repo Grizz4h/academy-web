@@ -10,6 +10,7 @@ from typing import Callable, Optional
 from identity.store import IdentityStore
 
 from .contracts import (
+    EntitlementRepository,
     IdentityRepository,
     ProfileRepository,
     RewardRepository,
@@ -17,6 +18,7 @@ from .contracts import (
     UserCredentialRepository,
 )
 from .json_credentials import JsonUserCredentialRepository
+from .json_entitlement import JsonEntitlementRepository
 from .json_identity import JsonIdentityRepository
 from .json_profile import JsonProfileRepository
 from .json_reward import JsonRewardRepository
@@ -30,6 +32,7 @@ class Repositories:
     profiles: ProfileRepository
     rewards: RewardRepository
     sessions: SessionRepository
+    entitlements: EntitlementRepository
     backend: str = "json"
 
 
@@ -44,6 +47,7 @@ def configure_repositories(
     get_profiles_dir: Callable[[], str],
     get_rewards_dir: Callable[[], str],
     get_sessions_dir: Callable[[], str],
+    get_entitlements_file: Callable[[], str],
     storage_backend: Optional[str] = None,
 ) -> Repositories:
     """Bind repositories. Callables keep tests' path monkeypatches live for JSON."""
@@ -56,6 +60,10 @@ def configure_repositories(
             profiles=JsonProfileRepository(get_profiles_dir),
             rewards=JsonRewardRepository(get_rewards_dir),
             sessions=JsonSessionRepository(get_sessions_dir),
+            entitlements=JsonEntitlementRepository(
+                get_entitlements_file,
+                get_identity_store,
+            ),
             backend="json",
         )
         _logger.info("[storage] selected backend=json")
@@ -69,6 +77,7 @@ def configure_repositories(
         database_url()
         configure_pool()
         from .pg_credentials import PostgresUserCredentialRepository
+        from .pg_entitlement import PostgresEntitlementRepository
         from .pg_identity import PostgresIdentityRepository
         from .pg_profile import PostgresProfileRepository
         from .pg_reward import PostgresRewardRepository
@@ -80,6 +89,7 @@ def configure_repositories(
             profiles=PostgresProfileRepository(),
             rewards=PostgresRewardRepository(),
             sessions=PostgresSessionRepository(),
+            entitlements=PostgresEntitlementRepository(),
             backend="postgres",
         )
         _logger.info("[storage] selected backend=postgres")
