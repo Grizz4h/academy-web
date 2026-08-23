@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import tempfile
@@ -118,15 +119,20 @@ class WiringDefaultJsonTests(unittest.TestCase):
         self.addCleanup(tmp.cleanup)
         root = Path(tmp.name)
         store = IdentityStore(str(root / "identity_store.json"))
-        with self.assertRaises(RuntimeError):
-            configure_repositories(
-                get_identity_store=lambda: store,
-                get_users_file=lambda: str(root / "users.json"),
-                get_profiles_dir=lambda: str(root / "profiles"),
-                get_rewards_dir=lambda: str(root / "rewards"),
-                get_sessions_dir=lambda: str(root / "sessions"),
-                storage_backend="postgres",
-            )
+        old_url = os.environ.pop("DATABASE_URL", None)
+        try:
+            with self.assertRaises(RuntimeError):
+                configure_repositories(
+                    get_identity_store=lambda: store,
+                    get_users_file=lambda: str(root / "users.json"),
+                    get_profiles_dir=lambda: str(root / "profiles"),
+                    get_rewards_dir=lambda: str(root / "rewards"),
+                    get_sessions_dir=lambda: str(root / "sessions"),
+                    storage_backend="postgres",
+                )
+        finally:
+            if old_url is not None:
+                os.environ["DATABASE_URL"] = old_url
 
 
 @unittest.skipUnless(
@@ -195,6 +201,77 @@ class MigrateDryRunLogicTests(unittest.TestCase):
         self.assertTrue(callable(cli.main))
         self.assertTrue(callable(importer.migrate_from_json))
         self.assertTrue(callable(verify.verify_migration))
+
+
+class CanonicalizationTests(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self._tmp.name)
+        self.rid = "30de6c03-3f4d-4617-8a2c-bb5786b688c0"
+        self.identities = [
+            {
+                "rinq_user_id": self.rid,
+                "legacy_username": "christoph",
+                "status": "active",
+            }
+        ]
+        rewards = self.root / "rewards"
+        rewards.mkdir()
+        (rewards / f"{self.rid}.json").write_text(
+            json.dumps({"xp": 10850, "currency": {"PUX": 2475}}),
+            encoding="utf-8",
+        )
+        (rewards / "christoph.json").write_text(
+            json.dumps({"xp": 0, "currency": {"PUX": 0}}),
+            encoding="utf-8",
+        )
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_uuid_file_wins_over_legacy(self):
+        from migration.canonical import canonicalize_user_json_dir
+
+        bundle = canonicalize_user_json_dir(
+            self.root / "rewards", self.identities, domain="rewards"
+        )
+        self.assertEqual(bundle.canonical_records, 1)
+        self.assertEqual(bundle.records[self.rid]["xp"], 10850)
+        self.assertIn("christoph.json", bundle.legacy_duplicate_skipped)
+
+    def test_uuid_file_wins_regardless_of_sort_order(self):
+        from migration.canonical import canonicalize_user_json_dir
+
+        rewards = self.root / "rewards"
+        (rewards / "christoph.json").write_text(
+            json.dumps({"xp": 0, "currency": {"PUX": 0}}),
+            encoding="utf-8",
+        )
+        bundle = canonicalize_user_json_dir(rewards, self.identities, domain="rewards")
+        self.assertEqual(bundle.records[self.rid]["currency"]["PUX"], 2475)
+
+    def test_semantic_counts_not_raw_files(self):
+        from migration.importer import _plan_wave1
+
+        profiles = self.root / "profiles"
+        profiles.mkdir()
+        (profiles / f"{self.rid}.json").write_text('{"displayName":"Chris"}', encoding="utf-8")
+        (profiles / "christoph.json").write_text('{"displayName":"Stale"}', encoding="utf-8")
+        _, reward_bundle, _, planned = _plan_wave1(self.root, self.identities, [], [])
+        self.assertEqual(planned["profiles"], 1)
+        self.assertEqual(planned["reward_states"], 1)
+        self.assertEqual(reward_bundle.source_files, 2)
+
+    def test_multiple_legacy_only_is_conflict(self):
+        from migration.canonical import canonicalize_user_json_dir
+
+        rewards = self.root / "rewards"
+        (rewards / f"{self.rid}.json").unlink()
+        (rewards / "christoph.json").write_text('{"xp": 1}', encoding="utf-8")
+        (rewards / "Christoph.json").write_text('{"xp": 2}', encoding="utf-8")
+        bundle = canonicalize_user_json_dir(rewards, self.identities, domain="rewards")
+        self.assertEqual(bundle.canonical_records, 0)
+        self.assertTrue(any("conflict" in e for e in bundle.errors))
 
 
 if __name__ == "__main__":

@@ -3,18 +3,23 @@
 from __future__ import annotations
 
 import json
-import os
 import shutil
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-from uuid import UUID
 
 from identity.store import normalize_subject
 from psycopg.types.json import Jsonb
 
 from db.pool import connection, transaction
+from migration.canonical import (
+    CanonicalBundle,
+    canonicalize_user_json_dir,
+    is_uuid,
+    iter_json_files,
+    resolve_rinq_for_username,
+)
 from repositories.json_reward import merge_reward_state
 from repositories.pg_mapping import (
     parse_timestamptz,
@@ -38,6 +43,9 @@ class MigrateReport:
     skipped: Dict[str, int] = field(default_factory=dict)
     errors: List[str] = field(default_factory=list)
     backup_path: Optional[str] = None
+    source_files: Dict[str, int] = field(default_factory=dict)
+    canonical_records: Dict[str, int] = field(default_factory=dict)
+    legacy_duplicate_skipped: List[str] = field(default_factory=list)
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -49,6 +57,9 @@ class MigrateReport:
             "skipped": self.skipped,
             "errors": self.errors,
             "backup_path": self.backup_path,
+            "source_files": self.source_files,
+            "canonical_records": self.canonical_records,
+            "legacy_duplicate_skipped": self.legacy_duplicate_skipped,
         }
 
 
@@ -124,30 +135,28 @@ def load_users(academy_dir: Path) -> List[Dict[str, Any]]:
     return []
 
 
-def iter_json_files(root: Path) -> List[Path]:
-    if not root.is_dir():
-        return []
-    return sorted(
-        p for p in root.rglob("*.json") if p.is_file() and not p.name.startswith(".")
+def _plan_wave1(
+    academy_dir: Path,
+    identities: List[Dict[str, Any]],
+    links: List[Any],
+    users: List[Any],
+) -> Tuple[CanonicalBundle, CanonicalBundle, List[Path], Dict[str, int]]:
+    profile_bundle = canonicalize_user_json_dir(
+        academy_dir / "profiles", identities, domain="profiles"
     )
-
-
-def resolve_rinq_for_username(
-    username: str, identities: List[Dict[str, Any]]
-) -> Optional[str]:
-    key = normalize_subject(username)
-    for row in identities:
-        if normalize_subject(row.get("legacy_username") or "") == key:
-            return str(row.get("rinq_user_id") or "") or None
-    return None
-
-
-def is_uuid(value: str) -> bool:
-    try:
-        UUID(str(value))
-        return True
-    except Exception:
-        return False
+    reward_bundle = canonicalize_user_json_dir(
+        academy_dir / "rewards", identities, domain="rewards"
+    )
+    session_paths = iter_json_files(academy_dir / "sessions")
+    planned = {
+        "app_users": len(identities),
+        "auth_links": len(links),
+        "legacy_credentials": len(users),
+        "profiles": profile_bundle.canonical_records,
+        "reward_states": reward_bundle.canonical_records,
+        "sessions": len(session_paths),
+    }
+    return profile_bundle, reward_bundle, session_paths, planned
 
 
 def migrate_from_json(
@@ -179,24 +188,30 @@ def migrate_from_json(
     identities = list(identity.get("identities") or [])
     links = list(identity.get("auth_links") or [])
     users = load_users(academy_dir)
-    profiles = iter_json_files(academy_dir / "profiles")
-    rewards = iter_json_files(academy_dir / "rewards")
-    sessions = iter_json_files(academy_dir / "sessions")
+    profile_bundle, reward_bundle, session_paths, planned = _plan_wave1(
+        academy_dir, identities, links, users
+    )
 
-    report.planned = {
-        "app_users": len(identities),
-        "auth_links": len(links),
-        "legacy_credentials": len(users),
-        "profiles": len(profiles),
-        "reward_states": len(rewards),
-        "sessions": len(sessions),
+    report.planned = planned
+    report.source_files = {
+        "profiles": profile_bundle.source_files,
+        "reward_states": reward_bundle.source_files,
+        "sessions": len(session_paths),
     }
+    report.canonical_records = {
+        "profiles": profile_bundle.canonical_records,
+        "reward_states": reward_bundle.canonical_records,
+    }
+    report.legacy_duplicate_skipped = (
+        profile_bundle.legacy_duplicate_skipped + reward_bundle.legacy_duplicate_skipped
+    )
+    report.errors.extend(profile_bundle.errors)
+    report.errors.extend(reward_bundle.errors)
 
     if dry_run:
         report.counts_after = report.counts_before
         return report
 
-    # ---- apply in FK order ----
     try:
         with transaction() as conn:
             for row in identities:
@@ -287,23 +302,7 @@ def migrate_from_json(
                     report.written.get("legacy_credentials", 0) + 1
                 )
 
-            for path in profiles:
-                try:
-                    doc = _read_json(path)
-                except Exception as exc:
-                    report.errors.append(f"profile read {path}: {exc}")
-                    continue
-                if not isinstance(doc, dict):
-                    continue
-                rid = path.stem
-                if not is_uuid(rid):
-                    # legacy username filename — map via identities
-                    mapped = resolve_rinq_for_username(rid, identities)
-                    if not mapped:
-                        report.errors.append(f"profile owner unresolved: {path.name}")
-                        report.skipped["profiles"] = report.skipped.get("profiles", 0) + 1
-                        continue
-                    rid = mapped
+            for rid, doc in profile_bundle.records.items():
                 display, chosen, payload, updated = split_profile(doc)
                 conn.execute(
                     """
@@ -320,24 +319,7 @@ def migrate_from_json(
                 )
                 report.written["profiles"] = report.written.get("profiles", 0) + 1
 
-            for path in rewards:
-                try:
-                    doc = _read_json(path)
-                except Exception as exc:
-                    report.errors.append(f"reward read {path}: {exc}")
-                    continue
-                if not isinstance(doc, dict):
-                    continue
-                rid = path.stem
-                if not is_uuid(rid):
-                    mapped = resolve_rinq_for_username(rid, identities)
-                    if not mapped:
-                        report.errors.append(f"reward owner unresolved: {path.name}")
-                        report.skipped["reward_states"] = (
-                            report.skipped.get("reward_states", 0) + 1
-                        )
-                        continue
-                    rid = mapped
+            for rid, doc in reward_bundle.records.items():
                 cols = split_reward(merge_reward_state_safe(doc))
                 conn.execute(
                     """
@@ -365,7 +347,7 @@ def migrate_from_json(
                 )
                 report.written["reward_states"] = report.written.get("reward_states", 0) + 1
 
-            for path in sessions:
+            for path in session_paths:
                 try:
                     doc = _read_json(path)
                 except Exception as exc:
@@ -386,7 +368,6 @@ def migrate_from_json(
                     report.errors.append(f"session owner unresolved: {sid} user={owner_raw}")
                     report.skipped["sessions"] = report.skipped.get("sessions", 0) + 1
                     continue
-                # Ensure parent exists (orphan session owners)
                 conn.execute(
                     """
                     INSERT INTO app_users (rinq_user_id, status)
@@ -399,7 +380,6 @@ def migrate_from_json(
                 cols, _ = split_session(doc)
                 if not cols["created_at"]:
                     cols["created_at"] = datetime.now(timezone.utc)
-                # Normalize unknown historical states into allowed set
                 allowed = {
                     "PRE",
                     "P1",

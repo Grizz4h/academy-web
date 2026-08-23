@@ -10,14 +10,13 @@ from typing import Any, Dict, List, Optional
 from identity.store import normalize_subject
 
 from db.pool import connection
-from migration.importer import (
-    is_uuid,
+from migration.canonical import (
+    canonicalize_user_json_dir,
     iter_json_files,
-    load_identity_bundle,
-    load_users,
-    pg_counts,
+    pick_canonical_reward_path,
     resolve_rinq_for_username,
 )
+from migration.importer import is_uuid, load_identity_bundle, load_users, pg_counts
 from repositories.json_reward import merge_reward_state
 from repositories.pg_mapping import merge_reward_row, merge_session_row
 
@@ -27,6 +26,7 @@ class VerifyReport:
     ok: bool = True
     counts_json: Dict[str, int] = field(default_factory=dict)
     counts_pg: Dict[str, int] = field(default_factory=dict)
+    source_files: Dict[str, int] = field(default_factory=dict)
     mismatches: List[str] = field(default_factory=list)
     anchors: Dict[str, Any] = field(default_factory=dict)
 
@@ -35,6 +35,7 @@ class VerifyReport:
             "ok": self.ok,
             "counts_json": self.counts_json,
             "counts_pg": self.counts_pg,
+            "source_files": self.source_files,
             "mismatches": self.mismatches,
             "anchors": self.anchors,
         }
@@ -46,13 +47,38 @@ def _read_json(path: Path) -> Any:
 
 
 def json_domain_counts(academy_dir: Path) -> Dict[str, int]:
+    academy_dir = Path(academy_dir)
     identity = load_identity_bundle(academy_dir)
+    identities = list(identity.get("identities") or [])
+    profiles = canonicalize_user_json_dir(
+        academy_dir / "profiles", identities, domain="profiles"
+    )
+    rewards = canonicalize_user_json_dir(
+        academy_dir / "rewards", identities, domain="rewards"
+    )
     return {
-        "app_users": len(identity.get("identities") or []),
+        "app_users": len(identities),
         "auth_links": len(identity.get("auth_links") or []),
         "legacy_credentials": len(load_users(academy_dir)),
-        "profiles": len(iter_json_files(academy_dir / "profiles")),
-        "reward_states": len(iter_json_files(academy_dir / "rewards")),
+        "profiles": profiles.canonical_records,
+        "reward_states": rewards.canonical_records,
+        "sessions": len(iter_json_files(academy_dir / "sessions")),
+    }
+
+
+def json_source_file_counts(academy_dir: Path) -> Dict[str, int]:
+    academy_dir = Path(academy_dir)
+    identity = load_identity_bundle(academy_dir)
+    identities = list(identity.get("identities") or [])
+    profiles = canonicalize_user_json_dir(
+        academy_dir / "profiles", identities, domain="profiles"
+    )
+    rewards = canonicalize_user_json_dir(
+        academy_dir / "rewards", identities, domain="rewards"
+    )
+    return {
+        "profiles": profiles.source_files,
+        "reward_states": rewards.source_files,
         "sessions": len(iter_json_files(academy_dir / "sessions")),
     }
 
@@ -68,13 +94,12 @@ def _anchor_for_legacy(
     rid = resolve_rinq_for_username(legacy_username, identities)
     if not rid:
         return None
-    # rewards
-    reward_path = academy_dir / "rewards" / f"{rid}.json"
-    if not reward_path.exists():
-        legacy_path = academy_dir / "rewards" / f"{normalize_subject(legacy_username)}.json"
-        reward_path = legacy_path if legacy_path.exists() else reward_path
+
+    reward_path = pick_canonical_reward_path(
+        academy_dir, rid, normalize_subject(legacy_username)
+    )
     xp = pux = achievements = None
-    if reward_path.exists():
+    if reward_path and reward_path.exists():
         state = merge_reward_state(_read_json(reward_path) or {})
         xp = int(state.get("xp") or 0)
         currency = state.get("currency") or {}
@@ -142,6 +167,7 @@ def verify_migration(
     report = VerifyReport()
     academy_dir = Path(academy_dir)
     report.counts_json = json_domain_counts(academy_dir)
+    report.source_files = json_source_file_counts(academy_dir)
     try:
         report.counts_pg = pg_counts()
     except Exception as exc:
@@ -149,8 +175,14 @@ def verify_migration(
         report.mismatches.append(f"postgres unreachable: {exc}")
         return report
 
-    # Count compare (credentials / profiles may differ if unresolved legacy files)
-    for key in ("app_users", "auth_links", "sessions"):
+    for key in (
+        "app_users",
+        "auth_links",
+        "legacy_credentials",
+        "profiles",
+        "reward_states",
+        "sessions",
+    ):
         j = report.counts_json.get(key, 0)
         p = report.counts_pg.get(key, 0)
         if j != p:
@@ -184,7 +216,6 @@ def verify_migration(
             report.mismatches.append(f"anchor {name}: missing app_users row")
         report.anchors[name] = entry
 
-    # Stable UUID check: every identity still present
     with connection() as conn:
         for row in identities:
             rid = str(row.get("rinq_user_id") or "")
