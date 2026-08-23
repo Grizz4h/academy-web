@@ -50,6 +50,7 @@ export async function login(
 
 import { labModules, predictionTemplates } from './features/lab/config'
 import type { UserAccountPayload, UserProfileCustomization } from './data/profile/types'
+import type { MyEntitlementsPayload } from './features/entitlements/types'
 
 
 // ==== Type Definitions ====
@@ -86,6 +87,8 @@ export interface Module {
   defaultFocus?: string
   /** When false, module is hidden from active curriculum navigation. */
   active?: boolean
+  /** Set by backend when drill configs are withheld (premium gate). */
+  premium_locked?: boolean
   deprecated?: boolean
   deprecation_note?: string
   sidequest_category?: string
@@ -923,8 +926,11 @@ export const api = {
   // Curriculum
   getCurriculum: async (): Promise<Curriculum> => {
     const primaryUrl = buildUrl('/curriculum')
+    const headers = authHeaders()
     try {
-      const res = await fetch(primaryUrl)
+      const res = await fetch(primaryUrl, {
+        headers: Object.keys(headers).length ? headers : undefined,
+      })
       if (!res.ok) throw new Error(`Failed to fetch curriculum (${res.status})`)
       return await res.json()
     } catch (err) {
@@ -985,12 +991,7 @@ export const api = {
       body: JSON.stringify(data)
     })
     if (!res.ok) {
-      let detail = ''
-      try {
-        const txt = await res.text()
-        if (txt) detail = txt
-      } catch {}
-      throw new Error(`Failed to create session (${res.status})${detail ? `: ${detail}` : ''}`)
+      throw await readApiError(res, 'Session konnte nicht gestartet werden')
     }
     return res.json()
   },
@@ -1618,6 +1619,14 @@ export const api = {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Profil konnte nicht geladen werden')
+    return res.json()
+  },
+
+  getMyEntitlements: async (): Promise<MyEntitlementsPayload> => {
+    const res = await fetch(buildUrl('/me/entitlements'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Entitlements konnten nicht geladen werden')
     return res.json()
   },
 

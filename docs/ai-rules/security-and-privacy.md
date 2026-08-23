@@ -171,7 +171,9 @@ Phase **5A (implementiert):**
 - Manuelle Admin-Grants (`source`: manual / promo / system) für Dev & Beta; Stripe erst später.
 - Frontend darf Premium-Status **nicht** setzen; Client Claims / localStorage nicht vertrauen.
 
-Noch offen (5C+): Frontend Premium UX; Stripe-Webhooks → Grant-Sync.
+Noch offen (5D): Stripe-Webhooks → Grant-Sync.
+
+Phase **5C (implementiert):** Frontend liest `premium_locked` aus `/api/curriculum` und `/api/me/entitlements` — keine clientseitige Premium-Flag-Setzung; SessionSetup blockiert A2+ vor Start.
 
 ### 9. Premium Content
 

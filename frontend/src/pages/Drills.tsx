@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { GlossaryTerm, renderWithGlossary } from '../components/GlossaryTerm'
 import { MechanicGlyph } from '../components/visuals'
+import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
 
 export default function Drills() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -20,6 +21,18 @@ export default function Drills() {
 
   if (!currentModule) {
     return <div className="card">Modul nicht gefunden.</div>
+  }
+
+  if (isModulePremiumLocked(currentModule)) {
+    return (
+      <div className="card">
+        <h2 style={{ marginTop: 0 }}>{currentModule.title}</h2>
+        <p>{premiumLockMessage(moduleId)}</p>
+        <button type="button" className="btn btn-secondary" onClick={() => navigate('/curriculum')}>
+          Zurück zum Lehrplan
+        </button>
+      </div>
+    )
   }
 
   return (

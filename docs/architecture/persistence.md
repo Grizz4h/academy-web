@@ -83,7 +83,9 @@ Constraints / FKs designed in 4C:
 
 **Done (5B):** Route gates — `POST /api/sessions`, filtered `GET /api/curriculum`, defense-in-depth on `GET /api/sessions/{id}`, download + reflection. Lab sessions exempt.
 
-**Later:** scenes/observations tables; frontend premium UX (5C); Stripe (5D).
+**Done (5C):** Frontend premium UX — `premium_locked` in Curriculum/SessionSetup, `GET /api/me/entitlements` hook (display only; no checkout).
+
+**Later:** Stripe (5D); scenes/observations tables.
 
 **Out of scope forever for this layer (static content):** curriculum, foundation, teams, rosters, games, sidequests — stay file/catalog based unless product needs otherwise.
 

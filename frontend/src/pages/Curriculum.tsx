@@ -7,8 +7,9 @@ import theoryData from '../data/theoryData.json'
 import { getLastActivityTrackId } from '../utils/curriculumActivity'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
-import { UiActionRow, UiButton } from '../components/ui'
+import { UiActionRow, UiButton, UiPill } from '../components/ui'
 import { useUser } from '../context/UserContext'
+import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
 import {
   getFoundationTrack,
   isAcademyLocked,
@@ -66,11 +67,11 @@ function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> 
 
 export default function Curriculum() {
   const navigate = useNavigate()
-  const { user } = useUser()
+  const { user, userId } = useUser()
   const tutorial = useTutorialOptional()
   const devMode = useDevNavEnabled()
   const { data: curriculum, isLoading, error } = useQuery({
-    queryKey: ['curriculum'],
+    queryKey: ['curriculum', userId],
     queryFn: () => api.getCurriculum()
   })
   const { data: sessions, isFetched: sessionsFetched } = useQuery({
@@ -209,23 +210,38 @@ export default function Curriculum() {
             <div className={styles.moduleGrid}>
               {activeModules.map((module: CurriculumModule) => {
                 const drills = module.drills || []
+                const premiumLocked = isModulePremiumLocked(module)
                 const progressNodes = buildDrillProgressNodes(
                   drills.map((d) => ({ id: d.id, title: d.title })),
                   { completedIds: completedDrillIds },
                 )
+                const startBlocked = (academyLocked && !foundation) || premiumLocked
+                const startLabel = premiumLocked
+                  ? 'Premium'
+                  : academyLocked && !foundation
+                    ? 'Zuerst Track 0'
+                    : 'Starten'
                 return (
-                <div key={module.id} className={styles.moduleCard}>
+                <div
+                  key={module.id}
+                  className={`${styles.moduleCard}${premiumLocked ? ` ${styles.moduleCardLocked}` : ''}`}
+                >
                   <div className={styles.moduleTop}>
-                    <h3 className={styles.moduleTitle}>{module.title}</h3>
+                    <h3 className={styles.moduleTitle}>
+                      {module.title}
+                      {premiumLocked ? (
+                        <UiPill tone="warn" className={styles.premiumPill}>Premium</UiPill>
+                      ) : null}
+                    </h3>
                     <UiActionRow className={styles.moduleActions}>
                       <UiButton
                         type="button"
                         size={module.id === entryModuleId && tutorial?.active ? 'md' : 'sm'}
                         onClick={() => navigate(`/setup/${module.id}`)}
-                        disabled={academyLocked && !foundation}
+                        disabled={startBlocked}
                         {...(module.id === entryModuleId ? { 'data-tutorial-id': TUTORIAL_TARGET.academyEntryStart } : {})}
                       >
-                        {academyLocked && !foundation ? 'Zuerst Track 0' : 'Starten'}
+                        {startLabel}
                       </UiButton>
                       {module.id in theoryData ? (
                         <UiButton type="button" size="sm" onClick={() => navigate(`/theory/${module.id}`)}>
@@ -235,6 +251,9 @@ export default function Curriculum() {
                     </UiActionRow>
                   </div>
                   <p className={styles.moduleText}>{module.summary}</p>
+                  {premiumLocked ? (
+                    <p className={styles.moduleMuted}>{premiumLockMessage(module.id)}</p>
+                  ) : null}
                   {module.description && (
                     <p className={styles.moduleMuted}>{module.description}</p>
                   )}

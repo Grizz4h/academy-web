@@ -24,12 +24,14 @@ import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { LiveObservationPanel } from '../components/game/LiveObservationPanel'
 import ArenaCheckPanel from '../components/game/ArenaCheckPanel'
+import { UiActionRow, UiButton } from '../components/ui'
 import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
 import { PastDrillSessions } from '../features/reflection/PastDrillSessions'
 import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
 import { readPendingVenuePresence } from '../features/location'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import { getFoundationModule, isAcademyLocked } from '../features/foundation/recommendations'
+import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
 import setupStyles from './SessionSetup.module.css'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
@@ -178,7 +180,7 @@ export default function SessionSetup() {
   }, [draftKey, goal, confidence, league, teamHome, teamAway, season, competitionPhase, competitionValue, selectedDrill, observationScope, observedTeam, selectedGameId])
 
   const { data: curriculum } = useQuery({
-    queryKey: ['curriculum'],
+    queryKey: ['curriculum', user],
     queryFn: () => api.getCurriculum()
   })
 
@@ -235,7 +237,12 @@ export default function SessionSetup() {
     },
     onError: (error: any) => {
       creatingSessionRef.current = false
+      const status = Number(error?.status || 0)
       const msg = String(error?.message || 'Unbekannter Fehler')
+      if (status === 403) {
+        setCreateError(premiumLockMessage(moduleId))
+        return
+      }
       setCreateError(msg)
     }
   })
@@ -247,6 +254,7 @@ export default function SessionSetup() {
     (track) => track.trackType === 'foundation' && (track.modules || []).some((m) => m.id === moduleId),
   )
   const isFoundationModule = Boolean(foundationTrack)
+  const premiumLocked = isModulePremiumLocked(currentModule)
   const moduleInactive = currentModule?.active === false
   const moduleDeprecationNote = currentModule?.deprecation_note
     || 'Dieses Modul ist nicht mehr als regulärer Track aktiv.'
@@ -510,6 +518,22 @@ export default function SessionSetup() {
     )
   }
 
+  if (premiumLocked && !account?.is_admin) {
+    return (
+      <div className="ui-page-shell" style={{ maxWidth: '640px', margin: '0 auto' }}>
+        <header className="ui-page-header">
+          <h1 className="ui-page-title">{currentModule.title}</h1>
+          <p className="ui-page-lead">{premiumLockMessage(moduleId)}</p>
+        </header>
+        <UiActionRow>
+          <UiButton type="button" variant="ghost" onClick={() => navigate('/curriculum')}>
+            Zurück zum Lehrplan
+          </UiButton>
+        </UiActionRow>
+      </div>
+    )
+  }
+
   if (moduleInactive) {
     return (
       <div className="card" style={{ maxWidth: 640 }}>
@@ -530,6 +554,10 @@ export default function SessionSetup() {
 
   const handleCreateSession = () => {
     if (creatingSessionRef.current || createSessionMutation.isPending) return
+    if (premiumLocked && !account?.is_admin) {
+      setCreateError(premiumLockMessage(moduleId))
+      return
+    }
     if (!user?.trim()) {
       alert('Bitte oben im Login einen Namen speichern, damit wir die Session zuordnen können.')
       return
