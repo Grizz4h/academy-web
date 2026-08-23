@@ -3896,6 +3896,71 @@ async def get_my_entitlements(current_user: AuthContext = Depends(get_current_us
     return {"rinq_user_id": current_user.rinq_user_id, "entitlements": grants}
 
 
+def _require_postgres_billing() -> None:
+    from db.settings import storage_backend
+
+    if storage_backend() != "postgres":
+        raise HTTPException(status_code=503, detail="Billing requires Postgres storage")
+
+
+@app.get("/api/me/billing")
+async def get_my_billing(current_user: AuthContext = Depends(get_current_user)):
+    """Stripe plan snapshot + subscription rows (billing only — gates use entitlement_grants)."""
+    _require_postgres_billing()
+    from billing.persistence import get_billing_status
+
+    try:
+        status = get_billing_status(current_user.rinq_user_id)
+    except Exception as exc:
+        logging.exception("[billing] status read failed")
+        raise HTTPException(status_code=500, detail="Billing status unavailable") from exc
+    return {"rinq_user_id": current_user.rinq_user_id, **status}
+
+
+@app.post("/api/billing/checkout")
+async def billing_checkout(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Start Stripe Checkout for academy_premium — grant applied via verified webhook only."""
+    _require_postgres_billing()
+    rate_limit(request, "billing_checkout", limit=10, window_sec=3600.0)
+    from billing import settings as billing_settings
+    from billing.checkout import create_checkout_session
+
+    if not billing_settings.stripe_configured():
+        raise HTTPException(status_code=503, detail="Stripe is not configured")
+    try:
+        result = create_checkout_session(current_user)
+    except Exception as exc:
+        logging.exception("[billing] checkout session failed")
+        raise HTTPException(status_code=502, detail="Checkout unavailable") from exc
+    return {"ok": True, **result}
+
+
+@app.post("/api/webhooks/stripe")
+async def stripe_webhook(request: Request):
+    """Stripe webhook — signature verified; idempotent; syncs subscription → entitlement_grants."""
+    _require_postgres_billing()
+    rate_limit(request, "stripe_webhook", limit=600, window_sec=60.0)
+    from billing.webhook import construct_stripe_event, handle_stripe_event
+
+    payload = await request.body()
+    signature = request.headers.get("stripe-signature")
+    try:
+        event = construct_stripe_event(payload, signature)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logging.warning("[billing] webhook signature invalid")
+        raise HTTPException(status_code=400, detail="Invalid webhook signature") from exc
+    try:
+        return handle_stripe_event(event)
+    except Exception as exc:
+        logging.exception("[billing] webhook handler failed id=%s", event.get("id"))
+        raise HTTPException(status_code=500, detail="Webhook processing failed") from exc
+
+
 @app.post("/api/admin/entitlements/grant")
 async def admin_grant_entitlement(
     payload: EntitlementGrantPayload,

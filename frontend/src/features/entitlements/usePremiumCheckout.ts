@@ -1,0 +1,20 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '../../api'
+
+export function usePremiumCheckout() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.createBillingCheckout(),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['entitlements'] })
+      queryClient.invalidateQueries({ queryKey: ['curriculum'] })
+      if (data.checkout_url) {
+        window.location.assign(data.checkout_url)
+      }
+    },
+  })
+}
+
+export function canOfferPremiumCheckout(user: string | null): boolean {
+  return Boolean(user)
+}

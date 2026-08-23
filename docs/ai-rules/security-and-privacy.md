@@ -171,9 +171,9 @@ Phase **5A (implementiert):**
 - Manuelle Admin-Grants (`source`: manual / promo / system) für Dev & Beta; Stripe erst später.
 - Frontend darf Premium-Status **nicht** setzen; Client Claims / localStorage nicht vertrauen.
 
-Noch offen (5D): Stripe-Webhooks → Grant-Sync.
+Noch offen (5D Ops): Stripe Dashboard Price + Webhook endpoint konfigurieren; Env `STRIPE_*` serverseitig setzen.
 
-Phase **5C (implementiert):** Frontend liest `premium_locked` aus `/api/curriculum` und `/api/me/entitlements` — keine clientseitige Premium-Flag-Setzung; SessionSetup blockiert A2+ vor Start.
+Phase **5D (implementiert):** Stripe Checkout (`POST /api/billing/checkout`), signierte Webhooks (`POST /api/webhooks/stripe`), Idempotenz via `processed_webhook_events`, Sync → `subscriptions` + `entitlement_grants` (`source=subscription`). Keine Payment-Rohdaten in Git/Frontend.
 
 ### 9. Premium Content
 

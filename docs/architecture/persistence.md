@@ -85,7 +85,9 @@ Constraints / FKs designed in 4C:
 
 **Done (5C):** Frontend premium UX — `premium_locked` in Curriculum/SessionSetup, `GET /api/me/entitlements` hook (display only; no checkout).
 
-**Later:** Stripe (5D); scenes/observations tables.
+**Done (5D):** Stripe Checkout + verified webhooks → `subscriptions` + `entitlement_grants` (`source=subscription`). Env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`.
+
+**Later:** scenes/observations tables.
 
 **Out of scope forever for this layer (static content):** curriculum, foundation, teams, rosters, games, sidequests — stay file/catalog based unless product needs otherwise.
 

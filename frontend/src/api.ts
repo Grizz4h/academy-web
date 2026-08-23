@@ -1630,6 +1630,27 @@ export const api = {
     return res.json()
   },
 
+  createBillingCheckout: async (): Promise<{ ok: boolean; checkout_url: string; session_id: string }> => {
+    const res = await fetch(buildUrl('/billing/checkout'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Checkout konnte nicht gestartet werden')
+    return res.json()
+  },
+
+  getMyBilling: async (): Promise<{
+    rinq_user_id: string
+    plan: Record<string, unknown> | null
+    subscriptions: Array<Record<string, unknown>>
+  }> => {
+    const res = await fetch(buildUrl('/me/billing'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Billing-Status konnte nicht geladen werden')
+    return res.json()
+  },
+
   linkGoogleAccount: async (accessToken: string): Promise<{
     ok: boolean
     rinq_user_id: string

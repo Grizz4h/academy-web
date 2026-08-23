@@ -31,7 +31,7 @@ import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
 import { readPendingVenuePresence } from '../features/location'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import { getFoundationModule, isAcademyLocked } from '../features/foundation/recommendations'
-import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
+import { isModulePremiumLocked, premiumLockMessage, usePremiumCheckout } from '../features/entitlements'
 import setupStyles from './SessionSetup.module.css'
 
 // NHL Teams mit Division als Metadaten (Fallback falls API nicht lädt)
@@ -86,6 +86,7 @@ export default function SessionSetup() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user } = useUser()
+  const premiumCheckout = usePremiumCheckout()
   const [goal, setGoal] = useState<string>('')
   const [observedTeam, setObservedTeam] = useState<string>('')
   const [confidence, setConfidence] = useState<number>(3)
@@ -526,10 +527,25 @@ export default function SessionSetup() {
           <p className="ui-page-lead">{premiumLockMessage(moduleId)}</p>
         </header>
         <UiActionRow>
+          {user ? (
+            <UiButton
+              type="button"
+              variant="primary"
+              disabled={premiumCheckout.isPending}
+              onClick={() => premiumCheckout.mutate()}
+            >
+              {premiumCheckout.isPending ? 'Weiterleitung…' : 'Premium freischalten'}
+            </UiButton>
+          ) : null}
           <UiButton type="button" variant="ghost" onClick={() => navigate('/curriculum')}>
             Zurück zum Lehrplan
           </UiButton>
         </UiActionRow>
+        {premiumCheckout.error ? (
+          <p style={{ color: 'rgba(255, 140, 140, 0.95)', marginTop: '0.75rem' }}>
+            {(premiumCheckout.error as Error).message}
+          </p>
+        ) : null}
       </div>
     )
   }

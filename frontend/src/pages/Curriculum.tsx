@@ -9,7 +9,7 @@ import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { UiActionRow, UiButton, UiPill } from '../components/ui'
 import { useUser } from '../context/UserContext'
-import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
+import { isModulePremiumLocked, premiumLockMessage, usePremiumCheckout } from '../features/entitlements'
 import {
   getFoundationTrack,
   isAcademyLocked,
@@ -68,6 +68,7 @@ function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> 
 export default function Curriculum() {
   const navigate = useNavigate()
   const { user, userId } = useUser()
+  const premiumCheckout = usePremiumCheckout()
   const tutorial = useTutorialOptional()
   const devMode = useDevNavEnabled()
   const { data: curriculum, isLoading, error } = useQuery({
@@ -253,6 +254,18 @@ export default function Curriculum() {
                   <p className={styles.moduleText}>{module.summary}</p>
                   {premiumLocked ? (
                     <p className={styles.moduleMuted}>{premiumLockMessage(module.id)}</p>
+                  ) : null}
+                  {premiumLocked && user ? (
+                    <UiActionRow className={styles.moduleActions}>
+                      <UiButton
+                        type="button"
+                        size="sm"
+                        disabled={premiumCheckout.isPending}
+                        onClick={() => premiumCheckout.mutate()}
+                      >
+                        {premiumCheckout.isPending ? 'Weiterleitung…' : 'Premium freischalten'}
+                      </UiButton>
+                    </UiActionRow>
                   ) : null}
                   {module.description && (
                     <p className={styles.moduleMuted}>{module.description}</p>
