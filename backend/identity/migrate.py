@@ -7,10 +7,21 @@ import os
 import re
 import shutil
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Protocol, Tuple
 
 from .context import LEGACY_PASSWORD_PROVIDER
 from .store import IdentityStore, normalize_subject
+
+
+class _LegacyIdentityEnsurer(Protocol):
+    def ensure_legacy_identity(
+        self,
+        username: str,
+        *,
+        display_name: Optional[str] = None,
+        created_at: Optional[str] = None,
+    ):
+        ...
 
 
 def _utc_stamp() -> str:
@@ -69,10 +80,13 @@ def backup_runtime_trees(paths: List[str], backup_root: str) -> str:
 
 
 def ensure_identities_for_users(
-    store: IdentityStore,
+    identity_repo: _LegacyIdentityEnsurer,
     users_file: str,
 ) -> Dict[str, str]:
-    """Return map normalized_username → rinq_user_id. Idempotent."""
+    """Return map normalized_username → rinq_user_id. Idempotent.
+
+    Uses IdentityRepository (JSON or Postgres) — not IdentityStore directly.
+    """
     mapping: Dict[str, str] = {}
     if not os.path.exists(users_file):
         return mapping
@@ -82,7 +96,7 @@ def ensure_identities_for_users(
         subject = normalize_subject(username)
         if not subject:
             continue
-        ctx = store.ensure_legacy_identity(
+        ctx = identity_repo.ensure_legacy_identity(
             subject,
             display_name=username,
             created_at=user.get("created_at"),
@@ -313,7 +327,12 @@ def run_identity_migration(
             backup_root,
         )
 
-    mapping = ensure_identities_for_users(store, users_file)
+    from repositories.json_identity import JsonIdentityRepository
+
+    mapping = ensure_identities_for_users(
+        JsonIdentityRepository(lambda: store),
+        users_file,
+    )
     report["mapping"] = mapping
     if not mapping:
         return report

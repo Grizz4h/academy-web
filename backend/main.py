@@ -4270,7 +4270,7 @@ def _identity_startup_ensure() -> None:
     try:
         from identity.migrate import ensure_identities_for_users
 
-        mapping = ensure_identities_for_users(_identity_store, USERS_FILE)
+        mapping = ensure_identities_for_users(_identity_repo(), USERS_FILE)
         logging.info("[identity] ensure_identities users=%s", len(mapping))
     except Exception:
         logging.exception("[identity] startup ensure failed")
