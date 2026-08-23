@@ -74,12 +74,11 @@ class PostgresRewardRepository:
 
     def delete_reward_state(self, user: AuthContext) -> bool:
         try:
-            with connection() as conn:
+            with transaction() as conn:
                 cur = conn.execute(
                     "DELETE FROM reward_states WHERE rinq_user_id = %s::uuid",
                     (user.rinq_user_id,),
                 )
-                conn.commit()
                 return cur.rowcount > 0
         except Exception as exc:
             raise StorageError(str(exc)) from exc

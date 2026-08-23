@@ -196,12 +196,11 @@ class PostgresSessionRepository:
     def delete_session_for_user(self, session_id: str, owner: AuthContext) -> bool:
         self.get_session_for_user(session_id, owner)  # ownership / 404
         try:
-            with connection() as conn:
+            with transaction() as conn:
                 cur = conn.execute(
                     "DELETE FROM sessions WHERE session_id = %s AND rinq_user_id = %s::uuid",
                     (session_id, owner.rinq_user_id),
                 )
-                conn.commit()
                 return cur.rowcount > 0
         except Exception as exc:
             raise StorageError(str(exc)) from exc

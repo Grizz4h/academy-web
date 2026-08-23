@@ -67,79 +67,81 @@ class PostgresUserCredentialRepository:
         return [self._to_record(r) for r in rows]
 
     def upsert_user(self, record: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            with transaction() as conn:
+                return self._upsert_user_on_conn(conn, record)
+        except ValueError:
+            raise
+        except Exception as exc:
+            raise StorageError(str(exc)) from exc
+
+    def _upsert_user_on_conn(self, conn, record: Dict[str, Any]) -> Dict[str, Any]:
         key = normalize_subject(record.get("username") or "")
         if not key:
             raise ValueError("username required")
         password_hash = record.get("password_hash")
         if not password_hash:
             raise ValueError("password_hash required")
-        try:
-            with transaction() as conn:
-                rinq = (record.get("rinq_user_id") or "").strip()
-                if not rinq:
-                    found = conn.execute(
-                        "SELECT rinq_user_id::text FROM app_users WHERE legacy_username = %s",
-                        (key,),
-                    ).fetchone()
-                    if not found:
-                        raise ValueError(
-                            f"no app_users row for legacy username={key}; "
-                            "ensure identity before credential upsert"
-                        )
-                    rinq = found["rinq_user_id"]
-                created = parse_timestamptz(record.get("created_at")) or _utc_now()
-                updated = parse_timestamptz(record.get("updated_at")) or _utc_now()
-                pwd_updated = parse_timestamptz(record.get("password_updated_at"))
-                conn.execute(
-                    """
-                    INSERT INTO legacy_credentials (
-                      rinq_user_id, username, password_hash, role,
-                      created_at, updated_at, password_updated_at
-                    ) VALUES (%s::uuid, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (username) DO UPDATE SET
-                      password_hash = EXCLUDED.password_hash,
-                      role = COALESCE(EXCLUDED.role, legacy_credentials.role),
-                      updated_at = EXCLUDED.updated_at,
-                      password_updated_at = COALESCE(
-                        EXCLUDED.password_updated_at, legacy_credentials.password_updated_at
-                      ),
-                      rinq_user_id = EXCLUDED.rinq_user_id
-                    """,
-                    (
-                        rinq,
-                        key,
-                        str(password_hash),
-                        record.get("role"),
-                        created,
-                        updated,
-                        pwd_updated,
-                    ),
+        rinq = (record.get("rinq_user_id") or "").strip()
+        if not rinq:
+            found = conn.execute(
+                "SELECT rinq_user_id::text FROM app_users WHERE legacy_username = %s",
+                (key,),
+            ).fetchone()
+            if not found:
+                raise ValueError(
+                    f"no app_users row for legacy username={key}; "
+                    "ensure identity before credential upsert"
                 )
-                row = conn.execute(
-                    """
-                    SELECT rinq_user_id::text, username, password_hash, role,
-                           created_at, updated_at, password_updated_at
-                    FROM legacy_credentials WHERE username = %s
-                    """,
-                    (key,),
-                ).fetchone()
-                return self._to_record(row)
-        except ValueError:
-            raise
-        except Exception as exc:
-            raise StorageError(str(exc)) from exc
+            rinq = found["rinq_user_id"]
+        created = parse_timestamptz(record.get("created_at")) or _utc_now()
+        updated = parse_timestamptz(record.get("updated_at")) or _utc_now()
+        pwd_updated = parse_timestamptz(record.get("password_updated_at"))
+        conn.execute(
+            """
+            INSERT INTO legacy_credentials (
+              rinq_user_id, username, password_hash, role,
+              created_at, updated_at, password_updated_at
+            ) VALUES (%s::uuid, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (username) DO UPDATE SET
+              password_hash = EXCLUDED.password_hash,
+              role = COALESCE(EXCLUDED.role, legacy_credentials.role),
+              updated_at = EXCLUDED.updated_at,
+              password_updated_at = COALESCE(
+                EXCLUDED.password_updated_at, legacy_credentials.password_updated_at
+              ),
+              rinq_user_id = EXCLUDED.rinq_user_id
+            """,
+            (
+                rinq,
+                key,
+                str(password_hash),
+                record.get("role"),
+                created,
+                updated,
+                pwd_updated,
+            ),
+        )
+        row = conn.execute(
+            """
+            SELECT rinq_user_id::text, username, password_hash, role,
+                   created_at, updated_at, password_updated_at
+            FROM legacy_credentials WHERE username = %s
+            """,
+            (key,),
+        ).fetchone()
+        return self._to_record(row)
 
     def delete_legacy_credential(self, username: str) -> bool:
         key = normalize_subject(username)
         if not key:
             return False
         try:
-            with connection() as conn:
+            with transaction() as conn:
                 cur = conn.execute(
                     "DELETE FROM legacy_credentials WHERE username = %s",
                     (key,),
                 )
-                conn.commit()
                 return cur.rowcount > 0
         except Exception as exc:
             raise StorageError(str(exc)) from exc
@@ -149,9 +151,17 @@ class PostgresUserCredentialRepository:
 
     def save_bundle(self, data: Dict[str, Any]) -> None:
         users = (data or {}).get("users") or []
-        for record in users:
-            if isinstance(record, dict):
-                self.upsert_user(record)
+        if not users:
+            return
+        try:
+            with transaction() as conn:
+                for record in users:
+                    if isinstance(record, dict):
+                        self._upsert_user_on_conn(conn, record)
+        except ValueError:
+            raise
+        except Exception as exc:
+            raise StorageError(str(exc)) from exc
 
     def _to_record(self, row: Dict[str, Any]) -> Dict[str, Any]:
         out: Dict[str, Any] = {

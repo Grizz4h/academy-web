@@ -320,7 +320,12 @@ app.add_middleware(
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok"}
+    from db.health import build_health_payload
+
+    payload, status_code = build_health_payload()
+    from fastapi.responses import JSONResponse
+
+    return JSONResponse(content=payload, status_code=status_code)
 
 # Daten-Verzeichnis
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
@@ -4251,6 +4256,13 @@ app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 
 @app.on_event("startup")
+def _storage_startup_log() -> None:
+    from db.settings import storage_backend
+
+    logging.info("[storage] backend=%s", storage_backend())
+
+
+@app.on_event("startup")
 def _identity_startup_ensure() -> None:
     """Ensure legacy users have identity rows. Full file migration: `python -m identity.migrate_cli`."""
     if os.environ.get("ACADEMY_SKIP_IDENTITY_MIGRATION") == "1":
@@ -4262,6 +4274,20 @@ def _identity_startup_ensure() -> None:
         logging.info("[identity] ensure_identities users=%s", len(mapping))
     except Exception:
         logging.exception("[identity] startup ensure failed")
+
+
+@app.on_event("shutdown")
+def _postgres_shutdown() -> None:
+    try:
+        from db.settings import storage_backend
+
+        if storage_backend() != "postgres":
+            return
+        from db.pool import close_pool
+
+        close_pool()
+    except Exception:
+        logging.exception("[db] shutdown pool close failed")
 
 
 if __name__ == "__main__":

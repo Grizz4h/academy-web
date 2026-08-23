@@ -110,6 +110,7 @@ class WiringDefaultJsonTests(unittest.TestCase):
             get_profiles_dir=lambda: str(root / "profiles"),
             get_rewards_dir=lambda: str(root / "rewards"),
             get_sessions_dir=lambda: str(root / "sessions"),
+            storage_backend="json",
         )
         self.assertEqual(repos.backend, "json")
         self.assertEqual(get_repos().backend, "json")

@@ -1,6 +1,6 @@
-# Postgres migration (Phase 4D)
+# Postgres migration & production ops (Phase 4D–4F)
 
-**Status:** tooling + repositories in repo. **JSON remains source of truth** until you explicitly cut over.  
+**Status (2026-08-23):** Wave 1 **cut over to Postgres** on production server (`STORAGE_BACKEND=postgres`). JSON retained as rollback snapshot only.  
 **Schema:** `backend/migrations/001_runtime_schema.sql`  
 **Repos:** `STORAGE_BACKEND=json|postgres` (default `json`)
 
@@ -16,12 +16,93 @@ Cursor prepares code only. You (or ops) do these outside the repo:
 | 2 | Copy Database connection string → set `DATABASE_URL` on server | Project Settings → Database → Connection string |
 | 3 | Apply `001_runtime_schema.sql` once | SQL Editor **or** `psql "$DATABASE_URL" -f …` |
 | 4 | Approve dry-run report | after `python -m migration.cli dry-run` |
-| 5 | Approve import to **staging** first | `python -m migration.cli import --confirm` |
+| 5 | Approve import | `python -m migration.cli import --confirm` |
 | 6 | Review `verify` anchors | Christoph / Martin / Tobi |
-| 7 | Only then consider `STORAGE_BACKEND=postgres` on a chosen environment | `.env.local` on server |
-| 8 | Production cutover | **separate explicit approval** — not part of “run the tool once” |
+| 7 | Cutover | `STORAGE_BACKEND=postgres` + restart (`academy-web.service`) |
+| 8 | Ongoing ops | health + `db.healthcheck` + Supabase backups (Dashboard) |
 
 Never put `DATABASE_URL` in `VITE_*`, frontend, or Git.
+
+---
+
+## Phase 4F — Production hardening (Wave 1 on Postgres)
+
+### Startup / fail-fast
+
+- `STORAGE_BACKEND=postgres` + missing/invalid `DATABASE_URL` → **startup fails** (no JSON fallback).
+- Pool opens with a `SELECT 1` ping; failure aborts startup.
+- Pool closes on app shutdown (`close_pool`).
+
+### Health endpoints
+
+```bash
+curl -s http://127.0.0.1:8000/api/health
+```
+
+JSON backend:
+
+```json
+{"status":"ok","storage":"json"}
+```
+
+Postgres backend (healthy):
+
+```json
+{"status":"ok","storage":"postgres","database":"ok"}
+```
+
+Postgres backend (DB down) → HTTP **503**:
+
+```json
+{"status":"degraded","storage":"postgres","database":"error"}
+```
+
+No secrets or connection strings in responses.
+
+### Read-only ops check
+
+```bash
+cd /opt/academy-web/backend
+set -a && source ../.env.local && set +a
+.venv/bin/python -m db.healthcheck
+```
+
+Reports: DB ping, Wave-1 table presence, row counts. **No writes.**
+
+Full JSON↔Postgres parity (anchors):
+
+```bash
+.venv/bin/python -m migration.cli verify
+```
+
+### Connection pool defaults
+
+| Setting | Env | Default | Notes |
+|---------|-----|---------|-------|
+| Min connections | `ACADEMY_PG_POOL_MIN` | `1` | Single worker API |
+| Max connections | `ACADEMY_PG_POOL_MAX` | `5` | Keep small with Supabase Session pooler |
+| Connect timeout (s) | `ACADEMY_PG_CONNECT_TIMEOUT` | `10` | Fail fast on network issues |
+
+Override only after measuring — no premature tuning.
+
+### Logging (server logs)
+
+- `[storage] backend=…` at startup
+- `[storage] selected backend=…` when repositories bind
+- `[db] pool ready …` / `[db] pool startup failed` / `[db] pool closed`
+- `[db] connection error` / `[db] transaction failed` (exception **type only**, no SQL/URLs/tokens)
+
+### Transactions & locking (Wave 1)
+
+| Operation | Pattern |
+|-----------|---------|
+| `apply_reward_delta` | `FOR UPDATE` + single transaction |
+| `create_auth_link` / `remove_auth_link` | transaction + row locks where needed |
+| credential upsert / `save_bundle` | single transaction |
+| session create/delete | transaction; delete scoped by `rinq_user_id` |
+| profile save/delete | transaction |
+
+DB constraints enforce FK, auth-link global uniqueness, non-negative XP/PUX, session ownership via `rinq_user_id`.
 
 ---
 
@@ -117,11 +198,35 @@ DATABASE_URL=…
 
 ---
 
-## 7. Rollback
+## 7. Rollback & backup
 
-- **Runtime:** set `STORAGE_BACKEND=json` and restart. JSON files were not deleted by import.
-- **DB:** optional `TRUNCATE` of Wave-1 tables on staging only (never casually on production).
-- Restore JSON from `data/backups/pre_pg_migrate_*` if something overwrote files (import itself does not delete sources).
+### Runtime rollback (instant)
+
+```bash
+# .env.local
+STORAGE_BACKEND=json
+sudo systemctl restart academy-web
+```
+
+JSON under `data/academy/` was not deleted by import or cutover.
+
+### JSON snapshots (app-level)
+
+| Path | When |
+|------|------|
+| `data/backups/pre_pg_migrate_*` | Before each `migration.cli import` |
+| `data/backups/pre_cutover_4e_*` | Before Phase 4E cutover |
+
+Restore files from a snapshot only if JSON was corrupted — not needed for normal Postgres rollback.
+
+### Supabase backup (MANUAL ACTION REQUIRED)
+
+Enable **Point-in-Time Recovery** / scheduled backups in Supabase Dashboard → Database → Backups.  
+App-level JSON snapshots do **not** replace managed DB backups.
+
+### DB reset (staging only)
+
+Optional `TRUNCATE` of Wave-1 tables on staging — never casually on production.
 
 ---
 
@@ -129,18 +234,18 @@ DATABASE_URL=…
 
 ```bash
 cd /opt/academy-web/backend
-.venv/bin/python test_repositories_4d.py          # no DB required
+.venv/bin/python test_repositories_4d.py     # no DB required
 .venv/bin/python test_schema_4c.py
-# Live Postgres (staging/local only):
-TEST_DATABASE_URL=postgresql://… .venv/bin/python test_repositories_4d.py
+.venv/bin/python test_db_hardening_4f.py     # pool/health unit tests; live constraints if DATABASE_URL set
+# Live Postgres constraint probes (optional):
+TEST_DATABASE_URL=postgresql://… .venv/bin/python test_db_hardening_4f.py
 ```
 
 ---
 
-## What this phase does **not** do
+## What is **not** in scope yet
 
-- Production cutover
-- Delete JSON
+- Delete JSON source files
 - Dual-write
 - Stripe / entitlements / webhooks
-- Scenes / observations tables
+- Scenes / observations Postgres migration

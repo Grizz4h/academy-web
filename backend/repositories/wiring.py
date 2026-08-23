@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -33,6 +34,7 @@ class Repositories:
 
 
 _repos: Optional[Repositories] = None
+_logger = logging.getLogger(__name__)
 
 
 def configure_repositories(
@@ -56,6 +58,7 @@ def configure_repositories(
             sessions=JsonSessionRepository(get_sessions_dir),
             backend="json",
         )
+        _logger.info("[storage] selected backend=json")
         return _repos
 
     if backend == "postgres":
@@ -79,6 +82,7 @@ def configure_repositories(
             sessions=PostgresSessionRepository(),
             backend="postgres",
         )
+        _logger.info("[storage] selected backend=postgres")
         return _repos
 
     raise RuntimeError(

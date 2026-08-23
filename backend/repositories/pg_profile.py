@@ -82,12 +82,11 @@ class PostgresProfileRepository:
 
     def delete_profile(self, user: AuthContext) -> bool:
         try:
-            with connection() as conn:
+            with transaction() as conn:
                 cur = conn.execute(
                     "DELETE FROM profiles WHERE rinq_user_id = %s::uuid",
                     (user.rinq_user_id,),
                 )
-                conn.commit()
                 return cur.rowcount > 0
         except Exception as exc:
             raise StorageError(str(exc)) from exc
