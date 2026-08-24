@@ -217,7 +217,7 @@ export function resolvePatternLogConfig(config: PatternLogConfig = {}) {
     finishLabel: config.finish_label || 'Muster einschätzen',
     observeHint:
       config.observe_hint
-      || 'Sobald du eine mögliche Pattern-Situation siehst, erfasse sie.',
+      || 'Sobald du eine mögliche Situation siehst, erfasse sie.',
     searchNextHint:
       config.search_next_hint
       || 'Suche jetzt nach einer weiteren Situation, die diesem Verhalten ähnelt.',
@@ -227,8 +227,8 @@ export function resolvePatternLogConfig(config: PatternLogConfig = {}) {
     decisionRule:
       config.decision_rule
       || 'Wenn nur das Ergebnis ähnlich ist, aber der Weg dorthin unterschiedlich war, behandle es noch nicht als Muster.',
-    summaryTitle: config.summary_title || 'Mögliches Muster',
-    fingerprintTitle: config.fingerprint_title || 'Pattern Fingerprint',
+    summaryTitle: config.summary_title || 'Hinweis auf eine mögliche Tendenz',
+    fingerprintTitle: config.fingerprint_title || 'Vergleichsmerkmale',
     zones: config.zones || DEFAULT_ZONE_OPTIONS,
     triggers: config.triggers || DEFAULT_TRIGGER_OPTIONS,
     sides: config.sides || DEFAULT_SIDE_OPTIONS,

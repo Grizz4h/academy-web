@@ -42,6 +42,7 @@ export type PrimaryChangeValue =
   | 'decisionBehavior'
   | 'other'
   | 'no_clear_change'
+  | 'situations_not_comparable'
   | 'unclear'
 
 export type ChangeMagnitude =
@@ -51,7 +52,13 @@ export type ChangeMagnitude =
   | 'too_variable'
   | 'unclear'
 
-export type CompareConfidence = 'low' | 'medium' | 'high'
+export type CompareConfidence = 'low' | 'medium' | 'high' | 'not_assessable'
+
+export type ComparabilityRating =
+  | 'well_comparable'
+  | 'partly_comparable'
+  | 'not_comparable'
+  | 'not_assessable'
 
 export type CompareStatus = 'same' | 'changed' | 'unclear' | 'not_relevant'
 
@@ -75,10 +82,13 @@ export type BeforeAfterCompareConfig = {
   changeMagnitudeKey: string
   changeSummaryKey: string
   confidenceKey: string
+  comparabilityKey: string
+  comparabilityLimitKey: string
   stateFields: StateFieldConfig[]
   requirePrimaryChange: boolean
   requireSummary: boolean
   requireConfidence: boolean
+  requireComparability: boolean
   summaryMinChars: number
   beforeTitle: string
   afterTitle: string

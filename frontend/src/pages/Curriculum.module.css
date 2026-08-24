@@ -67,8 +67,20 @@
   margin: 0;
   font-size: 1.05rem;
   color: rgba(240, 248, 255, 0.96);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  hyphens: none;
+  /* Desktop: prefer natural breaks; avoid mid-word wraps that leave "A –" alone. */
+  overflow-wrap: normal;
+  word-break: normal;
+  text-wrap: pretty;
+}
+
+@media (max-width: 768px) {
+  .trackTitle {
+    /* Mobile already wraps cleanly; allow wrapping under tight width. */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-wrap: wrap;
+  }
 }
 
 .trackMeta {

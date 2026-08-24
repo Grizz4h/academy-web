@@ -76,7 +76,8 @@ export function RateDefinitionFields({
     <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
       <h3 className={styles.panelTitle}>Messfrage definieren</h3>
       <p className={styles.lead}>
-        Alle Situationen, in denen das Target Event hätte eintreten können, gehören in den Nenner.
+        Lege vor der Erfassung fest, was eine gültige Ausgangssituation ist und was als Zielereignis zählt.
+        Jede gültige Ausgangssituation wird dokumentiert — auch wenn das Zielereignis nicht eintritt oder unklar bleibt.
         {metricScopeNote ? ` ${metricScopeNote}` : ''}
       </p>
 
@@ -112,12 +113,12 @@ export function RateDefinitionFields({
       {definition && (
         <>
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Welche Situationen zählen als Opportunity?</div>
+            <div className={styles.fieldLabel}>Welche Situationen zählen als gültige Ausgangssituation?</div>
             <input
               className={styles.input}
               value={definition.opportunityLabel}
               maxLength={160}
-              placeholder="z. B. jeder gegnerische Zone-Entry-Versuch"
+              placeholder="z. B. Versuche, die gegnerische Zone zu betreten"
               onChange={(event) => onChange(updateDefinitionLabels(definition, {
                 opportunityLabel: event.target.value,
                 questionManual: definition.questionManual,
@@ -126,12 +127,12 @@ export function RateDefinitionFields({
           </div>
 
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Welches Outcome möchtest du zählen?</div>
+            <div className={styles.fieldLabel}>Welches Zielereignis möchtest du zählen?</div>
             <input
               className={styles.input}
               value={definition.targetEventLabel}
               maxLength={160}
-              placeholder="z. B. kontrollierter Entry mit Puckbesitz"
+              placeholder="z. B. kontrollierter Zoneneintritt mit Puckbesitz"
               onChange={(event) => onChange(updateDefinitionLabels(definition, {
                 targetEventLabel: event.target.value,
                 questionManual: definition.questionManual,
@@ -152,8 +153,37 @@ export function RateDefinitionFields({
             />
           </div>
 
+          {(definition.situationStart || definition.situationEnd || definition.inclusionRules || definition.exclusionRules) && (
+            <details className={`${styles.examplesHelp} ui-flat-mobile mobile-flatten`}>
+              <summary className={styles.examplesSummary}>Einschluss-, Ausschluss- und Grenzregeln</summary>
+              <div className={styles.examplesBody}>
+                {definition.situationStart && (
+                  <p className={styles.exampleDescription}><strong>Beginn:</strong> {definition.situationStart}</p>
+                )}
+                {definition.situationEnd && (
+                  <p className={styles.exampleDescription}><strong>Ende:</strong> {definition.situationEnd}</p>
+                )}
+                {definition.inclusionRules && (
+                  <p className={styles.exampleDescription}><strong>Einschluss:</strong> {definition.inclusionRules}</p>
+                )}
+                {definition.exclusionRules && (
+                  <p className={styles.exampleDescription}><strong>Ausschluss:</strong> {definition.exclusionRules}</p>
+                )}
+                {definition.otherOutcomesNote && (
+                  <p className={styles.exampleDescription}><strong>Andere Ergebnisse:</strong> {definition.otherOutcomesNote}</p>
+                )}
+                {definition.unclearOutcomeNote && (
+                  <p className={styles.exampleDescription}><strong>Unklarer Ausgang:</strong> {definition.unclearOutcomeNote}</p>
+                )}
+                {definition.boundaryExamples && (
+                  <p className={styles.exampleDescription}><strong>Grenzfall:</strong> {definition.boundaryExamples}</p>
+                )}
+              </div>
+            </details>
+          )}
+
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Mögliche Outcomes</div>
+            <div className={styles.fieldLabel}>Mögliche Ergebnisse</div>
             <div className={styles.outcomeEditor}>
               {definition.outcomes.map((outcome) => (
                 <OutcomeEditorRow
@@ -177,7 +207,7 @@ export function RateDefinitionFields({
               className={styles.secondaryBtn}
               onClick={() => onChange(addBlankOutcome(definition, unclearOutcomeId))}
             >
-              + Outcome
+              + Ergebnis
             </button>
           </div>
         </>
@@ -221,7 +251,7 @@ function OutcomeEditorRow({
         className={styles.input}
         value={outcome.label}
         maxLength={80}
-        placeholder={isUnclear ? 'Unklar' : 'Outcome-Label'}
+        placeholder={isUnclear ? 'Unklar' : 'Ergebnis-Label'}
         onChange={(event) => onLabelChange(event.target.value)}
       />
       <div className={styles.outcomeRowActions}>
@@ -231,7 +261,7 @@ function OutcomeEditorRow({
             className={isTarget ? styles.templateBtnActive : styles.secondaryBtn}
             onClick={onTarget}
           >
-            {isTarget ? 'Target' : 'Als Target'}
+            {isTarget ? 'Zielereignis' : 'Als Zielereignis'}
           </button>
         )}
         {!isUnclear && !isTarget && (

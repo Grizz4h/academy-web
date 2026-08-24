@@ -27,7 +27,7 @@ export const POSSIBLE_TRIGGER_OPTIONS: ProfileOption[] = [
   { value: 'pressure_change', label: 'Veränderter Druck' },
   { value: 'matchup', label: 'Matchup' },
   { value: 'personnel_change', label: 'Anderes Personal / andere Reihe' },
-  { value: 'game_state', label: 'Game State / Spielstand / Zeit' },
+  { value: 'game_state', label: 'Spielkontext / Spielstand / Zeit' },
   { value: 'special_situation', label: 'Spezielle Spielsituation' },
   { value: 'tempo_change', label: 'Tempoänderung' },
   { value: 'other', label: 'Anderes' },
@@ -50,18 +50,18 @@ export const STABLE_ELEMENT_OPTIONS: ProfileOption[] = [
 export const INTERACTION_RESPONSE_OPTIONS: ProfileOption[] = [
   {
     value: 'problem_reduced',
-    label: 'Problem trat seltener auf',
-    description: 'Die vorherige Schwäche war weniger sichtbar.',
+    label: 'Interaktion trat seltener so auf',
+    description: 'Die vorherige Interaktion war weniger so sichtbar.',
   },
   {
     value: 'problem_shifted',
-    label: 'Problem verlagerte sich',
+    label: 'Problemverlagerung',
     description: 'Ein Raum wurde stabiler, dafür entstand ein anderer.',
   },
   {
     value: 'opponent_found_new_solution',
     label: 'Gegner fand eine neue Lösung',
-    description: 'Das Adjustment führte zu einer anderen gegnerischen Reaktion.',
+    description: 'Die Veränderung hing mit einer anderen gegnerischen Reaktion zusammen.',
   },
   {
     value: 'interaction_became_more_balanced',
@@ -76,26 +76,26 @@ export const INTERACTION_RESPONSE_OPTIONS: ProfileOption[] = [
 export const ASSESSMENT_OPTIONS: ProfileOption[] = [
   {
     value: 'strong_adjustment_signal',
-    label: 'Starkes Adjustment-Signal',
-    description: 'Vorher/Nachher ist klar, Veränderung bleibt bestehen und passt zeitlich zu einem möglichen Problem.',
+    label: 'Mehrfach und vergleichbar beobachtet',
+    description: 'Vorher/Nachher ist klar, Veränderung bleibt in vergleichbaren Situationen bestehen.',
   },
   {
     value: 'likely_adjustment',
-    label: 'Wahrscheinliches Adjustment',
+    label: 'Teilweise beziehungsweise gemischt beobachtet',
     description: 'Mehrere Hinweise passen zusammen, aber nicht alles ist eindeutig.',
   },
   {
     value: 'possible_adjustment',
-    label: 'Mögliches Adjustment',
-    description: 'Veränderung erkennbar, Zusammenhang noch dünn.',
+    label: 'Nur einzelne Abweichung / dünne Grundlage',
+    description: 'Veränderung erkennbar, Beobachtungsgrundlage noch dünn.',
   },
   {
     value: 'probably_context_variation',
-    label: 'Eher Kontextvariation',
+    label: 'Eher Kontextvariation als Spielanpassung',
     description: 'Unterschied könnte durch veränderte Spielsituation entstanden sein.',
   },
   { value: 'single_deviation', label: 'Eher einzelne Abweichung' },
-  { value: 'insufficient_evidence', label: 'Zu wenig Evidenz' },
+  { value: 'insufficient_evidence', label: 'Nicht ausreichend beobachtet' },
   { value: 'unclear', label: 'Unklar' },
 ]
 
@@ -113,11 +113,11 @@ export const PRIMARY_PICK_EXTRA_OPTIONS: ProfileOption[] = [
 ]
 
 export const NEXT_WATCH_OPTIONS: ProfileOption[] = [
-  { value: 'holds_adjustment_1', label: 'Hält Adjustment 1?' },
-  { value: 'holds_adjustment_2', label: 'Hält Adjustment 2?' },
+  { value: 'holds_adjustment_1', label: 'Hält mögliche Anpassung 1?' },
+  { value: 'holds_adjustment_2', label: 'Hält mögliche Anpassung 2?' },
   { value: 'old_behavior_returns', label: 'Kehrt das alte Verhalten zurück?' },
   { value: 'opponent_reacts_again', label: 'Reagiert der Gegner erneut?' },
-  { value: 'new_problem', label: 'Entsteht ein neues Problem?' },
+  { value: 'new_problem', label: 'Entsteht eine Problemverlagerung?' },
   { value: 'no_clear_priority', label: 'Keine klare Priorität' },
   { value: 'other', label: 'Anderes' },
 ]

@@ -89,7 +89,8 @@ export function summarizeTendencyProfile(
 }
 
 export function resolveTendencyProfileConfig(config: PatternLogConfig = {}) {
-  const minTendencies = Math.max(1, Number(config.minTendencies || 1))
+  const rawMin = config.minTendencies
+  const minTendencies = rawMin === undefined || rawMin === null ? 1 : Math.max(0, Number(rawMin))
   const maxTendencies = Math.max(minTendencies, Number(config.maxTendencies || 3))
   return {
     tendenciesKey: config.tendencies_key || 'tendency_entries',
@@ -104,15 +105,19 @@ export function resolveTendencyProfileConfig(config: PatternLogConfig = {}) {
     requireSegmentSummary: config.require_segment_summary !== false,
     requireStrongestTendency: config.require_strongest_tendency !== false,
     requireNextWatch: config.require_next_watch !== false,
+    allowEmptyTendencies:
+      config.allow_empty_tendencies === true
+      || config.allowEmptyTendencies === true
+      || minTendencies === 0,
     submitLabel: config.submit_label || 'Tendenz speichern',
     addMoreLabel: config.add_more_label || '+ Tendenz hinzufügen',
     observeHint:
       config.observe_hint
-      || 'Priorisiere wenige belastbare Tendenzen — nicht alles, was mehrfach passiert.',
+      || 'Priorisiere wenige vorläufige Tendenzen — oder schließe ohne belastbare Tendenz ab.',
     decisionRule:
       config.decision_rule
-      || 'Nicht alles, was mehrfach passiert, gehört automatisch ins Tendenzprofil.',
-    summaryTitle: config.summary_title || 'Tendenzprofil · beobachtetes Segment',
+      || 'Nicht alles, was mehrfach passiert, gehört automatisch in die Segment-Zusammenfassung. Null belastbare Tendenzen sind gültig.',
+    summaryTitle: config.summary_title || 'Tendenzen im beobachteten Segment',
     frequencyOptions: config.frequency_options || DEFAULT_FREQUENCY_OPTIONS,
     primaryConditionOptions: config.primary_condition_options || DEFAULT_PRIMARY_CONDITION_OPTIONS,
     stableCoreOptions: config.stable_core_options || DEFAULT_STABLE_CORE_OPTIONS,

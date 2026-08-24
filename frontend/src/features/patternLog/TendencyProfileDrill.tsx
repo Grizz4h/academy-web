@@ -174,7 +174,9 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
 
   const guide = drill?.didactics?.observation_guide
   const progressPercent = Math.min(100, Math.round((count / cfg.maxTendencies) * 100))
-  const allComplete = tendencies.length > 0 && tendencies.every(isTendencyComplete)
+  const allComplete =
+    (tendencies.length === 0 && (cfg.allowEmptyTendencies || cfg.minTendencies === 0))
+    || (tendencies.length > 0 && tendencies.every(isTendencyComplete))
 
   const nextWatchOptions = [
     ...tendencies.map((t, idx) => ({
@@ -258,7 +260,7 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
                   <div style={{ marginTop: '0.15rem', fontSize: '0.76rem', color: 'rgba(148,163,184,0.95)' }}>
                     {[
                       item.frequency ? labelForOption(cfg.frequencyOptions, item.frequency) : null,
-                      item.confidence ? `Confidence ${labelForOption(cfg.confidenceOptions, item.confidence)}` : null,
+                      item.confidence ? `Sicherheit ${labelForOption(cfg.confidenceOptions, item.confidence)}` : null,
                       item.attribution ? labelForOption(cfg.attributionOptions, item.attribution) : null,
                       isTendencyComplete(item) ? null : 'unvollständig',
                     ].filter(Boolean).join(' · ')}
@@ -380,7 +382,7 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Wie würdest du die Tendenz im beobachteten Segment am ehesten einordnen?
+              In welchen beobachteten Kontexten bleibt diese Tendenz sichtbar?
             </label>
             <OptionChips
               name="tend_attr"
@@ -391,7 +393,9 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
           </div>
 
           <div>
-            <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>Wie sicher bist du dir?</label>
+            <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
+              Sicherheit der vorläufigen Einordnung
+            </label>
             <OptionChips
               name="tend_conf"
               options={cfg.confidenceOptions}
@@ -402,13 +406,13 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Welche Beobachtung stützt diese Tendenz am stärksten?
+              Welche Beobachtung stützt diese vorläufige Tendenz am deutlichsten?
             </label>
             <textarea
               value={draft.strongestEvidence || ''}
               onChange={(e) => updateDraft({ strongestEvidence: e.target.value })}
               maxLength={280}
-              placeholder='z. B. „Das Muster blieb bei drei unterschiedlichen Entry-Seiten erhalten.“'
+              placeholder='z. B. „Das Verhalten blieb bei drei vergleichbaren Entry-Situationen sichtbar.“'
               style={{
                 width: '100%', minHeight: '62px', padding: '0.65rem', borderRadius: '8px',
                 border: '1px solid rgba(81,145,162,0.5)', background: '#050712', color: '#f7f7ff',
@@ -419,13 +423,14 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Was spricht gegen diese Einordnung? <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
+              Gegenfälle oder widersprechende Beobachtungen{' '}
+              <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
             </label>
             <textarea
               value={draft.counterEvidence || ''}
               onChange={(e) => updateDraft({ counterEvidence: e.target.value })}
               maxLength={220}
-              placeholder='z. B. „Alle Beispiele kamen aus demselben Drittel gegen dieselbe Reihe.“'
+              placeholder='z. B. „In einer vergleichbaren Lage trat das Verhalten nicht auf.“'
               style={{
                 width: '100%', minHeight: '52px', padding: '0.65rem', borderRadius: '8px',
                 border: '1px solid rgba(81,145,162,0.4)', background: '#050712', color: '#f7f7ff',
@@ -458,6 +463,22 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
         >
           <h4 style={{ margin: 0 }}>{cfg.summaryTitle}</h4>
 
+          {count === 0 && (
+            <div
+              style={{
+                padding: '0.65rem 0.75rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(251,191,36,0.3)',
+                background: 'rgba(245,158,11,0.08)',
+              }}
+            >
+              <strong style={{ color: '#fde68a' }}>Keine ausreichend gestützte Tendenz</strong>
+              <p style={{ margin: '0.3rem 0 0', fontSize: '0.82rem', color: 'rgba(254,243,199,0.9)', lineHeight: 1.4 }}>
+                Das ist ein gültiger Abschluss, wenn die Beobachtungsgrundlage nicht reicht. Du kannst optional trotzdem eine Tendenz hinzufügen.
+              </p>
+            </div>
+          )}
+
           {!atMax && (
             <button type="button" className="btn" onClick={startAdd} style={{ minHeight: '46px' }}>
               {cfg.addMoreLabel}
@@ -465,20 +486,22 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
           )}
           {atMax && (
             <p style={{ margin: 0, fontSize: '0.82rem', color: 'rgba(254,243,199,0.9)' }}>
-              Maximum erreicht — priorisiere die drei Tendenzen, die den Abschnitt am stärksten erklären.
+              Maximum erreicht — priorisiere höchstens drei vorläufige Tendenzen, die das beobachtete Segment beschreiben.
             </p>
           )}
 
-          <TendencyProfileVisual
-            title="Tendency Profile"
-            summary={profileSummary}
-            strongestTendencyId={strongestTendencyId || undefined}
-          />
+          {count > 0 && (
+            <TendencyProfileVisual
+              title="Tendenzen im beobachteten Segment"
+              summary={profileSummary}
+              strongestTendencyId={strongestTendencyId || undefined}
+            />
+          )}
 
           {count >= 2 && cfg.requireStrongestTendency && (
             <div>
               <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-                Welche Tendenz ist am belastbarsten?
+                Welche vorläufige Tendenz ist am deutlichsten gestützt?
               </label>
               <OptionChips
                 name="strongest_tend"
@@ -492,13 +515,13 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
           {cfg.requireSegmentSummary && (
             <div>
               <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-                Fasse das Tendenzprofil des beobachteten Segments in 2–4 Sätzen zusammen.
+                Fasse die Tendenzen im beobachteten Segment in 2–4 Sätzen zusammen.
               </label>
               <textarea
                 value={segmentSummary}
                 onChange={(e) => setAnswers({ ...safeAnswers, [cfg.segmentSummaryKey]: e.target.value })}
                 maxLength={700}
-                placeholder='z. B. „Im beobachteten Drittel lenkt das Team gegnerische Entries wiederholt nach außen …“'
+                placeholder='z. B. „Im beobachteten Drittel …“ oder „Keine ausreichend gestützte Tendenz — Beobachtungsgrundlage reicht noch nicht.“'
                 style={{
                   width: '100%', minHeight: '96px', padding: '0.65rem', borderRadius: '8px',
                   border: '1px solid rgba(81,145,162,0.5)', background: '#050712', color: '#f7f7ff',
@@ -508,10 +531,10 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
             </div>
           )}
 
-          {cfg.requireNextWatch && (
+          {count > 0 && cfg.requireNextWatch && (
             <div>
               <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-                Welche Tendenz würdest du im nächsten Drittel gezielt weiter beobachten?
+                Welche Tendenz soll als Nächstes weiter geprüft werden?
               </label>
               <OptionChips
                 name="next_watch"
@@ -519,25 +542,32 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
                 value={nextWatch}
                 onChange={(next) => setAnswers({ ...safeAnswers, [cfg.nextWatchKey]: next as string })}
               />
-              <label style={{ display: 'block', fontWeight: 650, margin: '0.55rem 0 0.3rem', fontSize: '0.86rem' }}>
-                Was müsste passieren, damit du deine Einschätzung änderst?{' '}
-                <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
-              </label>
-              <textarea
-                value={falsificationNote}
-                onChange={(e) => setAnswers({ ...safeAnswers, [cfg.falsificationNoteKey]: e.target.value })}
-                maxLength={220}
-                placeholder="Ein Satz zur möglichen Falsifikation."
-                style={{
-                  width: '100%', minHeight: '52px', padding: '0.65rem', borderRadius: '8px',
-                  border: '1px solid rgba(81,145,162,0.4)', background: '#050712', color: '#f7f7ff',
-                  fontFamily: 'inherit', boxSizing: 'border-box',
-                }}
-              />
             </div>
           )}
 
-          {segmentSummary.trim() && (count < 2 || strongestTendencyId || !cfg.requireStrongestTendency) && nextWatch && (
+          <div>
+            <label style={{ display: 'block', fontWeight: 650, margin: '0 0 0.3rem', fontSize: '0.86rem' }}>
+              {count === 0
+                ? 'Was solltest du als Nächstes beobachten?'
+                : 'Welche nächste Beobachtung würde gegen diese vorläufige Tendenz sprechen oder eine engere Formulierung erforderlich machen?'}{' '}
+              <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
+            </label>
+            <textarea
+              value={falsificationNote}
+              onChange={(e) => setAnswers({ ...safeAnswers, [cfg.falsificationNoteKey]: e.target.value })}
+              maxLength={220}
+              placeholder={count === 0
+                ? 'Nächste Prüfbeobachtung oder offener Vergleichspunkt.'
+                : 'Nächste Prüfbeobachtung — ohne den Begriff Falsifikation vorauszusetzen.'}
+              style={{
+                width: '100%', minHeight: '52px', padding: '0.65rem', borderRadius: '8px',
+                border: '1px solid rgba(81,145,162,0.4)', background: '#050712', color: '#f7f7ff',
+                fontFamily: 'inherit', boxSizing: 'border-box',
+              }}
+            />
+          </div>
+
+          {segmentSummary.trim() && (count < 2 || strongestTendencyId || !cfg.requireStrongestTendency) && (count === 0 || !cfg.requireNextWatch || Boolean(nextWatch)) && (
             <div
               style={{
                 padding: '0.75rem',
@@ -549,7 +579,11 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
               }}
             >
               <h4 style={{ margin: 0, color: '#99f6e4' }}>Ergebnis · beobachtetes Segment</h4>
-              {tendencies.map((t, idx) => (
+              {count === 0 ? (
+                <div style={{ fontSize: '0.84rem', color: 'rgba(236,253,245,0.9)' }}>
+                  Keine ausreichend gestützte Tendenz im beobachteten Segment.
+                </div>
+              ) : tendencies.map((t, idx) => (
                 <div key={t.id} style={{ fontSize: '0.82rem', color: 'rgba(236,253,245,0.9)', display: 'grid', gap: '0.15rem' }}>
                   <strong>{idx + 1} · {t.summary}</strong>
                   <span>
@@ -558,36 +592,38 @@ export function TendencyProfileDrill({ drill, answers, setAnswers }: TendencyPro
                     {t.conditionDetail || labelForOption(cfg.primaryConditionOptions, t.primaryCondition)}
                     {' · '}
                     {labelForOption(cfg.attributionOptions, t.attribution)}
-                    {' · Confidence '}
+                    {' · Sicherheit '}
                     {labelForOption(cfg.confidenceOptions, t.confidence)}
                   </span>
                   <span style={{ color: 'rgba(236,253,245,0.75)' }}>
-                    Kern: {(t.stableCore || []).map((v) => labelForOption(cfg.stableCoreOptions, v)).join(', ')}
+                    Wiederkehrend: {(t.stableCore || []).map((v) => labelForOption(cfg.stableCoreOptions, v)).join(', ')}
                   </span>
                   <span style={{ color: 'rgba(236,253,245,0.75)' }}>
-                    Variation: {(t.allowedVariation || []).map((v) => labelForOption(cfg.variationOptions, v)).join(', ')}
+                    Variabel: {(t.allowedVariation || []).map((v) => labelForOption(cfg.variationOptions, v)).join(', ')}
                   </span>
                 </div>
               ))}
               <div style={{ fontSize: '0.84rem', color: 'rgba(236,253,245,0.92)' }}>
-                <strong>Segment Summary:</strong> „{segmentSummary.trim()}“
+                <strong>Zusammenfassung:</strong> „{segmentSummary.trim()}“
               </div>
               {strongestTendencyId && (
                 <div style={{ fontSize: '0.82rem' }}>
-                  <strong>Am belastbarsten:</strong>{' '}
+                  <strong>Am deutlichsten gestützt:</strong>{' '}
                   {tendencyShortLabel(
                     tendencies.find((t) => t.id === strongestTendencyId)?.summary || '',
                     1,
                   )}
                 </div>
               )}
-              <div style={{ fontSize: '0.82rem' }}>
-                <strong>Weiter beobachten:</strong>{' '}
-                {nextWatchOptions.find((o) => o.value === nextWatch)?.label || nextWatch}
-              </div>
+              {nextWatch && (
+                <div style={{ fontSize: '0.82rem' }}>
+                  <strong>Weiter prüfen:</strong>{' '}
+                  {nextWatchOptions.find((o) => o.value === nextWatch)?.label || nextWatch}
+                </div>
+              )}
               {falsificationNote.trim() && (
                 <div style={{ fontSize: '0.82rem' }}>
-                  <strong>Falsifikation:</strong> „{falsificationNote.trim()}“
+                  <strong>Nächste Prüfbeobachtung:</strong> „{falsificationNote.trim()}“
                 </div>
               )}
             </div>

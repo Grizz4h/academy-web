@@ -14,7 +14,7 @@ type Props = {
 export function EvidenceAssessmentPanel({ assessment, compact = false }: Props) {
   return (
     <div className={styles.root}>
-      <h3 className={styles.title}>Evidence Check</h3>
+      <h3 className={styles.title}>Tragfähigkeits-Check</h3>
       {evidenceDimensions().map((dimension) => {
         const filled = dimensionSegmentCount(dimension.id, assessment.dimensions)
         const label = dimensionValueLabel(dimension.id, assessment.dimensions)

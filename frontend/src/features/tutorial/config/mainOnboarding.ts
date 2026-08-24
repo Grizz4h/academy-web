@@ -116,7 +116,7 @@ export const MAIN_ONBOARDING: TutorialDefinition = {
       route: '/locker',
       targetId: TUTORIAL_TARGET.lockerHome,
       placement: 'bottom',
-      title: 'Dein Locker',
+      title: 'Dein Spind',
       body: 'Durch deine Aktivitäten schaltest du Belohnungen und Sammlerstücke frei.',
       action: { type: 'acknowledge' },
       when: { feature: 'locker' },

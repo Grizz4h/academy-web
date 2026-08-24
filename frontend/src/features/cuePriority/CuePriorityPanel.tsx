@@ -14,7 +14,7 @@ export function CuePriorityPanel({
   cues,
   onChange,
   title = 'Ordne die Wichtigkeit deiner Hinweise',
-  help = 'Was hat deinen Read getragen? Keine Punkte, nur Rollen.',
+  help = 'Was hat deine Erwartung getragen? Genau ein Haupthinweis; keine Punkte, keine Prozentwerte.',
   formatCategory,
 }: Props) {
   return (

@@ -564,7 +564,7 @@ export function PatternConditionDrill({ drill, answers, setAnswers }: PatternCon
             >
               <strong style={{ color: '#fde68a' }}>Kein geeigneter Gegenfall beobachtet.</strong>
               <p style={{ margin: '0.3rem 0 0', fontSize: '0.82rem', color: 'rgba(254,243,199,0.9)', lineHeight: 1.4 }}>
-                Das stärkt das Muster nicht automatisch – es bedeutet nur, dass im beobachteten Segment keine passende Gegenprobe vorhanden war.
+                Das stärkt die vorläufige Tendenz nicht automatisch – es bedeutet nur, dass im beobachteten Segment keine passende Gegenprobe vorhanden war. „Nicht sicher vergleichbar“ ist ebenfalls ein gültiges Ergebnis.
               </p>
               <label style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', marginTop: '0.5rem', fontSize: '0.84rem' }}>
                 <input
@@ -662,6 +662,19 @@ export function PatternConditionDrill({ drill, answers, setAnswers }: PatternCon
           {counterCount > 0 && (
             <div>
               <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
+                Gegenfall prüfen
+              </label>
+              <p style={{ margin: '0 0 0.45rem', fontSize: '0.8rem', color: 'rgba(226,232,240,0.7)', lineHeight: 1.4 }}>
+                Ein Gegenfall ist eine ausreichend ähnliche Ausgangslage, in der das erwartete Verhalten nicht oder anders auftritt.
+                Er kann die Formulierung einschränken oder schärfen, widerlegt eine Tendenz aber nicht automatisch.
+              </p>
+              <ul style={{ margin: '0 0 0.55rem', paddingLeft: '1.1rem', fontSize: '0.8rem', color: 'rgba(226,232,240,0.72)', lineHeight: 1.45 }}>
+                <li>Welche Ausgangsmerkmale sind mit den bisherigen Fällen vergleichbar?</li>
+                <li>Was verlief sichtbar anders?</li>
+                <li>Welche bisherige Annahme wird dadurch schwächer oder muss enger formuliert werden?</li>
+                <li>Reicht der Bildausschnitt für den Vergleich?</li>
+              </ul>
+              <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
                 Was war im Gegenfall anders?
               </label>
               <OptionChips
@@ -681,7 +694,7 @@ export function PatternConditionDrill({ drill, answers, setAnswers }: PatternCon
                   [cfg.counterDifferenceNoteKey]: e.target.value,
                 })}
                 maxLength={240}
-                placeholder="Welcher Unterschied könnte erklären, warum das Muster hier nicht auftrat?"
+                placeholder="Welche Annahme wird schwächer oder muss enger formuliert werden? (Keine Kausalität.)"
                 style={{
                   width: '100%',
                   marginTop: '0.55rem',
@@ -700,7 +713,7 @@ export function PatternConditionDrill({ drill, answers, setAnswers }: PatternCon
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Wie klar kannst du inzwischen die Bedingungen des Musters beschreiben?
+              Wie klar kannst du inzwischen die Bedingungen der bisherigen Beobachtungen beschreiben?
             </label>
             <OptionChips
               name="condition_assessment"

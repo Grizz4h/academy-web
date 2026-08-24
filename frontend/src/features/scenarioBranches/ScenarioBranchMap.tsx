@@ -25,12 +25,12 @@ export function ScenarioBranchMap({ situation, primary, alternative, triggers = 
         </div>
         <span className={styles.trunk} aria-hidden />
         <div className={`${styles.arm} ${styles.armAlt}`}>
-          <div className={styles.label}>Alternative</div>
+          <div className={styles.label}>Alternativszenario</div>
           <p className={styles.value}>{alternative || 'Plan B wählen'}</p>
         </div>
         <div className={styles.arm}>
           <div className={styles.label}>bleibt aktiv, wenn …</div>
-          <p className={styles.value}>{triggerText || 'Trigger definieren'}</p>
+          <p className={styles.value}>{triggerText || 'Auslöser definieren'}</p>
           {triggerText ? (
             <p className={styles.note}>Keine Prozentwerte – nur die Bedingung, die Plan B wahrscheinlicher macht.</p>
           ) : null}

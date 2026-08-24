@@ -59,7 +59,7 @@ export default function TheoryDetail() {
         return (
           <ul key={index} className={styles.list}>
             {(item.items || []).map((listItem: string, idx: number) => (
-              <li key={idx}>{listItem}</li>
+              <li key={idx} dangerouslySetInnerHTML={{ __html: listItem }} />
             ))}
           </ul>
         )
@@ -116,7 +116,7 @@ export default function TheoryDetail() {
                   <h4 className={styles.phaseTitle}>{phase.title}</h4>
                   <ul className={styles.list}>
                     {(phase.items || []).map((phaseItem: string, pidx: number) => (
-                      <li key={pidx}>{phaseItem}</li>
+                      <li key={pidx} dangerouslySetInnerHTML={{ __html: phaseItem }} />
                     ))}
                   </ul>
                 </div>
@@ -214,13 +214,28 @@ export default function TheoryDetail() {
 
       {moduleId ? (
         <div className={styles.footerCta}>
-          <p className={styles.footerHint}>Bereit zum Anwenden?</p>
-          <div className={styles.footerActions}>
-            <UiButtonLink to={`/setup/${moduleId}`}>Session starten</UiButtonLink>
-            <UiButtonLink to="/curriculum" variant="secondary">
-              Zur Akademie
-            </UiButtonLink>
-          </div>
+          {String(data.badge || '').toUpperCase().includes('SIDEQUEST') ? (
+            <>
+              <p className={styles.footerHint}>
+                Sidequest-Hilfe — kein regulärer Pflichttrack. Erfasse numerische Sondersituationen opportunistisch über Special Teams in einer Session.
+              </p>
+              <div className={styles.footerActions}>
+                <UiButtonLink to="/curriculum" variant="secondary">
+                  Zur Akademie
+                </UiButtonLink>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className={styles.footerHint}>Bereit zum Anwenden?</p>
+              <div className={styles.footerActions}>
+                <UiButtonLink to={`/setup/${moduleId}`}>Session starten</UiButtonLink>
+                <UiButtonLink to="/curriculum" variant="secondary">
+                  Zur Akademie
+                </UiButtonLink>
+              </div>
+            </>
+          )}
         </div>
       ) : null}
     </div>

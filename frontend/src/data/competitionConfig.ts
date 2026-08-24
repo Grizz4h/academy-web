@@ -18,6 +18,13 @@ export interface CompetitionConfig {
 }
 
 export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
+  Testspiele: {
+    league: 'Testspiele',
+    label: 'Testspiele',
+    phases: [
+      { id: 'friendly', label: 'Testspiel', unit: { type: 'game_number', label: 'Spiel', min: 1, max: 20 } },
+    ],
+  },
   DEL: {
     league: 'DEL',
     label: 'PENNY DEL',

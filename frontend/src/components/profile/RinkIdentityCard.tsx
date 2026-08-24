@@ -6,7 +6,14 @@ import { getStickerAsset } from '../../data/profile/stickerCatalog'
 import { resolveAvatarRarity, resolveEquippedTagline, resolveEquippedTitle } from '../../features/progression'
 import type { UserProfileCustomization } from '../../data/profile/types'
 import { resolveUploadUrl } from '../../api'
+import { UiPill, type UiPillTone } from '../ui'
 import styles from './RinkIdentityCard.module.css'
+
+export type PremiumStatusPresentation = {
+  badgeLabel: string
+  badgeTone: UiPillTone
+  profileLine: string | null
+}
 
 export type RinkIdentityStats = {
   drillsCompleted?: number
@@ -23,6 +30,8 @@ type RinkIdentityCardProps = {
   stats?: RinkIdentityStats
   className?: string
   coinIds?: string[]
+  hasAcademyPremium?: boolean
+  premiumStatus?: PremiumStatusPresentation | null
 }
 
 function formatJersey(value: number | null | undefined): string | null {
@@ -30,7 +39,14 @@ function formatJersey(value: number | null | undefined): string | null {
   return String(Math.max(0, Math.min(99, value))).padStart(2, '0')
 }
 
-export default function RinkIdentityCard({ profile, stats, className = '', coinIds = [] }: RinkIdentityCardProps) {
+export default function RinkIdentityCard({
+  profile,
+  stats,
+  className = '',
+  coinIds = [],
+  hasAcademyPremium = false,
+  premiumStatus = null,
+}: RinkIdentityCardProps) {
   const banner = getBannerAsset(profile.bannerId || DEFAULT_BANNER_ID) || getBannerAsset(DEFAULT_BANNER_ID)
   const title = resolveEquippedTitle(profile.profileTitle)
   const tagline = resolveEquippedTagline(profile.profileTagline)
@@ -92,7 +108,21 @@ export default function RinkIdentityCard({ profile, stats, className = '', coinI
         </div>
 
         <div className={styles.identity}>
-          <h2 className={styles.name}>{displayName}</h2>
+          <div className={styles.nameRow}>
+            <h2 className={styles.name}>{displayName}</h2>
+            {hasAcademyPremium && premiumStatus ? (
+              <UiPill tone={premiumStatus.badgeTone} className={styles.premiumBadge}>
+                {premiumStatus.badgeLabel}
+              </UiPill>
+            ) : hasAcademyPremium ? (
+              <UiPill tone="accent" className={styles.premiumBadge}>Premium</UiPill>
+            ) : null}
+          </div>
+          {premiumStatus?.profileLine ? (
+            <p className={styles.premiumLine} data-tone={premiumStatus.badgeTone}>
+              {premiumStatus.profileLine}
+            </p>
+          ) : null}
           {(jersey || title) && (
             <p className={styles.meta}>
               {jersey ? <span>#{jersey}</span> : null}

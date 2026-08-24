@@ -3,14 +3,14 @@ import type { CompareFieldOption } from './types'
 export const DEFAULT_SPACE_PRIORITY_OPTIONS: CompareFieldOption[] = [
   { value: 'middle', label: 'Mitte' },
   { value: 'outside', label: 'Außen / Bande' },
-  { value: 'weak_side', label: 'Weak Side' },
-  { value: 'net_front', label: 'Net Front / Slot' },
+  { value: 'weak_side', label: 'Puckferne Seite' },
+  { value: 'net_front', label: 'Direkt vor dem Tor / Slot' },
   { value: 'high', label: 'Hoch / blaue Linie' },
   { value: 'depth', label: 'Tiefe / hinter dem Tor' },
-  { value: 'blue_line', label: 'Blue Line / Übergang' },
+  { value: 'blue_line', label: 'Bereich an der blauen Linie / Übergang' },
   { value: 'multiple', label: 'Mehrere Räume gleichzeitig' },
-  { value: 'not_relevant', label: 'Nicht relevant' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'not_relevant', label: 'Für diesen Vergleich nicht relevant' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_PRESSURE_OPTIONS: CompareFieldOption[] = [
@@ -20,8 +20,8 @@ export const DEFAULT_PRESSURE_OPTIONS: CompareFieldOption[] = [
   { value: 'protect_space_first', label: 'Erst Raum sichern' },
   { value: 'little_pressure', label: 'Wenig Druck' },
   { value: 'changing', label: 'Wechselnd / uneinheitlich' },
-  { value: 'not_relevant', label: 'Nicht relevant' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'not_relevant', label: 'Für diesen Vergleich nicht relevant' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_POSITIONING_OPTIONS: CompareFieldOption[] = [
@@ -33,8 +33,8 @@ export const DEFAULT_POSITIONING_OPTIONS: CompareFieldOption[] = [
   { value: 'high', label: 'Hoch' },
   { value: 'rotating', label: 'Rotierend / wechselnd' },
   { value: 'changing', label: 'Wechselnd / uneinheitlich' },
-  { value: 'not_relevant', label: 'Nicht relevant' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'not_relevant', label: 'Für diesen Vergleich nicht relevant' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_DECISION_OPTIONS: CompareFieldOption[] = [
@@ -46,22 +46,45 @@ export const DEFAULT_DECISION_OPTIONS: CompareFieldOption[] = [
   { value: 'risk_accepting', label: 'Risikobereit' },
   { value: 'reactive', label: 'Reaktiv' },
   { value: 'changing', label: 'Wechselnd / uneinheitlich' },
-  { value: 'not_relevant', label: 'Nicht relevant' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'not_relevant', label: 'Für diesen Vergleich nicht relevant' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_CHANGE_MAGNITUDE_OPTIONS: CompareFieldOption[] = [
   { value: 'subtle', label: 'Subtil' },
   { value: 'clear', label: 'Klar' },
-  { value: 'major', label: 'Deutlich / groß' },
+  { value: 'major', label: 'Deutlich' },
   { value: 'too_variable', label: 'Zu wechselhaft' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_CONFIDENCE_OPTIONS: CompareFieldOption[] = [
-  { value: 'low', label: 'Niedrig' },
-  { value: 'medium', label: 'Mittel' },
-  { value: 'high', label: 'Hoch' },
+  { value: 'low', label: 'gering' },
+  { value: 'medium', label: 'mittel' },
+  { value: 'high', label: 'hoch' },
+  { value: 'not_assessable', label: 'nicht beurteilbar' },
+]
+
+export const DEFAULT_COMPARABILITY_OPTIONS: CompareFieldOption[] = [
+  {
+    value: 'well_comparable',
+    label: 'gut vergleichbar',
+    description: 'Wesentliche Ausgangsbedingungen sind ähnlich genug.',
+  },
+  {
+    value: 'partly_comparable',
+    label: 'teilweise vergleichbar',
+    description: 'Vergleich möglich, aber mit dokumentierter Einschränkung.',
+  },
+  {
+    value: 'not_comparable',
+    label: 'nicht sinnvoll vergleichbar',
+    description: 'Unterschiede begrenzen den Vergleich zu stark.',
+  },
+  {
+    value: 'not_assessable',
+    label: 'nicht sicher beurteilbar',
+  },
 ]
 
 export const DEFAULT_PRIMARY_CHANGE_OPTIONS: CompareFieldOption[] = [
@@ -70,8 +93,16 @@ export const DEFAULT_PRIMARY_CHANGE_OPTIONS: CompareFieldOption[] = [
   { value: 'positioning', label: 'Positionierung / Staffelung' },
   { value: 'decisionBehavior', label: 'Entscheidungsverhalten' },
   { value: 'other', label: 'Freie Beschreibung / anderes' },
-  { value: 'no_clear_change', label: 'Keine klare relevante Veränderung' },
-  { value: 'unclear', label: 'Unklar' },
+  {
+    value: 'no_clear_change',
+    label: 'Keine klare Veränderung erkennbar',
+    description: 'Gültiges Ergebnis — keine Veränderung erzwingen.',
+  },
+  {
+    value: 'situations_not_comparable',
+    label: 'Situationen nicht ausreichend vergleichbar',
+  },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_STATE_FIELDS = [

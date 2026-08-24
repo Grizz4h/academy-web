@@ -34,7 +34,7 @@ export type AnticipationCueCategory = typeof DEFAULT_CUE_CATEGORIES[number]
 
 export type AnticipationConfidence = 'low' | 'medium' | 'high'
 
-export type AnticipationOutcomeMatch = 'matched' | 'partly_matched' | 'different'
+export type AnticipationOutcomeMatch = 'matched' | 'partly_matched' | 'different' | 'unclear'
 
 export type AnticipationReadQuality =
   | 'well_supported'
@@ -192,6 +192,7 @@ export type AnticipationReadResult = {
     matched: number
     partlyMatched: number
     different: number
+    unclear: number
   }
   readQualityDistribution: {
     wellSupported: number

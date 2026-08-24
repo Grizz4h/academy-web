@@ -69,8 +69,8 @@ assert.equal(updateProfile.decisionPatterns.changeCount, 2)
 assert.equal(updateProfile.decisionPatterns.keepCount, 1)
 assert.equal(updateProfile.updatePatterns.commonTriggers[0], 'Passlinie geschlossen')
 assert.equal(updateProfile.branchPatterns.commonBranches[0], 'Pass → Carry')
-assert.match(describeDecisionFlexibility(1, 2), /passt/)
-assert.match(describeDecisionFlexibility(3, 1), /ersten? Erwartung/)
+assert.match(describeDecisionFlexibility(1, 2), /geändert|häufiger geändert/i)
+assert.match(describeDecisionFlexibility(3, 1), /beibehalten|häufiger beibehalten/i)
 assert.equal(describeDecisionFlexibility(3, 1).includes('%'), false)
 assert.equal(describeDecisionFlexibility(3, 1).toLowerCase().includes('schlecht'), false)
 
@@ -79,8 +79,9 @@ const enough = computeAnticipationProfile(
   cfg,
   ['E4_D1'],
 )
-assert.equal(enough.hasEnoughData, true)
-assert.equal(enough.enoughBecause, 'read_count')
+assert.equal(enough.hasEnoughData, false)
+assert.equal(enough.enoughBecause, 'insufficient')
+assert.equal(enough.observationCountHint, 20)
 
 const covered = computeAnticipationProfile(supportHeavy, cfg, ['E4_D1', 'E4_D2', 'E4_D3', 'E4_D4'])
 assert.equal(covered.hasEnoughData, true)

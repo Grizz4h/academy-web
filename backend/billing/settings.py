@@ -37,5 +37,13 @@ def stripe_checkout_cancel_url() -> str:
     return f"{base}/account?checkout=cancel"
 
 
+def stripe_portal_return_url() -> str:
+    explicit = (os.environ.get("STRIPE_PORTAL_RETURN_URL") or "").strip()
+    if explicit:
+        return explicit
+    base = (os.environ.get("ACADEMY_PUBLIC_URL") or "https://rinq.app").rstrip("/")
+    return f"{base}/account"
+
+
 def stripe_configured() -> bool:
     return bool(stripe_secret_key() and stripe_price_id())

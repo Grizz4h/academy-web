@@ -15,6 +15,7 @@ import {
 } from '../config/featureFlags';
 import { navTutorialTarget } from '../features/tutorial';
 import { AccountPillFrame } from './profile/AccountPillFrame';
+import { useHorizontalScroll } from '../utils/useHorizontalScroll';
 import styles from './TopNav.module.css';
 
 const getSessionSortDate = (session: Session) => new Date(session.created_at).getTime() || 0;
@@ -78,7 +79,10 @@ const TopNav: React.FC = () => {
     wrapper.scrollLeft = 0
   }, [activeSession?.id])
 
+  useHorizontalScroll(navTabsWrapperRef, { draggingClass: styles.navTabsDragging })
+
   const isAdmin = Boolean(account?.is_admin);
+  const creatorMode = Boolean(account?.creator_mode);
 
   const handleLogoClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
     const currentlyOn = isDevNavEnabled();
@@ -111,7 +115,7 @@ const TopNav: React.FC = () => {
     window.setTimeout(() => setDevHint(''), 1600);
   }, [isAdmin]);
 
-  const publicTabs = getPublicNavTabs();
+  const publicTabs = getPublicNavTabs({ creatorMode });
   const hiddenTabs = getHiddenNavTabs();
   const showDevChrome = devNav && (import.meta.env.DEV || isAdmin);
   const navTabs = showDevChrome ? [...publicTabs, ...hiddenTabs] : publicTabs;
@@ -129,7 +133,12 @@ const TopNav: React.FC = () => {
               </picture>
             </NavLink>
 
-            <div ref={navTabsWrapperRef} className={styles.navTabsWrapper}>
+            <div
+              ref={navTabsWrapperRef}
+              className={styles.navTabsWrapper}
+              aria-label="Navigation"
+              role="region"
+            >
               <div className={styles.navTabs}>
                 {activeSession && (
                   <NavLink
@@ -178,6 +187,7 @@ const TopNav: React.FC = () => {
               </div>
             </div>
 
+            <div className={styles.identityCluster}>
             <AccountPillFrame className={styles.userSection} frameId={account?.profile?.frameId}>
               {devHint && <span className={styles.devHint}>{devHint}</span>}
               <UserName />
@@ -186,6 +196,7 @@ const TopNav: React.FC = () => {
                 <LogoutButton />
               </span>
             </AccountPillFrame>
+            </div>
           </div>
         </div>
       </div>

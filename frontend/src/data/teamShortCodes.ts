@@ -21,7 +21,8 @@ const NAME_ALIASES: Record<string, string> = {
   'Utah Hockey Club': 'UTA',
   'EC Kassel': 'KAS',
   'Kassel Huskies': 'KAS',
-  'Augsburger Panther': 'AEV',
+  'Steinbach Black Wings Linz': 'SBW',
+  'Black Wings Linz': 'SBW',
   // Legacy U20 names (pre "… U20" catalog rename)
   'ERC Ingolstadt U20': 'ING',
   'EV Landshut U20': 'EVL',

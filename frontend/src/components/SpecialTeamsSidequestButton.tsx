@@ -340,7 +340,7 @@ export function SpecialTeamsSidequestButton({
               {([
                 { id: 'power_play' as const, label: 'Powerplay', hint: 'Beobachtetes Team spielt fünf gegen vier' },
                 { id: 'penalty_kill' as const, label: 'Penalty Kill', hint: 'Beobachtetes Team spielt vier gegen fünf' },
-                { id: 'numerical_situation' as const, label: 'Numerical Situation', hint: '5v3, 6v5, Empty Net und andere seltene Lagen' },
+                { id: 'numerical_situation' as const, label: 'Numerische Sondersituation', hint: 'Zusätzlicher Feldspieler, 5v3, 6v5, leeres Tor und andere seltene Lagen' },
               ]).map((item) => (
                 <UiSheetChoice
                   key={item.id}

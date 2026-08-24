@@ -63,6 +63,7 @@ const logs = [...presentTarget, ...presentOther, ...absentTarget, ...absentOther
 
 const result = computeConditionalOutcome(definition, logs, 'target_more_with_condition')
 assert.equal(result.withCondition.total, 9)
+assert.equal(result.withCondition.evaluableCount, 9)
 assert.equal(result.withCondition.targetCount, 6)
 assert.equal(result.withCondition.ratePercent, 67)
 assert.equal(result.withoutCondition.total, 8)
@@ -83,7 +84,7 @@ assert.ok(opposite.counterexampleSummary?.includes('trotz'))
 
 const noExpectation = computeConditionalOutcome(definition, logs, 'no_expectation')
 assert.equal(noExpectation.counterexampleCount, 0)
-assert.equal(noExpectation.counterexampleSummary, null)
+assert.ok(noExpectation.counterexampleSummary?.includes('kein Gegenfall'))
 
 const withUnclearCondition = computeConditionalOutcome(definition, [
   ...logs,
@@ -102,8 +103,9 @@ const withUnclearOutcome = computeConditionalOutcome(definition, [
   ...absentOther,
 ])
 assert.equal(withUnclearOutcome.withCondition.total, 10)
+assert.equal(withUnclearOutcome.withCondition.evaluableCount, 9)
 assert.equal(withUnclearOutcome.withCondition.targetCount, 6)
-assert.equal(withUnclearOutcome.withCondition.ratePercent, 60)
+assert.equal(withUnclearOutcome.withCondition.ratePercent, 67)
 assert.equal(withUnclearOutcome.outcomeUnclearCount, 1)
 assert.equal(withUnclearOutcome.matrix.presentOther, 3)
 

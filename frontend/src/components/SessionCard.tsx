@@ -21,6 +21,8 @@ import {
   type SpatialSnapshot,
 } from './visuals'
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
+import { RinQIcon } from './icons'
+import { useCreatorMode } from '../features/creator'
 
 interface SessionCardProps {
   session: Session
@@ -42,6 +44,7 @@ export default function SessionCard({
   onToggleSelect,
 }: SessionCardProps) {
   const queryClient = useQueryClient()
+  const creatorMode = useCreatorMode()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [expandedPhases, setExpandedPhases] = useState<Set<number>>(new Set())
   const [isEditingSeason, setIsEditingSeason] = useState<boolean>(false)
@@ -336,11 +339,13 @@ export default function SessionCard({
                   e.currentTarget.style.backgroundColor = 'rgba(245, 158, 11, 0.2)'
                 }}
               >
-                🔄 Session fortsetzen {session.current_phase ? `(${getPhaseLabel(session.current_phase)})` : ''}
+                <RinQIcon name="continue" size="sm" inline />
+                Session fortsetzen {session.current_phase ? `(${getPhaseLabel(session.current_phase)})` : ''}
               </a>
             </div>
           )}
 
+          {creatorMode && (
           <div
             style={{
               padding: '1rem 1.5rem',
@@ -372,7 +377,8 @@ export default function SessionCard({
                 fontWeight: '600'
               }}
             >
-              🎬 Alle Szenen dieser Session öffnen
+              <RinQIcon name="scene" size="sm" inline />
+              Alle Szenen dieser Session öffnen
             </a>
 
             {sceneEntries.length > 0 && (
@@ -397,6 +403,7 @@ export default function SessionCard({
               </div>
             )}
           </div>
+          )}
 
           {session.goal && (
             <div
@@ -671,7 +678,7 @@ export default function SessionCard({
                           disabled={deleteCheckinMutation.isPending}
                           title="Phase löschen"
                         >
-                          {deleteCheckinMutation.isPending ? '...' : '🗑'}
+                          {deleteCheckinMutation.isPending ? '...' : <RinQIcon name="delete" size="sm" tone="danger" title="Check-in löschen" />}
                         </button>
                       </div>
 

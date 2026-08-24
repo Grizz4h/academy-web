@@ -22,17 +22,24 @@ export function AnticipationProfileSummary({
   return (
     <div className={styles.stack}>
       <section className={styles.block}>
-        <h3 className={styles.heading}>Dein Anticipation Profile</h3>
-        <p className={styles.hero}>{profile.sourceReads} Reads</p>
-        <p className={styles.lead}>Deine bisherigen Reads zeigen folgendes Muster. Kein Score, kein Level.</p>
+        <h3 className={styles.heading}>Meine bisherigen Antizipations-Beobachtungen</h3>
+        <p className={styles.hero}>{profile.sourceReads} dokumentierte Situationen</p>
+        <p className={styles.lead}>
+          Diese Zusammenfassung zeigt, welche sichtbaren Hinweise, Alternativszenarien und Aktualisierungsauslöser
+          in deinen bisherigen E4-Einträgen vorkamen. Sie bewertet weder dein Niveau noch deine Vorhersagegenauigkeit.
+        </p>
       </section>
 
       {!profile.hasEnoughData && insufficientHint && (
         <p className={styles.hint}>{insufficientHint}</p>
       )}
+      {profile.hasEnoughData && profile.enoughBecause === 'source_coverage' && (
+        <p className={styles.hint}>Abdeckung: alle vier E4-Beobachtungsschritte sind in der Zusammenfassung vertreten.</p>
+      )}
 
       <section className={styles.block}>
-        <h3 className={styles.heading}>Deine häufigsten Hinweise</h3>
+        <h3 className={styles.heading}>Häufig dokumentierte Hinweisarten</h3>
+        <p className={styles.lead}>Häufig bedeutet nicht gut.</p>
         {frequent.length ? (
           <ul className={styles.list}>
             {frequent.map((item) => (
@@ -40,12 +47,13 @@ export function AnticipationProfileSummary({
             ))}
           </ul>
         ) : (
-          <p className={styles.lead}>Noch keine Cue-Muster aus gewichteten oder benannten Hinweisen.</p>
+          <p className={styles.lead}>Noch keine Hinweis-Muster aus benannten oder gewichteten Hinweisen.</p>
         )}
       </section>
 
       <section className={styles.block}>
-        <h3 className={styles.heading}>Wenig genutzt</h3>
+        <h3 className={styles.heading}>Selten dokumentierte Hinweisarten</h3>
+        <p className={styles.lead}>Selten bedeutet nicht schlecht.</p>
         {rare.length ? (
           <ul className={styles.list}>
             {rare.map((item) => (
@@ -53,12 +61,12 @@ export function AnticipationProfileSummary({
             ))}
           </ul>
         ) : (
-          <p className={styles.lead}>Noch zu wenige Reads, um selten genutzte Hinweise zu erkennen.</p>
+          <p className={styles.lead}>Noch zu wenige Einträge, um selten dokumentierte Hinweise zu erkennen.</p>
         )}
       </section>
 
       <section className={styles.block}>
-        <h3 className={styles.heading}>Dein Entscheidungsverhalten</h3>
+        <h3 className={styles.heading}>Beibehalten und Ändern</h3>
         <p className={styles.line}>
           {describeDecisionFlexibility(profile.decisionPatterns.keepCount, profile.decisionPatterns.changeCount)}
         </p>
@@ -66,7 +74,7 @@ export function AnticipationProfileSummary({
 
       {branches.length > 0 && (
         <section className={styles.block}>
-          <h3 className={styles.heading}>Häufige Branches</h3>
+          <h3 className={styles.heading}>Vorkommende Alternativszenarien</h3>
           <ul className={styles.list}>
             {branches.map((item) => (
               <li key={item} className={styles.item}>{item}</li>
@@ -77,7 +85,7 @@ export function AnticipationProfileSummary({
 
       {profile.updatePatterns.commonTriggers.length > 0 && (
         <section className={styles.block}>
-          <h3 className={styles.heading}>Häufige Update-Auslöser</h3>
+          <h3 className={styles.heading}>Dokumentierte Aktualisierungsauslöser</h3>
           <ul className={styles.list}>
             {profile.updatePatterns.commonTriggers.map((item) => (
               <li key={item} className={styles.item}>{item}</li>

@@ -151,6 +151,37 @@
   min-width: 0;
 }
 
+.nameRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
+}
+
+.premiumBadge {
+  flex: 0 0 auto;
+}
+
+.premiumLine {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+  color: rgba(153, 246, 228, 0.88);
+}
+
+.premiumLine[data-tone='warn'] {
+  color: rgba(251, 191, 36, 0.92);
+}
+
+.premiumLine[data-tone='danger'] {
+  color: #fca5a5;
+}
+
+.premiumLine[data-tone='neutral'] {
+  color: rgba(210, 224, 240, 0.78);
+}
+
 .name {
   margin: 0;
   font-size: clamp(1.35rem, 3vw, 1.75rem);

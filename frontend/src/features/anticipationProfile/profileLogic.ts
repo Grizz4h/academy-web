@@ -45,22 +45,22 @@ export function resolveAnticipationProfileConfig(raw: Record<string, unknown> = 
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Deine bisherigen Reads zeigen ein Muster – keine Bewertung deines Niveaus.',
+        || 'Diese Zusammenfassung zeigt, welche sichtbaren Hinweise, Alternativszenarien und Aktualisierungsauslöser in deinen bisherigen E4-Einträgen vorkamen. Sie bewertet weder dein Niveau noch deine Vorhersagegenauigkeit.',
     ),
     coreHint: String(
       raw.core_hint
         || raw.coreHint
-        || 'Antizipation entsteht aus mehreren Teilfähigkeiten. Schau, welche Hinweise du oft nutzt – und welche noch selten vorkommen.',
+        || 'Häufig bedeutet nicht gut. Selten bedeutet nicht schlecht. Beschreibe Muster in deinen bisherigen Beobachtungen ohne Kompetenzbewertung.',
     ),
     introText: String(
       raw.intro_text
         || raw.introText
-        || 'Dieser Abschluss fasst deine Reads aus den vorherigen Anticipation-Drills zusammen. Du bekommst kein Rating, sondern ein Bild davon, wie du Situationen bisher liest.',
+        || 'Meine bisherigen Antizipations-Beobachtungen: eine beschreibende Zusammenfassung nach den E4-Übungen — kein Skill-Level, kein Hockey-IQ, keine Trefferquote.',
     ),
     insufficientHint: String(
       raw.insufficient_hint
         || raw.insufficientHint
-        || 'Sammle weitere Reads, damit dein Anticipation Profile aussagekräftiger wird.',
+        || 'Schließe weitere E4-Übungen ab, damit die Zusammenfassung alle vier Beobachtungsschritte abdecken kann. Eine vorläufige Übersicht kann unvollständig sein.',
     ),
   }
 }
@@ -180,11 +180,10 @@ export function computeAnticipationProfile(
     .map(([label]) => label)
 
   const sourceCoverage = cfg.sourceDrillIds.length > 0 && coveredDrills.length >= cfg.sourceDrillIds.length
-  const enoughBecause = observations.length >= cfg.minReadsForProfile
-    ? 'read_count'
-    : sourceCoverage
-      ? 'source_coverage'
-      : 'insufficient'
+  // Freischaltung nach Abdeckung aller Quelldrills — nicht nach isolierter Read-Zahl als Validitätsschwelle.
+  const enoughBecause: AnticipationProfile['enoughBecause'] = sourceCoverage
+    ? 'source_coverage'
+    : 'insufficient'
 
   return {
     sourceReads: observations.length,
@@ -203,20 +202,22 @@ export function computeAnticipationProfile(
     sourceDrillIds: coveredDrills,
     hasEnoughData: enoughBecause !== 'insufficient',
     enoughBecause,
+    /** Interne UX-Hinweiszahl; keine wissenschaftliche Evidenzschwelle. */
+    observationCountHint: cfg.minReadsForProfile,
   }
 }
 
 export function describeDecisionFlexibility(keepCount: number, changeCount: number): string {
   if (keepCount + changeCount === 0) {
-    return 'Noch keine Update-Reads. Deine bisherigen Reads zeigen, wie du Erwartungen bildest – noch nicht, wann du sie anpasst.'
+    return 'Noch keine Aktualisierungsentscheidungen dokumentiert. Bisher siehst du, wie Erwartungen gebildet wurden – noch nicht, wann sie angepasst wurden.'
   }
   if (keepCount > changeCount) {
-    return 'Du hältst häufig an deiner ersten Erwartung fest.'
+    return `In den bisherigen Einträgen wurde die Erwartung häufiger beibehalten (${keepCount}) als geändert (${changeCount}). Das ist eine neutrale Häufigkeit, keine Qualitätswertung.`
   }
   if (changeCount > keepCount) {
-    return 'Du passt deine Erwartung häufiger nach neuen Informationen an.'
+    return `In den bisherigen Einträgen wurde die Erwartung häufiger geändert (${changeCount}) als beibehalten (${keepCount}). Das ist eine neutrale Häufigkeit, keine Qualitätswertung.`
   }
-  return 'Behalten und Anpassen halten sich in deinen Reads bisher die Waage.'
+  return `Beibehalten und Ändern halten sich bisher die Waage (${keepCount} / ${changeCount}). Neutrale Häufigkeiten, keine Kompetenzwertung.`
 }
 
 const NEXT_FOCUS_ORDER = ['timing', 'body_orientation', 'player_movement']
@@ -228,9 +229,13 @@ export function describeNextFocus(
   const preferred = NEXT_FOCUS_ORDER.filter((key) => rarelyUsed.includes(key))
   const rest = rarelyUsed.filter((key) => !preferred.includes(key))
   const labels = [...preferred, ...rest].slice(0, 2).map(labelFor)
-  if (labels.length === 0) return 'Deine Cue-Nutzung ist bisher breit gestreut.'
-  if (labels.length === 1) return `Achte stärker auf ${labels[0]}.`
-  return `Achte stärker auf ${labels[0]} und ${labels[1]}.`
+  if (labels.length === 0) {
+    return 'In deinen bisherigen Einträgen sind die Hinweisarten breit gestreut. Wähle in der nächsten Situation bewusst einen Hinweis, den du bisher selten notiert hast.'
+  }
+  if (labels.length === 1) {
+    return `In deinen bisherigen Einträgen wurden Hinweise zu „${labels[0]}“ selten dokumentiert. Beobachte in der nächsten geeigneten Situation bewusst, ob „${labels[0]}“ eine Pass- oder Puckführungsoption sichtbar beeinflusst.`
+  }
+  return `In deinen bisherigen Einträgen wurden Hinweise zu „${labels[0]}“ und „${labels[1]}“ selten dokumentiert. Beobachte in der nächsten geeigneten Situation bewusst, ob einer davon die nächste Aktion sichtbar beeinflusst.`
 }
 
 export function toReflectionPayload(

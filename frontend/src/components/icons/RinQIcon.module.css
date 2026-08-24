@@ -1,0 +1,66 @@
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  color: rgba(143, 211, 223, 0.94);
+}
+
+.sm {
+  width: 14px;
+  height: 14px;
+}
+
+.md {
+  width: 18px;
+  height: 18px;
+}
+
+.lg {
+  width: 22px;
+  height: 22px;
+}
+
+.toneAccent {
+  color: #99f6e4;
+}
+
+.toneMuted {
+  color: rgba(148, 163, 184, 0.85);
+}
+
+.toneOk {
+  color: #86efac;
+}
+
+.toneWarn {
+  color: #fde68a;
+}
+
+.toneDanger {
+  color: #fca5a5;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid rgba(81, 145, 162, 0.32);
+  background: rgba(81, 145, 162, 0.1);
+  padding: 0.18rem;
+  line-height: 0;
+}
+
+.badgeSm {
+  padding: 0.12rem;
+  border-radius: 5px;
+}
+
+.badgeLg {
+  padding: 0.28rem;
+  border-radius: 7px;
+}
+
+.inline {
+  margin-right: 0.35em;
+}

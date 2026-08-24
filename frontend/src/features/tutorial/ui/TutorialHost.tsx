@@ -82,7 +82,7 @@ export function TutorialHost() {
             <li>✓ Akademie gefunden</li>
             <li>✓ Session verstanden</li>
             <li>✓ Verlauf kennengelernt</li>
-            <li>✓ Locker entdeckt</li>
+            <li>✓ Spind entdeckt</li>
           </ul>
         </TutorialDialog>
         <TutorialDevPanel />

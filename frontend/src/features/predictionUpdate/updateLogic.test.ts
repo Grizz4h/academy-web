@@ -18,11 +18,12 @@ assert.equal(resolvePredictionUpdateConfig({ mechanic: 'cue_priority' }).enabled
 assert.equal(resolvePredictionUpdateConfig({ mechanic: 'scenario_branches' }).enabled, false)
 const cfg = resolvePredictionUpdateConfig({ mechanic: 'prediction_update' })
 assert.equal(cfg.enabled, true)
-assert.equal(cfg.minUpdateTriggers, 1)
+assert.equal(cfg.minUpdateTriggers, 0)
 assert.equal(cfg.maxUpdateTriggers, 1)
 
 assert.equal(canSaveUpdateTriggers([], 1, 1), false)
 assert.equal(canSaveUpdateTriggers([{ id: 't1', description: 'leichter Druck' }], 1, 1), true)
+assert.equal(canSaveUpdateTriggers([], 0, 1), true)
 
 const keepOk = canSaveUpdateDecision('keep', 'Pass', '', 'Support bleibt verfügbar', {
   enabled: true,
@@ -52,6 +53,16 @@ assert.equal(canSaveUpdateDecision('maybe', 'Pass', 'Carry', '', {
   requireReasonOnKeep: true,
   requireUpdatedPredictionOnChange: true,
 }), false)
+assert.equal(canSaveUpdateDecision('no_new_info', 'Pass', '', '', {
+  enabled: true,
+  requireReasonOnKeep: true,
+  requireUpdatedPredictionOnChange: true,
+}), true)
+assert.equal(canSaveUpdateDecision('unclear', 'Pass', '', '', {
+  enabled: true,
+  requireReasonOnKeep: true,
+  requireUpdatedPredictionOnChange: true,
+}), true)
 
 const keepRead = {
   id: 'r1',
@@ -83,9 +94,20 @@ assert.equal(isCompletePredictionUpdate({ ...changeRead, updateTriggers: [] }, c
 const changeUpdate = buildPredictionUpdate(changeRead)
 assert.equal(changeUpdate!.updatedPrediction, 'Carry')
 
-const result = computePredictionUpdateResult([keepRead, changeRead])
-assert.equal(result.totalUpdates, 2)
-assert.equal(result.keepCount, 1)
+const noInfoRead = {
+  id: 'r3',
+  expectedAction: 'Pass',
+  supportingCues: [{ id: 'c1', category: 'support', label: 'Center frei' }],
+  updateTriggers: [],
+  updateDecision: 'no_new_info' as const,
+  updateQuality: 'not_updated' as const,
+}
+assert.equal(isCompletePredictionUpdate(noInfoRead, cfg), true)
+assert.ok(buildPredictionUpdate(noInfoRead))
+
+const result = computePredictionUpdateResult([keepRead, changeRead, noInfoRead])
+assert.equal(result.totalUpdates, 3)
+assert.equal(result.keepCount, 2)
 assert.equal(result.changeCount, 1)
 assert.equal(result.updateQualityDistribution.appropriate, 1)
 assert.equal(result.updateQualityDistribution.tooLate, 1)

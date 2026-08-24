@@ -92,7 +92,7 @@ export function AnticipationProfileDrill({ drill, answers, setAnswers }: Props) 
   if (isComplete) {
     return (
       <div className={styles.drillRoot}>
-        <span className={styles.completeBadge}>✓ Anticipation Profile erstellt</span>
+        <span className={styles.completeBadge}>✓ Zusammenfassung der bisherigen Beobachtungen</span>
         <AnticipationProfileSummary
           profile={profile}
           insufficientHint={cfg.insufficientHint}
@@ -109,7 +109,7 @@ export function AnticipationProfileDrill({ drill, answers, setAnswers }: Props) 
 
   return (
     <div className={styles.drillRoot}>
-      <p className={styles.eyebrow}>Reads → Muster → Fokus</p>
+      <p className={styles.eyebrow}>Beobachtungen → Muster → nächste Aufgabe</p>
       <h2 className={styles.title}>{drill.title}</h2>
       {drill.description && <p className={styles.lead}>{drill.description}</p>}
       <p className={styles.lead}>{cfg.introText}</p>

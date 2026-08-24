@@ -26,7 +26,7 @@ export function OutcomeDistribution({ items, total, compact = false }: Props) {
             <div className={styles.meta}>
               <span className={styles.label}>
                 {item.label}
-                {item.isTarget ? ' ← Target' : ''}
+                {item.isTarget ? ' ← Zielereignis' : ''}
               </span>
               <span className={styles.count}>{item.count}</span>
             </div>

@@ -10,24 +10,24 @@ export const PRIOR_PROBLEM_OPTIONS: TimelineOption[] = [
   { value: 'entries_too_easy', label: 'Gegner kommt zu leicht in die Zone', group: 'Gegnerische Wirkung' },
   { value: 'weak_side_exposed', label: 'Weak Side wird wiederholt offen gelassen', group: 'Gegnerische Wirkung' },
   { value: 'net_front_problem', label: 'Net Front wird wiederholt problematisch', group: 'Gegnerische Wirkung' },
-  { value: 'exit_under_pressure_fails', label: 'Exit scheitert unter Druck', group: 'Eigenes Problem' },
-  { value: 'support_missing', label: 'Support fehlt', group: 'Eigenes Problem' },
-  { value: 'turnovers_repeat', label: 'Turnover wiederholen sich', group: 'Eigenes Problem' },
-  { value: 'tempo_mismatch', label: 'Tempo / Abstände passen nicht', group: 'Eigenes Problem' },
-  { value: 'matchup_problem', label: 'Matchup erzeugt wiederholt Probleme', group: 'Kontext' },
+  { value: 'exit_under_pressure_fails', label: 'Exit unter Druck wiederholt schwierig', group: 'Eigene Herausforderung' },
+  { value: 'support_missing', label: 'Support fehlt', group: 'Eigene Herausforderung' },
+  { value: 'turnovers_repeat', label: 'Turnover wiederholen sich', group: 'Eigene Herausforderung' },
+  { value: 'tempo_mismatch', label: 'Tempo / Abstände passen nicht', group: 'Eigene Herausforderung' },
+  { value: 'matchup_problem', label: 'Matchup erzeugt wiederholt Herausforderungen', group: 'Kontext' },
   { value: 'personnel_change', label: 'Personal / Reihe verändert', group: 'Kontext' },
-  { value: 'game_state_shift', label: 'Game State verändert', group: 'Kontext' },
+  { value: 'game_state_shift', label: 'Spielkontext verändert', group: 'Kontext' },
   { value: 'special_teams_context', label: 'Special-Teams-Kontext', group: 'Kontext' },
   { value: 'other', label: 'Anderes', group: 'Sonstiges' },
-  { value: 'no_clear_problem', label: 'Kein klares Problem', group: 'Sonstiges' },
+  { value: 'no_clear_problem', label: 'Keine klare vorherige Herausforderung', group: 'Sonstiges' },
   { value: 'unclear', label: 'Unklar', group: 'Sonstiges' },
 ]
 
 export const TRIGGER_TYPE_OPTIONS: TimelineOption[] = [
   { value: 'opponent_driven', label: 'Gegnerbedingt' },
-  { value: 'own_structural_problem', label: 'Eigenes strukturelles Problem' },
+  { value: 'own_structural_problem', label: 'Eigene wiederkehrende Herausforderung' },
   { value: 'personnel_driven', label: 'Personalbedingt' },
-  { value: 'game_state_driven', label: 'Game-State-bedingt' },
+  { value: 'game_state_driven', label: 'Spielkontextbedingt' },
   { value: 'special_situation', label: 'Spezielle Situation' },
   { value: 'mixed', label: 'Gemischt' },
   { value: 'no_clear_trigger', label: 'Kein klarer Trigger' },
@@ -35,19 +35,19 @@ export const TRIGGER_TYPE_OPTIONS: TimelineOption[] = [
 ]
 
 export const EVIDENCE_OPTIONS: TimelineOption[] = [
-  { value: 'problem_repeated_before', label: 'Problem trat mehrfach vor der Veränderung auf' },
+  { value: 'problem_repeated_before', label: 'Herausforderung trat mehrfach vor der Veränderung auf' },
   { value: 'same_space', label: 'Veränderung betrifft genau den problematischen Raum' },
   { value: 'same_role', label: 'Veränderung betrifft genau die beteiligte Rolle / Spielerposition' },
   { value: 'timing_fits', label: 'Timing passt unmittelbar danach' },
   { value: 'reduces_open_option', label: 'Das neue Verhalten reduziert die zuvor offene Option' },
   { value: 'opponent_must_adapt', label: 'Gegner muss danach anders reagieren' },
-  { value: 'problem_less_frequent', label: 'Dasselbe Problem tritt später seltener auf' },
+  { value: 'problem_less_frequent', label: 'Dieselbe Interaktion tritt später seltener so auf' },
   {
     value: 'timing_only',
     label: 'Nur zeitlicher Zusammenhang',
-    description: 'Das Problem trat vorher auf und die Veränderung danach. Das allein beweist noch keine Ursache.',
+    description: 'Die Herausforderung trat vorher auf und die Veränderung danach. Das allein beweist noch keine Ursache.',
   },
-  { value: 'little_direct_evidence', label: 'Kaum direkte Evidenz' },
+  { value: 'little_direct_evidence', label: 'Kaum direkte Beobachtungsgrundlage' },
   { value: 'unclear', label: 'Unklar' },
 ]
 
@@ -55,7 +55,7 @@ export const ALTERNATIVE_OPTIONS: TimelineOption[] = [
   { value: 'different_opponent_behavior', label: 'Anderes gegnerisches Verhalten' },
   { value: 'different_personnel', label: 'Andere Spieler / Reihe auf dem Eis' },
   { value: 'matchup', label: 'Matchup' },
-  { value: 'game_state', label: 'Score / Game State' },
+  { value: 'game_state', label: 'Spielstand / Spielkontext' },
   { value: 'fatigue', label: 'Ermüdung' },
   { value: 'random_variation', label: 'Zufällige Variation' },
   { value: 'situational_solution', label: 'Situative Lösung einzelner Spieler' },
@@ -69,7 +69,8 @@ export const PROBLEM_FIT_OPTIONS: TimelineOption[] = [
   { value: 'partial', label: 'Teilweise' },
   { value: 'indirect', label: 'Indirekt' },
   { value: 'weak', label: 'Kaum' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'no_functional_link', label: 'Keine ausreichende funktionale Verbindung erkennbar' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const LINK_STRENGTH_OPTIONS: TimelineOption[] = [
@@ -94,7 +95,7 @@ export const LINK_STRENGTH_OPTIONS: TimelineOption[] = [
     description: 'Etwas passiert vorher, etwas anderes danach.',
   },
   { value: 'weak_link', label: 'Schwacher Zusammenhang' },
-  { value: 'insufficient_evidence', label: 'Zu wenig Evidenz' },
+  { value: 'insufficient_evidence', label: 'Nicht ausreichend beobachtet' },
   { value: 'unclear', label: 'Unklar' },
 ]
 

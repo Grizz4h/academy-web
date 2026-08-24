@@ -34,10 +34,10 @@ export function CuePrioritySummary({
 
   if (compact) {
     return (
-      <div className={styles.preview} aria-label="Cue Priority Preview">
+      <div className={styles.preview} aria-label="Hinweisrollen Preview">
         <div className={styles.previewTitle}>CUE PROFILE</div>
         <div className={styles.previewLine}>
-          Entscheidend {topPrimary ? `${topPrimary.label} ${topPrimary.count}` : '—'}
+          Haupthinweis {topPrimary ? `${topPrimary.label} ${topPrimary.count}` : '—'}
         </div>
       </div>
     )
@@ -46,27 +46,27 @@ export function CuePrioritySummary({
   return (
     <div className={styles.stack}>
       <section className={styles.block}>
-        <h3 className={styles.heading}>Cue Profile</h3>
+        <h3 className={styles.heading}>Hinweisrollen</h3>
         <p className={styles.lead}>Deine wichtigsten Hinweise — deskriptiv, ohne Score.</p>
       </section>
 
       {primaryItems.length > 0 && (
         <section className={styles.block}>
-          <h3 className={styles.heading}>Entscheidend</h3>
+          <h3 className={styles.heading}>Haupthinweis</h3>
           <OutcomeDistribution items={primaryItems} total={primaryItems.reduce((sum, item) => sum + item.count, 0)} />
         </section>
       )}
 
       {supportingItems.length > 0 && (
         <section className={styles.block}>
-          <h3 className={styles.heading}>Unterstützend</h3>
+          <h3 className={styles.heading}>Unterstützende Hinweise</h3>
           <OutcomeDistribution items={supportingItems} total={supportingItems.reduce((sum, item) => sum + item.count, 0)} />
         </section>
       )}
 
       {secondaryItems.length > 0 && (
         <section className={styles.block}>
-          <h3 className={styles.heading}>Nebensächlich</h3>
+          <h3 className={styles.heading}>Wahrgenommen, nicht genutzt</h3>
           <OutcomeDistribution items={secondaryItems} total={secondaryItems.reduce((sum, item) => sum + item.count, 0)} />
         </section>
       )}
@@ -74,7 +74,7 @@ export function CuePrioritySummary({
       {result.reviewTones.length > 0 && (
         <section className={styles.block}>
           <h3 className={styles.heading}>Nachträglicher Check</h3>
-          <p className={styles.lead}>Welche Hinweise haben deine Reads tatsächlich getragen?</p>
+          <p className={styles.lead}>Welche Hinweise hast du für deine Erwartungen genutzt? Häufig bedeutet nicht gut.</p>
           <ul className={styles.toneList}>
             {result.reviewTones.map((item) => (
               <li key={item.category} className={styles.toneRow}>

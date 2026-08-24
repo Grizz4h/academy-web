@@ -311,13 +311,13 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
   const nextLabel = (current: AnticipationDraftStep): string => {
     const next = nextAnticipationStep(current, cfg)
-    if (next === 'save') return isEditing ? 'Read speichern' : 'Read speichern'
+    if (next === 'save') return isEditing ? 'Erwartung speichern' : 'Erwartung speichern'
     if (next === 'prioritize') return 'Weiter zur Gewichtung'
-    if (next === 'alternative') return 'Weiter zur Alternative'
-    if (next === 'triggers') return 'Weiter zu den Triggern'
+    if (next === 'alternative') return 'Weiter zum Alternativszenario'
+    if (next === 'triggers') return 'Weiter zu den Auslösern'
     if (next === 'actual') return 'Weiter zur tatsächlichen Aktion'
-    if (next === 'quality') return 'Weiter zur Read Quality'
-    if (next === 'cueReview') return 'Weiter zum Cue-Check'
+    if (next === 'quality') return 'Weiter zur Nachprüfung der Begründung'
+    if (next === 'cueReview') return 'Weiter zur Hinweis-Nachprüfung'
     if (next === 'branchReview') return 'Weiter zum Branch-Check'
     if (next === 'updateInfo') return 'Weiter zur neuen Information'
     if (next === 'updateDecide') return 'Weiter zur Update-Entscheidung'
@@ -465,20 +465,20 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
   )
 
   const completeLabel = cfg.supportsPredictionUpdate
-    ? '✓ Prediction Update abgeschlossen'
+    ? '✓ Erwartung aktualisieren abgeschlossen'
     : cfg.supportsScenarioBranches
-      ? '✓ Scenario Branches abgeschlossen'
+      ? '✓ Alternativszenarien abgeschlossen'
       : cfg.supportsCuePriority
-        ? '✓ Cue Priority abgeschlossen'
-        : '✓ Anticipation Read abgeschlossen'
+        ? '✓ Hinweisrollen abgeschlossen'
+        : '✓ Situationslesen abgeschlossen'
 
   const eyebrow = cfg.supportsPredictionUpdate
-    ? 'Situation → Erster Read → Neue Information → Update → Aktion'
+    ? 'Situation → Erwartung → Neue Information → Aktualisieren → Aktion'
     : cfg.supportsScenarioBranches
-      ? 'Situation → Primäre Erwartung → Alternative → Trigger → Aktion'
+      ? 'Situation → Primäre Erwartung → Alternativszenario → Auslöser → Aktion'
       : cfg.supportsCuePriority
-        ? 'Situation → Erwartung → Cues → Gewichtung → Aktion'
-        : 'Situation → Erwartung → Cues → Aktion'
+        ? 'Situation → Erwartung → Hinweise → Rollen → Aktion'
+        : 'Situation → Erwartung → Hinweise → Aktion'
 
   if (isComplete) {
     return (
@@ -511,8 +511,8 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
       <div className={styles.progress}>
         <div className={styles.progressMeta}>
-          <span>{count} / {progressGoal} Reads</span>
-          {atMin && <span>Du hast genug Reads für eine erste Auswertung.</span>}
+          <span>{count} / {progressGoal} Erwartungen</span>
+          {atMin && <span>Du hast genug Einträge für eine erste Auswertung.</span>}
         </div>
         <div className={styles.progressBar} aria-hidden>
           <div className={styles.progressFill} style={{ width: `${progressPercent}%` }} />
@@ -522,7 +522,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
       {stage === 'observe' && collecting && (
         <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
           <h3 className={styles.panelTitle}>
-            {isEditing ? `READ #${observations[editIndex!]?.order || editIndex! + 1}` : `READ #${count + 1}`}
+            {isEditing ? `Erwartung #${observations[editIndex!]?.order || editIndex! + 1}` : `Erwartung #${count + 1}`}
           </h3>
 
           {step !== 'expect' && (
@@ -536,9 +536,9 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               )}
               <LockedLine label={cfg.supportsScenarioBranches ? 'Primäre Erwartung' : 'Erwartung'} value={primaryAction} />
-              <LockedLine label="Confidence" value={confidenceLabel(draft.confidence)} />
+              <LockedLine label="Sicherheit der ursprünglichen Erwartung" value={confidenceLabel(draft.confidence)} />
               <LockedLine
-                label="Cues"
+                label="Hinweise"
                 value={normalizeCues(draft.cues, cfg.maxCues).map((cue) => {
                   const priority = cuePriorityLabel(cue.priority)
                   const body = `${cueCategoryLabel(cue.category)} · ${cue.label}`
@@ -546,20 +546,24 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 }).join(' · ')}
               />
               {cfg.supportsScenarioBranches && step !== 'alternative' && (
-                <LockedLine label="Alternative" value={alternativeAction} />
+                <LockedLine label="Alternativszenario" value={alternativeAction} />
               )}
               {cfg.supportsScenarioBranches && step !== 'alternative' && step !== 'triggers' && triggerLines.length > 0 && (
-                <LockedLine label="Trigger" value={triggerLines.join(' · ')} />
+                <LockedLine label="Auslöser" value={triggerLines.join(' · ')} />
               )}
               {cfg.supportsPredictionUpdate && step !== 'updateInfo' && updateTriggerLines.length > 0 && (
                 <LockedLine label="Neue Information" value={updateTriggerLines.join(' · ')} />
               )}
               {cfg.supportsPredictionUpdate && step !== 'updateInfo' && step !== 'updateDecide' && draft.updateDecision && (
                 <LockedLine
-                  label="Update"
+                  label="Aktualisierung"
                   value={draft.updateDecision === 'change'
-                    ? `Ändern → ${draft.updatedPrediction || draft.updatedPredictionOptionId}`
-                    : `Bleibt${draft.updateReason ? ` · ${draft.updateReason}` : ''}`}
+                    ? `Erwartung geändert → ${draft.updatedPrediction || draft.updatedPredictionOptionId}`
+                    : draft.updateDecision === 'no_new_info'
+                      ? 'Keine relevante neue Information sichtbar'
+                      : draft.updateDecision === 'unclear'
+                        ? 'Nicht sicher beurteilbar'
+                        : `Ursprüngliche Erwartung beibehalten${draft.updateReason ? ` · ${draft.updateReason}` : ''}`}
                 />
               )}
             </>
@@ -573,7 +577,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   className={styles.input}
                   value={draft.situationLabel}
                   maxLength={80}
-                  placeholder="z. B. Entry an der Blue Line"
+                  placeholder="z. B. Zoneneintritt an der blauen Linie"
                   onChange={(event) => updateDraft({ situationLabel: event.target.value })}
                 />
               </div>
@@ -617,7 +621,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   )}
                   {cfg.supportsConfidence && (
                     <div className={styles.fieldBlock}>
-                      <div className={styles.fieldLabel}>Wie sicher bist du dir bei diesem Read?</div>
+                      <div className={styles.fieldLabel}>Sicherheit der ursprünglichen Erwartung</div>
                       <OptionChips
                         name="readConfidence"
                         options={confidenceOptions()}
@@ -631,7 +635,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 <div className={styles.fieldBlock}>
                   <div className={styles.fieldLabel}>Welche Hinweise sprechen für deine Erwartung?</div>
                   <p className={styles.fieldHelp}>
-                    {cfg.minCues}–{cfg.maxCues} Cues{cfg.supportsCuePriority ? `, empfohlen ${cfg.recommendedCues}` : ''}.
+                    {cfg.minCues}–{cfg.maxCues} Hinweise{cfg.supportsCuePriority ? `, empfohlen ${cfg.recommendedCues}` : ''}.
                     Kategorie plus kurzer Freitext.
                   </p>
                   <div className={styles.cueList}>
@@ -656,7 +660,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                         {draft.cues.length > 1 && (
                           <div className={styles.cueActions}>
                             <button type="button" className={styles.actionBtn} onClick={() => removeCue(cue.id)}>
-                              Cue entfernen
+                              Hinweis entfernen
                             </button>
                           </div>
                         )}
@@ -666,7 +670,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   {canAddCue(draft.cues.length, cfg.maxCues) && (
                     <div className={styles.actions}>
                       <button type="button" className={styles.secondaryBtn} onClick={addCue}>
-                        + Cue
+                        + Hinweis
                       </button>
                     </div>
                   )}
@@ -713,11 +717,15 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {step === 'alternative' && cfg.supportsScenarioBranches && (
             <>
+              <p className={styles.fieldHelp}>
+                Die Begrenzung auf eine Alternative dient der Übung. Weitere Spielmöglichkeiten können bestehen.
+                Wenn keine realistische Alternative formulierbar ist, verwirf diese Szene und wähle eine andere.
+              </p>
               {renderActionField(
                 'alternative',
                 draft.alternativeActionOptionId,
                 draft.alternativeAction,
-                'Was wäre die wahrscheinlichste andere Entwicklung?',
+                'Was wäre die wahrscheinlichste andere nächste Aktion?',
               )}
               <div className={styles.actions}>
                 <button
@@ -727,6 +735,13 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   onClick={() => goNextFrom('alternative')}
                 >
                   {nextLabel('alternative')}
+                </button>
+                <button
+                  type="button"
+                  className={styles.secondaryBtn}
+                  onClick={() => clearDraft({ [cfg.stageKey]: 'observe' })}
+                >
+                  Szene ungeeignet – neu wählen
                 </button>
               </div>
             </>
@@ -785,29 +800,35 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
             <>
               <LockedLine label="Neue Information" value={updateTriggerLines.join(' · ')} />
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Bleibt dein Read bestehen?</div>
+                <div className={styles.fieldLabel}>Bleibt deine Erwartung bestehen – oder ändert sie sich?</div>
                 <OptionChips
                   name="updateDecision"
                   options={updateDecisionOptions()}
                   value={draft.updateDecision}
                   onChange={(next) => updateDraft({ updateDecision: String(next) as UpdateDecision })}
                 />
-                <p className={styles.fieldHelp}>Keine dritte Option. Entscheide bewusst – behalten kann richtig sein.</p>
+                <p className={styles.fieldHelp}>
+                  Beibehalten und Ändern sind beide gültig. Ohne relevante neue Information oder wenn unsicher: das explizit wählen.
+                </p>
               </div>
               {draft.updateDecision === 'change' && renderActionField(
                 'updated',
                 draft.updatedPredictionOptionId,
                 draft.updatedPrediction,
-                'Was ist jetzt wahrscheinlicher?',
+                'Was ist jetzt die aktualisierte Erwartung?',
               )}
-              {draft.updateDecision === 'keep' && (
+              {(draft.updateDecision === 'keep' || draft.updateDecision === 'no_new_info') && (
                 <div className={styles.fieldBlock}>
-                  <div className={styles.fieldLabel}>Warum bleibt dein ursprünglicher Read bestehen?</div>
+                  <div className={styles.fieldLabel}>
+                    {draft.updateDecision === 'no_new_info'
+                      ? 'Kurznotiz (optional): Warum war keine relevante neue Information sichtbar?'
+                      : 'Warum reicht die neue Information noch nicht für eine Änderung?'}
+                  </div>
                   <input
                     className={styles.input}
                     value={draft.updateReason}
                     maxLength={120}
-                    placeholder="z. B. Support bleibt verfügbar"
+                    placeholder="z. B. Unterstützung bleibt verfügbar"
                     onChange={(event) => updateDraft({ updateReason: event.target.value })}
                   />
                 </div>
@@ -830,7 +851,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
               <div className={styles.actualGrid}>
                 {renderActionField('actual', draft.actualActionOptionId, draft.actualAction, 'Was ist tatsächlich passiert?')}
                 <div className={styles.fieldBlock}>
-                  <div className={styles.fieldLabel}>Passte dein Read?</div>
+                  <div className={styles.fieldLabel}>Stimmt die tatsächliche Aktion mit deiner Erwartung überein?</div>
                   <OptionChips
                     name="outcomeMatch"
                     options={outcomeMatchOptions()}
@@ -854,17 +875,17 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {step === 'quality' && (
             <>
-              <LockedLine label="Actual" value={draft.actualAction || draft.actualActionOptionId} />
-              <LockedLine label="Match" value={outcomeMatchLabel(draft.outcomeMatch)} />
+              <LockedLine label="Tatsächliche Aktion" value={draft.actualAction || draft.actualActionOptionId} />
+              <LockedLine label="Übereinstimmung" value={outcomeMatchLabel(draft.outcomeMatch)} />
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Wie gut war deine ursprüngliche Erwartung durch sichtbare Hinweise gestützt?</div>
+                <div className={styles.fieldLabel}>Wie war die ursprüngliche Erwartung durch sichtbare Hinweise gestützt?</div>
                 <OptionChips
                   name="readQuality"
                   options={readQualityOptions()}
                   value={draft.readQuality}
                   onChange={(next) => updateDraft({ readQuality: next as AnticipationDraft['readQuality'] })}
                 />
-                <p className={styles.fieldHelp}>Ein guter Read kann anders ausgehen. Ein Treffer ist nicht automatisch gut begründet.</p>
+                <p className={styles.fieldHelp}>Eine Übereinstimmung beweist keine hohe Qualität. Eine Abweichung beweist keine schlechte Antizipation.</p>
               </div>
               <div className={styles.fieldBlock}>
                 <div className={styles.fieldLabel}>Kurznotiz (optional)</div>
@@ -890,11 +911,11 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {step === 'cueReview' && cfg.supportsCuePriority && (
             <>
-              <LockedLine label="Actual" value={draft.actualAction || draft.actualActionOptionId} />
-              <LockedLine label="Match" value={outcomeMatchLabel(draft.outcomeMatch)} />
-              <LockedLine label="Read Quality" value={readQualityLabel(draft.readQuality)} />
+              <LockedLine label="Tatsächliche Aktion" value={draft.actualAction || draft.actualActionOptionId} />
+              <LockedLine label="Übereinstimmung" value={outcomeMatchLabel(draft.outcomeMatch)} />
+              <LockedLine label="Merkmale der Begründung" value={readQualityLabel(draft.readQuality)} />
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>War dein wichtigster Cue wirklich der entscheidende Hinweis?</div>
+                <div className={styles.fieldLabel}>War dein Haupthinweis vor der Aktion klar sichtbar, und blieb er für die ursprüngliche Erwartung relevant?</div>
                 <OptionChips
                   name="cueReview"
                   options={cueReviewOptions()}
@@ -902,7 +923,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   onChange={(next) => updateDraft({ cueReview: String(next) as CueReviewJudgement })}
                 />
                 <p className={styles.fieldHelp}>
-                  Das Outcome darf die ursprüngliche Cue-Gewichtung nicht automatisch umschreiben. Ein anderer Verlauf kann trotzdem auf einem guten Cue liegen.
+                  Die tatsächliche Aktion schreibt die Hinweisrollen nicht automatisch um. Ein abweichender Verlauf macht den Haupthinweis nicht automatisch irrelevant.
                 </p>
               </div>
               <div className={styles.actions}>
@@ -920,8 +941,8 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {step === 'branchReview' && cfg.supportsScenarioBranches && (
             <>
-              <LockedLine label="Actual" value={draft.actualAction || draft.actualActionOptionId} />
-              <LockedLine label="Alternative" value={alternativeAction} />
+              <LockedLine label="Tatsächliche Aktion" value={draft.actualAction || draft.actualActionOptionId} />
+              <LockedLine label="Alternativszenario" value={alternativeAction} />
               <div className={styles.fieldBlock}>
                 <div className={styles.fieldLabel}>Ist deine Alternative eingetreten?</div>
                 <OptionChips
@@ -932,7 +953,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>War dein Trigger relevant?</div>
+                <div className={styles.fieldLabel}>Wurde der definierte Auslöser sichtbar – und blieb er für die Verzweigung relevant?</div>
                 <OptionChips
                   name="triggerRelevant"
                   options={triggerRelevantOptions()}
@@ -940,7 +961,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   onChange={(next) => updateDraft({ triggerRelevant: next as AnticipationDraft['triggerRelevant'] })}
                 />
                 <p className={styles.fieldHelp}>
-                  Wenn die Alternative eintrat und der Trigger stimmte, war der Read nicht falsch – du hattest die Verzweigung erkannt.
+                  Das Eintreten der Alternative ohne den erwarteten Auslöser bestätigt die Verzweigung nicht automatisch.
                 </p>
               </div>
               <div className={styles.actions}>
@@ -958,15 +979,19 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {step === 'updateReview' && cfg.supportsPredictionUpdate && (
             <>
-              <LockedLine label="Actual" value={draft.actualAction || draft.actualActionOptionId} />
+              <LockedLine label="Tatsächliche Aktion" value={draft.actualAction || draft.actualActionOptionId} />
               <LockedLine
-                label="Update"
+                label="Aktualisierung"
                 value={draft.updateDecision === 'change'
-                  ? `Ändern → ${draft.updatedPrediction || draft.updatedPredictionOptionId}`
-                  : 'Erwartung bleibt'}
+                  ? `Erwartung geändert → ${draft.updatedPrediction || draft.updatedPredictionOptionId}`
+                  : draft.updateDecision === 'no_new_info'
+                    ? 'Keine relevante neue Information sichtbar'
+                    : draft.updateDecision === 'unclear'
+                      ? 'Nicht sicher beurteilbar'
+                      : 'Ursprüngliche Erwartung beibehalten'}
               />
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>War dein Update-Timing sinnvoll?</div>
+                <div className={styles.fieldLabel}>Wie verlief die Aktualisierung relativ zum Auftreten der neuen Information? (keine Geschwindigkeitswertung)</div>
                 <OptionChips
                   name="updateQuality"
                   options={updateQualityOptions()}
@@ -974,7 +999,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                   onChange={(next) => updateDraft({ updateQuality: String(next) as UpdateQuality })}
                 />
                 <p className={styles.fieldHelp}>
-                  Erkennen und rechtzeitig anpassen sind zwei verschiedene Fähigkeiten. Ein behaltener Read kann trotzdem passend getimt sein.
+                  Diese Kategorien beschreiben den Ablauf. Sie werden nicht in Punkte, Reaktionsgeschwindigkeit oder Kompetenz übersetzt.
                 </p>
               </div>
               <div className={styles.actions}>
@@ -1003,16 +1028,16 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
               className={styles.secondaryBtn}
               onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.addingMoreKey]: true, [cfg.draftKey]: emptyAnticipationDraft() })}
             >
-              + Weiteren Read beobachten
+              + Weitere Erwartung beobachten
             </button>
           )}
         </div>
       )}
 
       <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
-        <h3 className={styles.panelTitle}>Gespeicherte Reads</h3>
+        <h3 className={styles.panelTitle}>Gespeicherte Erwartungen</h3>
         {observations.length === 0 ? (
-          <p className={styles.empty}>Noch kein Read. Zuerst die Erwartung, dann die tatsächliche Aktion.</p>
+          <p className={styles.empty}>Noch kein Eintrag. Zuerst die Erwartung, dann die tatsächliche Aktion.</p>
         ) : (
           <ol className={styles.readList}>
             {observations.map((obs, index) => (
@@ -1072,7 +1097,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
           {cfg.supportsPredictionUpdate ? (
             <>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Bei welchem Read hast du deine Einschätzung erfolgreich angepasst?</div>
+                <div className={styles.fieldLabel}>Bei welcher Situation hast du deine Erwartung aufgrund neuer Information verändert?</div>
                 <OptionChips
                   name="successfulUpdate"
                   options={updateReadChoices}
@@ -1081,7 +1106,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Wann hast du zu lange an deiner ersten Erwartung festgehalten?</div>
+                <div className={styles.fieldLabel}>Bei welcher Situation hast du sie trotz neuer Information beibehalten?</div>
                 <OptionChips
                   name="heldTooLong"
                   options={updateReadChoices}
@@ -1090,7 +1115,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Welche neuen Informationen verändern deine Reads am stärksten?</div>
+                <div className={styles.fieldLabel}>Welche zusätzliche Information hätte eine Änderung gerechtfertigt?</div>
                 <OptionChips
                   name="strongestUpdateInfo"
                   options={strongestUpdateInfoChoices}
@@ -1102,7 +1127,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
           ) : cfg.supportsScenarioBranches ? (
             <>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Bei welchem Read war deine Alternative besonders wichtig?</div>
+                <div className={styles.fieldLabel}>Bei welcher Erwartung war dein Alternativszenario besonders wichtig?</div>
                 <OptionChips
                   name="importantAlternative"
                   options={alternativeReadChoices}
@@ -1111,7 +1136,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Welcher Trigger hätte deine Erwartung am stärksten verändert?</div>
+                <div className={styles.fieldLabel}>Welcher Auslöser hätte deine Erwartung am stärksten verändert?</div>
                 <OptionChips
                   name="strongestTrigger"
                   options={strongestTriggerChoices}
@@ -1120,7 +1145,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Denkst du oft zu linear?</div>
+                <div className={styles.fieldLabel}>War die Szene noch offen genug für beide Szenarien?</div>
                 <OptionChips
                   name="linearThinking"
                   options={linearThinkingOptions()}
@@ -1132,7 +1157,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
           ) : cfg.supportsCuePriority ? (
             <>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Welcher Cue hat dir am häufigsten geholfen?</div>
+                <div className={styles.fieldLabel}>Welche Hinweisart hast du am häufigsten für Erwartungen genutzt?</div>
                 <OptionChips
                   name="helpfulCue"
                   options={helpfulCueChoices}
@@ -1141,7 +1166,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Welchen Cue hast du möglicherweise überbewertet?</div>
+                <div className={styles.fieldLabel}>Welche Hinweisart war möglicherweise zu allgemein oder überbewertet?</div>
                 <OptionChips
                   name="overweightedCue"
                   options={cueChoices}
@@ -1150,7 +1175,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Welchen Cue möchtest du zukünftig bewusster beobachten?</div>
+                <div className={styles.fieldLabel}>Welche Hinweisart möchtest du als Nächstes bewusst dokumentieren?</div>
                 <OptionChips
                   name="futureCue"
                   options={futureCueChoices}
@@ -1163,7 +1188,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
             <>
           <div className={styles.fieldBlock}>
             <div className={styles.fieldLabel}>
-              Bei welchem Read war deine Erwartung anders als die tatsächliche Aktion, aber trotzdem gut begründet?
+              Bei welcher Erwartung wich die tatsächliche Aktion ab, obwohl die Hinweise vor der Aktion sichtbar und konkret waren?
             </div>
             <OptionChips
               name="strongMismatch"
@@ -1175,7 +1200,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {helpfulCueChoices.length > 0 && (
             <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>Welcher Cue hat dir am häufigsten geholfen, eine Erwartung zu bilden?</div>
+              <div className={styles.fieldLabel}>Welche Hinweisart hast du am häufigsten genutzt, um eine Erwartung zu bilden?</div>
               <OptionChips
                 name="helpfulCue"
                 options={helpfulCueChoices}
@@ -1197,7 +1222,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
 
           {safeAnswers[cfg.overconfidenceKey] === 'single' && observations.length > 0 && (
             <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>Welcher Read?</div>
+              <div className={styles.fieldLabel}>Welche Erwartung?</div>
               <OptionChips
                 name="overconfidenceRead"
                 options={observations.map((obs) => ({
@@ -1224,7 +1249,7 @@ export function AnticipationReadDrill({ drill, answers, setAnswers }: Props) {
               Auswertung abschließen
             </button>
             <button type="button" className={styles.secondaryBtn} onClick={() => setStage('observe')}>
-              Zurück zu den Reads
+              Zurück zu den Erwartungen
             </button>
           </div>
         </section>

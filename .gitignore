@@ -18,6 +18,8 @@ __pycache__/
 # --- Runtime user data (never commit) ---
 # Accounts + password hashes
 data/academy/users.json
+data/academy/users.json.lock
+data/academy/*.lock
 
 # RinQ identity store (UUID + auth_links)
 data/academy/identity_store.json

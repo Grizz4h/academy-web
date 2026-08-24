@@ -67,7 +67,7 @@ export default function PuxWalletButton() {
         </div>
 
         <p className={styles.summary}>
-          Belohnungswährung für Sessions, Achievements und den Locker-Shop. Trainieren, sammeln, ausgeben.
+          Belohnungswährung für Sessions, Achievements und den Spind-Shop. Trainieren, sammeln, ausgeben.
         </p>
 
         {recentActivity.length > 0 ? (
@@ -116,7 +116,7 @@ export default function PuxWalletButton() {
             className={styles.actionLink}
             onClick={() => close()}
           >
-            Zum Locker
+            Zum Spind
           </UiButtonLink>
           <UiButtonLink
             to="/progress"

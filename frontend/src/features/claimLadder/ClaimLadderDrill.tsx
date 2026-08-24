@@ -60,7 +60,7 @@ function CaseVisual({ caseDef }: { caseDef: EvidenceSynthesisCase }) {
       {sample.matrix && (
         <ConditionOutcomeMatrix
           conditionLabel={sample.conditionLabel || 'Bedingung'}
-          targetLabel={sample.targetLabel || 'Target'}
+          targetLabel={sample.targetLabel || 'Zielereignis'}
           matrix={sample.matrix}
         />
       )}
@@ -138,7 +138,7 @@ export function ClaimLadderDrill({ drill, answers, setAnswers }: Props) {
   if (stage === 'complete') {
     return (
       <div className={rateStyles.drillRoot}>
-        <span className={rateStyles.completeBadge}>✓ Evidence Profile abgeschlossen</span>
+        <span className={rateStyles.completeBadge}>✓ Aussagestufen abgeschlossen</span>
         <ReviewBlock cfgCases={cfg.cases} drafts={drafts} />
         <div className={rateStyles.actions}>
           <button type="button" className={rateStyles.secondaryBtn} onClick={() => setStage('review')}>
@@ -151,7 +151,7 @@ export function ClaimLadderDrill({ drill, answers, setAnswers }: Props) {
 
   return (
     <div className={rateStyles.drillRoot}>
-      <p className={rateStyles.eyebrow}>Von Daten zur belastbaren Aussage</p>
+      <p className={rateStyles.eyebrow}>Von Beobachtungsgrundlage zur höchstens vertretbaren Aussage</p>
       <h2 className={rateStyles.title}>{drill.title}</h2>
       {drill.description && <p className={rateStyles.lead}>{drill.description}</p>}
       {drill.didactics?.explanation && <p className={rateStyles.lead}>{drill.didactics.explanation}</p>}
@@ -163,9 +163,9 @@ export function ClaimLadderDrill({ drill, answers, setAnswers }: Props) {
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
           <h3 className={rateStyles.panelTitle}>Wie weit darf deine Aussage gehen?</h3>
           <p className={rateStyles.lead}>
-            Du hast gezählt, verglichen und Evidenz geprüft. Jetzt kommt der wichtigste Schritt:
-            Eine gute Analyse klingt nicht maximal selbstsicher. Sie ist genau so stark formuliert,
-            wie die vorhandene Evidenz es erlaubt.
+            Du hast gezählt, verglichen und die Beobachtungsgrundlage geprüft. Jetzt kommt der wichtigste Schritt:
+            Eine nachvollziehbare Analyse klingt nicht maximal selbstsicher. Sie ist genau so stark formuliert,
+            wie die Tragfähigkeit der Beobachtungsgrundlage es erlaubt — und benennt unklare Fälle, Grenzen und den nächsten Schritt.
           </p>
           <div className={rateStyles.actions}>
             <button
@@ -203,7 +203,7 @@ export function ClaimLadderDrill({ drill, answers, setAnswers }: Props) {
                 onClick={advance}
               >
                 {step === 'next_test' && caseIndex === cfg.cases.length - 1
-                  ? 'Zum Evidence Profile'
+                  ? 'Zur Aussagen-Zusammenfassung'
                   : step === 'next_test'
                     ? 'Nächster Fall'
                     : 'Weiter'}
@@ -224,7 +224,7 @@ export function ClaimLadderDrill({ drill, answers, setAnswers }: Props) {
 
       {stage === 'review' && (
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
-          <h3 className={rateStyles.panelTitle}>Deine Evidence Profiles</h3>
+          <h3 className={rateStyles.panelTitle}>Deine Aussagenprofile</h3>
           <ReviewBlock cfgCases={cfg.cases} drafts={drafts} />
           <div className={rateStyles.fieldBlock}>
             <div className={rateStyles.fieldLabel}>Was hat deine finale Formulierung am stärksten begrenzt?</div>
@@ -236,7 +236,7 @@ export function ClaimLadderDrill({ drill, answers, setAnswers }: Props) {
             />
           </div>
           <div className={rateStyles.fieldBlock}>
-            <div className={rateStyles.fieldLabel}>Welche Claim-Stufe wäre verlockend gewesen, aber zu stark? (optional)</div>
+            <div className={rateStyles.fieldLabel}>Welche Aussagestufe wäre verlockend gewesen, aber zu stark? (optional)</div>
             <OptionChips
               name="temptingClaimLevel"
               options={temptingClaimOptions()}
@@ -332,7 +332,7 @@ function StepFields({
     return (
       <div className={rateStyles.fieldBlock}>
         <div className={rateStyles.fieldLabel}>Wie stark trägt die Evidenz diese Fragestellung?</div>
-        <p className={rateStyles.fieldHelp}>Evidence Strength und Claim Ceiling bleiben getrennt.</p>
+        <p className={rateStyles.fieldHelp}>Tragfähigkeit der Beobachtungsgrundlage und höchstens vertretbare Aussage bleiben getrennt — die App berechnet die Stufe nicht als objektiv richtig.</p>
         <OptionChips
           name="claim-evidence"
           options={evidenceStrengthOptions()}
@@ -348,7 +348,7 @@ function StepFields({
     return (
       <>
         <div className={rateStyles.fieldBlock}>
-          <div className={rateStyles.fieldLabel}>Bis zu welcher Aussagestärke trägt diese Evidenz?</div>
+          <div className={rateStyles.fieldLabel}>Höchstens vertretbare Aussage</div>
           <p className={rateStyles.fieldHelp}>{cfg.claimHint}</p>
           <ClaimLadder
             selectedMaxLevel={draft.maxClaimLevel}
@@ -357,7 +357,7 @@ function StepFields({
           />
         </div>
         <details className={`${rateStyles.examplesHelp} ui-flat-mobile mobile-flatten`}>
-          <summary className={rateStyles.examplesSummary}>Was bedeuten die Claim-Stufen?</summary>
+          <summary className={rateStyles.examplesSummary}>Was bedeuten die Aussagestufen?</summary>
           <div className={rateStyles.examplesBody}>
             {CLAIM_LEVEL_HELP.map((item) => (
               <div key={item.level} className={rateStyles.exampleItem}>
@@ -409,7 +409,7 @@ function StepFields({
       <div className={rateStyles.fieldBlock}>
         <div className={rateStyles.fieldLabel}>Welche Beobachtung widerspricht deiner vermuteten Aussage am stärksten?</div>
         <p className={rateStyles.fieldHelp}>
-          Ein Gegenbeispiel macht deine Beobachtung nicht automatisch falsch. Es zeigt, dass deine Aussage präziser formuliert werden muss.
+          Ein Gegenfall macht deine Beobachtung nicht automatisch falsch. Er begrenzt oder schärft die Aussage.
         </p>
         <OptionChips
           name="claim-counter"

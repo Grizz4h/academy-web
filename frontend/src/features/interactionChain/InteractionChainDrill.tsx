@@ -142,7 +142,7 @@ export function InteractionChainDrill({ drill, answers, setAnswers }: Props) {
   if (stage === 'complete') {
     return (
       <div className={styles.drillRoot}>
-        <span className={styles.completeBadge}>✓ Adjustment-Kette erfasst</span>
+        <span className={styles.completeBadge}>✓ Spielanpassung-Kette erfasst</span>
         <InteractionChainSurface result={preview} />
         <div className={styles.actions}>
           <button type="button" className={styles.secondaryBtn} onClick={() => setStage('problem')}>
@@ -274,7 +274,7 @@ export function InteractionChainDrill({ drill, answers, setAnswers }: Props) {
           </div>
 
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Wie deutlich ist das Adjustment sichtbar?</div>
+            <div className={styles.fieldLabel}>Wie deutlich ist das Spielanpassung sichtbar?</div>
             <OptionChips
               name="change-magnitude"
               options={getMagnitudeOptions()}
@@ -376,7 +376,7 @@ export function InteractionChainDrill({ drill, answers, setAnswers }: Props) {
             <>
               <div className={styles.fieldBlock}>
                 <div className={styles.fieldLabel}>
-                  Welche neue Möglichkeit entsteht durch das Adjustment möglicherweise für den Gegner?
+                  Welche neue Möglichkeit entsteht durch das Spielanpassung möglicherweise für den Gegner?
                 </div>
                 <OptionChips
                   name="tradeoff"
@@ -388,7 +388,7 @@ export function InteractionChainDrill({ drill, answers, setAnswers }: Props) {
                 />
               </div>
               <div className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>Optional: Trade-off kurz beschreiben</div>
+                <div className={styles.fieldLabel}>Optional: Zielkonflikt kurz beschreiben</div>
                 <textarea
                   className={styles.textarea}
                   value={String(safeAnswers[cfg.tradeoffDetailKey] || '')}
@@ -405,7 +405,7 @@ export function InteractionChainDrill({ drill, answers, setAnswers }: Props) {
           {cfg.supportsComparability && (
             <div className={styles.fieldBlock}>
               <div className={styles.fieldLabel}>
-                Sind die Situationen vor und nach dem Adjustment ausreichend vergleichbar?
+                Sind die Situationen vor und nach dem Spielanpassung ausreichend vergleichbar?
               </div>
               <OptionChips
                 name="comparability"

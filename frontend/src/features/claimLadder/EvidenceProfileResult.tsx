@@ -17,30 +17,30 @@ export function EvidenceProfileResult({ profile, compact = false }: Props) {
     const a = groups[0]
     const b = groups[1]
     return (
-      <div className={styles.preview} aria-label="Evidence Profile Preview">
-        <div>{profile.sampleSummary.total} Samples</div>
+      <div className={styles.preview} aria-label="Aussagenprofil Vorschau">
+        <div>{profile.sampleSummary.total} Beobachtungen</div>
         {a && b && (
           <div>
             {formatRatePercent(a.rate)} % ↔ {formatRatePercent(b.rate)} %
           </div>
         )}
-        <div>Evidence: {evidenceLabel || profile.evidenceStrength}</div>
-        <div>Claim: {claimLevelLabel(profile.maxClaimLevel)}</div>
+        <div>Tragfähigkeit: {evidenceLabel || profile.evidenceStrength}</div>
+        <div>Aussagestufe: {claimLevelLabel(profile.maxClaimLevel)}</div>
       </div>
     )
   }
 
   return (
     <div className={styles.root}>
-      <h3 className={styles.title}>Evidence Profile</h3>
-      <span className={styles.badge}>Claim Ceiling · {claimLevelLabel(profile.maxClaimLevel)}</span>
+      <h3 className={styles.title}>Aussagenprofil</h3>
+      <span className={styles.badge}>Höchstens vertretbare Aussage · {claimLevelLabel(profile.maxClaimLevel)}</span>
       <div className={styles.block}>
         <div className={styles.label}>Frage</div>
         <p className={styles.value}>{profile.question}</p>
       </div>
       <div className={styles.block}>
-        <div className={styles.label}>Sample</div>
-        <p className={styles.value}>{profile.sampleSummary.total} Opportunities</p>
+        <div className={styles.label}>Stichprobe</div>
+        <p className={styles.value}>{profile.sampleSummary.total} Ausgangssituationen</p>
       </div>
       {groups.map((group) => (
         <div key={group.label} className={styles.block}>
@@ -51,22 +51,22 @@ export function EvidenceProfileResult({ profile, compact = false }: Props) {
         </div>
       ))}
       <div className={styles.block}>
-        <div className={styles.label}>Evidence</div>
+        <div className={styles.label}>Tragfähigkeit der Beobachtungsgrundlage</div>
         <p className={styles.value}>{evidenceLabel || profile.evidenceStrength}</p>
       </div>
       <div className={styles.block}>
-        <div className={styles.label}>Claim Level</div>
+        <div className={styles.label}>Aussagestufe</div>
         <p className={styles.value}>{claimLevelLabel(profile.maxClaimLevel)}</p>
       </div>
       {profile.primaryLimitation && (
         <div className={styles.block}>
-          <div className={styles.label}>Wichtigste Limitation</div>
+          <div className={styles.label}>Wichtigste Begrenzung</div>
           <p className={styles.value}>{profile.primaryLimitation}</p>
         </div>
       )}
       {profile.counterEvidence && profile.counterEvidence.length > 0 && (
         <div className={styles.block}>
-          <div className={styles.label}>Counterevidence</div>
+          <div className={styles.label}>Gegenfälle</div>
           <p className={styles.value}>{profile.counterEvidence.join(' ')}</p>
         </div>
       )}

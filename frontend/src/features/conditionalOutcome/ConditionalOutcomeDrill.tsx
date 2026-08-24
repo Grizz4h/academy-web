@@ -245,9 +245,9 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
 
       {stage === 'define' && (
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
-          <h3 className={rateStyles.panelTitle}>Opportunity, Bedingung, Outcome</h3>
+          <h3 className={rateStyles.panelTitle}>Ausgangssituation, Bedingung, Ergebnis</h3>
           <p className={rateStyles.lead}>
-            Drei getrennte Dinge: welche Situationen zählen, welche Bedingung du prüfst, welches Outcome du zählst.
+            Drei getrennte Dinge: welche Situationen zählen, welche Bedingung du prüfst, welches Ergebnis du zählst.
           </p>
 
           <div className={rateStyles.fieldBlock}>
@@ -294,7 +294,7 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
           </div>
 
           <div className={rateStyles.fieldBlock}>
-            <div className={rateStyles.fieldLabel}>Welches Outcome möchtest du zählen?</div>
+            <div className={rateStyles.fieldLabel}>Welches Zielereignis möchtest du zählen?</div>
             <input
               className={rateStyles.input}
               value={definition.targetEventLabel}
@@ -356,29 +356,35 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
 
             <div className={styles.liveGroups}>
               <div className={styles.liveGroup}>
-                <div>{count} Opportunities</div>
+                <div>{count} gültige Ausgangssituationen</div>
                 <div>Bedingung vorhanden: <strong>{present}</strong></div>
                 <div>Bedingung nicht vorhanden: <strong>{absent}</strong></div>
               </div>
-              {result.withCondition.total > 0 && (
+              {result.withCondition.evaluableCount > 0 && (
                 <div className={rateStyles.liveFraction}>
-                  Target mit Bedingung: {formatRateFraction(result.withCondition.targetCount, result.withCondition.total)}
+                  Zielereignis mit Bedingung: {formatRateFraction(result.withCondition.targetCount, result.withCondition.evaluableCount)}
+                  {result.withCondition.outcomeUnclear > 0
+                    ? ` · ${result.withCondition.outcomeUnclear} unklar`
+                    : ''}
                 </div>
               )}
-              {result.withoutCondition.total > 0 && (
+              {result.withoutCondition.evaluableCount > 0 && (
                 <div className={rateStyles.liveFraction}>
-                  Target ohne Bedingung: {formatRateFraction(result.withoutCondition.targetCount, result.withoutCondition.total)}
+                  Zielereignis ohne Bedingung: {formatRateFraction(result.withoutCondition.targetCount, result.withoutCondition.evaluableCount)}
+                  {result.withoutCondition.outcomeUnclear > 0
+                    ? ` · ${result.withoutCondition.outcomeUnclear} unklar`
+                    : ''}
                 </div>
               )}
             </div>
             {needPresent > 0 && (
               <p className={styles.balanceHint}>
-                Noch {needPresent} Opportunity{needPresent === 1 ? '' : 's'} mit Bedingung für den empfohlenen Vergleich.
+                Noch {needPresent} Situation{needPresent === 1 ? '' : 'en'} mit Bedingung für den empfohlenen Übungsumfang.
               </p>
             )}
             {needAbsent > 0 && (
               <p className={styles.balanceHint}>
-                Noch {needAbsent} Opportunity{needAbsent === 1 ? '' : 's'} ohne Bedingung für den empfohlenen Vergleich.
+                Noch {needAbsent} Situation{needAbsent === 1 ? '' : 'en'} ohne Bedingung für den empfohlenen Übungsumfang.
               </p>
             )}
             {atMin && result.sampleImbalance && (
@@ -388,9 +394,9 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
             {stage === 'observe' && collecting && (
               <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
                 <h3 className={rateStyles.panelTitle}>
-                  {isEditing ? `Opportunity ${editIndex! + 1} ändern` : `Opportunity #${count + 1}`}
+                  {isEditing ? `Ausgangssituation ${editIndex! + 1} ändern` : `Ausgangssituation #${count + 1}`}
                 </h3>
-                <p className={rateStyles.lead}>Zuerst die Bedingung, dann das Outcome. Nicht beides in einem Klick vermischen.</p>
+                <p className={rateStyles.lead}>Zuerst die Bedingung, dann das Ergebnis. Zusammenauftreten ist keine Ursache.</p>
 
                 <div className={rateStyles.fieldBlock}>
                   <div className={rateStyles.fieldLabel}>{definition.condition.label || 'Bedingung'}?</div>
@@ -413,7 +419,7 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
                 </div>
 
                 <div className={rateStyles.fieldBlock}>
-                  <div className={rateStyles.fieldLabel}>{definition.targetEventLabel || 'Target Outcome'}?</div>
+                  <div className={rateStyles.fieldLabel}>{definition.targetEventLabel || 'Zielereignis'}?</div>
                   <div className={styles.choiceRow}>
                     {([
                       ['target', 'ja'],
@@ -476,7 +482,7 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
                     disabled={!canSaveConditionalDraft(draft, cfg.supportsGameClock)}
                     onClick={saveObservation}
                   >
-                    Opportunity speichern
+                    Ausgangssituation speichern
                   </button>
                   {isEditing && (
                     <button type="button" className={rateStyles.secondaryBtn} onClick={() => clearDraft()}>
@@ -498,7 +504,7 @@ export function ConditionalOutcomeDrill({ drill, answers, setAnswers }: Props) {
                     className={rateStyles.secondaryBtn}
                     onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.addingMoreKey]: true })}
                   >
-                    + Weitere Opportunity
+                    + Weitere Ausgangssituation
                   </button>
                 )}
               </div>
@@ -679,28 +685,34 @@ function ResultSummary({
           matrix={result.matrix}
         />
         <CohortRateComparison
-          title="Target-Rate"
+          title="Stichprobenrate (Zielereignisse / auswertbar)"
           groupA={{
             id: 'A',
             label: 'Mit Bedingung',
             totalOpportunities: result.withCondition.total,
+            evaluableCount: result.withCondition.evaluableCount,
             targetCount: result.withCondition.targetCount,
+            otherCount: result.withCondition.otherCount,
             rate: result.withCondition.rate,
             ratePercent: result.withCondition.ratePercent,
             unclearCount: result.withCondition.outcomeUnclear,
             outcomeDistribution: {},
             distributionItems: [],
+            rateSummary: result.withCondition.rateSummary,
           }}
           groupB={{
             id: 'B',
             label: 'Ohne Bedingung',
             totalOpportunities: result.withoutCondition.total,
+            evaluableCount: result.withoutCondition.evaluableCount,
             targetCount: result.withoutCondition.targetCount,
+            otherCount: result.withoutCondition.otherCount,
             rate: result.withoutCondition.rate,
             ratePercent: result.withoutCondition.ratePercent,
             unclearCount: result.withoutCondition.outcomeUnclear,
             outcomeDistribution: {},
             distributionItems: [],
+            rateSummary: result.withoutCondition.rateSummary,
           }}
           percentagePointDifference={result.percentagePointDifference}
           sampleImbalance={result.sampleImbalance}
@@ -710,7 +722,7 @@ function ResultSummary({
       <p className={rateStyles.sampleNote}>{descriptiveDifference(result)} {sampleLimitNote}</p>
       {result.counterexampleSummary && (
         <div className={rateStyles.resultBlock}>
-          <div className={rateStyles.resultLabel}>Gegenbeispiele</div>
+          <div className={rateStyles.resultLabel}>Gegenfälle</div>
           <p className={rateStyles.resultValue}>{result.counterexampleSummary}</p>
         </div>
       )}

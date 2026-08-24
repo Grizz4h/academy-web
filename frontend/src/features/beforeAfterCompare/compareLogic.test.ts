@@ -42,6 +42,7 @@ assert.equal(
     before,
     after,
     __before_after_compare_stage: 'complete',
+    comparabilityRating: 'well_comparable',
     primaryChange: 'pressureBehavior',
     stableDimensions: ['spacePriority'],
     changeMagnitude: 'clear',

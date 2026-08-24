@@ -21,7 +21,7 @@ assert.equal(resolveCuePriorityConfig({ supportsCuePriority: true }).required, t
 const options = cuePriorityOptions()
 assert.deepEqual(options.map((item) => item.value), ['primary', 'supporting', 'secondary'])
 assert.equal(options.some((item) => /[0-9]|%|punkt/i.test(item.label)), false)
-assert.equal(cuePriorityLabel('primary'), 'Entscheidend')
+assert.equal(cuePriorityLabel('primary'), 'Haupthinweis')
 
 let cues: PrioritizableCue[] = [
   { id: 'c1', category: 'support', label: 'Center öffnet Raum' },

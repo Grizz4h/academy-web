@@ -7,6 +7,7 @@ import {
   emptyCustomDefinition,
   formatRateFraction,
   formatRatePercent,
+  formatRateSummary,
   invalidateObservationAt,
   isDefinitionReady,
   removeObservationAt,
@@ -42,9 +43,11 @@ assert.equal(canAddOpportunity(9, cfg.maxObservations), true)
 
 const entries = applyTemplateById('entries')
 assert.ok(entries)
-assert.equal(entries.opportunityLabel.includes('Entry'), true)
+assert.ok(/Zone|Zonen/.test(entries.opportunityLabel) || /Eintritt|Entry/i.test(entries.opportunityLabel))
 assert.equal(entries.targetOutcomeId, 'controlled')
 assert.ok(entries.outcomes.some((item) => item.id === 'unclear'))
+assert.ok(String(entries.inclusionRules || '').length > 0)
+assert.ok(String(entries.exclusionRules || '').length > 0)
 assert.equal(isDefinitionReady(entries), true)
 
 const mutated = applyTemplateById('entries')!
@@ -85,13 +88,19 @@ const eight = [
 
 const rate = computeOpportunityRate(entries, eight)
 assert.equal(rate.totalOpportunities, 8)
+assert.equal(rate.evaluableCount, 7)
 assert.equal(rate.targetCount, 4)
+assert.equal(rate.otherCount, 3)
 assert.equal(rate.unclearCount, 1)
-assert.equal(rate.rate, 0.5)
-assert.equal(rate.ratePercent, 50)
-assert.equal(formatRateFraction(rate.targetCount, rate.totalOpportunities), '4 / 8')
+assert.equal(rate.rateDenominatorBasis, 'evaluable')
+assert.equal(rate.rate, 4 / 7)
+assert.equal(rate.ratePercent, 57)
+assert.equal(formatRateFraction(rate.targetCount, rate.evaluableCount), '4 / 7')
+assert.ok(rate.rateSummary.includes('4 Zielereignisse aus 7'))
+assert.ok(rate.rateSummary.includes('1 weitere gültige Situation war unklar'))
+assert.ok(rate.rateSummary.includes('insgesamt wurden 8'))
 assert.equal(formatRatePercent(1 / 3), 33)
-assert.notEqual(formatRateFraction(rate.targetCount, rate.totalOpportunities), '50 %')
+assert.notEqual(formatRateFraction(rate.targetCount, rate.evaluableCount), '50 %')
 
 const removed = removeObservationAt(eight, 7)
 const afterRemove = computeOpportunityRate(entries, removed)
@@ -141,7 +150,7 @@ assert.equal(
     [cfg.definitionKey]: entries,
     [cfg.logsKey]: eight.slice(0, 5),
   }),
-  'Bitte erfasse mindestens 6 Opportunities.',
+  'Bitte erfasse mindestens 6 gültige Ausgangssituationen (Übungsumfang).',
 )
 
 assert.equal(

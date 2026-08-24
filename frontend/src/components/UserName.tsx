@@ -4,11 +4,14 @@ import { api, resolveUploadUrl } from '../api'
 import { useUser } from '../context/UserContext'
 import { getAvatarAsset, DEFAULT_AVATAR_ID } from '../data/profile/avatarCatalog'
 import { resolveAvatarRarity, resolveEquippedTitle } from '../features/progression'
+import { useEntitlements } from '../features/entitlements'
 import { TUTORIAL_TARGET } from '../features/tutorial'
+import { UiPill } from './ui'
 import styles from './TopNav.module.css'
 
 export default function UserName() {
   const { user } = useUser()
+  const { hasAcademyPremium } = useEntitlements()
   const { data: account } = useQuery({
     queryKey: ['me', user],
     queryFn: () => api.getMe(),
@@ -40,11 +43,16 @@ export default function UserName() {
       aria-label={title ? `Account öffnen · ${displayName}, ${title.label}` : `Account öffnen · ${displayName}`}
       data-tutorial-id={TUTORIAL_TARGET.navAccount}
     >
-      <span className={styles.userAvatarWrap} data-avatar-rarity={avatarRarity}>
+      <span className={styles.userAvatarWrap} data-avatar-rarity={avatarRarity} data-premium={hasAcademyPremium || undefined}>
         <img className={styles.userAvatar} src={avatarSrc} alt="" />
       </span>
       <span className={styles.userCopy}>
-        <span className={styles.userName}>{displayName}</span>
+        <span className={styles.userNameRow}>
+          <span className={styles.userName}>{displayName}</span>
+          {hasAcademyPremium ? (
+            <UiPill tone="accent" className={styles.premiumNavPill}>Premium</UiPill>
+          ) : null}
+        </span>
         {title ? <span className={`${styles.userTitle} rarity-type`} data-rarity={title.rarity}>{title.label}</span> : null}
       </span>
     </NavLink>

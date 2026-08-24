@@ -2,7 +2,9 @@ import assert from 'node:assert/strict'
 import { appendSidequest } from '../../utils/sessionSidequests.ts'
 import {
   CLAIM_LEVELS,
+  SELECTABLE_CLAIM_LEVELS,
   buildEvidenceProfile,
+  claimLevelLabel,
   emptyDraft,
   isDraftComplete,
   mapsEvidenceToClaim,
@@ -22,7 +24,12 @@ assert.equal(cfg.cases.length, 3)
 assert.equal(cfg.cases[0].id, 'support_exits')
 assert.equal(cfg.cases[1].id, 'thin_overlap')
 assert.equal(cfg.cases[2].id, 'clear_gap')
-assert.deepEqual(CLAIM_LEVELS, ['description', 'comparison', 'tendency', 'generalization', 'causal'])
+assert.deepEqual(CLAIM_LEVELS, ['none', 'description', 'comparison', 'tendency', 'generalization', 'causal'])
+assert.deepEqual(SELECTABLE_CLAIM_LEVELS, ['none', 'description', 'comparison', 'tendency', 'generalization'])
+assert.ok(!SELECTABLE_CLAIM_LEVELS.includes('causal'))
+assert.equal(claimLevelLabel('none'), 'Keine inhaltliche Aussage')
+assert.equal(claimLevelLabel('generalization'), 'Wiederkehrender Hinweis über mehrere Stichproben')
+assert.equal(claimLevelLabel('causal'), 'Ursache (nicht erreichbar in E3)')
 
 const support = cfg.cases[0]
 assert.equal(support.evidenceInput.sampleSize, 17)

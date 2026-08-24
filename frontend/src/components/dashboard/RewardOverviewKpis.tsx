@@ -39,7 +39,7 @@ export function RewardOverviewKpis({
             </div>
             <UiActionRow>
               <UiButtonLink to="/locker" size="sm">
-                Locker
+                Spind
               </UiButtonLink>
             </UiActionRow>
           </>

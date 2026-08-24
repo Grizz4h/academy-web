@@ -406,8 +406,8 @@ export default function LockerPage() {
     return (
       <div className={styles.page}>
         <header className="ui-page-header">
-          <h1 className="ui-page-title">Locker</h1>
-          <p className="ui-page-lead">Bitte melde dich an, um deinen Locker zu öffnen.</p>
+          <h1 className="ui-page-title">Spind</h1>
+          <p className="ui-page-lead">Bitte melde dich an, um deinen Spind zu öffnen.</p>
         </header>
       </div>
     )
@@ -417,7 +417,7 @@ export default function LockerPage() {
     <div className={styles.page}>
       <header className="ui-page-header ui-page-header--row" data-tutorial-id={TUTORIAL_TARGET.lockerHome}>
         <div>
-          <h1 className="ui-page-title">Locker</h1>
+          <h1 className="ui-page-title">Spind</h1>
           <p className="ui-page-lead">Sammeln · Browsen · Freischalten · Ausrüsten</p>
         </div>
         <Link className={styles.accountLink} to="/account">
@@ -433,7 +433,7 @@ export default function LockerPage() {
         <div>{stats.newUnlocks} neu</div>
       </section>
 
-      <nav className="ui-tablist" aria-label="Locker Bereiche">
+      <nav className="ui-tablist" aria-label="Spind-Bereiche">
         {([
           ['home', 'Start'],
           ['cosmetics', 'Cosmetics'],

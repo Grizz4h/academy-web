@@ -4,6 +4,7 @@ import { DrillGuideCard } from '../../components/DrillGuideCard'
 import { OptionChips } from '../patternLog/OptionChips'
 import {
   getChangeMagnitudeOptions,
+  getComparabilityOptions,
   getConfidenceOptions,
   isCompareStateComplete,
   primaryChangeOptionsForSummary,
@@ -259,7 +260,35 @@ export function BeforeAfterCompareDrill({ drill, answers, setAnswers }: Props) {
             <h3 className={styles.title}>Was hat sich verändert?</h3>
 
             <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>Welche Veränderung ist taktisch am relevantesten?</div>
+              <div className={styles.fieldLabel}>Wie vergleichbar waren die Situationen?</div>
+              <p className={styles.hint}>
+                Prüfe Spielphase, Zone, numerische Situation, Puckbesitz, Gegnerdruck, Rollen und Spielkontext.
+                Spielstand und Restzeit sind Kontext — keine automatische Erklärung.
+              </p>
+              <OptionChips
+                name="comparability"
+                options={getComparabilityOptions()}
+                value={safeAnswers[cfg.comparabilityKey] || ''}
+                onChange={(next) => patchAnswers(safeAnswers, setAnswers, { [cfg.comparabilityKey]: next })}
+              />
+            </div>
+
+            {(safeAnswers[cfg.comparabilityKey] === 'partly_comparable'
+              || safeAnswers[cfg.comparabilityKey] === 'not_comparable') && (
+              <div className={styles.fieldBlock}>
+                <div className={styles.fieldLabel}>Was begrenzt den Vergleich?</div>
+                <textarea
+                  className={styles.textarea}
+                  value={safeAnswers[cfg.comparabilityLimitKey] || ''}
+                  maxLength={400}
+                  placeholder="z. B. ähnlicher Gegnerdruck, aber andere Besetzung / anderer Spielstand …"
+                  onChange={(event) => patchAnswers(safeAnswers, setAnswers, { [cfg.comparabilityLimitKey]: event.target.value })}
+                />
+              </div>
+            )}
+
+            <div className={styles.fieldBlock}>
+              <div className={styles.fieldLabel}>Welche Veränderung ist am relevantesten — oder gibt es keine klare Veränderung?</div>
               <OptionChips
                 name="primaryChange"
                 options={primaryOptions}
@@ -294,27 +323,30 @@ export function BeforeAfterCompareDrill({ drill, answers, setAnswers }: Props) {
             </div>
 
             <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>Beschreibe die Veränderung in einem Vorher–Nachher-Satz</div>
+              <div className={styles.fieldLabel}>Beschreibe die Veränderung in einem Vorher–Nachher-Satz (oder warum keine klare Veränderung)</div>
               <textarea
                 className={styles.textarea}
                 value={safeAnswers[cfg.changeSummaryKey] || ''}
                 maxLength={1500}
-                placeholder="Vorher …, später …"
+                placeholder="Vorher …, später … / Keine klare Veränderung / nicht ausreichend vergleichbar …"
                 onChange={(event) => patchAnswers(safeAnswers, setAnswers, { [cfg.changeSummaryKey]: event.target.value })}
               />
             </div>
 
-            <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>
-                Wie sicher bist du, dass du wirklich eine Veränderung und nicht nur unterschiedliche Einzelsituationen siehst?
+            {cfg.requireConfidence && (
+              <div className={styles.fieldBlock}>
+                <div className={styles.fieldLabel}>
+                  Sicherheit der vorläufigen Einordnung{' '}
+                  <span style={{ fontWeight: 500, opacity: 0.7 }}>(subjektiv, keine Wahrscheinlichkeit)</span>
+                </div>
+                <OptionChips
+                  name="confidence"
+                  options={getConfidenceOptions()}
+                  value={safeAnswers[cfg.confidenceKey] || ''}
+                  onChange={(next) => patchAnswers(safeAnswers, setAnswers, { [cfg.confidenceKey]: next })}
+                />
               </div>
-              <OptionChips
-                name="confidence"
-                options={getConfidenceOptions()}
-                value={safeAnswers[cfg.confidenceKey] || ''}
-                onChange={(next) => patchAnswers(safeAnswers, setAnswers, { [cfg.confidenceKey]: next })}
-              />
-            </div>
+            )}
           </section>
 
           <div className={styles.actions}>

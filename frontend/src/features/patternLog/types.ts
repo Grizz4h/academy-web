@@ -58,6 +58,7 @@ export type PatternAssessment =
   | 'likely_tendency'
   | 'possible_signal'
   | 'mostly_individual_cases'
+  | 'outcome_similarity_only'
   | 'insufficient_sample'
   | 'unclear'
 
@@ -318,7 +319,7 @@ export type PatternAttribution =
   | 'insufficient_evidence'
   | 'unclear'
 
-export type AttributionConfidence = 'low' | 'medium' | 'high'
+export type AttributionConfidence = 'low' | 'medium' | 'high' | 'not_assessable'
 
 export type EvidenceBucketId =
   | 'structural'
@@ -514,6 +515,8 @@ export type PatternLogConfig = {
   require_segment_summary?: boolean
   require_strongest_tendency?: boolean
   require_next_watch?: boolean
+  allow_empty_tendencies?: boolean
+  allowEmptyTendencies?: boolean
   submit_label?: string
   add_more_label?: string
   finish_label?: string

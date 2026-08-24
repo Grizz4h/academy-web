@@ -240,7 +240,7 @@ const reads: AnticipationObservation[] = [
   },
 ]
 
-assert.equal(validateAnticipationReadAnswers(cfg, { [cfg.logsKey]: reads.slice(0, 3) }), 'Bitte erfasse mindestens 4 Reads.')
+assert.equal(validateAnticipationReadAnswers(cfg, { [cfg.logsKey]: reads.slice(0, 3) }), 'Bitte erfasse mindestens 4 Erwartungen.')
 assert.match(
   String(validateAnticipationReadAnswers(cfg, {
     [cfg.logsKey]: [...reads, { ...matchedWell!, id: 'extra-1' }, { ...matchedWell!, id: 'extra-2' }],
@@ -291,7 +291,7 @@ assert.equal(
     ...completeAnswers,
     [cfg.strongMismatchKey]: '',
   }),
-  'Bitte markiere einen gut begründeten Read, der anders ausging – oder wähle keiner / unklar.',
+  'Bitte markiere eine Erwartung, bei der die tatsächliche Aktion abwich, die Hinweise aber vor der Aktion sichtbar und konkret waren – oder keiner / unklar.',
 )
 assert.equal(
   validateAnticipationReadAnswers(cfg, {
@@ -489,7 +489,7 @@ const d3reads = [0, 1, 2, 3].map((index) => ({
 }))
 assert.equal(validateAnticipationReadAnswers(d3, {
   [d3.logsKey]: d3reads,
-}), 'Bitte markiere, bei welchem Read die Alternative besonders wichtig war – oder keiner / unklar.')
+}), 'Bitte markiere, bei welcher Erwartung dein Alternativszenario besonders wichtig war – oder keiner / unklar.')
 assert.equal(validateAnticipationReadAnswers(d3, {
   [d3.logsKey]: d3reads,
   [d3.importantAlternativeKey]: d3reads[0].id,
@@ -558,7 +558,7 @@ const keepDraft = {
   updateQuality: 'appropriate' as const,
 }
 assert.equal(canSaveUpdateInfoStep(keepDraft, d4), true)
-assert.equal(canSaveUpdateInfoStep({ ...keepDraft, updateTriggers: [] }, d4), false)
+assert.equal(canSaveUpdateInfoStep({ ...keepDraft, updateTriggers: [] }, d4), true)
 assert.equal(canSaveUpdateDecideStep(keepDraft, d4), true)
 assert.equal(canSaveUpdateDecideStep({ ...keepDraft, updateReason: '' }, d4), false)
 assert.equal(canSaveUpdateReviewStep(keepDraft, d4), true)
@@ -574,6 +574,19 @@ assert.equal(keepObs!.updateTriggers?.[0]?.description, 'leichter Druck')
 assert.equal(keepObs!.predictionUpdate?.updateDecision, 'keep')
 assert.equal(isCompleteRead(keepObs!, 1, false, false, true), true)
 
+const noInfoDraft = {
+  ...baseExpect(),
+  updateTriggers: [],
+  updateDecision: 'no_new_info' as const,
+  actualActionOptionId: 'Pass',
+  actualAction: 'Pass',
+  outcomeMatch: 'matched',
+  readQuality: 'well_supported',
+  updateQuality: 'not_updated' as const,
+}
+assert.equal(canSaveUpdateDecideStep(noInfoDraft, d4), true)
+assert.ok(draftToObservation(noInfoDraft, d4, null, 1))
+
 const changeDraft = {
   ...baseExpect(),
   updateTriggers: [{ id: 'u2', description: 'Passlinie geschlossen' }],
@@ -588,6 +601,7 @@ const changeDraft = {
 }
 assert.equal(canSaveUpdateDecideStep(changeDraft, d4), true)
 assert.equal(canSaveUpdateDecideStep({ ...changeDraft, updatedPredictionOptionId: 'Pass', updatedPrediction: 'Pass' }, d4), false)
+assert.equal(canSaveUpdateDecideStep({ ...changeDraft, updateTriggers: [] }, d4), false)
 const changeObs = draftToObservation(changeDraft, d4, null, 2)
 assert.ok(changeObs)
 assert.equal(changeObs!.updateDecision, 'change')
@@ -601,7 +615,7 @@ assert.equal(d4roundtrip.updateDecision, 'change')
 assert.equal(d4roundtrip.updatedPrediction, 'Carry')
 assert.equal(d4roundtrip.updateQuality, 'too_late')
 
-assert.equal(draftToObservation({ ...keepDraft, updateTriggers: [] }, d4, null, 1), null)
+assert.equal(draftToObservation({ ...changeDraft, updateTriggers: [] }, d4, null, 1), null)
 
 const d4reads = [
   { ...keepObs!, id: 'd4-0', order: 1 },
@@ -609,7 +623,7 @@ const d4reads = [
   { ...keepObs!, id: 'd4-2', order: 3 },
   { ...changeObs!, id: 'd4-3', order: 4 },
 ]
-assert.equal(validateAnticipationReadAnswers(d4, { [d4.logsKey]: d4reads }), 'Bitte markiere, bei welchem Read du deine Einschätzung erfolgreich angepasst hast – oder keiner / unklar.')
+assert.equal(validateAnticipationReadAnswers(d4, { [d4.logsKey]: d4reads }), 'Bitte markiere, bei welcher Situation du deine Erwartung aufgrund neuer Information verändert hast – oder keiner / unklar.')
 assert.equal(validateAnticipationReadAnswers(d4, {
   [d4.logsKey]: d4reads,
   [d4.successfulUpdateKey]: d4reads[1].id,

@@ -62,6 +62,11 @@ const RewardContext = createContext<RewardContextValue | undefined>(undefined)
 
 const EXIT_MS = 180
 
+function isRewardToastEvent(event: { kind?: string }): boolean {
+  const kind = event.kind
+  return kind === 'achievement' || kind === 'currency' || kind === 'system' || kind === 'mastery'
+}
+
 function normalizeReward(event: Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>): RewardEvent {
   return {
     id: event.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`),
@@ -242,6 +247,16 @@ export function RewardProvider({ children }: { children: ReactNode }) {
   const metaInFlightRef = useRef(false)
   rewardStateRef.current = rewardState
 
+  const closeActiveReward = useCallback(() => {
+    setIsRewardVisible(false)
+    if (exitTimerRef.current) {
+      window.clearTimeout(exitTimerRef.current)
+    }
+    exitTimerRef.current = window.setTimeout(() => {
+      setActiveReward(null)
+    }, EXIT_MS)
+  }, [])
+
   useEffect(() => {
     setQueue([])
     setActiveReward(null)
@@ -383,13 +398,37 @@ export function RewardProvider({ children }: { children: ReactNode }) {
     const [nextReward, ...rest] = queue
     setQueue(rest)
     setActiveReward(nextReward)
+  }, [activeReward, queue])
 
+  useEffect(() => {
+    if (!activeReward) {
+      setIsRewardVisible(false)
+      return
+    }
+
+    let cancelled = false
     const frame = window.requestAnimationFrame(() => {
-      setIsRewardVisible(true)
+      if (!cancelled) setIsRewardVisible(true)
     })
 
-    return () => window.cancelAnimationFrame(frame)
-  }, [activeReward, queue])
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(frame)
+    }
+  }, [activeReward])
+
+  useEffect(() => {
+    if (!activeReward || !isRewardVisible) return
+
+    const autoCloseMs = activeReward.autoCloseMs
+    if (!autoCloseMs || autoCloseMs <= 0) return
+
+    const timer = window.setTimeout(() => {
+      closeActiveReward()
+    }, autoCloseMs)
+
+    return () => window.clearTimeout(timer)
+  }, [activeReward, isRewardVisible, closeActiveReward])
 
   useEffect(() => {
     if (!activeReward) return
@@ -400,16 +439,6 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [activeReward])
-
-  const closeActiveReward = useCallback(() => {
-    setIsRewardVisible(false)
-    if (exitTimerRef.current) {
-      window.clearTimeout(exitTimerRef.current)
-    }
-    exitTimerRef.current = window.setTimeout(() => {
-      setActiveReward(null)
-    }, EXIT_MS)
-  }, [])
 
   const enqueueReward = useCallback((event: Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>) => {
     setQueue((previous) => [...previous, normalizeReward(event)])
@@ -560,10 +589,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         setRewardState(normalized)
 
         if (showToasts && rewardEvents.length > 0) {
-          const toastEvents = rewardEvents.filter((event) => {
-            const kind = (event as { kind?: string }).kind
-            return kind === 'achievement' || kind === 'currency' || kind === 'system'
-          })
+          const toastEvents = rewardEvents.filter(isRewardToastEvent)
           enqueueRewards(
             toastEvents.map((event) => event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>),
           )
@@ -599,9 +625,11 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         }))
         if (showToasts && rewardEvents.length > 0) {
           enqueueRewards(
-            rewardEvents.map(
-              (event) => event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>,
-            ),
+            rewardEvents
+              .filter(isRewardToastEvent)
+              .map(
+                (event) => event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>,
+              ),
           )
         }
       }

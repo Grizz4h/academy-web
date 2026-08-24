@@ -181,7 +181,7 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
   if (isComplete && definition && result) {
     return (
       <div className={styles.drillRoot}>
-        <span className={styles.completeBadge}>✓ Opportunity-Rate abgeschlossen</span>
+        <span className={styles.completeBadge}>✓ Anteilsrate abgeschlossen</span>
         <ResultSummary
           question={definition.question}
           result={result}
@@ -199,7 +199,7 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
 
   return (
     <div className={styles.drillRoot}>
-      <p className={styles.eyebrow}>Opportunity → Event → Rate</p>
+      <p className={styles.eyebrow}>Ausgangssituation → Zielereignis → Rate</p>
       <h2 className={styles.title}>{drill.title}</h2>
       {drill.description && <p className={styles.lead}>{drill.description}</p>}
       {drill.didactics?.explanation && <p className={styles.lead}>{drill.didactics.explanation}</p>}
@@ -228,8 +228,8 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
           <div className={styles.observeMain}>
             <div className={styles.progress}>
               <div className={styles.progressMeta}>
-                <span>{count} / {progressGoal} Opportunities</span>
-                {atMin && <span>Genug für erste Auswertung</span>}
+                <span>{count} / {progressGoal} gültige Ausgangssituationen</span>
+                {atMin && <span>Genug für erste Auswertung (Übungsumfang)</span>}
               </div>
               <div className={styles.progressBar} aria-hidden>
                 <div className={styles.progressFill} style={{ width: `${progressPercent}%` }} />
@@ -237,28 +237,32 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
             </div>
 
             <div className={styles.liveCounts}>
-              <div><strong>{result.totalOpportunities}</strong> Opportunities</div>
-              <div><strong>{result.targetCount}</strong> Target Events</div>
-              {count > 0 && (
-                <div className={styles.liveFraction}>{formatRateFraction(result.targetCount, result.totalOpportunities)}</div>
+              <div><strong>{result.totalOpportunities}</strong> gültig</div>
+              <div><strong>{result.evaluableCount}</strong> auswertbar</div>
+              <div><strong>{result.targetCount}</strong> Zielereignisse</div>
+              {result.unclearCount > 0 && (
+                <div><strong>{result.unclearCount}</strong> unklar</div>
+              )}
+              {count > 0 && result.evaluableCount > 0 && (
+                <div className={styles.liveFraction}>{formatRateFraction(result.targetCount, result.evaluableCount)}</div>
               )}
             </div>
 
             {stage === 'observe' && collecting && (
               <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
                 <h3 className={styles.panelTitle}>
-                  {isEditing ? `Opportunity ${editIndex! + 1} ändern` : 'Neue Opportunity'}
+                  {isEditing ? `Ausgangssituation ${editIndex! + 1} ändern` : 'Neue Ausgangssituation'}
                 </h3>
-                <p className={styles.lead}>Jede gespeicherte Zeile ist eine Opportunity – nicht nur ein Target Event.</p>
+                <p className={styles.lead}>Jede gespeicherte Zeile ist eine gültige Ausgangssituation – nicht nur ein Zielereignis.</p>
 
                 <div className={styles.fieldBlock}>
-                  <div className={styles.fieldLabel}>Wie endete diese Opportunity?</div>
+                  <div className={styles.fieldLabel}>Wie endete diese Ausgangssituation?</div>
                   <OptionChips
                     name="opportunityOutcome"
                     options={definition.outcomes.filter((outcome) => outcome.label.trim()).map((outcome) => ({
                       value: outcome.id,
                       label: outcome.id === definition.targetOutcomeId
-                        ? `${outcome.label}  ← Target`
+                        ? `${outcome.label}  ← Zielereignis`
                         : outcome.label,
                       description: outcome.description,
                     }))}
@@ -312,7 +316,7 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
                     disabled={!canSaveOpportunityDraft(draft, definition, cfg.supportsGameClock)}
                     onClick={saveObservation}
                   >
-                    {isEditing ? 'Opportunity speichern' : 'Opportunity speichern'}
+                    {isEditing ? 'Ausgangssituation speichern' : 'Ausgangssituation speichern'}
                   </button>
                   {isEditing && (
                     <button type="button" className={styles.secondaryBtn} onClick={() => clearDraft()}>
@@ -334,7 +338,7 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
                     className={styles.secondaryBtn}
                     onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.addingMoreKey]: true })}
                   >
-                    + Weitere Opportunity
+                    + Weitere Ausgangssituation
                   </button>
                 )}
               </div>
@@ -349,7 +353,7 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
                 />
 
                 <div className={styles.fieldBlock}>
-                  <div className={styles.fieldLabel}>Was hätte dir gefehlt, wenn du nur das Target Event gezählt hättest?</div>
+                  <div className={styles.fieldLabel}>Was hätte dir gefehlt, wenn du nur das Zielereignis gezählt hättest?</div>
                   <OptionChips
                     name="countOnlyReflection"
                     options={countOnlyOptions()}
@@ -359,7 +363,7 @@ export function OpportunityRateDrill({ drill, answers, setAnswers }: Props) {
                 </div>
 
                 <div className={styles.fieldBlock}>
-                  <div className={styles.fieldLabel}>War deine Opportunity-Definition während der Beobachtung eindeutig?</div>
+                  <div className={styles.fieldLabel}>War deine Definition der Ausgangssituation während der Beobachtung eindeutig?</div>
                   <OptionChips
                     name="opportunityDefinitionClarity"
                     options={clarityOptions()}
@@ -458,16 +462,21 @@ function ResultSummary({
       </div>
       <div className={styles.resultBlock}>
         <div className={styles.resultLabel}>Stichprobe</div>
-        <p className={styles.resultValue}>{result.totalOpportunities} Opportunities</p>
+        <p className={styles.resultValue}>{result.rateSummary}</p>
+        {result.excludedCount > 0 && (
+          <p className={styles.unclearNote}>{result.excludedCount} Situation(en) ausgeschlossen.</p>
+        )}
       </div>
       <div className={styles.resultBlock}>
-        <div className={styles.resultLabel}>Ergebnis</div>
+        <div className={styles.resultLabel}>Stichprobenrate (Zielereignisse / auswertbare Ergebnisse)</div>
         <p className={styles.rateHero}>
-          <span>{formatRateFraction(result.targetCount, result.totalOpportunities)}</span>
+          <span>{formatRateFraction(result.targetCount, result.evaluableCount)}</span>
           <span>{result.ratePercent} %</span>
         </p>
         {result.unclearCount > 0 && (
-          <p className={styles.unclearNote}>{result.unclearCount} Outcome unklar – bleibt im Nenner.</p>
+          <p className={styles.unclearNote}>
+            {result.unclearCount} Ergebnis(se) unklar – separat ausgewiesen, nicht als Misserfolg im Nenner.
+          </p>
         )}
       </div>
       <div className={styles.resultBlock}>

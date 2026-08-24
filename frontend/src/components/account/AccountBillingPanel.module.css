@@ -1,0 +1,75 @@
+.statusHeadline {
+  margin: 0 0 0.55rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: rgba(247, 247, 255, 0.94);
+  line-height: 1.4;
+}
+
+.lead {
+  margin: 0 0 0.85rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  margin-bottom: 0.55rem;
+}
+
+.planName {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f7f7ff;
+}
+
+.metaList {
+  margin: 0 0 0.85rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.metaItem {
+  font-size: 0.88rem;
+  color: rgba(210, 224, 240, 0.9);
+  line-height: 1.35;
+}
+
+.metaLabel {
+  color: rgba(186, 230, 253, 0.82);
+  font-weight: 650;
+}
+
+.noticeOk,
+.noticeWarn,
+.error {
+  margin: 0 0 0.75rem;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.noticeOk {
+  color: rgba(153, 246, 228, 0.95);
+}
+
+.noticeWarn {
+  color: rgba(251, 191, 36, 0.92);
+}
+
+.error {
+  color: #fca5a5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

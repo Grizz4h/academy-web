@@ -73,6 +73,9 @@
 
 .unlockedAt {
   margin-top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.75rem;
   color: rgba(82, 229, 200, 0.8);
   font-weight: 500;

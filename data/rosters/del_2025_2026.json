@@ -906,12 +906,12 @@
         }
       ],
       "snapshot": {
-        "imported_at": "2026-08-21T19:25:07.052698Z",
+        "imported_at": "2026-08-23T10:15:04.296818Z",
         "source": {
           "provider": "penny_del",
           "externalTeamId": "erc_ingolstadt",
           "sourceUrl": "https://www.penny-del.org/teams/erc-ingolstadt/kader",
-          "importedAt": "2026-08-21T19:25:07.050885Z"
+          "importedAt": "2026-08-23T10:15:04.295283Z"
         },
         "quality": "plausible",
         "warnings": [],

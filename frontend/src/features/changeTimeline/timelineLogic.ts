@@ -50,19 +50,19 @@ export function resolveChangeTimelineConfig(raw: Record<string, unknown> = {}): 
     summaryKey: String(raw.summary_key || raw.summaryKey || 'changeSummary'),
     stableDimensionsKey: String(raw.stable_dimensions_key || raw.stableDimensionsKey || 'stableDimensions'),
     supportsGameClock: raw.supports_game_clock !== false && raw.supportsGameClock !== false,
-    requireChangePoint: raw.require_change_point !== false && raw.requireChangePoint !== false,
+    requireChangePoint: raw.require_change_point === true || raw.requireChangePoint === true,
     requireComparability: raw.require_comparability !== false && raw.requireComparability !== false,
     requireMagnitude: raw.require_magnitude !== false && raw.requireMagnitude !== false,
     summaryMinChars: Math.max(1, Number(raw.summary_min_chars || raw.summaryMinChars || 20)),
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Ein Change Point braucht ein Vorher und ein Danach. Eine Abweichung wird erst interessant, wenn sie sich wiederholt.',
+        || 'Ein möglicher Veränderungszeitpunkt braucht ein Vorher und ein Danach. Vier Beobachtungen sind die Mindestmenge dieser Übung, keine Evidenzschwelle.',
     ),
     coreHint: String(
       raw.core_hint
         || raw.coreHint
-        || 'Eine neue Aktion ist noch kein neuer Zustand. Erst wenn das veränderte Verhalten erneut auftaucht oder bestehen bleibt, wird ein Adjustment-Hinweis stärker.',
+        || 'Eine neue Aktion ist noch keine anhaltende Veränderung. Erst wenn das veränderte Verhalten erneut auftaucht, wird der Hinweis stärker. Rücksprung ist gültig.',
     ),
   }
 }
@@ -135,10 +135,10 @@ export function validateChangeTimelineAnswers(
   }
 
   const baseline = String(answers[cfg.baselineKey] || '').trim()
-  if (!baseline) return 'Bitte beschreibe das Ausgangsverhalten (Baseline).'
+  if (!baseline) return 'Bitte beschreibe die Ausgangsbeobachtungen.'
 
   if (cfg.requireChangePoint && !answers[cfg.changePointKey]) {
-    return 'Bitte markiere einen möglichen Change Point – oder bestätige, dass keiner klar ist.'
+    return 'Bitte markiere einen möglichen Veränderungszeitpunkt – oder wähle, dass keiner klar erkennbar ist.'
   }
 
   const changePoint = String(answers[cfg.changePointKey] || '')
@@ -146,11 +146,11 @@ export function validateChangeTimelineAnswers(
     && !CHANGE_POINT_NONE_OPTIONS.some((opt) => opt.value === changePoint)
 
   if (hasConcreteChangePoint && !answers[cfg.stabilityKey]) {
-    return 'Bitte bewerte, wie stabil das neue Verhalten nach dem Change Point bleibt.'
+    return 'Bitte bewerte, wie das Verhalten nach dem möglichen Veränderungszeitpunkt weitergeht.'
   }
 
   if (cfg.requireComparability && !answers[cfg.comparabilityKey]) {
-    return 'Bitte bewerte, ob die Situationen vor und nach dem Change Point vergleichbar waren.'
+    return 'Bitte bewerte, ob die Situationen vor und nach dem möglichen Veränderungszeitpunkt vergleichbar waren.'
   }
 
   if (cfg.requireMagnitude && !answers[cfg.changeMagnitudeKey]) {

@@ -36,7 +36,7 @@ function resolveExamplesHelp(raw: Record<string, unknown>): ProfileExamplesHelp 
   if (suitable.length === 0 && unsuitable.length === 0) return null
 
   return {
-    title: String(source.title || 'Geeignete Adjustment-Profile'),
+    title: String(source.title || 'Geeignete Segment-Zusammenfassungen'),
     intro: source.intro ? String(source.intro) : undefined,
     suitable,
     unsuitableTitle: String(source.unsuitable_title || source.unsuitableTitle || 'Nicht sauber'),
@@ -97,7 +97,7 @@ export function resolveAdjustmentProfileConfig(raw: Record<string, unknown> = {}
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Priorisiere maximal zwei relevante Veränderungen. Nicht alles, was anders aussieht, ist ein Adjustment.',
+        || 'Priorisiere maximal zwei relevante Veränderungen. Nicht alles, was anders aussieht, ist eine Spielanpassung. Null Kandidaten sind gültig.',
     ),
     coreHint: String(
       raw.core_hint
@@ -179,8 +179,8 @@ export function describeProfile(entries: AdjustmentProfileEntry[]): string[] {
   if (temporary) statements.push(`${temporary} eher temporär / einzelne Abweichung.`)
   const high = entries.filter((item) => item.confidence === 'high').length
   const low = entries.filter((item) => item.confidence === 'low').length
-  if (high) statements.push(`${high} mit hoher Confidence.`)
-  if (low) statements.push(`${low} mit niedriger Confidence.`)
+  if (high) statements.push(`${high} mit hoher Interpretationssicherheit.`)
+  if (low) statements.push(`${low} mit geringer Interpretationssicherheit.`)
   return statements
 }
 
@@ -195,40 +195,40 @@ export function validateAdjustmentProfileAnswers(
 
   if (noClear) {
     if (!cfg.allowNoClearAdjustment) {
-      return 'Ein Adjustment-Kandidat ist in diesem Drill erforderlich.'
+      return 'Ein Anpassungskandidat ist in diesem Drill erforderlich.'
     }
     if (entries.length > 0) {
-      return 'Bitte entferne gespeicherte Kandidaten, wenn kein belastbares Adjustment erkannt wurde.'
+      return 'Bitte entferne gespeicherte Kandidaten, wenn keine ausreichend gestützte Spielanpassung erkannt wurde.'
     }
     if (!answers[cfg.noClearReasonKey]) {
-      return 'Bitte begründe, warum kein belastbares Adjustment erkennbar ist.'
+      return 'Bitte begründe, warum keine ausreichend gestützte Spielanpassung erkennbar ist.'
     }
   } else {
     if (entries.length < cfg.minAdjustments) {
       return cfg.minAdjustments === 1
-        ? 'Bitte dokumentiere mindestens einen Adjustment-Kandidaten.'
-        : `Bitte dokumentiere mindestens ${cfg.minAdjustments} Adjustment-Kandidaten.`
+        ? 'Bitte dokumentiere mindestens einen Anpassungskandidaten.'
+        : `Bitte dokumentiere mindestens ${cfg.minAdjustments} Anpassungskandidaten.`
     }
     if (entries.length > cfg.maxAdjustments) {
-      return `Maximal ${cfg.maxAdjustments} Adjustments — bitte priorisiere.`
+      return `Maximal ${cfg.maxAdjustments} mögliche Spielanpassungen — bitte priorisiere.`
     }
     if (entries.some((entry) => !isAdjustmentEntryComplete(entry))) {
-      return 'Bitte vervollständige alle Adjustment-Kandidaten.'
+      return 'Bitte vervollständige alle Anpassungskandidaten.'
     }
     if (entries.length >= 2 && !answers[cfg.primaryAdjustmentKey]) {
-      return 'Bitte wähle, welches Adjustment das Segment stärker geprägt hat.'
+      return 'Bitte wähle, welche mögliche Spielanpassung im Segment am deutlichsten gestützt ist.'
     }
   }
 
   if (cfg.requireSegmentSummary) {
     const summary = String(answers[cfg.segmentSummaryKey] || '').trim()
     if (!summary || summary.length < cfg.summaryMinChars) {
-      return 'Bitte fasse das Adjustment-Profil des beobachteten Segments zusammen.'
+      return 'Bitte fasse die möglichen Spielanpassungen im beobachteten Segment zusammen.'
     }
   }
 
-  if (cfg.requireNextWatchFocus && !answers[cfg.nextWatchKey]) {
-    return 'Bitte wähle, was du im nächsten Segment gezielt weiter beobachten würdest.'
+  if (cfg.requireNextWatchFocus && (entries.length > 0 || noClear) && !answers[cfg.nextWatchKey]) {
+    return 'Bitte wähle, was du als Nächstes gezielt weiter beobachten würdest.'
   }
 
   return null

@@ -271,12 +271,15 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
 
       {stage === 'compare' && definition && (
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
-          <h3 className={rateStyles.panelTitle}>Vergleichsdimension</h3>
-          <p className={rateStyles.lead}>Ändere möglichst nur eine Dimension. Opportunity und Target bleiben gleich.</p>
+          <h3 className={rateStyles.panelTitle}>Primäre Vergleichsdimension</h3>
+          <p className={rateStyles.lead}>
+            Lege eine primäre Vergleichsdimension fest. Messfrage, Ausgangssituation und Zielereignis bleiben in beiden Vergleichsgruppen gleich.
+            Weitere sichtbare Kontextunterschiede dokumentierst du später — im Spiel lassen sie sich nicht vollständig konstant halten.
+          </p>
           <p className={rateStyles.lead}><strong>Messfrage:</strong> {definition.question}</p>
 
           <div className={rateStyles.fieldBlock}>
-            <div className={rateStyles.fieldLabel}>Welche eine Dimension möchtest du vergleichen?</div>
+            <div className={rateStyles.fieldLabel}>Primäre Vergleichsdimension</div>
             <div className={rateStyles.templateRow}>
               {cfg.dimensionTemplates.map((template) => (
                 <button
@@ -363,8 +366,8 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
           <div className={rateStyles.observeMain}>
             <div className={rateStyles.progress}>
               <div className={rateStyles.progressMeta}>
-                <span>{count} / {progressGoal} Opportunities</span>
-                {atMin && <span>Genug für ersten Vergleich</span>}
+                <span>{count} / {progressGoal} Ausgangssituationen</span>
+                {atMin && <span>Genug für ersten Vergleich (Übungsumfang)</span>}
               </div>
               <div className={rateStyles.progressBar} aria-hidden>
                 <div className={rateStyles.progressFill} style={{ width: `${progressPercent}%` }} />
@@ -373,47 +376,57 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
 
             <div className={styles.liveGroups}>
               <div className={styles.liveGroup}>
-                <div>{comparison.groupA.label || 'Gruppe A'}</div>
-                <div><strong>{result.groupA.totalOpportunities}</strong> Opportunities · <strong>{result.groupA.targetCount}</strong> Target</div>
-                {result.groupA.totalOpportunities > 0 && (
+                <div>{comparison.groupA.label || 'Vergleichsgruppe A'}</div>
+                <div>
+                  <strong>{result.groupA.targetCount}</strong> Ziel ·{' '}
+                  <strong>{result.groupA.evaluableCount}</strong> auswertbar ·{' '}
+                  <strong>{result.groupA.totalOpportunities}</strong> gültig
+                  {result.groupA.unclearCount > 0 ? <> · <strong>{result.groupA.unclearCount}</strong> unklar</> : null}
+                </div>
+                {result.groupA.evaluableCount > 0 && (
                   <div className={rateStyles.liveFraction}>
-                    {formatRateFraction(result.groupA.targetCount, result.groupA.totalOpportunities)}
+                    {formatRateFraction(result.groupA.targetCount, result.groupA.evaluableCount)}
                   </div>
                 )}
               </div>
               <div className={styles.liveGroup}>
-                <div>{comparison.groupB.label || 'Gruppe B'}</div>
-                <div><strong>{result.groupB.totalOpportunities}</strong> Opportunities · <strong>{result.groupB.targetCount}</strong> Target</div>
-                {result.groupB.totalOpportunities > 0 && (
+                <div>{comparison.groupB.label || 'Vergleichsgruppe B'}</div>
+                <div>
+                  <strong>{result.groupB.targetCount}</strong> Ziel ·{' '}
+                  <strong>{result.groupB.evaluableCount}</strong> auswertbar ·{' '}
+                  <strong>{result.groupB.totalOpportunities}</strong> gültig
+                  {result.groupB.unclearCount > 0 ? <> · <strong>{result.groupB.unclearCount}</strong> unklar</> : null}
+                </div>
+                {result.groupB.evaluableCount > 0 && (
                   <div className={rateStyles.liveFraction}>
-                    {formatRateFraction(result.groupB.targetCount, result.groupB.totalOpportunities)}
+                    {formatRateFraction(result.groupB.targetCount, result.groupB.evaluableCount)}
                   </div>
                 )}
               </div>
             </div>
             {needA > 0 && (
               <p className={styles.balanceHint}>
-                Gruppe A braucht noch {needA} Opportunit{needA === 1 ? 'y' : 'ies'} für den empfohlenen Vergleich.
+                Vergleichsgruppe A braucht noch {needA} Situation{needA === 1 ? '' : 'en'} für den empfohlenen Übungsumfang.
               </p>
             )}
             {needB > 0 && (
               <p className={styles.balanceHint}>
-                Gruppe B braucht noch {needB} Opportunit{needB === 1 ? 'y' : 'ies'} für den empfohlenen Vergleich.
+                Vergleichsgruppe B braucht noch {needB} Situation{needB === 1 ? '' : 'en'} für den empfohlenen Übungsumfang.
               </p>
             )}
             {atMin && result.sampleImbalance && (
-              <p className={styles.balanceHint}>Die Gruppen sind unterschiedlich groß.</p>
+              <p className={styles.balanceHint}>Die Vergleichsgruppen sind unterschiedlich groß.</p>
             )}
 
             {stage === 'observe' && collecting && (
               <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
                 <h3 className={rateStyles.panelTitle}>
-                  {isEditing ? `Opportunity ${editIndex! + 1} ändern` : `Opportunity #${count + 1}`}
+                  {isEditing ? `Ausgangssituation ${editIndex! + 1} ändern` : `Ausgangssituation #${count + 1}`}
                 </h3>
-                <p className={rateStyles.lead}>Jede Zeile ist eine Opportunity derselben Messfrage – zugeordnet zu einer Gruppe.</p>
+                <p className={rateStyles.lead}>Jede Zeile ist eine gültige Ausgangssituation derselben Messfrage – zugeordnet zu einer Vergleichsgruppe.</p>
 
                 <div className={rateStyles.fieldBlock}>
-                  <div className={rateStyles.fieldLabel}>Gruppe</div>
+                  <div className={rateStyles.fieldLabel}>Vergleichsgruppe</div>
                   <div className={styles.cohortChoice}>
                     {(['A', 'B'] as CohortId[]).map((id) => (
                       <button
@@ -429,13 +442,13 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
                 </div>
 
                 <div className={rateStyles.fieldBlock}>
-                  <div className={rateStyles.fieldLabel}>Wie endete diese Opportunity?</div>
+                  <div className={rateStyles.fieldLabel}>Wie endete diese Ausgangssituation?</div>
                   <OptionChips
                     name="cohortOpportunityOutcome"
                     options={definition.outcomes.filter((outcome) => outcome.label.trim()).map((outcome) => ({
                       value: outcome.id,
                       label: outcome.id === definition.targetOutcomeId
-                        ? `${outcome.label}  ← Target`
+                        ? `${outcome.label}  ← Zielereignis`
                         : outcome.label,
                       description: outcome.description,
                     }))}
@@ -489,7 +502,7 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
                     disabled={!canSaveCohortDraft(draft, definition, cfg.supportsGameClock)}
                     onClick={saveObservation}
                   >
-                    Opportunity speichern
+                    Ausgangssituation speichern
                   </button>
                   {isEditing && (
                     <button type="button" className={rateStyles.secondaryBtn} onClick={() => clearDraft()}>
@@ -511,7 +524,7 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
                     className={rateStyles.secondaryBtn}
                     onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.addingMoreKey]: true })}
                   >
-                    + Weitere Opportunity
+                    + Weitere Ausgangssituation
                   </button>
                 )}
               </div>
@@ -537,12 +550,14 @@ export function CohortRateCompareDrill({ drill, answers, setAnswers }: Props) {
                 </div>
 
                 <div className={rateStyles.fieldBlock}>
-                  <div className={rateStyles.fieldLabel}>Welche andere Dimension könnte den Unterschied zusätzlich beeinflusst haben? (optional)</div>
+                  <div className={rateStyles.fieldLabel}>
+                    Weitere sichtbare Unterschiede zwischen den Vergleichsgruppen (Gegnerdruck, Personal, Spielphase, Spielstand/Zeit, numerische Situation, Zone, Puckkontrolle, Bildqualität, Gruppengröße …)
+                  </div>
                   <input
                     className={rateStyles.input}
                     value={safeAnswers[cfg.confounderKey] || ''}
                     maxLength={200}
-                    placeholder="z. B. Rechts entstand deutlich mehr Forecheckdruck."
+                    placeholder="z. B. Rechts entstand deutlich mehr Gegnerdruck."
                     onChange={(event) => patchAnswers(safeAnswers, setAnswers, { [cfg.confounderKey]: event.target.value })}
                   />
                 </div>
@@ -679,7 +694,7 @@ function ResultSummary({
       )}
       {confounder && (
         <div className={rateStyles.resultBlock}>
-          <div className={rateStyles.resultLabel}>Möglicher weiterer Einfluss</div>
+          <div className={rateStyles.resultLabel}>Weitere sichtbare Kontextunterschiede</div>
           <p className={rateStyles.resultValue}>{confounder}</p>
         </div>
       )}

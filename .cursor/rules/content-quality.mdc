@@ -1,0 +1,49 @@
+---
+description: Content QA — Fakten/Konvention/Modell/Grauzone, Didaktik-Gate, Theory↔Drill; vor Lerninhalten lesen
+globs: data/academy/**/*.json, data/academy/**/*.md, frontend/src/content/**/*, backend/**/*reflection*, backend/**/*prompt*, docs/ai-rules/**/*
+alwaysApply: false
+---
+
+# Content Quality & Didactic QA
+
+Vor Implementierung oder Änderung an Curriculum, Theorie, Drill-Texten, Beobachtungsmasken, Reflexionsfragen, KI-Feedback, Coaching-Hinweisen, Lernzielen oder Assessments:
+
+1. **Zuerst lesen:** `docs/ai-rules/content-quality.md`
+2. Track-Grenzen: `docs/ai-rules/curriculum-boundaries.md` (+ bei Rework `docs/ai-rules/curriculum-rework.md`)
+3. Mechanik/Renderer: `docs/ai-rules/mechanic-design.md`
+4. Geplante Änderung gegen Checkliste A–G prüfen (siehe Manifest)
+5. Bei Konflikt: nicht still ändern — Kategorie klären, Lösung vorschlagen
+
+## Claim-Klassifikation (Kurz)
+
+| Typ | Umgang |
+|-----|--------|
+| **FACT** | belastbar; wichtige Aussagen mit Quelle |
+| **COACHING_CONVENTION** | häufig/typischerweise — kein Naturgesetz |
+| **RINQ_MODEL** | als RinQ-Lern-/Analysemodell kennzeichnen |
+| **INTERPRETATION** | keine künstliche Eindeutigkeit |
+
+## Didaktik-Gate (Kurz)
+
+```text
+Previous Track → Current Track → Next Track
+```
+
+- Voraussetzung noch da?
+- Lernziel dieses Tracks klar?
+- Nichts vorweggenommen / keine Lücke?
+- Theorie ↔ Drill konsistent?
+- Frühe Tracks: Beobachtung vor Bewertung
+
+## Sprache
+
+Bei taktischer Grauzone vermeiden: immer · niemals · muss · eindeutig falsch.
+
+Neue fachliche Grundentscheidung → Manifest aktualisieren (Living Document).
+
+## Evidence & Human Review (Kurz)
+
+- RinQ-Taxonomien/Operationslabels ≠ IIHF-Standard — siehe `docs/content/hockey-glossary.md`
+- Evidence muss zur Sprachstärke passen (kein Superlativ aus MODERATE-Quelle)
+- **AI evidence review ≠ human approval** — `docs/qa/human-review/` · `human_status` nur menschlich setzen
+- **Immer beide Layer:** `curriculum.json` Didaktik **und** `frontend/src/data/theoryData.json` — passt Theorie-Seite noch zum Track?

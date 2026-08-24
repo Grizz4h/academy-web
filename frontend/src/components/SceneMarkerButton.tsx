@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { api, type Session, type Drill } from '../api'
 import { buildSceneCreatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
+import { useCreatorMode } from '../features/creator'
 import { isDummySession } from '../utils/sessionEligibility'
 import { formatGameTimeInput } from '../utils/sceneHelpers'
 import { UiButton, UiSheet, UiSheetActions } from './ui'
@@ -21,6 +22,7 @@ interface SceneMarkerButtonProps {
 }
 
 export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneMarkerButtonProps) {
+  const creatorMode = useCreatorMode()
   const { ingestActivityEvents } = useRewards()
   const [showModal, setShowModal] = useState(false)
   const [gameTime, setGameTime] = useState('')
@@ -47,6 +49,10 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
     }, 80)
     return () => window.clearTimeout(focusTimer)
   }, [showModal])
+
+  if (!creatorMode) {
+    return null
+  }
 
   const handleOpen = () => {
     setGameTime('')
@@ -192,6 +198,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         onClose={handleClose}
         title="🎬 Szene merken"
         label="Szene merken"
+        allowBackgroundScroll
         meta={`${phaseLabel}${activeDrill?.title ? ` · ${activeDrill.title}` : session.module_id ? ` · ${session.module_id}` : ''}`}
         onKeyDown={handleKeyDown}
       >

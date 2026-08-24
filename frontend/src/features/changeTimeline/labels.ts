@@ -6,7 +6,7 @@ export { DEFAULT_CHANGE_MAGNITUDE_OPTIONS }
 export const RELATION_OPTIONS: TimelineOption[] = [
   {
     value: 'matches_baseline',
-    label: 'Entspricht dem bisherigen Muster',
+    label: 'Entspricht den Ausgangsbeobachtungen',
     description: 'Verhalten wirkt wie zuvor.',
   },
   {
@@ -67,8 +67,8 @@ export const STABILITY_OPTIONS: TimelineOption[] = [
   },
   {
     value: 'returns_to_baseline',
-    label: 'Rückkehr zur Baseline',
-    description: 'Das Team kehrt sichtbar zum früheren Verhalten zurück.',
+    label: 'Rückkehr zu den Ausgangsbeobachtungen',
+    description: 'Das Verhalten kehrt sichtbar zu den Ausgangsbeobachtungen zurück — gültiges Ergebnis.',
   },
   {
     value: 'single_deviation_only',
@@ -90,12 +90,12 @@ export const COMPARABILITY_OPTIONS: TimelineOption[] = [
 export const ASSESSMENT_OPTIONS: TimelineOption[] = [
   {
     value: 'clear_new_state',
-    label: 'Klarer neuer Zustand',
-    description: 'Nach einem Zeitpunkt tritt ein neues Verhalten wiederholt und stabil auf.',
+    label: 'Möglicher Veränderungszeitpunkt erkennbar',
+    description: 'Ab einem Zeitpunkt tritt verändertes Verhalten in weiteren vergleichbaren Situationen erneut auf — vorläufig.',
   },
   {
     value: 'likely_change',
-    label: 'Wahrscheinliche Veränderung',
+    label: 'Mögliche anhaltende Veränderung',
     description: 'Die Hinweise sind stark, aber nicht vollständig stabil.',
   },
   {
@@ -105,12 +105,12 @@ export const ASSESSMENT_OPTIONS: TimelineOption[] = [
   },
   {
     value: 'temporary_deviation',
-    label: 'Temporäre Abweichung',
+    label: 'Verhalten wechselt wieder zurück',
     description: 'Neue Lösung tritt nur kurz auf.',
   },
   {
     value: 'single_outlier',
-    label: 'Einzelner Ausreißer',
+    label: 'Nur einzelne Abweichung',
     description: 'Eine Szene sieht anders aus, danach Rückkehr.',
   },
   {
@@ -118,8 +118,10 @@ export const ASSESSMENT_OPTIONS: TimelineOption[] = [
     label: 'Wechselndes Verhalten',
     description: 'Alt und neu wechseln sich ab.',
   },
-  { value: 'insufficient_sample', label: 'Zu wenig Beobachtungen' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'insufficient_sample', label: 'Nicht ausreichend beobachtet' },
+  { value: 'not_comparable', label: 'Nicht ausreichend vergleichbar' },
+  { value: 'no_persistent_change', label: 'Keine anhaltende Veränderung erkennbar' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const STABLE_DIMENSION_OPTIONS: TimelineOption[] = [
@@ -134,7 +136,7 @@ export const STABLE_DIMENSION_OPTIONS: TimelineOption[] = [
 ]
 
 export const CHANGE_POINT_NONE_OPTIONS: TimelineOption[] = [
-  { value: 'no_clear_change_point', label: 'Kein klarer Change Point' },
+  { value: 'no_clear_change_point', label: 'Kein möglicher Veränderungszeitpunkt erkennbar' },
   { value: 'too_variable', label: 'Zu wechselhaft' },
   { value: 'unclear', label: 'Unklar' },
 ]
@@ -163,7 +165,7 @@ export function relationSymbol(relation?: string): string {
 export function relationShortLabel(relation?: string): string {
   switch (relation) {
     case 'matches_baseline':
-      return 'Baseline'
+      return 'Ausgangsbeobachtungen'
     case 'slight_deviation':
       return 'Leichte Abweichung'
     case 'clear_deviation':

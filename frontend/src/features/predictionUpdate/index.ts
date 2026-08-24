@@ -11,6 +11,7 @@ export {
   isUpdateQuality,
   resolvePredictionUpdateConfig,
   resultHasUpdateScore,
+  triggersRequiredForDecision,
   updateDecisionLabel,
   updateDecisionOptions,
   updateQualityLabel,

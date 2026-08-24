@@ -1,12 +1,12 @@
 import type { EvidenceHint, EvidenceBucketId } from './types'
 
 const BUCKET_LABEL: Record<EvidenceBucketId, string> = {
-  structural: 'Spricht eher für strukturell',
-  situational: 'Spricht eher für situativ',
-  opponent: 'Spricht eher für gegnerbedingt',
-  personnel: 'Spricht eher für personell',
-  game_state: 'Spricht eher für Game State',
-  insufficient: 'Zu wenig Evidenz / Vorsicht',
+  structural: 'In mehreren unterschiedlichen Kontexten sichtbar',
+  situational: 'Bisher eher unter ähnlichen Kontextbedingungen',
+  opponent: 'Gegnerdruck als beobachteter Kontext',
+  personnel: 'Personal / Besetzung als beobachteter Kontext',
+  game_state: 'Spielstand / Zeit als beobachteter Kontext',
+  insufficient: 'Nicht ausreichend beobachtet / Vorsicht',
 }
 
 type EvidenceBoardProps = {

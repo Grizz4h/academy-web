@@ -54,7 +54,7 @@ export function ScenarioBranchPanel({
     <div className={styles.root}>
       <div className={styles.title}>{title}</div>
       <p className={styles.help}>
-        {help || `${minTriggers}–${maxTriggers} Trigger. Keine Prozentwerte – nur konkrete Bedingungen, die deine Erwartung verschieben würden.`}
+        {help || `${minTriggers}–${maxTriggers} Auslöser. Keine Prozentwerte – nur konkrete neue oder veränderte sichtbare Informationen.`}
       </p>
       {suggestions.length > 0 && (
         <div className={styles.chips}>
@@ -95,7 +95,7 @@ export function ScenarioBranchPanel({
             {rows.length > 1 && (
               <div className={styles.actions}>
                 <button type="button" className={styles.actionBtn} onClick={() => remove(trigger.id)}>
-                  Trigger entfernen
+                  Auslöser entfernen
                 </button>
               </div>
             )}
@@ -105,7 +105,7 @@ export function ScenarioBranchPanel({
       {canAddTrigger(rows.length, maxTriggers) && (
         <div className={styles.actions}>
           <button type="button" className={styles.actionBtn} onClick={() => add()}>
-            + Trigger
+            + Auslöser
           </button>
         </div>
       )}

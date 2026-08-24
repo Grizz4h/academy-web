@@ -22,10 +22,10 @@ export const TRIGGER_RELEVANT_LABELS: Record<TriggerRelevant, string> = {
 }
 
 export const LINEAR_THINKING_LABELS: Record<LinearThinkingAssessment, string> = {
-  rarely: 'selten',
-  sometimes: 'manchmal',
-  often: 'häufig',
-  unclear: 'unklar',
+  rarely: 'selten – Szene oft zu eng',
+  sometimes: 'manchmal offen genug',
+  often: 'häufig offen genug für beide',
+  unclear: 'nicht sicher beurteilbar',
 }
 
 function asStringArray(value: unknown): string[] {

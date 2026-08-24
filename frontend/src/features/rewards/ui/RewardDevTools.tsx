@@ -6,6 +6,7 @@ import {
   REWARD_PREVIEW_GOLD,
   REWARD_PREVIEW_MASTERY,
   REWARD_PREVIEW_QUEUE,
+  REWARD_PREVIEW_SESSION_QUEUE,
   REWARD_PREVIEW_SILVER,
 } from '../../../dev/rewardPreviewActions'
 
@@ -48,6 +49,13 @@ export default function RewardDevTools() {
         onClick={() => enqueueRewards([...REWARD_PREVIEW_QUEUE])}
       >
         Queue B→S→G
+      </button>
+      <button
+        className="btn"
+        style={{ minWidth: 150, fontSize: '0.82rem' }}
+        onClick={() => enqueueRewards([...REWARD_PREVIEW_SESSION_QUEUE])}
+      >
+        Queue Session
       </button>
     </div>
   )

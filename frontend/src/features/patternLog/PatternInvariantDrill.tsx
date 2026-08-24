@@ -522,11 +522,11 @@ export function PatternInvariantDrill({ drill, answers, setAnswers }: PatternInv
             >
               <h4 style={{ margin: 0, color: '#99f6e4' }}>Ergebnis</h4>
               <div style={{ fontSize: '0.86rem', color: 'rgba(236,253,245,0.92)' }}>
-                <strong>Funktionaler Kern:</strong> „{invariantSummary.trim()}“
+                <strong>Bisher wiederkehrende Merkmale:</strong> „{invariantSummary.trim()}“
               </div>
               {coreDims.length > 0 && (
                 <div style={{ fontSize: '0.82rem', color: 'rgba(236,253,245,0.85)' }}>
-                  <strong>Kernbestandteile:</strong>{' '}
+                  <strong>Bisher wiederkehrende Kernmerkmale:</strong>{' '}
                   {coreDims.map((entry) => labelForOption(
                     summary.dimensions.map((d) => ({ value: d.dimensionId, label: d.label })),
                     entry.dimensionId,

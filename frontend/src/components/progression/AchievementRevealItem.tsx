@@ -1,6 +1,7 @@
 import type { AchievementProgressItem } from '../../features/rewards/logic/achievementProgress'
 import { TapReveal } from '../ui/TapReveal'
 import { UiActionRow, UiButton, UiButtonLink } from '../ui'
+import { RinQIcon } from '../icons'
 import styles from './AchievementRevealItem.module.css'
 
 type AchievementRevealItemProps = {
@@ -60,7 +61,8 @@ export function AchievementRevealItem({
             )}
             {item.isUnlocked && unlockedAt && (
               <div className={styles.unlockedAt}>
-                ✓ {new Date(unlockedAt).toLocaleDateString('de-DE')}
+                <RinQIcon name="check" size="sm" tone="ok" inline />
+                {new Date(unlockedAt).toLocaleDateString('de-DE')}
               </div>
             )}
             <span className="ui-tap-hint" aria-hidden="true">

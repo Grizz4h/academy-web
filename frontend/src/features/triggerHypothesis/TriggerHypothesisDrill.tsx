@@ -131,7 +131,7 @@ export function TriggerHypothesisDrill({ drill, answers, setAnswers }: Props) {
   if (stage === 'complete') {
     return (
       <div className={styles.drillRoot}>
-        <span className={styles.completeBadge}>✓ Adjustment-Hypothese formuliert</span>
+        <span className={styles.completeBadge}>✓ Anpassungshypothese formuliert</span>
         <TriggerHypothesisSurface
           result={{
             observedChange: String(safeAnswers[cfg.observedChangeKey] || ''),
@@ -199,7 +199,7 @@ export function TriggerHypothesisDrill({ drill, answers, setAnswers }: Props) {
         <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
           <div className={styles.fieldBlock}>
             <div className={styles.fieldLabel}>
-              Welches Problem oder gegnerische Verhalten trat vor der Veränderung wiederholt auf?
+              Welche vorherige Herausforderung / Interaktion oder gegnerische Verhalten trat vor der Veränderung wiederholt auf?
             </div>
             {priorGroups.map((group) => (
               <div key={group.group} className={styles.fieldBlock}>
@@ -380,7 +380,7 @@ export function TriggerHypothesisDrill({ drill, answers, setAnswers }: Props) {
 
           <div className={styles.fieldBlock}>
             <div className={styles.fieldLabel}>
-              Wie könnte die Veränderung das Problem beeinflussen?
+              Welche funktionale Passung siehst du — oder ist keine ausreichende Verbindung erkennbar?
             </div>
             <textarea
               className={styles.textarea}
@@ -394,7 +394,7 @@ export function TriggerHypothesisDrill({ drill, answers, setAnswers }: Props) {
           </div>
 
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Adjustment-Hypothese (Weil …, könnte …, um …)</div>
+            <div className={styles.fieldLabel}>Anpassungshypothese (Weil …, könnte …, um …)</div>
             <textarea
               className={styles.textarea}
               value={String(safeAnswers[cfg.hypothesisSummaryKey] || '')}

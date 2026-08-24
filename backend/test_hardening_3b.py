@@ -189,6 +189,26 @@ class HardeningApiTests(unittest.TestCase):
         me2 = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
         self.assertFalse(me2.json().get("is_admin"))
 
+    def test_me_reports_creator_mode(self):
+        with mock.patch.dict(os.environ, {"ACADEMY_CREATOR_USERNAMES": "adminuser"}):
+            me = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('adminuser')}"})
+            self.assertEqual(me.status_code, 200)
+            self.assertTrue(me.json().get("creator_mode"))
+        me2 = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
+        self.assertFalse(me2.json().get("creator_mode"))
+
+    def test_create_scene_requires_creator_mode(self):
+        res = self.client.post(
+            "/api/scenes",
+            headers={"Authorization": f"Bearer {_token('alice')}"},
+            json={
+                "game_time": "13:42",
+                "source": {"type": "manual"},
+                "period": "P1",
+            },
+        )
+        self.assertEqual(res.status_code, 403)
+
     def test_login_rate_limit(self):
         # Exhaust limiter for this test client IP
         codes = []

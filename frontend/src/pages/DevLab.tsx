@@ -30,6 +30,7 @@ import {
   REWARD_PREVIEW_GOLD,
   REWARD_PREVIEW_MASTERY,
   REWARD_PREVIEW_QUEUE,
+  REWARD_PREVIEW_SESSION_QUEUE,
   REWARD_PREVIEW_SILVER,
   setFloatingRewardDevToolsEnabled,
 } from '../dev/rewardPreviewActions'
@@ -745,6 +746,14 @@ export default function DevLab() {
           >
             Queue B→S→G
           </UiButton>
+          <UiButton
+            type="button"
+            size="sm"
+            disabled={!user}
+            onClick={() => enqueueRewards([...REWARD_PREVIEW_SESSION_QUEUE])}
+          >
+            Queue Session
+          </UiButton>
         </div>
       </section>
 
@@ -754,7 +763,7 @@ export default function DevLab() {
           <UiButtonLink to="/curriculum" size="sm" variant="secondary">Akademie</UiButtonLink>
           <UiButtonLink to="/theory/A1" size="sm" variant="secondary">Theorie A1</UiButtonLink>
           <UiButtonLink to="/setup/A1" size="sm" variant="secondary">Setup A1</UiButtonLink>
-          <UiButtonLink to="/locker" size="sm" variant="secondary">Locker</UiButtonLink>
+          <UiButtonLink to="/locker" size="sm" variant="secondary">Spind</UiButtonLink>
           <UiButtonLink to="/ringabout" size="sm" variant="secondary">Szenenpool</UiButtonLink>
           <UiButtonLink to="/ringabout?tab=insights" size="sm" variant="secondary">Insights</UiButtonLink>
           <UiButtonLink to="/history" size="sm" variant="secondary">Verlauf</UiButtonLink>

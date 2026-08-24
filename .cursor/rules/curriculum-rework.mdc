@@ -1,5 +1,5 @@
 ---
-description: Curriculum-Rework — Tracks nie isoliert, Capabilities erhalten, erst Boundary-Check dann Code
+description: Curriculum-Rework — Tracks nie isoliert, Capabilities erhalten, Content QA + Boundary-Check dann Code
 globs: data/academy/**/*.json,frontend/src/pages/Curriculum.tsx,frontend/src/pages/Session.tsx,frontend/src/content/**/*.ts
 alwaysApply: false
 ---
@@ -8,9 +8,11 @@ alwaysApply: false
 
 Vor jeder Änderung an Track 0, A1, A2, A3 oder einem späteren Academy-Track:
 
-1. **Zuerst lesen:** `docs/ai-rules/curriculum-rework.md`
-2. Mechaniken: `docs/ai-rules/mechanic-design.md`
-3. Nicht intern optimieren. Immer: vorheriger Track → dieser Track → nächster Track.
+1. **Content QA:** `docs/ai-rules/content-quality.md`
+2. **Boundary-Gate:** `docs/ai-rules/curriculum-boundaries.md`
+3. **Rework-Prozess:** `docs/ai-rules/curriculum-rework.md`
+4. **Mechaniken:** `docs/ai-rules/mechanic-design.md`
+5. Nicht intern optimieren. Immer: vorheriger Track → dieser Track → nächster Track.
 
 ## Vor Implementation
 
@@ -33,4 +35,4 @@ Vor jeder Änderung an Track 0, A1, A2, A3 oder einem späteren Academy-Track:
 
 Kein Track isoliert umbauen. Keine Fähigkeit still löschen. Schlechte alte Drills nicht aus Angst behalten.
 
-**Abschlussbericht:** Boundary Check; Incoming/Outgoing; Capability-Tabelle (blieb / verschoben / neu / unassigned); Budget; was nicht gelehrt wird; Folgetrack-Lücke benennen statt still füllen; Mechanik reused / extended / new.
+**Abschlussbericht:** Content QA A–G; Boundary Check; Incoming/Outgoing; Capability-Tabelle (blieb / verschoben / neu / unassigned); Budget; was nicht gelehrt wird; Folgetrack-Lücke benennen statt still füllen; Mechanik reused / extended / new.

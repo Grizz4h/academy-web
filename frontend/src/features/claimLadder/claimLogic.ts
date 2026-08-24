@@ -17,11 +17,18 @@ import {
   type EvidenceSynthesisCase,
 } from './types'
 
-export const CLAIM_LEVELS: ClaimLevel[] = [
+/** Erreichbare Aussagestufen in E3 (Ursache ist nicht erreichbar). */
+export const SELECTABLE_CLAIM_LEVELS: ClaimLevel[] = [
+  'none',
   'description',
   'comparison',
   'tendency',
   'generalization',
+]
+
+/** Inkl. `causal` nur für Tempting-/Overclaim-Beispiele, nicht als erreichbare Stufe. */
+export const CLAIM_LEVELS: ClaimLevel[] = [
+  ...SELECTABLE_CLAIM_LEVELS,
   'causal',
 ]
 
@@ -38,30 +45,36 @@ export const CLAIM_LADDER_STEPS: ClaimLadderStep[] = [
 
 export const DEFAULT_LIMITATION_OPTIONS: Array<{ value: ClaimLimitationId; label: string }> = [
   { value: 'small_sample', label: 'Kleine Stichprobe' },
-  { value: 'unequal_groups', label: 'Ungleiche Sample Sizes' },
+  { value: 'unequal_groups', label: 'Ungleiche Vergleichsgruppen' },
   { value: 'poor_comparability', label: 'Schlechte Vergleichbarkeit' },
-  { value: 'several_counterexamples', label: 'Mehrere Gegenbeispiele' },
+  { value: 'several_counterexamples', label: 'Mehrere Gegenfälle' },
   { value: 'unclear_definition', label: 'Unklare Definition' },
-  { value: 'extra_dimension', label: 'Weitere Einflussdimensionen' },
-  { value: 'unclear_outcomes', label: 'Unklare Outcomes' },
+  { value: 'extra_dimension', label: 'Weitere sichtbare Kontextunterschiede' },
+  { value: 'unclear_outcomes', label: 'Unklare Ergebnisse' },
   { value: 'no_clear_difference', label: 'Kein klarer Unterschied' },
   { value: 'other', label: 'Anderes' },
 ]
 
 export const CLAIM_LEVEL_HELP: Array<{ level: ClaimLevel; title: string; body: string }> = [
-  { level: 'description', title: 'Beschreibung', body: 'Was wurde beobachtet?' },
-  { level: 'comparison', title: 'Vergleich', body: 'Wie unterscheiden sich Samples?' },
-  { level: 'tendency', title: 'Hinweis / Tendenz', body: 'Gibt es einen vorsichtigen Hinweis?' },
-  { level: 'generalization', title: 'Generalisierung', body: 'Gilt das wahrscheinlich über deine Stichprobe hinaus?' },
-  { level: 'causal', title: 'Ursache', body: 'Behauptest du, warum etwas passiert?' },
+  { level: 'none', title: 'Keine inhaltliche Aussage', body: 'Definition oder Beobachtungsgrundlage reichen nicht aus.' },
+  { level: 'description', title: 'Beschreibung der Stichprobe', body: 'Absolute Zahlen, auswertbarer Nenner, unklare Fälle.' },
+  { level: 'comparison', title: 'Vergleich innerhalb der Stichprobe', body: 'Rate in Vergleichsgruppe A vs. B — ohne Wertung besser/schlechter.' },
+  { level: 'tendency', title: 'Vorläufiger Zusammenhang in der Stichprobe', body: 'Bedingung und Ergebnis zusammen — mit Grenzen und Gegenfällen.' },
+  { level: 'generalization', title: 'Wiederkehrender Hinweis über mehrere Stichproben', body: 'Nur bei getrennten, konsistent definierten Beobachtungen.' },
+  { level: 'causal', title: 'Ursache (nicht erreichbar in E3)', body: 'Mit E3 allein keine erreichbare Stufe.' },
 ]
 
 export function claimLevelLabel(level: ClaimLevel): string {
-  if (level === 'description') return 'Beschreibung'
-  if (level === 'comparison') return 'Vergleich'
-  if (level === 'tendency') return 'Hinweis / Tendenz'
-  if (level === 'generalization') return 'Generalisierung'
-  return 'Ursache'
+  if (level === 'none') return 'Keine inhaltliche Aussage'
+  if (level === 'description') return 'Beschreibung der Stichprobe'
+  if (level === 'comparison') return 'Vergleich innerhalb der Stichprobe'
+  if (level === 'tendency') return 'Vorläufiger Zusammenhang in der Stichprobe'
+  if (level === 'generalization') return 'Wiederkehrender Hinweis über mehrere Stichproben'
+  return 'Ursache (nicht erreichbar in E3)'
+}
+
+export function isSelectableClaimLevel(level: ClaimLevel): boolean {
+  return SELECTABLE_CLAIM_LEVELS.includes(level)
 }
 
 export function claimLevelIndex(level?: ClaimLevel | null): number {
@@ -104,27 +117,27 @@ export function resolveClaimLadderConfig(raw: Record<string, unknown> = {}): Cla
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Deine Sprache darf nie stärker sein als deine Evidenz.',
+        || 'Die Sprache darf nicht stärker sein als die Beobachtungsgrundlage.',
     ),
     coreHint: String(
       raw.core_hint
         || raw.coreHint
-        || 'Sag auch, was deine Daten nicht zeigen können.',
+        || 'Nenne Stichprobe, Absolute, auswertbaren Nenner, unklare Fälle, Grenzen, Gegenfälle und nächsten Beobachtungsschritt.',
     ),
     claimHint: String(
       raw.claim_hint
         || raw.claimHint
-        || 'Wähle die höchste Stufe, die diese Stichprobe noch trägt – nicht die selbstsicherste.',
+        || 'Wähle die höchstens vertretbare Aussage — nicht die selbstsicherste. Ursache ist in E3 nicht erreichbar.',
     ),
     scaffoldHint: String(
       raw.scaffold_hint
         || raw.scaffoldHint
-        || 'In meinen beobachteten [Opportunities] trat [Outcome] bei [Condition/Gruppe] [häufiger/seltener/ähnlich] auf. Die Evidenz dafür ist [Strength]. Die Aussage wird vor allem durch [Limitation] begrenzt.',
+        || 'In den beobachteten Situationen trat das Zielereignis in x von y auswertbaren Fällen auf; z weitere Fälle waren unklar. Die Aussage wird vor allem durch [Begrenzung] begrenzt. Nächster Beobachtungsschritt: …',
     ),
     nextTestHint: String(
       raw.next_test_hint
         || raw.nextTestHint
-        || 'Gleicher Opportunity-Typ, gleiches Outcome, relevanter Kontext – nicht nur „mehr Daten“.',
+        || 'Gleiche Messdefinition, relevanter Kontext – nicht nur „mehr Daten“ und keine Kausalitätsprüfung.',
     ),
     finalClaimMinChars: Math.max(1, Number(raw.final_claim_min_chars || raw.finalClaimMinChars || 24)),
     nextTestMinChars: Math.max(1, Number(raw.next_test_min_chars || raw.nextTestMinChars || 20)),
@@ -225,9 +238,9 @@ export function mapsEvidenceToClaim(_evidence?: EvidenceStrength, _claim?: Claim
 
 export function microfeedbackOptions(): Array<{ value: string; label: string }> {
   return [
-    { value: 'sample', label: 'Sample' },
+    { value: 'sample', label: 'Stichprobe' },
     { value: 'comparability', label: 'Vergleichbarkeit' },
-    { value: 'counterexamples', label: 'Gegenbeispiele' },
+    { value: 'counterexamples', label: 'Gegenfälle' },
     { value: 'definition', label: 'Definitionsklarheit' },
     { value: 'small_difference', label: 'Kleiner Unterschied' },
     { value: 'extra_factors', label: 'Weitere Einflussfaktoren' },
@@ -237,7 +250,12 @@ export function microfeedbackOptions(): Array<{ value: string; label: string }> 
 }
 
 export function temptingClaimOptions(): Array<{ value: ClaimLevel; label: string }> {
-  return CLAIM_LEVELS.map((level) => ({ value: level, label: claimLevelLabel(level) }))
+  return CLAIM_LEVELS.map((level) => ({
+    value: level,
+    label: level === 'causal'
+      ? 'Ursache / Verbesserung / Teamwahrheit (nicht erreichbar in E3)'
+      : claimLevelLabel(level),
+  }))
 }
 
 export function validateClaimLadderAnswers(

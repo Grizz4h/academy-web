@@ -250,8 +250,23 @@
 }
 
 .unlockIcon {
-  width: 1.4rem;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  flex-shrink: 0;
+}
+
+.unlockedHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.devButtonLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .achievementGroup {

@@ -217,9 +217,9 @@ export function resolvePatternInvariantConfig(config: PatternLogConfig = {}) {
       || 'Erfasse eine Situation und zerlege sie in stabile vs. variable Merkmale.',
     decisionRule:
       config.decision_rule
-      || 'Suche nicht nach identischen Bildern. Suche nach einem stabilen funktionalen Kern.',
-    summaryTitle: config.summary_title || 'Funktionaler Kern',
-    fingerprintTitle: config.fingerprint_title || 'Invariant Fingerprint',
+      || 'Suche nicht nach identischen Bildern. Suche nach bisher wiederkehrenden Kernmerkmalen — vorläufig, keine bewiesene Invariante.',
+    summaryTitle: config.summary_title || 'Stabile und variable Merkmale',
+    fingerprintTitle: config.fingerprint_title || 'Stabile und variable Merkmale',
     dimensions: config.invariant_dimensions || DEFAULT_DIMENSIONS,
     zones: config.zones || DEFAULT_ZONE_OPTIONS,
     triggers: config.triggers || DEFAULT_TRIGGER_OPTIONS,

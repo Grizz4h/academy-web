@@ -114,7 +114,7 @@ function CompactAdjustmentCard({
   return (
     <article className={styles.compactCard}>
       <p className={styles.compactTitle}>
-        {index + 1} · {shortLabel(entry.changedBehavior, `Adjustment ${index + 1}`)}
+        {index + 1} · {shortLabel(entry.changedBehavior, `Anpassung ${index + 1}`)}
       </p>
       <p className={styles.compactMeta}>
         Vorher: {shortLabel(entry.beforeBehavior, '—')}
@@ -125,7 +125,7 @@ function CompactAdjustmentCard({
         <br />
         Signal: {labelForOption(ASSESSMENT_OPTIONS, entry.assessment)}
         {' · '}
-        Confidence: {labelForOption(DEFAULT_CONFIDENCE_OPTIONS, entry.confidence)}
+        Sicherheit der Interpretation: {labelForOption(DEFAULT_CONFIDENCE_OPTIONS, entry.confidence)}
       </p>
       <div className={styles.cardActions}>
         <button type="button" className={styles.miniBtn} onClick={onEdit}>
@@ -270,7 +270,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
   const primaryOptions = [
     ...entries.map((entry, idx) => ({
       value: entry.id,
-      label: `${idx + 1} · ${shortLabel(entry.changedBehavior, `Adjustment ${idx + 1}`)}`,
+      label: `${idx + 1} · ${shortLabel(entry.changedBehavior, `Anpassung ${idx + 1}`)}`,
     })),
     ...PRIMARY_PICK_EXTRA_OPTIONS,
   ]
@@ -279,11 +279,11 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
   if (stage === 'complete') {
     return (
       <div className={styles.drillRoot}>
-        <span className={styles.completeBadge}>✓ Adjustment-Profil des beobachteten Segments</span>
+        <span className={styles.completeBadge}>✓ Mögliche Spielanpassungen im beobachteten Segment</span>
 
         {noClear ? (
           <div className={styles.resultBlock}>
-            <div className={styles.resultLabel}>Kein belastbares Adjustment</div>
+            <div className={styles.resultLabel}>Keine ausreichend gestützte Spielanpassung</div>
             <p className={styles.resultValue}>
               {labelForOption(NO_ADJUSTMENT_REASON_OPTIONS, String(safeAnswers[cfg.noClearReasonKey] || ''))}
             </p>
@@ -292,7 +292,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
           entries.map((entry, idx) => (
             <div key={entry.id} className={styles.panel}>
               <p className={styles.compactTitle}>
-                {idx + 1} · {shortLabel(entry.changedBehavior, `Adjustment ${idx + 1}`)}
+                {idx + 1} · {shortLabel(entry.changedBehavior, `Anpassung ${idx + 1}`)}
               </p>
               <AdjustmentChain
                 before={entry.beforeBehavior}
@@ -307,7 +307,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
                 </p>
               </div>
               <div className={styles.resultBlock}>
-                <div className={styles.resultLabel}>Deine Einordnung · Confidence</div>
+                <div className={styles.resultLabel}>Deine Einordnung · Sicherheit der Interpretation</div>
                 <p className={styles.resultValue}>
                   {labelForOption(ASSESSMENT_OPTIONS, entry.assessment)}
                   {' · '}
@@ -326,7 +326,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
 
         {!noClear && count >= 2 && (
           <div className={styles.resultBlock}>
-            <div className={styles.resultLabel}>Prägendstes Adjustment</div>
+            <div className={styles.resultLabel}>Am deutlichsten gestützte mögliche Spielanpassung</div>
             <p className={styles.resultValue}>
               {labelForOption(primaryOptions, String(safeAnswers[cfg.primaryAdjustmentKey] || ''))}
             </p>
@@ -362,7 +362,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
 
   return (
     <div className={styles.drillRoot}>
-      <p className={styles.eyebrow}>Adjustment Profile</p>
+      <p className={styles.eyebrow}>Mögliche Spielanpassungen</p>
       <h2 className={styles.title}>{drill.title}</h2>
       {drill.description && <p className={styles.lead}>{drill.description}</p>}
       {drill.didactics?.explanation && <p className={styles.lead}>{drill.didactics.explanation}</p>}
@@ -389,7 +389,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
       {stage === 'collect' && collecting && (
         <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
           <p className={styles.fieldLabel}>
-            {isEditing ? `Adjustment ${editIndex! + 1} bearbeiten` : `Adjustment-Kandidat ${count + 1}`}
+            {isEditing ? `Anpassung ${editIndex! + 1} bearbeiten` : `Anpassungskandidat ${count + 1}`}
           </p>
 
           {draftStage === 'before' && (
@@ -480,7 +480,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
                 <div className={styles.fieldLabel}>
                   Was passierte nach der Veränderung mit der ursprünglichen Interaktion?
                 </div>
-                <p className={styles.lead}>Nicht: Hat das Adjustment funktioniert? Sondern: Hat sich die Interaktion verändert?</p>
+                <p className={styles.lead}>Nicht: Hat die Spielanpassung funktioniert? Sondern: Hat sich die Interaktion verändert?</p>
                 <OptionChips
                   name="interaction-response"
                   options={INTERACTION_RESPONSE_OPTIONS}
@@ -501,7 +501,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
               />
               <div className={styles.fieldBlock}>
                 <div className={styles.fieldLabel}>
-                  Wie stark ist dein Hinweis, dass es sich wirklich um ein Adjustment handelt?
+                  Wie stark ist dein Hinweis, dass es sich wirklich um eine mögliche Spielanpassung handelt?
                 </div>
                 <OptionChips
                   name="assessment"
@@ -512,7 +512,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
               </div>
               <div className={styles.fieldBlock}>
                 <div className={styles.fieldLabel}>Wie sicher bist du dir mit deiner Einordnung?</div>
-                <p className={styles.lead}>Getrennt vom Signal: Confidence ist nicht dasselbe wie Adjustment-Stärke.</p>
+                <p className={styles.lead}>Getrennt vom Signal: Sicherheit der Interpretation ist nicht dasselbe wie das Beobachtungssignal.</p>
                 <OptionChips
                   name="confidence"
                   options={DEFAULT_CONFIDENCE_OPTIONS}
@@ -560,12 +560,12 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
         <div className={styles.actions}>
           {!atMax && (
             <button type="button" className={styles.secondaryBtn} onClick={startAdd}>
-              + Zweites Adjustment hinzufügen
+              + Zweite mögliche Spielanpassung hinzufügen
             </button>
           )}
           {atMin && (
             <button type="button" className={styles.primaryBtn} onClick={() => setStage('wrapup')}>
-              Profil abschließen
+              Segment-Zusammenfassung abschließen
             </button>
           )}
         </div>
@@ -573,7 +573,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
 
       {stage === 'collect' && count === 0 && cfg.allowNoClearAdjustment && (
         <button type="button" className={styles.ghostBtn} onClick={markNoClear}>
-          Kein belastbares Adjustment erkannt
+          Keine ausreichend gestützte Spielanpassung
         </button>
       )}
 
@@ -581,7 +581,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
         <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
           {noClear && (
             <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>Warum kein belastbares Adjustment?</div>
+              <div className={styles.fieldLabel}>Warum keine ausreichend gestützte Spielanpassung?</div>
               <OptionChips
                 name="no-clear-reason"
                 options={NO_ADJUSTMENT_REASON_OPTIONS}
@@ -595,7 +595,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
 
           {!noClear && count >= 2 && (
             <div className={styles.fieldBlock}>
-              <div className={styles.fieldLabel}>Welches Adjustment hat das beobachtete Segment stärker geprägt?</div>
+              <div className={styles.fieldLabel}>Welche mögliche Spielanpassung ist im beobachteten Segment am deutlichsten gestützt?</div>
               <OptionChips
                 name="primary-adjustment"
                 options={primaryOptions}
@@ -610,7 +610,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
           {cfg.requireSegmentSummary && (
             <div className={styles.fieldBlock}>
               <div className={styles.fieldLabel}>
-                Fasse das Adjustment-Profil des beobachteten Segments in 2–4 Sätzen zusammen.
+                Fasse die möglichen Spielanpassungen im beobachteten Segment in 2–4 Sätzen zusammen.
               </div>
               <textarea
                 className={styles.textarea}
@@ -679,7 +679,7 @@ export function AdjustmentProfileDrill({ drill, answers, setAnswers }: Props) {
               disabled={!wrapupValid}
               onClick={() => setStage('complete')}
             >
-              Profil abschließen
+              Segment-Zusammenfassung abschließen
             </button>
           </div>
         </section>

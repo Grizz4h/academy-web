@@ -50,7 +50,7 @@ export const MECHANIC_INFO: Record<MechanicKind, MechanicInfo> = {
   profile: {
     label: 'Profil',
     summary: 'Muster einordnen und bündeln.',
-    detail: 'Du ordnest Beobachtungen vorsichtig ein oder fasst sie zu einem Tendenzprofil zusammen — weniger Zeichnen, mehr Synthese.',
+    detail: 'Du ordnest Beobachtungen vorsichtig ein oder fasst vorläufige Tendenzen im beobachteten Segment zusammen — weniger Zeichnen, mehr Synthese.',
   },
   log: {
     label: 'Beobachtung',

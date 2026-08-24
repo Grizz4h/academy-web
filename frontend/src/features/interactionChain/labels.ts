@@ -46,7 +46,7 @@ export const RESPONSE_TYPE_OPTIONS: ChainOption[] = [
   { value: 'reset', label: 'Reset notwendig' },
   { value: 'simplifies', label: 'Vereinfachte Lösung' },
   { value: 'loses_control', label: 'Kontrolle geht verloren' },
-  { value: 'creates_different_problem', label: 'Neues Problem entsteht' },
+  { value: 'creates_different_problem', label: 'Neue Herausforderung / Problemverlagerung' },
   { value: 'no_clear_response', label: 'Keine klare Veränderung' },
   { value: 'unclear', label: 'Unklar' },
 ]
@@ -62,35 +62,35 @@ export const RESPONSE_REPETITION_OPTIONS: ChainOption[] = [
 export const PROBLEM_EFFECT_OPTIONS: ChainOption[] = [
   {
     value: 'clearly_reduced',
-    label: 'Klar reduziert',
-    description: 'Das ursprüngliche Problem tritt deutlich seltener oder schwächer auf.',
+    label: 'Interaktion entwickelt sich wiederholt anders',
+    description: 'Die vergleichbare Interaktion verläuft wiederholt sichtbar anders.',
   },
   {
     value: 'partly_reduced',
-    label: 'Teilweise reduziert',
+    label: 'Teilweise verändert',
     description: 'Es bleibt vorhanden, aber verändert sich.',
   },
   {
     value: 'shifted_elsewhere',
-    label: 'Verlagerte sich',
-    description: 'Das Problem verschiebt sich in einen anderen Raum / eine andere Lösung.',
+    label: 'Herausforderung verlagert sich',
+    description: 'Eine bisherige Herausforderung wird weniger sichtbar, dafür entsteht an anderer Stelle eine neue Option oder ein Nachteil.',
   },
   {
     value: 'unchanged',
-    label: 'Unverändert',
-    description: 'Gleiche Interaktion bleibt bestehen.',
+    label: 'Keine klare Veränderung',
+    description: 'Vergleichbare Interaktion bleibt weitgehend gleich.',
   },
   {
     value: 'worse',
-    label: 'Verstärkt',
+    label: 'Herausforderung wird sichtbarer',
     description: 'Das Problem wird sichtbarer.',
   },
   {
     value: 'new_problem_created',
-    label: 'Neues Problem entstanden',
-    description: 'Das ursprüngliche Problem wird reduziert, dafür öffnet sich etwas anderes.',
+    label: 'Problemverlagerung / Zielkonflikt',
+    description: 'Die bisherige Interaktion verändert sich, dafür öffnet sich etwas anderes.',
   },
-  { value: 'insufficient_evidence', label: 'Zu wenig Evidenz' },
+  { value: 'insufficient_evidence', label: 'Nicht ausreichend beobachtet' },
   { value: 'unclear', label: 'Unklar' },
 ]
 
@@ -110,31 +110,32 @@ export const TRADEOFF_OPTIONS: ChainOption[] = [
 export const INTERACTION_ASSESSMENT_OPTIONS: ChainOption[] = [
   {
     value: 'clear_effect',
-    label: 'Klarer Effekt',
-    description: 'Die Interaktion verändert sich wiederholt sichtbar.',
+    label: 'Interaktion entwickelt sich wiederholt anders',
+    description: 'Die vergleichbare Interaktion verändert sich wiederholt sichtbar — ohne Erfolgsbewertung.',
   },
   {
     value: 'likely_effect',
-    label: 'Wahrscheinlicher Effekt',
+    label: 'Teilweise verändert',
     description: 'Mehrere Hinweise sprechen dafür.',
   },
   {
     value: 'possible_effect',
-    label: 'Möglicher Effekt',
+    label: 'Erste Veränderung erkennbar',
     description: 'Erste Veränderung erkennbar, aber Sample dünn.',
   },
   {
     value: 'problem_shifted',
-    label: 'Problem verlagert',
+    label: 'Herausforderung verlagert sich',
     description: 'Altes Problem kleiner, anderes entsteht.',
   },
   {
     value: 'no_clear_effect',
-    label: 'Kein klarer Effekt',
+    label: 'Keine klare Veränderung',
     description: 'Interaktion bleibt weitgehend gleich.',
   },
-  { value: 'insufficient_sample', label: 'Zu wenig Beobachtungen' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'insufficient_sample', label: 'Nicht ausreichend beobachtet' },
+  { value: 'not_comparable', label: 'Nicht ausreichend vergleichbar' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export function labelForOption(options: ChainOption[], value?: string): string {

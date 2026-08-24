@@ -55,9 +55,9 @@ export function composeCompareQuestion(
   groupALabel: string,
   groupBLabel: string,
 ): string {
-  const target = String(targetEventLabel || '').trim() || 'das Target Event'
-  const a = String(groupALabel || '').trim() || 'Gruppe A'
-  const b = String(groupBLabel || '').trim() || 'Gruppe B'
+  const target = String(targetEventLabel || '').trim() || 'das Zielereignis'
+  const a = String(groupALabel || '').trim() || 'Vergleichsgruppe A'
+  const b = String(groupBLabel || '').trim() || 'Vergleichsgruppe B'
   return `Wie unterscheidet sich die Rate von ${target} zwischen ${a} und ${b}?`
 }
 
@@ -203,22 +203,22 @@ export function resolveCohortRateCompareConfig(raw: Record<string, unknown> = {}
     coreHint: String(
       raw.core_hint
         || raw.coreHint
-        || 'Gleiche Messfrage. Gleiches Target. Eine bewusste Vergleichsdimension.',
+        || 'Gleiche Messfrage, gleiche Ausgangssituation, gleiches Zielereignis. Lege eine primäre Vergleichsdimension fest und dokumentiere weitere sichtbare Unterschiede.',
     ),
     sampleLimitNote: String(
       raw.sample_limit_note
         || raw.sampleLimitNote
-        || 'Diese Zahlen beschreiben deine beobachtete Stichprobe – nicht automatisch das generelle Verhalten des Teams.',
+        || 'Mindestwerte pro Vergleichsgruppe sind nur Übungsumfang. Sie machen die Stichprobe nicht repräsentativ und sind keine Evidenzschwelle.',
     ),
     conclusionHint: String(
       raw.conclusion_hint
         || raw.conclusionHint
-        || 'Nutze „in meiner Stichprobe“ oder „in den beobachteten Situationen“. Vermeide „Das Team ist über links besser.“',
+        || 'Nutze „in dieser Stichprobe“. Vermeide „besser“, „schlechter“ oder „effektiver“, sofern das Zielereignis nicht ausdrücklich als erwünscht/unerwünscht definiert wurde.',
     ),
     wordingHelp: String(
       raw.wording_help
         || raw.wordingHelp
-        || 'Nicht: „Das Team ist über links besser.“ Besser: „In meiner Stichprobe war die Rate kontrollierter Entries über links höher.“',
+        || 'Geeignet: „In dieser Stichprobe war die Rate kontrollierter Zoneneintritte links höher als rechts. Die Gruppen unterschieden sich zusätzlich beim sichtbaren Gegnerdruck.“ Nicht: „Das Team ist über links besser.“',
     ),
     summaryMinChars: Math.max(1, Number(raw.summary_min_chars || raw.summaryMinChars || 20)),
     examplesHelp: resolveExamplesHelp(raw),
@@ -283,23 +283,29 @@ export function computeCohortRateCompare(
       id: 'A',
       label: comparison.groupA.label,
       totalOpportunities: rateA.totalOpportunities,
+      evaluableCount: rateA.evaluableCount,
       targetCount: rateA.targetCount,
+      otherCount: rateA.otherCount,
       rate: rateA.rate,
       ratePercent: rateA.ratePercent,
       unclearCount: rateA.unclearCount,
       outcomeDistribution: rateA.outcomeDistribution,
       distributionItems: rateA.distributionItems,
+      rateSummary: rateA.rateSummary,
     },
     groupB: {
       id: 'B',
       label: comparison.groupB.label,
       totalOpportunities: rateB.totalOpportunities,
+      evaluableCount: rateB.evaluableCount,
       targetCount: rateB.targetCount,
+      otherCount: rateB.otherCount,
       rate: rateB.rate,
       ratePercent: rateB.ratePercent,
       unclearCount: rateB.unclearCount,
       outcomeDistribution: rateB.outcomeDistribution,
       distributionItems: rateB.distributionItems,
+      rateSummary: rateB.rateSummary,
     },
     percentagePointDifference: calculatePercentagePointDifference(rateA.rate, rateB.rate),
     sampleImbalance: hasSampleImbalance(rateA.totalOpportunities, rateB.totalOpportunities),
@@ -344,7 +350,7 @@ export function validateCohortRateCompareAnswers(
 ): string | null {
   const definition = answers[cfg.definitionKey] as RateDefinition | undefined
   if (!isDefinitionReady(definition, cfg.unclearOutcomeId)) {
-    return 'Bitte definiere Opportunity, Target Event und Outcomes – einmal für beide Gruppen.'
+    return 'Bitte definiere gültige Ausgangssituation, Zielereignis und Ergebnis-Kategorien – einmal für beide Gruppen.'
   }
   const comparison = answers[cfg.comparisonKey] as CohortComparison | undefined
   if (!isComparisonReady(comparison)) {

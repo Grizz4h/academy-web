@@ -94,33 +94,38 @@ export const DEFAULT_CONTEXT_TAG_OPTIONS: PatternLogOption<PatternContextTag>[] 
 
 export const DEFAULT_ASSESSMENT_OPTIONS: PatternLogOption<PatternAssessment>[] = [
   {
-    value: 'strong_pattern',
-    label: 'Starkes Muster',
-    description: 'Mehrere Situationen zeigen unter ähnlichen Bedingungen sehr ähnliche Reaktionen.',
+    value: 'possible_signal',
+    label: 'Hinweis auf eine mögliche Tendenz',
+    description: 'Mehrere Situationen zeigen vergleichbare Merkmale — noch keine allgemeine Teamtendenz.',
   },
   {
     value: 'likely_tendency',
-    label: 'Wahrscheinliche Tendenz',
-    description: 'Es gibt klare Wiederholungen, aber noch Variation.',
+    label: 'Hinweis auf eine mögliche Tendenz (wiederholt ähnlich)',
+    description: 'Mehrere Situationen ähneln sich unter vergleichbaren Bedingungen. Drei Fälle sind Mindestmenge der Übung, kein Nachweis.',
   },
   {
-    value: 'possible_signal',
-    label: 'Möglicher Hinweis',
-    description: 'Etwas scheint sich zu wiederholen, aber die Grundlage ist noch dünn.',
+    value: 'strong_pattern',
+    label: 'Hinweis auf eine mögliche Tendenz (sehr ähnlich)',
+    description: 'Die gespeicherten Situationen sind besonders ähnlich — weiterhin nur segmentbezogen und vorläufig.',
   },
   {
     value: 'mostly_individual_cases',
-    label: 'Eher Einzelfälle',
-    description: 'Die Situationen ähneln sich zu wenig.',
+    label: 'Beobachtungen noch zu unterschiedlich',
+    description: 'Die Situationen ähneln sich zu wenig, um eine vorläufige Tendenz zu formulieren.',
+  },
+  {
+    value: 'outcome_similarity_only',
+    label: 'Nur das Ergebnis ähnelt sich',
+    description: 'Ähnliches Ergebnis ohne vergleichbaren Ablauf oder vergleichbare Reaktion.',
   },
   {
     value: 'insufficient_sample',
-    label: 'Zu wenig Beobachtungen',
-    description: 'Keine belastbare Einschätzung möglich.',
+    label: 'Nicht ausreichend beobachtet',
+    description: 'Ausschnitt, Anzahl oder Vergleichbarkeit reichen noch nicht.',
   },
   {
     value: 'unclear',
-    label: 'Unklar',
+    label: 'Nicht sicher beurteilbar',
     description: 'Noch keine klare Einordnung möglich.',
   },
 ]
@@ -134,7 +139,7 @@ export const DEFAULT_CASE_TYPE_OPTIONS: PatternLogOption<PatternCaseType>[] = [
   {
     value: 'counter_case',
     label: 'Gegenfall',
-    description: 'Ähnliche Ausgangslage, aber das Verhalten tritt nicht auf.',
+    description: 'Ausreichend ähnliche Ausgangslage, in der das erwartete Verhalten nicht oder anders auftritt.',
   },
 ]
 
@@ -167,12 +172,12 @@ export const DEFAULT_SUPPORT_OPTIONS: PatternLogOption<SupportState>[] = [
 export const DEFAULT_CONDITION_ASSESSMENT_OPTIONS: PatternLogOption<ConditionAssessment>[] = [
   {
     value: 'clear_conditions',
-    label: 'klare Bedingungen erkennbar',
+    label: 'Bedingungen der bisherigen Beobachtungen erkennbar',
     description: 'Im beobachteten Segment scheinen wiederkehrende Bedingungen gut beschreibbar.',
   },
   {
     value: 'likely_conditions',
-    label: 'wahrscheinliche Bedingungen',
+    label: 'mögliche Bedingungen der bisherigen Beobachtungen',
     description: 'Es gibt klare Hinweise, aber noch Variation.',
   },
   {
@@ -187,7 +192,7 @@ export const DEFAULT_CONDITION_ASSESSMENT_OPTIONS: PatternLogOption<ConditionAss
   },
   {
     value: 'insufficient_sample',
-    label: 'zu wenig Beobachtungen',
+    label: 'nicht ausreichend beobachtet',
     description: 'Keine belastbare Einschätzung möglich.',
   },
   {
@@ -199,22 +204,22 @@ export const DEFAULT_CONDITION_ASSESSMENT_OPTIONS: PatternLogOption<ConditionAss
 export const DEFAULT_CONDITION_ROLE_OPTIONS: PatternLogOption<ConditionRole>[] = [
   {
     value: 'core',
-    label: 'Kernbedingung',
-    description: 'Ohne sie tritt das Muster wahrscheinlich nicht auf.',
+    label: 'Traf in Musterfällen wiederholt gemeinsam auf',
+    description: 'Könnte für die Abgrenzung relevant sein — keine notwendige Ursache.',
   },
   {
     value: 'supporting',
-    label: 'Unterstützende Bedingung',
-    description: 'Sie macht das Muster wahrscheinlicher, scheint aber nicht zwingend nötig.',
+    label: 'Unterschied Musterfall und Gegenfall besonders deutlich',
+    description: 'Hilfreich zur Schärfung der Formulierung, keine Kausalität.',
   },
   {
     value: 'incidental',
     label: 'Begleitmerkmal',
-    description: 'Sie war häufig vorhanden, könnte aber zufällig sein.',
+    description: 'War häufig vorhanden; Vergleichbarkeit unklar.',
   },
   {
     value: 'unclear',
-    label: 'Unklar',
+    label: 'Nicht sicher vergleichbar',
   },
 ]
 
@@ -242,19 +247,19 @@ export const DEFAULT_COUNTER_DIFFERENCE_OPTIONS: PatternLogOption<CounterDiffere
 ]
 
 export const DEFAULT_TARGET_EFFECT_OPTIONS: PatternLogOption<TargetEffect>[] = [
-  { value: 'middle', label: 'Mitte' },
-  { value: 'outside', label: 'außen' },
-  { value: 'weak_side', label: 'Weak Side' },
-  { value: 'net_front', label: 'Net Front' },
+  { value: 'middle', label: 'Zentraler Raum' },
+  { value: 'outside', label: 'Außenraum' },
+  { value: 'weak_side', label: 'Puckferne Seite' },
+  { value: 'net_front', label: 'Direkt vor dem Tor' },
   { value: 'depth', label: 'Tiefe' },
-  { value: 'blue_line', label: 'Blue Line' },
-  { value: 'passing_lane', label: 'Passweg' },
-  { value: 'shot_lane', label: 'Schussweg' },
-  { value: 'support_option', label: 'Support-Option' },
+  { value: 'blue_line', label: 'Bereich an der blauen Linie' },
+  { value: 'passing_lane', label: 'Passlinie' },
+  { value: 'shot_lane', label: 'Schussbahn' },
+  { value: 'support_option', label: 'Anschlussoption' },
   { value: 'space_behind', label: 'Raum dahinter' },
   { value: 'other', label: 'anderes' },
-  { value: 'not_relevant', label: 'nicht relevant' },
-  { value: 'unclear', label: 'unklar' },
+  { value: 'not_relevant', label: 'für diesen Vergleich nicht relevant' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
 export const DEFAULT_ACTOR_ROLE_OPTIONS: PatternLogOption<ActorRole>[] = [
@@ -284,21 +289,21 @@ export const DEFAULT_SEQUENCE_SIMILARITY_OPTIONS: PatternLogOption<SequenceSimil
 export const DEFAULT_INVARIANT_DIMENSION_ROLE_OPTIONS: PatternLogOption<InvariantDimensionRole>[] = [
   {
     value: 'core',
-    label: 'Kernbestandteil',
-    description: 'Bleibt stabil und scheint das Muster zu definieren.',
+    label: 'Bisher stabil beobachtet',
+    description: 'In den bisher verglichenen Situationen wiederholt ähnlich sichtbar — vorläufig, nicht bewiesen invariant.',
   },
   {
     value: 'frequent',
-    label: 'Häufiges Merkmal',
-    description: 'Tritt oft auf, ist aber nicht zwingend.',
+    label: 'Häufig ähnlich',
+    description: 'Tritt oft ähnlich auf, aber nicht in allen Fällen.',
   },
   {
     value: 'variable',
-    label: 'Variable Ausprägung',
-    description: 'Kann sich ändern, ohne dass das Muster verschwindet.',
+    label: 'Variabel',
+    description: 'Wechselt zwischen vergleichbaren Situationen.',
   },
-  { value: 'not_relevant', label: 'Nicht relevant' },
-  { value: 'unclear', label: 'Unklar' },
+  { value: 'not_relevant', label: 'Für diesen Vergleich nicht relevant' },
+  { value: 'unclear', label: 'Nicht ausreichend beurteilbar' },
 ]
 
 export const DEFAULT_FLEXIBILITY_OPTIONS: PatternLogOption<PatternFlexibility>[] = [
@@ -336,7 +341,7 @@ export const DEFAULT_ALLOWED_VARIATION_OPTIONS: PatternLogOption<InvariantDimens
   { value: 'side', label: 'Seite' },
   { value: 'primaryAction', label: 'zentrale Aktion / Positionierung' },
   { value: 'sequenceSimilarity', label: 'Ablauf' },
-  { value: 'targetEffect', label: 'Target / Effect' },
+  { value: 'targetEffect', label: 'Sichtbare Folge / beeinflusster Raum' },
   { value: 'other', label: 'andere' },
   { value: 'none', label: 'keine' },
   { value: 'unclear', label: 'unklar' },
@@ -386,46 +391,39 @@ export const DEFAULT_STARTING_CONDITION_OPTIONS: PatternLogOption<StartingCondit
 export const DEFAULT_ATTRIBUTION_OPTIONS: PatternLogOption<PatternAttribution>[] = [
   {
     value: 'mostly_structural',
-    label: 'eher strukturell',
-    description: 'Wirkt wie ein wiederkehrendes Teamprinzip im beobachteten Segment.',
+    label: 'In mehreren unterschiedlichen Kontexten beobachtet',
+    description: 'Das Verhalten war unter unterschiedlichen sichtbaren Kontextbedingungen erneut sichtbar — keine Ursache.',
   },
   {
     value: 'mostly_situational',
-    label: 'eher situativ',
-    description: 'Scheint an sehr ähnliche Ausgangsbedingungen gebunden.',
-  },
-  {
-    value: 'opponent_driven',
-    label: 'eher gegnerbedingt',
-    description: 'Scheint vor allem durch gegnerisches Verhalten ausgelöst.',
-  },
-  {
-    value: 'personnel_driven',
-    label: 'eher personell',
-    description: 'Hängt sichtbar an bestimmten Spielern/Rollen.',
-  },
-  {
-    value: 'game_state_driven',
-    label: 'eher spielstands-/zeitbedingt',
-    description: 'Scheint mit Score, Restzeit oder Game State zusammenzuhängen.',
+    label: 'Bisher nur unter ähnlichen Kontextbedingungen beobachtet',
+    description: 'Bisher eng an ähnliche Ausgangslagen gebunden — keine situative Ursache behaupten.',
   },
   {
     value: 'mixed',
-    label: 'gemischt',
-    description: 'Mehrere Erklärungen wirken plausibel.',
+    label: 'Gemischte beziehungsweise widersprüchliche Beobachtungen',
+    description: 'Passende und abweichende Kontexte stehen nebeneinander.',
   },
   {
     value: 'insufficient_evidence',
-    label: 'zu wenig Evidenz',
-    description: 'Keine belastbare Einordnung möglich.',
+    label: 'Nicht ausreichend beobachtet',
+    description: 'Vergleichbarkeit oder Anzahl reichen noch nicht.',
   },
-  { value: 'unclear', label: 'unklar' },
+  { value: 'unclear', label: 'Nicht sicher beurteilbar' },
 ]
 
+/** Legacy causal labels — readable for old answers, not offered in new UI. */
+export const LEGACY_ATTRIBUTION_LABELS: Record<string, string> = {
+  opponent_driven: '(Legacy) eher gegnerbedingt',
+  personnel_driven: '(Legacy) eher personell',
+  game_state_driven: '(Legacy) eher spielstands-/zeitbedingt',
+}
+
 export const DEFAULT_CONFIDENCE_OPTIONS: PatternLogOption<AttributionConfidence>[] = [
-  { value: 'low', label: 'niedrig' },
+  { value: 'low', label: 'gering' },
   { value: 'medium', label: 'mittel' },
   { value: 'high', label: 'hoch' },
+  { value: 'not_assessable', label: 'nicht beurteilbar' },
 ]
 
 export const DEFAULT_FREQUENCY_OPTIONS: PatternLogOption<TendencyFrequency>[] = [
@@ -482,7 +480,7 @@ export const INVARIANT_DIMENSION_LABELS: Record<InvariantDimensionId, string> = 
   zone: 'Zone',
   trigger: 'Trigger',
   primaryAction: 'Zentrale Aktion',
-  targetEffect: 'Zielraum / Effekt',
+  targetEffect: 'Sichtbare Folge / beeinflusster Raum',
   actorRole: 'Ausführende Rolle',
   side: 'Seite',
   sequenceSimilarity: 'Ablauf',
@@ -494,5 +492,5 @@ export function labelForOption<T extends string>(
 ): string {
   if (!value) return '–'
   const hit = options.find((opt) => opt.value === value)
-  return hit?.label || value
+  return hit?.label || LEGACY_ATTRIBUTION_LABELS[value] || value
 }

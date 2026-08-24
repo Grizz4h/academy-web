@@ -106,11 +106,15 @@ export type ConditionOutcomeMatrixCounts = {
 }
 
 export type ConditionalRateSlice = {
+  /** Gültige Ausgangssituationen mit klarer Bedingung (inkl. unklarer Ergebnisse). */
   total: number
+  evaluableCount: number
   targetCount: number
+  otherCount: number
   rate: number
   ratePercent: number
   outcomeUnclear: number
+  rateSummary: string
 }
 
 export type ConditionalOutcomeResult = {

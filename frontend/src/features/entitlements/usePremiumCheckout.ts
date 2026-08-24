@@ -7,6 +7,7 @@ export function usePremiumCheckout() {
     mutationFn: () => api.createBillingCheckout(),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['entitlements'] })
+      queryClient.invalidateQueries({ queryKey: ['billing'] })
       queryClient.invalidateQueries({ queryKey: ['curriculum'] })
       if (data.checkout_url) {
         window.location.assign(data.checkout_url)

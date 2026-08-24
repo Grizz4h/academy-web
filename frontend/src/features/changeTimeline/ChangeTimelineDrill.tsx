@@ -177,14 +177,14 @@ export function ChangeTimelineDrill({ drill, answers, setAnswers }: Props) {
           changePointId={changePointId}
         />
         <div className={styles.resultBlock}>
-          <div className={styles.resultLabel}>Baseline</div>
+          <div className={styles.resultLabel}>Ausgangsbeobachtungen</div>
           <p className={styles.resultValue}>{baseline}</p>
         </div>
         {evidence && (
           <div className={styles.evidence}>
-            <div>Vor Change Point: {evidence.beforeCount} Beobachtungen · {evidence.beforeBaselineCount}× Baseline</div>
+            <div>Vor möglichem Veränderungszeitpunkt: {evidence.beforeCount} Beobachtungen · {evidence.beforeBaselineCount}× Ausgangsbeobachtungen</div>
             <div>
-              Nach Change Point: {evidence.afterCount} Beobachtungen · {evidence.afterDeviationCount}× abweichend/neu · {evidence.afterBaselineCount}× Baseline
+              Nach möglichem Veränderungszeitpunkt: {evidence.afterCount} Beobachtungen · {evidence.afterDeviationCount}× abweichend/neu · {evidence.afterBaselineCount}× Ausgangsbeobachtungen
             </div>
           </div>
         )}
@@ -387,9 +387,9 @@ export function ChangeTimelineDrill({ drill, answers, setAnswers }: Props) {
 
           {evidence && (
             <div className={styles.evidence}>
-              <div>Vor Change Point: {evidence.beforeCount} Beobachtungen · {evidence.beforeBaselineCount}× Baseline</div>
+              <div>Vor möglichem Veränderungszeitpunkt: {evidence.beforeCount} Beobachtungen · {evidence.beforeBaselineCount}× Ausgangsbeobachtungen</div>
               <div>
-                Nach Change Point: {evidence.afterCount} Beobachtungen · {evidence.afterDeviationCount}× abweichend/neu · {evidence.afterBaselineCount}× Baseline
+                Nach möglichem Veränderungszeitpunkt: {evidence.afterCount} Beobachtungen · {evidence.afterDeviationCount}× abweichend/neu · {evidence.afterBaselineCount}× Ausgangsbeobachtungen
               </div>
             </div>
           )}
@@ -408,7 +408,7 @@ export function ChangeTimelineDrill({ drill, answers, setAnswers }: Props) {
           )}
 
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Wie deutlich unterscheidet sich das Verhalten vor und nach dem möglichen Change Point?</div>
+            <div className={styles.fieldLabel}>Wie deutlich unterscheidet sich das Verhalten vor und nach dem möglichen Veränderungszeitpunkt?</div>
             <OptionChips
               name="magnitude"
               options={getMagnitudeOptions()}
@@ -418,7 +418,7 @@ export function ChangeTimelineDrill({ drill, answers, setAnswers }: Props) {
           </div>
 
           <div className={styles.fieldBlock}>
-            <div className={styles.fieldLabel}>Waren die Situationen vor und nach dem Change Point ausreichend vergleichbar?</div>
+            <div className={styles.fieldLabel}>Waren die Situationen vor und nach dem möglichen Veränderungszeitpunkt ausreichend vergleichbar?</div>
             <OptionChips
               name="comparability"
               options={getComparabilityOptions()}

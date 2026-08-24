@@ -5,6 +5,7 @@
 
 import delTeams from './teams_del.json'
 import del2Teams from './teams_del2.json'
+import testspieleTeams from './teams_testspiele.json'
 import nationalTeams from './teams_national.json'
 import nhlTeams from './teams_nhl.json'
 import chlTeams from './teams_chl.json'
@@ -31,6 +32,7 @@ export type SeasonTeamCatalog = {
 
 const CATALOGS: Record<string, SeasonTeamCatalog> = {
   DEL: delTeams as SeasonTeamCatalog,
+  Testspiele: testspieleTeams as SeasonTeamCatalog,
   DEL2: del2Teams as SeasonTeamCatalog,
   NHL: nhlTeams as SeasonTeamCatalog,
   CHL: chlTeams as SeasonTeamCatalog,
@@ -38,7 +40,16 @@ const CATALOGS: Record<string, SeasonTeamCatalog> = {
   Nationalmannschaften: nationalTeams as SeasonTeamCatalog,
 }
 
-export const TEAM_CATALOG_LEAGUES = Object.keys(CATALOGS)
+/** Liga-Reihenfolge in Session-Setup / Beobachtungsmaske */
+export const TEAM_CATALOG_LEAGUES = [
+  'DEL',
+  'Testspiele',
+  'DEL2',
+  'NHL',
+  'CHL',
+  'U20_DNL',
+  'Nationalmannschaften',
+]
 
 export function resolveCatalogSeasonKey(
   league: string | null | undefined,

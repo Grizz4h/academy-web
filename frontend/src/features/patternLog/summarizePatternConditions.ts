@@ -202,7 +202,7 @@ export function summarizePatternConditions(
 
   if (counterCases.length === 0) {
     statements.push(
-      'Kein geeigneter Gegenfall beobachtet. Das stärkt das Muster nicht automatisch – es bedeutet nur, dass im beobachteten Segment keine passende Gegenprobe vorhanden war.',
+      'Kein geeigneter Gegenfall beobachtet. Das stärkt die vorläufige Tendenz nicht automatisch – es bedeutet nur, dass im beobachteten Segment keine passende Gegenprobe vorhanden war.',
     )
   }
 
@@ -249,7 +249,7 @@ export function resolvePatternConditionConfig(config: PatternLogConfig = {}) {
       config.decision_rule
       || 'Eine Bedingung ist interessanter, wenn sie bei mehreren Musterfällen gleich bleibt – und bei einem Gegenfall gerade nicht.',
     summaryTitle: config.summary_title || 'Geprüftes Muster',
-    fingerprintTitle: config.fingerprint_title || 'Condition Fingerprint',
+    fingerprintTitle: config.fingerprint_title || 'Verglichene Bedingungen',
     zones: config.zones || DEFAULT_ZONE_OPTIONS,
     triggers: config.triggers || DEFAULT_TRIGGER_OPTIONS,
     sides: config.sides || DEFAULT_SIDE_OPTIONS,

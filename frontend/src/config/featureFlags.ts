@@ -11,6 +11,8 @@ export type NavFeature = {
   label: string
   /** Show in the public top navigation. */
   navVisible: boolean
+  /** Only for creator-mode accounts (server flag on /api/me). */
+  creatorOnly?: boolean
   /** Exact match for NavLink `end` (home). */
   exact?: boolean
   /** Optional group for the hidden Dev hub. */
@@ -45,9 +47,14 @@ export const NAV_FEATURES: NavFeature[] = [
     group: 'observation',
     note: 'Spielerbeobachtung Stats – intern, noch nicht Demo-ready.',
   },
-  { to: '/ringabout', label: 'Rink About It!', navVisible: true, group: 'core' },
-  { to: '/locker', label: 'Locker', navVisible: true, group: 'core' },
+  { to: '/ringabout', label: 'Rink About It!', navVisible: true, group: 'core', creatorOnly: true },
+  { to: '/locker', label: 'Spind', navVisible: true, group: 'core' },
 ]
+
+export type PublicNavTabsOptions = {
+  /** Server-confirmed creator tools (/api/me creator_mode). */
+  creatorMode?: boolean
+}
 
 export const DEV_MODE_STORAGE_KEY = 'academy.devNav'
 
@@ -83,8 +90,16 @@ export function setDevNavEnabled(enabled: boolean): void {
   }
 }
 
-export function getPublicNavTabs(): NavFeature[] {
-  return NAV_FEATURES.filter((tab) => tab.navVisible)
+export function getPublicNavTabs(options?: PublicNavTabsOptions): NavFeature[] {
+  const creatorMode = options?.creatorMode ?? false
+  const visible = NAV_FEATURES.filter((tab) => {
+    if (!tab.navVisible) return false
+    if (tab.creatorOnly && !creatorMode) return false
+    return true
+  })
+  const regular = visible.filter((tab) => !tab.creatorOnly)
+  const creator = visible.filter((tab) => tab.creatorOnly)
+  return [...regular, ...creator]
 }
 
 export function getHiddenNavTabs(): NavFeature[] {

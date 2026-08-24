@@ -10,6 +10,8 @@ type UiSheetProps = {
   meta?: ReactNode
   label?: string
   overlayClassName?: string
+  /** Hintergrund scrollbar lassen (z. B. Session-Notizen beim Szene erfassen). */
+  allowBackgroundScroll?: boolean
   children: ReactNode
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void
 }
@@ -21,31 +23,37 @@ export function UiSheet({
   meta,
   label,
   overlayClassName,
+  allowBackgroundScroll = false,
   children,
   onKeyDown,
 }: UiSheetProps) {
   useEffect(() => {
-    if (!open) return
+    if (!open || allowBackgroundScroll) return
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = previousOverflow
     }
-  }, [open])
+  }, [open, allowBackgroundScroll])
 
   if (!open) return null
 
   return createPortal(
     <div
-      className={[styles.overlay, overlayClassName].filter(Boolean).join(' ')}
+      className={[
+        styles.overlay,
+        allowBackgroundScroll && styles.overlayPeek,
+        overlayClassName,
+      ].filter(Boolean).join(' ')}
       onClick={(event) => {
+        if (allowBackgroundScroll) return
         if (event.target === event.currentTarget) onClose()
       }}
     >
       <div
         className={styles.panel}
         role="dialog"
-        aria-modal="true"
+        aria-modal={allowBackgroundScroll ? 'false' : 'true'}
         aria-label={label || title}
         onKeyDown={(event) => {
           if (event.key === 'Escape') onClose()

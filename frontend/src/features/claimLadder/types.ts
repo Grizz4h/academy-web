@@ -3,6 +3,7 @@ import type { EvidenceSampleSummary, EvidenceStrength } from '../evidenceAssessm
 export const EVIDENCE_PROFILE_SCHEMA_VERSION = 1
 
 export type ClaimLevel =
+  | 'none'
   | 'description'
   | 'comparison'
   | 'tendency'

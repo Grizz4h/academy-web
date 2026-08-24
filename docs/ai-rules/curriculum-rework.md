@@ -4,12 +4,14 @@ These rules apply whenever an existing Academy track or drill is reworked.
 
 The goal is not to simplify a track in isolation. Improve the learning progression while keeping the curriculum a **connected system**.
 
-**Hard constraint.** Read this file before editing Track 0, A1, A2, A3, or any later track. In the completion report, confirm that these rules were applied — including incoming skills, outgoing skills, displaced **capabilities**, and what was intentionally not taught.
+**Hard constraint.** Read `docs/ai-rules/content-quality.md` and this file before editing Track 0, A1, A2, A3, or any later track. In the completion report, confirm Content QA (A–G) and these rules — including incoming skills, outgoing skills, displaced **capabilities**, and what was intentionally not taught.
 
 Sources of truth:
 
 - Track 0: `data/academy/foundation/t0-track.json`
 - A1 onward: `data/academy/curriculum.json`
+- **Content QA (fachlich + didaktisch):** `docs/ai-rules/content-quality.md`
+- **Curriculum boundaries:** `docs/ai-rules/curriculum-boundaries.md`
 - Mechanics: `docs/ai-rules/mechanic-design.md`
 
 ---

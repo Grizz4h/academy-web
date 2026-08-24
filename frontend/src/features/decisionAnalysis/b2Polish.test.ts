@@ -53,9 +53,9 @@ assert.deepEqual(
 assert.deepEqual(
   a3.drills.map((drill: { title: string }) => drill.title),
   [
-    'Transitionsmoment erkennen',
+    'Umschaltmoment erkennen',
     'Erste Reaktion erkennen',
-    'Transition fortsetzen oder kontrollieren',
+    'Umschalten fortsetzen oder kontrollieren',
     'Defensive Rückreaktion lesen',
     'Abstand und Raumkontrolle erkennen',
   ],
@@ -63,11 +63,11 @@ assert.deepEqual(
 assert.deepEqual(
   b1.drills.map((drill: { title: string }) => drill.title),
   [
-    'Support unter dem Puck',
-    'Dreiecksstabilität',
+    'Unterstützung unter dem Puck',
+    'Verbindungen erhalten',
     'Center-Aufgaben erkennen',
-    'Center als Outlet & Anschlussoption',
-    'Timing & frühe Wahrnehmung',
+    'Center als Anspielstation und Anschlussoption',
+    'Timing & sichtbare Vorbereitung',
   ],
 )
 
@@ -97,9 +97,9 @@ assert.deepEqual(
   [
     'Druck erkennen',
     'Lösung unter Druck erkennen',
-    'Entscheidungsursache erkennen',
-    'Erste Anschlussentscheidung erkennen',
-    'Entscheidungsmuster erkennen',
+    'Einflussfaktor und Lösung verbinden',
+    'Erste Lösung des Puckführers nach Gewinn',
+    'Beobachtungstendenzen unter Druck',
   ],
 )
 
@@ -126,29 +126,36 @@ assert.equal(
 assert.ok(!b2.drills[4].config.sample_key)
 assert.ok(!b2.drills[4].config.mode)
 
-// D2 solution options: no right/wrong framing
+// D2 solution options: internal IDs stable; DE labels
 assert.deepEqual(
   b2.drills[1].config.sample_fields[0].options.map((opt: { value: string }) => opt.value),
   ['pass', 'carry', 'sichern', 'befreiung', 'unklar'],
 )
+assert.deepEqual(
+  b2.drills[1].config.sample_fields[0].options.map((opt: { label: string }) => opt.label),
+  ['Pass', 'Puck führen', 'Kontrolle halten', 'Befreiung', 'Unklar'],
+)
 
-// D3 causes: conditions, not moral failure labels
+// D3: factor↔solution, not causal "Ursache"
 assert.deepEqual(
   b2.drills[2].config.sample_fields[0].options.map((opt: { value: string }) => opt.value),
   ['zeitmangel', 'raumbegrenzung', 'gegnerdruck', 'fehlende_optionen', 'unklar'],
 )
 assert.ok(!b2.drills[2].config.missions.some((m: { prompt: string }) => /gescheitert/i.test(m.prompt)))
+assert.ok(!/muss der Spieler handeln/i.test(JSON.stringify(b2.drills[0])))
+assert.ok(!/Entscheidungsprofil des Teams/i.test(JSON.stringify(b2.drills[4])))
 
-// D4 follow-up framing vs A3 transition
-assert.ok(/Anschlussentscheidung/i.test(b2.drills[3].description))
-assert.ok(/A3/i.test(b2.drills[3].description) || /Transition/i.test(b2.drills[3].didactics.explanation))
+// D4: B2 solution types, not A3 collective labels
+assert.ok(/Puckführer/i.test(b2.drills[3].description) || /erste sichtbare Lösung/i.test(b2.drills[3].description))
+assert.ok(/A3/i.test(b2.drills[3].description) || /A3/i.test(b2.drills[3].didactics.explanation))
 assert.deepEqual(
   b2.drills[3].config.sample_fields[0].options.map((opt: { value: string }) => opt.value),
-  ['tempo_nutzen', 'kontrolle_aufbauen', 'absichern', 'keine_klare', 'unklar'],
+  ['pass', 'carry', 'sichern', 'befreiung', 'unklar'],
 )
+assert.ok(!/tempo_nutzen|Sofort fortsetzen/i.test(JSON.stringify(b2.drills[3].config.sample_fields[0])))
 
 // Boundaries
-assert.ok(a3.title.toLowerCase().includes('transition') || a3.summary.toLowerCase().includes('transition'))
+assert.ok(a3.title.toLowerCase().includes('umschalten') || a3.summary.toLowerCase().includes('umschalt'))
 assert.ok(b1.title.toLowerCase().includes('center'))
 assert.ok(!/center/i.test(b2.title))
 assert.ok(b1.drills[4].didactics.learning_hint.includes('B2'))

@@ -51,6 +51,7 @@ export async function login(
 import { labModules, predictionTemplates } from './features/lab/config'
 import type { UserAccountPayload, UserProfileCustomization } from './data/profile/types'
 import type { MyEntitlementsPayload } from './features/entitlements/types'
+import type { MyBillingPayload } from './features/billing/types'
 
 
 // ==== Type Definitions ====
@@ -910,15 +911,16 @@ export const api = {
   addMicrofeedback: async (id: string, phase: 'P1'|'P2'|'P3', text: string): Promise<any> => {
     const trace = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
     const headers: Record<string, string> = {
+      ...authHeaders(),
       'Content-Type': 'application/json',
       'X-Trace-Id': trace,
       'X-Trace-Action': 'submitMicrofeedback',
-      'X-Client-Action': 'submitMicrofeedback'
+      'X-Client-Action': 'submitMicrofeedback',
     };
     const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/microfeedback`), {
       method: 'POST',
       headers,
-      body: JSON.stringify({ phase, text })
+      body: JSON.stringify({ phase, text }),
     });
     if (!res.ok) throw new Error('Failed to save microfeedback');
     return res.json();
@@ -1639,11 +1641,16 @@ export const api = {
     return res.json()
   },
 
-  getMyBilling: async (): Promise<{
-    rinq_user_id: string
-    plan: Record<string, unknown> | null
-    subscriptions: Array<Record<string, unknown>>
-  }> => {
+  createBillingPortal: async (): Promise<{ ok: boolean; portal_url: string }> => {
+    const res = await fetch(buildUrl('/billing/portal'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Abo-Verwaltung konnte nicht geöffnet werden')
+    return res.json()
+  },
+
+  getMyBilling: async (): Promise<MyBillingPayload> => {
     const res = await fetch(buildUrl('/me/billing'), {
       headers: { ...authHeaders() },
     })

@@ -25,7 +25,10 @@ export type AnticipationProfile = {
   updatePatterns: AnticipationProfileUpdatePatterns
   sourceDrillIds: string[]
   hasEnoughData: boolean
+  /** `read_count` bleibt lesbar für Legacy; Freischaltung nutzt `source_coverage`. */
   enoughBecause: 'read_count' | 'source_coverage' | 'insufficient'
+  /** Interne UX-Hinweiszahl aus Config; keine Validitätsschwelle. */
+  observationCountHint?: number
 }
 
 export type AnticipationProfileReflectionPayload = {

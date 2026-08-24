@@ -1,7 +1,7 @@
 import { comparabilityOptions, perceivedDifferenceOptions } from '../cohortRateCompare/compareLogic'
 import type { CohortGroupResult, CohortRateCompareResult } from '../cohortRateCompare/types'
 import type { ConditionalOutcomeResult } from '../conditionalOutcome/types'
-import { calculatePercentagePointDifference, formatRatePercent } from '../opportunityRate/rateLogic'
+import { calculatePercentagePointDifference, formatRatePercent, formatRateSummary } from '../opportunityRate/rateLogic'
 import type { OpportunityRateResult } from '../opportunityRate/types'
 import { DEFAULT_EVIDENCE_CASES } from './cases'
 import type {
@@ -36,7 +36,7 @@ export const EVIDENCE_CASE_STEPS: EvidenceCaseStep[] = [
 export const DEFAULT_NEXT_EVIDENCE_OPTIONS = [
   { value: 'more_comparable', label: 'Mehr vergleichbare Opportunities' },
   { value: 'balanced_groups', label: 'Ausgeglichenere Gruppen' },
-  { value: 'clearer_definition', label: 'Klarere Definition von Opportunity, Bedingung und Outcome' },
+  { value: 'clearer_definition', label: 'Klarere Definition von Ausgangssituation, Bedingung und Ergebnis' },
   { value: 'more_counterexamples', label: 'Mehr Gegenfälle prüfen' },
   { value: 'other_opponent', label: 'Dieselbe Bedingung bei einem anderen Gegner beobachten' },
   { value: 'reduce_unclear', label: 'Unklare Fälle reduzieren' },
@@ -142,17 +142,28 @@ export function groupsFromSample(sample: EvidenceSampleSummary): [CohortGroupRes
   const toGroup = (id: 'A' | 'B', index: number): CohortGroupResult => {
     const total = sizes[index]
     const targetCount = targets[index]
-    const rate = sample.rates?.[index] ?? (total > 0 ? targetCount / total : 0)
+    const unclearCount = 0
+    const evaluableCount = Math.max(0, total - unclearCount)
+    const otherCount = Math.max(0, evaluableCount - targetCount)
+    const rate = sample.rates?.[index] ?? (evaluableCount > 0 ? targetCount / evaluableCount : 0)
     return {
       id,
       label: labels[index] || `Gruppe ${id}`,
       totalOpportunities: total,
+      evaluableCount,
       targetCount,
+      otherCount,
       rate,
       ratePercent: formatRatePercent(rate),
-      unclearCount: 0,
+      unclearCount,
       outcomeDistribution: {},
       distributionItems: [],
+      rateSummary: formatRateSummary({
+        targetCount,
+        evaluableCount,
+        unclearCount,
+        totalOpportunities: total,
+      }),
     }
   }
   return [toGroup('A', 0), toGroup('B', 1)]
@@ -187,22 +198,22 @@ export function resolveEvidenceAssessmentConfig(raw: Record<string, unknown> = {
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Großer Unterschied heißt nicht automatisch starke Evidenz.',
+        || 'Die Tragfähigkeit der Beobachtungsgrundlage prüfst du mehrdimensional — ohne Inferenzstatistik und ohne automatischen Gesamtscore.',
     ),
     coreHint: String(
       raw.core_hint
         || raw.coreHint
-        || 'Je stärker deine Aussage, desto sauberer muss ihre Evidenzbasis sein.',
+        || 'Auch die höchste Kategorie bleibt ein konsistentes Bild innerhalb der Stichprobe, keine wissenschaftliche Sicherheit.',
     ),
     sampleLimitNote: String(
       raw.sample_limit_note
         || raw.sampleLimitNote
-        || 'Bei kleinen Samples verändert eine einzelne Observation die Rate stark.',
+        || 'Eine einzelne weitere oder anders klassifizierte Beobachtung kann die Rate stark verändern. Das ersetzt keine inferenzstatistische Unsicherheitsangabe.',
     ),
     statementHint: String(
       raw.statement_hint
         || raw.statementHint
-        || 'Bleib bei der Stichprobe. Behaupte keine Ursache.',
+        || 'Bleib bei der Stichprobe. Behaupte keine Ursache und bilde keinen numerischen Gesamtscore.',
     ),
     userStatementMinChars: Math.max(0, Number(raw.user_statement_min_chars || raw.userStatementMinChars || 0)),
   }
@@ -255,48 +266,51 @@ export function definitionClarityOptions(): Array<{ value: EvidenceDefinitionCla
 
 export function evidenceStrengthOptions(): Array<{ value: EvidenceStrength; label: string }> {
   return [
-    { value: 'strongly_supported', label: 'Stark gestützt' },
-    { value: 'reasonably_supported', label: 'Ordentlich gestützt' },
-    { value: 'suggestive', label: 'Hinweis' },
-    { value: 'weak', label: 'Schwach gestützt' },
-    { value: 'insufficient', label: 'Nicht ausreichend' },
-    { value: 'unclear', label: 'Unklar' },
+    { value: 'strongly_supported', label: 'Konsistentes Bild innerhalb dieser Stichprobe' },
+    { value: 'reasonably_supported', label: 'Deskriptiver Hinweis in dieser Stichprobe' },
+    { value: 'suggestive', label: 'Begrenzte Beobachtungsgrundlage' },
+    { value: 'weak', label: 'Sehr begrenzte Beobachtungsgrundlage' },
+    { value: 'insufficient', label: 'Nicht beurteilbar' },
+    { value: 'unclear', label: 'Nicht beurteilbar' },
   ]
 }
 
 export function evidenceDimensions(): EvidenceDimensionDefinition[] {
   return [
     {
+      id: 'definition',
+      label: 'Definition & Vollständigkeit',
+      question: 'Wie klar waren Ausgangssituation und Zielereignis definiert – und wie vollständig erfasst?',
+      help: 'Unklarheit und fehlende Fälle gehören sichtbar dazu, nicht still weg.',
+      options: definitionClarityOptions(),
+    },
+    {
       id: 'sample',
-      label: 'Sample',
-      question: 'Wie tragfähig wirkt die Stichprobengröße für diese Aussage?',
-      help: 'Bei kleinen Samples verändert eine einzelne Observation die Rate stark.',
+      label: 'Stichprobe & Unklarheit',
+      question: 'Wie tragfähig wirken Zahl gültiger/auswertbarer Fälle, unklare Fälle sowie Größe und Balance der Vergleichsgruppen?',
+      help: 'Eine einzelne weitere oder anders klassifizierte Beobachtung kann die Rate stark verändern. Mindestzahlen sind Übungsumfang, keine Evidenzschwelle.',
       options: sampleStrengthOptions(),
     },
     {
       id: 'comparability',
-      label: 'Vergleichbarkeit',
-      question: 'Wie gut lassen sich die Situationen miteinander vergleichen?',
+      label: 'Vergleichbarkeit & Kontext',
+      question: 'Wie vergleichbar waren die Situationen – und welche weiteren sichtbaren Kontextunterschiede gab es?',
+      help: 'Im Spiel lassen sich weitere Dimensionen nicht vollständig konstant halten.',
       options: comparabilityOptions(),
     },
     {
       id: 'counterexamples',
-      label: 'Gegenbeispiele',
-      question: 'Wie stark wird die Aussage durch Gegenbeispiele relativiert?',
-      help: 'Ein Gegenbeispiel macht die Aussage nicht automatisch falsch. Es verlangt eine Einschränkung.',
+      label: 'Widersprechende Fälle',
+      question: 'Wie stark wird die Aussage durch Gegenfälle relativiert?',
+      help: 'Ein Gegenfall macht die Aussage nicht automatisch falsch. Er verlangt eine Einschränkung.',
       options: counterexampleImpactOptions(),
     },
     {
       id: 'difference',
-      label: 'Unterschied',
-      question: 'Wie klar ist der Unterschied in den beobachteten Daten?',
+      label: 'Stabilität des Unterschieds',
+      question: 'Wie stabil wirkt der beobachtete Unterschied innerhalb dieser Stichprobe?',
+      help: 'Kein p-Wert, kein automatischer Evidenzscore — nur qualitative Einordnung.',
       options: perceivedDifferenceOptions(),
-    },
-    {
-      id: 'definition',
-      label: 'Definition',
-      question: 'Wie sauber waren Opportunity, Gruppen/Bedingung und Outcome definiert?',
-      options: definitionClarityOptions(),
     },
   ]
 }

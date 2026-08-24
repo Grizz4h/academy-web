@@ -65,7 +65,7 @@ export function resolveTriggerHypothesisConfig(raw: Record<string, unknown> = {}
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Zeitliche Reihenfolge ist ein Hinweis – keine Ursache. Eine gute Adjustment-Hypothese erklärt, warum genau diese Veränderung zu genau diesem Problem passen könnte.',
+        || 'Zeitliche Reihenfolge ist ein Hinweis – keine Ursache. Eine prüfbare Anpassungshypothese verbindet eine sichtbare Veränderung vorsichtig mit einer vorher beobachteten Interaktion.',
     ),
     coreHint: String(
       raw.core_hint
@@ -99,28 +99,31 @@ export function validateTriggerHypothesisAnswers(
     return 'Bitte prüfe eine alternative Erklärung.'
   }
   if (!answers[cfg.problemFitKey]) {
-    return 'Bitte bewerte, ob die Veränderung das Problem adressiert.'
+    return 'Bitte bewerte die funktionale Passung zur vorher beobachteten Interaktion.'
   }
   if (!answers[cfg.linkStrengthKey]) {
-    return 'Bitte bewerte den Zusammenhang zwischen Problem und Veränderung.'
+    return 'Bitte bewerte den Zusammenhang zwischen vorheriger Interaktion und Veränderung.'
   }
 
   if (cfg.requireFunctionalLink) {
-    const link = String(answers[cfg.functionalLinkKey] || '').trim()
-    if (!link || link.length < cfg.functionalLinkMinChars) {
-      return 'Bitte formuliere, wie die Veränderung das Problem beeinflussen könnte.'
+    const fit = String(answers[cfg.problemFitKey] || '')
+    if (fit !== 'no_functional_link') {
+      const link = String(answers[cfg.functionalLinkKey] || '').trim()
+      if (!link || link.length < cfg.functionalLinkMinChars) {
+        return 'Bitte formuliere die funktionale Passung – oder wähle, dass keine ausreichende Verbindung erkennbar ist.'
+      }
     }
   }
 
   if (cfg.requireHypothesisSummary) {
     const summary = String(answers[cfg.hypothesisSummaryKey] || '').trim()
     if (!summary || summary.length < cfg.summaryMinChars) {
-      return 'Bitte formuliere deine Adjustment-Hypothese in 1–2 Sätzen.'
+      return 'Bitte formuliere deine Anpassungshypothese in 1–2 Sätzen.'
     }
   }
 
   if (!answers[cfg.confidenceKey]) {
-    return 'Bitte gib an, wie sicher du dir bist.'
+    return 'Bitte schätze die Sicherheit der vorläufigen Einordnung ein (subjektiv).'
   }
 
   return null

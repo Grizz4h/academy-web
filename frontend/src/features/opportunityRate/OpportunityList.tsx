@@ -13,7 +13,7 @@ type Props = {
 export function OpportunityList({ observations, definition, onEdit, onRemove, badgeFor }: Props) {
   if (observations.length === 0) {
     return (
-      <p className={styles.empty}>Noch keine Opportunity erfasst. Jede gespeicherte Situation zählt in den Nenner.</p>
+      <p className={styles.empty}>Noch keine Ausgangssituation erfasst. Jede gespeicherte gültige Situation zählt — unabhängig vom Ergebnis.</p>
     )
   }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeGlossaryRenderer } from './GlossaryTerm';
+import { RinQIcon } from './icons';
 
 export type DrillGuide = {
   what_to_watch?: string[];
@@ -14,7 +15,10 @@ export function DrillGuideCard({ guide }: Props) {
   const rwg = makeGlossaryRenderer();
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-      <h3 className="text-lg font-semibold mb-3">👀 Beobachtungsanleitung</h3>
+      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+        <RinQIcon name="observe" size="md" badge />
+        Beobachtungsanleitung
+      </h3>
       <Section title="Worauf achten?" items={guide.what_to_watch} rwg={rwg} />
       <Section title="Wie entscheiden?" items={guide.how_to_decide || guide.how_to} rwg={rwg} />
       <Section title="Was ignorieren?" items={guide.ignore} rwg={rwg} />

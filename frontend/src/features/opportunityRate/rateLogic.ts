@@ -93,17 +93,17 @@ export function resolveOpportunityRateConfig(raw: Record<string, unknown> = {}):
     coreHint: String(
       raw.core_hint
         || raw.coreHint
-        || 'Der Nenner muss genauso sauber definiert sein wie das Target Event.',
+        || 'Definiere gültige Ausgangssituation und Zielereignis vor der Erfassung. Unklare Ergebnisse zählen nicht als Misserfolg.',
     ),
     sampleLimitNote: String(
       raw.sample_limit_note
         || raw.sampleLimitNote
-        || 'Diese Rate beschreibt deine beobachtete Stichprobe – nicht automatisch das generelle Verhalten des Teams.',
+        || 'Diese Mindestzahl dient der Übung. Sie macht die Stichprobe nicht repräsentativ und ist keine statistische Evidenzschwelle. Die Rate beschreibt nur die beobachtete Stichprobe.',
     ),
     conclusionHint: String(
       raw.conclusion_hint
         || raw.conclusionHint
-        || 'Beginne möglichst mit „In meinen beobachteten Situationen …“. Vermeide „Das Team macht immer …“.',
+        || 'Nenne Absolute (Zielereignisse / auswertbare Fälle), unklare Fälle und die Gesamtzahl gültiger Situationen. Vermeide „Das Team macht immer …“.',
     ),
     summaryMinChars: Math.max(1, Number(raw.summary_min_chars || raw.summaryMinChars || 20)),
     examplesHelp: resolveExamplesHelp(raw),
@@ -144,8 +144,8 @@ function resolveExamplesHelp(raw: Record<string, unknown>): RateExamplesHelp | n
 }
 
 export function composeQuestion(opportunityLabel: string, targetEventLabel: string): string {
-  const opportunity = String(opportunityLabel || '').trim() || 'Opportunities'
-  const target = String(targetEventLabel || '').trim() || 'das Target Event'
+  const opportunity = String(opportunityLabel || '').trim() || 'gültigen Ausgangssituationen'
+  const target = String(targetEventLabel || '').trim() || 'das Zielereignis'
   return `Von allen ${opportunity}: Wie viele enden als ${target}?`
 }
 
@@ -232,8 +232,28 @@ export function updateDefinitionLabels(
   return next
 }
 
-export function formatRateFraction(targetCount: number, totalOpportunities: number): string {
-  return `${targetCount} / ${totalOpportunities}`
+export function formatRateFraction(targetCount: number, denominator: number): string {
+  return `${targetCount} / ${denominator}`
+}
+
+/** Beispiel: „4 Zielereignisse aus 7 eindeutig auswertbaren Situationen; 2 weitere … unklar; insgesamt … 9 …“ */
+export function formatRateSummary(parts: {
+  targetCount: number
+  evaluableCount: number
+  unclearCount: number
+  totalOpportunities: number
+}): string {
+  const { targetCount, evaluableCount, unclearCount, totalOpportunities } = parts
+  const ziel = targetCount === 1 ? 'Zielereignis' : 'Zielereignisse'
+  const auswertbar = evaluableCount === 1 ? 'eindeutig auswertbaren Situation' : 'eindeutig auswertbaren Situationen'
+  let text = `${targetCount} ${ziel} aus ${evaluableCount} ${auswertbar}`
+  if (unclearCount > 0) {
+    const unklarNoun = unclearCount === 1 ? 'Situation war' : 'Situationen waren'
+    text += `; ${unclearCount} weitere gültige ${unklarNoun} unklar`
+  }
+  const gesamt = totalOpportunities === 1 ? 'gültige Situation' : 'gültige Situationen'
+  text += `; insgesamt wurden ${totalOpportunities} ${gesamt} erfasst.`
+  return text
 }
 
 export function formatObservationMeta(observation: OpportunityObservation): string {
@@ -296,11 +316,15 @@ export function computeOpportunityRate(
   observations: OpportunityObservation[],
   unclearId = UNCLEAR_OUTCOME_ID,
 ): OpportunityRateResult {
+  const excludedCount = observations.filter((item) => item.validOpportunity === false).length
   const usable = validObservations(observations)
   const totalOpportunities = usable.length
   const targetCount = usable.filter((item) => item.outcomeId === definition.targetOutcomeId).length
   const unclearCount = usable.filter((item) => item.outcomeId === unclearId).length
-  const rate = totalOpportunities > 0 ? targetCount / totalOpportunities : 0
+  const evaluableCount = Math.max(0, totalOpportunities - unclearCount)
+  const otherCount = Math.max(0, evaluableCount - targetCount)
+  // C1: Rate = Zielereignisse / eindeutig auswertbare Ergebnisse (unklar nicht als Misserfolg).
+  const rate = evaluableCount > 0 ? targetCount / evaluableCount : 0
   const outcomeDistribution: Record<string, number> = {}
   for (const outcome of definition.outcomes) {
     outcomeDistribution[outcome.id] = 0
@@ -320,12 +344,22 @@ export function computeOpportunityRate(
     definition,
     observations: usable,
     totalOpportunities,
+    evaluableCount,
     targetCount,
+    otherCount,
+    unclearCount,
+    excludedCount,
     rate,
     ratePercent: formatRatePercent(rate),
+    rateDenominatorBasis: 'evaluable',
     outcomeDistribution,
     distributionItems,
-    unclearCount,
+    rateSummary: formatRateSummary({
+      targetCount,
+      evaluableCount,
+      unclearCount,
+      totalOpportunities,
+    }),
   }
 }
 
@@ -380,24 +414,24 @@ export function validateOpportunityRateAnswers(
 ): string | null {
   const definition = answers[cfg.definitionKey] as RateDefinition | undefined
   if (!isDefinitionReady(definition, cfg.unclearOutcomeId)) {
-    return 'Bitte definiere Opportunity, Target Event und Outcomes.'
+    return 'Bitte definiere gültige Ausgangssituation, Zielereignis und Ergebnis-Kategorien.'
   }
   const observations = Array.isArray(answers[cfg.logsKey])
     ? (answers[cfg.logsKey] as OpportunityObservation[])
     : []
   const usable = validObservations(observations)
   if (usable.length < cfg.minObservations) {
-    return `Bitte erfasse mindestens ${cfg.minObservations} Opportunities.`
+    return `Bitte erfasse mindestens ${cfg.minObservations} gültige Ausgangssituationen (Übungsumfang).`
   }
   if (usable.length > cfg.maxObservations) {
-    return `Maximal ${cfg.maxObservations} Opportunities.`
+    return `Maximal ${cfg.maxObservations} gültige Ausgangssituationen.`
   }
   if (!answers[cfg.countOnlyKey]) {
     return 'Bitte beantworte die kurze Reflexionsfrage zum reinen Zählen.'
   }
   const clarity = String(answers[cfg.clarityKey] || '') as OpportunityClarity | ''
   if (!clarity) {
-    return 'Bitte bewerte, ob deine Opportunity-Definition eindeutig war.'
+    return 'Bitte bewerte, ob deine Definition der Ausgangssituation eindeutig war.'
   }
   const conclusion = String(answers[cfg.conclusionKey] || '').trim()
   if (conclusion.length < cfg.summaryMinChars) {

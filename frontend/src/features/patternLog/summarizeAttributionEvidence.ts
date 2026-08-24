@@ -70,7 +70,7 @@ export function summarizeAttributionEvidence(
     hints.push({
       id: 'presence',
       bucket: presentCount === 0 ? 'insufficient' : 'structural',
-      text: `Muster klar/teilweise in ${presentCount}/${n} Beobachtungen.`,
+      text: `Verhalten klar/teilweise sichtbar in ${presentCount}/${n} Beobachtungen.`,
     })
   }
 
@@ -78,7 +78,7 @@ export function summarizeAttributionEvidence(
     hints.push({
       id: 'absent',
       bucket: 'situational',
-      text: `In ${absentCount}/${n} Fällen trat das Muster nicht auf.`,
+      text: `In ${absentCount}/${n} Fällen trat das erwartete Verhalten nicht auf.`,
     })
   }
 
@@ -87,14 +87,14 @@ export function summarizeAttributionEvidence(
     hints.push({
       id: 'opponent-varies-pattern-stays',
       bucket: 'structural',
-      text: 'Gegnerverhalten wechselte, während das Muster in mehreren Fällen erkennbar blieb.',
+      text: 'Gegnerverhalten wechselte, während das Verhalten in mehreren Fällen erkennbar blieb.',
     })
   }
   if (presentCount >= 2 && opponentUnique <= 1 && presentOpponent.some(Boolean)) {
     hints.push({
       id: 'opponent-stable',
       bucket: 'opponent',
-      text: 'Gegnerkontext blieb weitgehend ähnlich, wenn das Muster auftrat.',
+      text: 'Gegnerkontext blieb weitgehend ähnlich, wenn das Verhalten auftrat.',
     })
   }
 
@@ -102,7 +102,7 @@ export function summarizeAttributionEvidence(
     hints.push({
       id: 'personnel-varies',
       bucket: 'structural',
-      text: 'Unterschiedliche Spieler/Rollen waren beteiligt, während das Muster erkennbar blieb.',
+      text: 'Unterschiedliche Spieler/Rollen waren beteiligt, während das Verhalten erkennbar blieb.',
     })
   }
   if (
@@ -122,14 +122,14 @@ export function summarizeAttributionEvidence(
     hints.push({
       id: 'starting-similar',
       bucket: 'situational',
-      text: 'Ausgangsbedingungen blieben sehr ähnlich, wenn das Muster auftrat.',
+      text: 'Ausgangsbedingungen blieben sehr ähnlich, wenn das Verhalten auftrat.',
     })
   }
   if (presentCount >= 2 && presentStarting.some((v) => v === 'different')) {
     hints.push({
       id: 'starting-differs',
       bucket: 'structural',
-      text: 'Das Muster trat auch bei deutlich anderer Ausgangslage auf.',
+      text: 'Das Verhalten trat auch bei deutlich anderer Ausgangslage auf.',
     })
   }
 
@@ -151,7 +151,7 @@ export function summarizeAttributionEvidence(
     hints.push({
       id: 'game-state-varies',
       bucket: 'structural',
-      text: 'Game State wechselte, während das Muster erkennbar blieb.',
+      text: 'Game State wechselte, während das Verhalten erkennbar blieb.',
     })
   }
 
@@ -164,7 +164,7 @@ export function summarizeAttributionEvidence(
   }
 
   const statements = [
-    `${n} Beobachtungen erfasst · Muster klar/teilweise: ${presentCount}.`,
+    `${n} Beobachtungen erfasst · Verhalten klar/teilweise: ${presentCount}.`,
     `Gegnerverhalten: ${contextVariation.opponent}.`,
     `Personal: ${contextVariation.personnel}.`,
     `Game State: ${contextVariation.gameState}.`,
@@ -200,11 +200,11 @@ export function resolvePatternAttributionConfig(config: PatternLogConfig = {}) {
     addMoreLabel: config.add_more_label || '+ Weitere Beobachtung',
     observeHint:
       config.observe_hint
-      || 'Erfasse eine Situation und prüfe, welchen Kontext sie für die Einordnung liefert.',
+      || 'Erfasse eine Situation und prüfe, welchen sichtbaren Kontext sie für die Kontextstabilität liefert.',
     decisionRule:
       config.decision_rule
-      || 'Strukturell heißt nicht „oft gesehen“, sondern „bleibt trotz veränderter Umstände erkennbar“.',
-    summaryTitle: config.summary_title || 'Muster-Einordnung',
+      || 'Wenn das Verhalten in mehreren unterschiedlichen beobachteten Kontexten erneut sichtbar wird, ist die Beschreibung weniger eng an einen einzelnen Kontext gebunden — ohne gesicherte Ursache.',
+    summaryTitle: config.summary_title || 'Kontextstabilität im beobachteten Segment',
     presenceOptions: config.pattern_presence_options || DEFAULT_PATTERN_PRESENCE_OPTIONS,
     opponentOptions: config.opponent_context_options || DEFAULT_OPPONENT_CONTEXT_OPTIONS,
     personnelOptions: config.personnel_context_options || DEFAULT_PERSONNEL_CONTEXT_OPTIONS,

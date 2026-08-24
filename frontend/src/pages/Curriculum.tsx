@@ -49,6 +49,14 @@ function moduleCountLabel(count: number): string {
   return count === 1 ? '1 Modul' : `${count} Module`
 }
 
+/** Keep letter prefix / en-dash / & from orphaning onto their own line. */
+function displayTrackTitle(title: string): string {
+  return String(title || '')
+    .replace(/\s+[–—-]\s+/g, '\u00A0–\u00A0')
+    .replace(/\s+&\s+/g, '\u00A0&\u00A0')
+    .replace(/-\s+(?=&)/g, '-\u00A0')
+}
+
 function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> {
   const completed = new Set<string>()
   for (const session of getRealSessions(sessions || [])) {
@@ -194,7 +202,7 @@ export default function Curriculum() {
                 className={styles.trackTitle}
                 {...(isEntryTrack ? { 'data-tutorial-id': TUTORIAL_TARGET.academyEntryTrack } : {})}
               >
-                {track.title}
+                {displayTrackTitle(track.title)}
               </h2>
             </div>
             <div className={styles.trackMeta}>
@@ -312,7 +320,7 @@ export default function Curriculum() {
           <summary className={styles.trackSummary}>
             <div className={styles.trackSummaryMain}>
               <div className={styles.clusterLabel}>{track.clusterLabel}</div>
-              <h2 className={styles.trackTitle}>{track.title}</h2>
+              <h2 className={styles.trackTitle}>{displayTrackTitle(track.title)}</h2>
             </div>
             <div className={styles.trackMeta}>
               <span>{moduleCountLabel(track.modules.length)}</span>

@@ -99,6 +99,58 @@ class SubscriptionSyncTests(unittest.TestCase):
         self.assertFalse(self.ent_repo.has_access(self.alice_id, ACADEMY_PREMIUM))
 
 
+class PortalSessionTests(unittest.TestCase):
+    @mock.patch("stripe.billing_portal.Session.create")
+    @mock.patch("billing.portal.get_billing_status")
+    @mock.patch("billing.portal.settings.stripe_configured", return_value=True)
+    @mock.patch("billing.portal.settings.stripe_secret_key", return_value="sk_test")
+    @mock.patch("billing.portal.settings.stripe_portal_return_url", return_value="https://example.test/account")
+    def test_create_portal_session(
+        self,
+        _return_url,
+        _secret,
+        _configured,
+        get_status,
+        portal_create,
+    ):
+        from billing.portal import create_portal_session
+        from identity.context import AuthContext
+
+        get_status.return_value = {"plan": {"external_customer_id": "cus_123"}, "subscriptions": []}
+        portal_create.return_value = mock.Mock(url="https://billing.stripe.com/session/test")
+        user = AuthContext(
+            rinq_user_id="11111111-1111-1111-1111-111111111111",
+            auth_provider="legacy_password",
+            auth_subject="alice",
+            display_name="alice",
+        )
+
+        result = create_portal_session(user)
+
+        self.assertEqual(result["portal_url"], "https://billing.stripe.com/session/test")
+        portal_create.assert_called_once_with(
+            customer="cus_123",
+            return_url="https://example.test/account",
+        )
+
+    @mock.patch("billing.portal.get_billing_status")
+    @mock.patch("billing.portal.settings.stripe_configured", return_value=True)
+    def test_create_portal_requires_customer(self, _configured, get_status):
+        from billing.portal import create_portal_session
+        from identity.context import AuthContext
+
+        get_status.return_value = {"plan": None, "subscriptions": []}
+        user = AuthContext(
+            rinq_user_id="11111111-1111-1111-1111-111111111111",
+            auth_provider="legacy_password",
+            auth_subject="alice",
+            display_name="alice",
+        )
+
+        with self.assertRaises(ValueError):
+            create_portal_session(user)
+
+
 class WebhookIdempotencyTests(unittest.TestCase):
     @mock.patch("billing.webhook.sync_subscription_object", return_value="u1")
     @mock.patch("billing.webhook.try_record_webhook_event", side_effect=[True, False])

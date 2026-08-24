@@ -27,6 +27,9 @@ import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { UiButton, UiPill, UiSheet, UiSheetActions } from '../components/ui'
 import { useTutorialOptional } from '../features/tutorial'
+import { useEntitlements } from '../features/entitlements'
+import { describeAcademyBilling, useBilling } from '../features/billing'
+import AccountBillingPanel from '../components/account/AccountBillingPanel'
 import { isSupabaseConfigured, signInWithGoogle } from '../lib/supabase'
 import styles from './Account.module.css'
 
@@ -73,7 +76,25 @@ export default function AccountPage() {
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [deletePassword, setDeletePassword] = useState('')
   const [deleteBusy, setDeleteBusy] = useState(false)
+  const [checkoutNotice, setCheckoutNotice] = useState<'success' | 'cancel' | null>(null)
   const googleConfigured = isSupabaseConfigured()
+
+  const { hasAcademyPremium, refetch: refetchEntitlements } = useEntitlements()
+  const billingQuery = useBilling()
+  const billingPresentation = useMemo(
+    () => describeAcademyBilling(hasAcademyPremium, billingQuery.data),
+    [hasAcademyPremium, billingQuery.data],
+  )
+  const premiumStatusForProfile = useMemo(
+    () => (hasAcademyPremium || billingPresentation.profileLine
+      ? {
+          badgeLabel: billingPresentation.badgeLabel,
+          badgeTone: billingPresentation.badgeTone,
+          profileLine: billingPresentation.profileLine,
+        }
+      : null),
+    [hasAcademyPremium, billingPresentation],
+  )
 
   const { data: account, isLoading, error, refetch } = useQuery({
     queryKey: ['me', user],
@@ -88,6 +109,19 @@ export default function AccountPage() {
       void refetch()
     }
   }, [searchParams, setSearchParams, refetch])
+
+  useEffect(() => {
+    const checkout = searchParams.get('checkout')
+    if (checkout === 'success') {
+      setCheckoutNotice('success')
+      void refetchEntitlements()
+      void billingQuery.refetch()
+      setSearchParams({}, { replace: true })
+    } else if (checkout === 'cancel') {
+      setCheckoutNotice('cancel')
+      setSearchParams({}, { replace: true })
+    }
+  }, [searchParams, setSearchParams, refetchEntitlements, billingQuery.refetch])
 
   const { data: sessions = [] } = useQuery({
     queryKey: ['sessions', user, 'account'],
@@ -288,6 +322,14 @@ export default function AccountPage() {
           </UiButton>
         </Card>
       ) : null}
+
+      <AccountBillingPanel
+        hasAcademyPremium={hasAcademyPremium}
+        checkoutNotice={checkoutNotice}
+        presentation={billingPresentation}
+        billingLoading={billingQuery.isLoading}
+        billingError={billingQuery.isError}
+      />
 
       {googleConfigured || (account?.auth_providers && account.auth_providers.length > 0) ? (
         <Card surface="section" className={styles.sectionCard}>
@@ -493,7 +535,13 @@ export default function AccountPage() {
 
       <section className={styles.section}>
         <h2 className="ui-section-title">RINK ID</h2>
-        <RinkIdentityCard profile={draft} stats={identityStats} coinIds={ownedCoinIds} />
+        <RinkIdentityCard
+          profile={draft}
+          stats={identityStats}
+          coinIds={ownedCoinIds}
+          hasAcademyPremium={hasAcademyPremium}
+          premiumStatus={premiumStatusForProfile}
+        />
       </section>
 
       <Card surface="section" className={styles.sectionCard}>

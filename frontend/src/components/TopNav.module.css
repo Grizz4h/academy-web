@@ -110,9 +110,22 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   scroll-padding-inline: 10px;
-  /* Fade only on the right — left edge stays fully opaque for session chip glow */
-  mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
+  /* Fade right edge — tabs scroll before profile cluster */
+  mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 2rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 2rem), transparent 100%);
+}
+
+.navTabsWrapper[data-scrollable='true'] {
+  cursor: grab;
+}
+
+.navTabsDragging {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.navTabsDragging .navLink {
+  pointer-events: none;
 }
 
 .navTabsWrapper::-webkit-scrollbar {
@@ -125,8 +138,8 @@
   gap: 6px;
   width: max-content;
   min-width: 0;
-  /* Room for session chip glow so overflow-x does not hard-clip the left edge */
-  padding: 4px 2.4rem 4px 10px;
+  /* Extra end padding so last tab clears profile pill + fade */
+  padding: 4px 3rem 4px 10px;
 }
 
 .navLink {
@@ -303,7 +316,20 @@
   color: rgba(226, 255, 251, 0.78);
 }
 
-/* Identity cluster */
+/* Identity cluster — fixed width, never overlaps tab scroller */
+
+.identityCluster {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 3;
+  margin-left: auto;
+  padding-left: 10px;
+  background: linear-gradient(90deg, rgba(8, 12, 24, 0) 0%, rgba(8, 12, 24, 0.92) 14px);
+}
+
+.identityCluster > div {
+  margin-left: 0 !important;
+}
 
 .userSection {
   position: relative;
@@ -311,7 +337,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: auto;
+  margin-left: 0;
   flex: 0 0 auto;
   padding: 5px 11px 5px 9px;
   border-radius: 999px;
@@ -357,9 +383,24 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
+.userAvatarWrap[data-premium='true']::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #5eead4 0%, #0ea5e9 100%);
+  border: 2px solid rgba(12, 18, 32, 0.95);
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.55);
+  pointer-events: none;
+}
+
 .userAvatarWrap {
   --avatar-shape: circle(50%);
   --avatar-rim: 186, 210, 230;
+  position: relative;
   width: 38px;
   height: 38px;
   flex: 0 0 auto;
@@ -426,6 +467,20 @@
   max-width: 11.5rem;
 }
 
+.userNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.premiumNavPill {
+  flex: 0 0 auto;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  padding: 0.12rem 0.42rem;
+}
+
 .userName {
   font-size: 0.82rem;
   font-weight: 750;
@@ -473,15 +528,55 @@
   transform: scale(0.97);
 }
 
-/* Desktop: single row — tabs scroll/clip, identity stays fixed */
 @media (min-width: 900px) {
+  .userAvatarWrap[data-premium='true']::after {
+    display: none;
+  }
+}
+
+/* Desktop: single row — tabs scroll/drag, identity stays fixed */
+@media (min-width: 900px) {
+  .brandRow {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+  }
+
+  .identityCluster {
+    margin-left: 0;
+    padding-left: 6px;
+    grid-column: 3;
+  }
+
   .navTabsWrapper {
+    grid-column: 2;
     overflow-x: auto;
     overflow-y: hidden;
+    scroll-padding-inline-end: 16px;
+    mask-image: linear-gradient(
+      90deg,
+      #000 0%,
+      #000 10px,
+      #000 calc(100% - 2.25rem),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      #000 0%,
+      #000 10px,
+      #000 calc(100% - 2.25rem),
+      transparent 100%
+    );
   }
 
   .navTabs {
     justify-content: flex-start;
+    padding-inline-end: 3.25rem;
+  }
+
+  .logoLink {
+    grid-column: 1;
   }
 
   .logo {
@@ -493,7 +588,7 @@
   }
 
   .userSection {
-    margin-left: 4px;
+    margin-left: 0;
   }
 }
 
@@ -516,14 +611,22 @@
     margin-left: 0;
     padding-bottom: 2px;
     scroll-padding-inline-start: 10px;
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.35rem), transparent 100%);
+    scroll-padding-inline-end: 16px;
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.75rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.75rem), transparent 100%);
+  }
+
+  .identityCluster {
+    order: 2;
+    margin-left: auto;
+    padding-left: 0;
+    background: none;
   }
 
   .navTabs {
     gap: 6px;
     padding-inline-start: 10px;
-    padding-inline-end: 2.4rem;
+    padding-inline-end: 2.75rem;
   }
 
   .navLink {
@@ -557,8 +660,17 @@
     height: 32px;
   }
 
+  /* Compact logo frees space — show name + equipped title */
   .userCopy {
-    max-width: 5.6rem;
+    max-width: 9rem;
+  }
+
+  .premiumNavPill {
+    display: none;
+  }
+
+  .userAvatarWrap[data-premium='true']::after {
+    display: block;
   }
 
   .logoutBtn {
@@ -584,11 +696,11 @@
   }
 
   .userCopy {
-    max-width: 4.6rem;
+    max-width: 8rem;
   }
 
   .userTitle {
-    display: none;
+    font-size: 0.6rem;
   }
 
   .userName {
@@ -617,5 +729,10 @@
   .userLink:hover,
   .userLink:focus-visible {
     transform: none;
+  }
+
+  .navTabsWrapper,
+  .navTabsDragging {
+    cursor: default;
   }
 }

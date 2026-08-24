@@ -82,6 +82,7 @@ from identity.store import configure_identity_store, normalize_subject
 from identity.migrate import owners_match as _identity_owners_match
 from security_guards import (
     is_admin_auth,
+    is_creator_mode_auth,
     legacy_signup_allowed,
     rate_limit,
     client_ip,
@@ -1369,6 +1370,8 @@ async def get_teams(league: Optional[str] = None, season: Optional[str] = None):
             data = load_json(os.path.join(DATA_DIR, "teams_chl.json"))
         elif league == "U20_DNL":
             data = load_json(os.path.join(DATA_DIR, "teams_u20_dnl.json"))
+        elif league == "Testspiele":
+            data = load_json(os.path.join(DATA_DIR, "teams_testspiele.json"))
         else:
             raise HTTPException(status_code=400, detail=f"Unknown league: {league}")
         return _teams_payload_for_season(data, season)
@@ -3359,6 +3362,8 @@ def _find_scene_path_by_identifier(identifier: str) -> Optional[str]:
 
 @app.post("/api/scenes")
 async def create_scene(payload: SceneMarkerCreate, current_user: AuthContext = Depends(get_current_user)):
+    if not is_creator_mode_auth(current_user, role_from_record=_role_from_auth(current_user)):
+        raise HTTPException(status_code=403, detail="Scene capture is not enabled for this account")
     import re
     if not re.match(r"^\d{1,2}(:\d{1,2})?$", (payload.game_time or "").strip()):
         raise HTTPException(status_code=400, detail="game_time must be a valid time, e.g. 13:42 or 13")
@@ -3938,6 +3943,29 @@ async def billing_checkout(
     return {"ok": True, **result}
 
 
+@app.post("/api/billing/portal")
+async def billing_portal(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Stripe Customer Portal — manage subscription, payment method, invoices."""
+    _require_postgres_billing()
+    rate_limit(request, "billing_portal", limit=20, window_sec=3600.0)
+    from billing import settings as billing_settings
+    from billing.portal import create_portal_session
+
+    if not billing_settings.stripe_configured():
+        raise HTTPException(status_code=503, detail="Stripe is not configured")
+    try:
+        result = create_portal_session(current_user)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        logging.exception("[billing] portal session failed")
+        raise HTTPException(status_code=502, detail="Portal unavailable") from exc
+    return {"ok": True, **result}
+
+
 @app.post("/api/webhooks/stripe")
 async def stripe_webhook(request: Request):
     """Stripe webhook — signature verified; idempotent; syncs subscription → entitlement_grants."""
@@ -4025,6 +4053,7 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "createdAt": (record or {}).get("created_at"),
         "role": role,
         "is_admin": is_admin_auth(current_user, role_from_record=role),
+        "creator_mode": is_creator_mode_auth(current_user, role_from_record=role),
         "profile": profile,
         "needs_display_name": _needs_display_name_setup(current_user),
         "auth_providers": _identity_repo().list_providers_for_user(current_user.rinq_user_id),

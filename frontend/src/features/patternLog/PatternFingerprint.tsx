@@ -5,7 +5,7 @@ type PatternFingerprintProps = {
   dimensions: PatternConsistency[]
 }
 
-export function PatternFingerprint({ title = 'Pattern Fingerprint', dimensions }: PatternFingerprintProps) {
+export function PatternFingerprint({ title = 'Vergleichsmerkmale', dimensions }: PatternFingerprintProps) {
   return (
     <section
       style={{

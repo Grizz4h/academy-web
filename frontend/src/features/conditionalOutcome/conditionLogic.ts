@@ -42,7 +42,7 @@ export function emptyConditionalDefinition(): ConditionalDefinition {
 }
 
 export function composeConditionalQuestion(targetEventLabel: string, conditionLabel: string): string {
-  const target = String(targetEventLabel || '').trim() || 'das Target'
+  const target = String(targetEventLabel || '').trim() || 'das Zielereignis'
   const condition = String(conditionLabel || '').trim() || 'die Bedingung'
   return `Tritt ${target} häufiger auf, wenn ${condition}?`
 }
@@ -164,7 +164,7 @@ export function resolveConditionalOutcomeConfig(raw: Record<string, unknown> = {
     sampleLimitNote: String(
       raw.sample_limit_note
         || raw.sampleLimitNote
-        || 'In deiner Stichprobe war die Target-Rate bei vorhandener Bedingung höher oder niedriger – das ist noch keine Ursache.',
+        || 'In deiner Stichprobe war die Zielereignis-Rate bei vorhandener Bedingung höher oder niedriger – das ist noch keine Ursache.',
     ),
     conclusionHint: String(
       raw.conclusion_hint
@@ -195,8 +195,8 @@ export function syntheticRateDefinition(definition: ConditionalDefinition): Rate
     question: definition.question,
     targetOutcomeId: 'target',
     outcomes: [
-      { id: 'target', label: definition.targetEventLabel || 'Target' },
-      { id: 'other', label: 'anderes Outcome' },
+      { id: 'target', label: definition.targetEventLabel || 'Zielereignis' },
+      { id: 'other', label: 'anderes Ergebnis' },
       { id: 'unclear', label: 'Unklar' },
     ],
   }
@@ -221,8 +221,9 @@ function toRateObservations(observations: ConditionalObservation[]) {
 /**
  * Condition unclear: stay in the session sample, but never enter present/absent
  * rate denominators or 2×2 cells.
- * Outcome unclear: if the condition is clear, the opportunity stays in that
- * condition's denominator (D1 rule). It is not counted as "other" in the matrix.
+ * Outcome unclear: if the condition is clear, the opportunity stays in the valid
+ * starting-situation total for that condition, but is excluded from the evaluable
+ * rate denominator (E3-C1).
  */
 export function buildConditionOutcomeMatrix(
   observations: ConditionalObservation[],
@@ -297,16 +298,18 @@ function counterexampleSummary(
   definition: ConditionalDefinition,
   count: number,
 ): string | null {
-  if (count <= 0) return null
-  const target = definition.targetEventLabel || 'Target'
+  if (count <= 0) {
+    return 'In dieser Stichprobe wurde kein Gegenfall erfasst. Daraus folgt noch keine allgemeine Regel oder Ursache.'
+  }
+  const target = definition.targetEventLabel || 'Zielereignis'
   const condition = definition.condition.label || 'der Bedingung'
   if (hypothesis === 'target_more_with_condition') {
-    return `${count}× ${target} ohne ${condition}.`
+    return `Gegenfall: ${count}× ${target} ohne ${condition} — begrenzt die Aussage, widerlegt keinen Zusammenhang automatisch.`
   }
   if (hypothesis === 'target_more_without_condition') {
-    return `${count}× ${target} trotz ${condition}.`
+    return `Gegenfall: ${count}× ${target} trotz ${condition} — begrenzt die Aussage, widerlegt keinen Zusammenhang automatisch.`
   }
-  return null
+  return `Gegenfälle in dieser Stichprobe: ${count}. Sie begrenzen oder schärfen die Aussage, widerlegen einen Zusammenhang aber nicht automatisch.`
 }
 
 export function computeConditionalOutcome(
@@ -328,17 +331,23 @@ export function computeConditionalOutcome(
     matrix,
     withCondition: {
       total: presentRate.totalOpportunities,
+      evaluableCount: presentRate.evaluableCount,
       targetCount: presentRate.targetCount,
+      otherCount: presentRate.otherCount,
       rate: presentRate.rate,
       ratePercent: presentRate.ratePercent,
       outcomeUnclear: presentRate.unclearCount,
+      rateSummary: presentRate.rateSummary,
     },
     withoutCondition: {
       total: absentRate.totalOpportunities,
+      evaluableCount: absentRate.evaluableCount,
       targetCount: absentRate.targetCount,
+      otherCount: absentRate.otherCount,
       rate: absentRate.rate,
       ratePercent: absentRate.ratePercent,
       outcomeUnclear: absentRate.unclearCount,
+      rateSummary: absentRate.rateSummary,
     },
     percentagePointDifference: calculatePercentagePointDifference(presentRate.rate, absentRate.rate),
     conditionUnclearCount: matrix.conditionUnclear,
@@ -351,21 +360,26 @@ export function computeConditionalOutcome(
 }
 
 export function descriptiveDifference(result: ConditionalOutcomeResult): string {
-  const withRate = result.withCondition.ratePercent
-  const withoutRate = result.withoutCondition.ratePercent
-  if (withRate === withoutRate) {
-    return 'In deiner Stichprobe war die Target-Rate mit und ohne Bedingung gleich.'
+  const withRate = result.withCondition
+  const withoutRate = result.withoutCondition
+  const target = result.definition.targetEventLabel || 'das Zielereignis'
+  const condition = result.definition.condition.label || 'die Bedingung'
+  const withFrac = `${withRate.targetCount} von ${withRate.evaluableCount}`
+  const withoutFrac = `${withoutRate.targetCount} von ${withoutRate.evaluableCount}`
+  const base = `In dieser Stichprobe trat ${target} bei sichtbarer „${condition}“ in ${withFrac} auswertbaren Fällen auf und ohne diese Bedingung in ${withoutFrac} Fällen.`
+  if (withRate.ratePercent === withoutRate.ratePercent) {
+    return `${base} Die beobachteten Raten waren ähnlich.`
   }
-  if (withRate > withoutRate) {
-    return 'In deiner Stichprobe war die Target-Rate bei vorhandener Bedingung höher.'
+  if (withRate.ratePercent > withoutRate.ratePercent) {
+    return `${base} Bei vorhandener Bedingung war die Rate in dieser Stichprobe höher.`
   }
-  return 'In deiner Stichprobe war die Target-Rate bei vorhandener Bedingung niedriger.'
+  return `${base} Bei vorhandener Bedingung war die Rate in dieser Stichprobe niedriger.`
 }
 
 export function hypothesisOptions(): Array<{ value: ConditionalHypothesis; label: string }> {
   return [
-    { value: 'target_more_with_condition', label: 'Target tritt mit Bedingung häufiger auf' },
-    { value: 'target_more_without_condition', label: 'Target tritt ohne Bedingung häufiger auf' },
+    { value: 'target_more_with_condition', label: 'Zielereignis tritt mit Bedingung häufiger auf' },
+    { value: 'target_more_without_condition', label: 'Zielereignis tritt ohne Bedingung häufiger auf' },
     { value: 'roughly_equal', label: 'Ungefähr gleich' },
     { value: 'no_expectation', label: 'Keine Erwartung' },
   ]
@@ -395,7 +409,7 @@ export function validateConditionalOutcomeAnswers(
 ): string | null {
   const definition = answers[cfg.definitionKey] as ConditionalDefinition | undefined
   if (!isConditionalDefinitionReady(definition)) {
-    return 'Bitte definiere Opportunity, Bedingung und Target Outcome getrennt.'
+    return 'Bitte definiere Ausgangssituation, Bedingung und Zielereignis getrennt.'
   }
   if (!answers[cfg.hypothesisKey]) {
     return 'Bitte halte fest, was du erwartest, bevor du auswertest.'

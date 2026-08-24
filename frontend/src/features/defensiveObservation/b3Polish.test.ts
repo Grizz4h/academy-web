@@ -34,9 +34,9 @@ const DRILL_TYPES = [
 assert.deepEqual(
   a3.drills.map((drill: { title: string }) => drill.title),
   [
-    'Transitionsmoment erkennen',
+    'Umschaltmoment erkennen',
     'Erste Reaktion erkennen',
-    'Transition fortsetzen oder kontrollieren',
+    'Umschalten fortsetzen oder kontrollieren',
     'Defensive Rückreaktion lesen',
     'Abstand und Raumkontrolle erkennen',
   ],
@@ -46,9 +46,9 @@ assert.deepEqual(
   [
     'Druck erkennen',
     'Lösung unter Druck erkennen',
-    'Entscheidungsursache erkennen',
-    'Erste Anschlussentscheidung erkennen',
-    'Entscheidungsmuster erkennen',
+    'Einflussfaktor und Lösung verbinden',
+    'Erste Lösung des Puckführers nach Gewinn',
+    'Beobachtungstendenzen unter Druck',
   ],
 )
 
@@ -64,7 +64,7 @@ assert.deepEqual(
     'Wirkung des Drucks erkennen',
     'Teamunterstützung beim Zugriff erkennen',
     'Defensive Sequenzen lesen',
-    'Defensive Muster erkennen',
+    'Defensive Tendenzen zusammenführen',
   ],
 )
 
@@ -82,13 +82,29 @@ assert.ok(!/\?$/.test(b3.drills[2].title))
 assert.equal(b3.drills[2].config.decision.label, 'Wie wird der Zugriff unterstützt?')
 assert.ok(Array.isArray(b3.drills[2].config.secondary_decision.options))
 assert.ok(b3.drills[2].config.secondary_decision.options.length >= 3)
+assert.ok(Array.isArray(b3.drills[2].config.role_decision?.options))
+assert.ok(b3.drills[2].config.role_decision.options.includes('Zentrum schützen'))
+assert.ok(b3.drills[2].config.role_decision.options.includes('Center nicht erkennbar'))
 
-// D5: pattern language, not identity branding; persistence key kept
+// D5: multidimensional tendencies — no exclusive identity branding
 assert.ok(!/Identität/i.test(b3.drills[4].title))
-assert.ok(!/Identität/i.test(b3.drills[4].config.identity.label))
-assert.equal(b3.drills[4].config.identity.key, 'patternIdentity')
-assert.equal(b3.drills[4].config.analysis_phase.title, 'Defensive Muster')
-assert.ok(!/Identität/i.test(b3.drills[4].config.active_focus_text))
+assert.ok(!b3.drills[4].config.identity)
+assert.equal(b3.drills[4].config.tendencies.key, 'observedDefensiveTendencies')
+assert.equal(b3.drills[4].config.tendencies.dimensions.length, 5)
+assert.deepEqual(
+  b3.drills[4].config.tendencies.dimensions.map((d: { id: string }) => d.id),
+  ['early_pressure', 'outside_guiding', 'center_protection', 'pressure_support', 'sequence_structure'],
+)
+assert.deepEqual(
+  b3.drills[4].config.tendencies.frequency_options.map((o: { value: string }) => o.value),
+  ['frequent', 'partial', 'rare', 'unclear'],
+)
+assert.ok(!/Entscheidungsprofil/i.test(JSON.stringify(b3.drills[4].didactics)))
+assert.ok(/keine.*Identität|keine Team-Identität/i.test(JSON.stringify(b3.drills[4].didactics)))
+assert.ok(!/\bReaktive Defensive\b/i.test(JSON.stringify(b3.drills[4])))
+assert.equal(b3.drills[4].config.analysis_phase.title, 'Beobachtungstendenzen')
+assert.ok(b3.drills[4].config.legacy_identity_key === 'patternIdentity')
+assert.ok(!/patternIdentity/.test(JSON.stringify(b3.drills[4].miniFeedback)))
 
 // Distinct persistence keys (period borrow must not auto-complete siblings)
 assert.equal(b3.drills[1].config.logs_key || 'impact', b3.drills[1].config.logs_key)

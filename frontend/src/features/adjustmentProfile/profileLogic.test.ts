@@ -98,7 +98,7 @@ const two = [completeEntry({ confidence: 'high' }), completeEntry({
 
 assert.match(
   String(validateAdjustmentProfileAnswers(cfg, wrapup({ [cfg.entriesKey]: two }))),
-  /stärker geprägt/i,
+  /deutlichsten gestützt|stärker geprägt|primary/i,
 )
 
 assert.equal(

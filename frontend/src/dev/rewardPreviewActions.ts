@@ -10,6 +10,7 @@ export const REWARD_PREVIEW_BRONZE: RewardPreviewDraft = {
   visualTier: 'bronze',
   icon: '1',
   variant: 'popup',
+  autoCloseMs: 3200,
 }
 
 export const REWARD_PREVIEW_SILVER: RewardPreviewDraft = {
@@ -20,6 +21,7 @@ export const REWARD_PREVIEW_SILVER: RewardPreviewDraft = {
   visualTier: 'silver',
   icon: '10',
   variant: 'popup',
+  autoCloseMs: 3200,
 }
 
 export const REWARD_PREVIEW_GOLD: RewardPreviewDraft = {
@@ -30,6 +32,7 @@ export const REWARD_PREVIEW_GOLD: RewardPreviewDraft = {
   visualTier: 'gold',
   icon: '50',
   variant: 'popup',
+  autoCloseMs: 3600,
 }
 
 export const REWARD_PREVIEW_MASTERY: RewardPreviewDraft = {
@@ -41,12 +44,31 @@ export const REWARD_PREVIEW_MASTERY: RewardPreviewDraft = {
   icon: 'M',
   variant: 'hero',
   mastery: 'mastery',
+  autoCloseMs: 4200,
+}
+
+export const REWARD_PREVIEW_PUX: RewardPreviewDraft = {
+  kind: 'currency',
+  title: 'PUX! erhalten',
+  description: 'Drill abgeschlossen',
+  amountPux: 10,
+  visualTier: 'silver',
+  icon: 'PUX',
+  variant: 'small',
+  autoCloseMs: 2600,
 }
 
 export const REWARD_PREVIEW_QUEUE = [
   REWARD_PREVIEW_BRONZE,
   REWARD_PREVIEW_SILVER,
   REWARD_PREVIEW_GOLD,
+] as const
+
+/** Simulates session completion: PUX toast first, then tier popups. */
+export const REWARD_PREVIEW_SESSION_QUEUE = [
+  REWARD_PREVIEW_PUX,
+  ...REWARD_PREVIEW_QUEUE,
+  REWARD_PREVIEW_MASTERY,
 ] as const
 
 export const DEV_REWARDS_STORAGE_KEY = 'academy.devRewards'

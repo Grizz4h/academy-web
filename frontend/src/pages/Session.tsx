@@ -7,6 +7,7 @@ import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrac
 import { isDummySession, isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
 import { isDevNavEnabled } from '../config/featureFlags'
 import { UiButton } from '../components/ui'
+import { RinQIcon } from '../components/icons'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
@@ -217,6 +218,8 @@ export default function SessionPage() {
 
   // Session Continuation: nur initial Phase aus Session übernehmen
   const firstLoadRef = useRef(true)
+  /** Pro Session+Phase nur einmal vom Server/localStorage hydratisieren — Sync darf lokalen Input nicht überschreiben. */
+  const hydratedPhaseKeysRef = useRef<Set<string>>(new Set())
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -224,9 +227,21 @@ export default function SessionPage() {
   }, [])
 
   useEffect(() => {
-    if (!session) return;
+    hydratedPhaseKeysRef.current = new Set()
+    firstLoadRef.current = true
 
-    // Initiale Phase auf Scope abbilden (z. B. P2-Sessions starten direkt in P2).
+    const noteKey = id ? `academy.session.${id}.note` : null
+    if (noteKey) {
+      const savedNote = localStorage.getItem(noteKey)
+      setSessionNote(savedNote ?? '')
+    } else {
+      setSessionNote('')
+    }
+  }, [id])
+
+  useEffect(() => {
+    if (!session) return
+
     const initialPhase = normalizePhaseForScope(session.current_phase)
     if (firstLoadRef.current) {
       if (initialPhase && initialPhase !== currentPhase) {
@@ -234,44 +249,33 @@ export default function SessionPage() {
       }
       firstLoadRef.current = false
     }
-
-    // NOTE: NICHT mehr stumpf [currentPhase] auf {} setzen, sonst verlierst du UI-State
-    // Wir laden nur, wenn es wirklich Daten gibt.
-    if (session.drafts && session.drafts[currentPhase]) {
-      setAnswersByPhase(prev => ({ ...prev, [currentPhase]: session.drafts?.[currentPhase] || {} }))
-    } else {
-      // wenn es schon lokale answers gibt: behalten
-      setAnswersByPhase(prev => prev)
-    }
-
-    // Session-Notiz (localStorage)
-    const noteKey = id ? `academy.session.${id}.note` : null
-    if (noteKey) {
-      const savedNote = localStorage.getItem(noteKey)
-      if (savedNote !== null) setSessionNote(savedNote)
-    }
   }, [session, id]) // absichtlich nicht currentPhase
 
-  // Draft laden beim Phasenwechsel (Fallback für alte Sessions)
+  // Draft einmalig pro Phase laden (nicht bei jedem Sync-Refetch)
   useEffect(() => {
-    if (!session) return;
+    if (!session || !id) return
 
-    if (session.drafts && session.drafts[currentPhase]) {
+    const hydrationKey = `${id}:${currentPhase}`
+    if (hydratedPhaseKeysRef.current.has(hydrationKey)) return
+
+    hydratedPhaseKeysRef.current.add(hydrationKey)
+
+    if (session.drafts?.[currentPhase]) {
       setAnswersByPhase(prev => ({ ...prev, [currentPhase]: session.drafts?.[currentPhase] || {} }))
       return
     }
 
-    // Fallback localStorage
     if (draftKey) {
-      const saved = localStorage.getItem(draftKey)
-      if (saved) {
-        setAnswersByPhase(prev => ({ ...prev, [currentPhase]: JSON.parse(saved) }))
-      } else {
-        // wenn es schon lokale answers gibt: behalten
-        setAnswersByPhase(prev => prev)
+      try {
+        const saved = localStorage.getItem(draftKey)
+        if (saved) {
+          setAnswersByPhase(prev => ({ ...prev, [currentPhase]: JSON.parse(saved) }))
+        }
+      } catch {
+        // ignore corrupt local draft
       }
     }
-  }, [session, currentPhase, draftKey])
+  }, [session, id, currentPhase, draftKey])
 
   // Draft speichern bei Änderungen
   useEffect(() => {
@@ -807,7 +811,7 @@ export default function SessionPage() {
       const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
 
       if (!String(answers?.[candidateKey] || '').trim()) {
-        return 'Bitte formuliere zuerst, welches Muster du einordnen möchtest.'
+        return 'Bitte formuliere zuerst, welches Verhalten du auf Kontextstabilität prüfen möchtest.'
       }
 
       if (logs.length < minObservations) {
@@ -815,15 +819,15 @@ export default function SessionPage() {
       }
 
       if (!answers?.[attributionKey]) {
-        return 'Bitte ordne das Muster ein (strukturell, situativ, …).'
+        return 'Bitte ordne ein, in welchen beobachteten Kontexten das Verhalten sichtbar bleibt.'
       }
 
       if (!answers?.[confidenceKey]) {
-        return 'Bitte schätze ein, wie sicher du dir mit der Einordnung bist.'
+        return 'Bitte schätze die Sicherheit der vorläufigen Einordnung ein.'
       }
 
       if (!String(answers?.[strongestEvidenceKey] || '').trim()) {
-        return 'Bitte nenne die Beobachtung, die am stärksten für deine Einordnung spricht.'
+        return 'Bitte nenne die Beobachtung, die am deutlichsten für deine vorläufige Einordnung spricht.'
       }
     }
 
@@ -832,7 +836,8 @@ export default function SessionPage() {
       const segmentSummaryKey = drill?.config?.segment_summary_key || 'segment_summary'
       const strongestKey = drill?.config?.strongest_tendency_key || 'strongest_tendency_id'
       const nextWatchKey = drill?.config?.next_watch_key || 'next_watch_tendency_id'
-      const minTendencies = Math.max(1, Number(drill?.config?.minTendencies || 1))
+      const rawMin = drill?.config?.minTendencies
+      const minTendencies = rawMin === undefined || rawMin === null ? 1 : Math.max(0, Number(rawMin))
       const maxTendencies = Math.max(minTendencies, Number(drill?.config?.maxTendencies || 3))
       const requireSegmentSummary = drill?.config?.require_segment_summary !== false
       const requireStrongest = drill?.config?.require_strongest_tendency !== false
@@ -860,18 +865,18 @@ export default function SessionPage() {
         || !String(entry?.strongestEvidence || '').trim()
       ))
       if (incomplete) {
-        return 'Bitte vervollständige alle Tendenzen (Beschreibung, Häufigkeit, Bedingung, Kern, Variation, Einordnung, Confidence, Indiz).'
+        return 'Bitte vervollständige alle Tendenzen (Beschreibung, Häufigkeit, Bedingung, Kernmerkmale, Variation, Kontext-Einordnung, Sicherheit, Indiz).'
       }
 
       if (requireStrongest && tendencies.length >= 2 && !answers?.[strongestKey]) {
-        return 'Bitte markiere, welche Tendenz am belastbarsten ist.'
+        return 'Bitte markiere, welche vorläufige Tendenz am deutlichsten gestützt ist.'
       }
 
       if (requireSegmentSummary && !String(answers?.[segmentSummaryKey] || '').trim()) {
-        return 'Bitte fasse das Tendenzprofil des beobachteten Segments zusammen.'
+        return 'Bitte fasse die Tendenzen im beobachteten Segment zusammen (auch: keine ausreichend gestützte Tendenz).'
       }
 
-      if (requireNextWatch && !answers?.[nextWatchKey]) {
+      if (requireNextWatch && tendencies.length > 0 && !answers?.[nextWatchKey]) {
         return 'Bitte markiere, welche Tendenz du als Nächstes weiter beobachten würdest.'
       }
     }
@@ -910,17 +915,25 @@ export default function SessionPage() {
       )
 
     if (isDefensivePatternReflection) {
-      const identityKey = drill?.config?.identity?.key || 'patternIdentity'
-      const supportKey = drill?.config?.supporting_observations?.key || 'supportingObservations'
+      const tendenciesKey = drill?.config?.tendencies?.key || 'observedDefensiveTendencies'
+      const dimensions = Array.isArray(drill?.config?.tendencies?.dimensions)
+        ? drill.config.tendencies.dimensions
+        : []
       const changedKey = drill?.config?.changed_during_observation?.key || 'changedDuringObservation'
-      const supportValues = Array.isArray(answers?.[supportKey]) ? answers[supportKey] : []
+      const ratings = answers?.[tendenciesKey]
+      const ratingsObj = ratings && typeof ratings === 'object' && !Array.isArray(ratings) ? ratings : null
 
-      if (!answers?.[identityKey]) {
-        return 'Bitte wähle ein defensives Muster aus, bevor du weitergehst.'
+      // Legacy single-identity answers alone are not enough to continue after the rebuild.
+      if (!ratingsObj || dimensions.length === 0) {
+        return 'Bitte schätze alle defensiven Beobachtungstendenzen ein, bevor du weitergehst.'
       }
 
-      if (supportValues.length === 0) {
-        return 'Bitte wähle mindestens eine Beobachtung zur Begründung aus, bevor du weitergehst.'
+      const missing = dimensions.some((dim: { id?: string }) => {
+        const id = dim?.id
+        return !id || !ratingsObj[id]
+      })
+      if (missing) {
+        return 'Bitte schätze alle fünf Dimensionen ein (häufig / teilweise / selten / nicht sicher beurteilbar).'
       }
 
       if (!answers?.[changedKey]) {
@@ -1099,6 +1112,7 @@ export default function SessionPage() {
       const questions = Array.isArray(drill?.config?.questions) ? drill.config.questions : []
       for (const question of questions) {
         if (!question?.key) continue
+        if (question.hidden === true || question.legacy === true) continue
         if (question.optional === true) continue
         if (question.required !== true && question.optional !== false) continue
 
@@ -1143,7 +1157,7 @@ export default function SessionPage() {
         && drill?.config?.mode !== 'transition_followup_assessment'
         && !((drill?.config?.observationLayers || []).includes('pattern_synthesis'))
       const samples = Array.isArray(answers?.[sampleKey]) ? answers[sampleKey] : []
-      const sampleFields = Array.isArray(drill?.config?.sample_fields) && drill.config.sample_fields.length > 0
+      const sampleFields = (Array.isArray(drill?.config?.sample_fields) && drill.config.sample_fields.length > 0
         ? drill.config.sample_fields
         : Array.isArray(drill?.config?.diagnosis_fields) && drill.config.diagnosis_fields.length > 0
           ? drill.config.diagnosis_fields
@@ -1153,6 +1167,7 @@ export default function SessionPage() {
               { key: 'gegnerdruck' },
               { key: 'optionsdruck' },
             ]
+      ).filter((field: any) => field && field.hidden !== true && field.legacy !== true)
       const sampleLabel = drill?.config?.sample_label || 'Situation'
 
       // D5 pattern synthesis uses period questions, not sample logs.
@@ -1645,7 +1660,10 @@ export default function SessionPage() {
 
       {isCompleted && (
         <div className="card" data-tutorial-id={TUTORIAL_TARGET.sessionResult} style={{ position: 'relative', zIndex: 2 }}>
-          <h2>Session abgeschlossen! 🎉</h2>
+          <h2 className="flex items-center justify-center gap-2 flex-wrap">
+            Session abgeschlossen!
+            <RinQIcon name="celebrate" size="lg" tone="accent" badge />
+          </h2>
           <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.85rem' }}>
             <button
@@ -1743,7 +1761,10 @@ export default function SessionPage() {
         return (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="card" style={{ maxWidth: 500, width: '95%', margin: '0 auto' }}>
-              <h3>💡 Microfeedback</h3>
+              <h3 className="flex items-center gap-2">
+                <RinQIcon name="terms" size="md" badge />
+                Microfeedback
+              </h3>
               {contextSummary && (
                 <div style={{ marginBottom: '0.75rem', padding: '0.6rem 0.8rem', background: 'rgba(255,255,255,0.06)', borderRadius: '0.4rem', fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5 }}>
                   <span style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', marginBottom: '0.3rem' }}>Ausgewählter Moment</span>

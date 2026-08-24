@@ -7,12 +7,14 @@ export type UpdateCue = {
   priority?: string
 }
 
-export type UpdateDecision = 'keep' | 'change'
+export type UpdateDecision = 'keep' | 'change' | 'no_new_info' | 'unclear'
 
 export type UpdateQuality =
   | 'appropriate'
+  | 'after_confirmation'
   | 'too_late'
   | 'too_early'
+  | 'not_updated'
   | 'unclear'
 
 export type PredictionUpdate = {
@@ -55,8 +57,10 @@ export type PredictionUpdateResult = {
   changeCount: number
   updateQualityDistribution: {
     appropriate: number
+    afterConfirmation: number
     tooLate: number
     tooEarly: number
+    notUpdated: number
     unclear: number
   }
   commonUpdateTriggers?: Record<string, number>

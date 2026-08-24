@@ -14,9 +14,9 @@ export function ScenarioBranchSummary({ result, compact = false }: Props) {
 
   if (compact) {
     return (
-      <div className={styles.preview} aria-label="Scenario Branches Preview">
+      <div className={styles.preview} aria-label="Alternativszenarien Preview">
         <div className={styles.previewTitle}>SCENARIO BRANCHES</div>
-        <div className={styles.previewLine}>Primary {primary} · Alternative {alternative}</div>
+        <div className={styles.previewLine}>Primäre Erwartung {primary} · Alternativszenario {alternative}</div>
         {trigger ? <div className={styles.previewLine}>Wenn: {trigger}</div> : null}
       </div>
     )
@@ -25,15 +25,15 @@ export function ScenarioBranchSummary({ result, compact = false }: Props) {
   return (
     <div className={styles.stack}>
       <section className={styles.block}>
-        <h3 className={styles.heading}>Scenario Branches</h3>
-        <p className={styles.lead}>Deine häufigsten Reads – ohne Wahrscheinlichkeitszahlen.</p>
+        <h3 className={styles.heading}>Alternativszenarien</h3>
+        <p className={styles.lead}>Häufig dokumentierte Verläufe – ohne Wahrscheinlichkeitszahlen oder Scores.</p>
       </section>
       <section className={styles.block}>
         <h3 className={styles.heading}>Primary</h3>
         <p className={styles.hero}>{primary}</p>
       </section>
       <section className={styles.block}>
-        <h3 className={styles.heading}>Alternative</h3>
+        <h3 className={styles.heading}>Alternativszenario</h3>
         <p className={styles.hero}>{alternative}</p>
       </section>
       {trigger ? (
@@ -43,7 +43,7 @@ export function ScenarioBranchSummary({ result, compact = false }: Props) {
         </section>
       ) : null}
       <p className={styles.lead}>
-        Alternative eingetreten: {result.branchTriggeredCount} · Trigger erkannt: {result.triggerRecognizedCount}
+        Alternativszenario eingetreten: {result.branchTriggeredCount} · Auslöser erkannt: {result.triggerRecognizedCount}
       </p>
     </div>
   )

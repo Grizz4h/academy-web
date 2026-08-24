@@ -194,7 +194,7 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
           {cfg.decisionRule}
         </p>
         <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: 'rgba(254,243,199,0.88)', lineHeight: 1.4 }}>
-          Formuliere vorsichtig: „spricht eher dafür“, „wirkt strukturell“, „im beobachteten Segment“ — nicht „ist strukturell“.
+          Formuliere vorsichtig: „im beobachteten Segment sichtbar unter …“, „bisher nur unter ähnlichen Kontexten“ — keine gesicherte Ursache.
         </p>
       </div>
 
@@ -207,7 +207,7 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
         }}
       >
         <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem', color: '#bae6fd' }}>
-          Welches Muster möchtest du einordnen?
+          Welches Verhalten möchtest du auf Kontextstabilität prüfen?
         </label>
         <textarea
           value={candidate}
@@ -393,7 +393,7 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Wie würdest du das Muster im beobachteten Segment am ehesten einordnen?
+              In welchen beobachteten Kontexten bleibt das Verhalten sichtbar?
             </label>
             <OptionChips
               name="attribution"
@@ -405,8 +405,11 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Wie sicher bist du dir mit dieser Einordnung?
+              Sicherheit der vorläufigen Einordnung
             </label>
+            <p style={{ margin: '0 0 0.35rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
+              Selbsteinschätzung — kein objektiver Evidenzwert und keine Wahrscheinlichkeit.
+            </p>
             <OptionChips
               name="confidence"
               options={DEFAULT_CONFIDENCE_OPTIONS}
@@ -417,13 +420,13 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Welche Beobachtung spricht am stärksten für deine Einordnung?
+              Welche Beobachtung spricht am deutlichsten für deine vorläufige Einordnung?
             </label>
             <textarea
               value={strongestEvidence}
               onChange={(e) => setAnswers({ ...safeAnswers, [cfg.strongestEvidenceKey]: e.target.value })}
               maxLength={280}
-              placeholder='z. B. „Das Muster blieb auch bei wechselnden Spielern und unterschiedlichen Entry-Seiten erhalten.“'
+              placeholder='z. B. „Das Verhalten blieb auch bei wechselnden Spielern und unterschiedlichen Entry-Seiten sichtbar.“'
               style={{
                 width: '100%', minHeight: '68px', padding: '0.65rem', borderRadius: '8px',
                 border: '1px solid rgba(81,145,162,0.5)', background: '#050712', color: '#f7f7ff',
@@ -434,13 +437,35 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Was spricht gegen deine Einordnung? <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
+              Gegenfälle oder widersprechende Beobachtungen{' '}
+              <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
             </label>
             <textarea
               value={counterEvidence}
               onChange={(e) => setAnswers({ ...safeAnswers, [cfg.counterEvidenceKey]: e.target.value })}
               maxLength={240}
-              placeholder='z. B. „Alle drei Situationen waren gegen dieselbe Reihe.“'
+              placeholder='z. B. „In einer vergleichbaren Lage trat das Verhalten nicht auf.“'
+              style={{
+                width: '100%', minHeight: '58px', padding: '0.65rem', borderRadius: '8px',
+                border: '1px solid rgba(81,145,162,0.45)', background: '#050712', color: '#f7f7ff',
+                fontFamily: 'inherit', boxSizing: 'border-box',
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
+              Mögliche Erklärung, die weitere Beobachtung benötigt{' '}
+              <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.55)' }}>(optional)</span>
+            </label>
+            <p style={{ margin: '0 0 0.35rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
+              Eine Hypothese beschreibt eine offene Prüfidee. Sie ist keine aus den Beobachtungen bestätigte Ursache.
+            </p>
+            <textarea
+              value={String(safeAnswers.context_hypothesis || '')}
+              onChange={(e) => setAnswers({ ...safeAnswers, context_hypothesis: e.target.value })}
+              maxLength={240}
+              placeholder='z. B. „Könnte eng an hohen Gegnerdruck gebunden sein — weiter prüfen.“'
               style={{
                 width: '100%', minHeight: '58px', padding: '0.65rem', borderRadius: '8px',
                 border: '1px solid rgba(81,145,162,0.45)', background: '#050712', color: '#f7f7ff',
@@ -465,14 +490,19 @@ export function PatternAttributionDrill({ drill, answers, setAnswers }: PatternA
                 <strong>Einordnung:</strong> {labelForOption(DEFAULT_ATTRIBUTION_OPTIONS, attribution)}
               </div>
               <div style={{ fontSize: '0.82rem', color: 'rgba(236,253,245,0.85)' }}>
-                <strong>Confidence:</strong> {labelForOption(DEFAULT_CONFIDENCE_OPTIONS, confidence)}
+                <strong>Sicherheit der vorläufigen Einordnung:</strong> {labelForOption(DEFAULT_CONFIDENCE_OPTIONS, confidence)}
               </div>
               <div style={{ fontSize: '0.82rem', color: 'rgba(236,253,245,0.85)' }}>
-                <strong>Stärkstes Indiz:</strong> „{strongestEvidence.trim()}“
+                <strong>Deutlichstes Indiz:</strong> „{strongestEvidence.trim()}“
               </div>
               {counterEvidence.trim() && (
                 <div style={{ fontSize: '0.82rem', color: 'rgba(236,253,245,0.85)' }}>
-                  <strong>Gegenargument:</strong> „{counterEvidence.trim()}“
+                  <strong>Gegenfälle / Widerspruch:</strong> „{counterEvidence.trim()}“
+                </div>
+              )}
+              {String(safeAnswers.context_hypothesis || '').trim() && (
+                <div style={{ fontSize: '0.82rem', color: 'rgba(236,253,245,0.85)' }}>
+                  <strong>Offene Hypothese:</strong> „{String(safeAnswers.context_hypothesis).trim()}“
                 </div>
               )}
             </div>

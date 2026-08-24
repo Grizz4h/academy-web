@@ -12,16 +12,23 @@ import type {
 const PRIORITY_SET = new Set<CuePriority>(['primary', 'supporting', 'secondary'])
 
 export const CUE_PRIORITY_LABELS: Record<CuePriority, string> = {
-  primary: 'Entscheidend',
-  supporting: 'Unterstützend',
-  secondary: 'Nebensächlich',
+  primary: 'Haupthinweis',
+  supporting: 'Unterstützender Hinweis',
+  secondary: 'Wahrgenommen, aber nicht für die Erwartung genutzt',
 }
 
 export const CUE_REVIEW_LABELS: Record<CueReviewJudgement, string> = {
-  yes: 'Ja',
-  partly: 'Teilweise',
-  no: 'Nein',
-  unclear: 'Unklar',
+  yes: 'Ja – klar sichtbar und für die Erwartung relevant',
+  partly: 'Teilweise – Sichtbarkeit oder Relevanz eingeschränkt',
+  no: 'Nein – nicht klar sichtbar oder nicht relevant',
+  unclear: 'Nicht sicher beurteilbar',
+}
+
+/** Legacy absolute labels remain readable. */
+export const LEGACY_CUE_PRIORITY_LABELS: Record<string, string> = {
+  Entscheidend: 'Haupthinweis',
+  Unterstützend: 'Unterstützender Hinweis',
+  Nebensächlich: 'Wahrgenommen, aber nicht für die Erwartung genutzt',
 }
 
 export function isCuePriority(value: unknown): value is CuePriority {

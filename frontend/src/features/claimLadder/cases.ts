@@ -77,7 +77,7 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
     ],
     contextNotes: [
       'Übungsfall – kein echtes Spiel.',
-      'Sample: 17 Exit-Versuche.',
+      'Stichprobe: 17 Exit-Versuche.',
       'Vergleichbarkeit: überwiegend vergleichbar.',
       'Gegenbeispiele: 2 kontrollierte Exits ohne Support.',
       'Mögliche weitere Dimension: Forecheckdruck war nicht immer gleich.',
@@ -96,7 +96,7 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
     ceilingFeedback: {
       description: 'Sauber deskriptiv. Der sichtbare Abstand darf zusätzlich als Vergleich oder vorsichtiger Hinweis formuliert werden.',
       comparison: 'Plausibel: Du bleibst bei der Stichprobe und behauptest keine Teamregel.',
-      tendency: 'Level 3 ist hier plausibel: Die Differenz ist sichtbar, aber Sample und Kontext reichen nicht für eine allgemeine Teamregel.',
+      tendency: 'Level 3 ist hier plausibel: Die Differenz ist sichtbar, aber Stichprobe und Kontext reichen nicht für eine allgemeine Teamregel.',
       generalization: 'Eine allgemeine Teamregel braucht deutlich mehr und sauberer vergleichbare Beobachtungen.',
       causal: 'Ursache ist durch den beobachteten Zusammenhang nicht gedeckt.',
     },
@@ -104,7 +104,7 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
   {
     id: 'thin_overlap',
     title: 'Kleiner Abstand, widersprüchliche Basis',
-    question: 'Unterscheidet sich die Target-Rate zwischen Gruppe A und Gruppe B klar?',
+    question: 'Unterscheidet sich die Zielereignis-Rate zwischen Gruppe A und Gruppe B klar?',
     observedData: thinObserved,
     evidenceInput: sampleFromObserved(thinObserved, {
       comparability: 'partly_comparable',
@@ -118,7 +118,7 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
       'Kleine Stichprobe',
     ],
     counterEvidence: [
-      'Mehrere Target-Fälle in beiden Gruppen',
+      'Mehrere Zielereignis-Fälle in beiden Gruppen',
       'Der Abstand beträgt nur wenige Prozentpunkte',
       'Kein klares Gegenbeispiel',
     ],
@@ -126,7 +126,7 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
       'Übungsfall – kein echtes Spiel.',
       'A: 5 / 9 · 56 %. B: 4 / 8 · 50 %.',
       'Mehrere Gegenbeispiele, Vergleichbarkeit nur teilweise.',
-      'Nicht jedes Sample braucht eine Tendenz.',
+      'Nicht jedes Stichprobe braucht eine Tendenz.',
     ],
     descriptiveOptions: [
       { value: 'fractions', label: '5 von 9 in Gruppe A, 4 von 8 in Gruppe B.' },
@@ -135,22 +135,22 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
     claimExamples: [
       { level: 'description', text: 'Gruppe A: 5/9, Gruppe B: 4/8.' },
       { level: 'comparison', text: 'In dieser Stichprobe lag die Rate in Gruppe A geringfügig höher.' },
-      { level: 'tendency', text: 'Es gibt einen Hinweis, dass Gruppe A häufiger das Target erreicht.' },
+      { level: 'tendency', text: 'Es gibt einen Hinweis, dass Gruppe A häufiger das Zielereignis erreicht.' },
       { level: 'generalization', text: 'Gruppe A ist grundsätzlich stärker.' },
-      { level: 'causal', text: 'Der Gruppenfaktor verursacht das bessere Outcome.' },
+      { level: 'causal', text: 'Der Gruppenfaktor verursacht das bessere Ergebnis.' },
     ],
     ceilingFeedback: {
       description: 'Passt: Bei diesem Abstand reicht oft die Beschreibung.',
       comparison: 'Ein sehr vorsichtiger Vergleich ist noch vertretbar – mehr nicht.',
       tendency: 'Eine Tendenz überzieht hier leicht. Der Abstand ist klein und die Basis widersprüchlich.',
-      generalization: 'Eine Generalisierung ist durch dieses Sample nicht gedeckt.',
+      generalization: 'Eine Generalisierung ist durch dieses Stichprobe nicht gedeckt.',
       causal: 'Ursache ist hier nicht gedeckt.',
     },
   },
   {
     id: 'clear_gap',
     title: 'Klarer Abstand, gleiche Gruppengröße',
-    question: 'Tritt das Target in Gruppe A häufiger auf als in Gruppe B?',
+    question: 'Tritt das Zielereignis in Gruppe A häufiger auf als in Gruppe B?',
     observedData: solidObserved,
     evidenceInput: sampleFromObserved(solidObserved, {
       comparability: 'very_comparable',
@@ -159,11 +159,11 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
     evidenceStrengthHint: 'reasonably_supported',
     limitations: [
       'Immer noch eine Stichprobe, keine Saisonregel',
-      'Vier Target-Fälle in Gruppe B',
+      'Vier Zielereignis-Fälle in Gruppe B',
       'Keine Video- oder Kausalprüfung',
     ],
     counterEvidence: [
-      '4 Target-Fälle in Gruppe B',
+      '4 Zielereignis-Fälle in Gruppe B',
       'Kein klares Gegenbeispiel',
     ],
     contextNotes: [
@@ -177,11 +177,11 @@ export const DEFAULT_SYNTHESIS_CASES: EvidenceSynthesisCase[] = [
       { value: 'gap', label: 'In dieser Stichprobe 60 % gegenüber 20 %.' },
     ],
     claimExamples: [
-      { level: 'description', text: '12 von 20 Opportunities in Gruppe A endeten als Target.' },
-      { level: 'comparison', text: 'In dieser Stichprobe trat das Target in Gruppe A deutlich häufiger auf.' },
-      { level: 'tendency', text: 'Die Beobachtungen geben einen Hinweis auf eine höhere Target-Rate in Gruppe A.' },
+      { level: 'description', text: '12 von 20 Ausgangssituationen in Gruppe A endeten als Zielereignis.' },
+      { level: 'comparison', text: 'In dieser Stichprobe trat das Zielereignis in Gruppe A deutlich häufiger auf.' },
+      { level: 'tendency', text: 'Die Beobachtungen geben einen Hinweis auf eine höhere Zielereignis-Rate in Gruppe A.' },
       { level: 'generalization', text: 'Gruppe A ist grundsätzlich besser.' },
-      { level: 'causal', text: 'Faktor A verursacht das bessere Outcome.' },
+      { level: 'causal', text: 'Faktor A verursacht das bessere Ergebnis.' },
     ],
     ceilingFeedback: {
       description: 'Korrekt, aber der Abstand darf auch als Vergleich oder Hinweis formuliert werden.',

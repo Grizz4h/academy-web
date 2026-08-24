@@ -12,7 +12,19 @@ import { lockerTaskHref } from '../../features/progression/tasks'
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { UiButton, UiPill, UiProgress } from '../ui'
+import { RinQIcon, type RinQIconName } from '../icons'
 import styles from '../../pages/Account.module.css'
+
+function unlockKindIcon(kind: string): RinQIconName {
+  if (kind === 'achievement') return 'trophy'
+  if (kind === 'cosmetic') return 'palette'
+  if (kind === 'level') return 'star'
+  if (kind === 'pux') return 'coin'
+  if (kind === 'shop') return 'shop'
+  if (kind === 'collection') return 'folder'
+  if (kind === 'challenge') return 'mission'
+  return 'bolt'
+}
 
 function formatUnlockDate(iso?: string): string {
   if (!iso) return ''
@@ -47,9 +59,14 @@ function AchievementCard({ item }: { item: AchievementViewItem }) {
           size="sm"
         />
         <span className={styles.hint}>
-          {item.unlocked
-            ? `✓ Freigeschaltet am ${formatUnlockDate(item.unlockedAt)}`
-            : `${item.current} / ${item.target}`}
+          {item.unlocked ? (
+            <span className={styles.unlockedHint}>
+              <RinQIcon name="check" size="sm" tone="ok" inline />
+              Freigeschaltet am {formatUnlockDate(item.unlockedAt)}
+            </span>
+          ) : (
+            `${item.current} / ${item.target}`
+          )}
         </span>
       </div>
       <div className={styles.achievementRewards}>
@@ -115,7 +132,7 @@ export default function AccountProgressionPanel() {
             {recent.map((entry) => (
               <li key={entry.id} className={styles.unlockItem}>
                 <span className={styles.unlockIcon}>
-                  {entry.kind === 'achievement' ? '🏆' : entry.kind === 'cosmetic' ? '🎨' : entry.kind === 'level' ? '✦' : '⚡'}
+                  <RinQIcon name={unlockKindIcon(entry.kind)} size="sm" tone="accent" badge />
                 </span>
                 <span>
                   <strong>{entry.title}</strong>
@@ -213,7 +230,10 @@ export default function AccountProgressionPanel() {
             })
           }}
         >
-          ⚡ Progression neu berechnen
+          <span className={styles.devButtonLabel}>
+            <RinQIcon name="bolt" size="sm" inline />
+            Progression neu berechnen
+          </span>
         </UiButton>
       )}
     </div>

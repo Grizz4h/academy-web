@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Card from '../components/Card'
 import { CosmeticGlyph, MechanicGlyph } from '../components/visuals'
+import { RINQ_ICON_LABELS, RinQIcon, type RinQIconName } from '../components/icons'
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard'
 import {
   TapReveal,
@@ -65,6 +66,32 @@ export default function DevUiKit() {
           <UiPill tone="danger">Danger</UiPill>
         </div>
         <UiProgress value={42} max={100} label="Demo" />
+      </Card>
+
+      <Card surface="section">
+        <h2 className="ui-section-title">RinQ Icons · Eis-Look</h2>
+        <p className="ui-page-lead">
+          Ersetzen System-Emojis. Strich-Icons in <code>currentColor</code>, Eis-Türkis wie MechanicGlyph.
+          Registry: <code>components/icons</code> · Migration: <code>emojiToIcon.ts</code>.
+        </p>
+        <div className={styles.iconGrid}>
+          {(Object.keys(RINQ_ICON_LABELS) as RinQIconName[]).map((name) => (
+            <div key={name} className={styles.iconCell}>
+              <RinQIcon name={name} size="lg" badge />
+              <span className={styles.iconLabel}>{RINQ_ICON_LABELS[name]}</span>
+              <code className={styles.iconCode}>{name}</code>
+            </div>
+          ))}
+        </div>
+        <p className="ui-page-lead" style={{ marginTop: '0.85rem' }}>
+          Töne: ice (default), accent, muted, ok, warn, danger · Größen sm / md / lg
+        </p>
+        <div className={styles.row}>
+          <RinQIcon name="observe" inline /> Beobachtungsanleitung
+          <RinQIcon name="mission" tone="accent" inline /> Mission
+          <RinQIcon name="trophy" tone="warn" inline /> Erfolg
+          <RinQIcon name="check" tone="ok" inline /> Erledigt
+        </div>
       </Card>
 
       <Card surface="section">
@@ -196,7 +223,7 @@ export default function DevUiKit() {
 
       <Card surface="section">
         <h2 className="ui-section-title">Liste vs. Karte</h2>
-        <p className="ui-page-lead">Flache Zeile nur für dichte Meta. Aufgaben/Achievements: Karte mit Balken wie im Locker.</p>
+        <p className="ui-page-lead">Flache Zeile nur für dichte Meta. Aufgaben/Achievements: Karte mit Balken wie im Spind.</p>
         <div className={styles.listRow}>
           <span>Flache Zeile</span>
           <span>2 / 5</span>
@@ -212,7 +239,7 @@ export default function DevUiKit() {
         <h2 className="ui-section-title">Sheet</h2>
         <p className="ui-page-lead">`UiSheet`: Abbrechen links, Primary rechts. Kein eigenes Modal.</p>
         <UiButton size="sm" onClick={() => setSheetOpen(true)}>Sheet öffnen</UiButton>
-        <UiSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Beispiel-Sheet" meta="Locker / Aktionen">
+        <UiSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Beispiel-Sheet" meta="Spind / Aktionen">
           <p className="ui-page-lead">Portal auf document.body, Bottom-Sheet auf Mobile.</p>
           <UiSheetActions
             secondary={
@@ -240,7 +267,7 @@ export default function DevUiKit() {
       <Card surface="nested">
         <h2 className="ui-section-title">Nicht in diesem Kit</h2>
         <p className="ui-page-lead">
-          Drill-Renderer, Session-`.btn`, Locker-Rarity-Effekte, Tutorial-Chrome. Die bleiben eigene Welten.
+          Drill-Renderer, Session-`.btn`, Spind-Rarity-Effekte, Tutorial-Chrome. Die bleiben eigene Welten.
         </p>
       </Card>
     </div>

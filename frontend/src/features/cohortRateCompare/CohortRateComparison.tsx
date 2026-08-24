@@ -16,19 +16,20 @@ type Props = {
 function CohortBar({ group, showPercents }: { group: CohortGroupResult; showPercents: boolean }) {
   return (
     <div className={styles.cohort}>
-      <div className={styles.cohortLabel}>{group.label || `Gruppe ${group.id}`}</div>
+      <div className={styles.cohortLabel}>{group.label || `Vergleichsgruppe ${group.id}`}</div>
       <div className={styles.figures}>
         <span className={styles.fraction}>
-          {formatRateFraction(group.targetCount, group.totalOpportunities)}
+          {formatRateFraction(group.targetCount, group.evaluableCount)}
         </span>
         {showPercents && <span className={styles.percent}>{group.ratePercent} %</span>}
       </div>
       <div className={styles.track} aria-hidden>
         <div className={styles.fill} style={{ width: `${Math.min(100, Math.max(0, group.ratePercent))}%` }} />
       </div>
-      {group.unclearCount > 0 && (
-        <p className={styles.unclear}>{group.unclearCount} Outcome unklar – bleibt im Nenner.</p>
-      )}
+      <p className={styles.unclear}>
+        {group.targetCount} Zielereignisse · {group.evaluableCount} auswertbar · {group.totalOpportunities} gültig
+        {group.unclearCount > 0 ? ` · ${group.unclearCount} unklar` : ''}
+      </p>
     </div>
   )
 }
@@ -53,12 +54,13 @@ export function CohortRateComparison({
       </div>
       {showPercents && (
         <p className={styles.diff}>
-          Unterschied: {absDiff} Prozentpunkt{absDiff === 1 ? '' : 'e'}
-          {showPercents ? ` · ${groupA.ratePercent} % vs. ${groupB.ratePercent} %` : ''}
+          Beobachteter Unterschied in dieser Stichprobe: {absDiff} Prozentpunkt{absDiff === 1 ? '' : 'e'}
+          {` · ${groupA.ratePercent} % vs. ${groupB.ratePercent} %`}
+          {' '}(keine automatische Wertung als besser/schlechter)
         </p>
       )}
       {sampleImbalance && (
-        <p className={styles.imbalance}>Die Gruppen sind unterschiedlich groß.</p>
+        <p className={styles.imbalance}>Die Vergleichsgruppen sind unterschiedlich groß — das begrenzt die Einordnung.</p>
       )}
       {showDistributions && (
         <div className={styles.distributions}>

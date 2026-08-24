@@ -60,7 +60,7 @@ function SampleVisual({ caseDef }: { caseDef: EvidenceCaseDefinition }) {
       {sample.matrix && (
         <ConditionOutcomeMatrix
           conditionLabel={sample.conditionLabel || 'Bedingung'}
-          targetLabel={sample.targetLabel || 'Target'}
+          targetLabel={sample.targetLabel || 'Zielereignis'}
           matrix={sample.matrix}
         />
       )}
@@ -151,7 +151,7 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
   if (isComplete) {
     return (
       <div className={rateStyles.drillRoot}>
-        <span className={rateStyles.completeBadge}>✓ Evidence Assessment abgeschlossen</span>
+        <span className={rateStyles.completeBadge}>✓ Tragfähigkeitsprüfung abgeschlossen</span>
         <ReviewBlock cfgCases={cfg.cases} assessments={assessments} />
         <div className={rateStyles.actions}>
           <button type="button" className={rateStyles.secondaryBtn} onClick={() => setStage('review')}>
@@ -176,7 +176,7 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
           <h3 className={rateStyles.panelTitle}>Vier Übungsfälle</h3>
           <p className={rateStyles.lead}>
-            Du bewertest vorbereitete Mini-Samples – nicht ein neues Live-Tracking.
+            Du bewertest vorbereitete Mini-Stichproben – nicht ein neues Live-Erfassung.
             Kein p-Wert, kein Score, keine Scheingenauigkeit.
           </p>
           <p className={rateStyles.fieldHelp}>{cfg.sampleLimitNote}</p>
@@ -239,7 +239,7 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
 
       {stage === 'review' && (
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
-          <h3 className={rateStyles.panelTitle}>Deine Evidence Checks</h3>
+          <h3 className={rateStyles.panelTitle}>Deine Tragfähigkeits-Checks</h3>
           <ReviewBlock cfgCases={cfg.cases} assessments={assessments} />
           <div className={rateStyles.fieldBlock}>
             <div className={rateStyles.fieldLabel}>Welche Dimension hat deine Einschätzung der Evidenz am stärksten verändert?</div>
@@ -342,8 +342,8 @@ function CaseStepFields({
     const feedback = overallFeedback(caseDef, assessment.overallStrength)
     return (
       <div className={rateStyles.fieldBlock}>
-        <div className={rateStyles.fieldLabel}>Wie stark trägt die Evidenz insgesamt die Aussage?</div>
-        <p className={rateStyles.fieldHelp}>Du entscheidest. Die App rechnet daraus keinen Score.</p>
+        <div className={rateStyles.fieldLabel}>Wie tragfähig ist die Beobachtungsgrundlage insgesamt für die Aussage?</div>
+        <p className={rateStyles.fieldHelp}>Du entscheidest qualitativ. Die App rechnet daraus keinen Score und keinen p-Wert.</p>
         <OptionChips
           name="evidence-overall"
           options={evidenceStrengthOptions()}
@@ -382,7 +382,7 @@ function CaseStepFields({
           {tooStrong && <p className={styles.feedback}>{statementToneExplanation(tooStrong.tone)}</p>}
         </div>
         <div className={rateStyles.fieldBlock}>
-          <div className={rateStyles.fieldLabel}>Formuliere selbst eine Aussage, die zur Evidenzstärke passt. (empfohlen)</div>
+          <div className={rateStyles.fieldLabel}>Formuliere selbst eine Aussage, die zur Tragfähigkeit der Beobachtungsgrundlage passt. (empfohlen)</div>
           <textarea
             className={rateStyles.textarea}
             value={assessment.userStatement || ''}

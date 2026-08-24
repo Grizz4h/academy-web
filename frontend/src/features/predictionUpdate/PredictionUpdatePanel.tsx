@@ -26,11 +26,11 @@ export function PredictionUpdatePanel({
   return (
     <div className={styles.root}>
       <div className={styles.stop}>
-        <div className={styles.stopLabel}>Stop – neue Information</div>
+        <div className={styles.stopLabel}>Stop – neue sichtbare Information</div>
         <p className={styles.stopTitle}>Ändert sich deine Erwartung?</p>
       </div>
       <div className={styles.locked}>
-        <div className={styles.lockedLabel}>Dein erster Read</div>
+        <div className={styles.lockedLabel}>Ursprüngliche Erwartung</div>
         <p className={styles.lockedValue}>{initialPrediction || '—'}</p>
       </div>
       <ScenarioBranchPanel
@@ -40,11 +40,17 @@ export function PredictionUpdatePanel({
         suggestions={suggestions}
         cueCategories={cueCategories}
         categoryLabel={categoryLabel}
-        title="Neue Information"
-        help={`${minTriggers}–${maxTriggers} Trigger. Was hat sich in der Situation verändert? Keine Prozentwerte.`}
+        title="Neue sichtbare Information"
+        help={
+          minTriggers > 0
+            ? `${minTriggers}–${maxTriggers} Auslöser. Was hat sich in der Situation verändert? Keine Prozentwerte.`
+            : `Optional bis ${maxTriggers} Auslöser. Wenn keine relevante neue Information sichtbar war, kannst du ohne Eintrag weiter und das im nächsten Schritt markieren.`
+        }
         onChange={onChangeTriggers}
       />
-      <p className={styles.help}>Nicht jede neue Information zwingt dich zum Umschalten. Entscheide im nächsten Schritt bewusst.</p>
+      <p className={styles.help}>
+        Nicht jede neue Information zwingt zum Ändern. Beibehalten und Ändern sind beide gültig – entscheidend ist die dokumentierte Grundlage.
+      </p>
     </div>
   )
 }

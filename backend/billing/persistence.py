@@ -126,7 +126,7 @@ def get_billing_status(rinq_user_id: str) -> Dict[str, Any]:
             ).fetchone()
             subs = conn.execute(
                 """
-                SELECT external_subscription_id, status, price_id,
+                SELECT external_subscription_id, status, price_id, external_customer_id,
                        current_period_start, current_period_end, cancel_at_period_end, updated_at
                 FROM subscriptions
                 WHERE rinq_user_id = %s::uuid
@@ -153,6 +153,7 @@ def get_billing_status(rinq_user_id: str) -> Dict[str, Any]:
                 "external_subscription_id": row.get("external_subscription_id"),
                 "status": row.get("status"),
                 "price_id": row.get("price_id"),
+                "external_customer_id": row.get("external_customer_id"),
                 "current_period_start": _iso(row.get("current_period_start")),
                 "current_period_end": _iso(row.get("current_period_end")),
                 "cancel_at_period_end": bool(row.get("cancel_at_period_end")),

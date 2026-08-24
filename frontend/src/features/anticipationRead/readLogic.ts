@@ -26,6 +26,7 @@ import {
   computePredictionUpdateResult,
   isCompletePredictionUpdate,
   resolvePredictionUpdateConfig,
+  triggersRequiredForDecision,
   usedUpdateTriggerDescriptions,
 } from '../predictionUpdate/updateLogic'
 import type {
@@ -57,14 +58,14 @@ const CUE_CATEGORY_SET = new Set<string>(DEFAULT_CUE_CATEGORIES)
 
 export const CUE_CATEGORY_LABELS: Record<AnticipationCueCategory, string> = {
   positioning: 'Positionierung',
-  pressure: 'Druck',
-  support: 'Support',
-  puck_orientation: 'Puck-/Stick-Ausrichtung',
-  available_space: 'verfügbarer Raum',
-  body_orientation: 'Körperorientierung',
+  pressure: 'Gegnerdruck',
+  support: 'Unterstützung',
+  puck_orientation: 'Puck-/Stock-Ausrichtung',
+  available_space: 'Verfügbarer Raum',
+  body_orientation: 'Körperausrichtung',
   timing: 'Timing',
   player_movement: 'Spielerbewegung',
-  other: 'andere',
+  other: 'Andere',
 }
 
 export function cueCategoryLabel(category?: string | null): string {
@@ -192,20 +193,26 @@ export function resolveAnticipationReadConfig(raw: Record<string, unknown> = {})
         ? 'cue_priority'
         : 'anticipation_read'
   const defaultRule = supportsPredictionUpdate
-    ? 'Ein guter Read bleibt nicht stur – er passt sich an neue Informationen an.'
+    ? 'Eine Erwartung kann beibehalten oder verändert werden. Entscheidend für die Übung ist, welche neue sichtbare Information dafür dokumentiert wurde.'
     : supportsScenarioBranches
-      ? 'Antizipation bedeutet nicht, eine Zukunft vorherzusagen – sondern Wahrscheinlichkeiten zu ordnen.'
-      : 'Antizipation ist eine begründete Erwartung – keine Vorhersage aus dem Bauch.'
+      ? 'Eine primäre Erwartung, genau ein realistisches Alternativszenario und ein beobachtbarer Auslöser. Die Begrenzung auf eine Alternative dient der Übung.'
+      : supportsCuePriority
+        ? 'Ordne Hinweise danach, wie du sie für deine Erwartung genutzt hast – ohne Punkte oder objektive Cue-Wichtigkeit.'
+        : 'Antizipation ist eine begründete Erwartung und keine sichere Vorhersage.'
   const defaultHint = supportsPredictionUpdate
-    ? 'Nicht die erste Einschätzung entscheidet über Qualität, sondern wie gut du deine Einschätzung aktualisierst.'
+    ? 'Prüfe, ob neue sichtbare Informationen in die weitere Erwartung einbezogen wurden. Das tatsächliche Ergebnis allein bewertet diesen Prozess nicht.'
     : supportsScenarioBranches
-      ? 'Ein guter Read hat eine Hauptoption und kennt die wichtigste Alternative.'
-      : 'Bewerte deinen Read nach seinen Hinweisen, nicht nur nach dem Outcome.'
+      ? 'Der Auslöser muss eine konkrete neue oder veränderte sichtbare Information sein. Wenn keine realistische Alternative besteht, wähle eine andere Szene.'
+      : supportsCuePriority
+        ? 'Genau ein Haupthinweis; unterstützende Hinweise optional. Rollen beschreiben deine Nutzung in dieser Situation.'
+        : 'Trenne Erwartung, Hinweise, tatsächliche Aktion, Übereinstimmung und Nachprüfung der Begründung.'
   const defaultIntro = supportsPredictionUpdate
-    ? 'Antizipation ist kein einmaliges Raten. Du bildest zuerst eine Erwartung, dann erscheint neue Information. Entscheide bewusst, ob dein Read bestehen bleibt oder sich ändern muss – und prüfe später, ob das Timing sinnvoll war.'
+    ? 'Du bildest zuerst eine Erwartung, dann erscheint neue sichtbare Information. Entscheide bewusst, ob die Erwartung bestehen bleibt oder sich ändert – und dokumentiere den zeitlichen Ablauf, ohne daraus Geschwindigkeit oder Kompetenz abzuleiten.'
     : supportsScenarioBranches
-      ? 'Spielsituationen haben selten nur eine mögliche Zukunft. Du nennst zuerst deine primäre Erwartung, dann die wahrscheinlichste Alternative – und welche konkreten Bedingungen diese Alternative wahrscheinlicher machen würden. Danach prüfst du, was tatsächlich passiert ist und ob dein Trigger relevant war.'
-      : 'Gute Spieler und Beobachter warten nicht nur darauf, was passiert. Sie bilden vorher eine Erwartung. Entscheide vor der nächsten Aktion, was du für am wahrscheinlichsten hältst – und welche sichtbaren Hinweise dafür sprechen. Danach prüfst du nicht nur, ob du richtig lagst, sondern ob dein Read gut begründet war.'
+      ? 'Du nennst zuerst deine primäre Erwartung, dann genau ein realistisches Alternativszenario und einen beobachtbaren Auslöser. Die Begrenzung auf eine Alternative dient der Übung; weitere Spielmöglichkeiten können bestehen.'
+      : supportsCuePriority
+        ? 'Beim Antizipieren bildest du vor der nächsten Aktion eine Erwartung und bindest sie an sichtbare Hinweise. Ordne die Hinweise danach, wie du sie für deine Erwartung genutzt hast.'
+        : 'Beim Antizipieren bildest du vor der nächsten Aktion eine Erwartung und bindest sie an sichtbare Hinweise. Anschließend vergleichst du die Erwartung mit der tatsächlichen Aktion, ohne beides gleichzusetzen.'
 
   return {
     mechanic,
@@ -394,21 +401,29 @@ export function canSaveUpdateInfoStep(
   cfg: Pick<AnticipationReadConfig, 'supportsPredictionUpdate' | 'minUpdateTriggers' | 'maxUpdateTriggers'>,
 ): boolean {
   if (!cfg.supportsPredictionUpdate) return true
-  return canSaveUpdateTriggers(draft.updateTriggers, cfg.minUpdateTriggers, cfg.maxUpdateTriggers)
+  // Auslöser optional in diesem Schritt: bei „Erwartung geändert“ später verpflichtend.
+  const max = Math.max(cfg.maxUpdateTriggers, 1)
+  return canSaveUpdateTriggers(draft.updateTriggers, 0, max)
 }
 
 export function canSaveUpdateDecideStep(
   draft: AnticipationDraft,
-  cfg: Pick<AnticipationReadConfig, 'expectedActionOptions' | 'supportsPredictionUpdate'>,
+  cfg: Pick<AnticipationReadConfig, 'expectedActionOptions' | 'supportsPredictionUpdate' | 'minUpdateTriggers' | 'maxUpdateTriggers'>,
 ): boolean {
   if (!cfg.supportsPredictionUpdate) return true
   const initial = resolvedAction(draft.expectedActionOptionId, draft.expectedAction, cfg.expectedActionOptions)
   const updated = resolvedAction(draft.updatedPredictionOptionId, draft.updatedPrediction, cfg.expectedActionOptions)
-  return canSaveUpdateDecision(draft.updateDecision, initial, updated, draft.updateReason, {
+  if (!canSaveUpdateDecision(draft.updateDecision, initial, updated, draft.updateReason, {
     enabled: true,
     requireReasonOnKeep: true,
     requireUpdatedPredictionOnChange: true,
-  })
+  })) return false
+  if (triggersRequiredForDecision(draft.updateDecision)) {
+    const min = Math.max(1, cfg.minUpdateTriggers)
+    const max = Math.max(cfg.maxUpdateTriggers, min)
+    return canSaveUpdateTriggers(draft.updateTriggers, min, max)
+  }
+  return true
 }
 
 export function canSaveUpdateReviewStep(
@@ -458,7 +473,7 @@ export function isCompleteRead(
   if (requiresPredictionUpdate) {
     if (!isCompletePredictionUpdate(observation, {
       enabled: true,
-      minUpdateTriggers: 1,
+      minUpdateTriggers: 0,
       maxUpdateTriggers: 3,
       requireReasonOnKeep: true,
       requireUpdatedPredictionOnChange: true,
@@ -497,7 +512,7 @@ export function draftToObservation(
     ? normalizeTriggers(draft.updateTriggers, cfg.maxUpdateTriggers)
     : undefined
   const updatedPrediction = cfg.supportsPredictionUpdate
-    ? (draft.updateDecision === 'keep'
+    ? (draft.updateDecision === 'keep' || draft.updateDecision === 'no_new_info' || draft.updateDecision === 'unclear'
       ? expectedAction
       : resolvedAction(draft.updatedPredictionOptionId, draft.updatedPrediction, cfg.expectedActionOptions))
     : undefined
@@ -626,42 +641,43 @@ export function confidenceOptions(): Array<PatternLogOption<AnticipationConfiden
 
 export function outcomeMatchOptions(): Array<PatternLogOption<AnticipationOutcomeMatch>> {
   return [
-    { value: 'matched', label: 'Getroffen' },
-    { value: 'partly_matched', label: 'Teilweise getroffen' },
-    { value: 'different', label: 'Anders' },
+    { value: 'matched', label: 'Stimmt überein' },
+    { value: 'different', label: 'Stimmt nicht überein' },
+    { value: 'unclear', label: 'Nicht sicher beurteilbar' },
   ]
 }
 
 export function readQualityOptions(): Array<PatternLogOption<AnticipationReadQuality>> {
   return [
-    { value: 'well_supported', label: 'Gut gestützt' },
-    { value: 'partly_supported', label: 'Teilweise gestützt' },
-    { value: 'weakly_supported', label: 'Schwach gestützt' },
-    { value: 'unclear', label: 'Unklar' },
+    { value: 'well_supported', label: 'Durch sichtbare Hinweise begründet' },
+    { value: 'partly_supported', label: 'Hinweise waren zu allgemein' },
+    { value: 'weakly_supported', label: 'Wichtige sichtbare Information fehlte' },
+    { value: 'unclear', label: 'Nicht sicher beurteilbar' },
   ]
 }
 
 export function overconfidenceOptions(): Array<PatternLogOption<OverconfidenceAssessment>> {
   return [
-    { value: 'none', label: 'Bei keinem Read' },
-    { value: 'single', label: 'Bei einem Read' },
+    { value: 'none', label: 'Bei keiner Erwartung' },
+    { value: 'single', label: 'Bei einer Erwartung' },
     { value: 'multiple', label: 'Mehrfach' },
-    { value: 'unclear', label: 'Unklar' },
+    { value: 'unclear', label: 'Nicht sicher beurteilbar' },
   ]
 }
 
 export function outcomeMatchLabel(value?: AnticipationOutcomeMatch | string | null): string {
-  if (value === 'matched') return 'Getroffen'
-  if (value === 'partly_matched') return 'Teilweise'
-  if (value === 'different') return 'Anders'
+  if (value === 'matched') return 'Stimmt überein'
+  if (value === 'partly_matched') return 'Teilweise überein (Legacy)'
+  if (value === 'different') return 'Stimmt nicht überein'
+  if (value === 'unclear') return 'Nicht sicher beurteilbar'
   return ''
 }
 
 export function readQualityLabel(value?: AnticipationReadQuality | string | null): string {
-  if (value === 'well_supported') return 'Gut gestützt'
-  if (value === 'partly_supported') return 'Teilweise gestützt'
-  if (value === 'weakly_supported') return 'Schwach gestützt'
-  if (value === 'unclear') return 'Unklar'
+  if (value === 'well_supported') return 'Durch sichtbare Hinweise begründet'
+  if (value === 'partly_supported') return 'Hinweise waren zu allgemein'
+  if (value === 'weakly_supported') return 'Wichtige sichtbare Information fehlte'
+  if (value === 'unclear') return 'Nicht sicher beurteilbar'
   return ''
 }
 
@@ -675,7 +691,7 @@ export function confidenceLabel(value?: AnticipationConfidence | string | null):
 export function formatReadMeta(observation: AnticipationObservation): string {
   const clockParts = [observation.period, observation.gameClock].filter(Boolean)
   const suffix = clockParts.length ? ` · ${clockParts.join(' ')}` : ''
-  return `READ #${observation.order}${suffix}`
+  return `Erwartung #${observation.order}${suffix}`
 }
 
 export function removeObservationAt(
@@ -691,7 +707,7 @@ export function computeAnticipationReadResult(
   observations: AnticipationObservation[],
   extras: Partial<Pick<AnticipationReadResult, 'selectedStrongReadDespiteMismatchId' | 'mostHelpfulCueCategory' | 'overconfidenceAssessment' | 'overweightedCueCategory' | 'futureCueCategory' | 'importantAlternativeReadId' | 'strongestTriggerDescription' | 'linearThinkingAssessment' | 'successfulUpdateReadId' | 'heldTooLongReadId' | 'strongestUpdateInfo'>> = {},
 ): AnticipationReadResult {
-  const outcomeMatchDistribution = { matched: 0, partlyMatched: 0, different: 0 }
+  const outcomeMatchDistribution = { matched: 0, partlyMatched: 0, different: 0, unclear: 0 }
   const readQualityDistribution = { wellSupported: 0, partlySupported: 0, weaklySupported: 0, unclear: 0 }
   const confidenceDistribution = { low: 0, medium: 0, high: 0 }
   const cueCategoryCounts: Record<string, number> = {}
@@ -701,6 +717,7 @@ export function computeAnticipationReadResult(
     if (observation.outcomeMatch === 'matched') outcomeMatchDistribution.matched += 1
     if (observation.outcomeMatch === 'partly_matched') outcomeMatchDistribution.partlyMatched += 1
     if (observation.outcomeMatch === 'different') outcomeMatchDistribution.different += 1
+    if (observation.outcomeMatch === 'unclear') outcomeMatchDistribution.unclear += 1
 
     if (observation.readQuality === 'well_supported') readQualityDistribution.wellSupported += 1
     if (observation.readQuality === 'partly_supported') readQualityDistribution.partlySupported += 1
@@ -791,60 +808,65 @@ export function validateAnticipationReadAnswers(
     ? (answers[cfg.logsKey] as AnticipationObservation[])
     : []
   if (observations.length < cfg.minReads) {
-    return `Bitte erfasse mindestens ${cfg.minReads} Reads.`
+    return `Bitte erfasse mindestens ${cfg.minReads} Erwartungen.`
   }
   if (observations.length > cfg.maxReads) {
-    return `Maximal ${cfg.maxReads} Reads.`
+    return `Maximal ${cfg.maxReads} Erwartungen.`
   }
   for (const observation of observations) {
     if (!isCompleteRead(observation, cfg.minCues, cfg.supportsCuePriority, cfg.supportsScenarioBranches, cfg.supportsPredictionUpdate)) {
       if (cfg.supportsPredictionUpdate) {
-        return 'Bitte schließe jeden Read vollständig ab (Erwartung, neue Information, Update-Entscheidung, tatsächliche Aktion, Timing).'
+        return 'Bitte schließe jeden Eintrag vollständig ab (Erwartung, neue Information, Aktualisierungsentscheidung, tatsächliche Aktion, Timing).'
       }
       if (cfg.supportsScenarioBranches) {
-        return 'Bitte schließe jeden Read vollständig ab (Primäre Erwartung, Alternative, Trigger, tatsächliche Aktion, Match, Read Quality, Branch-Check).'
+        return 'Bitte schließe jeden Eintrag vollständig ab (primäre Erwartung, Alternativszenario, Auslöser, tatsächliche Aktion, Übereinstimmung, Begründung, Branch-Nachprüfung).'
       }
       return cfg.supportsCuePriority
-        ? 'Bitte schließe jeden Read vollständig ab (Erwartung, Cue-Gewichtung, tatsächliche Aktion, Match, Read Quality, Cue-Check).'
-        : 'Bitte schließe jeden Read vollständig ab (Erwartung, Cues, tatsächliche Aktion, Match, Read Quality).'
+        ? 'Bitte schließe jeden Eintrag vollständig ab (Erwartung, Hinweisrollen, tatsächliche Aktion, Übereinstimmung, Begründung, Hinweis-Nachprüfung).'
+        : 'Bitte schließe jeden Eintrag vollständig ab (Erwartung, Hinweise, tatsächliche Aktion, Übereinstimmung, Begründung).'
     }
     if (normalizeCues(observation.supportingCues, cfg.maxCues).length < cfg.minCues) {
-      return `Jeder Read braucht mindestens ${cfg.minCues} Cue.`
+      return `Jeder Eintrag braucht mindestens ${cfg.minCues} Hinweis.`
     }
     if ((observation.supportingCues || []).length > cfg.maxCues) {
-      return `Maximal ${cfg.maxCues} Cues pro Read.`
+      return `Maximal ${cfg.maxCues} Hinweise pro Eintrag.`
     }
     if (cfg.supportsScenarioBranches && !canSaveTriggers(observation.branchTriggers, cfg.minTriggers, cfg.maxTriggers)) {
-      return `Jeder Read braucht ${cfg.minTriggers}–${cfg.maxTriggers} Trigger für die Alternative.`
+      return `Jeder Eintrag braucht ${cfg.minTriggers}–${cfg.maxTriggers} Auslöser für das Alternativszenario.`
     }
-    if (cfg.supportsPredictionUpdate && !canSaveUpdateTriggers(observation.updateTriggers, cfg.minUpdateTriggers, cfg.maxUpdateTriggers)) {
-      return 'Jeder Read braucht mindestens eine neue Information als Update-Trigger.'
+    if (cfg.supportsPredictionUpdate) {
+      const decision = String(observation.updateDecision || observation.predictionUpdate?.updateDecision || '')
+      const min = triggersRequiredForDecision(decision) ? Math.max(1, cfg.minUpdateTriggers) : 0
+      const max = Math.max(cfg.maxUpdateTriggers, Math.max(min, 1))
+      if (!canSaveUpdateTriggers(observation.updateTriggers, min, max)) {
+        return 'Bei geänderter Erwartung brauchst du mindestens einen dokumentierten Auslöser (neue sichtbare Information).'
+      }
     }
   }
 
   const used = usedCueCategories(observations)
   if (used.length && !cfg.supportsScenarioBranches && !cfg.supportsPredictionUpdate) {
     const helpful = String(answers[cfg.helpfulCueKey] || '').trim()
-    if (!helpful) return 'Bitte wähle, welcher Cue dir am häufigsten geholfen hat.'
-    if (!used.includes(helpful)) return 'Bitte wähle eine Cue-Art, die du tatsächlich genutzt hast.'
+    if (!helpful) return 'Bitte wähle, welcher Hinweis dir am häufigsten geholfen hat.'
+    if (!used.includes(helpful)) return 'Bitte wähle eine Hinweisart, die du tatsächlich genutzt hast.'
   }
 
   if (cfg.supportsPredictionUpdate) {
     const successId = String(answers[cfg.successfulUpdateKey] || '').trim()
-    if (!successId) return 'Bitte markiere, bei welchem Read du deine Einschätzung erfolgreich angepasst hast – oder keiner / unklar.'
+    if (!successId) return 'Bitte markiere, bei welcher Situation du deine Erwartung aufgrund neuer Information verändert hast – oder keiner / unklar.'
     const readChoices = new Set([
       NONE_REFLECTION_ID,
       UNCLEAR_REFLECTION_ID,
       ...observations.map((item) => item.id),
     ])
     if (!readChoices.has(successId)) {
-      return 'Bitte wähle einen gültigen Read für die Update-Reflexion.'
+      return 'Bitte wähle einen gültigen Eintrag für die veränderte Erwartung.'
     }
 
     const heldId = String(answers[cfg.heldTooLongKey] || '').trim()
-    if (!heldId) return 'Bitte markiere, wann du zu lange an der ersten Erwartung festgehalten hast – oder keiner / unklar.'
+    if (!heldId) return 'Bitte markiere, bei welcher Situation du die Erwartung trotz neuer Information beibehalten hast – oder keiner / unklar.'
     if (!readChoices.has(heldId)) {
-      return 'Bitte wähle einen gültigen Read für das zu lange Festhalten.'
+      return 'Bitte wähle einen gültigen Eintrag für das Beibehalten.'
     }
 
     const usedInfo = usedUpdateTriggerDescriptions(observations)
@@ -860,7 +882,7 @@ export function validateAnticipationReadAnswers(
 
   if (cfg.supportsScenarioBranches) {
     const importantId = String(answers[cfg.importantAlternativeKey] || '').trim()
-    if (!importantId) return 'Bitte markiere, bei welchem Read die Alternative besonders wichtig war – oder keiner / unklar.'
+    if (!importantId) return 'Bitte markiere, bei welcher Erwartung dein Alternativszenario besonders wichtig war – oder keiner / unklar.'
     const importantChoices = new Set([
       NONE_REFLECTION_ID,
       UNCLEAR_REFLECTION_ID,
@@ -894,7 +916,7 @@ export function validateAnticipationReadAnswers(
 
   const mismatchId = String(answers[cfg.strongMismatchKey] || '').trim()
   if (!mismatchId) {
-    return 'Bitte markiere einen gut begründeten Read, der anders ausging – oder wähle keiner / unklar.'
+    return 'Bitte markiere eine Erwartung, bei der die tatsächliche Aktion abwich, die Hinweise aber vor der Aktion sichtbar und konkret waren – oder keiner / unklar.'
   }
   const mismatchChoices = new Set([
     NONE_REFLECTION_ID,

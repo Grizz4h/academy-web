@@ -134,6 +134,7 @@ export function LiveObservationPanel({
     return Array.from({ length: max - min + 1 }, (_, index) => min + index)
   }, [isSeriesPhase, selectedCompetitionPhase])
   const emptySeason = Boolean(league && season && catalog.catalogReady && !catalog.useCatalogFlow)
+  const isTestspiele = league === 'Testspiele'
   const [browseMatchday, setBrowseMatchday] = useState<number | 'other' | null>(null)
   const [hideSpoilers, setHideSpoilers] = useState(true)
   const [teamPicker, setTeamPicker] = useState<TeamPicker>(null)
@@ -488,7 +489,11 @@ export function LiveObservationPanel({
         ) : null}
 
         {emptySeason ? (
-          <p className={styles.emptyNote}>Für diese Saison sind noch keine Spiele verfügbar.</p>
+          <p className={styles.emptyNote}>
+            {isTestspiele
+              ? 'Testspiel — kein Spielplan. Heim- und Auswärtsteam unten wählen.'
+              : 'Für diese Saison sind noch keine Spiele verfügbar.'}
+          </p>
         ) : null}
 
         {catalog.catalogReady && !catalog.useCatalogFlow && competitionConfig && selectedCompetitionPhase ? (
@@ -517,8 +522,9 @@ export function LiveObservationPanel({
               </button>
             </div>
             <p className={styles.emptyNote}>
-              {useSplitSeason ? 'Split-Season' : 'Turnier-Jahr'}
-              {' · kein Spielplan — Teams selbst wählen'}
+              {isTestspiele
+                ? 'Testspiel — Teams selbst wählen (kein importierter Spielplan).'
+                : `${useSplitSeason ? 'Split-Season' : 'Turnier-Jahr'} · kein Spielplan — Teams selbst wählen`}
             </p>
           </div>
         ) : null}

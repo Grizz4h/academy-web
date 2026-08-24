@@ -280,10 +280,12 @@ const PRESSURE_DIMENSIONS = [
 function normalizeSampleFields(drill: any) {
 	const configuredFields = drill?.config?.sample_fields || drill?.config?.diagnosis_fields;
 	if (Array.isArray(configuredFields) && configuredFields.length > 0) {
-		return configuredFields.map((field: any) => ({
-			...field,
-			scoreMap: field.score_map || field.scoreMap || {},
-		}));
+		return configuredFields
+			.filter((field: any) => field && field.hidden !== true && field.legacy !== true)
+			.map((field: any) => ({
+				...field,
+				scoreMap: field.score_map || field.scoreMap || {},
+			}));
 	}
 	return PRESSURE_DIMENSIONS;
 }
@@ -555,9 +557,9 @@ const DEFAULT_PAINT_LAYERS: Record<string, PaintLayer[]> = {
 		{ id: "annotation", label: "Annotation", color: "#38bdf8" },
 	],
 	zone_priority: [
-		{ id: "protected_space", label: "Geschuetzter Raum", color: "#22c55e" },
-		{ id: "danger_space", label: "Gefaehrlicher Raum", color: "#ef4444" },
-		{ id: "accepted_space", label: "Bewusst zugelassener Raum", color: "#facc15" },
+		{ id: "protected_space", label: "Geschützter Raum", color: "#22c55e" },
+		{ id: "danger_space", label: "Raum mit hoher Torgefahr", color: "#ef4444" },
+		{ id: "accepted_space", label: "Weniger priorisierter Raum", color: "#facc15" },
 	],
 };
 
@@ -1882,13 +1884,16 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 	) as Record<string, ConfigurableSegmentZone & { path: string }>;
 
 	const selectionGroups = Array.isArray(config?.selection_groups) ? config.selection_groups : [];
-	const observationFields = Array.isArray(config?.observation_fields) ? config.observation_fields : [];
+	const observationFields = (Array.isArray(config?.observation_fields) ? config.observation_fields : [])
+		.filter((field: any) => field && field.hidden !== true && field.legacy !== true);
+	const observationFieldsProgressive = config?.observation_fields_progressive === true
+		|| config?.observationFieldsProgressive === true;
 	const observationNoteConfig = config?.observation_note || {};
 	const observationNoteKey = observationNoteConfig?.key || "observationNote";
-	const observationNoteLabel = observationNoteConfig?.label || "Woran hast du erkannt, welcher Weg geschlossen und welcher angeboten wurde?";
+	const observationNoteLabel = observationNoteConfig?.label || "Woran hast du erkannt, welcher Weg geschlossen und welcher am ehesten verfügbar war?";
 	const observationNotePlaceholder = observationNoteConfig?.placeholder || "Optional";
 	const observationNoteMaxChars = Number(observationNoteConfig?.max_chars || 600);
-	const conflictHint = String(config?.conflict_hint || "Du hast denselben Weg als primär geschlossen und als am ehesten verfügbar ausgewählt. Prüfe, ob das deine Beobachtung korrekt beschreibt.");
+	const conflictHint = String(config?.conflict_hint || "Du hast denselben Weg als primär geschlossen und als am ehesten verfügbar markiert. Das kann bei einer wechselhaften Szene vorkommen. Prüfe, ob du zwei unterschiedliche Momente derselben Sequenz bewertest.");
 	const conflictHintEnabled = config?.conflict_hint_enabled !== false && !!config?.conflict_hint;
 
 	const missions = Array.isArray(config?.missions) ? config.missions : [];
@@ -2379,9 +2384,19 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 						const fieldKey = String(field?.key || `field_${fieldIdx}`);
 						const fieldLabel = String(field?.label || fieldKey);
 						const fieldHelp = String(field?.help || field?.helper_text || "");
-						const fieldOptions = Array.isArray(field?.options) ? field.options : [];
+						const fieldOptions = (Array.isArray(field?.options) ? field.options : [])
+							.filter((opt: any) => !(opt && (opt.hidden === true || opt.legacy === true)));
 						const isMulti = isObservationFieldMulti(field);
 						if (fieldOptions.length === 0) return null;
+						if (observationFieldsProgressive && fieldIdx > 0) {
+							const prev = observationFields[fieldIdx - 1];
+							const prevKey = String(prev?.key || `field_${fieldIdx - 1}`);
+							const prevIsMulti = isObservationFieldMulti(prev);
+							const prevFilled = prevIsMulti
+								? normalizeSelectionValues(draftObservationFieldValues[prevKey]).length > 0
+								: !!draftObservationFieldValues[prevKey];
+							if (!prevFilled) return null;
+						}
 						const selectedValues = isMulti
 							? normalizeSelectionValues(draftObservationFieldValues[fieldKey])
 							: [];
@@ -2680,7 +2695,7 @@ function RinkZonePriorityObservationDrill({ drill, answers, setAnswers }: any) {
 	const noteMaxChars = Number(config?.note_max_chars || 220);
 	const saveButtonLabel = config?.save_button_label || "Beobachtung speichern";
 	const decisionRule = config?.decision_rule || "Markiere nicht einfach den Ort des Pucks. Markiere den Raum, den die Defensive sichtbar priorisiert schützt.";
-	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const activeFocusTitle = config?.active_focus_title || "Aktiver Fokus";
 	const activeFocusText = config?.active_focus_text || "Beobachte im weiteren Spiel, ob dieselbe Raumpriorität bestehen bleibt oder sich je nach Puckposition und Spielsituation verändert.";
 
 	const updateDraft = (nextDraft: any) => {
@@ -3133,7 +3148,12 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const observationNotePlaceholder = observationNoteConfig?.placeholder || "Optional";
 	const observationNoteMaxChars = Number(observationNoteConfig?.max_chars || 600);
 
-	const observationFields = Array.isArray(config?.observation_fields) ? config.observation_fields : [];
+	const observationFields = (Array.isArray(config?.observation_fields) ? config.observation_fields : [])
+		.filter((field: any) => field && field.hidden !== true && field.legacy !== true);
+	const observationFieldsProgressive = config?.observation_fields_progressive === true
+		|| config?.observationFieldsProgressive === true;
+	const structureFieldsProgressive = config?.structure_fields_progressive === true
+		|| config?.structureFieldsProgressive === true;
 	const markersConfig = Array.isArray(config?.markers) && config.markers.length > 0
 		? config.markers
 		: (config?.marker ? [config.marker] : [{ id: "marker", label: "Marker", required: true }]);
@@ -3195,7 +3215,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const locationLabel = config?.location_label || (isSingleMarkerMode
 		? "Setze den Marker an den Ort, an dem die Defensive von kontrollierter Raumverteidigung zu aktivem Zugriff übergeht."
 		: isDirectionalPathMode
-			? "Setze zuerst den Ausgangspunkt des Puckführers und danach den Punkt, in den die Defensive den Angriff lenkt."
+			? "Setze zuerst den Ausgangspunkt des Puckführers und danach den Punkt, der die sichtbare Lenkungsrichtung markiert."
 			: "Bubble bewegen = Position und Zugriffsort in einer Aktion");
 	const markerHeading = config?.marker_heading || selectionLabel;
 	const markerHint = config?.marker_hint || locationLabel;
@@ -3206,7 +3226,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const saveButtonLabel = config?.save_button_label || "Beobachtung speichern";
 	const savedFeedbackTemplate = config?.saved_feedback_template || "Beobachtung {index} gespeichert";
 
-	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const activeFocusTitle = config?.active_focus_title || "Aktiver Fokus";
 	const activeFocusText = config?.active_focus_text || "Halte weiterhin Ausschau nach erstem defensivem Druck und markiere interessante Szenen im Live-Spiel.";
 	const summaryLayoutStacked = String(config?.summary_layout || "").toLowerCase() === "stacked";
 	const positionsSummaryLabel = config?.positions_summary_label || "Spieler platziert";
@@ -4463,13 +4483,24 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 					{(isSingleMarkerMode || isDirectionalPathMode || isDefensiveStructureMode) && observationFields.map((field: any, fieldIdx: number) => {
 						const fieldKey = String(field?.key || `field_${fieldIdx}`);
 						const fieldLabel = String(field?.label || fieldKey);
-						const fieldOptions = Array.isArray(field?.options) ? field.options : [];
+						const fieldOptions = (Array.isArray(field?.options) ? field.options : [])
+							.filter((opt: any) => !(opt && (opt.hidden === true || opt.legacy === true)));
 						const isMulti = String(field?.type || "").toLowerCase() === "multi_select"
 							|| isMultiSelectionGroup(field);
 						const selectedValues = isMulti
 							? normalizeSelectionValues(draftObservationFieldValues[fieldKey])
 							: [];
 						if (fieldOptions.length === 0) return null;
+						if (observationFieldsProgressive && (isSingleMarkerMode || isDirectionalPathMode || isDefensiveStructureMode) && fieldIdx > 0) {
+							const prev = observationFields[fieldIdx - 1];
+							const prevKey = String(prev?.key || `field_${fieldIdx - 1}`);
+							const prevIsMulti = String(prev?.type || "").toLowerCase() === "multi_select"
+								|| isMultiSelectionGroup(prev);
+							const prevFilled = prevIsMulti
+								? normalizeSelectionValues(draftObservationFieldValues[prevKey]).length > 0
+								: !!draftObservationFieldValues[prevKey];
+							if (!prevFilled) return null;
+						}
 						return (
 							<div key={fieldKey} style={{ marginBottom: "0.55rem" }}>
 								<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{fieldLabel}</label>
@@ -4535,7 +4566,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						</div>
 					)}
 
-					{isDefensiveStructureMode && structuralFunctionOptions.length > 0 && (
+					{isDefensiveStructureMode && structuralFunctionOptions.length > 0 && (!structureFieldsProgressive || !!draftStructureRating) && (
 						<div style={{ marginBottom: "0.55rem" }}>
 							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>{structuralFunctionLabel}</label>
 							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
@@ -4563,7 +4594,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						</div>
 					)}
 
-					{isDefensiveStructureMode && keyStructureElementOptions.length > 0 && (
+					{isDefensiveStructureMode && keyStructureElementOptions.length > 0 && (!structureFieldsProgressive || (!!draftStructureRating && !!draftStructuralFunction)) && (
 						<div style={{ marginBottom: "0.55rem" }}>
 							<label style={{ display: "block", marginBottom: "0.28rem", fontWeight: 600 }}>
 								{keyStructureElementLabel}
@@ -5095,7 +5126,13 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 	const secondaryDecisionLabel = secondaryDecisionConfig?.label || "Welche Funktion übernimmt die Unterstützung?";
 	const secondaryDecisionOptions = Array.isArray(secondaryDecisionConfig?.options) ? secondaryDecisionConfig.options : [];
 	const secondaryDecisionShowWhen = Array.isArray(secondaryDecisionConfig?.show_when_decision_in) ? secondaryDecisionConfig.show_when_decision_in : [];
-	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const roleDecisionConfig = config?.role_decision || {};
+	const roleDecisionKey = roleDecisionConfig?.key || "role_decision";
+	const roleDecisionLabel = roleDecisionConfig?.label || "Rollenperspektive (optional)";
+	const roleDecisionOptions = Array.isArray(roleDecisionConfig?.options) ? roleDecisionConfig.options : [];
+	const roleDecisionShowWhen = Array.isArray(roleDecisionConfig?.show_when_decision_in) ? roleDecisionConfig.show_when_decision_in : [];
+	const roleDecisionHint = roleDecisionConfig?.hint || "";
+	const activeFocusTitle = config?.active_focus_title || "Aktiver Fokus";
 	const activeFocusText = config?.active_focus_text || "";
 
 	const currentIndex = logs.length;
@@ -5107,6 +5144,7 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 	const draftDecision = safeAnswers.__observation_log_draft_decision || "";
 	const draftReflection = safeAnswers.__observation_log_draft_reflection || "";
 	const draftSecondaryDecision = safeAnswers.__observation_log_draft_secondary_decision || "";
+	const draftRoleDecision = safeAnswers.__observation_log_draft_role_decision || "";
 	const isComplete = logs.length >= targetCount;
 	const progressPercent = targetCount > 0 ? Math.min(100, Math.round((logs.length / targetCount) * 100)) : 0;
 	const decisionCounts = decisionOptions.reduce((acc: Record<string, number>, opt: string) => {
@@ -5117,6 +5155,9 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 	const showSecondaryDecision = !!draftDecision
 		&& secondaryDecisionOptions.length > 0
 		&& (secondaryDecisionShowWhen.length === 0 || secondaryDecisionShowWhen.includes(draftDecision));
+	const showRoleDecision = !!draftDecision
+		&& roleDecisionOptions.length > 0
+		&& (roleDecisionShowWhen.length === 0 || roleDecisionShowWhen.includes(draftDecision));
 
 	const updateDraft = (next: any) => {
 		setAnswers({
@@ -5133,6 +5174,7 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 			mission_prompt: currentMission?.prompt || "",
 			[decisionKey]: draftDecision,
 			...(showSecondaryDecision && draftSecondaryDecision ? { [secondaryDecisionKey]: draftSecondaryDecision } : {}),
+			...(showRoleDecision && draftRoleDecision ? { [roleDecisionKey]: draftRoleDecision } : {}),
 			[reflectionKey]: draftReflection.trim(),
 		};
 
@@ -5141,6 +5183,7 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 			[logsKey]: [...logs, nextLog],
 			__observation_log_draft_decision: "",
 			__observation_log_draft_secondary_decision: "",
+			__observation_log_draft_role_decision: "",
 			__observation_log_draft_reflection: "",
 		});
 	};
@@ -5203,9 +5246,12 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 											const nextDecision = e.target.value;
 											const shouldKeepSecondary = secondaryDecisionOptions.length > 0
 												&& (secondaryDecisionShowWhen.length === 0 || secondaryDecisionShowWhen.includes(nextDecision));
+											const shouldKeepRole = roleDecisionOptions.length > 0
+												&& (roleDecisionShowWhen.length === 0 || roleDecisionShowWhen.includes(nextDecision));
 											updateDraft({
 												__observation_log_draft_decision: nextDecision,
 												__observation_log_draft_secondary_decision: shouldKeepSecondary ? draftSecondaryDecision : "",
+												__observation_log_draft_role_decision: shouldKeepRole ? draftRoleDecision : "",
 											});
 										}}
 									/>
@@ -5227,6 +5273,31 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 											value={opt}
 											checked={draftSecondaryDecision === opt}
 											onChange={(e) => updateDraft({ __observation_log_draft_secondary_decision: e.target.value })}
+										/>
+										<span style={{ fontSize: "0.9rem" }}>{opt}</span>
+									</label>
+								))}
+							</div>
+						</div>
+					)}
+
+					{showRoleDecision && (
+						<div style={{ marginBottom: "0.6rem" }}>
+							<label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 600 }}>{roleDecisionLabel}</label>
+							{roleDecisionHint && (
+								<p style={{ margin: "0 0 0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.62)", lineHeight: 1.35 }}>
+									{roleDecisionHint}
+								</p>
+							)}
+							<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+								{roleDecisionOptions.map((opt: string) => (
+									<label key={`role-${opt}`} style={{ display: "flex", alignItems: "center", gap: "0.4rem", lineHeight: 1.15 }}>
+										<input
+											type="radio"
+											name="observation_log_role_decision"
+											value={opt}
+											checked={draftRoleDecision === opt}
+											onChange={(e) => updateDraft({ __observation_log_draft_role_decision: e.target.value })}
 										/>
 										<span style={{ fontSize: "0.9rem" }}>{opt}</span>
 									</label>
@@ -5315,6 +5386,11 @@ function ObservationLogDrill({ drill, answers, setAnswers }: any) {
 									{secondaryDecisionLabel}: {log?.[secondaryDecisionKey]}
 								</div>
 							)}
+							{log?.[roleDecisionKey] && (
+								<div style={{ marginTop: "0.15rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.68)", lineHeight: 1.35 }}>
+									{roleDecisionLabel}: {log?.[roleDecisionKey]}
+								</div>
+							)}
 							{log?.[reflectionKey] && (
 								<div style={{ marginTop: "0.2rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.35 }}>
 									{log[reflectionKey]}
@@ -5385,59 +5461,131 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 	const safeAnswers = answers || {};
 	const config = drill?.config || {};
 
-	const observationPhaseTitle = config?.observation_phase?.title || "Beobachtungsphase";
-	const observationPhaseText = config?.observation_phase?.text || "Beobachte mehrere Situationen und suche wiederkehrende Muster.";
-	const observationPhaseHint = config?.observation_phase?.hint || "Achte darauf, wie das Team Druck erzeugt, Räume kontrolliert und auf gegnerische Aktionen reagiert.";
+	const observationPhaseTitle = config?.observation_phase?.title || "Stichprobe prüfen";
+	const observationPhaseText = config?.observation_phase?.text || "Schätze nur, was in deinen heutigen Beobachtungen sichtbar war.";
+	const observationPhaseHint = config?.observation_phase?.hint || "Mehrere Merkmale können gleichzeitig auftreten — bewerte sie getrennt.";
 
-	const analysisPhaseTitle = config?.analysis_phase?.title || "Defensive Muster";
-	const analysisPhaseText = config?.analysis_phase?.text || "Welches wiederkehrende Muster passt am besten zu deinen Beobachtungen?";
+	const analysisPhaseTitle = config?.analysis_phase?.title || "Beobachtungstendenzen";
+	const analysisPhaseText = config?.analysis_phase?.text || "Wie häufig war jedes Merkmal in deiner heutigen Stichprobe sichtbar?";
 
-	const reflectionPhaseTitle = config?.reflection_phase?.title || "Warum?";
-	const reflectionPhaseText = config?.reflection_phase?.text || "Welche Beobachtungen unterstützen deine Einschätzung?";
+	const reflectionPhaseTitle = config?.reflection_phase?.title || "Kurz reflektieren";
+	const reflectionPhaseText = config?.reflection_phase?.text || "Prüfe, ob deine Einschätzung zur Stichprobe passt.";
 
-	const identityConfig = config?.identity || {};
-	const identityKey = identityConfig?.key || "patternIdentity";
-	const identityLabel = identityConfig?.label || "Welches defensive Muster beschreibt deine Beobachtungen am besten?";
-	const identityOptions = Array.isArray(identityConfig?.options) ? identityConfig.options : [];
-	const summaryPatternLabel = config?.summary_pattern_label || "Defensives Muster";
+	const tendenciesConfig = config?.tendencies || {};
+	const tendenciesKey = tendenciesConfig?.key || "observedDefensiveTendencies";
+	const tendenciesLabel = tendenciesConfig?.label || "Defensive Beobachtungstendenzen";
+	const dimensions = Array.isArray(tendenciesConfig?.dimensions) ? tendenciesConfig.dimensions : [];
+	const frequencyOptions = Array.isArray(tendenciesConfig?.frequency_options) ? tendenciesConfig.frequency_options : [
+		{ value: "frequent", label: "häufig sichtbar" },
+		{ value: "partial", label: "teilweise sichtbar" },
+		{ value: "rare", label: "selten sichtbar" },
+		{ value: "unclear", label: "nicht sicher beurteilbar" },
+	];
 
-	const supportConfig = config?.supporting_observations || {};
-	const supportKey = supportConfig?.key || "supportingObservations";
-	const supportLabel = supportConfig?.label || "Welche Beobachtung unterstützt deine Einschätzung?";
-	const supportOptions = Array.isArray(supportConfig?.options) ? supportConfig.options : [];
+	const sampleSizeConfig = config?.sample_size || {};
+	const sampleSizeKey = sampleSizeConfig?.key || "observationSampleSize";
+	const sampleSizeLabel = sampleSizeConfig?.label || "Ungefähre Anzahl der Beobachtungen";
+	const sampleSizeOptions = Array.isArray(sampleSizeConfig?.options) ? sampleSizeConfig.options : [];
 
 	const changedConfig = config?.changed_during_observation || {};
 	const changedKey = changedConfig?.key || "changedDuringObservation";
-	const changedLabel = changedConfig?.label || "Hat sich deine Einschätzung während der Beobachtung verändert?";
+	const changedLabel = changedConfig?.label || "Hat sich deine Einschätzung während der Auswertung verändert?";
 	const changedOptions = Array.isArray(changedConfig?.options) ? changedConfig.options : [];
 
 	const noteConfig = config?.note || {};
 	const noteKey = noteConfig?.key || "note";
 	const noteLabel = noteConfig?.label || "Optionale Notiz";
-	const notePlaceholder = noteConfig?.placeholder || "Optional: kurze Beobachtung";
+	const notePlaceholder = noteConfig?.placeholder || "Optional: kurze Beobachtung zur Stichprobe";
 	const noteMaxChars = Number(noteConfig?.max_chars || 500);
 
-	const summaryTitle = config?.summary_title || "Deine Einschätzung";
-	const activeFocusTitle = config?.active_focus_title || "Active Focus";
+	const summaryTitle = config?.summary_title || "Zusammenfassung der Stichprobe";
+	const summaryDisclaimer = config?.summary_disclaimer
+		|| "Daraus lässt sich eine Beobachtungstendenz für diese Szenen ableiten, aber keine dauerhafte defensive Identität des Teams.";
+	const activeFocusTitle = config?.active_focus_title || "Aktiver Fokus";
 	const activeFocusText = config?.active_focus_text || "";
 	const createdAtKey = config?.created_at_key || "createdAt";
+	const primarySignalKey = config?.primary_signal_key || "tendencyPrimarySignal";
+	const legacyIdentityKey = config?.legacy_identity_key || "patternIdentity";
 
-	const identityValue = safeAnswers?.[identityKey] || "";
-	const supportValues = Array.isArray(safeAnswers?.[supportKey]) ? safeAnswers[supportKey] : [];
+	const rawTendencies = safeAnswers?.[tendenciesKey];
+	const tendencies: Record<string, string> = rawTendencies && typeof rawTendencies === "object" && !Array.isArray(rawTendencies)
+		? rawTendencies
+		: {};
+	const sampleSizeValue = safeAnswers?.[sampleSizeKey] || "";
 	const changedValue = safeAnswers?.[changedKey] || "";
 	const noteValue = safeAnswers?.[noteKey] || "";
+	const legacyIdentity = safeAnswers?.[legacyIdentityKey] || "";
 
-	const isComplete = !!identityValue && supportValues.length > 0 && !!changedValue;
+	const allDimensionsRated = dimensions.length > 0
+		&& dimensions.every((dim: any) => {
+			const id = dim?.id;
+			return id && typeof tendencies[id] === "string" && tendencies[id].length > 0;
+		});
+	const isComplete = allDimensionsRated && !!changedValue;
+
+	const frequencyLabel = (value: string) => {
+		const found = frequencyOptions.find((opt: any) => opt?.value === value);
+		return found?.label || value;
+	};
+
+	const derivePrimarySignal = (ratings: Record<string, string>) => {
+		const unclearCount = dimensions.filter((dim: any) => ratings[dim?.id] === "unclear").length;
+		if (unclearCount >= Math.ceil(dimensions.length / 2)) return "many_unclear";
+		const priorityFreq = ["frequent", "partial", "rare"] as const;
+		for (const freq of priorityFreq) {
+			for (const dim of dimensions) {
+				const id = dim?.id;
+				if (id && ratings[id] === freq) return `${id}:${freq}`;
+			}
+		}
+		return "many_unclear";
+	};
+
+	const buildSummarySentences = () => {
+		const sentences: string[] = [];
+		const byFreq: Record<string, string[]> = { frequent: [], partial: [], rare: [], unclear: [] };
+		for (const dim of dimensions) {
+			const id = dim?.id;
+			const freq = id ? tendencies[id] : "";
+			if (!id || !freq) continue;
+			const label = dim?.label || id;
+			if (byFreq[freq]) byFreq[freq].push(label);
+		}
+		if (byFreq.frequent.length) {
+			sentences.push(`${byFreq.frequent.join(", ")} ${byFreq.frequent.length === 1 ? "war" : "waren"} in der heutigen Stichprobe häufig sichtbar.`);
+		}
+		if (byFreq.partial.length) {
+			sentences.push(`${byFreq.partial.join(", ")} ${byFreq.partial.length === 1 ? "war" : "waren"} teilweise sichtbar.`);
+		}
+		if (byFreq.rare.length) {
+			sentences.push(`${byFreq.rare.join(", ")} ${byFreq.rare.length === 1 ? "war" : "waren"} selten sichtbar.`);
+		}
+		if (byFreq.unclear.length) {
+			sentences.push(`Für ${byFreq.unclear.join(", ")} reichten die bisherigen Beobachtungen noch nicht aus.`);
+		}
+		if (sampleSizeValue) {
+			const sizeOpt = sampleSizeOptions.find((opt: any) => opt?.value === sampleSizeValue);
+			sentences.push(`Zugrunde liegende Beobachtungen / Sequenzen: ${sizeOpt?.label || sampleSizeValue}.`);
+		}
+		return sentences;
+	};
 
 	useEffect(() => {
-		if (!isComplete || safeAnswers?.[createdAtKey]) return;
+		if (!isComplete) return;
+		const nextSignal = derivePrimarySignal(tendencies);
+		const patch: Record<string, any> = {};
+		if (safeAnswers?.[primarySignalKey] !== nextSignal) {
+			patch[primarySignalKey] = nextSignal;
+		}
+		if (!safeAnswers?.[createdAtKey]) {
+			patch[createdAtKey] = new Date().toISOString();
+		}
+		if (Object.keys(patch).length === 0) return;
 		setAnswers({
 			...safeAnswers,
-			[createdAtKey]: new Date().toISOString(),
+			...patch,
 		});
-	}, [createdAtKey, isComplete, safeAnswers, setAnswers]);
-
-	const selectedIdentity = identityOptions.find((opt: any) => opt?.value === identityValue);
+	}, [isComplete, tendencies, primarySignalKey, createdAtKey, safeAnswers, setAnswers, dimensions]);
 
 	const updateValue = (key: string, value: any) => {
 		setAnswers({
@@ -5446,13 +5594,24 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 		});
 	};
 
-	const toggleSupportValue = (value: string) => {
-		const hasValue = supportValues.includes(value);
-		const nextValues = hasValue
-			? supportValues.filter((item: string) => item !== value)
-			: [...supportValues, value];
-		updateValue(supportKey, nextValues);
+	const updateTendency = (dimensionId: string, frequency: string) => {
+		const nextTendencies = {
+			...tendencies,
+			[dimensionId]: frequency,
+		};
+		setAnswers({
+			...safeAnswers,
+			[tendenciesKey]: nextTendencies,
+			[primarySignalKey]: derivePrimarySignal(nextTendencies),
+		});
 	};
+
+	const summarySentences = allDimensionsRated ? buildSummarySentences() : [];
+
+	// Legacy single-pattern answers: keep readable, do not auto-fill dimensions
+	const legacyHint = legacyIdentity && !allDimensionsRated
+		? "Frühere Einzelauswahl (Legacy) erkannt. Bitte die fünf Dimensionen neu einschätzen — alte Werte werden nicht automatisch übernommen."
+		: "";
 
 	return (
 		<div className="card">
@@ -5469,37 +5628,42 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 				<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>👀 {observationPhaseTitle}</h4>
 				<p style={{ marginTop: 0, marginBottom: "0.4rem", color: "rgba(255,255,255,0.82)", lineHeight: 1.45 }}>{observationPhaseText}</p>
 				<p style={{ margin: 0, color: "rgba(255,255,255,0.7)", fontSize: "0.86rem", lineHeight: 1.4 }}>{observationPhaseHint}</p>
+				{legacyHint && (
+					<p style={{ margin: "0.55rem 0 0", color: "rgba(251,191,36,0.92)", fontSize: "0.84rem", lineHeight: 1.4 }}>{legacyHint}</p>
+				)}
 			</section>
 
 			<section style={{ marginBottom: "0.75rem", padding: "0.85rem", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px" }}>
 				<h4 style={{ marginTop: 0, marginBottom: "0.3rem" }}>🧭 {analysisPhaseTitle}</h4>
 				<p style={{ marginTop: 0, marginBottom: "0.55rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{analysisPhaseText}</p>
-				<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>{identityLabel}</label>
-				<div style={{ display: "grid", gap: "0.45rem" }}>
-					{identityOptions.map((opt: any) => {
-						const checked = identityValue === opt?.value;
-						const markers = Array.isArray(opt?.markers) ? opt.markers : [];
+				<p style={{ marginTop: 0, marginBottom: "0.65rem", fontWeight: 600 }}>{tendenciesLabel}</p>
+				<div style={{ display: "grid", gap: "0.7rem" }}>
+					{dimensions.map((dim: any) => {
+						const id = dim?.id;
+						if (!id) return null;
+						const selected = tendencies[id] || "";
 						return (
-							<label key={opt?.value} style={{ display: "block", padding: "0.55rem 0.6rem", borderRadius: "6px", border: checked ? "1px solid rgba(45,212,191,0.7)" : "1px solid rgba(255,255,255,0.15)", background: checked ? "rgba(20,184,166,0.12)" : "rgba(255,255,255,0.02)", cursor: "pointer" }}>
-								<div style={{ display: "flex", alignItems: "flex-start", gap: "0.45rem" }}>
-									<input
-										type="radio"
-										name="pattern_identity"
-										value={opt?.value}
-										checked={checked}
-										onChange={(e) => updateValue(identityKey, e.target.value)}
-									/>
-									<div>
-										<div style={{ fontWeight: 600, color: "#f7f7ff" }}>{opt?.label || opt?.value}</div>
-										{opt?.description && <div style={{ marginTop: "0.2rem", color: "rgba(255,255,255,0.74)", fontSize: "0.84rem", lineHeight: 1.35 }}>{opt.description}</div>}
-										{markers.length > 0 && (
-											<ul style={{ margin: "0.3rem 0 0", paddingLeft: "1rem", color: "rgba(255,255,255,0.68)", fontSize: "0.82rem", lineHeight: 1.35 }}>
-												{markers.map((marker: string) => (<li key={`${opt?.value}-${marker}`}>{marker}</li>))}
-											</ul>
-										)}
-									</div>
+							<div key={id} style={{ padding: "0.6rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.02)" }}>
+								<div style={{ fontWeight: 600, color: "#f7f7ff", marginBottom: "0.2rem" }}>{dim?.label || id}</div>
+								{dim?.description && (
+									<div style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.82rem", lineHeight: 1.35, marginBottom: "0.35rem" }}>{dim.description}</div>
+								)}
+								<div style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.82)", marginBottom: "0.35rem" }}>{dim?.prompt || "Wie häufig sichtbar?"}</div>
+								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+									{frequencyOptions.map((opt: any) => (
+										<label key={`${id}-${opt?.value}`} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+											<input
+												type="radio"
+												name={`tendency_${id}`}
+												value={opt?.value}
+												checked={selected === opt?.value}
+												onChange={() => updateTendency(id, opt?.value)}
+											/>
+											<span style={{ fontSize: "0.9rem" }}>{opt?.label || opt?.value}</span>
+										</label>
+									))}
 								</div>
-							</label>
+							</div>
 						);
 					})}
 				</div>
@@ -5509,24 +5673,29 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 				<h4 style={{ marginTop: 0, marginBottom: "0.3rem" }}>🧩 {reflectionPhaseTitle}</h4>
 				<p style={{ marginTop: 0, marginBottom: "0.55rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{reflectionPhaseText}</p>
 
-				<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>{supportLabel}</label>
-				<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", marginBottom: "0.65rem" }}>
-					{supportOptions.map((opt: any) => {
-						const value = typeof opt === "string" ? opt : opt?.value;
-						const label = typeof opt === "string" ? opt : (opt?.label || opt?.value);
-						if (!value) return null;
-						return (
-							<label key={`support-${value}`} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-								<input
-									type="checkbox"
-									checked={supportValues.includes(value)}
-									onChange={() => toggleSupportValue(value)}
-								/>
-								<span style={{ fontSize: "0.9rem" }}>{label}</span>
-							</label>
-						);
-					})}
-				</div>
+				{sampleSizeOptions.length > 0 && (
+					<div style={{ marginBottom: "0.65rem" }}>
+						<label style={{ display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>{sampleSizeLabel}</label>
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+							{sampleSizeOptions.map((opt: any) => {
+								const value = opt?.value;
+								if (!value) return null;
+								return (
+									<label key={`sample-size-${value}`} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+										<input
+											type="radio"
+											name="observation_sample_size"
+											value={value}
+											checked={sampleSizeValue === value}
+											onChange={(e) => updateValue(sampleSizeKey, e.target.value)}
+										/>
+										<span style={{ fontSize: "0.9rem" }}>{opt?.label || value}</span>
+									</label>
+								);
+							})}
+						</div>
+					</div>
+				)}
 
 				{changedOptions.length > 0 && (
 					<div style={{ marginBottom: "0.65rem" }}>
@@ -5574,23 +5743,28 @@ function PatternReflectionObservationDrill({ drill, answers, setAnswers }: any) 
 					/>
 				</div>
 
-				{identityValue && (
+				{allDimensionsRated && (
 					<section style={{ marginTop: "0.7rem", padding: "0.7rem", borderRadius: "6px", border: "1px solid rgba(45,212,191,0.36)", background: "rgba(20,184,166,0.1)" }}>
 						<h4 style={{ marginTop: 0, marginBottom: "0.35rem", color: "#99f6e4" }}>✓ {summaryTitle}</h4>
-						<div style={{ marginBottom: "0.35rem", color: "rgba(240,253,250,0.92)", lineHeight: 1.4 }}>
-							<strong>{summaryPatternLabel}:</strong><br />
-							{selectedIdentity?.label || identityValue}
+						<div style={{ display: "grid", gap: "0.35rem", marginBottom: "0.55rem" }}>
+							{dimensions.map((dim: any) => {
+								const id = dim?.id;
+								if (!id) return null;
+								return (
+									<div key={`summary-dim-${id}`} style={{ color: "rgba(240,253,250,0.92)", fontSize: "0.88rem", lineHeight: 1.35 }}>
+										<strong>{dim?.label || id}:</strong> {frequencyLabel(tendencies[id])}
+									</div>
+								);
+							})}
 						</div>
-						<div style={{ color: "rgba(240,253,250,0.9)", lineHeight: 1.4 }}>
-							<strong>Begründung:</strong>
-							<div style={{ marginTop: "0.25rem", display: "grid", gap: "0.15rem" }}>
-								{supportValues.length > 0 ? supportValues.map((value: string) => {
-									const found = supportOptions.find((opt: any) => (typeof opt === "string" ? opt : opt?.value) === value);
-									const label = typeof found === "string" ? found : (found?.label || value);
-									return <div key={`summary-support-${value}`}>✓ {label}</div>;
-								}) : <div>Keine Begründung ausgewählt.</div>}
-							</div>
-						</div>
+						{summarySentences.map((sentence, idx) => (
+							<p key={`summary-sentence-${idx}`} style={{ margin: idx === 0 ? "0 0 0.35rem" : "0 0 0.35rem", color: "rgba(240,253,250,0.9)", lineHeight: 1.45 }}>
+								{sentence}
+							</p>
+						))}
+						<p style={{ margin: "0.45rem 0 0", color: "rgba(153,246,228,0.95)", fontSize: "0.84rem", lineHeight: 1.4 }}>
+							{summaryDisclaimer}
+						</p>
 					</section>
 				)}
 
@@ -5823,12 +5997,22 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 
 				{showForm && canAddMore && (
 					<div style={{ marginBottom: "0.75rem", padding: "0.85rem", border: "1px solid rgba(81,145,162,0.45)", borderRadius: "6px", background: "rgba(81,145,162,0.08)" }}>
-						{sampleFields.map((field: any) => (
+						{sampleFields.map((field: any, fieldIdx: number) => {
+							const progressive = drill?.config?.sample_fields_progressive === true
+								|| drill?.config?.sampleFieldsProgressive === true;
+							if (progressive && fieldIdx > 0) {
+								const prev = sampleFields[fieldIdx - 1];
+								if (!form[prev.key]) return null;
+							}
+							const fieldOptions = (Array.isArray(field.options) ? field.options : [])
+								.filter((opt: any) => !(opt && (opt.hidden === true || opt.legacy === true)));
+							if (fieldOptions.length === 0) return null;
+							return (
 							<div key={field.key} style={{ marginBottom: "0.85rem" }}>
 								<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{field.label}</label>
 								{field.question && <p style={{ marginTop: 0, marginBottom: "0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.65)" }}>{field.question}</p>}
 								<div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-									{field.options.map((opt: any) => (
+									{fieldOptions.map((opt: any) => (
 										<label key={optionValue(opt)} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.1rem" }}>
 											<span style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
 												<input
@@ -5849,7 +6033,8 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 									))}
 								</div>
 							</div>
-						))}
+							);
+						})}
 
 						<div style={{ marginBottom: "0.85rem" }}>
 							<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{noteLabel}</label>
@@ -6005,14 +6190,16 @@ function PressureDiagnosisCheckin({ drill, answers, setAnswers }: any) {
 
 // ----------------------------- PERIOD CHECKIN -----------------------------
 export function PeriodCheckin({ drill, answers, setAnswers }: any) {
-	const questions = drill?.config?.questions || [];
+	const questions = (drill?.config?.questions || []).filter((q: any) => q && q.hidden !== true && q.legacy !== true);
 	const safeAnswers = answers || {};
 	const optionLayout = String(drill?.config?.option_layout || "inline");
 	const useOptionCards = optionLayout === "cards";
 	const summaryWhenComplete = drill?.config?.summary_when_complete === true;
 	const sentenceHelpers = drill?.config?.sentence_helpers || null;
 	const normalizeOptions = (options: any[]) =>
-		(options || []).map((opt: any) => {
+		(options || [])
+			.filter((opt: any) => !(opt && typeof opt === "object" && (opt.hidden === true || opt.legacy === true)))
+			.map((opt: any) => {
 			if (typeof opt === "string") {
 				return { value: opt, label: opt, description: undefined as string | undefined, phrase: undefined as string | undefined };
 			}

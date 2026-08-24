@@ -1,9 +1,11 @@
 import {
   DEFAULT_CHANGE_MAGNITUDE_OPTIONS,
+  DEFAULT_COMPARABILITY_OPTIONS,
   DEFAULT_CONFIDENCE_OPTIONS,
   DEFAULT_DECISION_OPTIONS,
   DEFAULT_POSITIONING_OPTIONS,
   DEFAULT_PRESSURE_OPTIONS,
+  DEFAULT_PRIMARY_CHANGE_OPTIONS,
   DEFAULT_SPACE_PRIORITY_OPTIONS,
   DEFAULT_STATE_FIELDS,
   labelForOption,
@@ -105,28 +107,31 @@ export function resolveBeforeAfterCompareConfig(raw: Record<string, unknown> = {
     changeMagnitudeKey: String(raw.change_magnitude_key || raw.changeMagnitudeKey || 'changeMagnitude'),
     changeSummaryKey: String(raw.change_summary_key || raw.changeSummaryKey || 'changeSummary'),
     confidenceKey: String(raw.confidence_key || raw.confidenceKey || 'confidence'),
+    comparabilityKey: String(raw.comparability_key || raw.comparabilityKey || 'comparabilityRating'),
+    comparabilityLimitKey: String(raw.comparability_limit_key || raw.comparabilityLimitKey || 'comparabilityLimit'),
     stateFields,
     requirePrimaryChange: raw.require_primary_change !== false && raw.requirePrimaryChange !== false,
     requireSummary: raw.require_summary !== false && raw.requireSummary !== false,
-    requireConfidence: raw.require_confidence !== false && raw.requireConfidence !== false,
+    requireConfidence: raw.require_confidence === true || raw.requireConfidence === true,
+    requireComparability: raw.require_comparability !== false && raw.requireComparability !== false,
     summaryMinChars: Math.max(1, Number(raw.summary_min_chars || raw.summaryMinChars || 20)),
-    beforeTitle: String(raw.before_title || raw.beforeTitle || 'Vorher-Segment beobachten'),
-    afterTitle: String(raw.after_title || raw.afterTitle || 'Nachher-Segment beobachten'),
+    beforeTitle: String(raw.before_title || raw.beforeTitle || 'Ausgangsbeobachtungen'),
+    afterTitle: String(raw.after_title || raw.afterTitle || 'Spätere Beobachtungen'),
     compareTitle: String(raw.compare_title || raw.compareTitle || 'Vorher vs. Nachher'),
     similarSituationsHint: String(
       raw.similar_situations_hint
         || raw.similarSituationsHint
-        || 'Du brauchst nicht exakt dieselbe Spielsituation. Aber Vorher und Nachher müssen ähnlich genug sein, dass der Unterschied sinnvoll vergleichbar ist.',
+        || 'Dokumentiere Vergleichbarkeit über Spielphase, Zone, numerische Situation, Puckbesitz, Gegnerdruck, Rollen und Spielkontext.',
     ),
     decisionRule: String(
       raw.decision_rule
         || raw.decisionRule
-        || 'Beschreibe zuerst die Veränderung. Erkläre sie noch nicht.',
+        || 'Beschreibe zuerst die Veränderung. Erkläre sie noch nicht. Keine klare Veränderung ist ein gültiges Ergebnis.',
     ),
     comparisonRule: String(
       raw.comparison_rule
         || raw.comparisonRule
-        || 'Vergleiche nicht einfach zwei unterschiedliche Szenen. Vergleiche dieselbe Art von Problem zu zwei verschiedenen Zeitpunkten.',
+        || 'Vergleiche dieselbe Art von Situation zu zwei verschiedenen Zeitpunkten und dokumentiere die Vergleichbarkeit.',
     ),
     examplesHelp: resolveExamplesHelp(raw),
     submitBeforeLabel: String(raw.submit_before_label || raw.submitBeforeLabel || 'Vorher erfasst → Nachher beobachten'),
@@ -215,8 +220,9 @@ export function isCompareStateComplete(
 
 export function primaryChangeOptionsForSummary(summary: BeforeAfterCompareSummary): CompareFieldOption[] {
   const base = [
-    { value: 'no_clear_change', label: 'Keine klare relevante Veränderung' },
-    { value: 'unclear', label: 'Unklar' },
+    { value: 'no_clear_change', label: 'Keine klare Veränderung erkennbar' },
+    { value: 'situations_not_comparable', label: 'Situationen nicht ausreichend vergleichbar' },
+    { value: 'unclear', label: 'Nicht sicher beurteilbar' },
   ]
 
   const changed = summary.comparisons
@@ -240,6 +246,14 @@ export function getConfidenceOptions(): CompareFieldOption[] {
   return DEFAULT_CONFIDENCE_OPTIONS
 }
 
+export function getComparabilityOptions(): CompareFieldOption[] {
+  return DEFAULT_COMPARABILITY_OPTIONS
+}
+
+export function getPrimaryChangeOptions(): CompareFieldOption[] {
+  return DEFAULT_PRIMARY_CHANGE_OPTIONS
+}
+
 export function validateBeforeAfterCompareAnswers(
   cfg: BeforeAfterCompareConfig,
   answers: Record<string, unknown>,
@@ -248,29 +262,48 @@ export function validateBeforeAfterCompareAnswers(
   const after = (answers[cfg.afterKey] || {}) as CompareState
 
   if (!isCompareStateComplete(before, cfg.stateFields)) {
-    return 'Bitte erfasse zuerst den Vorher-Zustand vollständig.'
+    return 'Bitte erfasse zuerst die Ausgangsbeobachtungen vollständig.'
   }
   if (!isCompareStateComplete(after, cfg.stateFields)) {
-    return 'Bitte erfasse den Nachher-Zustand vollständig.'
+    return 'Bitte erfasse die späteren Beobachtungen vollständig.'
+  }
+
+  if (cfg.requireComparability && !answers[cfg.comparabilityKey]) {
+    return 'Bitte bewerte, wie vergleichbar die Situationen waren.'
+  }
+
+  const comparability = String(answers[cfg.comparabilityKey] || '')
+  if (comparability === 'partly_comparable') {
+    const limit = String(answers[cfg.comparabilityLimitKey] || '').trim()
+    if (!limit) {
+      return 'Bei teilweise vergleichbar: bitte dokumentiere die Vergleichsgrenze.'
+    }
   }
 
   if (cfg.requirePrimaryChange && !answers[cfg.primaryChangeKey]) {
-    return 'Bitte wähle, welche Veränderung taktisch am relevantesten ist.'
+    return 'Bitte wähle, welche Veränderung am relevantesten ist – oder dass keine klare Veränderung erkennbar ist.'
   }
 
-  if (cfg.requireSummary) {
+  const primary = String(answers[cfg.primaryChangeKey] || '')
+  const skipChangeDetail = primary === 'no_clear_change'
+    || primary === 'situations_not_comparable'
+    || primary === 'unclear'
+    || comparability === 'not_comparable'
+    || comparability === 'not_assessable'
+
+  if (!skipChangeDetail && cfg.requireSummary) {
     const summary = String(answers[cfg.changeSummaryKey] || '').trim()
     if (!summary || summary.length < cfg.summaryMinChars) {
       return 'Bitte beschreibe die Veränderung in einem Vorher–Nachher-Satz.'
     }
   }
 
-  if (cfg.requireConfidence && !answers[cfg.confidenceKey]) {
-    return 'Bitte gib an, wie sicher du bei diesem Vergleich bist.'
+  if (!skipChangeDetail && !answers[cfg.changeMagnitudeKey]) {
+    return 'Bitte bewerte, wie deutlich der Unterschied ist.'
   }
 
-  if (!answers[cfg.changeMagnitudeKey]) {
-    return 'Bitte bewerte, wie deutlich der Unterschied ist.'
+  if (cfg.requireConfidence && !answers[cfg.confidenceKey]) {
+    return 'Bitte schätze die Sicherheit der vorläufigen Einordnung ein (subjektiv).'
   }
 
   return null

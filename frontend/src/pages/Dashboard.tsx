@@ -10,6 +10,7 @@ import Card from '../components/Card';
 import { PageSkeleton } from '../components/Skeleton';
 import { DrillPriorityCards } from '../components/dashboard/DrillPriorityCards';
 import type { DrillWithCount } from '../components/dashboard/DrillPriorityCards';
+import { selectRecommendedNextDrills } from '../utils/recommendedDrills';
 import { CoverageMap } from '../components/dashboard/CoverageMap';
 import { LearningRhythmWidget } from '../components/dashboard/LearningRhythmWidget';
 import { LearningProgressTeaser } from '../components/dashboard/LearningProgressTeaser';
@@ -367,16 +368,12 @@ export default function Dashboard() {
       ? countsArray
       : countsArray.filter(d => d.moduleId === activeScope);
     
-    // Recommended Next: lowest count first, then didactic drill order (1→5), then title
-    const recommendedNext = [...scopedCountsArray]
-      .sort((a, b) => {
-        if (a.count !== b.count) return a.count - b.count
-        const aNum = a.drillNumber ?? Number.POSITIVE_INFINITY
-        const bNum = b.drillNumber ?? Number.POSITIVE_INFINITY
-        if (aNum !== bNum) return aNum - bNum
-        return a.title.localeCompare(b.title)
-      })
-      .slice(0, 5);
+    // Recommended Next: curriculum order — finish current module, then first drill of next module
+    const isGlobalScope = activeScope === 'Gesamt' || activeScope === 'Global'
+    const recommendedNext = selectRecommendedNextDrills(scopedCountsArray, curriculum, 5, {
+      scopeModuleId: isGlobalScope ? null : activeScope,
+      allDrills: countsArray,
+    });
     
     // Most Trained (höchste Counts zuerst, nur count > 0)
     const mostTrained = [...scopedCountsArray]
@@ -847,7 +844,7 @@ export default function Dashboard() {
 
       {user ? <TodayChallenges games={slateCatalogGames} /> : null}
 
-      <div data-tutorial-id={TUTORIAL_TARGET.homeNextStep}>
+      <div className={styles.nextStepShell} data-tutorial-id={TUTORIAL_TARGET.homeNextStep}>
       <Card className={styles.nextStepCard} elevation="featured" surface="primary">
         <div className={styles.nextStepCopy}>
           <h2 className={styles.nextStepTitle}>{nextStepTitle}</h2>

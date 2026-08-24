@@ -12,6 +12,14 @@ export type RateDefinition = {
   targetOutcomeId: string
   templateId?: string
   questionManual?: boolean
+  /** Vor der Erfassung festgelegte Situationsregeln (Templates / Custom). */
+  situationStart?: string
+  situationEnd?: string
+  inclusionRules?: string
+  exclusionRules?: string
+  otherOutcomesNote?: string
+  unclearOutcomeNote?: string
+  boundaryExamples?: string
 }
 
 export type SuitableRateExample = {
@@ -95,16 +103,30 @@ export type OutcomeDistributionItem = {
   isUnclear: boolean
 }
 
+/** Rate-Nenner: Zielereignisse / eindeutig auswertbare Ergebnisse (unklar separat). */
+export type RateDenominatorBasis = 'evaluable' | 'legacy_total'
+
 export type OpportunityRateResult = {
   definition: RateDefinition
   observations: OpportunityObservation[]
+  /** Gültige Ausgangssituationen insgesamt (inkl. unklarer Ergebnisse). */
   totalOpportunities: number
+  /** Eindeutig als Zielereignis oder anderes Ergebnis klassifizierbar. */
+  evaluableCount: number
   targetCount: number
+  /** Eindeutig klassifiziert, aber nicht Zielereignis. */
+  otherCount: number
+  unclearCount: number
+  /** Ausgeschlossene Beobachtungen (validOpportunity === false). */
+  excludedCount: number
+  /** targetCount / evaluableCount (0 wenn evaluableCount === 0). */
   rate: number
   ratePercent: number
+  rateDenominatorBasis: RateDenominatorBasis
   outcomeDistribution: Record<string, number>
   distributionItems: OutcomeDistributionItem[]
-  unclearCount: number
+  /** Lesbare Zusammenfassung mit Absolutwerten. */
+  rateSummary: string
 }
 
 export type RateTemplate = {

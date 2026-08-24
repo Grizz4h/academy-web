@@ -368,7 +368,7 @@ export function PatternLogDrill({ drill, answers, setAnswers }: PatternLogDrillP
           </ul>
           {summary.onlyOutcomeHeavy && (
             <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem', color: '#fde68a' }}>
-              Hinweis: Du hast häufig „nur Ergebnis ähnlich“ markiert — das spricht eher gegen ein belastbares Muster.
+              Hinweis: Du hast häufig „nur Ergebnis ähnlich“ markiert — die Beobachtungen reichen noch nicht aus, um wiederkehrendes Verhalten von einzelnen ähnlichen Situationen zu unterscheiden.
             </p>
           )}
         </section>
@@ -538,7 +538,7 @@ export function PatternLogDrill({ drill, answers, setAnswers }: PatternLogDrillP
                 value={patternLabel}
                 onChange={(e) => setAnswers({ ...safeAnswers, [cfg.labelKey]: e.target.value })}
                 maxLength={160}
-                placeholder="Wie würdest du das mögliche Muster momentan kurz beschreiben?"
+                placeholder="Wie würdest du den möglichen Hinweis momentan kurz beschreiben?"
                 style={{
                   width: '100%',
                   padding: '0.65rem',
@@ -554,7 +554,7 @@ export function PatternLogDrill({ drill, answers, setAnswers }: PatternLogDrillP
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Wie stark ist dein Hinweis auf ein wiederkehrendes Muster?
+              Wie ordnest du die gespeicherten Situationen ein?
             </label>
             <OptionChips
               name="pattern_assessment"
@@ -566,7 +566,7 @@ export function PatternLogDrill({ drill, answers, setAnswers }: PatternLogDrillP
 
           <div>
             <label style={{ display: 'block', fontWeight: 700, marginBottom: '0.35rem' }}>
-              Beschreibe das mögliche Muster in einem Satz.
+              Beschreibe den möglichen Hinweis in einem Satz.
             </label>
             <textarea
               value={patternSummary}

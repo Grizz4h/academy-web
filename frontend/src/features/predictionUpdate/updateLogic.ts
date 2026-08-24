@@ -16,19 +16,31 @@ import type {
   UpdateQuality,
 } from './types'
 
-const DECISION_SET = new Set<UpdateDecision>(['keep', 'change'])
-const QUALITY_SET = new Set<UpdateQuality>(['appropriate', 'too_late', 'too_early', 'unclear'])
+const DECISION_SET = new Set<UpdateDecision>(['keep', 'change', 'no_new_info', 'unclear'])
+const QUALITY_SET = new Set<UpdateQuality>([
+  'appropriate',
+  'after_confirmation',
+  'too_late',
+  'too_early',
+  'not_updated',
+  'unclear',
+])
 
 export const UPDATE_DECISION_LABELS: Record<UpdateDecision, string> = {
-  keep: 'Erwartung bleibt',
-  change: 'Erwartung ändern',
+  keep: 'Ursprüngliche Erwartung beibehalten',
+  change: 'Erwartung geändert',
+  no_new_info: 'Keine relevante neue Information sichtbar',
+  unclear: 'Nicht sicher beurteilbar',
 }
 
 export const UPDATE_QUALITY_LABELS: Record<UpdateQuality, string> = {
-  appropriate: 'Passend',
-  too_late: 'Zu spät',
-  too_early: 'Zu früh',
-  unclear: 'Unklar',
+  appropriate: 'Bei Auftreten der neuen Information aktualisiert',
+  after_confirmation: 'Erst nach weiterer Bestätigung aktualisiert',
+  too_late: 'Erst aktualisiert, als die tatsächliche Aktion bereits erkennbar war',
+  /** Legacy; gleiche Aussage wie after_confirmation — kein Speed-/Kompetenzscore. */
+  too_early: 'Erst nach weiterer Bestätigung aktualisiert (Legacy)',
+  not_updated: 'Nicht aktualisiert',
+  unclear: 'Nicht sicher beurteilbar',
 }
 
 export function isUpdateDecision(value: unknown): value is UpdateDecision {
@@ -45,11 +57,11 @@ export function resolvePredictionUpdateConfig(raw: Record<string, unknown> = {})
     || mechanic === 'belief_update'
     || raw.supportsPredictionUpdate === true
     || raw.supports_prediction_update === true
-  const minUpdateTriggers = enabled
-    ? Math.max(1, Number(raw.minUpdateTriggers || raw.min_update_triggers || raw.minTriggers || 1))
-    : 0
+  const minRaw = Number(raw.minUpdateTriggers ?? raw.min_update_triggers ?? raw.minTriggers ?? 0)
+  const minUpdateTriggers = enabled ? Math.max(0, Number.isFinite(minRaw) ? minRaw : 0) : 0
+  const maxRaw = Number(raw.maxUpdateTriggers ?? raw.max_update_triggers ?? 1)
   const maxUpdateTriggers = enabled
-    ? Math.max(minUpdateTriggers, Number(raw.maxUpdateTriggers || raw.max_update_triggers || 1))
+    ? Math.max(Math.max(minUpdateTriggers, 1), Number.isFinite(maxRaw) ? maxRaw : 1)
     : 0
   return {
     mechanic: 'prediction_update',
@@ -65,14 +77,17 @@ export function updateDecisionOptions(): Array<PatternLogOption<UpdateDecision>>
   return [
     { value: 'keep', label: UPDATE_DECISION_LABELS.keep },
     { value: 'change', label: UPDATE_DECISION_LABELS.change },
+    { value: 'no_new_info', label: UPDATE_DECISION_LABELS.no_new_info },
+    { value: 'unclear', label: UPDATE_DECISION_LABELS.unclear },
   ]
 }
 
 export function updateQualityOptions(): Array<PatternLogOption<UpdateQuality>> {
   return [
     { value: 'appropriate', label: UPDATE_QUALITY_LABELS.appropriate },
+    { value: 'after_confirmation', label: UPDATE_QUALITY_LABELS.after_confirmation },
     { value: 'too_late', label: UPDATE_QUALITY_LABELS.too_late },
-    { value: 'too_early', label: UPDATE_QUALITY_LABELS.too_early },
+    { value: 'not_updated', label: UPDATE_QUALITY_LABELS.not_updated },
     { value: 'unclear', label: UPDATE_QUALITY_LABELS.unclear },
   ]
 }
@@ -104,6 +119,9 @@ export function canSaveUpdateDecision(
 ): boolean {
   if (!cfg.enabled) return true
   if (!isUpdateDecision(decision)) return false
+  if (decision === 'unclear' || decision === 'no_new_info') {
+    return true
+  }
   if (decision === 'keep') {
     return !cfg.requireReasonOnKeep || Boolean(String(reason || '').trim())
   }
@@ -111,6 +129,11 @@ export function canSaveUpdateDecision(
   if (!cfg.requireUpdatedPredictionOnChange) return Boolean(next)
   const initial = String(initialPrediction || '').trim()
   return Boolean(next) && next.toLowerCase() !== initial.toLowerCase()
+}
+
+/** Änderung braucht dokumentierten Auslöser; Beibehalten/keine neue Info/unklar nicht. */
+export function triggersRequiredForDecision(decision: string): boolean {
+  return decision === 'change'
 }
 
 export function canSaveUpdateQuality(value: string, enabled: boolean): boolean {
@@ -130,7 +153,8 @@ export function isCompletePredictionUpdate(
   const triggers = read.updateTriggers || read.predictionUpdate?.updateTriggers || (
     read.predictionUpdate?.updateTrigger ? [read.predictionUpdate.updateTrigger] : []
   )
-  if (!canSaveUpdateTriggers(triggers, cfg.minUpdateTriggers, cfg.maxUpdateTriggers)) return false
+  const minForDecision = triggersRequiredForDecision(decision) ? Math.max(1, cfg.minUpdateTriggers) : 0
+  if (!canSaveUpdateTriggers(triggers, minForDecision, Math.max(cfg.maxUpdateTriggers, minForDecision))) return false
   if (!canSaveUpdateDecision(decision, initial, updated, reason, cfg)) return false
   if (!isUpdateQuality(read.updateQuality || read.predictionUpdate?.updateQuality)) return false
   return true
@@ -150,8 +174,8 @@ export function buildPredictionUpdate(read: {
   const decision = read.updateDecision
   if (!initial || !isUpdateDecision(decision)) return null
   const triggers = normalizeTriggers(read.updateTriggers, 99)
-  if (!triggers.length) return null
-  const updated = decision === 'keep'
+  if (triggersRequiredForDecision(decision) && !triggers.length) return null
+  const updated = decision === 'keep' || decision === 'no_new_info' || decision === 'unclear'
     ? initial
     : (String(read.updatedPrediction || '').trim() || initial)
   return {
@@ -178,16 +202,28 @@ function countMap(values: string[]): Record<string, number> {
 }
 
 export function computePredictionUpdateResult(observations: PredictionUpdateRead[]): PredictionUpdateResult {
-  const keepCount = observations.filter((item) => (item.updateDecision || item.predictionUpdate?.updateDecision) === 'keep').length
+  const keepCount = observations.filter((item) => {
+    const d = item.updateDecision || item.predictionUpdate?.updateDecision
+    return d === 'keep' || d === 'no_new_info'
+  }).length
   const changeCount = observations.filter((item) => (item.updateDecision || item.predictionUpdate?.updateDecision) === 'change').length
-  const updateQualityDistribution = { appropriate: 0, tooLate: 0, tooEarly: 0, unclear: 0 }
+  const updateQualityDistribution = {
+    appropriate: 0,
+    afterConfirmation: 0,
+    tooLate: 0,
+    tooEarly: 0,
+    notUpdated: 0,
+    unclear: 0,
+  }
   const triggerDescriptions: string[] = []
 
   for (const item of observations) {
     const quality = item.updateQuality || item.predictionUpdate?.updateQuality
     if (quality === 'appropriate') updateQualityDistribution.appropriate += 1
+    if (quality === 'after_confirmation') updateQualityDistribution.afterConfirmation += 1
     if (quality === 'too_late') updateQualityDistribution.tooLate += 1
     if (quality === 'too_early') updateQualityDistribution.tooEarly += 1
+    if (quality === 'not_updated') updateQualityDistribution.notUpdated += 1
     if (quality === 'unclear') updateQualityDistribution.unclear += 1
     const triggers = item.updateTriggers
       || item.predictionUpdate?.updateTriggers

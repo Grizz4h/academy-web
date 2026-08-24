@@ -24,18 +24,18 @@ function cohortSample(
 export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
   {
     id: 'thin_sample',
-    title: 'Großer Unterschied, winziges Sample',
+    title: 'Großer Unterschied, winziges Stichprobe',
     statement: 'Kontrollierte Exits gelingen mit Weak-Side-Support deutlich häufiger.',
     intendedLearningFocus: 'sample',
     sample: cohortSample(2, 3, 0, 2, ['Mit Support', 'Ohne Support']),
     contextNotes: [
       'Übungsfall – kein echtes Spiel.',
-      'Nur fünf Opportunities insgesamt. Gruppe B hat zwei Fälle.',
+      'Nur fünf Ausgangssituationen insgesamt. Gruppe B hat zwei Fälle.',
     ],
     statements: [
       {
         id: 'a',
-        text: 'In dieser Stichprobe trat das Target mit Support häufiger auf – die Basis ist aber sehr klein.',
+        text: 'In dieser Stichprobe trat das Zielereignis mit Support häufiger auf – die Basis ist aber sehr klein.',
         tone: 'sample_bound',
       },
       {
@@ -56,7 +56,7 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
     ],
     supportedStatementId: 'a',
     feedback: {
-      strongly_supported: 'Der Unterschied ist groß, aber nur fünf Opportunities reichen, damit einzelne Situationen die Rate stark verändern. Eine vorsichtigere Einordnung wäre sinnvoll.',
+      strongly_supported: 'Der Unterschied ist groß, aber nur fünf Ausgangssituationen reichen, damit einzelne Situationen die Rate stark verändern. Eine vorsichtigere Einordnung wäre sinnvoll.',
       reasonably_supported: 'Der Unterschied ist sichtbar, die Stichprobe bleibt aber sehr dünn. „Ordentlich gestützt“ überzieht die Basis leicht.',
       suggestive: 'Passt: Der Unterschied ist sichtbar, die Stichprobe bleibt aber sehr dünn.',
       weak: 'Vorsichtig und nachvollziehbar – bei fünf Fällen trägt die Zahl wenig.',
@@ -66,8 +66,8 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
   },
   {
     id: 'small_difference',
-    title: 'Größeres Sample, kleiner Unterschied',
-    statement: 'Gruppe A hat eine höhere Target-Rate als Gruppe B.',
+    title: 'Größeres Stichprobe, kleiner Unterschied',
+    statement: 'Gruppe A hat eine höhere Zielereignis-Rate als Gruppe B.',
     intendedLearningFocus: 'difference',
     sample: cohortSample(11, 20, 10, 20, ['Gruppe A', 'Gruppe B']),
     contextNotes: [
@@ -87,7 +87,7 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
       },
       {
         id: 'c',
-        text: 'Das größere Sample beweist, dass Gruppe A das Outcome verursacht.',
+        text: 'Das größere Stichprobe beweist, dass Gruppe A das Ergebnis verursacht.',
         tone: 'causal',
       },
       {
@@ -137,7 +137,7 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
     statements: [
       {
         id: 'a',
-        text: 'In dieser Stichprobe trat das Target mit Support häufiger auf; die Situationen waren aber möglicherweise nicht vergleichbar.',
+        text: 'In dieser Stichprobe trat das Zielereignis mit Support häufiger auf; die Situationen waren aber möglicherweise nicht vergleichbar.',
         tone: 'sample_bound',
       },
       {
@@ -168,22 +168,22 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
   },
   {
     id: 'solid_picture',
-    title: 'Relativ solides Gesamtbild',
-    statement: 'In Gruppe A trat das Target häufiger auf als in Gruppe B.',
+    title: 'Konsistentes Stichprobenbild',
+    statement: 'In Gruppe A trat das Zielereignis häufiger auf als in Gruppe B.',
     intendedLearningFocus: 'difference',
     sample: {
-      ...cohortSample(12, 20, 4, 20, ['Gruppe A', 'Gruppe B']),
+      ...cohortSample(12, 20, 4, 20, ['Vergleichsgruppe A', 'Vergleichsgruppe B']),
       counterexampleCount: 4,
     },
     contextNotes: [
       'Übungsfall – kein echtes Spiel.',
-      'Gleich große Gruppen, klarer Abstand, Opportunity und Outcome sind gleich definiert.',
-      'Trotzdem: nur Stichprobe, keine Kausalität.',
+      'Gleich große Vergleichsgruppen, klarer Abstand, Ausgangssituation und Ergebnis sind gleich definiert.',
+      'Trotzdem: nur Stichprobe, keine Kausalität. Auch die höchste Kategorie bleibt auf die Stichprobe begrenzt.',
     ],
     statements: [
       {
         id: 'a',
-        text: 'In dieser Stichprobe trat das Target in Gruppe A deutlich häufiger auf.',
+        text: 'In dieser Stichprobe trat das Zielereignis in Vergleichsgruppe A deutlich häufiger auf.',
         tone: 'sample_bound',
       },
       {
@@ -193,7 +193,7 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
       },
       {
         id: 'c',
-        text: 'Der Unterschied beweist, dass Faktor A das Outcome verursacht.',
+        text: 'Der Unterschied beweist, dass Faktor A das Ergebnis verursacht.',
         tone: 'causal',
       },
       {
@@ -204,12 +204,12 @@ export const DEFAULT_EVIDENCE_CASES: EvidenceCaseDefinition[] = [
     ],
     supportedStatementId: 'a',
     feedback: {
-      strongly_supported: 'Das Sample trägt eine klare Stichproben-Aussage. „Stark gestützt“ bleibt trotzdem keine Ursache.',
-      reasonably_supported: 'Passt: Die Basis ist vergleichsweise sauber, die Aussage bleibt eine Stichprobe.',
-      suggestive: 'Zurückhaltend – bei diesem Bild wäre auch „ordentlich gestützt“ vertretbar.',
+      strongly_supported: 'Das Stichprobenbild ist konsistent. „Konsistentes Bild innerhalb dieser Stichprobe“ bleibt trotzdem keine Ursache und keine wissenschaftliche Sicherheit.',
+      reasonably_supported: 'Passt: Die Basis ist vergleichsweise sauber, die Aussage bleibt ein deskriptiver Hinweis in dieser Stichprobe.',
+      suggestive: 'Zurückhaltend – bei diesem Bild wäre auch „deskriptiver Hinweis“ oder „konsistentes Stichprobenbild“ vertretbar.',
       weak: 'Sehr vorsichtig. Der Abstand ist in der Stichprobe deutlich, die Basis aber immer noch klein.',
-      insufficient: 'Für „nicht ausreichend“ ist das Bild ungewöhnlich vorsichtig – die Aussage bleibt trotzdem nur eine Stichprobe.',
-      unclear: 'Unklar ist möglich, wenn dir eine Dimension fehlt. Die Zahlen allein entscheiden das nicht.',
+      insufficient: 'Für „nicht beurteilbar“ ist das Bild ungewöhnlich vorsichtig – die Aussage bleibt trotzdem nur eine Stichprobe.',
+      unclear: '„Nicht beurteilbar“ ist möglich, wenn dir eine Dimension fehlt. Die Zahlen allein entscheiden das nicht.',
     },
   },
 ]

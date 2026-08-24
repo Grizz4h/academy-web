@@ -86,13 +86,17 @@ export type CohortComparison = {
 export type CohortGroupResult = {
   id: CohortId
   label: string
+  /** Gültige Ausgangssituationen in dieser Vergleichsgruppe. */
   totalOpportunities: number
+  evaluableCount: number
   targetCount: number
+  otherCount: number
   rate: number
   ratePercent: number
   unclearCount: number
   outcomeDistribution: Record<string, number>
   distributionItems: OpportunityRateResult['distributionItems']
+  rateSummary: string
 }
 
 export type CohortRateCompareResult = {
