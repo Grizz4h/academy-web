@@ -4,6 +4,7 @@ import { readSidequests } from '../../utils/sessionSidequests'
 import { sanitizeLocationVerification } from '../location/privacy'
 import { isQualifyingVenueVerification } from '../location/verification'
 import { resolveHomeAwayRole } from '../location/homeAway'
+import { normalizeObservationScope } from '../../utils/observationScope'
 import {
   buildGameObservationCompletedEvent,
   buildObservationCreatedEvent,
@@ -11,6 +12,7 @@ import {
   buildSceneRatedEvent,
   buildSessionCompletedEvent,
   buildSidequestCompletedEvent,
+  buildTrack0CompletedEvent,
   buildTrackCompletedEvent,
 } from './activityEvents'
 import type { RinkActivityEvent } from './types'
@@ -31,6 +33,13 @@ function trackIdFromModule(moduleId: string | undefined | null): string {
 
 function drillIdFromSession(session: Session): string {
   return String(session.drill_id || session.module_id || 'unknown').trim() || 'unknown'
+}
+
+function isFoundationSession(session: Session): boolean {
+  if (normalizeObservationScope(session.observation_scope) === 'LESSON') return true
+  const moduleId = String(session.module_id || '').toUpperCase()
+  if (moduleId === 'T0' || moduleId.startsWith('T0')) return true
+  return (session.drills || []).some((drill) => drill?.drill_type === 'foundation_lesson')
 }
 
 function collectSessionAnswerMaps(session: Session): any[] {
@@ -126,7 +135,7 @@ export function deriveMechanicIdsFromSession(session: Session): string[] {
 
 export function buildEventsFromCompletedSession(
   session: Session,
-  options?: { priorCompletedDrillIds?: Set<string>; occurredAt?: string },
+  options?: { priorCompletedDrillIds?: Set<string>; occurredAt?: string; userId?: string },
 ): RinkActivityEvent[] {
   if (!isProgressionEligibleSession(session) || session.state !== 'COMPLETED') {
     return []
@@ -176,6 +185,7 @@ export function buildEventsFromCompletedSession(
       tags,
       isDummy: false,
       isFirstSessionOfDrill,
+      observationScope: normalizeObservationScope(session.observation_scope),
       venueId: verification?.venueId,
       venueVerified,
       homeAwayRole,
@@ -221,6 +231,15 @@ export function buildEventsFromCompletedSession(
         }),
       )
     }
+  }
+
+  if (isFoundationSession(session) && options?.userId) {
+    events.push(
+      buildTrack0CompletedEvent({
+        userId: options.userId,
+        occurredAt,
+      }),
+    )
   }
 
   return events

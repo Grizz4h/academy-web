@@ -2725,6 +2725,7 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
     session_id = (data.session_id or "").strip() or None
 
     # Hard stop: dummy/dev sessions must never mutate reward state.
+    session_doc = None
     if session_id:
         session_doc = get_repos().sessions.find_session_raw(session_id)
         if isinstance(session_doc, dict) and session_doc.get("is_dummy") is True:
@@ -2739,15 +2740,31 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
             }
 
     def _mutator(state: dict):
-        return _compute_reward_apply(state, data, event_id=event_id, session_id=session_id)
+        return _compute_reward_apply(
+            state,
+            data,
+            event_id=event_id,
+            session_id=session_id,
+            session_doc=session_doc if isinstance(session_doc, dict) else None,
+        )
 
     return get_repos().rewards.apply_reward_delta(current_user, _mutator)
 
 
-def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, session_id):
+def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, session_id, session_doc=None):
     """Business rules for rewards/apply. Called under RewardRepository lock."""
+    from progression.config import progression_unified_pipeline_enabled
+    from progression.grants import compute_unified_base_grants
+    from progression.level_curve import apply_curve_migration
+
+    apply_curve_migration(state)
+
     processed_events = state.get("processedEvents") or {}
     processed_sessions = state.get("processedSessions") or {}
+    unified_pipeline = progression_unified_pipeline_enabled()
+    server_granted_xp = 0
+    server_granted_pux = 0
+    server_cosmetics: list = []
 
     if event_id and event_id in processed_events and not data.replace_derived and not data.skip_idempotency:
         return None, {
@@ -2797,9 +2814,31 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
         state["masteryMilestoneUnlocks"] = {}
         state["puxTransactions"] = preserved_txs
         state["venueVisits"] = {}
+        state["processedUnits"] = {}
+        state["processedGrantKeys"] = {
+            k: v
+            for k, v in (state.get("processedGrantKeys") or {}).items()
+            if str(k).startswith("pux_shop_purchase:")
+        }
         processed_events = state["processedEvents"]
 
-    next_pux = int(state["currency"].get("PUX", 0)) + int(data.granted_pux or 0)
+    if unified_pipeline and data.activity_events:
+        server_granted_xp, server_granted_pux, server_cosmetics, grant_logs = compute_unified_base_grants(
+            state,
+            data.activity_events,
+            session_doc=session_doc,
+            evaluated_at=data.evaluated_at,
+        )
+        for line in grant_logs:
+            if line.startswith("skip:") or line.startswith("grant:"):
+                logging.info("[progression] %s", line)
+
+    client_granted_pux = int(data.granted_pux or 0)
+    client_granted_xp = int(data.granted_xp or 0)
+    total_granted_pux = client_granted_pux + server_granted_pux
+    total_granted_xp = client_granted_xp + server_granted_xp
+
+    next_pux = int(state["currency"].get("PUX", 0)) + total_granted_pux
     if next_pux < 0:
         return None, {
             "state": state,
@@ -2810,13 +2849,13 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
             "reason": "insufficient_pux",
         }
     state["currency"]["PUX"] = next_pux
-    state["xp"] = int(state.get("xp") or 0) + int(data.granted_xp or 0)
+    state["xp"] = int(state.get("xp") or 0) + total_granted_xp
 
     if session_id and session_id not in processed_sessions:
         state["processedSessions"][session_id] = {
             "sessionId": session_id,
             "grantedAt": data.evaluated_at,
-            "pux": int(data.granted_pux or 0),
+            "pux": int(total_granted_pux if unified_pipeline else client_granted_pux),
         }
 
     if event_id:
@@ -2844,6 +2883,12 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
         achievement_id = (achievement.get("id") or "").strip()
         if not achievement_id:
             continue
+        if unified_pipeline:
+            from progression.legacy import is_legacy_achievement_id
+
+            if is_legacy_achievement_id(achievement_id):
+                logging.info("[progression] skip:legacy_achievement:%s", achievement_id)
+                continue
         if achievement_id in state["unlockedAchievements"] and not data.replace_derived:
             continue
 
@@ -2856,7 +2901,23 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
             entry["sourceEventId"] = achievement.get("sourceEventId")
         state["unlockedAchievements"][achievement_id] = entry
 
-    for mastery in data.unlocked_masteries:
+    for cosmetic in server_cosmetics:
+        cosmetic_id = (cosmetic.get("cosmeticId") or cosmetic.get("id") or "").strip()
+        if not cosmetic_id:
+            continue
+        if cosmetic_id in state["unlockedCosmetics"] and not data.replace_derived:
+            continue
+        state["unlockedCosmetics"][cosmetic_id] = {
+            "cosmeticId": cosmetic_id,
+            "unlockedAt": cosmetic.get("unlockedAt") or data.evaluated_at,
+            "sourceType": cosmetic.get("sourceType") or "progression",
+            "sourceId": cosmetic.get("sourceId"),
+            "seenAt": cosmetic.get("seenAt"),
+            "earnKind": cosmetic.get("earnKind") or "earned",
+        }
+
+    legacy_masteries = [] if unified_pipeline else (data.unlocked_masteries or [])
+    for mastery in legacy_masteries:
         mastery_key = (mastery.get("key") or "").strip()
         if not mastery_key:
             continue
@@ -3015,9 +3076,11 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
     return state, {
         "state": state,
         "applied": True,
-        "granted_pux": int(data.granted_pux or 0),
-        "granted_xp": int(data.granted_xp or 0),
+        "granted_pux": total_granted_pux,
+        "granted_xp": total_granted_xp,
         "reward_events": data.reward_events,
+        "server_granted_pux": server_granted_pux,
+        "server_granted_xp": server_granted_xp,
     }
 
 

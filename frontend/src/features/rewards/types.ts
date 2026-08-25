@@ -1,5 +1,3 @@
-import type { Session } from '../../api'
-
 export const DISPLAY_CURRENCY_LABEL = 'PUX!'
 
 export type CurrencyCode = 'PUX'
@@ -74,21 +72,6 @@ export interface DrillMasteryProgress {
   statsSnapshot?: MasteryStatsSnapshot
 }
 
-export interface PerformanceSnapshot {
-  accuracy?: number | null
-  perfect?: boolean
-}
-
-export interface BaseRewardGrant {
-  id: string
-  reason: 'completion' | 'performance_bonus' | 'perfect_bonus' | 'streak_bonus'
-  title: string
-  description?: string
-  amountPux: number
-  visualTier: RewardVisualTier
-  variant: RewardDisplayVariant
-}
-
 export interface RewardEvent {
   id: string
   kind: 'currency' | 'achievement' | 'mastery' | 'system'
@@ -109,6 +92,12 @@ export interface RewardState {
   unlockedAchievements: Record<string, { id: string; unlockedAt: string; sourceEventId?: string }>
   unlockedMasteries: Record<string, DrillMasteryProgress>
   processedSessions: Record<string, { sessionId: string; grantedAt: string; pux: number }>
+  /** Phase-5 unified pipeline unit dedup */
+  processedUnits?: Record<string, { progressionUnitKey: string; sessionId?: string; grantedAt: string; ruleIds?: string[] }>
+  processedGrantKeys?: Record<string, string>
+  /** Phase-5 capped level curve (v2) + grandfather floor */
+  progressionCurveVersion?: number
+  levelGrandfatherFloor?: number
   /** Phase-1 progression foundation */
   xp: number
   processedEvents: Record<string, { eventId: string; processedAt: string; grantedXp: number; grantedPux: number }>
@@ -130,61 +119,16 @@ export interface RewardState {
   venueVisits?: Record<string, import('../../data/venues/types').VenueVisit>
 }
 
-export interface RewardFacts {
-  completedSessionsCount: number
-  completedDrillsCount: number
-  distinctDrillsCount: number
-  activeDaysCount: number
-  currentStreakDays: number
-  completedSessionStreak: number
-  currentSessionDrillCount: number
-  currentSessionDurationSeconds: number
-  completionHour: number
-  noteLength: number
-  deviceType: DeviceType
-  drillStatsById: Record<string, MasteryStatsSnapshot>
-}
-
-export interface RewardEvaluationContext {
-  completedAt: string
-  deviceType: DeviceType
-  noteText?: string
-  performance?: PerformanceSnapshot | null
-}
-
-export interface RewardEvaluationInput {
-  currentSession: Session
-  sessions: Session[]
-  rewardState: RewardState
-  context: RewardEvaluationContext
-}
-
-export interface RewardEvaluationResult {
-  sessionId: string
-  grantedPux: number
-  currencyGrants: BaseRewardGrant[]
-  unlockedAchievements: AchievementDefinition[]
-  unlockedMasteries: DrillMasteryProgress[]
-  rewardEvents: RewardEvent[]
-  evaluatedAt: string
-  progression?: {
-    eventId: string
-    grantedXp: number
-    grantedPux: number
-    unlockedAchievements: Array<{ id: string; unlockedAt: string; sourceEventId?: string }>
-    unlockedCosmetics: import('../progression/types').CosmeticUnlock[]
-    unlockHistory: import('../progression/types').UnlockHistoryEntry[]
-    activityEvents: import('../progression/types').RinkActivityEvent[]
-    bootstrapCompletedAt?: string
-  }
-}
-
 export function createEmptyRewardState(): RewardState {
   return {
     currency: { PUX: 0 },
     unlockedAchievements: {},
     unlockedMasteries: {},
     processedSessions: {},
+    processedUnits: {},
+    processedGrantKeys: {},
+    progressionCurveVersion: undefined,
+    levelGrandfatherFloor: undefined,
     xp: 0,
     processedEvents: {},
     unlockedCosmetics: {},

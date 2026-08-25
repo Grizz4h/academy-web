@@ -49,6 +49,14 @@ export function isLessonScope(scope?: string | null): boolean {
   return (scope || '').trim().toUpperCase() === 'LESSON'
 }
 
+export function normalizeObservationScope(scope?: string | null): ObservationScope | string {
+  const value = (scope || '').trim().toUpperCase()
+  if (value === 'P1' || value === 'P2' || value === 'P3' || value === 'FULL_GAME' || value === 'LESSON') {
+    return value
+  }
+  return 'FULL_GAME'
+}
+
 /** Next live phase for this observation scope. P1-only sessions go P1 → POST, never P2/P3. */
 export function getNextPhaseForScope(
   phase: string | null | undefined,

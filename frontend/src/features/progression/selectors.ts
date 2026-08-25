@@ -19,6 +19,8 @@ import type {
 
 export type ProgressionViewState = {
   xp: number
+  progressionCurveVersion?: number
+  levelGrandfatherFloor?: number
   unlockedAchievements: Record<string, { id: string; unlockedAt: string; sourceEventId?: string }>
   unlockedCosmetics: Record<string, CosmeticUnlock>
   activityLog: RinkActivityEvent[]
@@ -27,7 +29,9 @@ export type ProgressionViewState = {
 }
 
 export function selectLevelProgress(state: ProgressionViewState) {
-  return getXpProgressForLevel(state.xp || 0)
+  return getXpProgressForLevel(state.xp || 0, {
+    grandfatherFloor: state.levelGrandfatherFloor,
+  })
 }
 
 export function selectPux(state: ProgressionViewState): number {

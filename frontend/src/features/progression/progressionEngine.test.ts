@@ -5,7 +5,8 @@
 
 import { buildSessionCompletedEvent, buildSceneCreatedEvent } from './activityEvents'
 import { bootstrapProgression, BOOTSTRAP_EVENT_ID } from './bootstrap'
-import { getLevelFromXp, getXpProgressForLevel, levelsGainedBetween } from './levelSystem'
+import { getLevelFromXp, getXpProgressForLevel, levelsGainedBetween, xpRequiredForLevel } from './levelSystem'
+import { getLevelFromXpLegacy, migrateProgressionCurve, getXpProgressForLevel as progressWithFloor } from './levelCurve'
 import { processActivityEvent, processActivityEventBatch } from './progressionEngine'
 import { evaluateAchievementProgress } from './achievements/achievementEngine'
 import { getTankAchievement } from './achievements/achievementCatalog'
@@ -35,12 +36,26 @@ function emptySlice(): ProgressionStateSlice {
   }
 }
 
-// Level curve
+// Level curve (capped table v2)
 assertEqual(getLevelFromXp(0), 1, 'level at 0 xp')
-assert(getLevelFromXp(100) >= 2, 'level increases after first threshold')
+assertEqual(getLevelFromXp(100), 2, 'level 2 at 100 xp')
+assertEqual(getLevelFromXp(1200), 5, 'level 5 at ~12 units')
 assertEqual(levelsGainedBetween(0, 500).includes(2), true, 'multi level gain includes 2')
 const progress = getXpProgressForLevel(50)
 assert(progress.xpToNextLevel > 0, 'xp to next level positive')
+assertEqual(xpRequiredForLevel(25), 1000, 'cap 10 units per level from 25')
+
+// Grandfathering keeps displayed level when legacy curve was higher
+{
+  const xp = 355
+  const oldLevel = getLevelFromXpLegacy(xp)
+  const newLevel = getLevelFromXp(xp)
+  assert(oldLevel > newLevel, 'legacy curve ranks higher at same xp')
+  const migrated = migrateProgressionCurve({ xp })
+  const view = progressWithFloor(xp, { grandfatherFloor: migrated.levelGrandfatherFloor })
+  assertEqual(view.level, oldLevel, 'display level grandfathered')
+  assertEqual(view.xpIntoLevel, 0, 'grandfathered users start at 0 progress in held level')
+}
 
 // Dummy session grants nothing
 {

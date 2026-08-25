@@ -1,4 +1,5 @@
 import { ACHIEVEMENTS } from '../data/achievements'
+import { isLegacyAchievementsReadOnly } from '../data/legacyAchievements'
 import type {
   AchievementCondition,
   AchievementDefinition,
@@ -14,6 +15,8 @@ export type AchievementProgressItem = {
   target: number
   label: string
   isUnlocked: boolean
+  /** Legacy medals frozen under unified pipeline — display only if already unlocked. */
+  isReadOnly?: boolean
 }
 
 export type RecentUnlockedItem = {
@@ -240,8 +243,9 @@ export function getAchievementProgressItems(
   rewardState: RewardState,
 ): AchievementProgressItem[] {
   const stats = deriveStats(sessions)
+  const legacyReadOnly = isLegacyAchievementsReadOnly()
 
-  return ACHIEVEMENTS.map((achievement) => {
+  const items = ACHIEVEMENTS.map((achievement) => {
     const isUnlocked = Boolean(rewardState.unlockedAchievements[achievement.id])
     const progressData = computeProgressFromCondition(achievement.condition, stats)
 
@@ -249,8 +253,15 @@ export function getAchievementProgressItems(
       achievement,
       ...progressData,
       isUnlocked,
+      isReadOnly: legacyReadOnly && !isUnlocked,
     }
   })
+
+  if (legacyReadOnly) {
+    return items.filter((item) => item.isUnlocked)
+  }
+
+  return items
 }
 
 export function getTopNearAchievements(

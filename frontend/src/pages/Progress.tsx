@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import type { Session } from '../api'
@@ -7,6 +8,7 @@ import { PageSkeleton } from '../components/Skeleton'
 import { LEAGUES, getAllTeamNamesForLeague, getTeamNamesForLeague } from '../data/teamsByLeague'
 import { useUser } from '../context/UserContext'
 import { formatPux, getAchievementProgressItems, useRewards } from '../features/rewards'
+import { isLegacyAchievementsReadOnly } from '../features/rewards/data/legacyAchievements'
 import { computeTeamExposure, resolveDrillId } from '../stats/exposureStats'
 import { getObservationScopeLabel } from '../utils/observationScope'
 import { getAnalysisIntensity, getTealTileSurfaceStyle } from '../utils/tealIntensity'
@@ -292,6 +294,7 @@ export default function Progress() {
     return moduleId
   }
 
+  const legacyAchievementsReadOnly = isLegacyAchievementsReadOnly()
   const nearAchievements = getAchievementProgressItems(sessionList, rewardState)
   const allProgress = nearAchievements
   const byCategory = allProgress.reduce<Record<string, typeof allProgress>>((acc, item) => {
@@ -610,6 +613,20 @@ export default function Progress() {
             <span><strong>Meisterschaften:</strong> {unlockedMasteriesCount}</span>
           </div>
 
+          {legacyAchievementsReadOnly && (
+            <p className={styles.mutedText}>
+              Medaillen-Erfolge (Legacy) sind eingefroren — nur bereits freigeschaltete bleiben sichtbar.
+              Neue Erfolge findest du im <Link to="/locker">Spind → Achievements</Link>.
+            </p>
+          )}
+
+          {legacyAchievementsReadOnly && totalAchievements === 0 && (
+            <Card surface="section" className={styles.emptyCard}>
+              <p className={styles.mutedText}>Noch keine Legacy-Medaillen. Tank-Erfolge laufen über den Spind.</p>
+            </Card>
+          )}
+
+          {!legacyAchievementsReadOnly || totalAchievements > 0 ? (
           <div className={styles.achievementGroups}>
             {sortedCategories.map((cat) => {
               const items = byCategory[cat]
@@ -654,6 +671,7 @@ export default function Progress() {
               )
             })}
           </div>
+          ) : null}
         </div>
       </details>
 

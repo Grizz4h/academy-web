@@ -18,6 +18,7 @@ import {
   evaluateMasteryGrants,
   evaluateShopPurchase,
   isStarterCosmetic,
+  migrateProgressionCurve,
   processActivityEvent,
   processActivityEventBatch,
   type ProgressionStateSlice,
@@ -26,7 +27,7 @@ import {
 import { contentRegistry } from '../../../content/registry'
 import type { MatchdayContext } from '../../progression/challenges/types'
 import { applyVenuePresenceToEvents } from '../../location/visits'
-import { createEmptyRewardState, type RewardEvaluationResult, type RewardEvent, type RewardState } from '../types'
+import { createEmptyRewardState, type RewardEvent, type RewardState } from '../types'
 
 type RewardContextValue = {
   rewardState: RewardState
@@ -35,7 +36,6 @@ type RewardContextValue = {
   enqueueReward: (event: Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>) => void
   enqueueRewards: (events: Array<Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>>) => void
   closeActiveReward: () => void
-  grantRewardResult: (result: RewardEvaluationResult) => Promise<void>
   /** Process one or more activity events through the progression engine (idempotent). */
   ingestActivityEvents: (
     events: RinkActivityEvent[],
@@ -107,6 +107,8 @@ function matchdayFromState(state: RewardState): MatchdayContext | null {
 function toProgressionSlice(state: RewardState): ProgressionStateSlice {
   return {
     xp: state.xp || 0,
+    progressionCurveVersion: state.progressionCurveVersion,
+    levelGrandfatherFloor: state.levelGrandfatherFloor,
     unlockedAchievements: state.unlockedAchievements || {},
     unlockedCosmetics: state.unlockedCosmetics || {},
     processedEvents: state.processedEvents || {},
@@ -115,94 +117,9 @@ function toProgressionSlice(state: RewardState): ProgressionStateSlice {
   }
 }
 
-function applyRewardResultLocally(previousState: RewardState, result: RewardEvaluationResult): RewardState {
-  const nextState: RewardState = {
-    ...previousState,
-    currency: { ...previousState.currency },
-    unlockedAchievements: { ...previousState.unlockedAchievements },
-    unlockedMasteries: { ...previousState.unlockedMasteries },
-    processedSessions: { ...previousState.processedSessions },
-    processedEvents: { ...(previousState.processedEvents || {}) },
-    unlockedCosmetics: { ...(previousState.unlockedCosmetics || {}) },
-    activityLog: [...(previousState.activityLog || [])],
-    unlockHistory: [...(previousState.unlockHistory || [])],
-    xp: previousState.xp || 0,
-  }
-
-  const alreadyProcessed = Boolean(nextState.processedSessions[result.sessionId])
-
-  if (!alreadyProcessed) {
-    nextState.currency.PUX = (nextState.currency.PUX || 0) + result.grantedPux
-    nextState.processedSessions[result.sessionId] = {
-      sessionId: result.sessionId,
-      grantedAt: result.evaluatedAt,
-      pux: result.grantedPux,
-    }
-  }
-
-  for (const achievement of result.unlockedAchievements) {
-    if (!nextState.unlockedAchievements[achievement.id]) {
-      nextState.unlockedAchievements[achievement.id] = {
-        id: achievement.id,
-        unlockedAt: result.evaluatedAt,
-      }
-    }
-  }
-
-  for (const mastery of result.unlockedMasteries) {
-    if (!nextState.unlockedMasteries[mastery.key]) {
-      nextState.unlockedMasteries[mastery.key] = mastery
-    }
-  }
-
-  if (result.progression) {
-    const prog = result.progression
-    if (!nextState.processedEvents[prog.eventId]) {
-      nextState.xp = (nextState.xp || 0) + (prog.grantedXp || 0)
-      nextState.currency.PUX = (nextState.currency.PUX || 0) + (prog.grantedPux || 0)
-      nextState.processedEvents[prog.eventId] = {
-        eventId: prog.eventId,
-        processedAt: result.evaluatedAt,
-        grantedXp: prog.grantedXp || 0,
-        grantedPux: prog.grantedPux || 0,
-      }
-      for (const achievement of prog.unlockedAchievements || []) {
-        if (!nextState.unlockedAchievements[achievement.id]) {
-          nextState.unlockedAchievements[achievement.id] = achievement
-        }
-      }
-      for (const cosmetic of prog.unlockedCosmetics || []) {
-        if (!nextState.unlockedCosmetics[cosmetic.cosmeticId]) {
-          nextState.unlockedCosmetics[cosmetic.cosmeticId] = cosmetic
-        }
-      }
-      const existingIds = new Set(nextState.activityLog.map((e) => e.id))
-      for (const event of prog.activityEvents || []) {
-        if (!existingIds.has(event.id)) {
-          nextState.activityLog.push(event)
-          existingIds.add(event.id)
-        }
-        nextState.processedEvents[event.id] = {
-          eventId: event.id,
-          processedAt: result.evaluatedAt,
-          grantedXp: 0,
-          grantedPux: 0,
-        }
-      }
-      nextState.unlockHistory = [...(prog.unlockHistory || []), ...nextState.unlockHistory].slice(0, 100)
-      if (prog.bootstrapCompletedAt) {
-        nextState.bootstrapCompletedAt = prog.bootstrapCompletedAt
-      }
-    }
-  }
-
-  nextState.lastUpdatedAt = result.evaluatedAt
-  return nextState
-}
-
 function normalizeRewardState(state: any): RewardState {
   const base = createEmptyRewardState()
-  return {
+  const merged: RewardState = {
     ...base,
     ...(state || {}),
     currency: {
@@ -229,7 +146,15 @@ function normalizeRewardState(state: any): RewardState {
     challengeProgress: (state && state.challengeProgress) || {},
     challengeRotation: (state && state.challengeRotation) || null,
     venueVisits: (state && state.venueVisits) || {},
+    processedUnits: state?.processedUnits || {},
+    processedGrantKeys: state?.processedGrantKeys || {},
+    progressionCurveVersion: state?.progressionCurveVersion,
+    levelGrandfatherFloor: state?.levelGrandfatherFloor,
   }
+  const migrated = migrateProgressionCurve(merged)
+  merged.progressionCurveVersion = migrated.progressionCurveVersion
+  merged.levelGrandfatherFloor = migrated.levelGrandfatherFloor
+  return merged
 }
 
 export function RewardProvider({ children }: { children: ReactNode }) {
@@ -459,7 +384,9 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       const presence = applyVenuePresenceToEvents(events, current.venueVisits || {})
       const workingEvents = presence.events
       const slice = toProgressionSlice(current)
-      const { state: nextSlice, aggregate } = processActivityEventBatch(slice, workingEvents)
+      const { state: nextSlice, aggregate } = processActivityEventBatch(slice, workingEvents, {
+        skipBaseSessionXp: true,
+      })
       const challengeResult = evaluateChallenges({
         events: workingEvents,
         definitions: contentRegistry.challenges,
@@ -635,95 +562,6 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       }
     },
     [enqueueRewards, user],
-  )
-
-  const grantRewardResult = useCallback(
-    async (result: RewardEvaluationResult) => {
-      const hasAnythingToApply =
-        (result.grantedPux || 0) > 0 ||
-        (result.unlockedAchievements || []).length > 0 ||
-        (result.unlockedMasteries || []).length > 0 ||
-        (result.rewardEvents || []).length > 0 ||
-        Boolean(result.progression)
-
-      if (!hasAnythingToApply) {
-        return
-      }
-
-      try {
-        const prog = result.progression
-        const response = await api.applyRewardResult({
-          session_id: result.sessionId,
-          event_id: prog?.eventId,
-          evaluated_at: result.evaluatedAt,
-          granted_pux: result.grantedPux + (prog?.grantedPux || 0),
-          granted_xp: prog?.grantedXp || 0,
-          reward_events: result.rewardEvents,
-          unlocked_achievements: [
-            ...result.unlockedAchievements.map((achievement) => ({
-              id: achievement.id,
-              unlockedAt: result.evaluatedAt,
-            })),
-            ...((prog?.unlockedAchievements || []).map((item) => ({
-              id: item.id,
-              unlockedAt: item.unlockedAt,
-              sourceEventId: item.sourceEventId,
-            })) || []),
-          ],
-          unlocked_masteries: result.unlockedMasteries,
-          unlocked_cosmetics: prog?.unlockedCosmetics || [],
-          unlock_history: prog?.unlockHistory || [],
-          activity_events: prog?.activityEvents || [],
-          bootstrap_completed_at: prog?.bootstrapCompletedAt,
-        })
-
-        const nextState = normalizeRewardState(response.state)
-        const unlockedAchievementDelta = Object.keys(nextState.unlockedAchievements).filter(
-          (id) => !rewardState.unlockedAchievements[id],
-        )
-        const unlockedMasteryDelta = Object.keys(nextState.unlockedMasteries).filter(
-          (key) => !rewardState.unlockedMasteries[key],
-        )
-
-        setRewardState(nextState)
-
-        const serverEvents = (response.reward_events || []) as RewardEvent[]
-        const fallbackEvents = result.rewardEvents.filter((event) => {
-          if (event.kind === 'achievement' && event.achievementId) {
-            return unlockedAchievementDelta.includes(event.achievementId)
-          }
-
-          if (event.kind === 'mastery' && event.id.startsWith('mastery:')) {
-            const masteryKey = event.id.slice('mastery:'.length)
-            return unlockedMasteryDelta.includes(masteryKey)
-          }
-
-          return false
-        })
-
-        const mergedEventsById = new Map<string, RewardEvent>()
-        for (const event of serverEvents) {
-          if (event?.id) mergedEventsById.set(event.id, event)
-        }
-        for (const event of fallbackEvents) {
-          if (event?.id && !mergedEventsById.has(event.id)) {
-            mergedEventsById.set(event.id, event)
-          }
-        }
-
-        const mergedEvents = Array.from(mergedEventsById.values())
-        if (mergedEvents.length > 0) {
-          enqueueRewards(mergedEvents)
-        }
-      } catch (err) {
-        console.error('Failed to apply rewards on server, using local fallback', err)
-        setRewardState((previous) => applyRewardResultLocally(previous, result))
-        if (result.rewardEvents.length > 0) {
-          enqueueRewards(result.rewardEvents)
-        }
-      }
-    },
-    [enqueueRewards, rewardState.unlockedAchievements, rewardState.unlockedMasteries],
   )
 
   const rebuildProgression = useCallback(
@@ -1089,7 +927,6 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       enqueueReward,
       enqueueRewards,
       closeActiveReward,
-      grantRewardResult,
       ingestActivityEvents,
       rebuildProgression,
       purchaseShopListing,
@@ -1107,7 +944,6 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       enqueueReward,
       enqueueRewards,
       closeActiveReward,
-      grantRewardResult,
       ingestActivityEvents,
       rebuildProgression,
       purchaseShopListing,

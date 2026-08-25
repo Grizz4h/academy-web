@@ -14,6 +14,8 @@ import { getXpRulesForEvent } from './xpRules'
 
 export type ProgressionStateSlice = {
   xp: number
+  progressionCurveVersion?: number
+  levelGrandfatherFloor?: number
   unlockedAchievements: Record<string, { id: string; unlockedAt: string; sourceEventId?: string }>
   unlockedCosmetics: Record<string, CosmeticUnlock>
   processedEvents: Record<string, { eventId: string; processedAt: string; grantedXp: number; grantedPux: number }>
@@ -43,9 +45,24 @@ function grantXpAmount(
   rules: ReturnType<typeof getXpRulesForEvent>,
   event: RinkActivityEvent,
   activityLog: RinkActivityEvent[],
+  options?: { skipBaseSessionXp?: boolean },
 ): number {
   let total = 0
   for (const rule of rules) {
+    if (
+      options?.skipBaseSessionXp &&
+      (rule.key === 'session_completed' || rule.key === 'first_session_of_drill')
+    ) {
+      continue
+    }
+    if (
+      options?.skipBaseSessionXp &&
+      rule.key === 'track_completed' &&
+      event.type === 'track_completed' &&
+      (event.trackId === 'T0' || event.trackId.startsWith('T0'))
+    ) {
+      continue
+    }
     if (rule.key === 'first_session_of_drill') {
       if (event.type === 'session_completed' && event.isFirstSessionOfDrill) {
         total += rule.amount
@@ -133,7 +150,7 @@ function applyGrantList(
 export function processActivityEvent(
   state: ProgressionStateSlice,
   event: RinkActivityEvent,
-  options?: { suppressHistory?: boolean },
+  options?: { suppressHistory?: boolean; skipBaseSessionXp?: boolean },
 ): ProgressionApplyResult {
   const evaluatedAt = event.occurredAt || new Date().toISOString()
 
@@ -153,7 +170,9 @@ export function processActivityEvent(
   const activityLog = [...(state.activityLog || [])]
   const previousXp = state.xp || 0
 
-  let grantedXp = grantXpAmount(getXpRulesForEvent(event), event, activityLog)
+  let grantedXp = grantXpAmount(getXpRulesForEvent(event), event, activityLog, {
+    skipBaseSessionXp: options?.skipBaseSessionXp,
+  })
   let grantedPux = 0
   const unlockedAchievements: AchievementUnlock[] = []
   const unlockedCosmetics: CosmeticUnlock[] = []
@@ -322,7 +341,7 @@ export function processActivityEvent(
 export function processActivityEventBatch(
   initial: ProgressionStateSlice,
   events: RinkActivityEvent[],
-  options?: { suppressPerEventHistory?: boolean },
+  options?: { suppressPerEventHistory?: boolean; skipBaseSessionXp?: boolean },
 ): { state: ProgressionStateSlice; aggregate: ProgressionApplyResult } {
   let slice: ProgressionStateSlice = {
     xp: initial.xp || 0,
@@ -346,6 +365,7 @@ export function processActivityEventBatch(
   for (const event of sorted) {
     const result = processActivityEvent(slice, event, {
       suppressHistory: options?.suppressPerEventHistory,
+      skipBaseSessionXp: options?.skipBaseSessionXp,
     })
     if (result.alreadyProcessed) continue
     if (isDummyActivityEvent(event)) {

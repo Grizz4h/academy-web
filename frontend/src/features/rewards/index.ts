@@ -1,7 +1,5 @@
 export { RewardProvider, useRewards } from './state/RewardContext'
 export { default as RewardHost } from './ui/RewardHost'
 export { default as RewardDevTools } from './ui/RewardDevTools'
-export { evaluateSessionRewards } from './logic/evaluateSessionRewards'
-export { detectDeviceType } from './logic/device'
 export { getTopNearAchievements, getRecentUnlockedAchievements, getAchievementProgressItems } from './logic/achievementProgress'
 export { DISPLAY_CURRENCY_LABEL, formatPux } from './types'

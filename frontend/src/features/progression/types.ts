@@ -70,6 +70,7 @@ export type SessionCompletedEvent = ActivityEventBase & {
   tags?: string[]
   isDummy?: boolean
   isFirstSessionOfDrill?: boolean
+  observationScope?: string
   venueId?: string
   venueVerified?: boolean
   homeAwayRole?: 'home' | 'away' | 'unknown'
@@ -100,6 +101,12 @@ export type TrackCompletedEvent = ActivityEventBase & {
   type: 'track_completed'
   trackId: string
   completionVersion: string
+}
+
+export type Track0CompletedEvent = ActivityEventBase & {
+  type: 'track0_completed'
+  trackId: 'T0'
+  userId?: string
 }
 
 export type SidequestCompletedEvent = ActivityEventBase & {
@@ -173,6 +180,7 @@ export type RinkActivityEvent =
   | SceneCreatedEvent
   | SceneRatedEvent
   | TrackCompletedEvent
+  | Track0CompletedEvent
   | SidequestCompletedEvent
   | MechanicUsedEvent
   | PredictionCompletedEvent

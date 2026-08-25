@@ -5,6 +5,7 @@ import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { getHiddenNavTabs, isDevNavEnabled, setDevNavEnabled } from '../config/featureFlags'
 import DevActionLogPanel from '../components/dev/DevActionLogPanel'
+import ProgressionPersonaSimPanel from '../components/dev/ProgressionPersonaSimPanel'
 import {
   buildGameStatsBatchLogDetail,
   buildGameStatsImportLogDetail,
@@ -719,6 +720,8 @@ export default function DevLab() {
           </UiButton>
         </div>
       </section>
+
+      <ProgressionPersonaSimPanel />
 
       <section className={styles.card}>
         <h2 className="ui-section-title">Rewards Lab</h2>

@@ -4,6 +4,7 @@ import type {
   RinkActivityEvent,
 } from '../types'
 import { TANK_ACHIEVEMENTS } from './achievementCatalog'
+import { isTankBlockedByLegacyUnlock } from '../../rewards/data/legacyAchievements'
 
 function readField(event: RinkActivityEvent, field: string): unknown {
   return (event as unknown as Record<string, unknown>)[field]
@@ -139,6 +140,7 @@ export function findNewlyUnlockedAchievements(
 ): AchievementDefinition[] {
   return catalog.filter((definition) => {
     if (alreadyUnlocked[definition.id]) return false
+    if (isTankBlockedByLegacyUnlock(definition.id, alreadyUnlocked)) return false
     return evaluateAchievementProgress(definition, events).met
   })
 }

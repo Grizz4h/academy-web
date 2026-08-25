@@ -20,6 +20,8 @@ def create_default_reward_state() -> Dict[str, Any]:
         "unlockedAchievements": {},
         "unlockedMasteries": {},
         "processedSessions": {},
+        "processedUnits": {},
+        "processedGrantKeys": {},
         "xp": 0,
         "processedEvents": {},
         "unlockedCosmetics": {},
@@ -37,18 +39,24 @@ def create_default_reward_state() -> Dict[str, Any]:
         "challengeProgress": {},
         "challengeRotation": None,
         "venueVisits": {},
+        "progressionCurveVersion": None,
+        "levelGrandfatherFloor": None,
     }
 
 
 def merge_reward_state(state: Dict[str, Any]) -> Dict[str, Any]:
+    from progression.level_curve import apply_curve_migration
+
     base = create_default_reward_state()
-    return {
+    merged = {
         **base,
         **state,
         "currency": {**base["currency"], **(state.get("currency") or {})},
         "unlockedAchievements": state.get("unlockedAchievements") or {},
         "unlockedMasteries": state.get("unlockedMasteries") or {},
         "processedSessions": state.get("processedSessions") or {},
+        "processedUnits": state.get("processedUnits") or {},
+        "processedGrantKeys": state.get("processedGrantKeys") or {},
         "xp": int(state.get("xp") or 0),
         "processedEvents": state.get("processedEvents") or {},
         "unlockedCosmetics": state.get("unlockedCosmetics") or {},
@@ -65,7 +73,11 @@ def merge_reward_state(state: Dict[str, Any]) -> Dict[str, Any]:
         "challengeProgress": state.get("challengeProgress") or {},
         "challengeRotation": state.get("challengeRotation"),
         "venueVisits": state.get("venueVisits") or {},
+        "progressionCurveVersion": state.get("progressionCurveVersion"),
+        "levelGrandfatherFloor": state.get("levelGrandfatherFloor"),
     }
+    apply_curve_migration(merged)
+    return merged
 
 
 class JsonRewardRepository:

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
-import { detectDeviceType, evaluateSessionRewards, useRewards } from '../features/rewards'
+import { useRewards } from '../features/rewards'
 import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrackCompletionEvents } from '../features/progression'
 import { isDummySession, isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
 import { isDevNavEnabled } from '../config/featureFlags'
@@ -113,7 +113,7 @@ export default function SessionPage() {
   const queryClient = useQueryClient()
   const { user } = useUser()
   const tutorial = useTutorialOptional()
-  const { grantRewardResult, rewardState, ingestActivityEvents, evaluateLockerMetaProgress } = useRewards()
+  const { ingestActivityEvents, evaluateLockerMetaProgress } = useRewards()
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
   type PeriodPhase = 'P1' | 'P2' | 'P3'
@@ -496,21 +496,7 @@ export default function SessionPage() {
       queryFn: () => api.getSessions(user || undefined)
     })
 
-    const rewardResult = evaluateSessionRewards({
-      currentSession: completedSession,
-      sessions: freshSessions,
-      rewardState,
-      context: {
-        completedAt: completedSession.post?.completed_at || new Date().toISOString(),
-        deviceType: detectDeviceType(),
-        noteText: sessionNote,
-        performance: null,
-      }
-    })
-
     if (isProgressionEligibleSession(completedSession)) {
-      await grantRewardResult(rewardResult)
-
       const priorDrillIds = new Set(
         getRealSessions(freshSessions)
           .filter((s) => s.id !== completedSession.id && s.state === 'COMPLETED')
@@ -519,6 +505,7 @@ export default function SessionPage() {
       )
       const progressionEvents = buildEventsFromCompletedSession(completedSession, {
         priorCompletedDrillIds: priorDrillIds,
+        userId: user || undefined,
       })
 
       let trackDrills: Record<string, string[]> = {}

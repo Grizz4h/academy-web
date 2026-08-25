@@ -10,6 +10,7 @@ import type {
   SessionCompletedEvent,
   SidequestCompletedEvent,
   TrackCompletedEvent,
+  Track0CompletedEvent,
 } from './types'
 
 export function activityEventId(type: string, ...parts: Array<string | number | undefined | null>): string {
@@ -32,6 +33,7 @@ export function buildSessionCompletedEvent(input: {
   tags?: string[]
   isDummy?: boolean
   isFirstSessionOfDrill?: boolean
+  observationScope?: string
   venueId?: string
   venueVerified?: boolean
   homeAwayRole?: 'home' | 'away' | 'unknown'
@@ -54,6 +56,7 @@ export function buildSessionCompletedEvent(input: {
     tags: input.tags,
     isDummy: input.isDummy,
     isFirstSessionOfDrill: input.isFirstSessionOfDrill,
+    observationScope: input.observationScope,
     venueId: input.venueId,
     venueVerified: input.venueVerified,
     homeAwayRole: input.homeAwayRole,
@@ -114,6 +117,19 @@ export function buildTrackCompletedEvent(input: {
     occurredAt: input.occurredAt || new Date().toISOString(),
     trackId: input.trackId,
     completionVersion: version,
+  }
+}
+
+export function buildTrack0CompletedEvent(input: {
+  userId: string
+  occurredAt?: string
+}): Track0CompletedEvent {
+  return {
+    id: activityEventId('track0_completed', input.userId),
+    type: 'track0_completed',
+    trackId: 'T0',
+    userId: input.userId,
+    occurredAt: input.occurredAt || new Date().toISOString(),
   }
 }
 
