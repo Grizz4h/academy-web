@@ -16,7 +16,7 @@ export function DrillGuideCard({ guide }: Props) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
       <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-        <RinQIcon name="observe" size="md" badge />
+        <RinQIcon name="observe" size="md" badge inline />
         Beobachtungsanleitung
       </h3>
       <Section title="Worauf achten?" items={guide.what_to_watch} rwg={rwg} />

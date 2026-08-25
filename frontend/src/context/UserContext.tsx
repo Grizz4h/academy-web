@@ -91,40 +91,36 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }, [applyMe])
 
-  const setUser = async (username: string | null, password?: string): Promise<LoginResult> => {
-    if (!username) {
-      setUserState(null)
-      setUserIdState(null)
-      setAuthMode(null)
-      setNeedsDisplayName(false)
-      clearLocalAuth()
-      return { ok: true }
-    }
-    if (!password) return { ok: false, error: 'Passwort erforderlich' }
-    try {
-      await signOutSupabase()
-      const res = await apiLogin(username, password)
-      const resolved = res.username || username
-      const rid = res.rinq_user_id || res.user_id || null
-      setUserState(resolved)
-      setUserIdState(rid)
-      setAuthMode('legacy')
-      setNeedsDisplayName(false)
-      localStorage.setItem('academy.user', resolved)
-      localStorage.setItem('academy.authMode', 'legacy')
-      if (rid) localStorage.setItem('academy.userId', rid)
-      else localStorage.removeItem('academy.userId')
-      localStorage.setItem('academy.token', res.token)
-      return { ok: true }
-    } catch (e: any) {
-      setUserState(null)
-      setUserIdState(null)
-      setAuthMode(null)
-      setNeedsDisplayName(false)
-      clearLocalAuth()
-      return { ok: false, error: e?.message || 'Login fehlgeschlagen' }
-    }
-  }
+  const setUser = useCallback(
+    async (username: string | null, password?: string): Promise<LoginResult> => {
+      if (!username) {
+        setUserState(null)
+        setUserIdState(null)
+        setAuthMode(null)
+        setNeedsDisplayName(false)
+        clearLocalAuth()
+        return { ok: true }
+      }
+      if (!password) return { ok: false, error: 'Passwort erforderlich' }
+      try {
+        await signOutSupabase()
+        const res = await apiLogin(username, password)
+        // Resolve display name via /api/me (same as Supabase) — avoid flashing
+        // the lowercase login subject before profile.displayName loads.
+        localStorage.setItem('academy.token', res.token)
+        await applyMe(res.token, 'legacy')
+        return { ok: true }
+      } catch (e: any) {
+        setUserState(null)
+        setUserIdState(null)
+        setAuthMode(null)
+        setNeedsDisplayName(false)
+        clearLocalAuth()
+        return { ok: false, error: e?.message || 'Login fehlgeschlagen' }
+      }
+    },
+    [applyMe],
+  )
 
   const completeSupabaseSession = useCallback(
     async (accessToken: string): Promise<LoginResult> => {
@@ -171,7 +167,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       applyDisplayName,
       logout,
     }),
-    [user, userId, authMode, needsDisplayName, completeSupabaseSession, applyDisplayName],
+    [user, userId, authMode, needsDisplayName, setUser, completeSupabaseSession, applyDisplayName],
   )
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>

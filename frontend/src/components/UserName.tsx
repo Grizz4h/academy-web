@@ -22,7 +22,12 @@ export default function UserName() {
   if (!user) return null
 
   const profile = account?.profile
-  const displayName = profile?.displayName || user
+  // Prefer server display_name / profile name; context `user` is already the display
+  // name after login/bootstrap, but keep profile as source of truth once loaded.
+  const displayName =
+    (typeof account?.display_name === 'string' && account.display_name.trim()) ||
+    (typeof profile?.displayName === 'string' && profile.displayName.trim()) ||
+    user
   const title = resolveEquippedTitle(profile?.profileTitle)
 
   let avatarSrc = getAvatarAsset(DEFAULT_AVATAR_ID)?.src || ''

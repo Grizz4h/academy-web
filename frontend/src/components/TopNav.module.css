@@ -110,9 +110,21 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   scroll-padding-inline: 10px;
-  /* Fade right edge — tabs scroll before profile cluster */
-  mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 2rem), transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 2rem), transparent 100%);
+  /* Fade both edges — tabs scroll under logo (left) and profile (right) */
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 1.75rem,
+    #000 calc(100% - 2rem),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 1.75rem,
+    #000 calc(100% - 2rem),
+    transparent 100%
+  );
 }
 
 .navTabsWrapper[data-scrollable='true'] {
@@ -138,8 +150,8 @@
   gap: 6px;
   width: max-content;
   min-width: 0;
-  /* Extra end padding so last tab clears profile pill + fade */
-  padding: 4px 3rem 4px 10px;
+  /* Extra padding so first/last tabs clear the edge fades */
+  padding: 4px 3rem 4px 1.75rem;
 }
 
 .navLink {
@@ -324,7 +336,9 @@
   z-index: 3;
   margin-left: auto;
   padding-left: 10px;
-  background: linear-gradient(90deg, rgba(8, 12, 24, 0) 0%, rgba(8, 12, 24, 0.92) 14px);
+  /* No solid/gradient fill — a rectangular wash reads as a box behind
+     round account frames. Tab fade lives on .navTabsWrapper instead. */
+  background: none;
 }
 
 .identityCluster > div {
@@ -553,18 +567,19 @@
     grid-column: 2;
     overflow-x: auto;
     overflow-y: hidden;
+    scroll-padding-inline-start: 16px;
     scroll-padding-inline-end: 16px;
     mask-image: linear-gradient(
       90deg,
-      #000 0%,
-      #000 10px,
+      transparent 0%,
+      #000 2rem,
       #000 calc(100% - 2.25rem),
       transparent 100%
     );
     -webkit-mask-image: linear-gradient(
       90deg,
-      #000 0%,
-      #000 10px,
+      transparent 0%,
+      #000 2rem,
       #000 calc(100% - 2.25rem),
       transparent 100%
     );
@@ -572,6 +587,7 @@
 
   .navTabs {
     justify-content: flex-start;
+    padding-inline-start: 2rem;
     padding-inline-end: 3.25rem;
   }
 
@@ -610,10 +626,22 @@
     max-width: 100%;
     margin-left: 0;
     padding-bottom: 2px;
-    scroll-padding-inline-start: 10px;
+    scroll-padding-inline-start: 16px;
     scroll-padding-inline-end: 16px;
-    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.75rem), transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.75rem), transparent 100%);
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 1.75rem,
+      #000 calc(100% - 1.75rem),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 1.75rem,
+      #000 calc(100% - 1.75rem),
+      transparent 100%
+    );
   }
 
   .identityCluster {
@@ -625,7 +653,7 @@
 
   .navTabs {
     gap: 6px;
-    padding-inline-start: 10px;
+    padding-inline-start: 1.75rem;
     padding-inline-end: 2.75rem;
   }
 

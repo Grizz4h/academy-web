@@ -43,7 +43,7 @@ export function RinQIcon({
         styles.icon,
         sizeClass,
         toneClass,
-        inline ? styles.inline : '',
+        inline && !badge ? styles.inline : '',
         className,
       ]
         .filter(Boolean)
@@ -64,6 +64,7 @@ export function RinQIcon({
       className={[
         styles.badge,
         size === 'sm' ? styles.badgeSm : size === 'lg' ? styles.badgeLg : '',
+        inline ? styles.inline : '',
       ]
         .filter(Boolean)
         .join(' ')}
