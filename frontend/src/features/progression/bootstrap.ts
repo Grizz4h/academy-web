@@ -1,7 +1,7 @@
 import { getStarterCosmeticIds } from './cosmetics/cosmeticCatalog'
 import { getLevelFromXp } from './levelSystem'
 import { processActivityEventBatch, type ProgressionStateSlice } from './progressionEngine'
-import { collectBootstrapEvents, type TrackDrillMap } from './buildActivityFromSources'
+import { collectBootstrapEvents, type TrackDrillMap, type ModuleDrillMap } from './buildActivityFromSources'
 import type { Session, SceneMarker } from '../../api'
 import type { CosmeticUnlock, ProgressionApplyResult, UnlockHistoryEntry } from './types'
 
@@ -12,9 +12,11 @@ export type BootstrapInput = {
   sessions: Session[]
   scenes: SceneMarker[]
   trackDrills?: TrackDrillMap
+  moduleDrills?: ModuleDrillMap
   existing: ProgressionStateSlice
   /** When true, ignore existing derived progression and rebuild from sources. */
   forceRebuild?: boolean
+  userId?: string
 }
 
 export type BootstrapResult = {
@@ -111,10 +113,14 @@ export function bootstrapProgression(input: BootstrapInput): BootstrapResult {
     sessions: input.sessions,
     scenes: input.scenes,
     trackDrills: input.trackDrills,
+    moduleDrills: input.moduleDrills,
+    userId: input.userId,
   })
 
   const { state, aggregate } = processActivityEventBatch(base, events, {
     suppressPerEventHistory: true,
+    // Base unit XP/PUX + Track0 bundle come from the server unified pipeline.
+    skipBaseSessionXp: true,
   })
 
   const summaryHistory: UnlockHistoryEntry = {

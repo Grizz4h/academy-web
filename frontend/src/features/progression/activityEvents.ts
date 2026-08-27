@@ -10,6 +10,7 @@ import type {
   SessionCompletedEvent,
   SidequestCompletedEvent,
   TrackCompletedEvent,
+  ModuleCompletedEvent,
   Track0CompletedEvent,
 } from './types'
 
@@ -115,6 +116,23 @@ export function buildTrackCompletedEvent(input: {
     id: activityEventId('track_completed', input.trackId, version),
     type: 'track_completed',
     occurredAt: input.occurredAt || new Date().toISOString(),
+    trackId: input.trackId,
+    completionVersion: version,
+  }
+}
+
+export function buildModuleCompletedEvent(input: {
+  moduleId: string
+  trackId?: string
+  completionVersion?: string
+  occurredAt?: string
+}): ModuleCompletedEvent {
+  const version = input.completionVersion || 'v1'
+  return {
+    id: activityEventId('module_completed', input.moduleId, version),
+    type: 'module_completed',
+    occurredAt: input.occurredAt || new Date().toISOString(),
+    moduleId: input.moduleId,
     trackId: input.trackId,
     completionVersion: version,
   }

@@ -12,6 +12,7 @@ export const bannerCatalog: ProfileAsset[] = [
     src: '/profile/banners/banner_neutral_01.svg',
     category: 'rink',
     tags: ['neutral', 'rink'],
+    starter: true,
   },
   {
     id: 'banner_blue_line_01',
@@ -19,6 +20,7 @@ export const bannerCatalog: ProfileAsset[] = [
     src: '/profile/banners/banner_blue_line_01.svg',
     category: 'rink',
     tags: ['blue-line'],
+    starter: false,
   },
   {
     id: 'banner_chalk_01',
@@ -26,6 +28,7 @@ export const bannerCatalog: ProfileAsset[] = [
     src: '/profile/banners/banner_chalk_01.svg',
     category: 'chalk',
     tags: ['chalk', 'tactics'],
+    starter: false,
   },
   {
     id: 'banner_crease_01',
@@ -33,13 +36,30 @@ export const bannerCatalog: ProfileAsset[] = [
     src: '/profile/banners/banner_crease_01.svg',
     category: 'rink',
     tags: ['crease', 'goal'],
+    starter: false,
   },
   {
-    id: 'banner_property_of_the_slot',
-    label: 'Property of the Slot',
-    src: '/profile/banners/banner_property_of_the_slot.svg',
+    id: 'banner_high_slot',
+    label: 'High Slot',
+    src: '/profile/banners/banner_high_slot.svg',
     category: 'rink',
     tags: ['crease', 'slot'],
+    starter: false,
+  },
+  {
+    id: 'banner_scene_century',
+    label: 'Scene Century',
+    src: '/profile/banners/banner_scene_century.svg',
+    category: 'abstract',
+    tags: ['scenes', 'filmstrip'],
+    starter: false,
+  },
+  {
+    id: 'banner_ten_team_tour',
+    label: 'Ten Team Tour',
+    src: '/profile/banners/banner_ten_team_tour.svg',
+    category: 'rink',
+    tags: ['teams', 'breadth'],
     starter: false,
   },
   {
@@ -67,7 +87,7 @@ export const bannerCatalog: ProfileAsset[] = [
     starter: false,
   },
   {
-    id: 'banner_shop_soft_ice',
+    id: 'banner_soft_ice',
     label: 'Soft Ice',
     src: '/profile/banners/banner_shop_soft_ice.svg',
     category: 'rink',
@@ -96,14 +116,6 @@ export const bannerCatalog: ProfileAsset[] = [
     src: '/profile/banners/banner_night_circuit.svg',
     category: 'abstract',
     tags: ['cyberpunk', 'night-circuit'],
-    starter: false,
-  },
-  {
-    id: 'banner_zamboni_shift',
-    label: 'Night Cut',
-    src: '/profile/banners/banner_zamboni_shift.svg',
-    category: 'rink',
-    tags: ['zamboni', 'ice-crew'],
     starter: false,
   },
 ]

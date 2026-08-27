@@ -83,6 +83,7 @@ from identity.migrate import owners_match as _identity_owners_match
 from security_guards import (
     is_admin_auth,
     is_creator_mode_auth,
+    is_dev_access_auth,
     legacy_signup_allowed,
     rate_limit,
     client_ip,
@@ -295,6 +296,24 @@ def require_admin(
     return current_user
 
 
+def require_dev_access(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+) -> AuthContext:
+    """DevLab routes and progression preview — not admin import APIs."""
+    rate_limit(request, "dev_api", limit=180, window_sec=60.0)
+    users = load_users()
+    key = normalize_subject(current_user.legacy_username or current_user.auth_subject)
+    record = next(
+        (u for u in users.get("users", []) if normalize_subject(u.get("username") or "") == key),
+        None,
+    )
+    role = (record or {}).get("role") if isinstance(record, dict) else None
+    if not is_dev_access_auth(current_user, role_from_record=role):
+        raise HTTPException(status_code=403, detail="Dev access required")
+    return current_user
+
+
 # --- AUTH ENDPOINTS ---
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -321,14 +340,20 @@ from threading import Lock
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field, AliasChoices
 from datetime import datetime
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s',
-    handlers=[
-        logging.FileHandler("backend.log", encoding="utf-8"),
-        logging.StreamHandler()
-    ]
-)
+
+_log_handlers: list[logging.Handler] = [logging.StreamHandler()]
+try:
+    _log_handlers.insert(0, logging.FileHandler("backend.log", encoding="utf-8"))
+except OSError as exc:
+    # Service user may not own backend.log (e.g. root-owned) — don't crash startup.
+    logging.basicConfig(level=logging.INFO, format="%(message)s", handlers=[logging.StreamHandler()])
+    logging.getLogger(__name__).warning("backend.log unavailable (%s); stdout only", exc)
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(message)s",
+        handlers=_log_handlers,
+    )
 
 app = FastAPI(title="Academy API", version="1.0.0")
 
@@ -538,6 +563,18 @@ class RewardApplyData(BaseModel):
     challenge_progress: Optional[dict] = None
     challenge_rotation: Optional[dict] = None
     venue_visits: Optional[dict] = None
+
+
+class ProgressionPreviewData(BaseModel):
+    activity_events: List[dict] = Field(default_factory=list)
+    session_doc: Optional[dict] = None
+    reward_state_snapshot: Optional[dict] = None
+    use_account_state: bool = False
+
+
+class DevelopmentCosmeticCleanupData(BaseModel):
+    """Test-account only — development_data_cleanup (Rev. B path A)."""
+    reset_progression: bool = False
 
 
 class SceneSourcePayload(BaseModel):
@@ -2712,6 +2749,103 @@ async def get_rewards_state(current_user: AuthContext = Depends(get_current_user
     return state
 
 
+@app.post("/api/dev/progression/preview-grants")
+async def preview_progression_grants(
+    data: ProgressionPreviewData,
+    current_user: AuthContext = Depends(require_dev_access),
+):
+    """Dry-run unified base grants on a cloned reward state (no persistence)."""
+    import copy
+
+    from progression.grants import compute_unified_base_grants
+    from repositories.json_reward import create_default_reward_state, merge_reward_state
+
+    if data.use_account_state:
+        base = copy.deepcopy(_load_reward_state(current_user))
+    elif data.reward_state_snapshot:
+        base = copy.deepcopy(data.reward_state_snapshot)
+    else:
+        base = create_default_reward_state()
+
+    state = merge_reward_state(base)
+    evaluated_at = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    xp, pux, cosmetics, logs = compute_unified_base_grants(
+        state,
+        data.activity_events,
+        session_doc=data.session_doc,
+        evaluated_at=evaluated_at,
+    )
+    state["xp"] = int(state.get("xp") or 0) + int(xp)
+    if "currency" not in state or not isinstance(state["currency"], dict):
+        state["currency"] = {"PUX": 0}
+    state["currency"]["PUX"] = int(state["currency"].get("PUX") or 0) + int(pux)
+    return {
+        "granted_xp": int(xp),
+        "granted_pux": int(pux),
+        "cosmetics": cosmetics,
+        "logs": logs,
+        "state_after": {
+            "xp": int(state.get("xp") or 0),
+            "currency": state.get("currency") or {"PUX": 0},
+            "processedUnits": state.get("processedUnits") or {},
+            "processedGrantKeys": state.get("processedGrantKeys") or {},
+            "unlockedCosmetics": state.get("unlockedCosmetics") or {},
+        },
+    }
+
+
+@app.post("/api/dev/progression/run-journey")
+async def run_progression_journey(
+    current_user: AuthContext = Depends(require_dev_access),
+):
+    """Run the 4-week standard journey in one server-side chain (dry-run)."""
+    from progression.dev_journey import run_standard_journey
+
+    return run_standard_journey()
+
+
+@app.post("/api/dev/progression/cosmetic-cleanup")
+async def development_cosmetic_cleanup(
+    data: DevelopmentCosmeticCleanupData,
+    current_user: AuthContext = Depends(require_dev_access),
+):
+    """Reset current account cosmetics to Soll starter seed (development_data_cleanup).
+
+    Not a product migration. Test/dev accounts only (require_dev_access).
+    """
+    from progression.cosmetic_cleanup import (
+        development_data_cleanup_profile,
+        development_data_cleanup_reward_state,
+    )
+
+    state = _load_reward_state(current_user)
+    cleaned = development_data_cleanup_reward_state(
+        state,
+        reset_progression=bool(data.reset_progression),
+    )
+    _save_reward_state(current_user, cleaned)
+
+    profile = get_repos().profiles.get_profile(current_user) or {}
+    if not isinstance(profile, dict):
+        profile = {}
+    development_data_cleanup_profile(profile)
+    get_repos().profiles.save_profile(current_user, profile)
+
+    return {
+        "ok": True,
+        "kind": cleaned.get("developmentDataCleanupKind"),
+        "reset_progression": bool(data.reset_progression),
+        "starter": {
+            "avatarId": "avatar_chalk_01",
+            "bannerId": "banner_neutral_01",
+            "emblemId": "emblem_puck_01",
+            "frameId": None,
+            "profileTitleId": "prospect",
+            "taglineId": "tagline_starter",
+        },
+    }
+
+
 @app.post("/api/rewards/apply")
 async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depends(get_current_user)):
     enforce_max_text_length(data.reward_events, "reward_events")
@@ -2719,7 +2853,9 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
     enforce_max_text_length(data.unlocked_masteries, "unlocked_masteries")
     enforce_max_text_length(data.unlocked_cosmetics, "unlocked_cosmetics")
     enforce_max_text_length(data.unlock_history, "unlock_history")
-    enforce_max_text_length(data.activity_events, "activity_events")
+    # Activity events can be large on rebuild; only enforce when not replace_derived.
+    if not data.replace_derived:
+        enforce_max_text_length(data.activity_events, "activity_events")
 
     event_id = (data.event_id or "").strip() or None
     session_id = (data.session_id or "").strip() or None
@@ -2739,6 +2875,29 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
                 "reason": "dummy_session",
             }
 
+    # Load sessions BEFORE the reward-row lock to avoid pool deadlocks.
+    rebuild_events = None
+    rebuild_sessions_by_id = None
+    if data.replace_derived:
+        from progression.session_events import activity_events_from_sessions
+
+        owned_sessions = get_repos().sessions.list_sessions_for_user(current_user)
+        rebuild_events, rebuild_sessions_by_id = activity_events_from_sessions(
+            owned_sessions,
+            user_id=current_user.rinq_user_id,
+        )
+        logging.info(
+            "[progression] preloaded rebuild sessions=%s events=%s user=%s",
+            len(owned_sessions),
+            len(rebuild_events),
+            current_user.rinq_user_id,
+        )
+        if not rebuild_events:
+            raise HTTPException(
+                status_code=400,
+                detail="rebuild_from_sessions_empty: keine Sessions für Unit-Rebuild",
+            )
+
     def _mutator(state: dict):
         return _compute_reward_apply(
             state,
@@ -2746,12 +2905,30 @@ async def apply_rewards(data: RewardApplyData, current_user: AuthContext = Depen
             event_id=event_id,
             session_id=session_id,
             session_doc=session_doc if isinstance(session_doc, dict) else None,
+            user=current_user,
+            rebuild_events=rebuild_events,
+            rebuild_sessions_by_id=rebuild_sessions_by_id,
         )
 
-    return get_repos().rewards.apply_reward_delta(current_user, _mutator)
+    result = get_repos().rewards.apply_reward_delta(current_user, _mutator)
+    if isinstance(result, dict) and result.get("applied") is False:
+        reason = result.get("reason") or "apply_failed"
+        if str(reason).startswith("rebuild_"):
+            raise HTTPException(status_code=400, detail=str(reason))
+    return result
 
 
-def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, session_id, session_doc=None):
+def _compute_reward_apply(
+    state: dict,
+    data: RewardApplyData,
+    *,
+    event_id,
+    session_id,
+    session_doc=None,
+    user: Optional["AuthContext"] = None,
+    rebuild_events: Optional[list] = None,
+    rebuild_sessions_by_id: Optional[dict] = None,
+):
     """Business rules for rewards/apply. Called under RewardRepository lock."""
     from progression.config import progression_unified_pipeline_enabled
     from progression.grants import compute_unified_base_grants
@@ -2805,6 +2982,11 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
             if isinstance(tx, dict) and tx.get("sourceType") == "pux_shop"
         ]
         state["xp"] = 0
+        shop_spent = 0
+        for tx in preserved_txs:
+            shop_spent += int(tx.get("amount") or 0)
+        state["_rebuild_shop_spend"] = shop_spent
+        state["currency"] = {"PUX": 0}
         state["processedEvents"] = {**preserved_shop_events}
         state["unlockedCosmetics"] = preserved_cosmetics
         state["activityLog"] = []
@@ -2820,25 +3002,83 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
             for k, v in (state.get("processedGrantKeys") or {}).items()
             if str(k).startswith("pux_shop_purchase:")
         }
+        state["unlockedAchievements"] = {}
+        state["processedSessions"] = {}
         processed_events = state["processedEvents"]
+        processed_sessions = state["processedSessions"]
 
-    if unified_pipeline and data.activity_events:
-        server_granted_xp, server_granted_pux, server_cosmetics, grant_logs = compute_unified_base_grants(
-            state,
-            data.activity_events,
-            session_doc=session_doc,
-            evaluated_at=data.evaluated_at,
-        )
-        for line in grant_logs:
-            if line.startswith("skip:") or line.startswith("grant:"):
-                logging.info("[progression] %s", line)
+    if unified_pipeline:
+        grant_events = None
+        sessions_by_id: dict = {}
+        # replace_derived: use preloaded server sessions (never nested DB fetch under lock).
+        if data.replace_derived:
+            grant_events = list(rebuild_events or [])
+            sessions_by_id = dict(rebuild_sessions_by_id or {})
+            if not grant_events:
+                return None, {
+                    "state": state,
+                    "applied": False,
+                    "granted_pux": 0,
+                    "granted_xp": 0,
+                    "reward_events": [],
+                    "reason": "rebuild_from_sessions_empty",
+                }
+        elif data.activity_events:
+            grant_events = data.activity_events
+            try:
+                for raw_event in data.activity_events or []:
+                    if not isinstance(raw_event, dict):
+                        continue
+                    sid = str(raw_event.get("sessionId") or "").strip()
+                    if not sid or sid in sessions_by_id:
+                        continue
+                    found = get_repos().sessions.find_session_raw(sid)
+                    if isinstance(found, dict):
+                        sessions_by_id[sid] = found
+            except Exception:
+                logging.exception("[progression] session hydrate for activity_events failed")
+
+        if grant_events:
+            server_granted_xp, server_granted_pux, server_cosmetics, grant_logs = compute_unified_base_grants(
+                state,
+                grant_events,
+                session_doc=session_doc,
+                sessions_by_id=sessions_by_id,
+                evaluated_at=data.evaluated_at,
+            )
+            for line in grant_logs:
+                if line.startswith("skip:") or line.startswith("grant:"):
+                    logging.info("[progression] %s", line)
+            logging.info(
+                "[progression] server_grants xp=%s pux=%s cosmetics=%s units=%s",
+                server_granted_xp,
+                server_granted_pux,
+                len(server_cosmetics),
+                len(state.get("processedUnits") or {}),
+            )
+            if data.replace_derived and int(server_granted_xp) < 100:
+                return None, {
+                    "state": state,
+                    "applied": False,
+                    "granted_pux": 0,
+                    "granted_xp": 0,
+                    "reward_events": [],
+                    "reason": "rebuild_zero_xp",
+                }
 
     client_granted_pux = int(data.granted_pux or 0)
     client_granted_xp = int(data.granted_xp or 0)
+    # On replace_derived, unit XP comes only from server session rebuild.
+    # Client PUX may still carry achievement grants; level rewards are applied below.
+    if data.replace_derived:
+        client_granted_xp = 0
     total_granted_pux = client_granted_pux + server_granted_pux
     total_granted_xp = client_granted_xp + server_granted_xp
 
     next_pux = int(state["currency"].get("PUX", 0)) + total_granted_pux
+    if data.replace_derived:
+        shop_spent = int(state.pop("_rebuild_shop_spend", 0) or 0)
+        next_pux = max(0, next_pux - shop_spent)
     if next_pux < 0:
         return None, {
             "state": state,
@@ -2850,6 +3090,18 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
         }
     state["currency"]["PUX"] = next_pux
     state["xp"] = int(state.get("xp") or 0) + total_granted_xp
+
+    if data.replace_derived:
+        from progression.level_rewards import apply_level_rewards_for_xp
+
+        level_pux, level_cosmetics = apply_level_rewards_for_xp(
+            state, evaluated_at=data.evaluated_at
+        )
+        if level_pux:
+            state["currency"]["PUX"] = int(state["currency"].get("PUX", 0)) + int(level_pux)
+            total_granted_pux += int(level_pux)
+        if level_cosmetics:
+            server_cosmetics = list(server_cosmetics) + list(level_cosmetics)
 
     if session_id and session_id not in processed_sessions:
         state["processedSessions"][session_id] = {
@@ -2905,7 +3157,10 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
         cosmetic_id = (cosmetic.get("cosmeticId") or cosmetic.get("id") or "").strip()
         if not cosmetic_id:
             continue
-        if cosmetic_id in state["unlockedCosmetics"] and not data.replace_derived:
+        from progression.cosmetic_aliases import canonical_cosmetic_id, owns_cosmetic
+
+        cosmetic_id = canonical_cosmetic_id(cosmetic_id) or cosmetic_id
+        if owns_cosmetic(state, cosmetic_id) and not data.replace_derived:
             continue
         state["unlockedCosmetics"][cosmetic_id] = {
             "cosmeticId": cosmetic_id,
@@ -2932,9 +3187,12 @@ def _compute_reward_apply(state: dict, data: RewardApplyData, *, event_id, sessi
         cosmetic_id = (cosmetic.get("cosmeticId") or cosmetic.get("id") or "").strip()
         if not cosmetic_id:
             continue
-        if cosmetic_id in state["unlockedCosmetics"] and not data.replace_derived:
+        from progression.cosmetic_aliases import canonical_cosmetic_id, owns_cosmetic
+
+        cosmetic_id = canonical_cosmetic_id(cosmetic_id) or cosmetic_id
+        if owns_cosmetic(state, cosmetic_id) and not data.replace_derived:
             # Allow seenAt / metadata refresh on existing unlocks.
-            existing = state["unlockedCosmetics"][cosmetic_id]
+            existing = state["unlockedCosmetics"].get(cosmetic_id)
             if isinstance(existing, dict):
                 if cosmetic.get("seenAt"):
                     existing["seenAt"] = cosmetic.get("seenAt")
@@ -4116,6 +4374,7 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "createdAt": (record or {}).get("created_at"),
         "role": role,
         "is_admin": is_admin_auth(current_user, role_from_record=role),
+        "is_dev_access": is_dev_access_auth(current_user, role_from_record=role),
         "creator_mode": is_creator_mode_auth(current_user, role_from_record=role),
         "profile": profile,
         "needs_display_name": _needs_display_name_setup(current_user),

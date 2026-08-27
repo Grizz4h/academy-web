@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
 import { useRewards } from '../features/rewards'
-import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrackCompletionEvents } from '../features/progression'
+import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrackCompletionEvents, buildModuleCompletionEvents, buildCurriculumProgressionMaps } from '../features/progression'
 import { isDummySession, isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
 import { isDevNavEnabled } from '../config/featureFlags'
 import { UiButton } from '../components/ui'
@@ -509,30 +509,20 @@ export default function SessionPage() {
       })
 
       let trackDrills: Record<string, string[]> = {}
+      let moduleDrills: ReturnType<typeof buildCurriculumProgressionMaps>['moduleDrills'] = {}
       try {
         const curriculumData = await queryClient.fetchQuery({
           queryKey: ['curriculum'],
           queryFn: () => api.getCurriculum(),
         })
-        for (const track of curriculumData.tracks || []) {
-          const ids: string[] = []
-          for (const module of track.modules || []) {
-            if (module.active === false) continue
-            for (const drill of module.drills || []) {
-              if (drill.id) ids.push(drill.id)
-            }
-            if (module.id) ids.push(module.id)
-          }
-          trackDrills[track.id] = Array.from(new Set(ids))
-        }
-        progressionEvents.push(
-          ...buildTrackCompletionEvents(
-            getRealSessions(freshSessions).filter((s) => s.state === 'COMPLETED'),
-            trackDrills,
-          ),
-        )
+        const maps = buildCurriculumProgressionMaps(curriculumData)
+        trackDrills = maps.trackDrills
+        moduleDrills = maps.moduleDrills
+        const completed = getRealSessions(freshSessions).filter((s) => s.state === 'COMPLETED')
+        progressionEvents.push(...buildModuleCompletionEvents(completed, moduleDrills))
+        progressionEvents.push(...buildTrackCompletionEvents(completed, trackDrills))
       } catch {
-        // Track completion optional
+        // Track/module completion optional
       }
 
       await ingestActivityEvents(progressionEvents)

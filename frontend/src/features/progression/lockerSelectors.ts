@@ -3,6 +3,7 @@ import { getBannerAsset } from '../../data/profile/bannerCatalog'
 import { getCoinAsset } from '../../data/profile/coinCatalog'
 import { getEmblemAsset } from '../../data/profile/emblemCatalog'
 import { getStickerAsset } from '../../data/profile/stickerCatalog'
+import { getTankAchievement } from './achievements/achievementCatalog'
 import { COLLECTIONS } from './collections/collectionCatalog'
 import { selectCollectionProgress } from './collections/collectionEngine'
 import { COSMETIC_CATALOG, getCosmetic, isStarterCosmetic, RARITY_LABELS, RARITY_RANK } from './cosmetics/cosmeticCatalog'
@@ -40,61 +41,99 @@ export type LockerItemView = {
   unlockHint?: string
 }
 
+const EVENT_ORIGIN_LABELS: Record<string, string> = {
+  track0_bundle: 'Track 0 abgeschlossen',
+  'early_slot:2': '2 Beobachtungs-Units abgeschlossen',
+  'early_slot:4': '4 Beobachtungs-Units abgeschlossen',
+  'early_slot:10': '10 Beobachtungs-Units abgeschlossen',
+  'early_slot:24': '24 Beobachtungs-Units abgeschlossen',
+  'early_slot:48': '48 Beobachtungs-Units abgeschlossen',
+}
+
+const EVENT_UNLOCK_HINTS: Record<string, string> = {
+  track0_bundle: 'Track 0 abschließen',
+  'early_slot:2': '2 Beobachtungs-Units abschließen',
+  'early_slot:4': '4 Beobachtungs-Units abschließen',
+  'early_slot:10': '10 Beobachtungs-Units abschließen',
+  'early_slot:24': '24 Beobachtungs-Units abschließen',
+  'early_slot:48': '48 Beobachtungs-Units abschließen',
+}
+
+const TRACK_MASTERY_LABELS: Record<string, string> = {
+  C1: 'Defensive Zone Mastery',
+  C2: 'Neutral Zone Mastery',
+  D2: 'Special Teams Mastery',
+  D3: 'Powerplay/PK Mastery',
+}
+
+const COLLECTION_BY_ID = Object.fromEntries(COLLECTIONS.map((c) => [c.id, c]))
+
+function achievementLabel(achievementId: string): string {
+  const def = getTankAchievement(achievementId)
+  return def?.name || achievementId
+}
+
+/** How to unlock (locked state) — action-oriented. */
 export function formatUnlockHow(origin: RewardOrigin): string {
   switch (origin.type) {
     case 'achievement':
-      return `Achievement · ${origin.achievementId}`
+      return `Achievement „${achievementLabel(origin.achievementId)}“ freischalten`
     case 'level':
-      return `Erreiche Level ${origin.level}`
+      return `Account-Level ${origin.level} erreichen`
     case 'track_mastery':
-      return `Track Mastery · ${origin.trackId}`
+      return `${TRACK_MASTERY_LABELS[origin.trackId] || `Track ${origin.trackId}`} abschließen`
     case 'starter':
-      return 'Starter-Item'
+      return 'Vom Start an verfügbar'
     case 'pux_shop':
-      return 'Im Pux Shop kaufen'
+      return SHOP_LISTINGS.length > 0 ? 'Im Pux Shop kaufen' : 'Bald im Pux Shop'
     case 'battle_pass':
-      return `Battle Pass · ${origin.seasonId}`
-    case 'collection':
-      return `Collection · ${origin.collectionId}`
+      return `Battle-Pass-Saison ${origin.seasonId}`
+    case 'collection': {
+      const name = COLLECTION_BY_ID[origin.collectionId]?.name
+      return name ? `Collection „${name}“ vervollständigen` : 'Collection vervollständigen'
+    }
     case 'challenge':
-      return `Challenge · ${origin.challengeId}`
+      return 'Challenge abschließen'
     case 'event':
-      return `Event · ${origin.eventId}`
+      return EVENT_UNLOCK_HINTS[origin.eventId] || 'Durch Spielen freischalten'
     case 'secret':
-      return 'Geheimnis — weiter spielen'
+      return 'Geheim — später im Spiel'
     case 'artist_series':
-      return `Artist Series · ${origin.seriesId}`
+      return 'Artist Series'
     default:
       return 'Noch nicht freigeschaltet'
   }
 }
 
+/** Provenance when owned — what you did. */
 export function formatOriginLabel(origin: RewardOrigin): string {
   switch (origin.type) {
     case 'achievement':
-      return `Achievement · ${origin.achievementId}`
+      return `Achievement „${achievementLabel(origin.achievementId)}“`
     case 'level':
-      return `Level ${origin.level}`
+      return `Level ${origin.level} erreicht`
     case 'track_mastery':
-      return `Track Mastery · ${origin.trackId}`
+      return TRACK_MASTERY_LABELS[origin.trackId] || `Track-Mastery ${origin.trackId}`
     case 'starter':
-      return 'Starter'
+      return 'Starter-Ausstattung'
     case 'pux_shop':
-      return 'Pux Shop'
+      return 'Im Pux Shop gekauft'
     case 'battle_pass':
-      return `Battle Pass · ${origin.seasonId}`
-    case 'collection':
-      return `Collection · ${origin.collectionId}`
+      return `Battle Pass ${origin.seasonId}`
+    case 'collection': {
+      const name = COLLECTION_BY_ID[origin.collectionId]?.name
+      return name ? `Collection „${name}“` : 'Collection'
+    }
     case 'challenge':
-      return `Challenge · ${origin.challengeId}`
+      return 'Challenge abgeschlossen'
     case 'event':
-      return `Event · ${origin.eventId}`
+      return EVENT_ORIGIN_LABELS[origin.eventId] || 'Durch Spielen verdient'
     case 'secret':
-      return 'Secret'
+      return 'Geheim freigeschaltet'
     case 'artist_series':
-      return `Artist Series · ${origin.seriesId}`
+      return 'Artist Series'
     default:
-      return 'Unknown'
+      return 'Unbekannt'
   }
 }
 

@@ -7,15 +7,15 @@ export const COLLECTIONS: CollectionDefinition[] = [
     description: 'Wohnen im gefährlichsten Raum der Rink.',
     itemIds: [
       'title_slot_watcher',
-      'emblem_slot_resident',
+      'emblem_high_slot',
       'tagline_no_slot',
       'frame_slot',
-      'sticker_slot',
+      'sticker_high_slot',
     ],
     completionRewards: [
       { type: 'xp', amount: 200 },
       { type: 'pux', amount: 100 },
-      { type: 'cosmetic', cosmeticId: 'banner_property_of_the_slot' },
+      { type: 'cosmetic', cosmeticId: 'banner_high_slot' },
     ],
     visibility: 'visible',
   },

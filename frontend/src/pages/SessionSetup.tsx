@@ -1029,7 +1029,6 @@ export default function SessionSetup() {
                       drillType={drill.drill_type}
                       mode={drill.config?.mode}
                       mechanic={drill.config?.mechanic}
-                      showLabel
                     />
                     <div style={{ fontWeight: 'bold', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>{drill.title}</div>
                     <span

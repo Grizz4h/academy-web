@@ -16,6 +16,8 @@ from repositories.pg_mapping import merge_profile_row, split_profile
 
 class PostgresProfileRepository:
     def get_profile(self, user: AuthContext) -> Dict[str, Any]:
+        from progression.cosmetic_cleanup import sanitize_profile_cosmetics
+
         seed = user.display_name or user.legacy_username or user.rinq_user_id
         try:
             with connection() as conn:
@@ -31,7 +33,10 @@ class PostgresProfileRepository:
             raise StorageError(str(exc)) from exc
         if not row:
             return default_user_profile(seed)
-        return merge_profile_row(row)
+        profile = merge_profile_row(row)
+        if sanitize_profile_cosmetics(profile):
+            return self.save_profile(user, profile)
+        return profile
 
     def create_default_profile(self, user: AuthContext, display_seed: str) -> Dict[str, Any]:
         return self.save_profile(user, default_user_profile(display_seed))

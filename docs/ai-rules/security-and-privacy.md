@@ -296,23 +296,32 @@ Für jeden neuen externen Anbieter prüfen:
 
 ### Vor Payment
 
-- [ ] Rewards / XP / PUX serverseitig härten
+- [ ] Rewards / XP / PUX serverseitig härten (Client darf Rewards pushen; Ownership servergebunden — vor Scale härten)
 - [x] Entitlement-System (Phase 5A — `entitlement_grants`, Repository, `can_access()`)
 - [x] Premium route gates (Phase 5B — curriculum filter + session gates; Frontend 5C; Stripe 5D)
-- [ ] Premium-Content serverseitig schützen
-- [ ] Rate Limits
+- [ ] Premium-Content serverseitig schützen (API-Filter aktiv; vollständiger Drill-JSON ggf. noch im FE-Bundle)
+- [x] Payment-Webhook-Verification (Stripe Signature + `processed_webhook_events`; siehe `backend/billing/webhook.py`)
+- [ ] Webhook Idempotenz härten (process-then-mark / Reprocess nach Partial-Fail; Doppel-Checkout blocken)
+- [ ] Rate Limits vervollständigen (Login/Signup/Admin/Billing vorhanden; Reflection/KI noch offen)
 - [ ] Input-Validation-Audit
-- [ ] Payment-Webhook-Verification
 - [ ] Logging / Alerting
 
 ### Vor Public Launch
 
+Living Go/No-Go board: [`docs/ops/pre-launch-board.md`](../ops/pre-launch-board.md) (Priorität: Legal → Launch-Loop → Ops).
+
 - [ ] Dependency-Audit
 - [ ] Security-Header-Audit
 - [ ] HTTPS / HSTS prüfen
-- [ ] Backup- / Restore-Konzept
-- [ ] Datenschutz-Dokumentation
-- [x] Lösch- / Export-Prozess (Phase 3G Self-Service; Backup-Retention weiterhin ops-seitig)
+- [ ] Backup- / Restore-Konzept (PITR-Hinweise vorhanden; Restore-Drill offen)
+- [x] Datenschutz-Seite + Footer-Link (`/datenschutz`; TODOs auf der Seite vor Launch abarbeiten)
+- [ ] Datenschutz-Dokumentation (AVV, Fristen, Fonts/KI-Rechtsgrundlagen — siehe TODOs auf `/datenschutz`)
+- [x] Lösch- / Export-Prozess (Phase 3G Self-Service; Postgres-Pfad + Entitlements noch verifizieren; Backup-Retention ops-seitig)
+- [ ] Age-Policy / 18+ (Gate oder dokumentierte juristische Entscheidung)
+- [x] Impressum-Seite + Footer-Link (`/impressum`; Kontakt-E-Mail + MStV-Prüfung noch offen — siehe `docs/ops/pre-launch-board.md`)
+- [ ] AGB / Widerruf digitale Inhalte
+- [ ] In-App Support / Problem melden
+- [ ] Reflection Rate-Limit + Cost-Cap
 - [ ] strukturierter Security Review
 
 ### Später / High Assurance
@@ -320,6 +329,9 @@ Für jeden neuen externen Anbieter prüfen:
 - [ ] OWASP ASVS Review
 - [ ] externer Security Review / Pentest
 - [ ] regelmäßige Dependency- / Security-Checks
+- [ ] Curriculum `contentVersion` / Answer-Migration
+- [ ] Multi-Tab Draft-Konflikt-Schutz
+- [ ] Apple Sign-In
 
 ---
 

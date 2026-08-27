@@ -103,6 +103,13 @@ export type TrackCompletedEvent = ActivityEventBase & {
   completionVersion: string
 }
 
+export type ModuleCompletedEvent = ActivityEventBase & {
+  type: 'module_completed'
+  moduleId: string
+  trackId?: string
+  completionVersion: string
+}
+
 export type Track0CompletedEvent = ActivityEventBase & {
   type: 'track0_completed'
   trackId: 'T0'
@@ -180,6 +187,7 @@ export type RinkActivityEvent =
   | SceneCreatedEvent
   | SceneRatedEvent
   | TrackCompletedEvent
+  | ModuleCompletedEvent
   | Track0CompletedEvent
   | SidequestCompletedEvent
   | MechanicUsedEvent
@@ -240,6 +248,10 @@ export type AchievementCondition =
   | {
       type: 'track_completed'
       trackId: string
+    }
+  | {
+      type: 'module_completed'
+      moduleId: string
     }
   | {
       type: 'track_completed_count'

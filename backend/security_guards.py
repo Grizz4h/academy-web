@@ -46,6 +46,28 @@ def is_admin_auth(
     return False
 
 
+def dev_username_allowlist() -> Set[str]:
+    """DevLab /dev* access without admin or premium bypass. Default includes paywall-test."""
+    raw = (os.environ.get("ACADEMY_DEV_USERNAMES") or "paywall-test").strip()
+    if not raw:
+        return set()
+    return {normalize_subject(part) for part in raw.split(",") if part.strip()}
+
+
+def is_dev_access_auth(
+    auth: AuthContext,
+    *,
+    role_from_record: Optional[str] = None,
+) -> bool:
+    """Dev surfaces (/dev, progression preview) — not admin APIs or premium bypass."""
+    if is_admin_auth(auth, role_from_record=role_from_record):
+        return True
+    subject = normalize_subject(auth.legacy_username or auth.auth_subject)
+    if subject and subject in dev_username_allowlist():
+        return True
+    return False
+
+
 # Code-controlled creator allowlist (TikTok / Szenenpool). Extend here or via env override.
 _CREATOR_MODE_USERNAMES: frozenset[str] = frozenset({"christoph"})
 _CREATOR_MODE_RINQ_USER_IDS: frozenset[str] = frozenset({

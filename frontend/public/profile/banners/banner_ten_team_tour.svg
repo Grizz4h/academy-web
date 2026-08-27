@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img">
+  <rect width="960" height="240" fill="#0b1522"/>
+  <rect x="0" y="108" width="960" height="6" fill="rgba(143,211,223,.2)"/>
+  <!-- ten team dots along the ice -->
+  <g>
+    <circle cx="72" cy="120" r="14" fill="none" stroke="#67e8f9" stroke-width="3"/>
+    <circle cx="168" cy="120" r="14" fill="none" stroke="#a78bfa" stroke-width="3"/>
+    <circle cx="264" cy="120" r="14" fill="none" stroke="#fde68a" stroke-width="3"/>
+    <circle cx="360" cy="120" r="14" fill="none" stroke="#67e8f9" stroke-width="3"/>
+    <circle cx="456" cy="120" r="14" fill="none" stroke="#a78bfa" stroke-width="3"/>
+    <circle cx="552" cy="120" r="14" fill="none" stroke="#fde68a" stroke-width="3"/>
+    <circle cx="648" cy="120" r="14" fill="none" stroke="#67e8f9" stroke-width="3"/>
+    <circle cx="744" cy="120" r="14" fill="none" stroke="#a78bfa" stroke-width="3"/>
+    <circle cx="840" cy="120" r="14" fill="none" stroke="#fde68a" stroke-width="3"/>
+    <circle cx="916" cy="120" r="12" fill="#93c5fd"/>
+  </g>
+  <path d="M72 120 H916" fill="none" stroke="rgba(148,163,184,.35)" stroke-width="2" stroke-dasharray="8 10"/>
+  <text x="480" y="48" text-anchor="middle" fill="rgba(255,255,255,.4)" font-family="system-ui,sans-serif" font-size="18" font-weight="600">TEN TEAM TOUR</text>
+</svg>

@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext'
 import { getHiddenNavTabs, isDevNavEnabled, setDevNavEnabled } from '../config/featureFlags'
 import DevActionLogPanel from '../components/dev/DevActionLogPanel'
 import ProgressionPersonaSimPanel from '../components/dev/ProgressionPersonaSimPanel'
+import ProgressionHarnessPanel from '../components/dev/ProgressionHarnessPanel'
 import {
   buildGameStatsBatchLogDetail,
   buildGameStatsImportLogDetail,
@@ -35,7 +36,7 @@ import {
   REWARD_PREVIEW_SILVER,
   setFloatingRewardDevToolsEnabled,
 } from '../dev/rewardPreviewActions'
-import { selectLevelProgress } from '../features/progression'
+import { buildCurriculumProgressionMaps, selectLevelProgress } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { formatPux } from '../features/rewards/types'
 import { countDummySessions, getRealSessions } from '../utils/sessionEligibility'
@@ -470,22 +471,10 @@ export default function DevLab() {
     },
   })
 
-  const trackDrills = useMemo(() => {
-    const map: Record<string, string[]> = {}
-    for (const track of curriculum?.tracks || []) {
-      const trackId = String(track.id || '').trim()
-      if (!trackId) continue
-      const drillIds: string[] = []
-      for (const module of track.modules || []) {
-        if (module.active === false) continue
-        for (const drill of module.drills || []) {
-          if (drill.id) drillIds.push(drill.id)
-        }
-      }
-      map[trackId] = Array.from(new Set(drillIds))
-    }
-    return map
-  }, [curriculum])
+  const { trackDrills, moduleDrills } = useMemo(
+    () => buildCurriculumProgressionMaps(curriculum),
+    [curriculum],
+  )
 
   const copyDiagnostics = async () => {
     try {
@@ -699,6 +688,7 @@ export default function DevLab() {
                 sessions: getRealSessions(sessionList),
                 scenes: scenesData?.scenes || [],
                 trackDrills,
+                moduleDrills,
               })
                 .then(() => {
                   appendLog({
@@ -722,6 +712,8 @@ export default function DevLab() {
       </section>
 
       <ProgressionPersonaSimPanel />
+
+      <ProgressionHarnessPanel />
 
       <section className={styles.card}>
         <h2 className="ui-section-title">Rewards Lab</h2>
@@ -774,6 +766,8 @@ export default function DevLab() {
           <UiButtonLink to="/account" size="sm" variant="secondary">Account</UiButtonLink>
           <UiButtonLink to="/dev/ui" size="sm">UI Kit</UiButtonLink>
           <UiButtonLink to="/dev/content" size="sm">Content</UiButtonLink>
+          <UiButtonLink to="/dev/cosmetics" size="sm">Cosmetics</UiButtonLink>
+          <UiButtonLink to="/dev/progression" size="sm">Progression</UiButtonLink>
         </div>
       </section>
 

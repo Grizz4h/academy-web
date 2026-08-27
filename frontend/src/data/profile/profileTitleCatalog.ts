@@ -2,8 +2,10 @@ import type { ProfileTitleAsset } from './types'
 
 /**
  * Data-driven profile titles. No gameplay logic attached to individual titles.
+ * Starter title: only `prospect` → cosmetic `title_catalog_prospect`.
  */
 export const profileTitleCatalog: ProfileTitleAsset[] = [
+  { id: 'prospect', label: 'Prospect', description: 'Erste Schicht. Noch alles offen.' },
   { id: 'rink_rat', label: 'Rink Rat', description: 'Immer irgendwo am Glas.' },
   { id: 'slot_watcher', label: 'Slot Watcher', description: 'Augen auf die gefährlichen Räume.' },
   { id: 'puck_detective', label: 'Puck Detective', description: 'Folgt dem Puck und den Optionen dahinter.' },
@@ -14,11 +16,17 @@ export const profileTitleCatalog: ProfileTitleAsset[] = [
   { id: 'hockey_observer', label: 'Hockey Observer', description: 'Beobachtet, bevor er urteilt.' },
 ]
 
-export const DEFAULT_PROFILE_TITLE_ID = 'rink_rat'
+export const DEFAULT_PROFILE_TITLE_ID = 'prospect'
+
+/** Legacy starter id before Prospect rename. */
+const LEGACY_TITLE_ALIASES: Record<string, string> = {
+  rookie: 'prospect',
+}
 
 export function getProfileTitle(id: string | null | undefined): ProfileTitleAsset | undefined {
   if (!id) return undefined
-  return profileTitleCatalog.find((item) => item.id === id)
+  const resolved = LEGACY_TITLE_ALIASES[id] || id
+  return profileTitleCatalog.find((item) => item.id === resolved)
 }
 
 /** Catalog label, otherwise the stored title string if it is already display text. */

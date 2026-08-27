@@ -4,7 +4,7 @@ import { useUser } from '../context/UserContext'
 import { api } from '../api'
 
 /**
- * Production: /dev* requires server-confirmed admin (is_admin from /api/me).
+ * Production: /dev* requires server-confirmed dev access (is_dev_access from /api/me).
  * Vite DEV: routes stay available for local engineering.
  */
 export function DevRouteGuard({ children }: { children: ReactNode }) {
@@ -24,7 +24,7 @@ export function DevRouteGuard({ children }: { children: ReactNode }) {
     ;(async () => {
       try {
         const me = await api.getMe()
-        if (!cancelled) setAllowed(Boolean(me.is_admin))
+        if (!cancelled) setAllowed(Boolean(me.is_dev_access || me.is_admin))
       } catch {
         if (!cancelled) setAllowed(false)
       }

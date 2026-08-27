@@ -17,6 +17,8 @@ T = TypeVar("T")
 
 class PostgresRewardRepository:
     def get_reward_state(self, user: AuthContext) -> Dict[str, Any]:
+        from progression.cosmetic_cleanup import purge_removed_from_reward_state
+
         try:
             with connection() as conn:
                 row = conn.execute(
@@ -31,7 +33,10 @@ class PostgresRewardRepository:
             raise StorageError(str(exc)) from exc
         if not row:
             return create_default_reward_state()
-        return merge_reward_state(merge_reward_row(row))
+        state = merge_reward_state(merge_reward_row(row))
+        if purge_removed_from_reward_state(state):
+            self.save_reward_state(user, state)
+        return state
 
     def save_reward_state(self, user: AuthContext, state: Dict[str, Any]) -> None:
         cols = split_reward(merge_reward_state(state))

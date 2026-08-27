@@ -38,13 +38,14 @@ def _session_is_grant_eligible(session: Optional[Dict[str, Any]]) -> bool:
     scope = normalize_observation_scope(session.get("observation_scope"))
     if scope == "LESSON":
         return False
-    game_id = session.get("game_id") or (session.get("game_info") or {}).get("game_id")
     drill_id = session.get("drill_id") or session.get("module_id")
-    if not normalize_part(str(game_id) if game_id else None):
-        return False
     if not normalize_part(str(drill_id) if drill_id else None):
         return False
-    return True
+    game_id = session.get("game_id") or (session.get("game_info") or {}).get("game_id")
+    # Real units need a game; historical pre-game sessions still count via legacy unit keys.
+    if normalize_part(str(game_id) if game_id else None):
+        return True
+    return bool(normalize_part(str(session.get("id") or "")))
 
 
 def _session_is_foundation(session: Optional[Dict[str, Any]]) -> bool:
@@ -87,17 +88,20 @@ def _unlock_cosmetic(
 ) -> Optional[dict]:
     if not cosmetic_id:
         return None
+    from progression.cosmetic_aliases import canonical_cosmetic_id, owns_cosmetic
+
+    canon = canonical_cosmetic_id(cosmetic_id) or cosmetic_id
     unlocked = state.setdefault("unlockedCosmetics", {})
-    if cosmetic_id in unlocked:
+    if owns_cosmetic(state, canon):
         return None
     entry = {
-        "cosmeticId": cosmetic_id,
+        "cosmeticId": canon,
         "unlockedAt": evaluated_at,
         "sourceType": source_type,
         "sourceId": source_id,
         "earnKind": "earned",
     }
-    unlocked[cosmetic_id] = entry
+    unlocked[canon] = entry
     return entry
 
 
@@ -115,7 +119,8 @@ def _apply_early_slot_grants(
     for threshold, cosmetic_id in sorted(EARLY_SLOT_COSMETICS.items()):
         if unit_count < threshold:
             continue
-        slot_key = _grant_key(RULE_EARLY_SLOT, str(threshold))
+        # Include cosmetic id so rewire to new slot rewards is not blocked by legacy keys.
+        slot_key = _grant_key(RULE_EARLY_SLOT, f"{threshold}:{cosmetic_id}")
         if slot_key in processed_grant_keys:
             continue
         processed_grant_keys[slot_key] = evaluated_at
@@ -172,6 +177,7 @@ def compute_unified_base_grants(
     activity_events: List[dict],
     *,
     session_doc: Optional[Dict[str, Any]] = None,
+    sessions_by_id: Optional[Dict[str, Dict[str, Any]]] = None,
     evaluated_at: str,
 ) -> GrantResult:
     """
@@ -186,9 +192,11 @@ def compute_unified_base_grants(
     added_cosmetics: List[dict] = []
     logs: List[str] = []
 
-    sessions_by_id: Dict[str, Dict[str, Any]] = {}
+    resolved_sessions: Dict[str, Dict[str, Any]] = {}
+    if isinstance(sessions_by_id, dict):
+        resolved_sessions.update(sessions_by_id)
     if session_doc and session_doc.get("id"):
-        sessions_by_id[str(session_doc["id"])] = session_doc
+        resolved_sessions[str(session_doc["id"])] = session_doc
 
     for raw_event in activity_events or []:
         if not isinstance(raw_event, dict):
@@ -214,7 +222,19 @@ def compute_unified_base_grants(
             continue
 
         event_session_id = str(raw_event.get("sessionId") or "").strip()
-        session = sessions_by_id.get(event_session_id) if event_session_id else session_doc
+        session = resolved_sessions.get(event_session_id) if event_session_id else None
+        if session is None:
+            session = session_doc
+        # Event payload can stand in when session docs were not hydrated (rebuild).
+        if session is None and event_session_id:
+            session = {
+                "id": event_session_id,
+                "state": "COMPLETED",
+                "is_dummy": False,
+                "drill_id": raw_event.get("drillId"),
+                "game_id": raw_event.get("gameId"),
+                "observation_scope": raw_event.get("observationScope"),
+            }
         if not _session_is_grant_eligible(session):
             if _session_is_foundation(session):
                 logs.append(f"skip:foundation_session:{event_session_id or 'unknown'}")
@@ -283,7 +303,7 @@ def compute_unified_base_grants(
                 logs.append(f"grant:full_game:{game_id}")
 
                 cosmetic_key = _grant_key(RULE_FULL_GAME_COSMETIC, game_id)
-                if cosmetic_key not in processed_grant_keys:
+                if FULL_GAME_BONUS_COSMETIC_ID and cosmetic_key not in processed_grant_keys:
                     processed_grant_keys[cosmetic_key] = evaluated_at
                     cosmetic = _unlock_cosmetic(
                         state,

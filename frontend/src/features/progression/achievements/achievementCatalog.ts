@@ -32,6 +32,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 150 },
       { type: 'pux', amount: 50 },
+      { type: 'cosmetic', cosmeticId: 'sticker_getting_warm' },
     ],
     progression: { target: 10 },
   },
@@ -61,6 +62,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 40 },
       { type: 'pux', amount: 20 },
+      { type: 'cosmetic', cosmeticId: 'tagline_first_clip' },
     ],
     progression: { target: 1 },
   },
@@ -105,6 +107,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 75 },
       { type: 'pux', amount: 40 },
+      { type: 'cosmetic', cosmeticId: 'sticker_five_star' },
     ],
     progression: { target: 1 },
   },
@@ -119,7 +122,6 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 200 },
       { type: 'pux', amount: 75 },
-      { type: 'cosmetic', cosmeticId: 'title_blue_line_student' },
     ],
     progression: { target: 1 },
   },
@@ -134,6 +136,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 350 },
       { type: 'pux', amount: 120 },
+      { type: 'cosmetic', cosmeticId: 'title_two_way_student' },
     ],
     progression: { target: 2 },
   },
@@ -149,6 +152,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 250 },
       { type: 'pux', amount: 100 },
+      { type: 'cosmetic', cosmeticId: 'title_ice_reader' },
     ],
     progression: { target: 1 },
   },
@@ -184,6 +188,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 120 },
       { type: 'pux', amount: 50 },
+      { type: 'cosmetic', cosmeticId: 'sticker_paint_it_black' },
     ],
     progression: { target: 5 },
   },
@@ -229,7 +234,6 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
       { type: 'xp', amount: 180 },
       { type: 'pux', amount: 70 },
       { type: 'cosmetic', cosmeticId: 'tagline_no_slot' },
-      { type: 'cosmetic', cosmeticId: 'emblem_slot_resident' },
     ],
     progression: { target: 8 },
   },
@@ -245,7 +249,6 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
       { type: 'xp', amount: 180 },
       { type: 'pux', amount: 70 },
       { type: 'cosmetic', cosmeticId: 'title_neutral_zone_tourist' },
-      { type: 'cosmetic', cosmeticId: 'emblem_goblin' },
     ],
     progression: { target: 8 },
   },
@@ -291,6 +294,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 150 },
       { type: 'pux', amount: 60 },
+      { type: 'cosmetic', cosmeticId: 'sticker_league_hopper' },
     ],
     progression: { target: 3 },
   },
@@ -305,6 +309,7 @@ export const PHASE1_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 100 },
       { type: 'pux', amount: 50 },
+      { type: 'cosmetic', cosmeticId: 'tagline_specialist' },
     ],
     progression: { target: 1 },
   },

@@ -2869,7 +2869,7 @@
             "Center als Anspielstation und Anschlussoption sehen",
             "sichtbare Vorbereitung und Vorbereitung des Centers erkennen"
           ],
-          "difficulty": 1,
+          "difficulty": 2,
           "duration": 45,
           "drills": [
             {
@@ -6499,6 +6499,7 @@
           "title": "C2 – Neutral Zone Systeme verstehen",
           "summary": "Geschlossene und verbleibende Eintrittswege, Tiefenstaffelung, Lenkung, Anpassung nach Überspielen — Prinzip vor Systemnamen",
           "description": "C1 hat die Raumorganisation in der eigenen Zone erklärt. C2 liest Raum- und Eintrittskontrolle in der neutralen Zone: geschlossene und verbleibende Wege → Tiefenstaffelung, Abstände und Breite → sichtbare Lenkung → Anpassung nach Überspielen der ersten Ebene → vorsichtige Neutral-Zone-Beobachtung. Systemnamen sind kein Pflichtlernziel. B3 bleibt beim Einzelzugriff; C3 bei der Angriffsentwicklung.",
+          "difficulty": 3,
           "drills": [
             {
               "id": "C2_D1",

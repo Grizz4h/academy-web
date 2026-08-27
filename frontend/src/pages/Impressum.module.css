@@ -1,0 +1,74 @@
+.page {
+  max-width: 720px;
+  padding-bottom: 2rem;
+}
+
+.sectionCard {
+  margin-bottom: 0.85rem !important;
+}
+
+.lead {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted, rgba(210, 224, 240, 0.78));
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.body {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted, rgba(210, 224, 240, 0.78));
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.body:last-child {
+  margin-bottom: 0;
+}
+
+.address {
+  display: block;
+  font-style: normal;
+  margin: 0 0 0.85rem;
+  color: var(--text, #f7f7ff);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.strong {
+  font-weight: 650;
+}
+
+.contactLine {
+  margin: 0;
+  color: var(--text-muted, rgba(210, 224, 240, 0.78));
+  font-size: 0.95rem;
+}
+
+.mail {
+  color: var(--text-accent, #8fd3df);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mail:hover {
+    text-decoration: underline;
+  }
+}
+
+.todo {
+  display: inline;
+  color: color-mix(in srgb, #e9c46a 85%, white);
+  font-weight: 600;
+}
+
+.list {
+  margin: 0 0 0.85rem;
+  padding-left: 1.2rem;
+  color: var(--text-muted, rgba(210, 224, 240, 0.78));
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

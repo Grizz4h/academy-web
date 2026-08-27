@@ -17,7 +17,7 @@ export const FULL_GAME_BONUS_XP = 25
 export const FULL_GAME_BONUS_PUX = 10
 export const TRACK_COMPLETED_XP = 500
 
-export const EARLY_SLOT_UNITS = [2, 4, 10] as const
+export const EARLY_SLOT_UNITS = [2, 4, 10, 24, 48] as const
 export const REFERENCE_LEVELS = [5, 10, 25, 50] as const
 
 export type PersonaId = 'locker' | 'standard' | 'intensive'

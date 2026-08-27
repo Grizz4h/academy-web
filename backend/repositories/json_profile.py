@@ -19,17 +19,17 @@ def default_user_profile(display_seed: str) -> Dict[str, Any]:
         display = display[0].upper() + display[1:]
     return {
         "displayName": display or "Spieler",
-        "avatar": {"type": "catalog", "avatarId": "avatar_ice_01"},
+        "avatar": {"type": "catalog", "avatarId": "avatar_chalk_01"},
         "bannerId": "banner_neutral_01",
         "frameId": None,
         "emblem": {"type": "catalog", "emblemId": "emblem_puck_01"},
         "customEmblemId": None,
         "customEmblems": [],
-        "profileTitle": "rink_rat",
+        "profileTitle": "prospect",
         "jerseyNumber": None,
         "favoriteLeague": None,
         "favoriteTeamName": None,
-        "profileTagline": None,
+        "profileTagline": "tagline_starter",
         "stickerIds": [],
         "academyHelpLevel": "guided",
         "terminologyMode": "direct",
@@ -68,6 +68,8 @@ class JsonProfileRepository:
         return lock
 
     def _merge(self, stored: Dict[str, Any], display_seed: str) -> Dict[str, Any]:
+        from progression.cosmetic_cleanup import sanitize_profile_cosmetics
+
         base = default_user_profile(display_seed)
         merged = {**base, **(stored or {})}
         if not isinstance(merged.get("avatar"), dict):
@@ -78,6 +80,7 @@ class JsonProfileRepository:
             merged["customEmblems"] = []
         if merged.get("stickerIds") is None or not isinstance(merged.get("stickerIds"), list):
             merged["stickerIds"] = []
+        sanitize_profile_cosmetics(merged)
         return merged
 
     def _read_unlocked(self, user: AuthContext, display_seed: str) -> Dict[str, Any]:
@@ -97,9 +100,18 @@ class JsonProfileRepository:
         return self._merge(stored, display_seed)
 
     def get_profile(self, user: AuthContext) -> Dict[str, Any]:
+        from progression.cosmetic_cleanup import sanitize_profile_cosmetics
+
         seed = user.display_name or user.legacy_username or user.rinq_user_id
         with self._lock_for(user).exclusive():
-            return self._read_unlocked(user, seed)
+            profile = self._read_unlocked(user, seed)
+            if sanitize_profile_cosmetics(profile):
+                profile["updatedAt"] = datetime.utcnow().isoformat()
+                try:
+                    atomic_write_json(self._path(user), profile)
+                except Exception as exc:
+                    raise StorageError(str(exc)) from exc
+            return profile
 
     def create_default_profile(self, user: AuthContext, display_seed: str) -> Dict[str, Any]:
         profile = default_user_profile(display_seed)

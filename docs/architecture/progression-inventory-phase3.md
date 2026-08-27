@@ -225,6 +225,8 @@ Engine: [`masteryEngine.ts`](../../frontend/src/features/progression/mastery/mas
 
 Katalog: [`cosmeticCatalog.ts`](../../frontend/src/features/progression/cosmetics/cosmeticCatalog.ts) (+ Phase2, Starter-Presets, PoC Stick/Puck)
 
+Für die vollständige ID-/Source-/Asset-Tabelle (inkl. Dual-Path, Orphans und Grant-Lücken) siehe das Deep-Inventory [`cosmetic-inventory-phase3.md`](./cosmetic-inventory-phase3.md). Dieser Abschnitt bleibt die Kurzfassung der Herkunftsverteilung und Shop-Zahlen.
+
 | Origin | Anzahl | Beispiele |
 |---|---:|---|
 | starter | 29 | Avatare, Banner, Embleme, Titles |

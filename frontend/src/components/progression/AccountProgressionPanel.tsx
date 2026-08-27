@@ -1,4 +1,5 @@
 import {
+  buildCurriculumProgressionMaps,
   selectAchievementViews,
   selectAchievementsByCategory,
   selectLevelProgress,
@@ -11,6 +12,7 @@ import { useRewards } from '../../features/rewards'
 import { lockerTaskHref } from '../../features/progression/tasks'
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { api } from '../../api'
 import { UiButton, UiPill, UiProgress } from '../ui'
 import { RinQIcon, type RinQIconName } from '../icons'
 import styles from '../../pages/Account.module.css'
@@ -208,25 +210,15 @@ export default function AccountProgressionPanel() {
           type="button"
           variant="dev"
           onClick={async () => {
-            const sessions = await (await import('../../api')).api.getSessions()
-            const scenes = await (await import('../../api')).api.getScenes()
-            const curriculum = await (await import('../../api')).api.getCurriculum()
-            const trackDrills: Record<string, string[]> = {}
-            for (const track of curriculum.tracks || []) {
-              const ids: string[] = []
-              for (const module of track.modules || []) {
-                if (module.active === false) continue
-                for (const drill of module.drills || []) {
-                  if (drill.id) ids.push(drill.id)
-                }
-                if (module.id) ids.push(module.id)
-              }
-              trackDrills[track.id] = Array.from(new Set(ids))
-            }
+            const sessions = await api.getSessions()
+            const scenes = await api.getScenes()
+            const curriculum = await api.getCurriculum()
+            const { trackDrills, moduleDrills } = buildCurriculumProgressionMaps(curriculum)
             await rebuildProgression({
               sessions,
               scenes: scenes.scenes || [],
               trackDrills,
+              moduleDrills,
             })
           }}
         >

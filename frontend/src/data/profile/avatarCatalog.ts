@@ -3,6 +3,8 @@ import type { ProfileAsset } from './types'
 /**
  * Data-driven avatar pool.
  * Workflow: add file under /public/profile/avatars/ → add entry here.
+ * Only assets with starter: true (or omitted default false after migration) enter the starter bundle —
+ * see starterAndRemoved.STARTER_COSMETIC_IDS. Explicit starter flags required.
  */
 export const avatarCatalog: ProfileAsset[] = [
   {
@@ -11,6 +13,7 @@ export const avatarCatalog: ProfileAsset[] = [
     src: '/profile/avatars/avatar_ice_01.svg',
     category: 'abstract',
     tags: ['ice', 'minimal'],
+    starter: false,
   },
   {
     id: 'avatar_puck_01',
@@ -18,6 +21,7 @@ export const avatarCatalog: ProfileAsset[] = [
     src: '/profile/avatars/avatar_puck_01.svg',
     category: 'equipment',
     tags: ['puck'],
+    starter: false,
   },
   {
     id: 'avatar_crest_01',
@@ -25,6 +29,7 @@ export const avatarCatalog: ProfileAsset[] = [
     src: '/profile/avatars/avatar_crest_01.svg',
     category: 'identity',
     tags: ['crest'],
+    starter: false,
   },
   {
     id: 'avatar_chalk_01',
@@ -32,6 +37,7 @@ export const avatarCatalog: ProfileAsset[] = [
     src: '/profile/avatars/avatar_chalk_01.svg',
     category: 'chalk',
     tags: ['chalk', 'player'],
+    starter: true,
   },
   {
     id: 'avatar_net_01',
@@ -39,6 +45,7 @@ export const avatarCatalog: ProfileAsset[] = [
     src: '/profile/avatars/avatar_net_01.svg',
     category: 'rink',
     tags: ['net', 'crease'],
+    starter: false,
   },
   {
     id: 'avatar_tape_01',
@@ -88,17 +95,9 @@ export const avatarCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
-  {
-    id: 'avatar_zamboni',
-    label: 'RT-81',
-    src: '/profile/avatars/avatar_zamboni.svg',
-    category: 'equipment',
-    tags: ['zamboni', 'ice-crew'],
-    starter: false,
-  },
 ]
 
-export const DEFAULT_AVATAR_ID = 'avatar_ice_01'
+export const DEFAULT_AVATAR_ID = 'avatar_chalk_01'
 
 export function getAvatarAsset(id: string | null | undefined): ProfileAsset | undefined {
   if (!id) return undefined

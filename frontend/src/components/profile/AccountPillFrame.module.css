@@ -19,7 +19,8 @@
   border-color: transparent;
 }
 
-/* Common — Basic */
+/* Common — Basic (canonical + Ist alias) */
+.pill[data-frame='frame_basic'],
 .pill[data-frame='frame_shop_basic'] {
   border-color: rgba(186, 210, 230, 0.95);
   box-shadow:
@@ -83,7 +84,71 @@
   pointer-events: none;
 }
 
-/* Rare — Rare Trim */
+/* Epic — Century Club (100 sessions) */
+.pill[data-frame='frame_century'] {
+  border-color: rgba(253, 230, 138, 0.9);
+  box-shadow:
+    0 0 0 2px rgba(253, 230, 138, 0.75),
+    0 0 0 5px rgba(59, 130, 246, 0.35),
+    0 0 20px rgba(251, 191, 36, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.pill[data-frame='frame_century']::before,
+.pill[data-frame='frame_century']::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fde68a;
+  pointer-events: none;
+}
+
+.pill[data-frame='frame_century']::before {
+  top: -4px;
+  left: -4px;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 3px 0 0 0;
+}
+
+.pill[data-frame='frame_century']::after {
+  right: -4px;
+  bottom: -4px;
+  border-left: 0;
+  border-top: 0;
+  border-radius: 0 0 3px 0;
+  box-shadow:
+    -10px 0 0 -8px #93c5fd,
+    0 -10px 0 -8px #93c5fd;
+}
+
+/* Epic — Spatial Addict (rink grid) */
+.pill[data-frame='frame_spatial'] {
+  border-color: rgba(103, 232, 249, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(103, 232, 249, 0.85),
+    0 0 18px rgba(34, 211, 238, 0.4),
+    inset 0 0 0 1px rgba(165, 243, 252, 0.25);
+}
+
+.pill[data-frame='frame_spatial']::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 4px;
+  border-radius: inherit;
+  border: 1px solid rgba(103, 232, 249, 0.35);
+  background:
+    linear-gradient(90deg, transparent 32%, rgba(103, 232, 249, 0.22) 32%, rgba(103, 232, 249, 0.22) 34%, transparent 34%, transparent 66%, rgba(103, 232, 249, 0.22) 66%, rgba(103, 232, 249, 0.22) 68%, transparent 68%),
+    linear-gradient(0deg, transparent 32%, rgba(103, 232, 249, 0.18) 32%, rgba(103, 232, 249, 0.18) 34%, transparent 34%, transparent 66%, rgba(103, 232, 249, 0.18) 66%, rgba(103, 232, 249, 0.18) 68%, transparent 68%);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Rare — Rare Trim (canonical + Ist alias) */
+.pill[data-frame='frame_rare_trim'],
 .pill[data-frame='frame_shop_rare_trim'] {
   border-color: rgba(253, 230, 138, 0.95);
   box-shadow:

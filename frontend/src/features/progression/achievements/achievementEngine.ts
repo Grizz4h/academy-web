@@ -74,6 +74,12 @@ export function evaluateConditionProgress(
       ).length
       return { current, target: 1, met: current >= 1 }
     }
+    case 'module_completed': {
+      const current = events.filter(
+        (event) => event.type === 'module_completed' && event.moduleId === condition.moduleId,
+      ).length
+      return { current, target: 1, met: current >= 1 }
+    }
     case 'track_completed_count': {
       const tracks = new Set(
         events.filter((event) => event.type === 'track_completed').map((event) => event.trackId),

@@ -51,10 +51,10 @@ function assert(cond: boolean, label: string) {
 {
   const owned = {
     title_slot_watcher: { cosmeticId: 'title_slot_watcher', unlockedAt: 't', sourceType: 'x' },
-    emblem_slot_resident: { cosmeticId: 'emblem_slot_resident', unlockedAt: 't', sourceType: 'x' },
+    emblem_high_slot: { cosmeticId: 'emblem_high_slot', unlockedAt: 't', sourceType: 'x' },
     tagline_no_slot: { cosmeticId: 'tagline_no_slot', unlockedAt: 't', sourceType: 'x' },
     frame_slot: { cosmeticId: 'frame_slot', unlockedAt: 't', sourceType: 'x' },
-    sticker_slot: { cosmeticId: 'sticker_slot', unlockedAt: 't', sourceType: 'x' },
+    sticker_high_slot: { cosmeticId: 'sticker_high_slot', unlockedAt: 't', sourceType: 'x' },
   }
   const first = evaluateCollectionCompletions({
     unlockedCosmetics: owned,
@@ -62,7 +62,7 @@ function assert(cond: boolean, label: string) {
     starterOwned: isStarterCosmetic,
   })
   assert(first.completedCollections?.includes('the_slot') === true, 'slot collection complete')
-  assert(first.unlockedCosmetics.some((c) => c.cosmeticId === 'banner_property_of_the_slot'), 'completion banner')
+  assert(first.unlockedCosmetics.some((c) => c.cosmeticId === 'banner_high_slot'), 'completion banner')
   const eventId = collectionCompletionEventId('the_slot')
   const second = evaluateCollectionCompletions({
     unlockedCosmetics: {

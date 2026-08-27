@@ -14,6 +14,7 @@ import {
   buildSidequestCompletedEvent,
   buildTrack0CompletedEvent,
   buildTrackCompletedEvent,
+  buildModuleCompletedEvent,
 } from './activityEvents'
 import type { RinkActivityEvent } from './types'
 
@@ -271,6 +272,8 @@ export function buildEventsFromScene(scene: SceneMarker, options?: { isDummy?: b
 }
 
 export type TrackDrillMap = Record<string, string[]>
+/** moduleId → drill ids (and optionally the module id itself for matching). */
+export type ModuleDrillMap = Record<string, { trackId?: string; drillIds: string[] }>
 
 /**
  * Emit track_completed when every drill id in a track has ≥1 eligible completed session.
@@ -312,10 +315,54 @@ export function buildTrackCompletionEvents(
   return events
 }
 
+/**
+ * Emit module_completed when every drill in a module has ≥1 eligible completed session.
+ */
+export function buildModuleCompletionEvents(
+  sessions: Session[],
+  moduleDrills: ModuleDrillMap,
+): RinkActivityEvent[] {
+  const eligible = sessions.filter((session) => isProgressionEligibleSession(session) && session.state === 'COMPLETED')
+  const completedDrills = new Set(eligible.map((session) => drillIdFromSession(session).toUpperCase()))
+
+  const events: RinkActivityEvent[] = []
+  for (const [moduleId, meta] of Object.entries(moduleDrills)) {
+    const drills = meta.drillIds || []
+    if (!drills.length) continue
+    const done = drills.every((drillId) => completedDrills.has(drillId.toUpperCase()))
+    if (!done) continue
+
+    const latest = eligible
+      .filter((session) => {
+        const id = drillIdFromSession(session).toUpperCase()
+        const mid = String(session.module_id || '').toUpperCase()
+        return (
+          mid === moduleId.toUpperCase() ||
+          drills.some((d) => d.toUpperCase() === id)
+        )
+      })
+      .map((session) => session.post?.completed_at || session.created_at || '')
+      .sort()
+      .at(-1)
+
+    events.push(
+      buildModuleCompletedEvent({
+        moduleId,
+        trackId: meta.trackId,
+        completionVersion: 'v1',
+        occurredAt: latest || new Date().toISOString(),
+      }),
+    )
+  }
+  return events
+}
+
 export function collectBootstrapEvents(input: {
   sessions: Session[]
   scenes: SceneMarker[]
   trackDrills?: TrackDrillMap
+  moduleDrills?: ModuleDrillMap
+  userId?: string
 }): RinkActivityEvent[] {
   const eligibleSessions = input.sessions
     .filter((session) => isProgressionEligibleSession(session) && session.state === 'COMPLETED')
@@ -330,12 +377,21 @@ export function collectBootstrapEvents(input: {
 
   for (const session of eligibleSessions) {
     const drillId = drillIdFromSession(session)
-    events.push(...buildEventsFromCompletedSession(session, { priorCompletedDrillIds: new Set(seenDrills) }))
+    events.push(
+      ...buildEventsFromCompletedSession(session, {
+        priorCompletedDrillIds: new Set(seenDrills),
+        userId: input.userId,
+      }),
+    )
     seenDrills.add(drillId)
   }
 
   for (const scene of input.scenes || []) {
     events.push(...buildEventsFromScene(scene))
+  }
+
+  if (input.moduleDrills) {
+    events.push(...buildModuleCompletionEvents(eligibleSessions, input.moduleDrills))
   }
 
   if (input.trackDrills) {

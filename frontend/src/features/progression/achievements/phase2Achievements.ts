@@ -4,6 +4,36 @@ import { MASTERY_COIN_IDS } from '../mastery/masteryCatalog'
 /** Additional Phase-2 achievements (~25) layered on Phase-1 catalog. */
 export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
   {
+    id: 'module_a1_complete',
+    name: 'A1 Complete',
+    description: 'Modul A1 vollständig abschließen (alle Drills).',
+    category: 'curriculum',
+    visibility: 'visible',
+    rarity: 'uncommon',
+    conditions: [{ type: 'module_completed', moduleId: 'A1' }],
+    rewards: [
+      { type: 'xp', amount: 150 },
+      { type: 'pux', amount: 60 },
+      { type: 'cosmetic', cosmeticId: 'title_module_a1' },
+    ],
+    progression: { target: 1 },
+  },
+  {
+    id: 'track_a_complete',
+    name: 'Track A Complete',
+    description: 'Track A vollständig abschließen.',
+    category: 'curriculum',
+    visibility: 'visible',
+    rarity: 'rare',
+    conditions: [{ type: 'track_completed', trackId: 'A' }],
+    rewards: [
+      { type: 'xp', amount: 400 },
+      { type: 'pux', amount: 150 },
+      { type: 'cosmetic', cosmeticId: 'title_track_a' },
+    ],
+    progression: { target: 1 },
+  },
+  {
     id: 'century_club',
     name: 'Century Club',
     description: '100 echte Sessions abschließen.',
@@ -14,6 +44,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 600 },
       { type: 'pux', amount: 250 },
+      { type: 'cosmetic', cosmeticId: 'frame_century' },
     ],
     progression: { target: 100 },
   },
@@ -28,6 +59,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 500 },
       { type: 'pux', amount: 200 },
+      { type: 'cosmetic', cosmeticId: 'banner_scene_century' },
     ],
     progression: { target: 100 },
   },
@@ -42,6 +74,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 200 },
       { type: 'pux', amount: 80 },
+      { type: 'cosmetic', cosmeticId: 'title_five_star_critic' },
     ],
     progression: { target: 10 },
   },
@@ -56,6 +89,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 400 },
       { type: 'pux', amount: 150 },
+      { type: 'cosmetic', cosmeticId: 'emblem_track_trio' },
     ],
     progression: { target: 3 },
   },
@@ -70,6 +104,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 300 },
       { type: 'pux', amount: 120 },
+      { type: 'cosmetic', cosmeticId: 'banner_ten_team_tour' },
     ],
     progression: { target: 10 },
   },
@@ -99,6 +134,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 150 },
       { type: 'pux', amount: 60 },
+      { type: 'cosmetic', cosmeticId: 'tagline_drill_regular' },
     ],
     progression: { target: 5 },
   },
@@ -158,6 +194,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 220 },
       { type: 'pux', amount: 90 },
+      { type: 'cosmetic', cosmeticId: 'emblem_numerical' },
     ],
     progression: { target: 5 },
   },
@@ -172,6 +209,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 250 },
       { type: 'pux', amount: 100 },
+      { type: 'cosmetic', cosmeticId: 'emblem_paint_pro' },
     ],
     progression: { target: 15 },
   },
@@ -186,6 +224,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 250 },
       { type: 'pux', amount: 100 },
+      { type: 'cosmetic', cosmeticId: 'title_path_finder' },
     ],
     progression: { target: 15 },
   },
@@ -200,6 +239,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 250 },
       { type: 'pux', amount: 100 },
+      { type: 'cosmetic', cosmeticId: 'title_formation_nerd' },
     ],
     progression: { target: 15 },
   },
@@ -214,6 +254,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 350 },
       { type: 'pux', amount: 140 },
+      { type: 'cosmetic', cosmeticId: 'frame_spatial' },
     ],
     progression: { target: 25 },
   },
@@ -228,7 +269,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 300 },
       { type: 'pux', amount: 120 },
-      { type: 'cosmetic', cosmeticId: 'emblem_slot_resident' },
+      { type: 'cosmetic', cosmeticId: 'emblem_high_slot' },
     ],
     progression: { target: 20 },
   },
@@ -243,7 +284,6 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 350 },
       { type: 'pux', amount: 140 },
-      { type: 'cosmetic', cosmeticId: 'emblem_blue_line_inspector' },
     ],
     progression: { target: 20 },
   },
@@ -258,6 +298,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 220 },
       { type: 'pux', amount: 90 },
+      { type: 'cosmetic', cosmeticId: 'title_league_tourist' },
     ],
     progression: { target: 5 },
   },
@@ -272,6 +313,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 400 },
       { type: 'pux', amount: 160 },
+      { type: 'cosmetic', cosmeticId: 'title_honest_fog' },
     ],
     progression: { target: 15 },
   },
@@ -301,6 +343,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 100 },
       { type: 'pux', amount: 40 },
+      { type: 'cosmetic', cosmeticId: 'emblem_clip_goblin_jr' },
     ],
     progression: { target: 10 },
   },
@@ -315,6 +358,7 @@ export const PHASE2_ACHIEVEMENTS: AchievementDefinition[] = [
     rewards: [
       { type: 'xp', amount: 60 },
       { type: 'pux', amount: 30 },
+      { type: 'cosmetic', cosmeticId: 'tagline_manual_marker' },
     ],
     progression: { target: 3 },
   },

@@ -13,10 +13,12 @@ import { useUser } from '../../../context/UserContext'
 import {
   BOOTSTRAP_EVENT_ID,
   bootstrapProgression,
+  buildCurriculumProgressionMaps,
   evaluateChallenges,
   evaluateCollectionCompletions,
   evaluateMasteryGrants,
   evaluateShopPurchase,
+  getLevelRewards,
   isStarterCosmetic,
   migrateProgressionCurve,
   processActivityEvent,
@@ -45,6 +47,7 @@ type RewardContextValue = {
     sessions: Parameters<typeof bootstrapProgression>[0]['sessions']
     scenes: Parameters<typeof bootstrapProgression>[0]['scenes']
     trackDrills?: Parameters<typeof bootstrapProgression>[0]['trackDrills']
+    moduleDrills?: Parameters<typeof bootstrapProgression>[0]['moduleDrills']
   }) => Promise<void>
   purchaseShopListing: (listingId: string) => Promise<{ ok: boolean; reason?: string }>
   markCosmeticsSeen: (cosmeticIds: string[]) => Promise<void>
@@ -238,26 +241,13 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         ])
         if (cancelled) return
 
-        const trackDrills: Record<string, string[]> = {}
-        const tracks = curriculum?.tracks || []
-        for (const track of tracks) {
-          const trackId = String(track.id || '').trim()
-          if (!trackId) continue
-          const drillIds: string[] = []
-          for (const module of track.modules || []) {
-            if (module.active === false) continue
-            for (const drill of module.drills || []) {
-              if (drill.id) drillIds.push(drill.id)
-            }
-            if (module.id) drillIds.push(module.id)
-          }
-          trackDrills[trackId] = Array.from(new Set(drillIds))
-        }
+        const { trackDrills, moduleDrills } = buildCurriculumProgressionMaps(curriculum)
 
         const result = bootstrapProgression({
           sessions,
           scenes: scenesPayload?.scenes || [],
           trackDrills,
+          moduleDrills,
           existing: toProgressionSlice(rewardStateRef.current),
         })
 
@@ -569,11 +559,12 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       sessions: Parameters<typeof bootstrapProgression>[0]['sessions']
       scenes: Parameters<typeof bootstrapProgression>[0]['scenes']
       trackDrills?: Parameters<typeof bootstrapProgression>[0]['trackDrills']
+      moduleDrills?: Parameters<typeof bootstrapProgression>[0]['moduleDrills']
     }) => {
       const confirmed =
         typeof window === 'undefined' ||
         window.confirm(
-          'Progression neu berechnen? Abgeleitete XP/Achievements/Cosmetics werden aus echten Daten neu aufgebaut. Legacy-PUX aus alten Session-Rewards bleibt erhalten.',
+          'Progression neu berechnen? Abgeleitete XP/Achievements/Cosmetics werden aus deinen echten Sessions nach aktueller Logik neu aufgebaut. Shop-Käufe bleiben erhalten.',
         )
       if (!confirmed) return
 
@@ -581,46 +572,75 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         ...input,
         existing: toProgressionSlice(rewardStateRef.current),
         forceRebuild: true,
+        userId: user || undefined,
       })
       const evaluatedAt = new Date().toISOString()
-      const response = await api.applyRewardResult({
-        event_id: BOOTSTRAP_EVENT_ID,
-        evaluated_at: evaluatedAt,
-        // Rebuild must not re-grant PUX into the existing currency balance.
-        granted_pux: 0,
-        granted_xp: result.aggregate.grantedXp,
-        reward_events: result.aggregate.rewardEvents,
-        unlocked_achievements: Object.values(result.state.unlockedAchievements).map((item) => ({
-          id: item.id,
-          unlockedAt: item.unlockedAt,
-          sourceEventId: item.sourceEventId,
-        })),
-        unlocked_masteries: [],
-        unlocked_cosmetics: Object.values(result.state.unlockedCosmetics),
-        unlock_history: result.state.unlockHistory,
-        activity_events: result.state.activityLog,
-        bootstrap_completed_at: evaluatedAt,
-        replace_derived: true,
-      })
+      // Unit XP/PUX: server. Level rewards: server after final XP.
+      // Client PUX on rebuild = achievement/collection only (strip level PUX).
+      const levelPuxFromClient = (result.aggregate.levelsGained || []).reduce((sum, level) => {
+        const rewards = getLevelRewards(level)?.rewards || []
+        return (
+          sum +
+          rewards.reduce((inner, reward) => {
+            if (reward.type === 'pux') return inner + Number(reward.amount || 0)
+            return inner
+          }, 0)
+        )
+      }, 0)
+      const achievementPux = Math.max(0, Number(result.aggregate.grantedPux || 0) - levelPuxFromClient)
+      let response
+      try {
+        response = await api.applyRewardResult({
+          event_id: BOOTSTRAP_EVENT_ID,
+          evaluated_at: evaluatedAt,
+          granted_pux: achievementPux,
+          granted_xp: 0,
+          reward_events: result.aggregate.rewardEvents,
+          unlocked_achievements: Object.values(result.state.unlockedAchievements).map((item) => ({
+            id: item.id,
+            unlockedAt: item.unlockedAt,
+            sourceEventId: item.sourceEventId,
+          })),
+          unlocked_masteries: [],
+          unlocked_cosmetics: Object.values(result.state.unlockedCosmetics),
+          unlock_history: result.state.unlockHistory,
+          // Don't ship the full activity log for unit grants — server loads sessions itself.
+          activity_events: [],
+          bootstrap_completed_at: evaluatedAt,
+          replace_derived: true,
+        })
+      } catch (err) {
+        window.alert(
+          `Progression-Rebuild fehlgeschlagen — bisheriger Stand bleibt. ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        )
+        return
+      }
       const normalized = normalizeRewardState(response.state)
       normalized.processedEvents = {
         ...normalized.processedEvents,
         ...result.state.processedEvents,
       }
-      normalized.xp = result.state.xp
       normalized.activityLog = result.state.activityLog
       normalized.unlockHistory = result.state.unlockHistory
       setRewardState(normalized)
+      const serverXp = Number(normalized.xp || 0)
+      if (serverXp < 500) {
+        window.alert(
+          `Rebuild verdächtig niedrig (${serverXp} XP). Bitte Backend-Neustart prüfen und nicht erneut rebuilden.`,
+        )
+      }
       enqueueReward({
         kind: 'system',
         title: 'Progression neu berechnet',
-        description: result.summaryHistory?.description,
+        description: `${result.summaryHistory?.description || ''} · Server ${serverXp} XP`.trim(),
         variant: 'popup',
         visualTier: 'gold',
         icon: '⚡',
       })
     },
-    [enqueueReward],
+    [enqueueReward, user],
   )
 
   const purchaseShopListing = useCallback(async (listingId: string) => {

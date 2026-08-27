@@ -13,16 +13,20 @@ FULL_GAME_BONUS_PUX = 10
 
 TRACK0_BUNDLE_XP = 100
 TRACK0_BUNDLE_PUX = 25
-TRACK0_BUNDLE_COSMETIC_ID = "frame_shop_basic"
+# Track 0 grants the basic frame (canonical ID; Ist alias: frame_shop_basic).
+TRACK0_BUNDLE_COSMETIC_ID = "frame_basic"
 
-# Unit-count thresholds → cosmetic unlock (Phase 2 early slots).
+# Unit-count thresholds → cosmetic unlock (Grundprogression Rev. B).
 EARLY_SLOT_COSMETICS: Dict[int, str] = {
-    2: "title_shop_quiet_observer",
-    4: "title_shop_glass_leaner",
-    10: "emblem_shop_simple_crest",
+    2: "emblem_arrow_01",
+    4: "avatar_ice_01",
+    10: "banner_soft_ice",  # Ist alias: banner_shop_soft_ice
+    24: "frame_rare_trim",  # Ist alias: frame_shop_rare_trim
+    48: "avatar_slot_01",
 }
 
-FULL_GAME_BONUS_COSMETIC_ID = "sticker_matchday_first_read"
+FULL_GAME_BONUS_COSMETIC_ID = ""
+# Matchday sticker stays on challenge only (primary freigegeben 2026-08-26).
 
 RULE_BASE_UNIT_XP = "base_unit_xp"
 RULE_BASE_UNIT_PUX = "base_unit_pux"

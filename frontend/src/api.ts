@@ -1624,6 +1624,64 @@ export const api = {
     return res.json()
   },
 
+  previewProgressionGrants: async (payload: {
+    activity_events: Array<Record<string, unknown>>
+    session_doc?: Record<string, unknown>
+    reward_state_snapshot?: Record<string, unknown>
+    use_account_state?: boolean
+  }): Promise<{
+    granted_xp: number
+    granted_pux: number
+    cosmetics: Array<Record<string, unknown>>
+    logs: string[]
+    state_after: {
+      xp: number
+      currency: { PUX: number }
+      processedUnits: Record<string, unknown>
+      processedGrantKeys: Record<string, unknown>
+      unlockedCosmetics: Record<string, unknown>
+    }
+  }> => {
+    const res = await fetch(buildUrl('/dev/progression/preview-grants'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw await readApiError(res, 'Progression-Preview fehlgeschlagen')
+    return res.json()
+  },
+
+  runProgressionJourney: async (): Promise<{
+    weeks: number
+    steps: Array<{
+      title: string
+      granted_xp: number
+      granted_pux: number
+      total_xp: number
+      total_pux: number
+      level: number
+      units: number
+      logs: string[]
+    }>
+    summary: { total_xp: number; total_pux: number; level: number; units: number; xp_to_level_5: number }
+  }> => {
+    const res = await fetch(buildUrl('/dev/progression/run-journey'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({}),
+    })
+    if (!res.ok) {
+      const err = await readApiError(
+        res,
+        res.status === 404
+          ? 'Journey-API fehlt — Backend neu starten (sudo systemctl restart academy-web)'
+          : 'Journey fehlgeschlagen',
+      )
+      throw err
+    }
+    return res.json()
+  },
+
   getMyEntitlements: async (): Promise<MyEntitlementsPayload> => {
     const res = await fetch(buildUrl('/me/entitlements'), {
       headers: { ...authHeaders() },

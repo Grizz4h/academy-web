@@ -45,6 +45,7 @@ def create_default_reward_state() -> Dict[str, Any]:
 
 
 def merge_reward_state(state: Dict[str, Any]) -> Dict[str, Any]:
+    from progression.cosmetic_cleanup import purge_removed_from_reward_state
     from progression.level_curve import apply_curve_migration
 
     base = create_default_reward_state()
@@ -77,6 +78,7 @@ def merge_reward_state(state: Dict[str, Any]) -> Dict[str, Any]:
         "levelGrandfatherFloor": state.get("levelGrandfatherFloor"),
     }
     apply_curve_migration(merged)
+    purge_removed_from_reward_state(merged)
     return merged
 
 
@@ -130,8 +132,13 @@ class JsonRewardRepository:
             raise StorageError(f"Failed to write reward state: {exc}") from exc
 
     def get_reward_state(self, user: AuthContext) -> Dict[str, Any]:
+        from progression.cosmetic_cleanup import purge_removed_from_reward_state
+
         with self._lock_for(user).exclusive():
-            return self._read_unlocked(user)
+            state = self._read_unlocked(user)
+            if purge_removed_from_reward_state(state):
+                self._write_unlocked(user, state)
+            return state
 
     def save_reward_state(self, user: AuthContext, state: Dict[str, Any]) -> None:
         with self._lock_for(user).exclusive():

@@ -82,13 +82,13 @@ const TopNav: React.FC = () => {
   useHorizontalScroll(navTabsWrapperRef, { draggingClass: styles.navTabsDragging })
 
   const isAdmin = Boolean(account?.is_admin);
+  const isDevAccess = Boolean(account?.is_dev_access);
   const creatorMode = Boolean(account?.creator_mode);
 
   const handleLogoClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
     const currentlyOn = isDevNavEnabled();
-    // Production: only admins may turn Dev chrome ON. Turning OFF stays allowed
-    // (otherwise a stuck localStorage flag cannot be cleared).
-    if (import.meta.env.PROD && !isAdmin && !currentlyOn) return;
+    // Production: dev-access users may turn Dev chrome ON. Turning OFF stays allowed.
+    if (import.meta.env.PROD && !isAdmin && !isDevAccess && !currentlyOn) return;
 
     const state = logoClicksRef.current;
     state.count += 1;
@@ -113,11 +113,11 @@ const TopNav: React.FC = () => {
     setDevNav(next);
     setDevHint(next ? 'Dev-Nav an' : 'Dev-Nav aus');
     window.setTimeout(() => setDevHint(''), 1600);
-  }, [isAdmin]);
+  }, [isAdmin, isDevAccess]);
 
   const publicTabs = getPublicNavTabs({ creatorMode });
   const hiddenTabs = getHiddenNavTabs();
-  const showDevChrome = devNav && (import.meta.env.DEV || isAdmin);
+  const showDevChrome = devNav && (import.meta.env.DEV || isAdmin || isDevAccess);
   const navTabs = showDevChrome ? [...publicTabs, ...hiddenTabs] : publicTabs;
 
   return (
@@ -128,8 +128,8 @@ const TopNav: React.FC = () => {
           <div className={styles.brandRow}>
             <NavLink to="/" className={styles.logoLink} onClick={handleLogoClick}>
               <picture>
-                <source media="(max-width: 899px)" srcSet="/RINK_TANK_LOGO-2.png" />
-                <img src="/RINK_TANK_LOGO.png" alt="RINK Tank" className={styles.logo} />
+                <source media="(max-width: 899px)" srcSet="/RINK_TANK_LOGO-2_v2.png" />
+                <img src="/RINK_TANK_LOGO_v2.png" alt="RINK Tank" className={styles.logo} />
               </picture>
             </NavLink>
 

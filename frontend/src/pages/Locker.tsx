@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext'
 import {
   COLLECTIONS,
   COSMETIC_TYPE_TO_SLOT,
+  buildCurriculumProgressionMaps,
   filterLockerItems,
   getCosmetic,
   isEquipableCosmetic,
@@ -198,21 +199,6 @@ function LockerItemCard({
   )
 }
 
-function buildTrackDrills(curriculum: Awaited<ReturnType<typeof api.getCurriculum>> | null | undefined) {
-  const trackDrills: Record<string, string[]> = {}
-  for (const track of curriculum?.tracks || []) {
-    const ids: string[] = []
-    for (const module of track.modules || []) {
-      if (module.active === false) continue
-      for (const drill of module.drills || []) {
-        if (drill.id) ids.push(drill.id)
-      }
-      if (module.id) ids.push(module.id)
-    }
-    trackDrills[track.id] = Array.from(new Set(ids))
-  }
-  return trackDrills
-}
 
 export default function LockerPage() {
   const { user } = useUser()
@@ -283,7 +269,10 @@ export default function LockerPage() {
     enabled: Boolean(user),
   })
 
-  const trackDrills = useMemo(() => buildTrackDrills(curriculum), [curriculum])
+  const { trackDrills, moduleDrills } = useMemo(
+    () => buildCurriculumProgressionMaps(curriculum),
+    [curriculum],
+  )
   const stats = useMemo(
     () => selectLockerStats({ ...rewardState, favoriteCosmeticIds: rewardState.favoriteCosmeticIds }),
     [rewardState],
@@ -738,7 +727,12 @@ export default function LockerPage() {
           variant="dev"
           onClick={async () => {
             const scenes = await api.getScenes()
-            await rebuildProgression({ sessions, scenes: scenes.scenes || [], trackDrills })
+            await rebuildProgression({
+              sessions,
+              scenes: scenes.scenes || [],
+              trackDrills,
+              moduleDrills,
+            })
           }}
         >
           ⚡ DEV · Progression neu berechnen

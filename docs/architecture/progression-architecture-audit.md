@@ -78,7 +78,7 @@ Track 0 abgeschlossen
 
 ## Phase 2: Progressionsgeschwindigkeit & Tunability
 
-> **Ausgearbeitet in:** [grundprogression-phase2.md](./grundprogression-phase2.md) (Rev. 2 — **EINGEFROREN**).  
+> **Ausgearbeitet in:** [grundprogression-phase2.md](./grundprogression-phase2.md) (Rev. 4 — **EINGEFROREN**).  
 > **Inventory (Phase 3):** [progression-inventory-phase3.md](./progression-inventory-phase3.md).  
 > **Migration + Anti-Farm (Phase 4):** [progression-migration-phase4.md](./progression-migration-phase4.md).
 

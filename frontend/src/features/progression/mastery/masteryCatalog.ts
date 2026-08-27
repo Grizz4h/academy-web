@@ -97,7 +97,6 @@ export const TRACK_MASTERY_DEFINITIONS: MasteryDefinition[] = [
         rewards: [
           { type: 'xp', amount: 200 },
           { type: 'pux', amount: 100 },
-          { type: 'cosmetic', cosmeticId: MASTERY_COIN_IDS.defensive_zone },
         ],
       },
       {
@@ -180,7 +179,6 @@ export const DRILL_MASTERY_MILESTONES = [
     rewards: [
       { type: 'xp' as const, amount: 200 },
       { type: 'pux' as const, amount: 100 },
-      { type: 'cosmetic' as const, cosmeticId: 'title_drill_obsessed' },
     ],
   },
 ]

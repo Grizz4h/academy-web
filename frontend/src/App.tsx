@@ -19,15 +19,22 @@ import LabPredictSession from './pages/LabPredictSession'
 import DevLab from './pages/DevLab'
 import DevUiKit from './pages/DevUiKit'
 import DevContent from './pages/DevContent'
+import DevCosmetics from './pages/DevCosmetics'
+import DevProgression from './pages/DevProgression'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
 import AuthCallbackPage from './pages/AuthCallback'
 import CreatorRouteGuard from './components/CreatorRouteGuard'
 import TopNav from './components/TopNav'
+import AppFooter from './components/AppFooter'
 import { DevRouteGuard } from './components/DevRouteGuard'
 import { DisplayNameSetupSheet } from './components/DisplayNameSetupSheet'
 import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 import { TutorialHost } from './features/tutorial'
+import ImpressumPage from './pages/Impressum'
+import DatenschutzPage from './pages/Datenschutz'
+import KontaktPage from './pages/Kontakt'
+import LegalPage from './pages/Legal'
 
 function App() {
   return (
@@ -55,11 +62,18 @@ function App() {
             <Route path="/observation/run/:runId" element={<ObservationRun />} />
             <Route path="/observation/stats" element={<ObservationStats />} />
             <Route path="/ringabout" element={<CreatorRouteGuard><RingAbout /></CreatorRouteGuard>} />
+            <Route path="/legal" element={<LegalPage />} />
+            <Route path="/impressum" element={<ImpressumPage />} />
+            <Route path="/datenschutz" element={<DatenschutzPage />} />
+            <Route path="/kontakt" element={<KontaktPage />} />
             <Route path="/dev" element={<DevRouteGuard><DevLab /></DevRouteGuard>} />
             <Route path="/dev/ui" element={<DevRouteGuard><DevUiKit /></DevRouteGuard>} />
             <Route path="/dev/content" element={<DevRouteGuard><DevContent /></DevRouteGuard>} />
+            <Route path="/dev/cosmetics" element={<DevRouteGuard><DevCosmetics /></DevRouteGuard>} />
+            <Route path="/dev/progression" element={<DevRouteGuard><DevProgression /></DevRouteGuard>} />
           </Routes>
         </main>
+        <AppFooter />
       </div>
       <DisplayNameSetupSheet />
       <RewardHost />

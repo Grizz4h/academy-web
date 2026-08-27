@@ -4,6 +4,8 @@ Die Challenge-Schicht sitzt **auf** der bestehenden Progression (XP, Pux, Achiev
 
 Regel: keine losen Aufgaben, keine losen Belohnungen. Jede Challenge zahlt auf XP / Pux / Cosmetic / Collection ein.
 
+Die komplette Cosmetic-ID-/Source-/Asset-Tabelle steht im Deep-Inventory [`architecture/cosmetic-inventory-phase3.md`](./architecture/cosmetic-inventory-phase3.md). Hier geht es nur ums Anlegen neuer Rewards und Challenges.
+
 ## So fügst du morgen etwas hinzu
 
 ### 1. Reward (Cosmetic / Collection Item)

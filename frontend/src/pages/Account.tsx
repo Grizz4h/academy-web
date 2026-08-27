@@ -173,15 +173,15 @@ export default function AccountPage() {
   )
 
   const avatarItems = useMemo(
-    () => avatarCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
+    () => avatarCatalog.filter((item) => isCosmeticOwned(rewardState, item.id)),
     [rewardState],
   )
   const bannerItems = useMemo(
-    () => bannerCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
+    () => bannerCatalog.filter((item) => isCosmeticOwned(rewardState, item.id)),
     [rewardState],
   )
   const emblemItems = useMemo(
-    () => emblemCatalog.map((item) => ({ ...item, locked: !isCosmeticOwned(rewardState, item.id) })),
+    () => emblemCatalog.filter((item) => isCosmeticOwned(rewardState, item.id)),
     [rewardState],
   )
   const titleOptions = selectTitleOptions(rewardState)
@@ -578,7 +578,8 @@ export default function AccountPage() {
         </div>
 
         <div className={styles.field}>
-          <span className={styles.label}>Avatar aus Pool</span>
+          <span className={styles.label}>Avatar</span>
+          <p className={styles.hint}>Nur freigeschaltete Items. Weitere freischalten im <Link to="/locker">Spind</Link>.</p>
           <ProfileAssetSelector
             type="avatar"
             items={avatarItems}
@@ -716,7 +717,7 @@ export default function AccountPage() {
             onSelect={(id) => updateDraft({ emblem: { type: 'catalog', emblemId: id } })}
           />
           <p className={styles.hint}>
-            Custom-Embleme aus einem Formen-Editor sind vorbereitet, aber noch nicht im MVP freigeschaltet.
+            Nur freigeschaltete Items — Rest im Spind. Custom-Embleme aus dem Formen-Editor sind vorbereitet, aber noch nicht im MVP.
           </p>
         </div>
       </Card>

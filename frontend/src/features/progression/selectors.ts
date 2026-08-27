@@ -5,6 +5,7 @@ import {
   getTankAchievement,
 } from './achievements/achievementCatalog'
 import { getCosmetic, getStarterCosmeticIds, isStarterCosmetic } from './cosmetics/cosmeticCatalog'
+import { ownsCosmeticUnlock } from './cosmetics/cosmeticAliases'
 import { getXpProgressForLevel } from './levelSystem'
 import type {
   AchievementCategory,
@@ -40,7 +41,7 @@ export function selectPux(state: ProgressionViewState): number {
 
 export function isCosmeticOwned(state: ProgressionViewState, cosmeticId: string): boolean {
   if (isStarterCosmetic(cosmeticId)) return true
-  if (state.unlockedCosmetics?.[cosmeticId]) return true
+  if (ownsCosmeticUnlock(state.unlockedCosmetics, cosmeticId)) return true
   // Starter pool by id even if catalog origin missing
   if (getStarterCosmeticIds().includes(cosmeticId)) return true
   return false
@@ -51,8 +52,14 @@ export function selectOwnedCosmetics(state: ProgressionViewState, type?: Cosmeti
     ...getStarterCosmeticIds(),
     ...Object.keys(state.unlockedCosmetics || {}),
   ])
-  const list: CosmeticDefinition[] = []
+  // Resolve aliases to canonical catalog ids for display (dedupe)
+  const resolved = new Set<string>()
   for (const id of ownedIds) {
+    const def = getCosmetic(id)
+    resolved.add(def?.id || id)
+  }
+  const list: CosmeticDefinition[] = []
+  for (const id of resolved) {
     const def = getCosmetic(id)
     if (!def) continue
     if (type && def.type !== type) continue

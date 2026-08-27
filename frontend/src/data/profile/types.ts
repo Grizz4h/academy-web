@@ -13,7 +13,7 @@ export type ProfileAsset = {
     value?: unknown
   }
   locked?: boolean
-  /** If false, the asset is not a starter cosmetic. Default: starter. */
+  /** If true, included in the minimal starter bundle. Default: not starter. */
   starter?: boolean
 }
 
@@ -123,6 +123,8 @@ export type UserAccountPayload = {
   role: string | null
   /** Server-confirmed admin (env allowlist and/or role=admin). */
   is_admin?: boolean
+  /** DevLab / progression preview — no admin or premium bypass. */
+  is_dev_access?: boolean
   /** Server-confirmed creator tools (code/env allowlist). Not editable via profile. */
   creator_mode?: boolean
   profile: UserProfileCustomization

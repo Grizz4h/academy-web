@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "BROWSERSLIST_IGNORE_OLD_DATA=true tsc -b && vite build",
+    "build:app": "BROWSERSLIST_IGNORE_OLD_DATA=true vite build",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -3,6 +3,7 @@ import { bannerCatalog } from '../../../data/profile/bannerCatalog'
 import { emblemCatalog } from '../../../data/profile/emblemCatalog'
 import { profileTitleCatalog } from '../../../data/profile/profileTitleCatalog'
 import type { CosmeticDefinition } from '../types'
+import { canonicalCosmeticId } from './cosmeticAliases'
 import { PHASE2_COSMETICS } from './phase2Cosmetics'
 import { PUCK_POC_COSMETICS } from './puckSkins'
 import { STICK_POC_COSMETICS } from './stickSkins'
@@ -14,43 +15,68 @@ export const TAGLINE_PRESETS: Array<{ id: string; text: string; description?: st
   { id: 'tagline_one_more_replay', text: 'One more replay.' },
   { id: 'tagline_no_slot', text: 'No slot.' },
   { id: 'tagline_paused_for_research', text: 'I paused it for research.' },
-  { id: 'tagline_starter', text: 'Ich bringe mir gerade Hockey bei.', description: 'Starter-Tagline' },
+  {
+    id: 'tagline_starter',
+    text: 'Erste Schicht.',
+    description: 'Starter-Tagline',
+  },
+  {
+    id: 'tagline_specialist',
+    text: 'Special teams first.',
+    description: 'Special-Teams Einstieg',
+  },
+  {
+    id: 'tagline_first_clip',
+    text: 'Clip saved.',
+    description: 'Erste Szene',
+  },
+  {
+    id: 'tagline_manual_marker',
+    text: 'Marked by hand.',
+    description: 'Manuelle Szene',
+  },
+  {
+    id: 'tagline_drill_regular',
+    text: 'Same drill. Again.',
+    description: 'Drill Regular',
+  },
 ]
 
-function starterAvatarCosmetics(): CosmeticDefinition[] {
-  return avatarCatalog.filter((asset) => asset.starter !== false).map((asset) => ({
+function avatarCosmetics(): CosmeticDefinition[] {
+  return avatarCatalog.map((asset) => ({
     id: asset.id,
     type: 'avatar' as const,
     name: asset.label,
     rarity: 'common' as const,
     assetId: asset.id,
-    origin: { type: 'starter' as const },
+    origin: asset.starter === true ? ({ type: 'starter' as const }) : ({ type: 'pux_shop' as const }),
   }))
 }
 
-function starterBannerCosmetics(): CosmeticDefinition[] {
-  return bannerCatalog.filter((asset) => asset.starter !== false).map((asset) => ({
+function bannerCosmetics(): CosmeticDefinition[] {
+  return bannerCatalog.map((asset) => ({
     id: asset.id,
     type: 'banner' as const,
     name: asset.label,
     rarity: 'common' as const,
     assetId: asset.id,
-    origin: { type: 'starter' as const },
+    origin: asset.starter === true ? ({ type: 'starter' as const }) : ({ type: 'pux_shop' as const }),
   }))
 }
 
-function starterEmblemCosmetics(): CosmeticDefinition[] {
-  return emblemCatalog.filter((asset) => asset.starter !== false).map((asset) => ({
+function emblemCosmetics(): CosmeticDefinition[] {
+  return emblemCatalog.map((asset) => ({
     id: asset.id,
     type: 'emblem' as const,
     name: asset.label,
     rarity: 'common' as const,
     assetId: asset.id,
-    origin: { type: 'starter' as const },
+    origin: asset.starter === true ? ({ type: 'starter' as const }) : ({ type: 'pux_shop' as const }),
   }))
 }
 
-function starterTitleCosmetics(): CosmeticDefinition[] {
+/** Non-starter catalog titles stay selectable only after unlock; Prospect is starter. */
+function catalogTitleCosmetics(): CosmeticDefinition[] {
   return profileTitleCatalog.map((title) => ({
     id: `title_catalog_${title.id}`,
     type: 'title' as const,
@@ -59,7 +85,10 @@ function starterTitleCosmetics(): CosmeticDefinition[] {
     rarity: 'common' as const,
     assetId: title.id,
     text: title.label,
-    origin: { type: 'starter' as const },
+    origin:
+      title.id === 'prospect'
+        ? ({ type: 'starter' as const })
+        : ({ type: 'pux_shop' as const }),
     metadata: { profileTitleId: title.id },
   }))
 }
@@ -213,11 +242,44 @@ function fixTaglineOrigins(list: CosmeticDefinition[]): CosmeticDefinition[] {
     tagline_one_more_replay: { type: 'achievement', achievementId: 'clip_hoarder' },
     tagline_no_slot: { type: 'achievement', achievementId: 'slot_squatter' },
     tagline_paused_for_research: { type: 'secret', achievementId: 'no_idea_yet' },
+    tagline_specialist: { type: 'achievement', achievementId: 'specialist' },
+    tagline_first_clip: { type: 'achievement', achievementId: 'first_clip' },
+    tagline_manual_marker: { type: 'achievement', achievementId: 'manual_marker' },
+    tagline_drill_regular: { type: 'achievement', achievementId: 'same_drill_five' },
   }
   return list.map((item) => {
     if (item.type !== 'tagline') return item
     const origin = originById[item.id]
     return origin ? { ...item, origin } : item
+  })
+}
+
+/** Override origins for Grundprogression slot cosmetics from profile catalogs. */
+function fixProgressionOrigins(list: CosmeticDefinition[]): CosmeticDefinition[] {
+  const originById: Record<string, CosmeticDefinition['origin']> = {
+    emblem_arrow_01: { type: 'event', eventId: 'early_slot:2' },
+    avatar_ice_01: { type: 'event', eventId: 'early_slot:4' },
+    banner_soft_ice: { type: 'event', eventId: 'early_slot:10' },
+    frame_rare_trim: { type: 'event', eventId: 'early_slot:24' },
+    avatar_slot_01: { type: 'event', eventId: 'early_slot:48' },
+    frame_basic: { type: 'event', eventId: 'track0_bundle' },
+    title_shop_quiet_observer: { type: 'achievement', achievementId: 'same_team_again' },
+    title_shop_glass_leaner: { type: 'pux_shop' },
+  }
+  const rarityById: Partial<Record<string, CosmeticDefinition['rarity']>> = {
+    banner_soft_ice: 'uncommon',
+    frame_rare_trim: 'rare',
+    avatar_slot_01: 'epic',
+  }
+  return list.map((item) => {
+    const origin = originById[item.id]
+    const rarity = rarityById[item.id]
+    if (!origin && !rarity) return item
+    return {
+      ...item,
+      ...(origin ? { origin } : {}),
+      ...(rarity ? { rarity } : {}),
+    }
   })
 }
 
@@ -227,26 +289,30 @@ function uniqueCosmetics(items: CosmeticDefinition[]): CosmeticDefinition[] {
   return Array.from(map.values())
 }
 
-export const COSMETIC_CATALOG: CosmeticDefinition[] = uniqueCosmetics([
-  ...starterAvatarCosmetics(),
-  ...starterBannerCosmetics(),
-  ...starterEmblemCosmetics(),
-  ...starterTitleCosmetics(),
-  ...fixTaglineOrigins(REWARD_COSMETICS).map((item) => {
-    if (item.id === 'tagline_no_slot') return { ...item, collectionId: 'the_slot' }
-    if (item.id === 'tagline_watch_the_center') return { ...item, collectionId: 'neutral_zone_goblins' }
-    return item
-  }),
-  ...PHASE2_COSMETICS,
-  ...PUCK_POC_COSMETICS,
-  ...STICK_POC_COSMETICS,
-])
+export const COSMETIC_CATALOG: CosmeticDefinition[] = fixProgressionOrigins(
+  uniqueCosmetics([
+    ...avatarCosmetics(),
+    ...bannerCosmetics(),
+    ...emblemCosmetics(),
+    ...catalogTitleCosmetics(),
+    ...fixTaglineOrigins(REWARD_COSMETICS).map((item) => {
+      if (item.id === 'tagline_no_slot') return { ...item, collectionId: 'the_slot' }
+      if (item.id === 'tagline_watch_the_center') return { ...item, collectionId: 'neutral_zone_goblins' }
+      return item
+    }),
+    ...PHASE2_COSMETICS,
+    ...PUCK_POC_COSMETICS,
+    ...STICK_POC_COSMETICS,
+  ]),
+)
 
 export const COSMETIC_BY_ID: Record<string, CosmeticDefinition> = Object.fromEntries(
   COSMETIC_CATALOG.map((item) => [item.id, item]),
 )
 export function getCosmetic(id: string): CosmeticDefinition | undefined {
-  return COSMETIC_BY_ID[id]
+  if (COSMETIC_BY_ID[id]) return COSMETIC_BY_ID[id]
+  const canon = canonicalCosmeticId(id)
+  return canon && canon !== id ? COSMETIC_BY_ID[canon] : undefined
 }
 
 export function getStarterCosmeticIds(): string[] {

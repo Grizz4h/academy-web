@@ -167,7 +167,38 @@ class UnifiedBaseGrantTests(unittest.TestCase):
         self.assertEqual(xp, 100)
         self.assertEqual(pux, 10)
         self.assertEqual(len(cosmetics), 1)
+        self.assertEqual(cosmetics[0]["cosmeticId"], "emblem_arrow_01")
         self.assertTrue(any("grant:early_slot:2" in line for line in logs))
+
+    def test_early_slots_at_48_units_all_missing(self):
+        """Nutzer mit 48 Units erhält alle fehlenden Slots — nicht nur den höchsten."""
+        processed = {f"game-1|P1|drill-{i}": {} for i in range(47)}
+        state = {
+            "processedUnits": processed,
+            "processedGrantKeys": {},
+            "unlockedCosmetics": {},
+        }
+        xp, pux, cosmetics, logs = compute_unified_base_grants(
+            state,
+            [self._event(session_id="s48", scope="P2", drill="drill-48")],
+            session_doc={**self._session("s48", "P2"), "drill_id": "drill-48"},
+            evaluated_at="2026-08-25T12:00:00Z",
+        )
+        self.assertEqual(xp, 100)
+        self.assertEqual(pux, 10)
+        ids = {c["cosmeticId"] for c in cosmetics}
+        self.assertEqual(
+            ids,
+            {
+                "emblem_arrow_01",
+                "avatar_ice_01",
+                "banner_soft_ice",
+                "frame_rare_trim",
+                "avatar_slot_01",
+            },
+        )
+        for n in (2, 4, 10, 24, 48):
+            self.assertTrue(any(f"grant:early_slot:{n}" in line for line in logs))
 
     def test_track0_bundle_once(self):
         state = {"processedUnits": {}, "processedGrantKeys": {}, "unlockedCosmetics": {}}
@@ -186,6 +217,7 @@ class UnifiedBaseGrantTests(unittest.TestCase):
         self.assertEqual(xp, 100)
         self.assertEqual(pux, 25)
         self.assertEqual(len(cosmetics), 1)
+        self.assertEqual(cosmetics[0]["cosmeticId"], "frame_basic")
         self.assertTrue(any("grant:track0_bundle" in line for line in logs))
 
         xp2, pux2, cosmetics2, _logs2 = compute_unified_base_grants(
