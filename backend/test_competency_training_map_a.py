@@ -40,7 +40,10 @@ class ATrackTrainingMapTests(unittest.TestCase):
         cls.document = json.loads(
             (ROOT_DIR / "data/academy/competency/drill_profiles.json").read_text()
         )
-        cls.profiles = validate_drill_profiles(cls.document)
+        cls.profiles = [
+            profile for profile in validate_drill_profiles(cls.document)
+            if profile.drillId.startswith("A")
+        ]
 
     def test_contains_exactly_the_fifteen_approved_a_profiles(self):
         self.assertEqual([profile.drillId for profile in self.profiles], list(EXPECTED))

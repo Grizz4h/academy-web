@@ -331,6 +331,336 @@
         "assessmentMode": null,
         "requiresQualityEvaluation": false
       }
+    },
+    {
+      "drillId": "B1_D1",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 100,
+        "space_structure": 75,
+        "options_decisions": 25,
+        "transition_tempo": 0,
+        "pressure_control": 0,
+        "systems_patterns": 0,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B1_D2",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 100,
+        "space_structure": 75,
+        "options_decisions": 25,
+        "transition_tempo": 25,
+        "pressure_control": 0,
+        "systems_patterns": 25,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B1_D3",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 100,
+        "space_structure": 50,
+        "options_decisions": 25,
+        "transition_tempo": 0,
+        "pressure_control": 0,
+        "systems_patterns": 25,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B1_D4",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 100,
+        "space_structure": 75,
+        "options_decisions": 75,
+        "transition_tempo": 25,
+        "pressure_control": 0,
+        "systems_patterns": 25,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B1_D5",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 75,
+        "space_structure": 50,
+        "options_decisions": 50,
+        "transition_tempo": 75,
+        "pressure_control": 25,
+        "systems_patterns": 0,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B2_D1",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 0,
+        "space_structure": 75,
+        "options_decisions": 50,
+        "transition_tempo": 25,
+        "pressure_control": 100,
+        "systems_patterns": 0,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B2_D2",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 0,
+        "space_structure": 50,
+        "options_decisions": 100,
+        "transition_tempo": 25,
+        "pressure_control": 75,
+        "systems_patterns": 0,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B2_D3",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 0,
+        "space_structure": 75,
+        "options_decisions": 100,
+        "transition_tempo": 25,
+        "pressure_control": 100,
+        "systems_patterns": 0,
+        "evidence_analysis": 25
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B2_D4",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 25,
+        "space_structure": 50,
+        "options_decisions": 100,
+        "transition_tempo": 75,
+        "pressure_control": 75,
+        "systems_patterns": 0,
+        "evidence_analysis": 25
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B2_D5",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 25,
+        "roles_support": 0,
+        "space_structure": 25,
+        "options_decisions": 75,
+        "transition_tempo": 25,
+        "pressure_control": 75,
+        "systems_patterns": 50,
+        "evidence_analysis": 75
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B3_D1",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 75,
+        "roles_support": 50,
+        "space_structure": 50,
+        "options_decisions": 25,
+        "transition_tempo": 25,
+        "pressure_control": 100,
+        "systems_patterns": 0,
+        "evidence_analysis": 0
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B3_D2",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 25,
+        "space_structure": 75,
+        "options_decisions": 50,
+        "transition_tempo": 25,
+        "pressure_control": 100,
+        "systems_patterns": 25,
+        "evidence_analysis": 25
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B3_D3",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 100,
+        "space_structure": 75,
+        "options_decisions": 25,
+        "transition_tempo": 25,
+        "pressure_control": 100,
+        "systems_patterns": 50,
+        "evidence_analysis": 25
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B3_D4",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 50,
+        "roles_support": 75,
+        "space_structure": 75,
+        "options_decisions": 25,
+        "transition_tempo": 75,
+        "pressure_control": 100,
+        "systems_patterns": 50,
+        "evidence_analysis": 25
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
+    },
+    {
+      "drillId": "B3_D5",
+      "schemaVersion": 1,
+      "trainingWeights": {
+        "scanning_identification": 25,
+        "roles_support": 50,
+        "space_structure": 50,
+        "options_decisions": 25,
+        "transition_tempo": 25,
+        "pressure_control": 75,
+        "systems_patterns": 75,
+        "evidence_analysis": 75
+      },
+      "evidence": {
+        "enabled": false,
+        "weights": {},
+        "level": null,
+        "maxStrength": null,
+        "assessmentMode": null,
+        "requiresQualityEvaluation": false
+      }
     }
   ]
 }
