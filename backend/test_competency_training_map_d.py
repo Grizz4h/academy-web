@@ -2,6 +2,7 @@ import hashlib
 import json
 import sys
 import unittest
+from collections import Counter
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parent
@@ -17,37 +18,41 @@ IDS = [
 ]
 
 EXPECTED = {
-    "C1_D1": [50, 25, 100, 0, 0, 75, 50, 0],
-    "C1_D2": [50, 75, 100, 0, 0, 75, 75, 0],
-    "C1_D3": [50, 50, 75, 50, 50, 100, 75, 25],
-    "C1_D4": [50, 75, 100, 25, 50, 75, 100, 25],
-    "C1_D5": [25, 50, 75, 25, 25, 75, 100, 75],
-    "C2_D1": [50, 0, 100, 50, 0, 100, 50, 0],
-    "C2_D2": [50, 50, 100, 0, 0, 75, 100, 0],
-    "C2_D3": [50, 25, 100, 50, 25, 100, 75, 25],
-    "C2_D4": [50, 50, 75, 25, 75, 100, 100, 25],
-    "C2_D5": [25, 25, 75, 25, 25, 75, 100, 75],
-    "C3_D1": [50, 25, 100, 0, 0, 0, 75, 0],
-    "C3_D2": [50, 75, 100, 50, 0, 0, 75, 0],
-    "C3_D3": [50, 50, 100, 25, 50, 25, 100, 25],
-    "C3_D4": [50, 25, 75, 100, 50, 0, 75, 25],
-    "C3_D5": [25, 50, 75, 50, 25, 0, 100, 75],
+    "D1_D1": [50, 25, 100, 50, 0, 50, 75, 0],
+    "D1_D2": [50, 100, 75, 50, 0, 0, 100, 0],
+    "D1_D3": [50, 50, 100, 25, 50, 75, 100, 25],
+    "D1_D4": [50, 25, 75, 100, 50, 25, 75, 25],
+    "D1_D5": [25, 50, 75, 50, 25, 25, 100, 75],
+    "D2_D1": [50, 25, 100, 0, 0, 100, 75, 0],
+    "D2_D2": [50, 75, 100, 0, 0, 100, 100, 0],
+    "D2_D3": [50, 50, 75, 50, 50, 100, 100, 25],
+    "D2_D4": [50, 25, 50, 75, 75, 100, 75, 25],
+    "D2_D5": [25, 50, 75, 25, 25, 75, 100, 75],
+    "D3_D1": [50, 0, 100, 100, 25, 75, 50, 0],
+    "D3_D2": [50, 100, 75, 75, 25, 25, 50, 0],
+    "D3_D3": [50, 50, 75, 100, 75, 25, 50, 25],
+    "D3_D4": [50, 25, 75, 100, 50, 100, 50, 25],
+    "D3_D5": [25, 25, 75, 75, 25, 50, 75, 75],
+    "D4_D1": [50, 75, 100, 25, 0, 0, 100, 0],
+    "D4_D2": [50, 50, 75, 100, 25, 0, 75, 25],
+    "D4_D3": [50, 75, 75, 75, 25, 75, 75, 25],
 }
 
 PREVIOUS_MAP_HASHES = {
     "A": "68fc8e3dc504ae814c1d150ce27b0c108e2ec4db6ed9a0f70e19160f9645cea1",
     "B": "6c46e935e278979d479c5d29030bf278aeaa7df832c227e9ad95da0d377db2c3",
+    "C": "b27aa3d3cd526ef08af731e8b629c950c385f401597e1f6052ab5864bb730f64",
 }
 
 
-class CTrackTrainingMapTests(unittest.TestCase):
+class DTrackTrainingMapTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.document = json.loads(
             (ROOT_DIR / "data/academy/competency/drill_profiles.json").read_text()
         )
         cls.profiles = validate_drill_profiles(cls.document)
-        cls.c_profiles = [profile for profile in cls.profiles if profile.drillId.startswith("C")]
+        cls.d_profiles = [profile for profile in cls.profiles if profile.drillId.startswith("D")]
 
     def test_collection_contains_63_profiles_and_previous_maps_are_unchanged(self):
         self.assertEqual(len(self.profiles), 63)
@@ -61,21 +66,22 @@ class CTrackTrainingMapTests(unittest.TestCase):
             ).hexdigest()
             self.assertEqual(len(previous), 15)
             self.assertEqual(actual_hash, expected_hash)
-        self.assertEqual([profile.drillId for profile in self.c_profiles], list(EXPECTED))
+        self.assertEqual([profile.drillId for profile in self.d_profiles], list(EXPECTED))
 
-    def test_each_c_track_has_exactly_five_profiles(self):
-        for track in ("C1", "C2", "C3"):
-            self.assertEqual(sum(profile.drillId.startswith(f"{track}_") for profile in self.c_profiles), 5)
+    def test_d_distribution_and_removed_d4_d4(self):
+        counts = Counter(profile.drillId.split("_")[0] for profile in self.d_profiles)
+        self.assertEqual(counts, {"D1": 5, "D2": 5, "D3": 5, "D4": 3})
+        self.assertNotIn("D4_D4", {profile.drillId for profile in self.profiles})
 
-    def test_all_eight_approved_c_weights_are_exact(self):
-        for profile in self.c_profiles:
+    def test_all_eight_approved_d_weights_are_exact(self):
+        for profile in self.d_profiles:
             with self.subTest(drillId=profile.drillId):
                 actual = [profile.trainingWeights[competency_id] for competency_id in IDS]
                 self.assertEqual(actual, EXPECTED[profile.drillId])
                 self.assertEqual(set(profile.trainingWeights), set(IDS))
 
-    def test_evidence_is_neutral_and_disabled_for_every_c_profile(self):
-        for profile in self.c_profiles:
+    def test_evidence_is_neutral_and_disabled_for_every_d_profile(self):
+        for profile in self.d_profiles:
             with self.subTest(drillId=profile.drillId):
                 self.assertFalse(profile.evidence.enabled)
                 self.assertEqual(profile.evidence.weights, {})
