@@ -49,8 +49,8 @@ class CTrackTrainingMapTests(unittest.TestCase):
         cls.profiles = validate_drill_profiles(cls.document)
         cls.c_profiles = [profile for profile in cls.profiles if profile.drillId.startswith("C")]
 
-    def test_collection_contains_63_profiles_and_previous_maps_are_unchanged(self):
-        self.assertEqual(len(self.profiles), 63)
+    def test_collection_contains_83_profiles_and_previous_maps_are_unchanged(self):
+        self.assertEqual(len(self.profiles), 83)
         for prefix, expected_hash in PREVIOUS_MAP_HASHES.items():
             previous = [
                 profile for profile in self.document["profiles"]

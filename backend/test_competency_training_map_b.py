@@ -51,7 +51,7 @@ class BTrackTrainingMapTests(unittest.TestCase):
         a_hash = hashlib.sha256(
             json.dumps(a_profiles, sort_keys=True, separators=(",", ":")).encode()
         ).hexdigest()
-        self.assertEqual(len(self.profiles), 63)
+        self.assertEqual(len(self.profiles), 83)
         self.assertEqual(len(a_profiles), 15)
         self.assertEqual(a_hash, A_MAP_HASH)
         self.assertEqual([profile.drillId for profile in self.b_profiles], list(EXPECTED))

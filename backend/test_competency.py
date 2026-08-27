@@ -34,7 +34,7 @@ class CompetencyContractTests(unittest.TestCase):
 
     def test_profile_collection_uses_valid_contracts(self):
         document = json.loads((ROOT_DIR / "data/academy/competency/drill_profiles.json").read_text())
-        self.assertEqual(len(validate_drill_profiles(document)), 63)
+        self.assertEqual(len(validate_drill_profiles(document)), 83)
 
     def test_weight_range_and_unknown_id_are_rejected(self):
         with self.assertRaises(ValidationError):
