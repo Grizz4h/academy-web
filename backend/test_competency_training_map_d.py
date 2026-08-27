@@ -339,12 +339,12 @@ class DTrackEvidenceMapTests(unittest.TestCase):
         self.assertEqual(counts, {"D1": 5, "D2": 5, "D3": 5, "D4": 3})
         self.assertNotIn("D4_D4", {p.drillId for p in self.all_profiles})
 
-    def test_a_b_c_remain_enabled_and_e_disabled(self):
+    def test_a_b_c_remain_enabled_and_e4_disabled(self):
         self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("A") and p.evidence.enabled), 15)
         self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("B") and p.evidence.enabled), 15)
         self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("C") and p.evidence.enabled), 15)
         for profile in self.all_profiles:
-            if not profile.drillId.startswith("E"):
+            if not profile.drillId.startswith("E4_"):
                 continue
             with self.subTest(drillId=profile.drillId):
                 self.assertFalse(profile.evidence.enabled)

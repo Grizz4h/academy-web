@@ -16,7 +16,7 @@ IDS = [
     "transition_tempo", "pressure_control", "systems_patterns", "evidence_analysis",
 ]
 
-EXPECTED = {
+EXPECTED_TRAINING = {
     "E1_D1": [25, 0, 25, 0, 0, 0, 50, 100],
     "E1_D2": [25, 0, 50, 25, 25, 25, 50, 100],
     "E1_D3": [25, 0, 25, 0, 50, 0, 50, 100],
@@ -45,6 +45,179 @@ PREVIOUS_TRAINING_MAP_HASHES = {
     "C": "04c26a5acd1f641b44eab1d7fe2cfea125e19465b1c407a74acce894d5d747c9",
     "D": "05b7524877591b9d3fa5f4e68f76addf3dd674b0aec7684e887d2a7c223e1ff6",
 }
+E_TRAINING_MAP_HASH = "5252986a5ebb12d6621a3a51fe7e7516e9e6683a36e77d17b88391d9bd9c0dda"
+
+EXPECTED_EVIDENCE = {
+    "E1_D1": {
+        "level": 4,
+        "maxStrength": 0.85,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 20,
+            "systems_patterns": 40,
+            "evidence_analysis": 85,
+        },
+    },
+    "E1_D2": {
+        "level": 4,
+        "maxStrength": 0.90,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 35,
+            "options_decisions": 20,
+            "transition_tempo": 20,
+            "pressure_control": 20,
+            "systems_patterns": 40,
+            "evidence_analysis": 85,
+        },
+    },
+    "E1_D3": {
+        "level": 4,
+        "maxStrength": 0.90,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 20,
+            "transition_tempo": 40,
+            "systems_patterns": 40,
+            "evidence_analysis": 85,
+        },
+    },
+    "E1_D4": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 35,
+            "options_decisions": 20,
+            "transition_tempo": 20,
+            "pressure_control": 20,
+            "systems_patterns": 60,
+            "evidence_analysis": 90,
+        },
+    },
+    "E1_D5": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 20,
+            "options_decisions": 20,
+            "transition_tempo": 20,
+            "pressure_control": 20,
+            "systems_patterns": 60,
+            "evidence_analysis": 90,
+        },
+    },
+    "E2_D1": {
+        "level": 4,
+        "maxStrength": 0.90,
+        "weights": {
+            "scanning_identification": 15,
+            "roles_support": 20,
+            "space_structure": 35,
+            "options_decisions": 20,
+            "transition_tempo": 60,
+            "pressure_control": 20,
+            "systems_patterns": 60,
+            "evidence_analysis": 85,
+        },
+    },
+    "E2_D2": {
+        "level": 4,
+        "maxStrength": 0.90,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 20,
+            "transition_tempo": 80,
+            "systems_patterns": 60,
+            "evidence_analysis": 90,
+        },
+    },
+    "E2_D3": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "scanning_identification": 15,
+            "space_structure": 35,
+            "options_decisions": 35,
+            "transition_tempo": 40,
+            "pressure_control": 20,
+            "systems_patterns": 60,
+            "evidence_analysis": 90,
+        },
+    },
+    "E2_D4": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "scanning_identification": 15,
+            "roles_support": 20,
+            "space_structure": 35,
+            "options_decisions": 35,
+            "transition_tempo": 60,
+            "pressure_control": 20,
+            "systems_patterns": 60,
+            "evidence_analysis": 90,
+        },
+    },
+    "E2_D5": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "scanning_identification": 15,
+            "roles_support": 20,
+            "space_structure": 35,
+            "options_decisions": 20,
+            "transition_tempo": 60,
+            "pressure_control": 20,
+            "systems_patterns": 80,
+            "evidence_analysis": 90,
+        },
+    },
+    "E3_D1": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "systems_patterns": 20,
+            "evidence_analysis": 90,
+        },
+    },
+    "E3_D2": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "space_structure": 20,
+            "systems_patterns": 20,
+            "evidence_analysis": 90,
+        },
+    },
+    "E3_D3": {
+        "level": 5,
+        "maxStrength": 0.95,
+        "weights": {
+            "space_structure": 20,
+            "options_decisions": 20,
+            "systems_patterns": 40,
+            "evidence_analysis": 90,
+        },
+    },
+    "E3_D4": {
+        "level": 5,
+        "maxStrength": 1.00,
+        "weights": {
+            "systems_patterns": 20,
+            "evidence_analysis": 95,
+        },
+    },
+    "E3_D5": {
+        "level": 5,
+        "maxStrength": 1.00,
+        "weights": {
+            "systems_patterns": 20,
+            "evidence_analysis": 95,
+        },
+    },
+}
 
 
 class ETrackTrainingMapTests(unittest.TestCase):
@@ -63,7 +236,11 @@ class ETrackTrainingMapTests(unittest.TestCase):
                 training_map_sha256(self.document["profiles"], prefix=prefix),
                 expected_hash,
             )
-        self.assertEqual([profile.drillId for profile in self.e_profiles], list(EXPECTED))
+        self.assertEqual(
+            training_map_sha256(self.document["profiles"], prefix="E"),
+            E_TRAINING_MAP_HASH,
+        )
+        self.assertEqual([profile.drillId for profile in self.e_profiles], list(EXPECTED_TRAINING))
 
     def test_each_e_track_has_exactly_five_profiles(self):
         counts = Counter(profile.drillId.split("_")[0] for profile in self.e_profiles)
@@ -73,11 +250,45 @@ class ETrackTrainingMapTests(unittest.TestCase):
         for profile in self.e_profiles:
             with self.subTest(drillId=profile.drillId):
                 actual = [profile.trainingWeights[competency_id] for competency_id in IDS]
-                self.assertEqual(actual, EXPECTED[profile.drillId])
+                self.assertEqual(actual, EXPECTED_TRAINING[profile.drillId])
                 self.assertEqual(set(profile.trainingWeights), set(IDS))
 
-    def test_evidence_is_neutral_and_disabled_for_every_e_profile(self):
-        for profile in self.e_profiles:
+
+class ETrackEvidenceMapTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.document = json.loads(
+            (ROOT_DIR / "data/academy/competency/drill_profiles.json").read_text()
+        )
+        cls.all_profiles = validate_drill_profiles(cls.document)
+        cls.e_profiles = [p for p in cls.all_profiles if p.drillId.startswith("E")]
+        cls.e123 = [p for p in cls.e_profiles if not p.drillId.startswith("E4_")]
+        cls.e4 = [p for p in cls.e_profiles if p.drillId.startswith("E4_")]
+
+    def test_cluster1_evidence_coverage_totals(self):
+        enabled = [p for p in self.all_profiles if p.evidence.enabled]
+        disabled_e4 = [p for p in self.all_profiles if p.drillId.startswith("E4_")]
+        self.assertEqual(len(self.all_profiles), 83)
+        self.assertEqual(len(enabled), 78)
+        self.assertEqual(len(disabled_e4), 5)
+        self.assertTrue(all(not p.evidence.enabled for p in disabled_e4))
+        self.assertNotIn("D4_D4", {p.drillId for p in self.all_profiles})
+
+    def test_e1_e2_e3_enabled_counts(self):
+        for track in ("E1", "E2", "E3"):
+            enabled = [p for p in self.all_profiles if p.drillId.startswith(f"{track}_") and p.evidence.enabled]
+            self.assertEqual(len(enabled), 5, track)
+        self.assertEqual([p.drillId for p in self.e123], list(EXPECTED_EVIDENCE))
+
+    def test_a_b_c_d_remain_enabled(self):
+        self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("A") and p.evidence.enabled), 15)
+        self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("B") and p.evidence.enabled), 15)
+        self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("C") and p.evidence.enabled), 15)
+        self.assertEqual(sum(1 for p in self.all_profiles if p.drillId.startswith("D") and p.evidence.enabled), 18)
+
+    def test_e4_remains_fully_training_only_and_guarded(self):
+        self.assertEqual(len(self.e4), 5)
+        for profile in self.e4:
             with self.subTest(drillId=profile.drillId):
                 self.assertFalse(profile.evidence.enabled)
                 self.assertEqual(profile.evidence.weights, {})
@@ -85,13 +296,44 @@ class ETrackTrainingMapTests(unittest.TestCase):
                 self.assertIsNone(profile.evidence.maxStrength)
                 self.assertIsNone(profile.evidence.assessmentMode)
                 self.assertFalse(profile.evidence.requiresQualityEvaluation)
+                # High training weights must not imply accidental evidence activation.
+                self.assertGreater(sum(profile.trainingWeights.values()), 0)
 
-    def test_e4_is_explicitly_training_only(self):
-        e4_profiles = [profile for profile in self.e_profiles if profile.drillId.startswith("E4_")]
-        self.assertEqual(len(e4_profiles), 5)
-        for profile in e4_profiles:
-            self.assertFalse(profile.evidence.enabled)
-            self.assertEqual(profile.evidence.weights, {})
+    def test_approved_e123_evidence_contracts(self):
+        for profile in self.e123:
+            with self.subTest(drillId=profile.drillId):
+                expected = EXPECTED_EVIDENCE[profile.drillId]
+                self.assertTrue(profile.evidence.enabled)
+                self.assertEqual(profile.evidence.level, expected["level"])
+                self.assertEqual(profile.evidence.maxStrength, expected["maxStrength"])
+                self.assertEqual(profile.evidence.assessmentMode, "structured")
+                self.assertTrue(profile.evidence.requiresQualityEvaluation)
+                self.assertEqual(
+                    {str(k): v for k, v in profile.evidence.weights.items()},
+                    expected["weights"],
+                )
+                self.assertIn(profile.evidence.level, (4, 5))
+                self.assertGreaterEqual(profile.evidence.maxStrength, 0)
+                self.assertLessEqual(profile.evidence.maxStrength, 1)
+
+    def test_evidence_weights_do_not_exceed_training_and_require_support(self):
+        for profile in self.e123:
+            with self.subTest(drillId=profile.drillId):
+                for competency_id, weight in profile.evidence.weights.items():
+                    training = profile.trainingWeights[competency_id]
+                    self.assertGreater(training, 0)
+                    self.assertLessEqual(weight, training)
+
+    def test_e3_d4_and_d5_cap_strength_without_implying_score(self):
+        for drill_id in ("E3_D4", "E3_D5"):
+            profile = next(p for p in self.e123 if p.drillId == drill_id)
+            with self.subTest(drillId=drill_id):
+                self.assertEqual(profile.evidence.level, 5)
+                self.assertEqual(profile.evidence.maxStrength, 1.0)
+                self.assertEqual(profile.evidence.weights["evidence_analysis"], 95)
+                self.assertEqual(profile.trainingWeights["evidence_analysis"], 100)
+                # Capacity metadata only — no score/event semantics in V1 map.
+                self.assertIsNone(getattr(profile, "score", None))
 
 
 if __name__ == "__main__":

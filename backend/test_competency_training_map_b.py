@@ -267,13 +267,13 @@ class BTrackEvidenceMapTests(unittest.TestCase):
         self.assertEqual(len(enabled_b), 15)
         self.assertEqual([p.drillId for p in enabled_b], list(EXPECTED_EVIDENCE))
 
-    def test_a_b_evidence_remain_enabled_and_e_disabled(self):
+    def test_a_b_evidence_remain_enabled_and_e4_disabled(self):
         enabled_a = [p for p in self.all_profiles if p.drillId.startswith("A") and p.evidence.enabled]
         enabled_b = [p for p in self.all_profiles if p.drillId.startswith("B") and p.evidence.enabled]
         self.assertEqual(len(enabled_a), 15)
         self.assertEqual(len(enabled_b), 15)
         for profile in self.all_profiles:
-            if not profile.drillId.startswith("E"):
+            if not profile.drillId.startswith("E4_"):
                 continue
             with self.subTest(drillId=profile.drillId):
                 self.assertFalse(profile.evidence.enabled)

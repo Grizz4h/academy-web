@@ -1837,12 +1837,17 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 20,
+          "systems_patterns": 40,
+          "evidence_analysis": 85
+        },
+        "level": 4,
+        "maxStrength": 0.85,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1859,12 +1864,20 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 35,
+          "options_decisions": 20,
+          "transition_tempo": 20,
+          "pressure_control": 20,
+          "systems_patterns": 40,
+          "evidence_analysis": 85
+        },
+        "level": 4,
+        "maxStrength": 0.9,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1881,12 +1894,18 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 20,
+          "transition_tempo": 40,
+          "systems_patterns": 40,
+          "evidence_analysis": 85
+        },
+        "level": 4,
+        "maxStrength": 0.9,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1903,12 +1922,20 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 35,
+          "options_decisions": 20,
+          "transition_tempo": 20,
+          "pressure_control": 20,
+          "systems_patterns": 60,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1925,12 +1952,20 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 20,
+          "options_decisions": 20,
+          "transition_tempo": 20,
+          "pressure_control": 20,
+          "systems_patterns": 60,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1947,12 +1982,21 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "roles_support": 20,
+          "space_structure": 35,
+          "options_decisions": 20,
+          "transition_tempo": 60,
+          "pressure_control": 20,
+          "systems_patterns": 60,
+          "evidence_analysis": 85
+        },
+        "level": 4,
+        "maxStrength": 0.9,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1969,12 +2013,18 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 20,
+          "transition_tempo": 80,
+          "systems_patterns": 60,
+          "evidence_analysis": 90
+        },
+        "level": 4,
+        "maxStrength": 0.9,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -1991,12 +2041,20 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 35,
+          "options_decisions": 35,
+          "transition_tempo": 40,
+          "pressure_control": 20,
+          "systems_patterns": 60,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2013,12 +2071,21 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "roles_support": 20,
+          "space_structure": 35,
+          "options_decisions": 35,
+          "transition_tempo": 60,
+          "pressure_control": 20,
+          "systems_patterns": 60,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2035,12 +2102,21 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "roles_support": 20,
+          "space_structure": 35,
+          "options_decisions": 20,
+          "transition_tempo": 60,
+          "pressure_control": 20,
+          "systems_patterns": 80,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2057,12 +2133,15 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "systems_patterns": 20,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2079,12 +2158,16 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "space_structure": 20,
+          "systems_patterns": 20,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2101,12 +2184,17 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "space_structure": 20,
+          "options_decisions": 20,
+          "systems_patterns": 40,
+          "evidence_analysis": 90
+        },
+        "level": 5,
+        "maxStrength": 0.95,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2123,12 +2211,15 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "systems_patterns": 20,
+          "evidence_analysis": 95
+        },
+        "level": 5,
+        "maxStrength": 1.0,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -2145,12 +2236,15 @@
         "evidence_analysis": 100
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "systems_patterns": 20,
+          "evidence_analysis": 95
+        },
+        "level": 5,
+        "maxStrength": 1.0,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {

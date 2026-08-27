@@ -231,9 +231,9 @@ class ATrackEvidenceMapTests(unittest.TestCase):
         self.assertEqual(len(enabled_a), 15)
         self.assertEqual([p.drillId for p in enabled_a], list(EXPECTED_EVIDENCE))
 
-    def test_e_remains_evidence_disabled(self):
+    def test_e4_remains_evidence_disabled(self):
         for profile in self.all_profiles:
-            if not profile.drillId.startswith("E"):
+            if not profile.drillId.startswith("E4_"):
                 continue
             with self.subTest(drillId=profile.drillId):
                 self.assertFalse(profile.evidence.enabled)
