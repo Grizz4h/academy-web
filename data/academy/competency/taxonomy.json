@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "scope": {
+    "cluster": 1,
+    "tracks": ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "D1", "D2", "D3", "D4", "E1", "E2", "E3", "E4"],
+    "excludedTracks": ["0", "F", "M"]
+  },
+  "capabilityBands": [
+    {"min": 0, "max": 20, "id": "exposure", "label": "Exposure", "description": "Der Nutzer beginnt zu verstehen, wonach er suchen soll."},
+    {"min": 21, "max": 40, "id": "recognition", "label": "Recognition", "description": "Er erkennt das Merkmal in klaren Situationen."},
+    {"min": 41, "max": 60, "id": "connection", "label": "Connection", "description": "Er kann mehrere relevante Elemente verbinden."},
+    {"min": 61, "max": 80, "id": "integration", "label": "Integration", "description": "Er erkennt das Prinzip über komplexere Situationen und Sequenzen hinweg."},
+    {"min": 81, "max": 100, "id": "analytical_transfer", "label": "Analytical Transfer", "description": "Er kann das Prinzip kontextübergreifend anwenden und Grenzen seiner Beobachtung erkennen."}
+  ],
+  "competencies": [
+    {"id": "scanning_identification", "label": "Scanning", "coreQuestion": "Erkennt der Nutzer relevante Spieler, Rollen, Ereignisse, Trigger und Beobachtungsmomente?", "includes": ["Fokus lösen", "relevante Akteure finden", "Ereignisse identifizieren", "relevante Beobachtungsfenster erkennen"], "excludes": ["Bedeutung der Struktur interpretieren"]},
+    {"id": "roles_support", "label": "Roles", "coreQuestion": "Erkennt der Nutzer funktionale Beziehungen zwischen Spielern?", "includes": ["Rollen", "Support", "Absicherung", "Anspielbarkeit", "funktionale Beziehungen"], "excludes": ["allgemeine Raumstruktur unabhängig von Rollen"]},
+    {"id": "space_structure", "label": "Space", "coreQuestion": "Kann der Nutzer räumliche Ordnung lesen?", "includes": ["Abstände", "Staffelung", "Breite/Tiefe", "Raumprioritäten", "verbundene/offene Strukturen"], "excludes": ["Entscheidung selbst"]},
+    {"id": "options_decisions", "label": "Decisions", "coreQuestion": "Erkennt der Nutzer vorhandene Optionen, die gewählte Aktion und deren Bedingungen?", "includes": ["Optionen", "Entscheidung", "Anschlussoptionen", "Aktion vs. Ergebnis"], "excludes": ["eigene sportliche Entscheidungsfähigkeit des Nutzers"], "note": "RinQ bewertet Decision Reading, nicht Playing Skill."},
+    {"id": "transition_tempo", "label": "Transition", "coreQuestion": "Erkennt der Nutzer Veränderungen von Struktur und Verhalten über Zeit?", "includes": ["Umschaltmomente", "erste Reaktion", "Rückreaktion", "Strukturentwicklung", "Sequenzen"], "excludes": ["rein statische Struktur"]},
+    {"id": "pressure_control", "label": "Control", "coreQuestion": "Erkennt der Nutzer, wie Zeit, Raum und Optionen kontrolliert oder eingeschränkt werden?", "includes": ["Druck", "Zugriff", "Lenkung", "Raumkontrolle", "Gap", "defensive Stabilität"], "excludes": ["bloße Systembenennung"]},
+    {"id": "systems_patterns", "label": "Systems", "coreQuestion": "Erkennt der Nutzer wiederkehrende kollektive Prinzipien über Einzelaktionen hinaus?", "includes": ["kollektive Strukturen", "wiederkehrende Prinzipien", "Systemveränderungen", "segmentbezogene Tendenzen"], "excludes": ["Systemnamen auswendig lernen"]},
+    {"id": "evidence_analysis", "label": "Analysis", "coreQuestion": "Wie sauber und belastbar kann der Nutzer Beobachtungen in Aussagen überführen?", "includes": ["Einzelfall vs. Tendenz", "Gegenfälle", "Vergleichbarkeit", "Stichprobe", "Rates vs. Counts", "Evidenzstärke", "Aussagegrenzen", "keine unbelegte Kausalität"], "excludes": ["allgemeines Hockeywissen"]}
+  ]
+}

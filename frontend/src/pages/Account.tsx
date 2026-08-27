@@ -30,6 +30,7 @@ import { useTutorialOptional } from '../features/tutorial'
 import { useEntitlements } from '../features/entitlements'
 import { describeAcademyBilling, useBilling } from '../features/billing'
 import AccountBillingPanel from '../components/account/AccountBillingPanel'
+import { CompetencyRadar, type CompetencyRadarValue } from '../features/competency'
 import { isSupabaseConfigured, signInWithGoogle } from '../lib/supabase'
 import styles from './Account.module.css'
 
@@ -38,6 +39,17 @@ const PROVIDER_LABELS: Record<string, string> = {
   supabase_google: 'Google',
   supabase_email: 'Email OTP',
 }
+
+const COMPETENCY_PREVIEW_VALUES: readonly CompetencyRadarValue[] = [
+  { competencyId: 'scanning_identification', score: 82 },
+  { competencyId: 'roles_support', score: 76 },
+  { competencyId: 'space_structure', score: 88 },
+  { competencyId: 'options_decisions', score: 64 },
+  { competencyId: 'transition_tempo', score: 71 },
+  { competencyId: 'pressure_control', score: 79 },
+  { competencyId: 'systems_patterns', score: 68 },
+  { competencyId: 'evidence_analysis', score: 52 },
+]
 
 function formatMemberSince(iso: string | null | undefined): string | null {
   if (!iso) return null
@@ -551,6 +563,8 @@ export default function AccountPage() {
         </p>
         <AccountProgressionPanel />
       </Card>
+
+      <CompetencyRadar values={COMPETENCY_PREVIEW_VALUES} />
 
       <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Profil</h2>

@@ -9,6 +9,7 @@ Verbindliche Manifeste für Agents und Reviewer. Vor Arbeit im jeweiligen Bereic
 | [`curriculum-rework.md`](curriculum-rework.md) | Track-Rework, Phasen, D1–D5, Complexity Budget |
 | [`mechanic-design.md`](mechanic-design.md) | Drill-Renderer, wiederverwendbare Mechaniken |
 | [`security-and-privacy.md`](security-and-privacy.md) | Auth, Userdaten, Payments, Uploads, Admin |
+| [`competency-model.md`](competency-model.md) | Competency-Taxonomie, Drill-/Evidence-Profile, Scores, Radar |
 | [`../qa/content-review-template.md`](../qa/content-review-template.md) | Track Content QA — Review-Template |
 
 Cursor-Regeln (Kurzfassung): `.cursor/rules/*.mdc`
