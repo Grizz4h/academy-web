@@ -227,13 +227,13 @@ class ATrackEvidenceMapTests(unittest.TestCase):
         cls.a_profiles = [p for p in cls.all_profiles if p.drillId.startswith("A")]
 
     def test_exactly_fifteen_a_profiles_have_evidence_enabled(self):
-        enabled = [p for p in self.all_profiles if p.evidence.enabled]
-        self.assertEqual(len(enabled), 15)
-        self.assertEqual([p.drillId for p in enabled], list(EXPECTED_EVIDENCE))
+        enabled_a = [p for p in self.all_profiles if p.drillId.startswith("A") and p.evidence.enabled]
+        self.assertEqual(len(enabled_a), 15)
+        self.assertEqual([p.drillId for p in enabled_a], list(EXPECTED_EVIDENCE))
 
-    def test_b_through_e_remain_evidence_disabled(self):
+    def test_c_through_e_remain_evidence_disabled(self):
         for profile in self.all_profiles:
-            if profile.drillId.startswith("A"):
+            if profile.drillId.startswith(("A", "B")):
                 continue
             with self.subTest(drillId=profile.drillId):
                 self.assertFalse(profile.evidence.enabled)

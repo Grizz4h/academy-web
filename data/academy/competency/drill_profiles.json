@@ -420,12 +420,16 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 75,
+          "space_structure": 50
+        },
+        "level": 2,
+        "maxStrength": 0.7,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -442,12 +446,18 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 80,
+          "space_structure": 50,
+          "transition_tempo": 20,
+          "systems_patterns": 20
+        },
+        "level": 2,
+        "maxStrength": 0.75,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -464,12 +474,17 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 80,
+          "space_structure": 35,
+          "systems_patterns": 20
+        },
+        "level": 2,
+        "maxStrength": 0.75,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -486,12 +501,18 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 80,
+          "space_structure": 50,
+          "options_decisions": 55,
+          "systems_patterns": 20
+        },
+        "level": 2,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -508,12 +529,19 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 55,
+          "space_structure": 35,
+          "options_decisions": 35,
+          "transition_tempo": 55,
+          "pressure_control": 20
+        },
+        "level": 2,
+        "maxStrength": 0.75,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -530,12 +558,18 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "space_structure": 50,
+          "options_decisions": 35,
+          "transition_tempo": 20,
+          "pressure_control": 75
+        },
+        "level": 2,
+        "maxStrength": 0.75,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -552,12 +586,18 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "space_structure": 35,
+          "options_decisions": 80,
+          "transition_tempo": 20,
+          "pressure_control": 55
+        },
+        "level": 2,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -574,12 +614,19 @@
         "evidence_analysis": 25
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "space_structure": 50,
+          "options_decisions": 80,
+          "transition_tempo": 20,
+          "pressure_control": 75,
+          "evidence_analysis": 20
+        },
+        "level": 3,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -596,12 +643,20 @@
         "evidence_analysis": 25
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 20,
+          "space_structure": 35,
+          "options_decisions": 80,
+          "transition_tempo": 55,
+          "pressure_control": 55,
+          "evidence_analysis": 20
+        },
+        "level": 3,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -618,12 +673,20 @@
         "evidence_analysis": 75
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "space_structure": 20,
+          "options_decisions": 55,
+          "transition_tempo": 20,
+          "pressure_control": 50,
+          "systems_patterns": 40,
+          "evidence_analysis": 60
+        },
+        "level": 3,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -640,12 +703,18 @@
         "evidence_analysis": 0
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 45,
+          "roles_support": 30,
+          "space_structure": 35,
+          "transition_tempo": 20,
+          "pressure_control": 80
+        },
+        "level": 2,
+        "maxStrength": 0.75,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -662,12 +731,21 @@
         "evidence_analysis": 25
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 20,
+          "space_structure": 50,
+          "options_decisions": 35,
+          "transition_tempo": 20,
+          "pressure_control": 80,
+          "systems_patterns": 20,
+          "evidence_analysis": 20
+        },
+        "level": 2,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -684,12 +762,20 @@
         "evidence_analysis": 25
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 75,
+          "space_structure": 50,
+          "transition_tempo": 20,
+          "pressure_control": 80,
+          "systems_patterns": 35,
+          "evidence_analysis": 20
+        },
+        "level": 3,
+        "maxStrength": 0.8,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -706,12 +792,20 @@
         "evidence_analysis": 25
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 25,
+          "roles_support": 55,
+          "space_structure": 50,
+          "transition_tempo": 55,
+          "pressure_control": 80,
+          "systems_patterns": 35,
+          "evidence_analysis": 20
+        },
+        "level": 3,
+        "maxStrength": 0.85,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
@@ -728,12 +822,21 @@
         "evidence_analysis": 75
       },
       "evidence": {
-        "enabled": false,
-        "weights": {},
-        "level": null,
-        "maxStrength": null,
-        "assessmentMode": null,
-        "requiresQualityEvaluation": false
+        "enabled": true,
+        "weights": {
+          "scanning_identification": 15,
+          "roles_support": 35,
+          "space_structure": 35,
+          "options_decisions": 20,
+          "transition_tempo": 20,
+          "pressure_control": 55,
+          "systems_patterns": 55,
+          "evidence_analysis": 60
+        },
+        "level": 3,
+        "maxStrength": 0.85,
+        "assessmentMode": "structured",
+        "requiresQualityEvaluation": true
       }
     },
     {
