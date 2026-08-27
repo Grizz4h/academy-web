@@ -6,11 +6,17 @@ import styles from '../pages/Dashboard.module.css'
 
 type Step = 'idle' | 'email' | 'otp'
 
+type EmailOtpLoginProps = {
+  /** Required before sending OTP (new accounts may be created). */
+  ageConfirmed?: boolean
+  onNeedAgeConfirm?: () => void
+}
+
 /**
  * Passwordless email login via Supabase OTP.
  * RinQ identity is created only after a verified access token hits /api/me.
  */
-export function EmailOtpLogin() {
+export function EmailOtpLogin({ ageConfirmed = false, onNeedAgeConfirm }: EmailOtpLoginProps) {
   const { completeSupabaseSession } = useUser()
   const [step, setStep] = useState<Step>('idle')
   const [email, setEmail] = useState('')
@@ -25,6 +31,10 @@ export function EmailOtpLogin() {
         type="button"
         variant="secondary"
         onClick={() => {
+          if (!ageConfirmed) {
+            onNeedAgeConfirm?.()
+            return
+          }
           setStep('email')
           setError('')
           setInfo('')
@@ -36,6 +46,11 @@ export function EmailOtpLogin() {
   }
 
   const sendCode = async () => {
+    if (!ageConfirmed) {
+      onNeedAgeConfirm?.()
+      setError('Bitte bestätige, dass du mindestens 18 Jahre alt bist.')
+      return
+    }
     setBusy(true)
     setError('')
     setInfo('')

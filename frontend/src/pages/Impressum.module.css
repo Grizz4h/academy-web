@@ -3,6 +3,10 @@
   padding-bottom: 2rem;
 }
 
+.heading {
+  color: var(--text, #f7f7ff);
+}
+
 .sectionCard {
   margin-bottom: 0.85rem !important;
 }

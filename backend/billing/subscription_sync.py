@@ -9,7 +9,12 @@ from entitlements.feature_keys import ACADEMY_PREMIUM
 from repositories.wiring import get_repos
 
 from . import settings
-from .persistence import upsert_plan_entitlement, upsert_subscription_row
+from .persistence import (
+    get_subscription_by_external_id,
+    upsert_plan_entitlement,
+    upsert_subscription_row,
+)
+from .contract_payment import capture_initial_payment_for_subscription, capture_initial_payment_from_invoice
 
 GRANT_STATUSES = frozenset({"active", "trialing"})
 ENTITLEMENT_PLAN_STATUSES = frozenset(
@@ -120,6 +125,7 @@ def sync_checkout_session_completed(session: Dict[str, Any]) -> Optional[str]:
 
     customer_id = session.get("customer")
     subscription_id = session.get("subscription")
+    session_id = str(session.get("id") or "").strip() or None
     if customer_id:
         upsert_plan_entitlement(
             rinq_user_id=uid,
@@ -134,6 +140,25 @@ def sync_checkout_session_completed(session: Dict[str, Any]) -> Optional[str]:
 
         stripe.api_key = settings.stripe_secret_key()
         sub = stripe.Subscription.retrieve(str(subscription_id))
-        return sync_subscription_object(dict(sub), rinq_user_id=uid)
+        result_uid = sync_subscription_object(dict(sub), rinq_user_id=uid)
+        # Anchor checkout session + initial contract payment when available
+        capture_initial_payment_for_subscription(
+            str(subscription_id),
+            checkout_session_id=session_id,
+        )
+        return result_uid
 
     return uid
+
+
+def sync_invoice_paid(invoice: Dict[str, Any]) -> Optional[str]:
+    """Persist initial payment refs from subscription_create invoices."""
+    if not capture_initial_payment_from_invoice(invoice):
+        return None
+    sub_id = invoice.get("subscription")
+    if isinstance(sub_id, dict):
+        sub_id = sub_id.get("id")
+    if not sub_id:
+        return None
+    row = get_subscription_by_external_id(str(sub_id))
+    return row.get("rinq_user_id") if row else None

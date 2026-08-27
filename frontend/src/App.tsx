@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Navigate, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Dashboard from './pages/Dashboard'
 import Curriculum from './pages/Curriculum'
@@ -35,6 +35,11 @@ import ImpressumPage from './pages/Impressum'
 import DatenschutzPage from './pages/Datenschutz'
 import KontaktPage from './pages/Kontakt'
 import LegalPage from './pages/Legal'
+import AgbPage from './pages/Agb'
+import WiderrufPage from './pages/Widerruf'
+import VertragKuendigenPage from './pages/VertragKuendigen'
+import VertragWiderrufenPage from './pages/VertragWiderrufen'
+import NotFoundPage from './pages/NotFound'
 
 function App() {
   return (
@@ -65,12 +70,23 @@ function App() {
             <Route path="/legal" element={<LegalPage />} />
             <Route path="/impressum" element={<ImpressumPage />} />
             <Route path="/datenschutz" element={<DatenschutzPage />} />
+            <Route path="/agb" element={<AgbPage />} />
+            <Route path="/widerruf" element={<WiderrufPage />} />
             <Route path="/kontakt" element={<KontaktPage />} />
+            <Route path="/vertrag-kuendigen" element={<VertragKuendigenPage />} />
+            <Route path="/vertrag-widerrufen" element={<VertragWiderrufenPage />} />
+            {/* Stripe Dashboard convenience aliases */}
+            <Route path="/legal/agb" element={<Navigate to="/agb" replace />} />
+            <Route path="/legal/widerruf" element={<Navigate to="/widerruf" replace />} />
+            <Route path="/legal/datenschutz" element={<Navigate to="/datenschutz" replace />} />
+            <Route path="/legal/impressum" element={<Navigate to="/impressum" replace />} />
+            <Route path="/legal/kontakt" element={<Navigate to="/kontakt" replace />} />
             <Route path="/dev" element={<DevRouteGuard><DevLab /></DevRouteGuard>} />
             <Route path="/dev/ui" element={<DevRouteGuard><DevUiKit /></DevRouteGuard>} />
             <Route path="/dev/content" element={<DevRouteGuard><DevContent /></DevRouteGuard>} />
             <Route path="/dev/cosmetics" element={<DevRouteGuard><DevCosmetics /></DevRouteGuard>} />
             <Route path="/dev/progression" element={<DevRouteGuard><DevProgression /></DevRouteGuard>} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
         <AppFooter />

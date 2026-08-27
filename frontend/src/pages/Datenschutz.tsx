@@ -13,15 +13,11 @@ function Todo({ children }: { children: ReactNode }) {
 }
 
 function ContactEmail() {
-  if (RINQ_CONTACT_EMAIL) {
-    return (
-      <a className={styles.mail} href={`mailto:${RINQ_CONTACT_EMAIL}`}>
-        {RINQ_CONTACT_EMAIL}
-      </a>
-    )
-  }
-  // TODO(launch-legal): Set RINQ_CONTACT_EMAIL in content/legal.ts
-  return <span className={styles.todoInline}>[TODO: rInQ-Kontaktadresse noch festlegen]</span>
+  return (
+    <a className={styles.mail} href={`mailto:${RINQ_CONTACT_EMAIL}`}>
+      {RINQ_CONTACT_EMAIL}
+    </a>
+  )
 }
 
 function ProviderLines() {

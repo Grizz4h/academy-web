@@ -173,7 +173,7 @@ Phase **5A (implementiert):**
 
 Noch offen (5D Ops): Stripe Dashboard Price + Webhook endpoint konfigurieren; Env `STRIPE_*` serverseitig setzen.
 
-Phase **5D (implementiert):** Stripe Checkout (`POST /api/billing/checkout`), signierte Webhooks (`POST /api/webhooks/stripe`), Idempotenz via `processed_webhook_events`, Sync → `subscriptions` + `entitlement_grants` (`source=subscription`). Keine Payment-Rohdaten in Git/Frontend.
+Phase **5D (implementiert):** Stripe Checkout (`POST /api/billing/checkout`), signierte Webhooks (`POST /api/webhooks/stripe`), Idempotenz via `processed_webhook_events` (**process-then-mark** — Markierung erst nach erfolgreichem Sync, damit Stripe-Retries nach Partial-Fail greifen), Sync → `subscriptions` + `entitlement_grants` (`source=subscription`). Keine Payment-Rohdaten in Git/Frontend.
 
 ### 9. Premium Content
 
@@ -271,11 +271,12 @@ Für jeden neuen externen Anbieter prüfen:
 **Eingetragen (Phase 3C):** Supabase Auth (Managed Auth); Google als OAuth-IdP hinter Supabase. Frontend nur Publishable/Anon Key (`VITE_*`). Service Role / JWT-Secret nie im Client.
 ### 20. Löschung und Export
 
-- Nutzer können eigene Daten **exportieren** (`GET /api/me/export`, JSON, nur `rinq_user_id`-Ownership).
+- Nutzer können eigene Daten **exportieren** (`GET /api/me/export`, JSON, nur `rinq_user_id`-Ownership). Unter `STORAGE_BACKEND=postgres` umfasst der Export Profil/Rewards/Sessions/Grants sowie redigiertes Billing + Widerrufe (keine Payment-Roh-IDs / kein `provider_subject`).
 - Nutzer können den Account **vollständig löschen** (`POST /api/me/delete`, Bestätigung `LÖSCHEN`).
 - Löschung umfasst app-interne Runtime-Daten (Profil, Sessions, Rewards, Observations, Scenes, Uploads), alle `auth_links`, Identity und — sofern konfiguriert — den Managed-Auth-User (Supabase Admin API via `SUPABASE_SERVICE_ROLE_KEY`, nur Backend).
+- Vor dem Identity-CASCADE: Stripe-Subscriptions canceln + Stripe-Customer löschen (`billing/account_cleanup.py`), fail-closed bei Cleanup-Fehler.
 - Keine unnötige Aufbewahrung gelöschter Accounts in der Live-Runtime.
-- **Backups:** Gelöschte Daten können für eine begrenzte Zeit in bestehenden Server-Backups enthalten sein; keine neuen Backup-Jobs nur wegen Account-Löschung. Retention der Ops-Backups separat dokumentieren.
+- **Backups:** Gelöschte Daten können für eine begrenzte Zeit in bestehenden Server-Backups enthalten sein (inkl. nightly `pg_dump`); keine neuen Backup-Jobs nur wegen Account-Löschung. Retention der Ops-Backups separat dokumentieren.
 
 ---
 
@@ -301,8 +302,9 @@ Für jeden neuen externen Anbieter prüfen:
 - [x] Premium route gates (Phase 5B — curriculum filter + session gates; Frontend 5C; Stripe 5D)
 - [ ] Premium-Content serverseitig schützen (API-Filter aktiv; vollständiger Drill-JSON ggf. noch im FE-Bundle)
 - [x] Payment-Webhook-Verification (Stripe Signature + `processed_webhook_events`; siehe `backend/billing/webhook.py`)
-- [ ] Webhook Idempotenz härten (process-then-mark / Reprocess nach Partial-Fail; Doppel-Checkout blocken)
-- [ ] Rate Limits vervollständigen (Login/Signup/Admin/Billing vorhanden; Reflection/KI noch offen)
+- [x] Doppel-Checkout blocken bei aktivem/trialing Abo oder bestehendem Premium-Grant (`billing/checkout.py`)
+- [ ] Webhook Idempotenz härten (process-then-mark / Reprocess nach Partial-Fail)
+- [x] Rate Limits: Login/Signup/Admin/Billing + Reflection (8/h User, 40/h IP; Cache-Hits zählen nicht)
 - [ ] Input-Validation-Audit
 - [ ] Logging / Alerting
 
@@ -317,11 +319,11 @@ Living Go/No-Go board: [`docs/ops/pre-launch-board.md`](../ops/pre-launch-board.
 - [x] Datenschutz-Seite + Footer-Link (`/datenschutz`; TODOs auf der Seite vor Launch abarbeiten)
 - [ ] Datenschutz-Dokumentation (AVV, Fristen, Fonts/KI-Rechtsgrundlagen — siehe TODOs auf `/datenschutz`)
 - [x] Lösch- / Export-Prozess (Phase 3G Self-Service; Postgres-Pfad + Entitlements noch verifizieren; Backup-Retention ops-seitig)
-- [ ] Age-Policy / 18+ (Gate oder dokumentierte juristische Entscheidung)
-- [x] Impressum-Seite + Footer-Link (`/impressum`; Kontakt-E-Mail + MStV-Prüfung noch offen — siehe `docs/ops/pre-launch-board.md`)
-- [ ] AGB / Widerruf digitale Inhalte
-- [ ] In-App Support / Problem melden
-- [ ] Reflection Rate-Limit + Cost-Cap
+- [x] Age-Policy / 18+ Checkbox (Signup + Checkout Bestellübersicht `age_confirmed` → Stripe metadata; kein Geburtsdatum; juristische Freigabe noch bestätigen)
+- [x] Impressum-Seite + Footer-Link (`/impressum`; Kontakt: `kontakt@rinq-tank.de`; MStV-Prüfung noch offen)
+- [x] AGB / Widerruf digitale Inhalte (Entwurf `/agb` + `/widerruf`; Bestellübersicht; Widerruf Cancel/Refund; SMTP Blocker; juristische Prüfung vor Paid Launch)
+- [x] In-App Support / Problem melden (Footer + Kontakt Mailto mit App-Version/Pfad)
+- [x] Reflection Rate-Limit (+ grobes IP-Cap)
 - [ ] strukturierter Security Review
 
 ### Später / High Assurance

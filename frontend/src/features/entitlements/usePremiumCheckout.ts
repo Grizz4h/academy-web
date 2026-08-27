@@ -4,7 +4,8 @@ import { api } from '../../api'
 export function usePremiumCheckout() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: () => api.createBillingCheckout(),
+    mutationFn: (opts: { ageConfirmed: boolean }) =>
+      api.createBillingCheckout({ ageConfirmed: opts.ageConfirmed }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['entitlements'] })
       queryClient.invalidateQueries({ queryKey: ['billing'] })

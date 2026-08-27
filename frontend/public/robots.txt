@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# SPA — do not index auth callback noise
+Disallow: /auth/callback
+Disallow: /dev
+Disallow: /dev/
+
+Sitemap: https://rinq-tank.de/sitemap.xml

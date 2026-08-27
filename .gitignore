@@ -25,7 +25,11 @@ data/academy/*.lock
 data/academy/identity_store.json
 data/academy/identity_store.json.lock
 data/academy/.identity_migration_3a_done
+# App-level JSON + Postgres dumps (never commit)
 data/backups/
+
+# Local extracted postgresql-client (pg_dump) — see docs/ops/pg-backup.md
+tools/pg-client/
 
 # Per-user profiles / rewards / sessions / uploads
 data/academy/profiles/**
@@ -34,6 +38,8 @@ data/academy/rewards/**
 !data/academy/rewards/.gitkeep
 data/academy/sessions/**
 !data/academy/sessions/.gitkeep
+data/academy/withdrawal_requests.json
+data/academy/withdrawal_requests.json.tmp
 data/academy/uploads/**
 !data/academy/uploads/.gitkeep
 !data/academy/uploads/avatars/

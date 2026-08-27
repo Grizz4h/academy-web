@@ -1,10 +1,9 @@
 /**
  * Public legal / contact constants for rInQ Tank.
  *
- * TODO(launch-legal): Set the official rInQ support/contact email before public launch.
- * Do not fall back to HIGHspeed / NOVADELTA addresses.
+ * Official support/contact address (confirmed).
  */
-export const RINQ_CONTACT_EMAIL: string | null = null
+export const RINQ_CONTACT_EMAIL = 'kontakt@rinq-tank.de'
 
 export const RINQ_PROVIDER = {
   name: 'Christoph Rabhansl',
@@ -21,3 +20,39 @@ export const RINK_ABOUT_IT_LINKS = [
   { platform: 'YouTube', href: 'https://youtube.com/@rinkaboutit' },
   { platform: 'X', href: 'https://x.com/rinkabout' },
 ] as const
+
+/** Client-reported app build label for support mails (not a secret). */
+export const APP_VERSION =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_VERSION) || 'dev'
+
+export type ProblemReportContext = {
+  path?: string
+  drillId?: string
+  sessionId?: string
+  moduleId?: string
+  note?: string
+}
+
+/** Mailto for in-app „Problem melden“ — includes route + optional drill/session ids. */
+export function buildProblemReportMailto(ctx: ProblemReportContext = {}): string {
+  const path = ctx.path || (typeof window !== 'undefined' ? window.location.pathname : '/')
+  const lines = [
+    'Kurzbeschreibung des Problems:',
+    '',
+    '',
+    '---',
+    `App: rInQ Tank ${APP_VERSION}`,
+    `Pfad: ${path}`,
+    ctx.moduleId ? `Modul: ${ctx.moduleId}` : null,
+    ctx.drillId ? `Drill: ${ctx.drillId}` : null,
+    ctx.sessionId ? `Session: ${ctx.sessionId}` : null,
+    ctx.note ? `Notiz: ${ctx.note}` : null,
+    `Zeit: ${new Date().toISOString()}`,
+  ].filter(Boolean)
+
+  const subject = encodeURIComponent(
+    ctx.drillId ? `rInQ Problem · ${ctx.drillId}` : 'rInQ Problem melden',
+  )
+  const body = encodeURIComponent(lines.join('\n'))
+  return `mailto:${RINQ_CONTACT_EMAIL}?subject=${subject}&body=${body}`
+}

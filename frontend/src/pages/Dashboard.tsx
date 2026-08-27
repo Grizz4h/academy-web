@@ -84,6 +84,7 @@ export default function Dashboard() {
   const [signupSuccess, setSignupSuccess] = useState("");
   const [allowLegacySignup, setAllowLegacySignup] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const googleConfigured = isSupabaseConfigured();
 
   useEffect(() => {
@@ -595,11 +596,26 @@ export default function Dashboard() {
                   <div className={styles.authDivider} role="separator">
                     <span>oder</span>
                   </div>
+                  <label className={styles.ageCheck}>
+                    <input
+                      type="checkbox"
+                      checked={ageConfirmed}
+                      onChange={(e) => {
+                        setAgeConfirmed(e.target.checked)
+                        setLoginError('')
+                      }}
+                    />
+                    <span>Ich bin mindestens 18 Jahre alt.</span>
+                  </label>
                   <UiButton
                     type="button"
                     variant="secondary"
                     onClick={async () => {
                       setLoginError('')
+                      if (!ageConfirmed) {
+                        setLoginError('Bitte bestätige, dass du mindestens 18 Jahre alt bist.')
+                        return
+                      }
                       setGoogleBusy(true)
                       try {
                         const result = await signInWithGoogle()
@@ -615,11 +631,16 @@ export default function Dashboard() {
                   <div className={styles.authDivider} role="separator">
                     <span>oder</span>
                   </div>
-                  <EmailOtpLogin />
+                  <EmailOtpLogin
+                    ageConfirmed={ageConfirmed}
+                    onNeedAgeConfirm={() =>
+                      setLoginError('Bitte bestätige, dass du mindestens 18 Jahre alt bist.')
+                    }
+                  />
                 </>
               ) : null}
               {allowLegacySignup ? (
-                <UiButton type="button" variant="ghost" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); }}>Account erstellen</UiButton>
+                <UiButton type="button" variant="ghost" onClick={() => { setSignupMode(true); setSignupError(""); setSignupSuccess(""); setAgeConfirmed(false); }}>Account erstellen</UiButton>
               ) : null}
               {loginError && <span className={styles.errorMsg}>{loginError}</span>}
             </div>
@@ -660,8 +681,42 @@ export default function Dashboard() {
                 }}
                 className={styles.input}
               />
-              <UiButton type="button" onClick={async () => { setSignupError(""); setSignupSuccess(""); const name = signupName.trim(); if (!name || !signupPassword || !signupPassword2) { setSignupError("Alle Felder erforderlich"); return; } if (signupPassword !== signupPassword2) { setSignupError("Passwörter stimmen nicht überein"); return; } try { await api.signup(name, signupPassword); setSignupSuccess("Account erstellt! Du wirst eingeloggt..."); setTimeout(async () => { await setUser(name, signupPassword); }, 800); } catch (e: any) { setSignupError(e.message || "Registrierung fehlgeschlagen"); } }}>Account erstellen</UiButton>
-              <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); }}>Zurück zur Anmeldung</UiButton>
+              <label className={styles.ageCheck}>
+                <input
+                  type="checkbox"
+                  checked={ageConfirmed}
+                  onChange={(e) => {
+                    setAgeConfirmed(e.target.checked)
+                    setSignupError('')
+                  }}
+                />
+                <span>Ich bin mindestens 18 Jahre alt.</span>
+              </label>
+              <UiButton type="button" onClick={async () => {
+                setSignupError("");
+                setSignupSuccess("");
+                const name = signupName.trim();
+                if (!name || !signupPassword || !signupPassword2) {
+                  setSignupError("Alle Felder erforderlich");
+                  return;
+                }
+                if (signupPassword !== signupPassword2) {
+                  setSignupError("Passwörter stimmen nicht überein");
+                  return;
+                }
+                if (!ageConfirmed) {
+                  setSignupError("Bitte bestätige, dass du mindestens 18 Jahre alt bist.");
+                  return;
+                }
+                try {
+                  await api.signup(name, signupPassword, { ageConfirmed: true });
+                  setSignupSuccess("Account erstellt! Du wirst eingeloggt...");
+                  setTimeout(async () => { await setUser(name, signupPassword); }, 800);
+                } catch (e: any) {
+                  setSignupError(e.message || "Registrierung fehlgeschlagen");
+                }
+              }}>Account erstellen</UiButton>
+              <UiButton type="button" variant="secondary" onClick={() => { setSignupMode(false); setSignupError(""); setSignupSuccess(""); setAgeConfirmed(false); }}>Zurück zur Anmeldung</UiButton>
               {signupError && <span className={styles.errorMsg}>{signupError}</span>}
               {signupSuccess && <span className={styles.successMsg}>{signupSuccess}</span>}
             </div>

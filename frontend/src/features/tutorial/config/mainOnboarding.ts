@@ -4,15 +4,15 @@ import type { TutorialDefinition } from '../types'
 export const MAIN_ONBOARDING: TutorialDefinition = {
   id: TUTORIAL_ID.mainOnboarding,
   version: 1,
-  title: 'RINK Tank kennenlernen',
+  title: 'rInQ Tank kennenlernen',
   steps: [
     {
       id: 'what-is-rink-tank',
       kind: 'explain',
       route: '/',
       placement: 'center',
-      title: 'Was ist RINK Tank?',
-      body: 'RINK Tank ist deine Lern-App für Hockey. Du beobachtest Spiele, beantwortest gezielte Fragen und verstehst Schritt für Schritt mehr.',
+      title: 'Was ist rInQ Tank?',
+      body: 'rInQ Tank ist deine Lern-App für Hockey. Du beobachtest Spiele, beantwortest gezielte Fragen und verstehst Schritt für Schritt mehr.',
       action: { type: 'acknowledge' },
     },
     {

@@ -221,8 +221,10 @@ Restore files from a snapshot only if JSON was corrupted — not needed for norm
 
 ### Supabase backup (MANUAL ACTION REQUIRED)
 
-Enable **Point-in-Time Recovery** / scheduled backups in Supabase Dashboard → Database → Backups.  
-App-level JSON snapshots do **not** replace managed DB backups.
+Enable **Point-in-Time Recovery** / scheduled backups in Supabase Dashboard when paying for Pro — optional until then.
+
+**Until Pro:** nightly logical dump on Hetzner — [pg-backup.md](pg-backup.md) / [launch-ops.md](launch-ops.md) §1.  
+App-level JSON snapshots do **not** replace Postgres dumps.
 
 ### DB reset (staging only)
 

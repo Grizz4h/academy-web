@@ -107,7 +107,7 @@ export const MVP_CHALLENGES: ChallengeDefinition[] = [
     type: 'matchday',
     title: 'HOME ICE',
     description:
-      'Begleite ein Heimspiel vor Ort mit RINK Tank und schließe dort eine qualifizierende Session ab.',
+      'Begleite ein Heimspiel vor Ort mit rInQ Tank und schließe dort eine qualifizierende Session ab.',
     requirements: [
       {
         id: 'verified_home_session',
@@ -137,7 +137,7 @@ export const MVP_CHALLENGES: ChallengeDefinition[] = [
     type: 'matchday',
     title: 'ON THE ROAD',
     description:
-      'Besuche mit RINK Tank ein Auswärtsspiel und schließe dort eine qualifizierende Session ab.',
+      'Besuche mit rInQ Tank ein Auswärtsspiel und schließe dort eine qualifizierende Session ab.',
     requirements: [
       {
         id: 'verified_away_session',

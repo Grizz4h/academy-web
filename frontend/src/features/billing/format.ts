@@ -58,7 +58,22 @@ export function describeAcademyBilling(
   const endDate = formatBillingDate(subscription?.current_period_end || billing?.plan?.current_period_end)
   const cancelAtEnd = Boolean(subscription?.cancel_at_period_end)
 
+  // Server revokes premium on past_due/unpaid — do not claim access until period end.
   if (!hasAcademyPremium) {
+    if (stripeStatus === 'past_due' || stripeStatus === 'unpaid') {
+      return {
+        planLabel: 'Free',
+        badgeLabel: 'Zahlung fehlgeschlagen',
+        badgeTone: 'danger',
+        statusHeadline: 'Premium pausiert',
+        statusDetail:
+          'Die Zahlung ist fehlgeschlagen. Premium-Zugang ist gesperrt, bis du die Zahlungsmethode im Kundenportal aktualisierst.',
+        profileLine: 'Premium · Zahlung fehlgeschlagen',
+        canManage,
+        showCheckout: false,
+      }
+    }
+
     return {
       planLabel: 'Free',
       badgeLabel: 'Free',
@@ -73,7 +88,7 @@ export function describeAcademyBilling(
 
   if (cancelAtEnd && endDate) {
     return {
-      planLabel: 'RinQ Premium',
+      planLabel: 'rInQ Premium',
       badgeLabel: 'Auslaufend',
       badgeTone: 'warn',
       statusHeadline: `Auslaufend zum ${endDate}`,
@@ -86,13 +101,12 @@ export function describeAcademyBilling(
 
   if (stripeStatus === 'past_due' || stripeStatus === 'unpaid') {
     return {
-      planLabel: 'RinQ Premium',
+      planLabel: 'rInQ Premium',
       badgeLabel: 'Zahlung ausstehend',
       badgeTone: 'danger',
       statusHeadline: 'Zahlung ausstehend',
-      statusDetail: endDate
-        ? `Bitte Zahlungsmethode prüfen. Premium-Zugang gilt vorerst bis ${endDate}.`
-        : 'Bitte Zahlungsmethode im Abo prüfen.',
+      statusDetail:
+        'Bitte Zahlungsmethode im Kundenportal prüfen. Ohne Klärung wird der Premium-Zugang gesperrt.',
       profileLine: 'Premium · Zahlung ausstehend',
       canManage,
       showCheckout: false,
@@ -101,7 +115,7 @@ export function describeAcademyBilling(
 
   if (stripeStatus === 'trialing') {
     return {
-      planLabel: 'RinQ Premium',
+      planLabel: 'rInQ Premium',
       badgeLabel: 'Testphase',
       badgeTone: 'ok',
       statusHeadline: endDate ? `Testphase bis ${endDate}` : 'Testphase',
@@ -114,7 +128,7 @@ export function describeAcademyBilling(
 
   if (stripeStatus === 'canceled') {
     return {
-      planLabel: 'RinQ Premium',
+      planLabel: 'rInQ Premium',
       badgeLabel: 'Beendet',
       badgeTone: 'neutral',
       statusHeadline: endDate ? `Beendet · Zugang bis ${endDate}` : 'Beendet',
@@ -126,7 +140,7 @@ export function describeAcademyBilling(
   }
 
   return {
-    planLabel: 'RinQ Premium',
+    planLabel: 'rInQ Premium',
     badgeLabel: 'Premium aktiv',
     badgeTone: 'accent',
     statusHeadline: endDate ? `Aktiv · Verlängerung am ${endDate}` : 'Aktiv',

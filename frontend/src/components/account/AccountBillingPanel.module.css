@@ -43,6 +43,17 @@
   line-height: 1.35;
 }
 
+.metaItem a {
+  color: var(--text-accent, #8fd3df);
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .metaItem a:hover {
+    text-decoration: underline;
+  }
+}
+
 .metaLabel {
   color: rgba(186, 230, 253, 0.82);
   font-weight: 650;

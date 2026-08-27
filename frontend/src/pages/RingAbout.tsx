@@ -1817,7 +1817,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
             onClick={async () => {
               try {
                 await shareOrCopy({
-                  title: 'Rink Tank Szene',
+                  title: 'rInQ Tank Szene',
                   text: [
                     gameLabel,
                     `${scenePeriodLabel(scene.period)} · ${scene.game_time}`,

@@ -14,9 +14,9 @@ export function TutorialHost() {
     return (
       <>
         <TutorialDialog
-          kicker="RINK Tank"
-          title="Willkommen bei RINK Tank"
-          body="RINK Tank hilft dir dabei, Hockey bewusster zu beobachten und Schritt für Schritt besser zu verstehen."
+          kicker="rInQ Tank"
+          title="Willkommen bei rInQ Tank"
+          body="rInQ Tank hilft dir dabei, Hockey bewusster zu beobachten und Schritt für Schritt besser zu verstehen."
           primaryLabel="Tutorial starten"
           onPrimary={tutorial.start}
           secondaryLabel="Später"

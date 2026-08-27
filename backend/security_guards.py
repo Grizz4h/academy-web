@@ -142,6 +142,17 @@ def client_ip(request: Request) -> str:
     return "unknown"
 
 
-def rate_limit(request: Request, scope: str, *, limit: int, window_sec: float) -> None:
-    ip = client_ip(request)
-    _rate_limiter.check(f"{scope}:{ip}", limit=limit, window_sec=window_sec)
+def rate_limit(
+    request: Request,
+    scope: str,
+    *,
+    limit: int,
+    window_sec: float,
+    subject: Optional[str] = None,
+) -> None:
+    """IP-based by default; pass subject for per-user buckets (e.g. reflection)."""
+    if subject:
+        key = f"{scope}:user:{subject}"
+    else:
+        key = f"{scope}:{client_ip(request)}"
+    _rate_limiter.check(key, limit=limit, window_sec=window_sec)

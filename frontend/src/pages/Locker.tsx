@@ -419,7 +419,6 @@ export default function LockerPage() {
         <div>{stats.xpIntoLevel.toLocaleString('de-DE')} / {stats.xpForNextLevel.toLocaleString('de-DE')} XP</div>
         <div>{stats.pux.toLocaleString('de-DE')} Pux</div>
         <div>{stats.cosmeticsOwned} / {stats.cosmeticsTotal} Cosmetics</div>
-        <div>{stats.newUnlocks} neu</div>
       </section>
 
       <nav className="ui-tablist" aria-label="Spind-Bereiche">

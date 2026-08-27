@@ -38,16 +38,9 @@ export default function ImpressumPage() {
         <ProviderBlock />
         <p className={styles.contactLine}>
           E-Mail:{' '}
-          {RINQ_CONTACT_EMAIL ? (
-            <a className={styles.mail} href={`mailto:${RINQ_CONTACT_EMAIL}`}>
-              {RINQ_CONTACT_EMAIL}
-            </a>
-          ) : (
-            // TODO(launch-legal): Replace with official rInQ contact email (see content/legal.ts).
-            <span className={styles.todo}>
-              [TODO: rInQ-Kontaktadresse noch festlegen]
-            </span>
-          )}
+          <a className={styles.mail} href={`mailto:${RINQ_CONTACT_EMAIL}`}>
+            {RINQ_CONTACT_EMAIL}
+          </a>
         </p>
       </Card>
 

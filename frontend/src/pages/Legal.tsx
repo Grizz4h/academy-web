@@ -1,19 +1,30 @@
 import { Link } from 'react-router-dom'
 import styles from './Legal.module.css'
+import { LEGAL_PUBLIC_PATHS } from '../content/legalMeta'
 
 const LEGAL_CARDS = [
   {
-    to: '/impressum',
+    to: LEGAL_PUBLIC_PATHS.impressum,
     title: 'Impressum',
     description: 'Anbieterkennzeichnung, Verantwortliche, Haftung und Urheberrecht.',
   },
   {
-    to: '/datenschutz',
+    to: LEGAL_PUBLIC_PATHS.datenschutz,
     title: 'Datenschutz',
     description: 'Informationen zur Verarbeitung personenbezogener Daten in rInQ Tank.',
   },
   {
-    to: '/kontakt',
+    to: LEGAL_PUBLIC_PATHS.agb,
+    title: 'AGB',
+    description: 'Vertragsbedingungen für die Nutzung von rInQ Tank und kostenpflichtige Abonnements.',
+  },
+  {
+    to: LEGAL_PUBLIC_PATHS.widerruf,
+    title: 'Widerruf',
+    description: 'Informationen zum gesetzlichen Widerrufsrecht und zur Ausübung des Widerrufs.',
+  },
+  {
+    to: LEGAL_PUBLIC_PATHS.kontakt,
     title: 'Kontakt',
     description: 'Support, Feedback, fachliche Hinweise & Kooperationen.',
   },

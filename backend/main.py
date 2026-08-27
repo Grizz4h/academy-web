@@ -2705,7 +2705,11 @@ from reflection import generate_session_reflection
 
 
 @app.post("/api/sessions/{session_id}/reflection")
-async def create_session_reflection(session_id: str, current_user: AuthContext = Depends(get_current_user)):
+async def create_session_reflection(
+    session_id: str,
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
     """Generate or return cached AI reflection for a completed session (owner only)."""
     session_path, session = _require_session_owner(session_id, current_user)
     _require_session_module_access(current_user, session)
@@ -2722,6 +2726,10 @@ async def create_session_reflection(session_id: str, current_user: AuthContext =
     existing = session.get("ai_reflection")
     if existing:
         return {"reflection": existing, "cached": True}
+
+    # Cap OpenAI cost: per-user + coarse IP limit (cached hits above skip this)
+    rate_limit(request, "reflection", limit=8, window_sec=3600.0, subject=current_user.rinq_user_id)
+    rate_limit(request, "reflection_ip", limit=40, window_sec=3600.0)
 
     curriculum = _merge_foundation_tracks(
         load_json(os.path.join(DATA_DIR, "curriculum.json"))
@@ -4011,6 +4019,11 @@ async def signup(payload: dict, request: Request):
             status_code=403,
             detail="Legacy signup is disabled. Use managed login when available.",
         )
+    if not payload.get("age_confirmed"):
+        raise HTTPException(
+            status_code=400,
+            detail="Age confirmation required (18+).",
+        )
     username = payload["username"].strip().lower()
     password = payload["password"].strip()
     users = load_users()
@@ -4240,7 +4253,28 @@ async def get_my_billing(current_user: AuthContext = Depends(get_current_user)):
     except Exception as exc:
         logging.exception("[billing] status read failed")
         raise HTTPException(status_code=500, detail="Billing status unavailable") from exc
-    return {"rinq_user_id": current_user.rinq_user_id, **status}
+    # Do not expose payment-intent / charge anchors to the client
+    public_subs = []
+    for row in status.get("subscriptions") or []:
+        public_subs.append(
+            {
+                "external_subscription_id": row.get("external_subscription_id"),
+                "status": row.get("status"),
+                "price_id": row.get("price_id"),
+                "external_customer_id": row.get("external_customer_id"),
+                "current_period_start": row.get("current_period_start"),
+                "current_period_end": row.get("current_period_end"),
+                "cancel_at_period_end": row.get("cancel_at_period_end"),
+                "created_at": row.get("created_at"),
+                "updated_at": row.get("updated_at"),
+                "contract_started_at": row.get("contract_started_at"),
+            }
+        )
+    return {
+        "rinq_user_id": current_user.rinq_user_id,
+        "plan": status.get("plan"),
+        "subscriptions": public_subs,
+    }
 
 
 @app.post("/api/billing/checkout")
@@ -4252,16 +4286,149 @@ async def billing_checkout(
     _require_postgres_billing()
     rate_limit(request, "billing_checkout", limit=10, window_sec=3600.0)
     from billing import settings as billing_settings
-    from billing.checkout import create_checkout_session
+    from billing.checkout import (
+        ActiveSubscriptionError,
+        AgeConfirmationRequired,
+        create_checkout_session,
+    )
+
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    if not isinstance(body, dict):
+        body = {}
 
     if not billing_settings.stripe_configured():
         raise HTTPException(status_code=503, detail="Stripe is not configured")
     try:
-        result = create_checkout_session(current_user)
+        result = create_checkout_session(
+            current_user,
+            age_confirmed=bool(body.get("age_confirmed")),
+        )
+    except AgeConfirmationRequired as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except ActiveSubscriptionError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except Exception as exc:
         logging.exception("[billing] checkout session failed")
         raise HTTPException(status_code=502, detail="Checkout unavailable") from exc
     return {"ok": True, **result}
+
+
+@app.get("/api/billing/offer")
+async def billing_offer(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Public price snapshot from Stripe Price API for pre-checkout disclosure."""
+    _require_postgres_billing()
+    rate_limit(request, "billing_offer", limit=60, window_sec=60.0)
+    from billing import settings as billing_settings
+    from billing.offer import get_premium_offer
+
+    if not billing_settings.stripe_configured():
+        raise HTTPException(status_code=503, detail="Stripe is not configured")
+    try:
+        return {"ok": True, "offer": get_premium_offer()}
+    except Exception as exc:
+        logging.exception("[billing] offer lookup failed")
+        raise HTTPException(status_code=502, detail="Offer unavailable") from exc
+
+
+@app.post("/api/billing/withdrawal-request")
+async def billing_withdrawal_request(
+    payload: dict,
+    request: Request,
+    authorization: str = Header(None),
+):
+    """
+    Consumer withdrawal declaration.
+    Authenticated: process cancel/refund after UI confirm.
+    Public: email match + confirm link (no Stripe IDs exposed).
+    """
+    rate_limit(request, "billing_withdrawal", limit=10, window_sec=3600.0)
+    if not payload.get("confirmed"):
+        raise HTTPException(status_code=400, detail="Confirmation required")
+    from billing.withdrawal import (
+        public_response,
+        record_withdrawal_request,
+        resolve_user_by_customer_email,
+    )
+
+    note = payload.get("note")
+    if note is not None and not isinstance(note, str):
+        raise HTTPException(status_code=400, detail="Invalid note")
+
+    display_name = payload.get("display_name")
+    contact_email = payload.get("contact_email")
+    if display_name is not None and not isinstance(display_name, str):
+        raise HTTPException(status_code=400, detail="Invalid display_name")
+    if contact_email is not None and not isinstance(contact_email, str):
+        raise HTTPException(status_code=400, detail="Invalid contact_email")
+
+    user = resolve_user_from_authorization(authorization)
+    require_email_confirm = False
+    if user:
+        rinq_user_id = user.rinq_user_id
+        name = (display_name or "").strip() or user.display_name
+        email = (contact_email or "").strip() or None
+        if not name or not email or "@" not in email:
+            raise HTTPException(
+                status_code=400,
+                detail="Name und E-Mail sind für den Widerruf erforderlich.",
+            )
+    else:
+        name = (display_name or "").strip()
+        email = (contact_email or "").strip().lower()
+        if not name or not email or "@" not in email:
+            raise HTTPException(
+                status_code=400,
+                detail="Name und E-Mail sind für den öffentlichen Widerruf erforderlich.",
+            )
+        rinq_user_id, resolved_email, err = resolve_user_by_customer_email(email)
+        if err or not rinq_user_id:
+            raise HTTPException(
+                status_code=404,
+                detail=err or "Kein Abonnement zu diesen Angaben gefunden.",
+            )
+        email = resolved_email or email
+        require_email_confirm = True
+
+    try:
+        row = record_withdrawal_request(
+            rinq_user_id=rinq_user_id,
+            display_name=name if isinstance(name, str) else None,
+            contact_email=email,
+            note=note if isinstance(note, str) else None,
+            require_email_confirm=require_email_confirm,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    logging.info(
+        "[billing] withdrawal_request id=%s rinq_user_id=%s status=%s",
+        row.get("id"),
+        rinq_user_id,
+        row.get("status"),
+    )
+    return {"ok": True, **public_response(row)}
+
+
+@app.post("/api/billing/withdrawal-confirm")
+async def billing_withdrawal_confirm(payload: dict, request: Request):
+    """Confirm a public withdrawal via emailed token, then process refund."""
+    rate_limit(request, "billing_withdrawal_confirm", limit=20, window_sec=3600.0)
+    token = payload.get("token") if isinstance(payload, dict) else None
+    if not isinstance(token, str) or not token.strip():
+        raise HTTPException(status_code=400, detail="Token required")
+    from billing.withdrawal import confirm_withdrawal_by_token, public_response
+
+    try:
+        row = confirm_withdrawal_by_token(token.strip())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True, **public_response(row)}
 
 
 @app.post("/api/billing/portal")
@@ -4357,6 +4524,64 @@ async def admin_revoke_entitlement(
     if not revoked:
         raise HTTPException(status_code=404, detail="No active grant to revoke")
     return {"ok": True, "revoked": True}
+
+
+@app.post("/api/admin/mail/test")
+async def admin_mail_test(
+    payload: dict,
+    request: Request,
+    current_user: AuthContext = Depends(require_admin),
+):
+    """Send a transactional test mail to an explicit address (admin only)."""
+    rate_limit(request, "admin_mail_test", limit=5, window_sec=3600.0)
+    to = (payload or {}).get("to") if isinstance(payload, dict) else None
+    if not isinstance(to, str) or "@" not in to.strip():
+        raise HTTPException(status_code=400, detail="Field 'to' (email) required")
+    from mail import MSG_TEST, build_test_mail_bodies, mail_configured, send_transactional_mail
+
+    if not mail_configured():
+        raise HTTPException(status_code=503, detail="SMTP not configured")
+    text, html = build_test_mail_bodies()
+    result = send_transactional_mail(
+        recipient=to.strip(),
+        subject="rInQ Tank — SMTP Test",
+        text_body=text,
+        html_body=html,
+        message_type=MSG_TEST,
+        reference_id="admin-mail-test",
+    )
+    if not result.ok:
+        raise HTTPException(status_code=502, detail=result.error or "Mail failed")
+    return {"ok": True, "to": to.strip()}
+
+
+@app.post("/api/admin/billing/withdrawal/{withdrawal_id}/retry-email")
+async def admin_withdrawal_retry_email(
+    withdrawal_id: str,
+    current_user: AuthContext = Depends(require_admin),
+):
+    from billing.withdrawal import public_response, retry_withdrawal_email
+
+    try:
+        row = retry_withdrawal_email(withdrawal_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"ok": True, **public_response(row)}
+
+
+@app.post("/api/admin/billing/withdrawal/{withdrawal_id}/retry")
+async def admin_withdrawal_retry(
+    withdrawal_id: str,
+    current_user: AuthContext = Depends(require_admin),
+):
+    """Resume withdrawal processing (cancel/refund/email) without creating a new request."""
+    from billing.withdrawal import public_response, retry_withdrawal_processing
+
+    try:
+        row = retry_withdrawal_processing(withdrawal_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"ok": True, **public_response(row)}
 
 
 @app.get("/api/me")
@@ -4611,6 +4836,12 @@ async def delete_my_account(
             raise HTTPException(
                 status_code=500,
                 detail="Lokale Daten entfernt, Supabase-Cleanup unvollständig — Support prüfen.",
+            )
+        if msg == "stripe_cleanup_incomplete":
+            logging.error("[SEC] account_delete_failed rinq=%s reason=stripe_cleanup", current_user.rinq_user_id)
+            raise HTTPException(
+                status_code=502,
+                detail="Stripe-Cleanup fehlgeschlagen — Account nicht gelöscht. Bitte später erneut versuchen oder Support.",
             )
         logging.error("[SEC] account_delete_failed rinq=%s reason=%s", current_user.rinq_user_id, type(exc).__name__)
         raise HTTPException(status_code=500, detail="Account-Löschung fehlgeschlagen")

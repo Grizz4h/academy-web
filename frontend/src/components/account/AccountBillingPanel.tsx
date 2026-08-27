@@ -1,10 +1,13 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Card from '../Card'
 import { UiActionRow, UiButton, UiPill } from '../ui'
+import PremiumCheckoutSheet from '../billing/PremiumCheckoutSheet'
 import {
   useBillingPortal,
   type AcademyBillingPresentation,
 } from '../../features/billing'
-import { usePremiumCheckout } from '../../features/entitlements'
+import { LEGAL_PUBLIC_PATHS } from '../../content/legalMeta'
 import styles from './AccountBillingPanel.module.css'
 
 type AccountBillingPanelProps = {
@@ -22,19 +25,34 @@ export default function AccountBillingPanel({
   billingLoading = false,
   billingError = false,
 }: AccountBillingPanelProps) {
-  const premiumCheckout = usePremiumCheckout()
   const billingPortal = useBillingPortal()
-  const busy = premiumCheckout.isPending || billingPortal.isPending
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const busy = billingPortal.isPending
 
   return (
     <Card surface="section">
-      <h2 className="ui-section-title">RinQ Premium</h2>
+      <h2 className="ui-section-title">rInQ Premium</h2>
       <p className={styles.lead}>
         Track A2+ und weitere Premium-Inhalte. Zugang wird serverseitig über dein Abo freigeschaltet.
       </p>
 
       {checkoutNotice === 'success' ? (
-        <p className={styles.noticeOk}>Premium ist aktiv — willkommen in Track A2+.</p>
+        <div className={styles.noticeOk}>
+          <p>
+            Checkout bei Stripe abgeschlossen. Premium wird nach bestätigtem Stripe-Webhook
+            freigeschaltet — ggf. kurz neu laden.
+          </p>
+          <p className={styles.metaItem}>
+            Für Verbraucher gilt grundsätzlich eine 14-tägige Widerrufsfrist. Details:{' '}
+            <Link to={LEGAL_PUBLIC_PATHS.widerruf}>Widerrufsbelehrung</Link>
+            {' · '}
+            <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Vertrag widerrufen</Link>
+            {' · '}
+            <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Vertrag kündigen</Link>
+            {' · '}
+            <Link to="/account">Kundenkonto</Link>
+          </p>
+        </div>
       ) : null}
       {checkoutNotice === 'cancel' ? (
         <p className={styles.noticeWarn}>Checkout abgebrochen. Du kannst Premium jederzeit erneut freischalten.</p>
@@ -67,8 +85,20 @@ export default function AccountBillingPanel({
         </>
       )}
 
+      <p className={styles.metaItem}>
+        <Link to={LEGAL_PUBLIC_PATHS.agb}>AGB</Link>
+        {' · '}
+        <Link to={LEGAL_PUBLIC_PATHS.widerruf}>Widerruf</Link>
+        {' · '}
+        <Link to={LEGAL_PUBLIC_PATHS.datenschutz}>Datenschutz</Link>
+        {' · '}
+        <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Kündigen</Link>
+        {' · '}
+        <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Widerrufen</Link>
+      </p>
+
       <UiActionRow className={styles.actions}>
-        {hasAcademyPremium && presentation.canManage ? (
+        {presentation.canManage ? (
           <UiButton
             type="button"
             variant="secondary"
@@ -82,16 +112,13 @@ export default function AccountBillingPanel({
           <UiButton
             type="button"
             disabled={busy}
-            onClick={() => premiumCheckout.mutate()}
+            onClick={() => setCheckoutOpen(true)}
           >
-            {premiumCheckout.isPending ? 'Weiterleitung…' : 'Premium freischalten'}
+            Premium freischalten
           </UiButton>
         ) : null}
       </UiActionRow>
 
-      {premiumCheckout.error ? (
-        <p className={styles.error}>{(premiumCheckout.error as Error).message}</p>
-      ) : null}
       {billingPortal.error ? (
         <p className={styles.error}>{(billingPortal.error as Error).message}</p>
       ) : null}
@@ -101,6 +128,8 @@ export default function AccountBillingPanel({
           Abo-Verwaltung ist noch nicht verknüpft. Nach dem nächsten Checkout steht hier „Abo verwalten“ bereit.
         </p>
       ) : null}
+
+      <PremiumCheckoutSheet open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
     </Card>
   )
 }

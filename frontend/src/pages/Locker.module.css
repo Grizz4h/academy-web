@@ -47,9 +47,21 @@
 
 .chipRow {
   display: flex;
+  flex-wrap: nowrap;
   gap: 0.4rem;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
   padding-bottom: 0.2rem;
+}
+
+.chipRow::-webkit-scrollbar {
+  display: none;
+}
+
+.chipRow > * {
+  flex: 0 0 auto;
 }
 
 .grid {

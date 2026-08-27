@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
 import { api, type Session } from '../api';
@@ -12,10 +12,12 @@ import {
   getPublicNavTabs,
   isDevNavEnabled,
   setDevNavEnabled,
+  type NavFeature,
 } from '../config/featureFlags';
 import { navTutorialTarget } from '../features/tutorial';
 import { AccountPillFrame } from './profile/AccountPillFrame';
 import { useHorizontalScroll } from '../utils/useHorizontalScroll';
+import { isCoreNavTile, isSecondaryNavTile, NavTabIcon } from './TopNavTabIcons';
 import styles from './TopNav.module.css';
 
 const getSessionSortDate = (session: Session) => new Date(session.created_at).getTime() || 0;
@@ -34,6 +36,30 @@ const getSessionContext = (session: Session): string => {
 
   return session.drill_id || session.drills?.[session.progress?.current_drill_index || 0]?.id || session.module_id;
 };
+
+function NavTabLink({ tab }: { tab: NavFeature }) {
+  const isTile = isCoreNavTile(tab.to) || isSecondaryNavTile(tab.to)
+  return (
+    <NavLink
+      to={tab.to}
+      className={({ isActive }) =>
+        [
+          styles.navLink,
+          isTile ? styles.navLinkTile : '',
+          isActive ? styles.navLinkActive : '',
+          tab.to === '/dev' ? styles.devLink : '',
+        ]
+          .filter(Boolean)
+          .join(' ')
+      }
+      end={tab.exact}
+      {...(navTutorialTarget(tab.to) ? { 'data-tutorial-id': navTutorialTarget(tab.to) } : {})}
+    >
+      {isTile && <NavTabIcon to={tab.to} className={styles.navTileIcon} />}
+      <span className={styles.navLabel}>{tab.label}</span>
+    </NavLink>
+  )
+}
 
 const TopNav: React.FC = () => {
   const { user } = useUser();
@@ -118,7 +144,17 @@ const TopNav: React.FC = () => {
   const publicTabs = getPublicNavTabs({ creatorMode });
   const hiddenTabs = getHiddenNavTabs();
   const showDevChrome = devNav && (import.meta.env.DEV || isAdmin || isDevAccess);
-  const navTabs = showDevChrome ? [...publicTabs, ...hiddenTabs] : publicTabs;
+
+  const navTabs = useMemo(() => {
+    const tabs = showDevChrome ? [...publicTabs, ...hiddenTabs] : publicTabs
+    const primary = tabs.filter((tab) => isCoreNavTile(tab.to))
+    const secondary = tabs.filter((tab) => !isCoreNavTile(tab.to))
+    return [
+      ...primary,
+      ...secondary,
+      ...(devNav ? [{ to: '/dev', label: 'Dev', navVisible: false, group: 'core' as const }] : []),
+    ]
+  }, [publicTabs, hiddenTabs, showDevChrome, devNav]);
 
   return (
     <nav className={styles.navbar} data-top-nav="true">
@@ -129,7 +165,7 @@ const TopNav: React.FC = () => {
             <NavLink to="/" className={styles.logoLink} onClick={handleLogoClick}>
               <picture>
                 <source media="(max-width: 899px)" srcSet="/RINK_TANK_LOGO-2_v2.png" />
-                <img src="/RINK_TANK_LOGO_v2.png" alt="RINK Tank" className={styles.logo} />
+                <img src="/RINK_TANK_LOGO_v2.png" alt="rInQ Tank" className={styles.logo} />
               </picture>
             </NavLink>
 
@@ -139,7 +175,7 @@ const TopNav: React.FC = () => {
               aria-label="Navigation"
               role="region"
             >
-              <div className={styles.navTabs}>
+              <div className={styles.navCluster}>
                 {activeSession && (
                   <NavLink
                     to={getSessionRoute(activeSession)}
@@ -159,31 +195,9 @@ const TopNav: React.FC = () => {
                     </span>
                   </NavLink>
                 )}
-                {navTabs.map(tab => (
-                  <NavLink
-                    key={tab.to}
-                    to={tab.to}
-                    className={({ isActive }) =>
-                      isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
-                    }
-                    end={tab.exact}
-                    {...(navTutorialTarget(tab.to) ? { 'data-tutorial-id': navTutorialTarget(tab.to) } : {})}
-                  >
-                    {tab.label}
-                  </NavLink>
+                {navTabs.map((tab) => (
+                  <NavTabLink key={tab.to} tab={tab} />
                 ))}
-                {devNav && (
-                  <NavLink
-                    to="/dev"
-                    className={({ isActive }) =>
-                      isActive
-                        ? `${styles.navLink} ${styles.navLinkActive} ${styles.devLink}`
-                        : `${styles.navLink} ${styles.devLink}`
-                    }
-                  >
-                    Dev
-                  </NavLink>
-                )}
               </div>
             </div>
 

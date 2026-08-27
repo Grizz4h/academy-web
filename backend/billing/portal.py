@@ -10,7 +10,7 @@ from . import settings
 from .persistence import get_billing_status
 
 
-def _resolve_stripe_customer_id(billing: Dict[str, Any]) -> str | None:
+def resolve_stripe_customer_id(billing: Dict[str, Any]) -> str | None:
     plan_customer = (billing.get("plan") or {}).get("external_customer_id")
     if plan_customer:
         return str(plan_customer)
@@ -21,12 +21,16 @@ def _resolve_stripe_customer_id(billing: Dict[str, Any]) -> str | None:
     return None
 
 
+def _resolve_stripe_customer_id(billing: Dict[str, Any]) -> str | None:
+    return resolve_stripe_customer_id(billing)
+
+
 def create_portal_session(user: AuthContext) -> Dict[str, Any]:
     if not settings.stripe_configured():
         raise RuntimeError("Stripe is not configured")
 
     existing = get_billing_status(user.rinq_user_id)
-    customer_id = _resolve_stripe_customer_id(existing)
+    customer_id = resolve_stripe_customer_id(existing)
     if not customer_id:
         raise ValueError("No Stripe customer for this account")
 

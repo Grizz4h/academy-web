@@ -135,7 +135,7 @@ export default function ArenaCheckPanel({ game, compact = false }: ArenaCheckPan
         </p>
       ) : permission === 'unknown' && !result ? (
         <p className={styles.copy}>
-          RINK Tank kann einmalig deinen Standort prüfen, um festzustellen, ob du dieses Spiel tatsächlich vor Ort begleitest.
+          rInQ Tank kann einmalig deinen Standort prüfen, um festzustellen, ob du dieses Spiel tatsächlich vor Ort begleitest.
           Dein Standort wird nicht dauerhaft verfolgt.
         </p>
       ) : null}

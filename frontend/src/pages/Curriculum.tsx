@@ -9,7 +9,8 @@ import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { UiActionRow, UiButton, UiPill } from '../components/ui'
 import { useUser } from '../context/UserContext'
-import { isModulePremiumLocked, premiumLockMessage, usePremiumCheckout } from '../features/entitlements'
+import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
+import PremiumCheckoutSheet from '../components/billing/PremiumCheckoutSheet'
 import {
   getFoundationTrack,
   isAcademyLocked,
@@ -77,7 +78,7 @@ function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> 
 export default function Curriculum() {
   const navigate = useNavigate()
   const { user, userId } = useUser()
-  const premiumCheckout = usePremiumCheckout()
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
   const tutorial = useTutorialOptional()
   const devMode = useDevNavEnabled()
   const { data: curriculum, isLoading, error } = useQuery({
@@ -275,10 +276,9 @@ export default function Curriculum() {
                       <UiButton
                         type="button"
                         size="sm"
-                        disabled={premiumCheckout.isPending}
-                        onClick={() => premiumCheckout.mutate()}
+                        onClick={() => setCheckoutOpen(true)}
                       >
-                        {premiumCheckout.isPending ? 'Weiterleitung…' : 'Premium freischalten'}
+                        Premium freischalten
                       </UiButton>
                     </UiActionRow>
                   ) : null}
@@ -499,6 +499,7 @@ export default function Curriculum() {
         </>
       )}
       </div>
+      <PremiumCheckoutSheet open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
     </div>
   )
 }

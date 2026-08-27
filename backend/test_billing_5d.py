@@ -152,15 +152,37 @@ class PortalSessionTests(unittest.TestCase):
 
 
 class WebhookIdempotencyTests(unittest.TestCase):
+    @mock.patch("billing.webhook.try_record_webhook_event", return_value=True)
     @mock.patch("billing.webhook.sync_subscription_object", return_value="u1")
-    @mock.patch("billing.webhook.try_record_webhook_event", side_effect=[True, False])
-    def test_duplicate_event_skipped(self, _record, _sync):
-        event = {"id": "evt_1", "type": "customer.subscription.updated", "data": {"object": {"metadata": {}}}}
+    @mock.patch("billing.webhook.webhook_event_seen", side_effect=[False, True])
+    def test_duplicate_event_skipped(self, _seen, _sync, _record):
+        event = {
+            "id": "evt_1",
+            "type": "customer.subscription.updated",
+            "data": {"object": {"metadata": {}}},
+        }
         first = handle_stripe_event(event)
         second = handle_stripe_event(event)
         self.assertFalse(first.get("duplicate"))
         self.assertTrue(second.get("duplicate"))
         _sync.assert_called_once()
+        _record.assert_called_once()
+
+    @mock.patch("billing.webhook.try_record_webhook_event")
+    @mock.patch(
+        "billing.webhook.sync_subscription_object",
+        side_effect=RuntimeError("boom"),
+    )
+    @mock.patch("billing.webhook.webhook_event_seen", return_value=False)
+    def test_failure_does_not_mark_processed(self, _seen, _sync, record):
+        event = {
+            "id": "evt_fail",
+            "type": "customer.subscription.updated",
+            "data": {"object": {"metadata": {}}},
+        }
+        with self.assertRaises(RuntimeError):
+            handle_stripe_event(event)
+        record.assert_not_called()
 
 
 if __name__ == "__main__":

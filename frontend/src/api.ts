@@ -1,9 +1,17 @@
 // --- Signup ---
-export async function signup(username: string, password: string): Promise<{ ok: boolean }> {
+export async function signup(
+  username: string,
+  password: string,
+  options?: { ageConfirmed?: boolean },
+): Promise<{ ok: boolean }> {
   const res = await fetch(buildUrl('/auth/signup'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({
+      username,
+      password,
+      age_confirmed: Boolean(options?.ageConfirmed),
+    })
   });
   if (!res.ok) {
     let detail = '';
@@ -1690,12 +1698,84 @@ export const api = {
     return res.json()
   },
 
-  createBillingCheckout: async (): Promise<{ ok: boolean; checkout_url: string; session_id: string }> => {
+  createBillingCheckout: async (payload?: {
+    ageConfirmed?: boolean
+  }): Promise<{ ok: boolean; checkout_url: string; session_id: string }> => {
     const res = await fetch(buildUrl('/billing/checkout'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ age_confirmed: Boolean(payload?.ageConfirmed) }),
     })
     if (!res.ok) throw await readApiError(res, 'Checkout konnte nicht gestartet werden')
+    return res.json()
+  },
+
+  getBillingOffer: async (): Promise<{
+    ok: boolean
+    offer: {
+      product_label: string
+      price_id: string
+      unit_amount: number | null
+      currency: string | null
+      interval: string | null
+      interval_count: number | null
+      nickname: string | null
+      free_modules: string[]
+      premium_from: string
+      notes: string[]
+    }
+  }> => {
+    const res = await fetch(buildUrl('/billing/offer'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Angebotsdaten konnten nicht geladen werden')
+    return res.json()
+  },
+
+  submitWithdrawalRequest: async (payload: {
+    confirmed: boolean
+    note?: string
+    display_name?: string
+    contact_email?: string
+  }): Promise<{
+    ok: boolean
+    id: string
+    received_at: string
+    status: string
+    refund_status: string
+    email_status?: string
+    outside_window?: boolean
+    awaiting_email_confirm?: boolean
+    contact_email?: string | null
+    display_name?: string | null
+    contract_ref?: string
+  }> => {
+    const res = await fetch(buildUrl('/billing/withdrawal-request'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw await readApiError(res, 'Widerruf konnte nicht übermittelt werden')
+    return res.json()
+  },
+
+  confirmWithdrawalRequest: async (token: string): Promise<{
+    ok: boolean
+    id: string
+    received_at: string
+    status: string
+    refund_status: string
+    email_status?: string
+    outside_window?: boolean
+    contact_email?: string | null
+    contract_ref?: string
+  }> => {
+    const res = await fetch(buildUrl('/billing/withdrawal-confirm'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    })
+    if (!res.ok) throw await readApiError(res, 'Widerruf-Bestätigung fehlgeschlagen')
     return res.json()
   },
 

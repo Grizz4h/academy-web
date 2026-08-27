@@ -233,12 +233,26 @@
   flex-wrap: wrap;
   overflow-x: auto;
   padding-bottom: 0.1rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ui-tablist::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .ui-tablist {
+    flex-wrap: nowrap;
+    overscroll-behavior-x: contain;
+  }
 }
 
 .ui-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
   color: var(--chip-text);

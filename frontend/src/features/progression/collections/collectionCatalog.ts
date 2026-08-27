@@ -103,7 +103,7 @@ export const COLLECTIONS: CollectionDefinition[] = [
   {
     id: 'arena_passport',
     name: 'Arena Passport',
-    description: 'Hallen, in denen du wirklich mit RINK Tank dabei warst. Prototype — später Patches, Tickets, Road Trips.',
+    description: 'Hallen, in denen du wirklich mit rInQ Tank dabei warst. Prototype — später Patches, Tickets, Road Trips.',
     itemIds: ['title_home_ice', 'title_on_the_road', 'title_first_visit'],
     completionRewards: [{ type: 'pux', amount: 80 }],
     visibility: 'visible',

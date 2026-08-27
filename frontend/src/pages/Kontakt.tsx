@@ -1,19 +1,15 @@
 import type { ReactNode } from 'react'
 import Card from '../components/Card'
 import LegalPager from '../components/LegalPager'
-import { RINQ_CONTACT_EMAIL, RINK_ABOUT_IT_LINKS } from '../content/legal'
+import { RINQ_CONTACT_EMAIL, RINK_ABOUT_IT_LINKS, buildProblemReportMailto } from '../content/legal'
 import styles from './Kontakt.module.css'
 
 function ContactEmail() {
-  if (RINQ_CONTACT_EMAIL) {
-    return (
-      <a className={styles.mail} href={`mailto:${RINQ_CONTACT_EMAIL}`}>
-        {RINQ_CONTACT_EMAIL}
-      </a>
-    )
-  }
-  // TODO(launch-legal): Set RINQ_CONTACT_EMAIL in content/legal.ts
-  return <span className={styles.todo}>[TODO: rInQ-Kontaktadresse noch festlegen]</span>
+  return (
+    <a className={styles.mail} href={`mailto:${RINQ_CONTACT_EMAIL}`}>
+      {RINQ_CONTACT_EMAIL}
+    </a>
+  )
 }
 
 /** Simple stroke icons — no third-party icon library. */
@@ -83,6 +79,13 @@ export default function KontaktPage() {
         </p>
         <p className={styles.body}>
           <ContactEmail />
+        </p>
+        <p className={styles.body}>
+          <a className={styles.mail} href={buildProblemReportMailto()}>
+            Problem melden
+          </a>
+          {' '}
+          (öffnet eine vorgefüllte E-Mail mit App-Version und aktuellem Pfad).
         </p>
       </Card>
 

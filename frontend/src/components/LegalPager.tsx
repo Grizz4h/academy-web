@@ -1,10 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import styles from './LegalPager.module.css'
+import { LEGAL_PUBLIC_PATHS } from '../content/legalMeta'
 
 const LEGAL_PAGES = [
-  { path: '/impressum', label: 'Impressum' },
-  { path: '/datenschutz', label: 'Datenschutz' },
-  { path: '/kontakt', label: 'Kontakt' },
+  { path: LEGAL_PUBLIC_PATHS.impressum, label: 'Impressum' },
+  { path: LEGAL_PUBLIC_PATHS.datenschutz, label: 'Datenschutz' },
+  { path: LEGAL_PUBLIC_PATHS.agb, label: 'AGB' },
+  { path: LEGAL_PUBLIC_PATHS.widerruf, label: 'Widerruf' },
+  { path: LEGAL_PUBLIC_PATHS.kontakt, label: 'Kontakt' },
 ] as const
 
 /** Named prev/next between legal detail pages + link back to overview. */
@@ -27,7 +30,7 @@ export default function LegalPager() {
           <span />
         )}
       </div>
-      <Link to="/legal" className={styles.hub}>
+      <Link to={LEGAL_PUBLIC_PATHS.hub} className={styles.hub}>
         Legal
       </Link>
       <div className={`${styles.side} ${styles.sideEnd}`}>

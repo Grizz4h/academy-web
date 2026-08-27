@@ -14,5 +14,5 @@ export function hasAcademyPremium(grants: EntitlementGrant[] | null | undefined)
 
 export function premiumLockMessage(moduleId?: string | null): string {
   const label = moduleId ? ` (${moduleId})` : ''
-  return `Dieses Modul${label} gehört zu RinQ Premium (Track A2+). Premium kannst du im Account oder Lehrplan freischalten.`
+  return `Dieses Modul${label} gehört zu rInQ Premium (Track A2+). Premium kannst du im Account oder Lehrplan freischalten.`
 }

@@ -6,8 +6,13 @@ import logging
 from typing import Any, Dict
 
 from . import settings
-from .persistence import try_record_webhook_event
-from .subscription_sync import resolve_rinq_user_id, sync_checkout_session_completed, sync_subscription_object
+from .persistence import try_record_webhook_event, webhook_event_seen
+from .subscription_sync import (
+    resolve_rinq_user_id,
+    sync_checkout_session_completed,
+    sync_invoice_paid,
+    sync_subscription_object,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -30,6 +35,7 @@ def construct_stripe_event(payload: bytes, signature_header: str | None) -> Dict
 
 
 def handle_stripe_event(event: Dict[str, Any]) -> Dict[str, Any]:
+    """Process then mark. Failures leave the event unmarked so Stripe can retry."""
     event_id = str(event.get("id") or "")
     event_type = str(event.get("type") or "")
     data_obj = (event.get("data") or {}).get("object") or {}
@@ -41,25 +47,32 @@ def handle_stripe_event(event: Dict[str, Any]) -> Dict[str, Any]:
         else None,
     )
 
-    if not try_record_webhook_event(
-        webhook_event_id=event_id,
-        event_type=event_type,
-        rinq_user_id=rinq_user_id,
-        payload={"type": event_type, "id": event_id},
-    ):
+    if event_id and webhook_event_seen(event_id):
         return {"ok": True, "duplicate": True}
 
     if event_type == "checkout.session.completed":
         uid = sync_checkout_session_completed(data_obj)
-        return {"ok": True, "rinq_user_id": uid, "action": "checkout_completed"}
-
-    if event_type in {
+        result = {"ok": True, "rinq_user_id": uid, "action": "checkout_completed"}
+    elif event_type in {"invoice.paid", "invoice.payment_succeeded"}:
+        uid = sync_invoice_paid(data_obj)
+        result = {"ok": True, "rinq_user_id": uid, "action": event_type}
+    elif event_type in {
         "customer.subscription.created",
         "customer.subscription.updated",
         "customer.subscription.deleted",
     }:
         uid = sync_subscription_object(data_obj, rinq_user_id=rinq_user_id)
-        return {"ok": True, "rinq_user_id": uid, "action": event_type}
+        result = {"ok": True, "rinq_user_id": uid, "action": event_type}
+    else:
+        _logger.info("[billing] stripe webhook ignored type=%s id=%s", event_type, event_id)
+        result = {"ok": True, "ignored": event_type}
 
-    _logger.info("[billing] stripe webhook ignored type=%s id=%s", event_type, event_id)
-    return {"ok": True, "ignored": event_type}
+    # Mark only after successful sync / ignore so retries remain possible.
+    if event_id:
+        try_record_webhook_event(
+            webhook_event_id=event_id,
+            event_type=event_type,
+            rinq_user_id=result.get("rinq_user_id") or rinq_user_id,
+            payload={"type": event_type, "id": event_id},
+        )
+    return result

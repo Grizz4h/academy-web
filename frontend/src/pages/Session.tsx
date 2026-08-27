@@ -1660,7 +1660,7 @@ export default function SessionPage() {
                     ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
                     : session.module_id
                   const result = await shareOrCopy({
-                    title: 'Rink Tank Session',
+                    title: 'rInQ Tank Session',
                     text: `Session abgeschlossen: ${matchup} · ${session.module_id}`,
                   })
                   setShareNote(result === 'shared' ? 'Geteilt.' : 'In Zwischenablage kopiert.')
