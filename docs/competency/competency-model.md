@@ -14,9 +14,11 @@ Python domain contracts live in `backend/competency/models.py`:
 - `UserCompetencyState` stores score, confidence, count, breadth, highest evidence level and recency.
 - `EvidenceEvent` represents one assessed user performance, never mere completion.
 
-Weights use integer/decimal values on a documented **0–100 scale**. Event `quality` and `strength` use **0.0–1.0**, because they describe one normalized assessment. Evidence levels are restricted to 1–5; user state uses 0 when no evidence exists.
+Weights use integer/decimal values on a documented **0–100 scale**. Event `quality` and `strength` use **0.0–1.0**, because they describe one normalized assessment. Drill-profile `evidence.maxStrength` uses the same **0.0–1.0** scale (it caps later event strength). Evidence levels are restricted to 1–5; user state uses 0 when no evidence exists.
 
-`data/academy/competency/drill_profiles.json` deliberately contains an empty `profiles` array. The next approved Training Map batch (A1–A3) is inserted into that array. No weights may be inferred or invented.
+`assessmentMode` on drill profiles uses the contract enum (`structured`, `deterministic`, `ai_review`). `structured` means structured observation / structured fields — no AI call is implied until an AI mode is set.
+
+`data/academy/competency/drill_profiles.json` holds Cluster-1 drill contracts. Training weights and evidence weights are separate; evidence may only target competencies with training support (`trainingWeights > 0`) and must not exceed training weight.
 
 ## Persistence boundary
 

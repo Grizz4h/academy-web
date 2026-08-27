@@ -1,4 +1,3 @@
-import hashlib
 import json
 import sys
 import unittest
@@ -9,7 +8,7 @@ BACKEND_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BACKEND_DIR.parent
 sys.path.insert(0, str(BACKEND_DIR))
 
-from competency.validation import validate_drill_profiles
+from competency.validation import training_map_sha256, validate_drill_profiles
 
 
 IDS = [
@@ -40,11 +39,11 @@ EXPECTED = {
     "E4_D5": [50, 25, 50, 50, 75, 25, 75, 100],
 }
 
-PREVIOUS_MAP_HASHES = {
-    "A": "68fc8e3dc504ae814c1d150ce27b0c108e2ec4db6ed9a0f70e19160f9645cea1",
-    "B": "6c46e935e278979d479c5d29030bf278aeaa7df832c227e9ad95da0d377db2c3",
-    "C": "b27aa3d3cd526ef08af731e8b629c950c385f401597e1f6052ab5864bb730f64",
-    "D": "5929b1436df046c7ceecb3039f677c593cf2583e79693ff6f22ba7d3d30cb7d6",
+PREVIOUS_TRAINING_MAP_HASHES = {
+    "A": "3eac1c6ff7db7ba9a1b73ae06f4ac23ed2f5609659a4f41bd2b063664a8af2e6",
+    "B": "2c483613f9003e77f5eb63a1572695ad426974593bff344ab2efa5057ddb2af0",
+    "C": "04c26a5acd1f641b44eab1d7fe2cfea125e19465b1c407a74acce894d5d747c9",
+    "D": "05b7524877591b9d3fa5f4e68f76addf3dd674b0aec7684e887d2a7c223e1ff6",
 }
 
 
@@ -59,15 +58,11 @@ class ETrackTrainingMapTests(unittest.TestCase):
 
     def test_collection_contains_83_profiles_and_previous_maps_are_unchanged(self):
         self.assertEqual(len(self.profiles), 83)
-        for prefix, expected_hash in PREVIOUS_MAP_HASHES.items():
-            previous = [
-                profile for profile in self.document["profiles"]
-                if profile["drillId"].startswith(prefix)
-            ]
-            actual_hash = hashlib.sha256(
-                json.dumps(previous, sort_keys=True, separators=(",", ":")).encode()
-            ).hexdigest()
-            self.assertEqual(actual_hash, expected_hash)
+        for prefix, expected_hash in PREVIOUS_TRAINING_MAP_HASHES.items():
+            self.assertEqual(
+                training_map_sha256(self.document["profiles"], prefix=prefix),
+                expected_hash,
+            )
         self.assertEqual([profile.drillId for profile in self.e_profiles], list(EXPECTED))
 
     def test_each_e_track_has_exactly_five_profiles(self):

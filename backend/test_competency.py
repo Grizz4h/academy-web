@@ -64,6 +64,44 @@ class CompetencyContractTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             EvidenceEvent(eventId=uuid4(), userId=uuid4(), drillId="A2_D2", competencyId="options_decisions", quality=1.1, strength=0.5, evidenceLevel=2, assessmentSource="structured", createdAt="2026-08-27T12:00:00Z")
 
+    def test_enabled_evidence_requires_training_support_and_max_strength_unit_interval(self):
+        with self.assertRaises(ValidationError):
+            DrillCompetencyProfile(
+                drillId="A1_D1",
+                trainingWeights=training_weights(),
+                evidence={
+                    "enabled": True,
+                    "weights": {"space_structure": 20},
+                    "level": 1,
+                    "maxStrength": 0.5,
+                    "assessmentMode": "structured",
+                },
+            )
+        with self.assertRaises(ValidationError):
+            DrillCompetencyProfile(
+                drillId="A1_D1",
+                trainingWeights={**training_weights(), "space_structure": 10},
+                evidence={
+                    "enabled": True,
+                    "weights": {"space_structure": 20},
+                    "level": 1,
+                    "maxStrength": 0.5,
+                    "assessmentMode": "structured",
+                },
+            )
+        with self.assertRaises(ValidationError):
+            DrillCompetencyProfile(
+                drillId="A1_D1",
+                trainingWeights={**training_weights(), "space_structure": 50},
+                evidence={
+                    "enabled": True,
+                    "weights": {"space_structure": 20},
+                    "level": 1,
+                    "maxStrength": 1.5,
+                    "assessmentMode": "structured",
+                },
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

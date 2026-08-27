@@ -1,4 +1,3 @@
-import hashlib
 import json
 import sys
 import unittest
@@ -8,7 +7,7 @@ BACKEND_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BACKEND_DIR.parent
 sys.path.insert(0, str(BACKEND_DIR))
 
-from competency.validation import validate_drill_profiles
+from competency.validation import training_map_sha256, validate_drill_profiles
 
 
 IDS = [
@@ -34,7 +33,8 @@ EXPECTED = {
     "B3_D5": [25, 50, 50, 25, 25, 75, 75, 75],
 }
 
-A_MAP_HASH = "68fc8e3dc504ae814c1d150ce27b0c108e2ec4db6ed9a0f70e19160f9645cea1"
+# Training-only fingerprint (evidence edits must not change this).
+A_TRAINING_MAP_HASH = "3eac1c6ff7db7ba9a1b73ae06f4ac23ed2f5609659a4f41bd2b063664a8af2e6"
 
 
 class BTrackTrainingMapTests(unittest.TestCase):
@@ -48,12 +48,12 @@ class BTrackTrainingMapTests(unittest.TestCase):
 
     def test_collection_contains_fifteen_a_and_fifteen_b_profiles(self):
         a_profiles = [profile for profile in self.document["profiles"] if profile["drillId"].startswith("A")]
-        a_hash = hashlib.sha256(
-            json.dumps(a_profiles, sort_keys=True, separators=(",", ":")).encode()
-        ).hexdigest()
         self.assertEqual(len(self.profiles), 83)
         self.assertEqual(len(a_profiles), 15)
-        self.assertEqual(a_hash, A_MAP_HASH)
+        self.assertEqual(
+            training_map_sha256(self.document["profiles"], prefix="A"),
+            A_TRAINING_MAP_HASH,
+        )
         self.assertEqual([profile.drillId for profile in self.b_profiles], list(EXPECTED))
 
     def test_each_b_track_has_exactly_five_profiles(self):

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Any, Dict, List
 
 from pydantic import TypeAdapter
@@ -27,3 +29,15 @@ def validate_drill_profiles(document: Dict[str, Any]) -> List[DrillCompetencyPro
     if document.get("weightScale") != "0-100":
         raise ValueError("weightScale must be 0-100")
     return TypeAdapter(List[DrillCompetencyProfile]).validate_python(document.get("profiles", []))
+
+
+def training_map_sha256(profiles: List[Dict[str, Any]], *, prefix: str) -> str:
+    """Fingerprint trainingWeights only — evidence edits must not change this."""
+    rows = [
+        {"drillId": profile["drillId"], "trainingWeights": profile["trainingWeights"]}
+        for profile in profiles
+        if str(profile.get("drillId") or "").startswith(prefix)
+    ]
+    return hashlib.sha256(
+        json.dumps(rows, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()

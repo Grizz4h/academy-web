@@ -38,7 +38,8 @@ class DrillEvidenceProfile(StrictContract):
     enabled: bool = False
     weights: Dict[CompetencyId, float] = Field(default_factory=dict)
     level: Optional[int] = Field(default=None, ge=1, le=5)
-    maxStrength: Optional[float] = Field(default=None, ge=0, le=100)
+    # Caps later EvidenceEvent.strength (0–1); not a 0–100 weight.
+    maxStrength: Optional[float] = Field(default=None, ge=0, le=1)
     assessmentMode: Optional[AssessmentSource] = None
     requiresQualityEvaluation: bool = False
 
@@ -82,6 +83,27 @@ class DrillCompetencyProfile(StrictContract):
     def enforce_e4_training_only(self) -> "DrillCompetencyProfile":
         if self.drillId.upper().startswith("E4_") and self.evidence.enabled:
             raise ValueError("E4 is training-only; evidence must be disabled")
+        return self
+
+    @model_validator(mode="after")
+    def evidence_requires_training_support(self) -> "DrillCompetencyProfile":
+        if not self.evidence.enabled:
+            return self
+        if not self.evidence.weights:
+            raise ValueError("enabled evidence requires at least one weight")
+        if self.evidence.level is None or self.evidence.maxStrength is None or self.evidence.assessmentMode is None:
+            raise ValueError("enabled evidence requires level, maxStrength and assessmentMode")
+        for key, weight in self.evidence.weights.items():
+            competency_id = str(key)
+            training = float(self.trainingWeights.get(key, self.trainingWeights.get(competency_id, 0)))
+            if training <= 0:
+                raise ValueError(
+                    f"evidence weight for {competency_id} requires trainingWeights > 0"
+                )
+            if weight > training:
+                raise ValueError(
+                    f"evidence weight for {competency_id} cannot exceed training weight"
+                )
         return self
 
 
