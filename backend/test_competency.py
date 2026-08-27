@@ -32,9 +32,9 @@ class CompetencyContractTests(unittest.TestCase):
         self.assertEqual(ids, IDS)
         self.assertEqual(len(ids), len(set(ids)))
 
-    def test_empty_profile_collection_is_valid_foundation(self):
+    def test_profile_collection_uses_valid_contracts(self):
         document = json.loads((ROOT_DIR / "data/academy/competency/drill_profiles.json").read_text())
-        self.assertEqual(validate_drill_profiles(document), [])
+        self.assertEqual(len(validate_drill_profiles(document)), 15)
 
     def test_weight_range_and_unknown_id_are_rejected(self):
         with self.assertRaises(ValidationError):
