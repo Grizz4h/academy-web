@@ -1,0 +1,72 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.staleBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.06);
+  color: rgba(254, 243, 199, 0.92);
+  font-size: 0.84rem;
+}
+
+.staleBanner p { margin: 0; }
+
+.recomputeError {
+  margin: 0;
+  color: rgba(252, 165, 165, 0.92);
+  font-size: 0.82rem;
+}
+
+.errorShell {
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  border-radius: 14px;
+  background: rgba(40, 12, 16, 0.35);
+}
+
+.errorTitle {
+  margin: 0 0 0.35rem;
+  color: #fecaca;
+  font-size: 1.05rem;
+}
+
+.errorText {
+  margin: 0 0 0.75rem;
+  color: rgba(254, 202, 202, 0.88);
+  font-size: 0.88rem;
+}
+
+.skeleton {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid rgba(94, 234, 212, 0.16);
+  border-radius: 18px;
+  background: rgba(8, 20, 28, 0.65);
+  min-height: 320px;
+}
+
+.skeletonTitle,
+.skeletonNote,
+.skeletonChart {
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.skeletonTitle { height: 1.4rem; width: 42%; margin-bottom: 0.65rem; }
+.skeletonNote { height: 0.85rem; width: 72%; margin-bottom: 1rem; }
+.skeletonChart { height: min(52vw, 280px); width: min(100%, 320px); margin-inline: auto; aspect-ratio: 1; }
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}

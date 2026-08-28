@@ -58,6 +58,7 @@ export async function login(
 
 import { labModules, predictionTemplates } from './features/lab/config'
 import type { UserAccountPayload, UserProfileCustomization } from './data/profile/types'
+import type { MyCompetenciesPayload } from './features/competency/types'
 import type { MyEntitlementsPayload } from './features/entitlements/types'
 import type { MyBillingPayload } from './features/billing/types'
 
@@ -1695,6 +1696,23 @@ export const api = {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Entitlements konnten nicht geladen werden')
+    return res.json()
+  },
+
+  getMyCompetencies: async (): Promise<MyCompetenciesPayload> => {
+    const res = await fetch(buildUrl('/me/competencies'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Kompetenzprofil konnte nicht geladen werden')
+    return res.json()
+  },
+
+  recomputeMyCompetencies: async (): Promise<MyCompetenciesPayload> => {
+    const res = await fetch(buildUrl('/me/competencies/recompute'), {
+      method: 'POST',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Kompetenzprofil konnte nicht aktualisiert werden')
     return res.json()
   },
 
