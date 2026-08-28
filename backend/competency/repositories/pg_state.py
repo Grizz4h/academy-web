@@ -47,6 +47,27 @@ class PostgresUserCompetencyStateRepository:
             raise StorageError(str(exc)) from exc
         return [row_to_user_competency_state(dict(row)) for row in rows]
 
+    def get_projection_metadata(
+        self, user: AuthContext
+    ) -> Optional[tuple[str, Optional[str]]]:
+        try:
+            with connection() as conn:
+                row = conn.execute(
+                    """
+                    SELECT engine_version, map_hash
+                    FROM user_competency_states
+                    WHERE rinq_user_id = %s::uuid
+                    LIMIT 1
+                    """,
+                    (user.rinq_user_id,),
+                ).fetchone()
+        except Exception as exc:
+            raise StorageError(str(exc)) from exc
+        if not row:
+            return None
+        data = dict(row)
+        return (str(data["engine_version"]), data.get("map_hash"))
+
     def replace_all_for_user(
         self,
         user: AuthContext,

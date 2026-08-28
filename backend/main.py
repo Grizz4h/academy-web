@@ -82,6 +82,7 @@ from identity.store import configure_identity_store, normalize_subject
 from identity.migrate import owners_match as _identity_owners_match
 from security_guards import (
     is_admin_auth,
+    is_rinq_admin,
     is_creator_mode_auth,
     is_dev_access_auth,
     legacy_signup_allowed,
@@ -292,6 +293,18 @@ def require_admin(
             )
         except Exception:
             print(f"[SEC] admin_denied subject={current_user.auth_subject}")
+        raise HTTPException(status_code=403, detail="Admin required")
+    return current_user
+
+
+def require_rinq_admin(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+) -> AuthContext:
+    """Strict operational admin gate: stable server-side RinQ user IDs only."""
+    rate_limit(request, "rinq_admin_api", limit=120, window_sec=60.0, subject=current_user.rinq_user_id)
+    if not is_rinq_admin(current_user):
+        logging.warning("[SEC] rinq_admin_denied user_id=%s path=%s", current_user.rinq_user_id, request.url.path)
         raise HTTPException(status_code=403, detail="Admin required")
     return current_user
 
@@ -2188,9 +2201,13 @@ async def get_sessions(
 ):
     """List sessions for the authenticated user only (ignores client-supplied user filters)."""
     sessions = get_repos().sessions.list_sessions_for_user(current_user, state=state)
+    display = (current_user.display_name or "").strip() or "Spieler"
     for session in sessions:
         if not session.get('created_by'):
             session['created_by'] = session.get('user', 'Unbekannt')
+        # Own-session list: prefer stored snapshot, else current profile name (never leak raw UUID as label).
+        stored_name = str(session.get("display_name") or "").strip()
+        session["display_name"] = stored_name or display
         if not session.get('learning_area'):
             session['learning_area'] = 'academy'
         session['observation_scope'] = _normalize_observation_scope(session.get('observation_scope'))
@@ -4235,6 +4252,37 @@ async def get_my_entitlements(current_user: AuthContext = Depends(get_current_us
     return {"rinq_user_id": current_user.rinq_user_id, "entitlements": grants}
 
 
+@app.get("/api/me/competencies")
+async def get_my_competencies(current_user: AuthContext = Depends(get_current_user)):
+    """Cached competency profile for the authenticated user (derived projection)."""
+    from competency.api import competency_profile_service_from_repos
+
+    return competency_profile_service_from_repos(get_repos()).get_profile(current_user)
+
+
+@app.post("/api/me/competencies/recompute")
+async def recompute_my_competencies(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Recompute competency states from immutable evidence events (logged-in user only)."""
+    rate_limit(
+        request,
+        "competency_recompute",
+        limit=10,
+        window_sec=60.0,
+        subject=current_user.rinq_user_id,
+    )
+    from competency.api import competency_profile_service_from_repos
+    from repositories.errors import StorageError
+
+    try:
+        return competency_profile_service_from_repos(get_repos()).recompute_profile(current_user)
+    except StorageError as exc:
+        logging.exception("[competency] recompute failed rinq=%s", current_user.rinq_user_id)
+        raise HTTPException(status_code=500, detail="Competency recompute unavailable") from exc
+
+
 def _require_postgres_billing() -> None:
     from db.settings import storage_backend
 
@@ -4480,7 +4528,7 @@ async def stripe_webhook(request: Request):
 @app.post("/api/admin/entitlements/grant")
 async def admin_grant_entitlement(
     payload: EntitlementGrantPayload,
-    current_user: AuthContext = Depends(require_admin),
+    current_user: AuthContext = Depends(require_rinq_admin),
 ):
     """Manual / beta / ops grants — admin only; never callable by normal users."""
     try:
@@ -4507,7 +4555,7 @@ async def admin_grant_entitlement(
 @app.post("/api/admin/entitlements/revoke")
 async def admin_revoke_entitlement(
     payload: EntitlementRevokePayload,
-    current_user: AuthContext = Depends(require_admin),
+    current_user: AuthContext = Depends(require_rinq_admin),
 ):
     try:
         validate_feature_key(payload.feature_key)
@@ -4530,7 +4578,7 @@ async def admin_revoke_entitlement(
 async def admin_mail_test(
     payload: dict,
     request: Request,
-    current_user: AuthContext = Depends(require_admin),
+    current_user: AuthContext = Depends(require_rinq_admin),
 ):
     """Send a transactional test mail to an explicit address (admin only)."""
     rate_limit(request, "admin_mail_test", limit=5, window_sec=3600.0)
@@ -4558,7 +4606,7 @@ async def admin_mail_test(
 @app.post("/api/admin/billing/withdrawal/{withdrawal_id}/retry-email")
 async def admin_withdrawal_retry_email(
     withdrawal_id: str,
-    current_user: AuthContext = Depends(require_admin),
+    current_user: AuthContext = Depends(require_rinq_admin),
 ):
     from billing.withdrawal import public_response, retry_withdrawal_email
 
@@ -4572,7 +4620,7 @@ async def admin_withdrawal_retry_email(
 @app.post("/api/admin/billing/withdrawal/{withdrawal_id}/retry")
 async def admin_withdrawal_retry(
     withdrawal_id: str,
-    current_user: AuthContext = Depends(require_admin),
+    current_user: AuthContext = Depends(require_rinq_admin),
 ):
     """Resume withdrawal processing (cancel/refund/email) without creating a new request."""
     from billing.withdrawal import public_response, retry_withdrawal_processing
@@ -5073,6 +5121,157 @@ def _postgres_shutdown() -> None:
     except Exception:
         logging.exception("[db] shutdown pool close failed")
 
+
+@app.post("/api/me/support-code")
+def create_my_support_code(request: Request, current_user: AuthContext = Depends(get_current_user)):
+    """Issue a random 30-minute support code; nothing is persisted."""
+    rate_limit(request, "support_code", limit=5, window_sec=3600.0, subject=current_user.rinq_user_id)
+    from support_codes import issue_support_code
+    return issue_support_code(current_user.rinq_user_id)
+
+
+# --- Operational admin API (stable server-side rinq_user_id allowlist) ---
+@app.get("/api/admin/me")
+def admin_me(admin: AuthContext = Depends(require_rinq_admin)):
+    return {"ok": True, "rinq_user_id": admin.rinq_user_id, "display_name": admin.display_name}
+
+
+@app.get("/api/admin/overview")
+def admin_overview(admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    return admin_service.overview()
+
+
+@app.get("/api/admin/users/search")
+def admin_user_search(q: str = Query(min_length=1, max_length=200), admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    from support_codes import resolve_support_code
+    cleaned = q.strip()
+    resolved_user_id = resolve_support_code(cleaned) if cleaned.upper().startswith("RINQ-") else None
+    users = admin_service.search_users(resolved_user_id or cleaned)
+    if cleaned.upper().startswith("RINQ-"):
+        admin_service.audit(admin.rinq_user_id, "support_code_resolve", "ephemeral_support_code", "resolved" if resolved_user_id else "not_found")
+    return {"users": users, "resolved_support_code": bool(resolved_user_id), "privacy_mode": "identifiers_only"}
+
+
+@app.get("/api/admin/users/{user_id}")
+def admin_user_detail(user_id: str, admin: AuthContext = Depends(require_rinq_admin)):
+    from uuid import UUID
+    import admin_service
+    try: UUID(user_id)
+    except ValueError: raise HTTPException(status_code=400, detail="Invalid user id")
+    result = admin_service.user_detail(user_id)
+    if not result: raise HTTPException(status_code=404, detail="User not found")
+    return result
+
+
+@app.post("/api/admin/users/{user_id}/resync-entitlement")
+def admin_resync_entitlement(user_id: str, admin: AuthContext = Depends(require_rinq_admin)):
+    from uuid import UUID
+    import admin_service
+    from billing.persistence import get_billing_status
+    from billing import settings as billing_settings
+    from billing.subscription_sync import sync_subscription_object
+    try: UUID(user_id)
+    except ValueError: raise HTTPException(status_code=400, detail="Invalid user id")
+    try:
+        billing = get_billing_status(user_id)
+        subs = billing.get("subscriptions") or []
+        sub_id = next((row.get("external_subscription_id") for row in subs if row.get("external_subscription_id")), None)
+        if not sub_id:
+            admin_service.audit(admin.rinq_user_id, "entitlement_resync", user_id, "no_subscription")
+            return {"ok": True, "status": "no_active_subscription"}
+        if not billing_settings.stripe_configured():
+            raise RuntimeError("stripe_not_configured")
+        import stripe
+        stripe.api_key = billing_settings.stripe_secret_key()
+        subscription = dict(stripe.Subscription.retrieve(sub_id))
+        sync_subscription_object(subscription, rinq_user_id=user_id)
+        status = str(subscription.get("status") or "unknown")
+        admin_service.audit(admin.rinq_user_id, "entitlement_resync", user_id, f"synced:{status}")
+        return {"ok": True, "status": "synced", "subscription_status": status}
+    except HTTPException: raise
+    except Exception as exc:
+        try: admin_service.audit(admin.rinq_user_id, "entitlement_resync", user_id, "failed")
+        except Exception: logging.exception("[admin] audit failed")
+        logging.exception("[admin] entitlement resync failed user_id=%s", user_id)
+        raise HTTPException(status_code=502, detail="Entitlement sync failed") from exc
+
+
+@app.get("/api/admin/withdrawals")
+def admin_withdrawals(status: Optional[str] = Query(default=None, max_length=40), admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    return {"withdrawals": admin_service.withdrawals(status)}
+
+
+@app.post("/api/admin/withdrawals/{withdrawal_id}/retry-email")
+def admin_retry_withdrawal_email(withdrawal_id: str, admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    from billing.withdrawal import retry_withdrawal_email
+    try:
+        result = retry_withdrawal_email(withdrawal_id)
+        admin_service.audit(admin.rinq_user_id, "withdrawal_mail_retry", withdrawal_id, "completed")
+        return result
+    except ValueError as exc: raise HTTPException(status_code=404, detail="Withdrawal not found") from exc
+    except Exception as exc:
+        logging.exception("[admin] withdrawal email retry failed id=%s", withdrawal_id)
+        raise HTTPException(status_code=502, detail="Mail retry failed") from exc
+
+
+@app.post("/api/admin/withdrawals/{withdrawal_id}/retry-processing")
+def admin_retry_withdrawal_processing(withdrawal_id: str, admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    from billing.withdrawal import retry_withdrawal_processing
+    try:
+        result = retry_withdrawal_processing(withdrawal_id)
+        admin_service.audit(admin.rinq_user_id, "refund_retry", withdrawal_id, str(result.get("status") or "completed"))
+        return result
+    except ValueError as exc: raise HTTPException(status_code=404, detail="Withdrawal not found") from exc
+    except Exception as exc:
+        logging.exception("[admin] withdrawal retry failed id=%s", withdrawal_id)
+        raise HTTPException(status_code=502, detail="Withdrawal retry failed") from exc
+
+
+@app.post("/api/admin/withdrawals/{withdrawal_id}/retry-premium-revoke")
+def admin_retry_premium_revoke(withdrawal_id: str, admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    from billing import withdrawal_store
+    from entitlements.feature_keys import ACADEMY_PREMIUM
+    row = withdrawal_store.get_withdrawal(withdrawal_id)
+    if not row: raise HTTPException(status_code=404, detail="Withdrawal not found")
+    if not row.get("rinq_user_id"): raise HTTPException(status_code=409, detail="Withdrawal has no user reference")
+    try:
+        get_repos().entitlements.revoke_entitlement(row["rinq_user_id"], ACADEMY_PREMIUM)
+        withdrawal_store.update_withdrawal(withdrawal_id, {"premium_revoked_at": datetime.utcnow()})
+        admin_service.audit(admin.rinq_user_id, "premium_revoke_retry", withdrawal_id, "completed")
+        return {"ok": True, "status": "revoked"}
+    except Exception as exc:
+        logging.exception("[admin] premium revoke retry failed id=%s", withdrawal_id)
+        raise HTTPException(status_code=502, detail="Premium revoke retry failed") from exc
+
+
+@app.get("/api/admin/billing/issues")
+def admin_billing_issues(admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    return {"issues": admin_service.billing_issues()}
+
+
+@app.get("/api/admin/system/status")
+def admin_system_status(admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    return admin_service.system_status()
+
+
+@app.get("/api/admin/errors")
+def admin_errors(admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    return {"errors": admin_service.operational_errors()}
+
+
+@app.get("/api/admin/audit")
+def admin_audit(admin: AuthContext = Depends(require_rinq_admin)):
+    import admin_service
+    return {"entries": admin_service.audit_entries()}
 
 if __name__ == "__main__":
     import uvicorn

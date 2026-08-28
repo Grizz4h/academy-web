@@ -87,6 +87,19 @@ class JsonUserCompetencyStateRepository:
             }
             self._save_doc(user.rinq_user_id, doc)
 
+    def get_projection_metadata(
+        self, user: AuthContext
+    ) -> Optional[tuple[str, Optional[str]]]:
+        doc = self._load_doc(user.rinq_user_id)
+        states = doc.get("states") or []
+        if not states:
+            return None
+        engine_version = doc.get("engine_version")
+        if not engine_version:
+            return None
+        map_hash = doc.get("map_hash")
+        return (str(engine_version), str(map_hash) if map_hash else None)
+
     def delete_for_user(self, user: AuthContext) -> int:
         path = _states_path(self._get_dir, user.rinq_user_id)
         with self._lock.exclusive():

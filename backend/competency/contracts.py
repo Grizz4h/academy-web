@@ -25,6 +25,10 @@ class UserCompetencyStateRepository(Protocol):
         recomputed_at: Optional[str] = None,
     ) -> None: ...
 
+    def get_projection_metadata(
+        self, user: AuthContext
+    ) -> Optional[tuple[str, Optional[str]]]: ...
+
     def delete_for_user(self, user: AuthContext) -> int: ...
 
 
