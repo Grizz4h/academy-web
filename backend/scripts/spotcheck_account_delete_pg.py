@@ -93,6 +93,8 @@ def main() -> int:
             "entitlement_grants",
             "subscriptions",
             "entitlements",
+            "evidence_events",
+            "user_competency_states",
         ]
         out: dict[str, int] = {}
         with connection() as conn:

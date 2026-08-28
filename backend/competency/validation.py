@@ -41,3 +41,25 @@ def training_map_sha256(profiles: List[Dict[str, Any]], *, prefix: str) -> str:
     return hashlib.sha256(
         json.dumps(rows, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
+
+
+def evidence_map_sha256(profiles: List[Dict[str, Any]]) -> str:
+    """Fingerprint enabled evidence profiles for reproducibility / map_version."""
+    rows = []
+    for profile in profiles:
+        evidence = profile.get("evidence") or {}
+        if not evidence.get("enabled"):
+            continue
+        rows.append(
+            {
+                "drillId": profile["drillId"],
+                "weights": evidence.get("weights") or {},
+                "level": evidence.get("level"),
+                "maxStrength": evidence.get("maxStrength"),
+            }
+        )
+    rows.sort(key=lambda item: item["drillId"])
+    return hashlib.sha256(
+        json.dumps(rows, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+

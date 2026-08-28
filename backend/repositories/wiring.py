@@ -5,9 +5,12 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Optional
 
 from identity.store import IdentityStore
+
+from competency.contracts import EvidenceEventRepository, UserCompetencyStateRepository
 
 from .contracts import (
     EntitlementRepository,
@@ -33,11 +36,23 @@ class Repositories:
     rewards: RewardRepository
     sessions: SessionRepository
     entitlements: EntitlementRepository
+    competency_events: "EvidenceEventRepository"
+    competency_states: "UserCompetencyStateRepository"
     backend: str = "json"
 
 
 _repos: Optional[Repositories] = None
 _logger = logging.getLogger(__name__)
+
+
+def _default_competency_events_dir() -> str:
+    root = Path(__file__).resolve().parents[1].parent / "data/academy/competency/events"
+    return str(root)
+
+
+def _default_competency_states_dir() -> str:
+    root = Path(__file__).resolve().parents[1].parent / "data/academy/competency/states"
+    return str(root)
 
 
 def configure_repositories(
@@ -49,11 +64,18 @@ def configure_repositories(
     get_sessions_dir: Callable[[], str],
     get_entitlements_file: Callable[[], str],
     storage_backend: Optional[str] = None,
+    get_competency_events_dir: Optional[Callable[[], str]] = None,
+    get_competency_states_dir: Optional[Callable[[], str]] = None,
 ) -> Repositories:
     """Bind repositories. Callables keep tests' path monkeypatches live for JSON."""
     global _repos
+    events_dir = get_competency_events_dir or _default_competency_events_dir
+    states_dir = get_competency_states_dir or _default_competency_states_dir
     backend = (storage_backend or os.environ.get("STORAGE_BACKEND") or "json").strip().lower()
     if backend == "json":
+        from competency.repositories.json_evidence import JsonEvidenceEventRepository
+        from competency.repositories.json_state import JsonUserCompetencyStateRepository
+
         _repos = Repositories(
             identity=JsonIdentityRepository(get_identity_store),
             credentials=JsonUserCredentialRepository(get_users_file),
@@ -64,6 +86,8 @@ def configure_repositories(
                 get_entitlements_file,
                 get_identity_store,
             ),
+            competency_events=JsonEvidenceEventRepository(events_dir),
+            competency_states=JsonUserCompetencyStateRepository(states_dir),
             backend="json",
         )
         _logger.info("[storage] selected backend=json")
@@ -82,6 +106,8 @@ def configure_repositories(
         from .pg_profile import PostgresProfileRepository
         from .pg_reward import PostgresRewardRepository
         from .pg_session import PostgresSessionRepository
+        from competency.repositories.pg_evidence import PostgresEvidenceEventRepository
+        from competency.repositories.pg_state import PostgresUserCompetencyStateRepository
 
         _repos = Repositories(
             identity=PostgresIdentityRepository(),
@@ -90,6 +116,8 @@ def configure_repositories(
             rewards=PostgresRewardRepository(),
             sessions=PostgresSessionRepository(),
             entitlements=PostgresEntitlementRepository(),
+            competency_events=PostgresEvidenceEventRepository(),
+            competency_states=PostgresUserCompetencyStateRepository(),
             backend="postgres",
         )
         _logger.info("[storage] selected backend=postgres")

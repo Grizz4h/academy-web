@@ -404,6 +404,8 @@ def delete_account(
         "supabase_users": 0,
         "supabase_errors": [],
         "stripe": None,
+        "competency_events": 0,
+        "competency_states": 0,
     }
 
     def owned(resource_user: str) -> bool:
@@ -490,6 +492,11 @@ def delete_account(
         raise RuntimeError("supabase_cleanup_incomplete")
 
     # --- identity (all links) → PG CASCADE for app userdata ---
+    repos = _try_repos()
+    if repos is not None:
+        deleted["competency_events"] = repos.competency_events.delete_for_user(user)
+        deleted["competency_states"] = repos.competency_states.delete_for_user(user)
+
     snapshot = identity_store.delete_identity_cascade(rid)
     deleted["auth_links"] = len(snapshot.get("auth_links") or [])
 

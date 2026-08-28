@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -129,3 +129,24 @@ class EvidenceEvent(StrictContract):
     evidenceLevel: int = Field(ge=1, le=5)
     assessmentSource: AssessmentSource
     createdAt: datetime
+
+
+class EvidenceEventCreate(StrictContract):
+    """Server-side append input — no client-authoritative map fields."""
+
+    drillId: str = Field(min_length=1)
+    competencyId: CompetencyId
+    quality: float = Field(ge=0, le=1)
+    assessmentSource: AssessmentSource
+    sourceType: str = Field(min_length=1)
+    sourceId: str = Field(min_length=1)
+    createdAt: Optional[datetime] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("sourceType", "sourceId")
+    @classmethod
+    def non_empty_trimmed(cls, value: str) -> str:
+        trimmed = value.strip()
+        if not trimmed:
+            raise ValueError("must not be empty")
+        return trimmed
