@@ -111,9 +111,9 @@ class UserCompetencyState(StrictContract):
     schemaVersion: int = Field(default=SCHEMA_VERSION, ge=1)
     competencyId: CompetencyId
     score: float = Field(ge=0, le=100)
-    confidence: float = Field(ge=0, le=100)
+    confidence: float = Field(ge=0, le=1)
     evidenceCount: int = Field(ge=0)
-    breadth: float = Field(ge=0, le=100)
+    breadth: float = Field(ge=0, le=1)
     highestEvidenceLevel: int = Field(ge=0, le=5)
     lastEvidenceAt: Optional[datetime] = None
 
