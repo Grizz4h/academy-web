@@ -50,3 +50,14 @@ class CompetencyRecomputeService:
         appended = self._events.append(user, create)
         result = self.recompute_user(user)
         return appended, result
+
+    def append_events_and_recompute(
+        self,
+        user: AuthContext,
+        creates: list[EvidenceEventCreate],
+    ) -> Tuple[list[EvidenceEvent], EngineRecomputeResult]:
+        appended: list[EvidenceEvent] = []
+        for create in creates:
+            appended.append(self._events.append(user, create))
+        result = self.recompute_user(user)
+        return appended, result

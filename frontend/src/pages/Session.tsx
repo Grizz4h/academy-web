@@ -541,7 +541,8 @@ export default function SessionPage() {
   const handleDrillComplete = (answers: any) => {
     checkinMutation.mutate({
       phase: currentPhase,
-      answers
+      answers,
+      final: true,
     }, {
       onSuccess: async () => {
         queryClient.invalidateQueries({ queryKey: ['session', id] })
@@ -1215,6 +1216,7 @@ export default function SessionPage() {
       await api.saveCheckin(id as string, {
         phase,
         answers: answersByPhase[currentPhase],
+        final: true,
         _trace: clickId
       })
 

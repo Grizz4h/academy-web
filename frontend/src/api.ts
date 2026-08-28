@@ -1017,7 +1017,7 @@ export const api = {
     return res.json()
   },
 
-  saveCheckin: async (id: string, data: { phase: string; answers: any; feedback?: string; next_task?: string; [key: string]: any }): Promise<Session> => {
+  saveCheckin: async (id: string, data: { phase: string; answers: any; feedback?: string; next_task?: string; final?: boolean; [key: string]: any }): Promise<Session> => {
     const trace = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
     console.log("[saveCheckin]", { trace, sessionId: id, phase: data.phase, at: new Date().toISOString() });
     const headers: Record<string, string> = {

@@ -485,6 +485,7 @@ class CheckinData(BaseModel):
     answers: dict
     feedback: Optional[str] = None  # Nur POST
     next_task: Optional[str] = None  # Nur POST
+    final: bool = False  # True only on validated advance / drill complete — triggers competency evidence
 
 class PostData(BaseModel):
     summary: str
@@ -2450,6 +2451,34 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
     _persist_session(session)
     counts_after = Counter((c.get("phase") or "") for c in session.get("checkins", []))
     logging.info(f"[checkin:{req_id}] session={session_id} counts_after={dict(counts_after)}")
+
+    if checkin.final:
+        from competency.structured import process_structured_evidence_for_checkin
+        from competency.service import CompetencyRecomputeService
+        from repositories.errors import RepositoryError, StorageError
+
+        repos = get_repos()
+        recompute = CompetencyRecomputeService(repos.competency_events, repos.competency_states)
+        try:
+            process_structured_evidence_for_checkin(
+                current_user,
+                session_id=session_id,
+                session=session,
+                answers=checkin.answers,
+                final=True,
+                recompute_service=recompute,
+            )
+        except (StorageError, RepositoryError) as exc:
+            logging.exception(
+                "[competency] structured evidence failed session=%s user=%s",
+                session_id,
+                current_user.rinq_user_id,
+            )
+            raise HTTPException(
+                status_code=500,
+                detail="Kompetenz-Evidenz konnte nicht gespeichert werden",
+            ) from exc
+
     return session
 
 @app.post("/api/sessions/{session_id}/post")
