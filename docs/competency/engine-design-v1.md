@@ -1,12 +1,12 @@
 # Competency Engine Design V1
 
-**Phase 4A — design & simulation only.**  
-**Status:** `ENGINE DESIGN V1 READY`  
+**Phase 4A / 4A.1 — design & simulation only.**
+**Status:** `ENGINE V1 CALIBRATED` (implementation-ready specification)
 **Engine version:** `competency-engine-v1`
 
 Maps remain frozen (Training V1 + Evidence V1). This document specifies the recommended V1 computation model. Implementation is Phase 4B+.
 
-Simulation reference: `backend/competency/simulations/engine_v1_sim.py`  
+Simulation reference: `backend/competency/simulations/engine_v1_sim.py`
 Run: `python backend/competency/simulations/engine_v1_sim.py`
 
 ---
@@ -44,7 +44,7 @@ Per competency:
 
 | Field | Range | Semantics |
 |-------|-------|-----------|
-| `score` | 0–100 | Estimated competence height **when assessed** |
+| `score` | 0–100 | Best-effort estimate of observed competence height (**not** % correct, XP, or percentile) |
 | `confidence` | 0–1 | Certainty of the estimate (not competence itself) |
 | `breadth` | 0–1 | Diversity of evidence sources (not event count) |
 | `highestEvidenceLevel` | 0–5 | Highest **proven** evidence level (see §14) |
@@ -63,7 +63,76 @@ UI rule: do NOT render as “Skill 0” — show “Noch nicht bewertet” / emp
 
 Nullable `score` is possible but adds DB/API complexity; **confidence-gated display** is simpler and sufficient.
 
-Internal derived metrics (not public V1): `effectiveEvidence`, `provenLevelSupport`, `coverageCatalogVersion`.
+Internal derived metrics (not public V1): `effectiveEvidenceVolume`, `provenLevelSupport`, `coverageCatalogVersion`.
+
+### Score semantics (V1)
+
+```text
+score = best deterministic estimate of currently observable competence
+```
+
+Valid example: `score=80, confidence=0.35, breadth=0.20` → strong signal, thin basis.
+UI copy: *„Was ich bisher gesehen habe, deutet auf hohes Niveau — aber ich habe noch nicht genug unterschiedliche Situationen gesehen.“*
+
+---
+
+## Phase 4A.1 — Calibration summary
+
+### Confidence (Variant B — frozen)
+
+Compared legacy `k=2.8` gate (10 diverse → **conf≈0.99**) vs calibrated:
+
+```text
+effectiveVolume = Σ(strength_i × n_i^-0.5)
+evidenceConfidence = 1 - exp(-0.95 × sqrt(effectiveVolume))
+breadthModifier = 0.35 + 0.65 × sqrt(breadth)
+confidence = min(0.98, evidenceConfidence × breadthModifier)
+```
+
+| Scenario | breadth | confidence (calibrated) |
+|----------|---------|-------------------------|
+| 1 good event | ~0.07 | ~0.26 |
+| 3 events, 1 drill | ~0.07 | ~0.31 |
+| 10 diverse / 3 tracks | ~0.23 | **~0.56** |
+| 20 diverse (matrix D) | ~0.36 | ~0.74 |
+| 20× L1 farm | ~0.07 | ~0.31 |
+| 50× L1 farm | ~0.07 | ~0.36 |
+
+`confidence` may exceed `breadth` (e.g. specialist), but **`conf≈0.99` at breadth≈0.23 is no longer possible**.
+
+### Level proof (frozen)
+
+Aggregate support uses **repetition-damped** contributions:
+
+```text
+levelSupport[L] += strength × n^-0.5
+```
+
+Level `L` is proven if:
+
+1. `levelSupport[L] ≥ threshold(L)` where
+   `threshold = 0.26 × 0.72^(uniqueDrillsAtLevel - 1)` for `uniqueDrills ≥ 2`, else `0.26`
+2. **OR** fast-path single event: `quality ≥ 0.80` AND `strength ≥ 0.48`
+
+Qualifying events: `quality ≥ 0.55`, `strength ≥ 0.10`.
+
+**Advanced scanning (7 mixed drills):** proven L3, ceiling 75, score≈63, conf≈0.40, breadth≈0.37 — breadth without fake elite score.
+
+### Soft ceiling (frozen)
+
+```text
+if scoreRaw ≤ hardCeiling: score = scoreRaw
+else: score = hardCeiling + (scoreRaw - hardCeiling) × 0.18
+```
+
+Used when raw mean exceeds proven band; prevents abrupt cliffs without allowing L1 farming into 90+.
+
+### Specialist vs generalist (simulated)
+
+| | score | confidence | breadth |
+|---|-------|------------|---------|
+| Specialist (6× L4, q≈0.92) | 84 | 0.39 | 0.07 |
+| Generalist (10 tracks, q≈0.80) | 71 | 0.61 | 0.44 |
 
 ---
 
@@ -125,42 +194,43 @@ Neutral quality (0.5) → `strength = 0` (event exists but carries no weight).
 
 ---
 
-## 4. Level ceiling model (hard rule)
+## 4. Level ceiling model
 
-Evidence level limits **achievable score bands**, not merely event weight.
+Evidence level limits **achievable score bands**.
 
-### Score ceilings
+### Score ceilings (`LEVEL_SCORE_CEILING`)
 
 ```text
-L1 → 35
-L2 → 55
-L3 → 75
-L4 → 90
-L5 → 100
+L1 → 35   L2 → 55   L3 → 75   L4 → 90   L5 → 100
 ```
 
-### Proving a level (aggregate + optional fast-path)
+### Proving a level
 
-A level `L` is **proven** if either:
-
-1. **Aggregate:** `Σ strength` of qualifying events at level `L` ≥ **0.30**  
-   (qualifying: `quality ≥ 0.55` and `strength ≥ 0.12`)
-
-2. **Fast-path (single exceptional event):** `quality ≥ 0.80` AND `strength ≥ 0.50`
+See Phase 4A.1 summary above. Constants:
 
 ```text
-scoreCeiling = LEVEL_SCORE_CEILING[max(provenLevels)]  or 35 if none proven
+LEVEL_PROOF_AGGREGATE = 0.26
+LEVEL_PROOF_DIVERSITY_FACTOR = 0.72   // per extra unique drill at level
+LEVEL_PROOF_MIN_QUALITY = 0.55
+LEVEL_PROOF_MIN_STRENGTH = 0.10
+LEVEL_PROOF_SINGLE_QUALITY = 0.80
+LEVEL_PROOF_SINGLE_STRENGTH = 0.48
+```
+
+```text
+hardCeiling = LEVEL_SCORE_CEILING[max(provenLevels)]  or 35
+score = applySoftCeiling(scoreRaw, hardCeiling)       // bleed=0.18
 ```
 
 **Simulated behaviour:**
 
-- 20× perfect L1 farm → score ≤ 35, hiLvl=1 ✓
-- L4 single event q=1.0 → score ≤ 90 ✓
-- Many L1 events raise confidence, not ceiling ✓
+- 20× L1 farm → score≤35, conf≈0.31, breadth≈0.07 ✓
+- 10 diverse → score≈68, conf≈0.56, breadth≈0.23 ✓
+- q=0.55 × 20 → score≈38 (neutral cannot farm high scores) ✓
 
 ---
 
-## 5. Score model (recommended: recompute weighted aggregation)
+## 5. Score model (recompute weighted aggregation)
 
 ### Compared approaches
 
@@ -185,48 +255,37 @@ else:
 ### Repetition factor (per competency + drillId, chronological)
 
 ```text
-repetitionFactor(n) = 1 / sqrt(n)     ← recommended V1
+repetitionFactor(n) = n^-0.5    // REPETITION_POWER = 0.5
 ```
 
-Alternatives simulated: `1/(1+0.45*(n-1))`, `exp(-0.18*(n-1))`.  
-`1/sqrt(n)` balances first-attempt full weight, useful 2nd/3rd reps, minimal 20th rep.
+50 repetitions → cumulative effective weight ≈1.8× single event (not 50×).
 
 ### Final score
 
 ```text
-effectiveWeight_i = strength_i * repetitionFactor(n_i)
-scoreRaw = Σ(effectiveWeight_i * eventTarget_i) / Σ(effectiveWeight_i)
-score = clamp(scoreRaw, 0, scoreCeiling)
+effectiveWeight_i = strength_i × n_i^-0.5
+scoreRaw = Σ(effectiveWeight_i × eventTarget_i) / Σ(effectiveWeight_i)
+score = applySoftCeiling(scoreRaw, hardCeiling)
 ```
-
-Properties:
-
-- Single event cannot jump to 95 unless level + weights allow
-- Poor quality can pull below midpoint
-- High confidence requires many diverse events (see §7)
-- Not monotonic globally (new weak evidence can lower score)
 
 ---
 
 ## 6. Confidence model (0–1)
 
-**Recommendation:** saturating exponential over **diversity-gated effective evidence**.
+**Frozen formula (Variant B):**
 
 ```text
-effectiveEvidence = Σ(strength_i * repetitionFactor(n_i))
-diversityGate = 0.25 + 0.75 * breadth
-confidence = 1 - exp(-k * effectiveEvidence * diversityGate)
+effectiveVolume = Σ(strength_i × n_i^-0.5)
+evidenceConfidence = 1 - exp(-0.95 × sqrt(effectiveVolume))
+breadthModifier = 0.35 + 0.65 × sqrt(breadth)
+confidence = min(0.98, evidenceConfidence × breadthModifier)
 ```
 
-`k = 2.8` (tuned in simulation).
+Constants: `CONFIDENCE_K=0.95`, `CONFIDENCE_MAX=0.98`.
 
-Compared to plain `1 - exp(-k * count)`: diversity gate prevents 20 same-drill reps from → 1.0.
+**Not enforced:** `confidence ≤ breadth` — specialist may have higher confidence than breadth.
 
-| Scenario | confidence (sim) |
-|----------|------------------|
-| 20× L1 farm | ~0.55 |
-| 10 diverse drills / 3 tracks | ~0.99 |
-| 30× gamer farm | ~0.63 |
+**Rejected for V1:** legacy `k=2.8` linear gate (overconfident at low breadth).
 
 ---
 
@@ -264,12 +323,12 @@ Properties:
 | **Confidence** | How sure we are | Many weighted events |
 | **Breadth** | How wide evidence base is | Many drills/tracks |
 
-**Simulated separability:**
+**Simulated separability (calibrated):**
 
-- 2× strong L4 events: score≈85, confidence≈0.57, breadth≈0.07 ✓
-- Advanced user space_structure: score≈80, confidence≈0.97, breadth≈0.33 ✓
-- Advanced scanning (spread, no level depth): score≈35, confidence≈0.63, breadth≈0.37 ✓  
-  → demonstrates breadth without score inflation (WORTH REVIEW for calibration)
+- 1× strong L4: score≈90, confidence≈0.26, breadth≈0.07 ✓
+- Specialist: score≈84, confidence≈0.39, breadth≈0.07 ✓
+- Generalist: score≈71, confidence≈0.61, breadth≈0.44 ✓
+- Advanced scanning: score≈63, confidence≈0.40, breadth≈0.37 ✓
 
 ---
 
@@ -307,57 +366,42 @@ Rationale: product measures **analytic competence**, not physical freshness. Eve
 
 ---
 
-## 12. Farming protection (simulation results)
+## 12. Farming & sparse-vs-diverse (calibrated simulation)
 
-### Scenario A — 20× same L1 drill, q=1.0
-
-```text
-score=35  confidence≈0.55  breadth≈0.07  hiLvl=1
-```
-
-### Scenario B — 10 drills, 3 tracks
+### 20× / 50× L1 farm (scanning A1_D1, q=1.0)
 
 ```text
-score≈67.5  confidence≈0.99  breadth≈0.23  hiLvl=3
+n=20: score=35  confidence≈0.31  breadth≈0.07
+n=50: score=35  confidence≈0.36  breadth≈0.07
 ```
 
-### Scenario C — A→E progression (space_structure)
+### Sparse-vs-diverse matrix (20 events, q=0.85, space_structure)
 
-| After | score | conf | breadth | hiLvl |
-|-------|-------|------|---------|-------|
-| A2_D1 | 35 | 0.16 | 0.06 | 0 |
-| B2_D1 | 53 | 0.31 | 0.13 | 2 |
-| C1_D4 | 69 | 0.63 | 0.19 | 4 |
-| D1_D3 | 74 | 0.83 | 0.26 | 4 |
-| E1_D4 | 77 | 0.90 | 0.32 | 4 |
+| Pattern | score | confidence | breadth |
+|---------|-------|------------|---------|
+| A: 1×20 | 68 | 0.41 | 0.07 |
+| B: 5×4 | 68 | 0.64 | 0.22 |
+| C: 10×2 | 68 | 0.68 | 0.27 |
+| D: 20×1 | 70 | 0.74 | 0.36 |
 
-Higher bands unlock with higher-level evidence ✓
+Score stable; **confidence and breadth increase with diversity** ✓
 
-### Scenario D — gaming user (30× A1_D1)
+### High-score sanity paths (space_structure)
 
-```text
-score=35  confidence≈0.63  breadth≈0.07  hiLvl=1
-vs advanced breadth explorer: same score, 5× breadth
-```
+| Target | score | hiLvl | notes |
+|--------|-------|-------|-------|
+| ~50 | 53 | 2 | foundation |
+| ~70 | 67 | 3 | applied |
+| ~85 | 79 | 4 | strong L4 mix |
+| ~95 | 85 | 4 | needs L5 proof for 90+ band — not trivial |
 
-Completion farming does not explode radar ✓
+Score 95 requires sustained L5 evidence + breadth (rare by design).
 
 ---
 
 ## 13. Advanced user simulation (~50 synthetic events)
 
-| Competency | score | conf | breadth | hiLvl |
-|------------|-------|------|---------|-------|
-| scanning_identification | 35 | 0.63 | 0.37 | 0 |
-| roles_support | 68 | 0.90 | 0.34 | 3 |
-| space_structure | 80 | 0.97 | 0.33 | 5 |
-| options_decisions | 78 | 0.93 | 0.29 | 5 |
-| transition_tempo | 77 | 0.89 | 0.27 | 4 |
-| pressure_control | 74 | 0.95 | 0.29 | 4 |
-| systems_patterns | 86 | 0.98 | 0.28 | 5 |
-| evidence_analysis | 91 | 1.00 | 0.42 | 5 |
-
-E3_D4/D5: score high on analysis only with map-appropriate narrow profiles ✓
+Re-run after calibration recommended at implementation; scanning now reflects L3 proof when diverse L3 hits accumulate.
 
 ---
 
@@ -383,7 +427,7 @@ EvidenceEventRepository.append(event)
   → UserCompetencyStateRepository.save
 ```
 
-Benefits: formula versioning, audit trail, bug recovery, no drift.  
+Benefits: formula versioning, audit trail, bug recovery, no drift.
 Optional: cache incremental for hot path later; recompute on read/write remains canonical.
 
 Performance: 78 drills × ~50 events worst-case ≪ 1s Python; acceptable for V1.
@@ -415,31 +459,62 @@ On engine bump: recompute all users from events. Events immutable; strength may 
 
 ## 18. Radar coverage readiness (from Evidence Map V1 audit)
 
-All eight axes have ≥12 tracks of evidence; no single-drill dependency.  
+All eight axes have ≥12 tracks of evidence; no single-drill dependency.
 `transition_tempo` thinner but 52 sources / 15 tracks — engine breadth normalization handles map asymmetry.
 
 ---
 
 ## 19. Achsen-Korrelation (simulation, 78 vectors)
 
-No pair ≥ |0.75|. Strongest: scanning ↔ evidence_analysis **r≈−0.72** (expected A vs E split).  
+No pair ≥ |0.75|. Strongest: scanning ↔ evidence_analysis **r≈−0.72** (expected A vs E split).
 Focus pairs moderate (~0.33–0.40) — axes remain distinguishable.
 
 ---
 
-## 20. Known calibration risks (WORTH REVIEW, not blockers)
+## 20. Frozen V1 constants
 
-| Risk | Notes |
-|------|-------|
-| `LEVEL_PROOF_AGGREGATE = 0.30` | May be strict for “wide but shallow” explorers (scanning advanced sim) |
-| Watchlist broad profiles | B3/C/D synthesis drills — observe in beta |
-| confidence/breadth 0–1 vs model 0–100 | Resolve at implementation |
-| E4 training-only | Engine must skip E4 drills for evidence entirely |
-| Quality rubric undefined | Phase 4B; neutral 0.5 critical |
+```text
+ENGINE_VERSION = competency-engine-v1
+
+LEVEL_SCORE_CEILING = {1:35, 2:55, 3:75, 4:90, 5:100}
+LEVEL_CAPACITY = {1:0.55, 2:0.70, 3:0.82, 4:0.92, 5:1.00}
+
+QUALITY_NEUTRAL = 0.5
+REPETITION_POWER = 0.5                    // n^-0.5
+
+LEVEL_PROOF_AGGREGATE = 0.26
+LEVEL_PROOF_DIVERSITY_FACTOR = 0.72
+LEVEL_PROOF_MIN_QUALITY = 0.55
+LEVEL_PROOF_MIN_STRENGTH = 0.10
+LEVEL_PROOF_SINGLE_QUALITY = 0.80
+LEVEL_PROOF_SINGLE_STRENGTH = 0.48
+
+SCORE_SOFT_CEILING_BLEED = 0.18
+
+CONFIDENCE_K = 0.95
+CONFIDENCE_BREADTH_BASE = 0.35
+CONFIDENCE_BREADTH_SQRT_SCALE = 0.65
+CONFIDENCE_MAX = 0.98
+
+BREADTH_W_DRILL = 0.45
+BREADTH_W_TRACK = 0.35
+BREADTH_W_LETTER = 0.20
+```
 
 ---
 
-## 21. Implementation checklist (Phase 4B — out of scope here)
+## 21. Known calibration notes (WORTH REVIEW)
+
+| Item | Notes |
+|------|-------|
+| Level proof 6× vs 3× L4 | Both may prove L4; differentiate via confidence/breadth — stricter L4+ single-drill aggregate optional in beta |
+| Watchlist synthesis drills | unchanged from Evidence Map audit |
+| Quality rubric | Phase 4B; neutral 0.5 is load-bearing |
+| Model 0–100 vs spec 0–1 | Align `UserCompetencyState` at implementation |
+
+---
+
+## 22. Implementation checklist (Phase 4B)
 
 - [ ] `EvidenceEvent` persistence + append-only store
 - [ ] `recompute_competency_state(user, competency_id, engine_version)`
@@ -453,14 +528,14 @@ Focus pairs moderate (~0.33–0.40) — axes remain distinguishable.
 ## Findings summary
 
 ```text
-EXPECTED — recompute architecture; level ceilings; farming protection; E4 excluded
-EXPECTED — score/confidence/breadth separable; no decay V1
-EXPECTED — E3 maxStrength 1.0 is capacity not score
-WORTH REVIEW — level proof threshold tuning; scanning “wide shallow” pattern
-WORTH REVIEW — existing broad synthesis watchlist drills
-LIKELY INCONSISTENCY — none blocking V1 design
+EXPECTED — confidence no longer ~0.99 at breadth≈0.23
+EXPECTED — scanning breadth without artificial score 35 when L3 band proven
+EXPECTED — specialist high score / low breadth; generalist lower score / high breadth
+EXPECTED — q=0.55 cannot farm elite scores
+WORTH REVIEW — L4 proof via 6× same drill vs 3× different (score/conf differ; hiLvl may match)
+LIKELY INCONSISTENCY — none blocking implementation
 ```
 
 ```text
-ENGINE DESIGN V1 READY
+ENGINE V1 CALIBRATED
 ```

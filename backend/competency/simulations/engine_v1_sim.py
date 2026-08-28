@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Competency Engine V1 — design simulation only.
+Competency Engine V1 — design simulation only (Phase 4A / 4A.1).
 
-Deterministic, no I/O side effects when imported. Run directly for audit output:
+Run calibration audit:
     python backend/competency/simulations/engine_v1_sim.py
 
 NOT production runtime code.
@@ -20,25 +20,28 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 ENGINE_VERSION = "competency-engine-v1"
 
-# --- Level ceiling (score cap supported by evidence level) ---
+# --- Frozen V1 constants (Phase 4A.1 calibration) ---
 LEVEL_SCORE_CEILING = {1: 35.0, 2: 55.0, 3: 75.0, 4: 90.0, 5: 100.0}
+LEVEL_CAPACITY = {1: 0.55, 2: 0.70, 3: 0.82, 4: 0.92, 5: 1.00}
 
-LEVEL_PROOF_AGGREGATE = 0.30  # tuned: sum(strength) at level L to "prove" band L
-LEVEL_PROOF_SINGLE_STRENGTH = 0.50  # optional fast-path
-LEVEL_PROOF_SINGLE_QUALITY = 0.80
-
-# Minimum event strength + quality to count toward level support
-LEVEL_PROOF_MIN_STRENGTH = 0.12
+LEVEL_PROOF_AGGREGATE = 0.26
+LEVEL_PROOF_MIN_STRENGTH = 0.10  # include moderate L2/L3 scanning hits in aggregate proof
 LEVEL_PROOF_MIN_QUALITY = 0.55
+LEVEL_PROOF_SINGLE_STRENGTH = 0.48
+LEVEL_PROOF_SINGLE_QUALITY = 0.80
+# At level L: threshold *= DIVERSITY^max(0, uniqueDrills-1) when uniqueDrills>=2
+LEVEL_PROOF_DIVERSITY_FACTOR = 0.72
 
-# highestEvidenceLevel uses same thresholds
-HIGHEST_LEVEL_MIN_STRENGTH = LEVEL_PROOF_MIN_STRENGTH
-HIGHEST_LEVEL_MIN_QUALITY = LEVEL_PROOF_MIN_QUALITY
+QUALITY_NEUTRAL = 0.5
+REPETITION_POWER = 0.5  # n^-0.5 == 1/sqrt(n)
 
-# Confidence saturation constant (tuned on synthetic scenarios)
-CONFIDENCE_K = 2.8
+CONFIDENCE_K = 0.95
+CONFIDENCE_BREADTH_BASE = 0.35
+CONFIDENCE_BREADTH_SQRT_SCALE = 0.65
+CONFIDENCE_MAX = 0.98  # pract. never 1.0
 
-# Breadth weights (must sum to 1)
+SCORE_SOFT_CEILING_BLEED = 0.18  # retain this fraction of excess above hard ceiling
+
 BREADTH_W_DRILL = 0.45
 BREADTH_W_TRACK = 0.35
 BREADTH_W_LETTER = 0.20
@@ -94,14 +97,18 @@ class CompetencyState:
 
 @dataclass
 class CoverageCatalog:
-    """Per-competency available evidence sources from frozen Evidence Map V1."""
     drills: Dict[str, set] = field(default_factory=lambda: defaultdict(set))
     tracks: Dict[str, set] = field(default_factory=lambda: defaultdict(set))
     letters: Dict[str, set] = field(default_factory=lambda: defaultdict(set))
 
 
-def load_coverage_catalog(profiles_path: Path) -> Tuple[Dict[str, MapEntry], CoverageCatalog]:
-    doc = json.loads(profiles_path.read_text())
+def profiles_path() -> Path:
+    return Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json"
+
+
+def load_coverage_catalog(profiles_path_arg: Optional[Path] = None) -> Tuple[Dict[str, MapEntry], CoverageCatalog]:
+    path = profiles_path_arg or profiles_path()
+    doc = json.loads(path.read_text())
     entries: Dict[str, MapEntry] = {}
     catalog = CoverageCatalog()
     for profile in doc["profiles"]:
@@ -131,8 +138,7 @@ def load_coverage_catalog(profiles_path: Path) -> Tuple[Dict[str, MapEntry], Cov
 
 
 def quality_signal(quality: float) -> float:
-    """Neutral at 0.5; positive above, negative below. Range approx [-1, +1]."""
-    return max(-1.0, min(1.0, (quality - 0.5) * 2.0))
+    return max(-1.0, min(1.0, (quality - QUALITY_NEUTRAL) * 2.0))
 
 
 def compute_event_strength(
@@ -141,28 +147,14 @@ def compute_event_strength(
     evidence_level: int,
     quality: float,
 ) -> float:
-    """
-    Stored event strength (0–1).
-
-    Semantics:
-    - evidenceWeight/100 → drill relevance for competency
-    - maxStrength → per-drill believability cap
-    - evidenceLevel → soft capacity multiplier (not redundant with maxStrength)
-    - quality → performance (neutral at 0.5)
-    """
     relevance = evidence_weight / 100.0
-    level_capacity = {1: 0.55, 2: 0.70, 3: 0.82, 4: 0.92, 5: 1.00}[evidence_level]
     perf = abs(quality_signal(quality))
-    raw = relevance * max_strength * level_capacity * perf
+    raw = relevance * max_strength * LEVEL_CAPACITY[evidence_level] * perf
     cap = relevance * max_strength
     return max(0.0, min(raw, cap))
 
 
 def event_target_score(evidence_level: int, quality: float) -> float:
-    """
-    Directional score suggestion from one event before aggregation.
-    Neutral quality → midpoint (no directional pull).
-    """
     ceiling = LEVEL_SCORE_CEILING[evidence_level]
     sig = quality_signal(quality)
     if sig >= 0:
@@ -171,16 +163,10 @@ def event_target_score(evidence_level: int, quality: float) -> float:
     return 50.0 + (floor - 50.0) * (-sig)
 
 
-def repetition_factor(variant: str, n: int) -> float:
+def repetition_factor(n: int, power: float = REPETITION_POWER) -> float:
     if n <= 0:
         return 0.0
-    if variant == "sqrt":
-        return 1.0 / math.sqrt(n)
-    if variant == "harmonic":
-        return 1.0 / (1.0 + 0.45 * (n - 1))
-    if variant == "exp":
-        return math.exp(-0.18 * (n - 1))
-    raise ValueError(variant)
+    return n ** (-power)
 
 
 def build_event(
@@ -209,22 +195,53 @@ def build_event(
     )
 
 
-def proven_level_support(events: Iterable[SyntheticEvent]) -> Dict[int, float]:
-    by_level: Dict[int, float] = defaultdict(float)
+def _ordered_events(events: Iterable[SyntheticEvent]) -> List[SyntheticEvent]:
+    return sorted(events, key=lambda e: e.timestamp)
+
+
+def _drill_counts(events: Iterable[SyntheticEvent]) -> Dict[str, int]:
+    counts: Dict[str, int] = defaultdict(int)
     for ev in events:
+        counts[ev.drill_id] += 1
+    return counts
+
+
+def _effective_weight(ev: SyntheticEvent, n: int) -> float:
+    return ev.strength * repetition_factor(n)
+
+
+def proven_level_details(events: Iterable[SyntheticEvent]) -> Tuple[Dict[int, float], Dict[int, set]]:
+    support: Dict[int, float] = defaultdict(float)
+    drills_at: Dict[int, set] = defaultdict(set)
+    counts: Dict[str, int] = defaultdict(int)
+    for ev in _ordered_events(events):
+        counts[ev.drill_id] += 1
         if ev.quality < LEVEL_PROOF_MIN_QUALITY or ev.strength < LEVEL_PROOF_MIN_STRENGTH:
             continue
-        by_level[ev.evidence_level] += ev.strength
-    return by_level
+        lvl = ev.evidence_level
+        support[lvl] += _effective_weight(ev, counts[ev.drill_id])
+        drills_at[lvl].add(ev.drill_id)
+    return support, drills_at
+
+
+def _level_proof_threshold(unique_drills: int) -> float:
+    threshold = LEVEL_PROOF_AGGREGATE
+    if unique_drills >= 2:
+        threshold *= LEVEL_PROOF_DIVERSITY_FACTOR ** (unique_drills - 1)
+    return threshold
 
 
 def proven_levels(events: Iterable[SyntheticEvent]) -> List[int]:
-    support = proven_level_support(events)
-    proven = [lvl for lvl, s in support.items() if s >= LEVEL_PROOF_AGGREGATE]
+    support, drills_at = proven_level_details(events)
+    proven = [
+        lvl
+        for lvl, s in support.items()
+        if s >= _level_proof_threshold(len(drills_at[lvl]))
+    ]
     for ev in events:
         if ev.quality >= LEVEL_PROOF_SINGLE_QUALITY and ev.strength >= LEVEL_PROOF_SINGLE_STRENGTH:
             proven.append(ev.evidence_level)
-    return proven
+    return sorted(set(proven))
 
 
 def score_ceiling_from_events(events: Iterable[SyntheticEvent]) -> float:
@@ -239,11 +256,17 @@ def highest_proven_level(events: Iterable[SyntheticEvent]) -> int:
     return max(proven) if proven else 0
 
 
+def apply_score_ceiling(raw: float, hard_ceiling: float, soft: bool = True) -> float:
+    if raw <= hard_ceiling or not soft:
+        return max(0.0, min(raw, hard_ceiling if not soft else raw))
+    excess = raw - hard_ceiling
+    return hard_ceiling + excess * SCORE_SOFT_CEILING_BLEED
+
+
 def compute_breadth(
     events: List[SyntheticEvent],
     catalog: CoverageCatalog,
     competency: str,
-    rep_variant: str = "sqrt",
 ) -> float:
     if not events:
         return 0.0
@@ -254,19 +277,17 @@ def compute_breadth(
     drill_contrib: Dict[str, float] = defaultdict(float)
     tracks_hit: set = set()
     letters_hit: set = set()
-    drill_counts: Dict[str, int] = defaultdict(int)
+    counts: Dict[str, int] = defaultdict(int)
 
     for ev in events:
-        drill_counts[ev.drill_id] += 1
-        n = drill_counts[ev.drill_id]
-        drill_contrib[ev.drill_id] += ev.strength * repetition_factor(rep_variant, n)
+        counts[ev.drill_id] += 1
+        drill_contrib[ev.drill_id] += _effective_weight(ev, counts[ev.drill_id])
         tracks_hit.add(ev.track)
         letters_hit.add(ev.letter)
 
     drill_coverage = sum(min(1.0, v) for v in drill_contrib.values()) / avail_drills
     track_coverage = len(tracks_hit) / avail_tracks
     letter_coverage = len(letters_hit) / avail_letters
-
     raw = (
         BREADTH_W_DRILL * drill_coverage
         + BREADTH_W_TRACK * track_coverage
@@ -275,57 +296,71 @@ def compute_breadth(
     return max(0.0, min(1.0, raw))
 
 
-def compute_confidence(
-    events: List[SyntheticEvent],
-    breadth: float,
-    rep_variant: str = "sqrt",
-) -> float:
-    if not events:
-        return 0.0
-    drill_counts: Dict[str, int] = defaultdict(int)
-    effective = 0.0
-    for ev in events:
-        drill_counts[ev.drill_id] += 1
-        n = drill_counts[ev.drill_id]
-        effective += ev.strength * repetition_factor(rep_variant, n)
-    # Diversity gate: confidence cannot exceed breadth-driven ceiling much
-    diversity_gate = 0.25 + 0.75 * breadth
-    effective *= diversity_gate
-    return max(0.0, min(1.0, 1.0 - math.exp(-CONFIDENCE_K * effective)))
+def effective_evidence_volume(events: List[SyntheticEvent]) -> float:
+    counts: Dict[str, int] = defaultdict(int)
+    total = 0.0
+    for ev in _ordered_events(events):
+        counts[ev.drill_id] += 1
+        total += _effective_weight(ev, counts[ev.drill_id])
+    return total
 
 
-def compute_score(
-    events: List[SyntheticEvent],
-    rep_variant: str = "sqrt",
-) -> float:
+def compute_confidence_legacy(events: List[SyntheticEvent], breadth: float, k: float = 2.8) -> float:
+    effective = effective_evidence_volume(events)
+    gate = 0.25 + 0.75 * breadth
+    return min(1.0, 1.0 - math.exp(-k * effective * gate))
+
+
+def compute_confidence_variant_a(events: List[SyntheticEvent], breadth: float, k: float) -> float:
+    effective = effective_evidence_volume(events)
+    gate = 0.25 + 0.75 * breadth
+    return min(CONFIDENCE_MAX, 1.0 - math.exp(-k * effective * gate))
+
+
+def compute_confidence_variant_b(events: List[SyntheticEvent], breadth: float, k: float = CONFIDENCE_K) -> float:
+    effective = effective_evidence_volume(events)
+    evidence_conf = 1.0 - math.exp(-k * math.sqrt(max(0.0, effective)))
+    breadth_mod = CONFIDENCE_BREADTH_BASE + CONFIDENCE_BREADTH_SQRT_SCALE * math.sqrt(max(0.0, breadth))
+    return min(CONFIDENCE_MAX, evidence_conf * breadth_mod)
+
+
+def compute_confidence(events: List[SyntheticEvent], breadth: float) -> float:
+    """Calibrated V1 (Variant B)."""
     if not events:
         return 0.0
-    drill_counts: Dict[str, int] = defaultdict(int)
+    return compute_confidence_variant_b(events, breadth)
+
+
+def compute_score(events: List[SyntheticEvent], soft_ceiling: bool = True) -> float:
+    if not events:
+        return 0.0
+    counts: Dict[str, int] = defaultdict(int)
     weighted_sum = 0.0
     weight_total = 0.0
-    for ev in events:
-        drill_counts[ev.drill_id] += 1
-        n = drill_counts[ev.drill_id]
-        w = ev.strength * repetition_factor(rep_variant, n)
+    for ev in _ordered_events(events):
+        counts[ev.drill_id] += 1
+        w = _effective_weight(ev, counts[ev.drill_id])
         if w <= 0:
             continue
-        target = event_target_score(ev.evidence_level, ev.quality)
-        weighted_sum += w * target
+        weighted_sum += w * event_target_score(ev.evidence_level, ev.quality)
         weight_total += w
     if weight_total <= 0:
         return 0.0
     raw = weighted_sum / weight_total
-    ceiling = score_ceiling_from_events(events)
-    return max(0.0, min(raw, ceiling))
+    hard = score_ceiling_from_events(events)
+    return round(apply_score_ceiling(raw, hard, soft=soft_ceiling), 1)
 
 
 def recompute_competency(
     competency: str,
     events: List[SyntheticEvent],
     catalog: CoverageCatalog,
-    rep_variant: str = "sqrt",
+    *,
+    soft_ceiling: bool = True,
+    confidence_fn=compute_confidence,
 ) -> CompetencyState:
-    comp_events = sorted([e for e in events if e.competency == competency], key=lambda e: e.timestamp)
+    comp_events = [e for e in events if e.competency == competency]
+    comp_events = _ordered_events(comp_events)
     if not comp_events:
         return CompetencyState(
             competency_id=competency,
@@ -336,278 +371,239 @@ def recompute_competency(
             highest_evidence_level=0,
             assessed=False,
         )
-    breadth = compute_breadth(comp_events, catalog, competency, rep_variant)
-    confidence = compute_confidence(comp_events, breadth, rep_variant)
-    score = compute_score(comp_events, rep_variant)
-    highest = highest_proven_level(comp_events)
+    breadth = compute_breadth(comp_events, catalog, competency)
+    confidence = confidence_fn(comp_events, breadth)
+    score = compute_score(comp_events, soft_ceiling=soft_ceiling)
     return CompetencyState(
         competency_id=competency,
-        score=round(score, 1),
+        score=score,
         confidence=round(confidence, 3),
         evidence_count=len(comp_events),
         breadth=round(breadth, 3),
-        highest_evidence_level=highest,
+        highest_evidence_level=highest_proven_level(comp_events),
         last_evidence_at=comp_events[-1].timestamp,
         assessed=True,
     )
 
 
-def recompute_all(
-    events: List[SyntheticEvent],
-    catalog: CoverageCatalog,
-    rep_variant: str = "sqrt",
-) -> Dict[str, CompetencyState]:
-    return {
-        comp: recompute_competency(comp, events, catalog, rep_variant)
-        for comp in COMPETENCIES
-    }
-
-
-# --- Scenario helpers ---
-
 def _t(base: datetime, days: int) -> datetime:
     return base + timedelta(days=days)
 
 
-def scenario_farm_l1(
-    map_entries: Dict[str, MapEntry],
-    rep_variant: str = "sqrt",
-) -> Dict[str, CompetencyState]:
-    """20× same L1 drill, quality=1.0 — scanning via A1_D1."""
-    base = datetime(2026, 1, 1, tzinfo=timezone.utc)
-    events = [
-        build_event(map_entries, "scanning_identification", "A1_D1", 1.0, _t(base, i))
-        for i in range(20)
-    ]
-    _, catalog = load_coverage_catalog(Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json")
-    return recompute_all(events, catalog, rep_variant)
-
-
-def scenario_diverse(
-    map_entries: Dict[str, MapEntry],
-) -> CompetencyState:
-    """10 drills, 3 tracks, space_structure."""
+def scenario_diverse_10(map_entries: Dict[str, MapEntry], catalog: CoverageCatalog) -> CompetencyState:
     base = datetime(2026, 2, 1, tzinfo=timezone.utc)
     drills = ["C1_D1", "C1_D2", "C2_D1", "C2_D2", "C3_D1", "C3_D2", "D1_D1", "D1_D2", "D2_D1", "D3_D1"]
-    events = [
-        build_event(map_entries, "space_structure", drill, 0.85, _t(base, i))
-        for i, drill in enumerate(drills)
-    ]
-    _, catalog = load_coverage_catalog(Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json")
+    events = [build_event(map_entries, "space_structure", d, 0.85, _t(base, i)) for i, d in enumerate(drills)]
     return recompute_competency("space_structure", events, catalog)
 
 
-def scenario_progression(
+def scenario_sparse_matrix(
     map_entries: Dict[str, MapEntry],
-    competency: str = "space_structure",
-) -> List[Tuple[str, CompetencyState]]:
-    """A→B→C→D→E rising levels."""
-    base = datetime(2026, 3, 1, tzinfo=timezone.utc)
-    plan = [
-        ("A1_D1", 0.8),
-        ("A2_D1", 0.82),
-        ("B2_D1", 0.85),
-        ("C1_D4", 0.88),
-        ("D1_D3", 0.9),
-        ("E1_D4", 0.92),
-        ("E3_D4", 0.95),
-    ]
-    _, catalog = load_coverage_catalog(Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json")
-    snapshots = []
+    catalog: CoverageCatalog,
+    pattern: str,
+    n_total: int = 20,
+    quality: float = 0.85,
+) -> CompetencyState:
+    """A:1×20, B:5×4, C:10×2, D:20×1 on space_structure L3-ish drills."""
+    pools = {
+        "A": ["C1_D1"],
+        "B": ["C1_D1", "C2_D1", "C3_D1", "D1_D1", "D2_D1"],
+        "C": ["C1_D1", "C1_D2", "C2_D1", "C2_D2", "C3_D1", "C3_D2", "D1_D1", "D1_D2", "D2_D1", "D3_D1"],
+        "D": ["C1_D1", "C1_D2", "C1_D3", "C2_D1", "C2_D2", "C2_D3", "C3_D1", "C3_D2", "C3_D3", "D1_D1",
+              "D1_D2", "D1_D3", "D2_D1", "D2_D2", "D3_D1", "D3_D2", "D3_D3", "D4_D1", "D4_D2", "D4_D3"],
+    }
+    reps = {"A": 20, "B": 4, "C": 2, "D": 1}[pattern]
+    drills = pools[pattern]
+    base = datetime(2026, 7, 1, tzinfo=timezone.utc)
     events: List[SyntheticEvent] = []
-    for i, (drill, q) in enumerate(plan):
-        try:
-            events.append(build_event(map_entries, competency, drill, q, _t(base, i * 3)))
-        except KeyError:
-            continue
-        snapshots.append((drill, recompute_competency(competency, events, catalog)))
-    return snapshots
+    day = 0
+    for _ in range(n_total // reps):
+        for d in drills:
+            for _r in range(reps):
+                events.append(build_event(map_entries, "space_structure", d, quality, _t(base, day)))
+                day += 1
+    return recompute_competency("space_structure", events, catalog)
 
 
-def scenario_advanced_user(map_entries: Dict[str, MapEntry]) -> Dict[str, CompetencyState]:
+def scenario_specialist_vs_generalist(map_entries: Dict[str, MapEntry], catalog: CoverageCatalog) -> Tuple[CompetencyState, CompetencyState]:
+    base = datetime(2026, 8, 1, tzinfo=timezone.utc)
+    specialist = [
+        build_event(map_entries, "space_structure", "C1_D4", 0.92, _t(base, i))
+        for i in range(6)
+    ]
+    generalist_drills = ["A2_D1", "B2_D1", "C1_D4", "C2_D4", "D1_D3", "D2_D2", "D3_D4", "E2_D3", "E3_D2", "C3_D5"]
+    generalist = [
+        build_event(map_entries, "space_structure", d, 0.80, _t(base, i))
+        for i, d in enumerate(generalist_drills)
+    ]
+    return (
+        recompute_competency("space_structure", specialist, catalog),
+        recompute_competency("space_structure", generalist, catalog),
+    )
+
+
+def scenario_advanced_scanning(map_entries: Dict[str, MapEntry], catalog: CoverageCatalog) -> None:
     base = datetime(2026, 4, 1, tzinfo=timezone.utc)
-    samples = [
-        ("scanning_identification", "A1_D1", 0.75),
-        ("scanning_identification", "B1_D2", 0.82),
-        ("scanning_identification", "C1_D1", 0.88),
-        ("roles_support", "B1_D1", 0.8),
-        ("roles_support", "C1_D2", 0.86),
-        ("roles_support", "D1_D2", 0.9),
-        ("space_structure", "A2_D1", 0.78),
-        ("space_structure", "C1_D4", 0.92),
-        ("space_structure", "D2_D2", 0.88),
-        ("space_structure", "E2_D3", 0.9),
-        ("options_decisions", "A2_D2", 0.77),
-        ("options_decisions", "D3_D1", 0.91),
-        ("options_decisions", "E1_D4", 0.93),
-        ("transition_tempo", "A3_D1", 0.8),
-        ("transition_tempo", "E2_D2", 0.94),
-        ("pressure_control", "B2_D2", 0.83),
-        ("pressure_control", "C2_D3", 0.87),
-        ("pressure_control", "D2_D3", 0.89),
-        ("systems_patterns", "C1_D5", 0.9),
-        ("systems_patterns", "D1_D5", 0.88),
-        ("systems_patterns", "E2_D5", 0.92),
-        ("evidence_analysis", "B3_D5", 0.85),
-        ("evidence_analysis", "C1_D5", 0.88),
-        ("evidence_analysis", "E3_D4", 0.96),
-        ("evidence_analysis", "E3_D5", 0.97),
-        ("scanning_identification", "D3_D1", 0.84),
-        ("roles_support", "D4_D1", 0.81),
-        ("space_structure", "E3_D2", 0.91),
-        ("options_decisions", "E2_D3", 0.86),
-        ("transition_tempo", "D2_D4", 0.88),
-        ("pressure_control", "D1_D1", 0.8),
-        ("systems_patterns", "E1_D5", 0.9),
-        ("evidence_analysis", "E2_D5", 0.94),
-        ("scanning_identification", "E1_D2", 0.87),
-        ("roles_support", "E2_D4", 0.89),
-        ("space_structure", "C2_D4", 0.93),
-        ("options_decisions", "C3_D4", 0.9),
-        ("transition_tempo", "B3_D4", 0.85),
-        ("pressure_control", "C1_D3", 0.86),
-        ("systems_patterns", "E3_D3", 0.92),
-        ("evidence_analysis", "E1_D5", 0.95),
-        ("space_structure", "D3_D4", 0.91),
-        ("scanning_identification", "C2_D1", 0.83),
-        ("roles_support", "B3_D3", 0.84),
-        ("options_decisions", "D3_D3", 0.88),
-        ("transition_tempo", "E2_D1", 0.9),
-        ("pressure_control", "D3_D4", 0.92),
-        ("systems_patterns", "C3_D5", 0.89),
-        ("evidence_analysis", "D2_D5", 0.87),
-        ("space_structure", "E3_D2", 0.91),
-        ("scanning_identification", "A3_D2", 0.79),
+    drills = [
+        ("A1_D1", 0.75), ("B1_D2", 0.82), ("C1_D1", 0.88), ("D3_D1", 0.84),
+        ("E1_D2", 0.87), ("C2_D1", 0.83), ("A3_D2", 0.79),
     ]
-    events = []
-    for i, (comp, drill, q) in enumerate(samples):
-        try:
-            events.append(build_event(map_entries, comp, drill, q, _t(base, i)))
-        except KeyError:
-            pass
-    _, catalog = load_coverage_catalog(Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json")
-    return recompute_all(events, catalog)
+    events = [build_event(map_entries, "scanning_identification", d, q, _t(base, i)) for i, (d, q) in enumerate(drills)]
+    st = recompute_competency("scanning_identification", events, catalog)
+    support, drills_at = proven_level_details(events)
+    print("  events:")
+    for ev in events:
+        print(f"    {ev.drill_id} L{ev.evidence_level} str={ev.strength:.3f} tgt={event_target_score(ev.evidence_level, ev.quality):.1f}")
+    print(f"  level support={dict(support)} unique={ {k: len(v) for k,v in drills_at.items()} }")
+    print(f"  proven={proven_levels(events)} ceiling={score_ceiling_from_events(events)}")
+    print(f"  score={st.score} conf={st.confidence} breadth={st.breadth} hiLvl={st.highest_evidence_level}")
 
 
-def scenario_gamer(map_entries: Dict[str, MapEntry]) -> Dict[str, CompetencyState]:
-    """100% completion farming one easy drill."""
-    base = datetime(2026, 5, 1, tzinfo=timezone.utc)
-    events = [
-        build_event(map_entries, "scanning_identification", "A1_D1", 1.0, _t(base, i))
-        for i in range(30)
-    ]
-    _, catalog = load_coverage_catalog(Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json")
-    return recompute_all(events, catalog)
-
-
-def compare_repetition_models(map_entries: Dict[str, MapEntry]) -> None:
-    print("\n=== Repetition model comparison (20× A1_D1 L1 farm, scanning_identification) ===")
+def run_calibration() -> None:
+    map_entries, catalog = load_coverage_catalog()
     base = datetime(2026, 1, 1, tzinfo=timezone.utc)
-    events = [
-        build_event(map_entries, "scanning_identification", "A1_D1", 1.0, _t(base, i))
-        for i in range(20)
+
+    print("=" * 60)
+    print("PHASE 4A.1 — ENGINE CALIBRATION")
+    print("ENGINE_VERSION", ENGINE_VERSION)
+    print("=" * 60)
+
+    # 1. Confidence variants on 10 diverse / 3 tracks
+    print("\n=== 1. Confidence variants (10 drills / 3 tracks, space_structure) ===")
+    div = scenario_diverse_10(map_entries, catalog)
+    eff = effective_evidence_volume([
+        build_event(map_entries, "space_structure", d, 0.85, base)
+        for d in ["C1_D1", "C1_D2", "C2_D1", "C2_D2", "C3_D1", "C3_D2", "D1_D1", "D1_D2", "D2_D1", "D3_D1"]
+    ])
+    print(f"  breadth={div.breadth:.3f} effectiveVolume={eff:.3f}")
+    print(f"  LEGACY k=2.8: conf={compute_confidence_legacy([], div.breadth):.3f} (placeholder)")
+    ev10 = [
+        build_event(map_entries, "space_structure", d, 0.85, _t(base, i))
+        for i, d in enumerate(["C1_D1", "C1_D2", "C2_D1", "C2_D2", "C3_D1", "C3_D2", "D1_D1", "D1_D2", "D2_D1", "D3_D1"])
     ]
-    _, catalog = load_coverage_catalog(Path(__file__).resolve().parents[3] / "data/academy/competency/drill_profiles.json")
-    for variant in ("sqrt", "harmonic", "exp"):
-        st = recompute_competency("scanning_identification", events, catalog, variant)
-        print(f"  {variant:9s} score={st.score:5.1f} conf={st.confidence:.3f} breadth={st.breadth:.3f} hiLvl={st.highest_evidence_level}")
+    for label, fn in [
+        ("legacy k=2.8", lambda e, b: compute_confidence_legacy(e, b, 2.8)),
+        ("varA k=1.2", lambda e, b: compute_confidence_variant_a(e, b, 1.2)),
+        ("varA k=1.6", lambda e, b: compute_confidence_variant_a(e, b, 1.6)),
+        ("varB k=0.95 CAL", compute_confidence_variant_b),
+    ]:
+        c = fn(ev10, div.breadth)
+        print(f"  {label:18s} conf={c:.3f}  (target 0.55–0.80)")
 
+    print(f"\n  CALIBRATED full state: score={div.score} conf={div.confidence} breadth={div.breadth} hiLvl={div.highest_evidence_level}")
 
-def compare_score_models(events: List[SyntheticEvent], catalog: CoverageCatalog) -> None:
-    """EMA vs recompute — recompute preferred; show EMA drift risk."""
-    print("\n=== Score model A (EMA incremental) vs B (recompute) ===")
-    comp = "space_structure"
-    comp_events = [e for e in events if e.competency == comp]
-    # EMA
-    alpha_base = 0.35
-    ema = 50.0
-    drill_counts: Dict[str, int] = defaultdict(int)
-    for ev in sorted(comp_events, key=lambda e: e.timestamp):
-        drill_counts[ev.drill_id] += 1
-        n = drill_counts[ev.drill_id]
-        w = ev.strength * repetition_factor("sqrt", n)
-        target = event_target_score(ev.evidence_level, ev.quality)
-        alpha = alpha_base * min(1.0, w / 0.25)
-        ema = ema + alpha * (target - ema)
-        ema = min(ema, score_ceiling_from_events(comp_events[: comp_events.index(ev) + 1]))
-    rec = recompute_competency(comp, comp_events, catalog)
-    print(f"  EMA final score={ema:.1f} | Recompute score={rec.score:.1f} conf={rec.confidence:.3f} breadth={rec.breadth:.3f}")
+    # Confidence targets
+    print("\n=== Confidence calibration targets ===")
+    cases = [
+        ("1 good event", [build_event(map_entries, "space_structure", "C1_D4", 0.90, base)]),
+        ("3 events 1-2 drills", [
+            build_event(map_entries, "space_structure", "C1_D1", 0.88, _t(base, i)) for i in range(3)
+        ]),
+        ("10 diverse", ev10),
+    ]
+    for label, evs in cases:
+        b = compute_breadth(evs, catalog, "space_structure")
+        c = compute_confidence(evs, b)
+        print(f"  {label:22s} conf={c:.3f} breadth={b:.3f}")
+
+    # 3. Scanning advanced diagnosis
+    print("\n=== 3. Advanced scanning diagnosis ===")
+    scenario_advanced_scanning(map_entries, catalog)
+
+    # 4. Hard vs soft ceiling
+    print("\n=== 4. Hard vs soft ceiling (7 mixed scanning events) ===")
+    scan_events = [
+        build_event(map_entries, "scanning_identification", d, q, _t(base, i))
+        for i, (d, q) in enumerate([
+            ("A1_D1", 0.75), ("B1_D2", 0.82), ("C1_D1", 0.88), ("D3_D1", 0.84),
+            ("E1_D2", 0.87), ("C2_D1", 0.83), ("A3_D2", 0.79),
+        ])
+    ]
+    raw = compute_score(scan_events, soft_ceiling=False)
+    # compute raw manually
+    counts: Dict[str, int] = defaultdict(int)
+    ws = wt = 0.0
+    for ev in scan_events:
+        counts[ev.drill_id] += 1
+        w = _effective_weight(ev, counts[ev.drill_id])
+        ws += w * event_target_score(ev.evidence_level, ev.quality)
+        wt += w
+    raw_mean = ws / wt if wt else 0
+    hard = score_ceiling_from_events(scan_events)
+    soft = apply_score_ceiling(raw_mean, hard, True)
+    print(f"  rawMean={raw_mean:.1f} hardCeiling={hard} hardScore={min(raw_mean,hard):.1f} softScore={soft:.1f}")
+
+    # 5. Level proof diversity: 6× same L4 vs 3× different L4
+    print("\n=== 5. Level proof diversity (L4 space_structure) ===")
+    same6 = [build_event(map_entries, "space_structure", "C1_D4", 0.90, _t(base, i)) for i in range(6)]
+    diff3 = [
+        build_event(map_entries, "space_structure", d, 0.90, _t(base, i))
+        for i, d in enumerate(["C1_D4", "C2_D4", "D1_D4"])
+    ]
+    for label, evs in [("6× C1_D4", same6), ("3× L4 drills", diff3)]:
+        sup, da = proven_level_details(evs)
+        print(f"  {label}: support={dict(sup)} proven={proven_levels(evs)} hiLvl={highest_proven_level(evs)}")
+
+    # 7. Quality sweep extended
+    print("\n=== 7. Quality sweep (C1_D4) ===")
+    for q in (0.25, 0.40, 0.50, 0.55, 0.60, 0.75, 1.0):
+        ev = [build_event(map_entries, "space_structure", "C1_D4", q, base)]
+        st = recompute_competency("space_structure", ev, catalog)
+        print(f"  q={q:.2f} score={st.score} str={ev[0].strength:.3f}")
+
+    # q=0.55 farming
+    print("\n  20× q=0.55 C1_D4:")
+    farm55 = [build_event(map_entries, "space_structure", "C1_D4", 0.55, _t(base, i)) for i in range(20)]
+    st55 = recompute_competency("space_structure", farm55, catalog)
+    print(f"    score={st55.score} conf={st55.confidence} (neutral should not farm high scores)")
+
+    # 8. Repetition curve
+    print("\n=== 8. Repetition cumulative (C1_D4 q=0.9) ===")
+    cumulative = 0.0
+    for n in (1, 2, 3, 5, 10, 20, 50):
+        inc = compute_event_strength(80, 0.9, 4, 0.9) * repetition_factor(n)
+        cumulative += inc
+        print(f"  n={n:2d} factor={repetition_factor(n):.3f} increment={inc:.3f} cumulative={cumulative:.3f}")
+    for p in (0.6, 0.7):
+        print(f"  alt power={p}: n=50 factor={50**(-p):.4f}")
+
+    # 9. Sparse vs diverse matrix
+    print("\n=== 9. Sparse-vs-diverse matrix (20 events, q=0.85) ===")
+    for pat in ("A", "B", "C", "D"):
+        st = scenario_sparse_matrix(map_entries, catalog, pat)
+        print(f"  {pat}: score={st.score} conf={st.confidence} breadth={st.breadth}")
+
+    # 10. High score requirements (synthetic paths)
+    print("\n=== 10. High score sanity paths ===")
+    paths = {
+        "~50": [("A2_D1", 0.75), ("B2_D1", 0.78)],
+        "~70": [("C1_D2", 0.82), ("C2_D2", 0.84), ("D1_D1", 0.86)],
+        "~85": [("C1_D4", 0.88), ("D1_D3", 0.90), ("D2_D2", 0.88), ("E2_D3", 0.87)],
+        "~95": [("C1_D4", 0.95), ("C2_D4", 0.94), ("D1_D3", 0.93), ("D3_D4", 0.92), ("D2_D4", 0.91)],
+    }
+    for target, plan in paths.items():
+        events = [build_event(map_entries, "space_structure", d, q, _t(base, i)) for i, (d, q) in enumerate(plan)]
+        st = recompute_competency("space_structure", events, catalog)
+        print(f"  target {target}: score={st.score} conf={st.confidence} breadth={st.breadth} hiLvl={st.highest_evidence_level}")
+
+    # 11. Specialist vs generalist
+    print("\n=== 11. Specialist vs Generalist ===")
+    spec, gen = scenario_specialist_vs_generalist(map_entries, catalog)
+    print(f"  Specialist: score={spec.score} conf={spec.confidence} breadth={spec.breadth}")
+    print(f"  Generalist: score={gen.score} conf={gen.confidence} breadth={gen.breadth}")
+
+    # Farming 20/50
+    print("\n=== Farming 20× / 50× L1 scanning ===")
+    for n in (20, 50):
+        evs = [build_event(map_entries, "scanning_identification", "A1_D1", 1.0, _t(base, i)) for i in range(n)]
+        st = recompute_competency("scanning_identification", evs, catalog)
+        print(f"  n={n}: score={st.score} conf={st.confidence} breadth={st.breadth} effVol={effective_evidence_volume(evs):.2f}")
+
+    print("\nSTATUS: ENGINE V1 CALIBRATED")
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parents[3]
-    profiles = root / "data/academy/competency/drill_profiles.json"
-    map_entries, catalog = load_coverage_catalog(profiles)
-
-    print("ENGINE_VERSION", ENGINE_VERSION)
-    print("Map entries", len(map_entries))
-
-    # Scenario A — farm
-    print("\n=== Scenario A: 20× same L1 drill, q=1.0 (scanning A1_D1) ===")
-    farm = scenario_farm_l1(map_entries)
-    st = farm["scanning_identification"]
-    print(f"  score={st.score} conf={st.confidence} breadth={st.breadth} hiLvl={st.highest_evidence_level}")
-    print(f"  ceiling={LEVEL_SCORE_CEILING[1]} → farm cannot exceed L1 proof band")
-
-    # Scenario B — diverse
-    print("\n=== Scenario B: 10 drills / 3 tracks ===")
-    div = scenario_diverse(map_entries)
-    print(f"  score={div.score} conf={div.confidence} breadth={div.breadth} hiLvl={div.highest_evidence_level}")
-
-    # Scenario C — progression
-    print("\n=== Scenario C: A→E progression snapshots (space_structure) ===")
-    for drill, st in scenario_progression(map_entries):
-        print(f"  after {drill:8s} score={st.score:5.1f} conf={st.confidence:.3f} breadth={st.breadth:.3f} hiLvl={st.highest_evidence_level}")
-
-    # Sparse user
-    print("\n=== Sparse user (scanning_identification) ===")
-    base = datetime(2026, 6, 1, tzinfo=timezone.utc)
-    for n in (0, 1, 3, 5):
-        ev = [build_event(map_entries, "scanning_identification", "A1_D1", 0.9, _t(base, i)) for i in range(n)]
-        st = recompute_competency("scanning_identification", ev, catalog)
-        print(f"  n={n} score={st.score} conf={st.confidence} breadth={st.breadth} assessed={st.assessed}")
-
-    # Quality sweep
-    print("\n=== Quality sweep (single C1_D4 L4 event, space_structure) ===")
-    for q in (0.0, 0.25, 0.5, 0.75, 1.0):
-        ev = [build_event(map_entries, "space_structure", "C1_D4", q, base)]
-        st = recompute_competency("space_structure", ev, catalog)
-        print(f"  q={q:.2f} score={st.score} strength={ev[0].strength:.3f} hiLvl={st.highest_evidence_level}")
-
-    # Advanced user
-    print("\n=== Advanced user (~50 events) ===")
-    adv = scenario_advanced_user(map_entries)
-    for comp in COMPETENCIES:
-        st = adv[comp]
-        if st.evidence_count:
-            print(f"  {comp:26s} score={st.score:5.1f} conf={st.confidence:.3f} breadth={st.breadth:.3f} hiLvl={st.highest_evidence_level} n={st.evidence_count}")
-
-    # Gamer
-    print("\n=== Gaming user (30× A1_D1 scanning) ===")
-    gamer = scenario_gamer(map_entries)
-    st = gamer["scanning_identification"]
-    print(f"  score={st.score} conf={st.confidence} breadth={st.breadth} hiLvl={st.highest_evidence_level}")
-    adv_st = adv["scanning_identification"]
-    print(f"  vs advanced scanning: score={adv_st.score} conf={adv_st.confidence} breadth={adv_st.breadth}")
-
-    # Separability
-    print("\n=== Metric separability examples ===")
-    print("  high score / low conf: score=80 conf=0.25 breadth=0.20 → achievable via 1-2 strong L4 events")
-    ev = [
-        build_event(map_entries, "space_structure", "C1_D4", 0.95, _t(base, 0)),
-        build_event(map_entries, "space_structure", "C1_D4", 0.92, _t(base, 1)),
-    ]
-    st = recompute_competency("space_structure", ev, catalog)
-    print(f"    simulated: score={st.score} conf={st.confidence} breadth={st.breadth}")
-    print("  moderate score / high conf: advanced user space_structure above")
-
-    compare_repetition_models(map_entries)
-    compare_score_models(
-        [build_event(map_entries, "space_structure", "C1_D1", 0.85, _t(base, i)) for i in range(8)],
-        catalog,
-    )
-
-    print("\nSTATUS: ENGINE DESIGN V1 READY (simulation)")
+    run_calibration()
 
 
 if __name__ == "__main__":
