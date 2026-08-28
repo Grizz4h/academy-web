@@ -2453,14 +2453,14 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
     logging.info(f"[checkin:{req_id}] session={session_id} counts_after={dict(counts_after)}")
 
     if checkin.final:
-        from competency.structured import process_structured_evidence_for_checkin
+        from competency.evidence_submission import process_evidence_for_checkin
         from competency.service import CompetencyRecomputeService
         from repositories.errors import RepositoryError, StorageError
 
         repos = get_repos()
         recompute = CompetencyRecomputeService(repos.competency_events, repos.competency_states)
         try:
-            process_structured_evidence_for_checkin(
+            process_evidence_for_checkin(
                 current_user,
                 session_id=session_id,
                 session=session,
@@ -2470,7 +2470,7 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
             )
         except (StorageError, RepositoryError) as exc:
             logging.exception(
-                "[competency] structured evidence failed session=%s user=%s",
+                "[competency] evidence failed session=%s user=%s",
                 session_id,
                 current_user.rinq_user_id,
             )

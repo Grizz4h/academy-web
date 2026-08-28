@@ -1,6 +1,16 @@
 """Structured competency evidence generation (Phase 5A)."""
 
-from .evaluator import StructuredEvidenceEvaluator
-from .submission import process_structured_evidence_for_checkin
+from __future__ import annotations
 
-__all__ = ["StructuredEvidenceEvaluator", "process_structured_evidence_for_checkin"]
+from competency.evidence_submission import (
+    process_evidence_for_checkin,
+    process_structured_evidence_for_checkin,
+)
+
+from .evaluator import StructuredEvidenceEvaluator
+
+__all__ = [
+    "StructuredEvidenceEvaluator",
+    "process_evidence_for_checkin",
+    "process_structured_evidence_for_checkin",
+]
