@@ -159,3 +159,4 @@ See:
 
 - `docs/competency/ai-evidence-calibration-review.md`
 - `docs/competency/ai-evidence-generic-rubric-v1.md` (Variant B: AI dimensions → backend quality)
+- `docs/competency/ai-evidence-validation-batch.md` (6-drill cross-calibration; not production-wired)

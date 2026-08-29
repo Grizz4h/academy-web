@@ -1,27 +1,43 @@
 {
   "drillId": "D3_D5",
-  "specVersion": "D3_D5-spec-v1",
+  "specVersion": "D3_D5-spec-v2",
   "title": "Heutige Beobachtung an den blauen Linien",
   "scope": "pattern_synthesis",
   "primaryTextKeys": ["profileSummary", "observation_text"],
+  "primaryCompetencies": ["systems_patterns", "options_decisions", "space_structure", "evidence_analysis"],
+  "observableEvidence": [
+    "entry/exit solutions at blue lines across the segment",
+    "support / control conditions tied to visible cues",
+    "repeated tendencies without outcome-as-proof"
+  ],
   "evaluationFocus": [
     "blue-line situations across the segment",
     "space/options under transfer conditions",
-    "segment-scoped patterns"
+    "multi-observation synthesis without outcome bias"
   ],
   "requiredForStrong": [
     "references more than one blue-line situation",
     "connects space or options to visible conditions",
-    "keeps claim scoped to today's segment"
+    "keeps claim scoped to today's segment; decision ≠ goal"
   ],
   "commonFailureModes": [
     "generic blue-line theory",
-    "outcome bias from zone entries",
-    "one clip as season tendency"
+    "outcome bias from zone entries/goals",
+    "one clip as season tendency",
+    "unsupported causal coaching claims"
   ],
   "dimensionEmphasis": {
     "evidenceScope": "high",
+    "specificity": "high",
+    "relationalReasoning": "high",
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high",
+    "outcomeBias": "high",
     "competencyAlignment": "high"
   },
+  "fairnessNote": "Quality tracks how well the learner meets D3 synthesis requirements — not whether the prose is 'more advanced' than A drills.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required profileSummary already sufficient for AI review alongside structured entry/exit radios.",
   "validationOnly": true
 }

@@ -1,27 +1,42 @@
 {
   "drillId": "A1_D2",
-  "specVersion": "A1_D2-spec-v1",
+  "specVersion": "A1_D2-spec-v2",
   "title": "Wo taucht der Center auf?",
   "scope": "single_observation",
   "primaryTextKeys": ["observation_text", "note"],
+  "primaryCompetencies": ["scanning_identification", "roles_support", "space_structure"],
+  "observableEvidence": [
+    "center reappearance after a shift/marker",
+    "relative height vs current play (behind / connection / ahead)",
+    "spatial side or zone cue without tactical judgment"
+  ],
   "evaluationFocus": [
     "visible center location / reappearance",
     "concrete spatial or situational anchor",
-    "identification without inventing intent"
+    "identification without inventing intent or system labels"
   ],
   "requiredForStrong": [
     "names where the center appeared with a visible cue",
-    "does not overclaim a team tendency from one sighting"
+    "keeps claim to this sighting — no team tendency",
+    "does not evaluate whether the position was 'good'"
   ],
   "commonFailureModes": [
     "generic 'center was good'",
-    "role theory without location",
-    "outcome bias from scoring"
+    "role/system theory without location",
+    "outcome bias from scoring",
+    "punishing uncertainty when the learner correctly marks unsure"
   ],
   "dimensionEmphasis": {
     "observationGrounding": "high",
-    "evidenceScope": "high",
-    "relationalReasoning": "low"
+    "specificity": "high",
+    "competencyAlignment": "high",
+    "uncertaintyCalibration": "high",
+    "relationalReasoning": "low",
+    "evidenceScope": "low"
   },
+  "fairnessNote": "Excellent A1 answers may score quality ~0.9. Missing system analysis must not lower quality — difficulty lives in evidenceLevel/maxStrength, not a harsher quality scale.",
+  "freeTextReadiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+  "evidenceSourceRecommendation": "structured_only",
+  "minimalInputChange": "Keep structured shift_tracker quality (already implemented). AI only if a short required note (≥40 chars) is added after scans — not needed for competence evidence.",
   "validationOnly": true
 }

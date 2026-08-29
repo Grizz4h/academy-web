@@ -1,28 +1,44 @@
 {
   "drillId": "E3_D5",
-  "specVersion": "E3_D5-spec-v1",
+  "specVersion": "E3_D5-spec-v2",
   "title": "Aussagestufen",
   "scope": "comparative_analysis",
   "primaryTextKeys": ["finalClaim", "falsificationCondition", "observation_text"],
+  "primaryCompetencies": ["evidence_analysis", "systems_patterns"],
+  "observableEvidence": [
+    "claim strength matched to sample / denominator",
+    "explicit limits, countercases, or next observation test",
+    "observation vs inference boundary"
+  ],
   "evaluationFocus": [
     "claim strength matched to evidence base",
     "falsification / next observation test",
-    "observation vs inference boundaries"
+    "observation vs inference boundaries; no invented missing cases"
   ],
   "requiredForStrong": [
     "states a claim whose strength fits the available evidence",
     "includes a meaningful falsification or limit",
-    "does not invent missing observations"
+    "avoids causal language beyond the sample"
   ],
   "commonFailureModes": [
     "causal claim from thin sample",
     "no falsification path",
-    "confident tone masking weak basis"
+    "confident tone masking weak basis",
+    "outcome confused with claim strength"
   ],
   "dimensionEmphasis": {
     "evidenceScope": "high",
     "uncertaintyCalibration": "high",
-    "unsupportedClaims": "high"
+    "unsupportedClaims": "high",
+    "outcomeBias": "high",
+    "competencyAlignment": "high",
+    "observationGrounding": "medium",
+    "specificity": "medium",
+    "relationalReasoning": "medium"
   },
+  "fairnessNote": "High bar for THIS drill's evidence discipline. Excellent E3 quality may share the 0.85–1.0 band with excellent A1 — engine level/capacity carries difficulty.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "ai_review",
+  "minimalInputChange": "Claim ladder already produces free-text claims / falsification fields suitable for AI dimension scoring. Prefer AI over forcing a brittle structured claim scorer.",
   "validationOnly": true
 }

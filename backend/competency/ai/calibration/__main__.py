@@ -3,8 +3,9 @@
 Usage:
   cd backend
   .venv/bin/python -m competency.ai.calibration --mock
+  .venv/bin/python -m competency.ai.calibration --mock --validation
+  .venv/bin/python -m competency.ai.calibration --validation-matrix
   .venv/bin/python -m competency.ai.calibration --live   # costs OpenAI tokens
-  .venv/bin/python -m competency.ai.calibration --mock --json
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="AI evidence pilot calibration review (synthetic fixtures, no persistence)",
     )
-    mode = parser.add_mutually_exclusive_group(required=True)
+    mode = parser.add_mutually_exclusive_group(required=False)
     mode.add_argument(
         "--mock",
         action="store_true",
@@ -44,11 +45,29 @@ def main(argv: list[str] | None = None) -> int:
         help="Include 6 cross-drill validation fixtures (generic rubric check)",
     )
     parser.add_argument(
+        "--validation-matrix",
+        action="store_true",
+        help="Run synthetic class matrix (excellent→empty) with dimension diagnostics",
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="Emit JSON instead of Markdown",
     )
     args = parser.parse_args(argv)
+
+    if args.validation_matrix:
+        from .validation_matrix import format_validation_matrix_markdown, run_validation_matrix
+
+        report = run_validation_matrix(drill_ids=args.drills)
+        if args.json:
+            print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+        else:
+            print(format_validation_matrix_markdown(report))
+        return 0 if report.globalVerdict == "VALIDATION RUBRIC CALIBRATED" else 2
+
+    if not args.mock and not args.live:
+        parser.error("one of --mock / --live is required (unless --validation-matrix)")
 
     report = run_calibration(
         mode="live" if args.live else "mock",

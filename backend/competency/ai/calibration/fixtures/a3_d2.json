@@ -1,74 +1,62 @@
 [
   {
-    "caseId": "a3_very_weak",
-    "expectedBand": "very_weak",
+    "caseId": "a3_excellent",
+    "expectedBand": "excellent",
     "caseKind": "band",
-    "notes": "very_weak",
+    "answerClass": "excellent",
+    "notes": "excellent",
     "answers": {
-      "observation_text": "Es ging irgendwie schnell um. Mehr habe ich zum Umschalten nicht gesehen heute."
+      "observation_text": "Vor: kompakter Block. Nach Turnover NZ: erste Reaktion Support voraus, Absicherung bleibt. Sequenz gesehen; kein Systemlabel."
+    }
+  },
+  {
+    "caseId": "a3_good",
+    "expectedBand": "strong",
+    "caseKind": "band",
+    "answerClass": "good",
+    "notes": "good",
+    "answers": {
+      "observation_text": "Turnover NZ → erster Schritt Support voraus, Absicherung bleibt. Sequenz klar begrenzt auf die ersten Sekunden."
+    }
+  },
+  {
+    "caseId": "a3_partial",
+    "expectedBand": "decent",
+    "caseKind": "band",
+    "answerClass": "partial",
+    "notes": "partial",
+    "answers": {
+      "observation_text": "Nach dem Wechsel sah ich eine Vorwärtsbewegung, aber ich bin unsicher, ob das schon die erste Reaktion war."
     }
   },
   {
     "caseId": "a3_weak",
     "expectedBand": "weak",
     "caseKind": "band",
+    "answerClass": "weak",
     "notes": "weak",
     "answers": {
       "observation_text": "Nach dem Puckgewinn wirkte das Tempo höher. Die erste Reaktion war unklar."
     }
   },
   {
-    "caseId": "a3_neutral",
-    "expectedBand": "neutral",
-    "caseKind": "band",
-    "notes": "neutral",
-    "answers": {
-      "observation_text": "Nach dem Wechsel sah ich eine Vorwärtsbewegung, aber ich bin unsicher, ob das schon die erste Reaktion war."
-    }
-  },
-  {
-    "caseId": "a3_decent",
-    "expectedBand": "decent",
-    "caseKind": "band",
-    "notes": "decent",
-    "answers": {
-      "observation_text": "Puckgewinn NZ → erster sichtbarer Schritt: nächster Spieler startet Support-Lauf nach vorne, bevor Tempo ganz da ist."
-    }
-  },
-  {
-    "caseId": "a3_strong",
-    "expectedBand": "strong",
-    "caseKind": "band",
-    "notes": "strong",
-    "answers": {
-      "observation_text": "Umschaltmoment: Turnover NZ Mitte. Erste Reaktion: nächster Stürmer öffnet sofort eine Passspur; Verteidiger sichert hinter dem Puck. Sequenz klar begrenzt."
-    }
-  },
-  {
-    "caseId": "a3_excellent",
-    "expectedBand": "excellent",
-    "caseKind": "band",
-    "notes": "excellent",
-    "answers": {
-      "observation_text": "Vor: kompakter Block. Nach Turnover: erste Reaktion = Support voraus, Absicherung bleibt. Eine zweite Szene ohne klaren Support notiert — deshalb nur Sequenzhinweis, keine Teamtendenz."
-    }
-  },
-  {
-    "caseId": "a3_adv_jargon",
+    "caseId": "a3_unsupported_confident",
     "expectedBand": "weak",
     "caseKind": "adversarial",
-    "notes": "hockey without sequence",
+    "answerClass": "unsupported_confident",
+    "notes": "unsupported_confident",
     "answers": {
-      "observation_text": "Transition Tempo und vertikale Progression belohnen aggressive erste Reaktionen im modernen System — ohne dass ich den konkreten Wechselzeitpunkt zuordnen kann."
+      "observation_text": "Transition Tempo und vertikale Progression belohnen aggressive erste Reaktionen im modernen System — ohne den konkreten Wechselzeitpunkt."
     }
   },
   {
-    "caseId": "a3_adv_short_precise",
-    "expectedBand": "strong",
+    "caseId": "a3_empty_offtopic",
+    "expectedBand": "very_weak",
     "caseKind": "adversarial",
-    "notes": "short precise",
+    "answerClass": "empty_offtopic",
+    "notes": "empty_offtopic",
     "answers": {
-      "observation_text": "Turnover NZ → erster Schritt Support voraus, Absicherung bleibt. Sequenz gesehen; kein Systemlabel."
+      "observation_text": "Umschalten ist im Eishockey immer wichtig und spannend; heute war viel Bewegung, aber ohne greifbare Sequenzbeschreibung."
     }
   }
 ]

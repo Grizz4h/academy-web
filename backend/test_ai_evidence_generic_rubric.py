@@ -12,7 +12,6 @@ os.environ.setdefault("ACADEMY_JWT_SECRET", "test-jwt-secret-phase1-hardening-32
 BACKEND_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BACKEND_DIR))
 
-from competency.ai.calibration.bands import BAND_ORDER
 from competency.ai.calibration.fixtures_loader import load_cases
 from competency.ai.calibration.runner import run_calibration
 from competency.ai.constants import (
@@ -124,10 +123,12 @@ class GenericRubricArchitectureTests(unittest.TestCase):
         self.assertIsNone(evaluation)
 
     def test_validation_fixtures_cover_bands_and_adversarial(self):
+        from competency.ai.calibration.validation_matrix import CLASS_ORDER
+
         for drill_id in sorted(VALIDATION_DRILL_IDS):
             cases = load_cases([drill_id])
-            bands = {c.expected_band for c in cases if c.case_kind == "band"}
-            self.assertTrue(set(BAND_ORDER) <= bands, drill_id)
+            notes = {c.notes for c in cases}
+            self.assertTrue(set(CLASS_ORDER) <= notes, drill_id)
             self.assertGreaterEqual(sum(1 for c in cases if c.case_kind == "adversarial"), 2)
 
     def test_mock_validation_calibration_runs(self):

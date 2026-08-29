@@ -1,74 +1,62 @@
 [
   {
-    "caseId": "b1_very_weak",
-    "expectedBand": "very_weak",
+    "caseId": "b1_excellent",
+    "expectedBand": "excellent",
     "caseKind": "band",
-    "notes": "very_weak",
+    "answerClass": "excellent",
+    "notes": "excellent",
     "answers": {
-      "observation_text": "Unterstützung war irgendwie da. Schwer zu sagen wer wem half unter dem Puck."
+      "observation_text": "Wandträger: Support von hinten innen in kurzer Distanz, Passkörper offen — Supportrelation sichtbar; Nähe allein wäre zu wenig."
+    }
+  },
+  {
+    "caseId": "b1_good",
+    "expectedBand": "strong",
+    "caseKind": "band",
+    "answerClass": "good",
+    "notes": "good",
+    "answers": {
+      "observation_text": "Unter dem Puckträger bot ein Mitspieler kurze Anspielbarkeit von hinten links; Abstand klein, Körper zum Pass geöffnet."
+    }
+  },
+  {
+    "caseId": "b1_partial",
+    "expectedBand": "decent",
+    "caseKind": "band",
+    "answerClass": "partial",
+    "notes": "partial",
+    "answers": {
+      "observation_text": "Hinter dem Puckträger stand jemand näher — könnte Support sein, unsicher welche Funktion."
     }
   },
   {
     "caseId": "b1_weak",
     "expectedBand": "weak",
     "caseKind": "band",
+    "answerClass": "weak",
     "notes": "weak",
     "answers": {
       "observation_text": "Ein Spieler half wohl. Ob das unter dem Puck war, weiß ich nicht genau."
     }
   },
   {
-    "caseId": "b1_neutral",
-    "expectedBand": "neutral",
-    "caseKind": "band",
-    "notes": "neutral",
-    "answers": {
-      "observation_text": "Hinter dem Puckträger stand jemand näher — könnte Support sein, unsicher welche Funktion."
-    }
-  },
-  {
-    "caseId": "b1_decent",
-    "expectedBand": "decent",
-    "caseKind": "band",
-    "notes": "decent",
-    "answers": {
-      "observation_text": "Unter dem Puckträger bot ein Mitspieler kurze Anspielbarkeit von hinten links; Abstand klein, Körper zum Pass geöffnet."
-    }
-  },
-  {
-    "caseId": "b1_strong",
-    "expectedBand": "strong",
-    "caseKind": "band",
-    "notes": "strong",
-    "answers": {
-      "observation_text": "Puckträger an der Wand: Support kommt von hinten innen und hält kurze Distanz, während ein anderer Spieler Breite hält — funktionale Unterstützung sichtbar."
-    }
-  },
-  {
-    "caseId": "b1_excellent",
-    "expectedBand": "excellent",
-    "caseKind": "band",
-    "notes": "excellent",
-    "answers": {
-      "observation_text": "Zwei Momente: 1) Support unter dem Puck (kurze Outlet-Option). 2) Ohne Support blieb der Träger isoliert. Relation beobachtet; keine Absicht unterstellt."
-    }
-  },
-  {
-    "caseId": "b1_adv_generic",
-    "expectedBand": "very_weak",
+    "caseId": "b1_unsupported_confident",
+    "expectedBand": "weak",
     "caseKind": "adversarial",
-    "notes": "generic praise",
+    "answerClass": "unsupported_confident",
+    "notes": "unsupported_confident",
     "answers": {
       "observation_text": "Gutes Support-Spiel ist immer wichtig und dieses Team macht das grundsätzlich stark und professionell ohne Einzelszenen."
     }
   },
   {
-    "caseId": "b1_adv_short_precise",
-    "expectedBand": "strong",
+    "caseId": "b1_empty_offtopic",
+    "expectedBand": "very_weak",
     "caseKind": "adversarial",
-    "notes": "short precise",
+    "answerClass": "empty_offtopic",
+    "notes": "empty_offtopic",
     "answers": {
-      "observation_text": "Wandträger: Support von hinten innen in kurzer Distanz, Passkörper offen — Supportrelation sichtbar."
+      "observation_text": "Unterstützung war irgendwie da. Schwer zu sagen wer wem half unter dem Puck, aber Support ist halt zentral im Hockey."
     }
   }
 ]

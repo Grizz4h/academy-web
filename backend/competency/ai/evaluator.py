@@ -37,7 +37,11 @@ def clear_ai_profile_cache() -> None:
 def _aggregation_context(drill_id: str) -> AggregationContext:
     spec = load_drill_assessment_spec(drill_id)
     scope = spec.scope if spec else "multi_observation"
-    return AggregationContext(relational_weight_scale=relational_scale_for_scope(scope))
+    emphasis = dict(spec.dimension_emphasis) if spec else {}
+    return AggregationContext(
+        relational_weight_scale=relational_scale_for_scope(scope),
+        dimension_emphasis=emphasis,
+    )
 
 
 def aggregate_dimension_evaluation(

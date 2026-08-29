@@ -1,27 +1,43 @@
 {
   "drillId": "C1_D5",
-  "specVersion": "C1_D5-spec-v1",
+  "specVersion": "C1_D5-spec-v2",
   "title": "Heutige Stabilitätsbeobachtung",
   "scope": "pattern_synthesis",
   "primaryTextKeys": ["profileSummary", "observation_text"],
+  "primaryCompetencies": ["systems_patterns", "evidence_analysis", "pressure_control", "space_structure"],
+  "observableEvidence": [
+    "recurring spacing / protected space / connected structure across comparable scenes",
+    "segment-scoped defensive stability cues",
+    "counterexamples or limits when present"
+  ],
   "evaluationFocus": [
     "segment-scoped defensive stability patterns",
-    "recurring collective behaviour",
-    "limits of the sample"
+    "synthesis across more than one comparable situation",
+    "limits of the sample; no eternal team identity"
   ],
   "requiredForStrong": [
     "ties pattern to multiple comparable situations in the segment",
-    "avoids eternal team-identity claims",
-    "separates observation from system labels"
+    "avoids formation/system names as proof",
+    "separates observation from unsupported generalization"
   ],
   "commonFailureModes": [
-    "single scene as system proof",
+    "single scene sold as stable system",
     "formation name as evidence",
-    "unsupported causality"
+    "unsupported causality / philosophy",
+    "outcome bias from goals against"
   ],
   "dimensionEmphasis": {
     "evidenceScope": "high",
-    "relationalReasoning": "high"
+    "relationalReasoning": "high",
+    "competencyAlignment": "high",
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high",
+    "observationGrounding": "medium",
+    "specificity": "medium"
   },
+  "fairnessNote": "Excellent here means excellent synthesis for THIS drill — not 'more complex prose than A1'. A1 excellent and C1 excellent may share the same quality band; engine weights differ.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required profileSummary (20–800 chars) is already usable. Structured radios remain authoritative for layers; AI evaluates the summary.",
   "validationOnly": true
 }

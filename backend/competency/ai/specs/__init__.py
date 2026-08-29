@@ -21,6 +21,23 @@ SCOPE_TYPES = frozenset(
     }
 )
 
+FREE_TEXT_READINESS = frozenset(
+    {
+        "READY",
+        "NEEDS_SMALL_INPUT_CHANGE",
+        "NOT_SUITABLE_FOR_AI_EVIDENCE",
+    }
+)
+
+EVIDENCE_SOURCE_STRATEGIES = frozenset(
+    {
+        "deterministic_only",
+        "structured_only",
+        "ai_review",
+        "structured_plus_ai_review",
+    }
+)
+
 # Production AI pilots + cross-drill validation set (not a 78-drill rollout)
 PRODUCTION_AI_DRILLS = frozenset({"B2_D5", "E1_D1"})
 VALIDATION_AI_DRILLS = frozenset(
@@ -55,9 +72,16 @@ class DrillAssessmentSpec:
     common_failure_modes: Tuple[str, ...]
     dimension_emphasis: Dict[str, str] = field(default_factory=dict)
     validation_only: bool = False
+    primary_competencies: Tuple[str, ...] = ()
+    observable_evidence: Tuple[str, ...] = ()
+    fairness_note: str = ""
+    free_text_readiness: str = ""
+    evidence_source_recommendation: str = ""
+    minimal_input_change: str = ""
 
     def to_prompt_dict(self) -> Dict[str, Any]:
-        return {
+        """Fields injected into the LLM prompt — no solution templates, no wiring metadata."""
+        payload: Dict[str, Any] = {
             "drillId": self.drill_id,
             "specVersion": self.spec_version,
             "title": self.title,
@@ -67,6 +91,13 @@ class DrillAssessmentSpec:
             "commonFailureModes": list(self.common_failure_modes),
             "dimensionEmphasis": dict(self.dimension_emphasis),
         }
+        if self.primary_competencies:
+            payload["primaryCompetencies"] = list(self.primary_competencies)
+        if self.observable_evidence:
+            payload["observableEvidence"] = list(self.observable_evidence)
+        if self.fairness_note:
+            payload["fairnessNote"] = self.fairness_note
+        return payload
 
 
 def clear_spec_caches() -> None:
@@ -109,6 +140,15 @@ def load_drill_assessment_spec(drill_id: str) -> Optional[DrillAssessmentSpec]:
     scope = str(row.get("scope") or "").strip().lower()
     if scope and scope not in SCOPE_TYPES:
         raise ValueError(f"invalid scope {scope!r} in {path}")
+
+    readiness = str(row.get("freeTextReadiness") or "").strip().upper()
+    if readiness and readiness not in FREE_TEXT_READINESS:
+        raise ValueError(f"invalid freeTextReadiness {readiness!r} in {path}")
+
+    source = str(row.get("evidenceSourceRecommendation") or "").strip().lower()
+    if source and source not in EVIDENCE_SOURCE_STRATEGIES:
+        raise ValueError(f"invalid evidenceSourceRecommendation {source!r} in {path}")
+
     return DrillAssessmentSpec(
         drill_id=str(row.get("drillId") or drill_id).strip(),
         spec_version=str(row.get("specVersion") or f"{drill_id}-spec-v1").strip(),
@@ -122,6 +162,12 @@ def load_drill_assessment_spec(drill_id: str) -> Optional[DrillAssessmentSpec]:
             str(k): str(v) for k, v in (row.get("dimensionEmphasis") or {}).items()
         },
         validation_only=bool(row.get("validationOnly")),
+        primary_competencies=tuple(str(x) for x in (row.get("primaryCompetencies") or []) if str(x).strip()),
+        observable_evidence=tuple(str(x) for x in (row.get("observableEvidence") or []) if str(x).strip()),
+        fairness_note=str(row.get("fairnessNote") or "").strip(),
+        free_text_readiness=readiness,
+        evidence_source_recommendation=source,
+        minimal_input_change=str(row.get("minimalInputChange") or "").strip(),
     )
 
 
