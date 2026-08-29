@@ -13,11 +13,15 @@ from .bands import BAND_RANGES
 
 # Midpoint-ish deterministic qualities per band (stable for tests).
 MOCK_QUALITY_BY_BAND: Dict[str, float] = {
-    "very_weak": 0.22,
-    "weak": 0.40,
-    "moderate": 0.60,
+    "very_weak": 0.12,
+    "weak": 0.35,
+    "neutral": 0.50,
+    "decent": 0.62,
     "strong": 0.78,
-    "very_strong": 0.88,
+    "excellent": 0.90,
+    # Legacy aliases
+    "moderate": 0.50,
+    "very_strong": 0.90,
 }
 
 
@@ -52,6 +56,14 @@ class CalibrationMockProvider(AiEvidenceProvider):
             quality = min(quality, 0.25)
             unsupported = 0.35
             reason = "vague_claims"
+        elif kind == "adversarial":
+            # Band-driven quality; weak/very_weak adversarial = speculative / empty
+            if band in ("very_weak", "weak"):
+                unsupported = 0.65
+                reason = "unsupported_inference" if band == "weak" else "insufficient_basis"
+            else:
+                unsupported = max(0.05, 0.55 - quality)
+                reason = "observation_grounded" if quality >= 0.65 else "partial_observation"
         else:
             unsupported = max(0.05, 0.55 - quality)
             reason = "observation_grounded" if quality >= 0.65 else "partial_observation"

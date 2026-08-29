@@ -4,22 +4,29 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Sequence, Tuple
 
-# Soft target ranges — overlaps intentional.
+# Calibration-pass bands (E1_D1 / B2_D5). Soft overlaps intentional.
 BAND_RANGES: Dict[str, Tuple[float, float]] = {
-    "very_weak": (0.10, 0.35),
-    "weak": (0.30, 0.50),
-    "moderate": (0.50, 0.70),
-    "strong": (0.70, 0.88),
-    "very_strong": (0.82, 0.95),
+    "very_weak": (0.0, 0.25),
+    "weak": (0.25, 0.45),
+    "neutral": (0.45, 0.55),
+    "decent": (0.55, 0.70),
+    "strong": (0.70, 0.85),
+    "excellent": (0.85, 1.00),
+    # Legacy aliases from Phase 5B.1 fixtures
+    "moderate": (0.45, 0.55),
+    "very_strong": (0.85, 1.00),
 }
 
-BAND_ORDER = ("very_weak", "weak", "moderate", "strong", "very_strong")
+BAND_ORDER = ("very_weak", "weak", "neutral", "decent", "strong", "excellent")
 
-# Soft ceilings: moderate should rarely sit at "strong+"
-MODERATE_HIGH_WARN = 0.85
+# Soft ceilings / floors for band drift warnings
+NEUTRAL_HIGH_WARN = 0.62
 STRONG_LOW_WARN = 0.55
 UNSUPPORTED_MIN = 0.40
 INJECTION_QUALITY_MAX = 0.55
+
+# Alias for older call sites
+MODERATE_HIGH_WARN = NEUTRAL_HIGH_WARN
 
 
 def flags_for_row(
@@ -40,17 +47,22 @@ def flags_for_row(
         if unsupported_claims < UNSUPPORTED_MIN:
             flags.append("UNSUPPORTED_CLAIMS_MISSED")
 
-    if lo_hi is not None and case_kind in ("band", "vague", "unsupported_claim", "injection"):
+    if lo_hi is not None and case_kind in (
+        "band",
+        "vague",
+        "unsupported_claim",
+        "injection",
+        "adversarial",
+    ):
         lo, hi = lo_hi
-        # Soft band check — still apply for special cases with an expected band.
         if quality > hi + 0.08:
             flags.append("TOO_HIGH")
         elif quality < lo - 0.08:
             flags.append("TOO_LOW")
 
-    if band == "moderate" and quality >= MODERATE_HIGH_WARN and "TOO_HIGH" not in flags:
+    if band in ("neutral", "moderate") and quality >= NEUTRAL_HIGH_WARN and "TOO_HIGH" not in flags:
         flags.append("TOO_HIGH")
-    if band in ("strong", "very_strong") and quality <= STRONG_LOW_WARN and "TOO_LOW" not in flags:
+    if band in ("strong", "excellent", "very_strong") and quality <= STRONG_LOW_WARN and "TOO_LOW" not in flags:
         flags.append("TOO_LOW")
 
     if not flags:

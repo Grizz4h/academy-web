@@ -1,7 +1,7 @@
-# AI Evidence Calibration Review — Phase 5B.1
+# AI Evidence Calibration Review — Phase 5B.1 / Calibration Pass
 
 **Status:** tooling only (not production pipeline)  
-**Depends on:** `343ce64` AI evidence pilot (`B2_D5`, `E1_D1`)
+**Prompt:** `ai-evidence` prompt `v2` · rubrics `B2_D5-rubric-v2` / `E1_D1-rubric-v2`
 
 ## Purpose
 
@@ -13,6 +13,7 @@ This module:
 - calls existing `AiEvidenceEvaluator.evaluate_detailed(...)`
 - **never** appends EvidenceEvents or recomputes competency state
 - does **not** unlock additional pilot drills
+- does **not** change completion gate / curriculum config / idempotency / export
 
 ## Run
 
@@ -24,12 +25,6 @@ cd backend
 
 # Real provider (manual; costs tokens — requires OPENAI_API_KEY)
 .venv/bin/python -m competency.ai.calibration --live
-
-# JSON
-.venv/bin/python -m competency.ai.calibration --mock --json
-
-# One drill
-.venv/bin/python -m competency.ai.calibration --live --drill B2_D5
 ```
 
 Exit code `0` = `PILOT CALIBRATION LOOKS GOOD`, `2` = `REVIEW PROMPT/RUBRIC BEFORE ROLLOUT`.
@@ -41,32 +36,35 @@ backend/competency/ai/calibration/fixtures/b2_d5.json
 backend/competency/ai/calibration/fixtures/e1_d1.json
 ```
 
-Per drill ≈ 10 band cases (`very_weak` … `very_strong`, ~2 each) plus:
-
-- 1 vague
-- 1 unsupported claim
-- 1 prompt-injection style text
+Per drill: band cases across six quality bands plus vague / unsupported / injection / adversarial cases.
 
 `expectedBand` / `caseKind` stay in the fixture metadata and are **not** sent to the evaluator.
 
-## Soft target ranges
+## Soft target ranges (calibration pass)
 
 ```text
-very_weak   ~ 0.10–0.35
-weak        ~ 0.30–0.50
-moderate    ~ 0.50–0.70
-strong      ~ 0.70–0.88
-very_strong ~ 0.82–0.95
+very_weak   0.0–0.25
+weak        0.25–0.45
+neutral     0.45–0.55
+decent      0.55–0.70
+strong      0.70–0.85
+excellent   0.85–1.00   (1.0 rare)
 ```
 
-Overlaps allowed. Flags: `TOO_HIGH`, `TOO_LOW`, `UNSUPPORTED_CLAIMS_MISSED`, `INJECTION_SUSPICIOUS`, `OK`.
+Aliases: `moderate` → neutral, `very_strong` → excellent.
+
+Flags: `TOO_HIGH`, `TOO_LOW`, `UNSUPPORTED_CLAIMS_MISSED`, `INJECTION_SUSPICIOUS`, `OK`.
 
 ## Tests
 
 ```bash
-.venv/bin/python -m unittest test_ai_evidence_calibration test_ai_evidence -q
+.venv/bin/python -m unittest \
+  test_ai_evidence_calibration_pass \
+  test_ai_evidence_calibration \
+  test_ai_evidence \
+  test_competency_evidence_hardening -q
 ```
 
-## Next step after a live run
+## Prompt hardening (v2)
 
-Manually read the table. If moderate answers cluster at 0.85+ or injection cases score high → revise prompt/rubric before any broader AI drill rollout.
+Anti-bias rules in `competency/ai/prompt.py`: no length / confidence / jargon / plausibility reward; no inferred observations; score only explicit evidence. Drill-specific rubrics for `E1_D1` (repetition + evidence_analysis) and `B2_D5` (pressure + options + decision pattern).

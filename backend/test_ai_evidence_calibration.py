@@ -38,7 +38,12 @@ class CalibrationReviewTests(unittest.TestCase):
             self.assertIn("unsupported_claim", kinds, drill_id)
             self.assertIn("vague", kinds, drill_id)
             bands = {c.expected_band for c in rows if c.case_kind == "band"}
-            self.assertTrue({"very_weak", "weak", "moderate", "strong", "very_strong"} <= bands)
+            self.assertTrue(
+                {"very_weak", "weak", "neutral", "decent", "strong", "excellent"} <= bands,
+                drill_id,
+            )
+            kinds = {c.case_kind for c in rows}
+            self.assertIn("adversarial", kinds, drill_id)
 
     def test_expected_band_not_in_evaluator_answers(self):
         for case in load_cases(["B2_D5"]):

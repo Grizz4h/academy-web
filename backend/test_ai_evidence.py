@@ -248,7 +248,7 @@ class AiEvidenceUnitTests(unittest.TestCase):
             _b2_d5_answers(),
             {"questions": []},
             allowed_competency_ids=allowed,
-            rubric_version="B2_D5-rubric-v1",
+            rubric_version="B2_D5-rubric-v2",
         )
         self.assertIsNotNone(evaluation_input)
 
@@ -259,7 +259,7 @@ class AiEvidenceUnitTests(unittest.TestCase):
             mock_openai_cls.return_value.responses.create.return_value = _FakeResponse()
             result, _audit = call_openai_evidence(
                 evaluation_input,
-                cfg={"api_key": "test-key", "model": "mock-model", "prompt_version": "v1"},
+                cfg={"api_key": "test-key", "model": "mock-model", "prompt_version": "v2"},
             )
         self.assertIsNone(result)
 
@@ -273,7 +273,7 @@ class AiEvidenceUnitTests(unittest.TestCase):
                 {"pattern_summary": "kurz", "pattern_assessment": "possible_signal", "pattern_observations": [{}, {}, {}]},
                 {"minObservations": 3},
                 allowed_competency_ids=allowed,
-                rubric_version="E1_D1-rubric-v1",
+                rubric_version="E1_D1-rubric-v2",
             )
         )
         self.assertIsNotNone(
@@ -282,7 +282,7 @@ class AiEvidenceUnitTests(unittest.TestCase):
                 _e1_d1_answers(),
                 {"minObservations": 3},
                 allowed_competency_ids=allowed,
-                rubric_version="E1_D1-rubric-v1",
+                rubric_version="E1_D1-rubric-v2",
             )
         )
 

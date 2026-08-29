@@ -57,7 +57,8 @@ def run_case(evaluator: AiEvidenceEvaluator, case: CalibrationCase) -> List[Revi
                 reasonCode="no_evaluation",
                 flags=(
                     ["TOO_LOW"]
-                    if case.case_kind == "band" and case.expected_band in ("strong", "very_strong")
+                    if case.case_kind == "band"
+                    and case.expected_band in ("strong", "excellent", "very_strong")
                     else ["OK"]
                 ),
             )

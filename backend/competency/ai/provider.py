@@ -8,7 +8,8 @@ import os
 import time
 from typing import Any, Callable, Optional, Protocol
 
-from competency.ai.prompt import SYSTEM_PROMPT_V1, build_user_prompt
+from competency.ai.constants import AI_PROMPT_VERSION
+from competency.ai.prompt import SYSTEM_PROMPT_V2, build_user_prompt
 from competency.ai.rubrics import AiEvaluationInput
 from competency.ai.schema import AI_EVIDENCE_JSON_SCHEMA, AiEvidenceEvaluation
 
@@ -27,7 +28,7 @@ def _config() -> dict[str, str]:
     return {
         "api_key": (os.environ.get("OPENAI_API_KEY") or "").strip(),
         "model": (os.environ.get("OPENAI_EVIDENCE_MODEL") or os.environ.get("OPENAI_REFLECTION_MODEL") or DEFAULT_MODEL).strip(),
-        "prompt_version": (os.environ.get("OPENAI_EVIDENCE_PROMPT_VERSION") or "v1").strip(),
+        "prompt_version": (os.environ.get("OPENAI_EVIDENCE_PROMPT_VERSION") or AI_PROMPT_VERSION).strip(),
     }
 
 
@@ -83,7 +84,7 @@ def call_openai_evidence(
         response = client.responses.create(
             model=cfg["model"],
             input=[
-                {"role": "system", "content": SYSTEM_PROMPT_V1},
+                {"role": "system", "content": SYSTEM_PROMPT_V2},
                 {"role": "user", "content": user_prompt},
             ],
             text={

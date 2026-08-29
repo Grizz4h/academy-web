@@ -84,8 +84,10 @@ No `VITE_*`, no user UUID/email sent to provider.
 ## Quality rubric (AI)
 
 - `0.5` = neutral engine pivot (partially usable / uncertain)
-- Reward: observational grounding, specificity, observation/claim separation
-- Do **not** reward: length, polish, jargon alone
+- Reward: observational grounding, specificity, observation/claim separation, scoped claims
+- Do **not** reward: length, polish, confident tone, jargon alone, or “sounds plausible”
+- Do **not** infer missing observations or assume unstated tactical intent
+- Drill-specific band guides live in `competency/ai/prompt.py` (`E1_D1`, `B2_D5`) — prompt `v2` / rubric `*-rubric-v2`
 
 ## Idempotency
 
@@ -115,7 +117,7 @@ No invented quality 0.5 or 1.0 on failure.
 ## Audit metadata (event.metadata)
 
 - `evaluatorVersion`: `ai-evidence-v1`
-- `rubricVersion`: e.g. `B2_D5-rubric-v1`
+- `rubricVersion`: e.g. `B2_D5-rubric-v2`
 - `provider`, `model`, `promptVersion`
 
 Not stored: full prompts, secrets, redundant user text.
