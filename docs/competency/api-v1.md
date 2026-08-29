@@ -96,5 +96,6 @@ API uses repository contracts only — works with `STORAGE_BACKEND=json` and `ST
 
 - `GET /api/me/evidence-events`
 - AI evidence generation
-- Frontend radar wiring
 - User-editable skill values
+
+Frontend radar read-wiring: see `docs/competency/radar-ui-v1.md`.

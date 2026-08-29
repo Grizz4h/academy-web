@@ -20,7 +20,7 @@ const freshProfile = buildProfile(buildRatedCompetencies(), { stale: false })
 
 const unratedHtml = renderToStaticMarkup(<CompetencyProfileView profile={unratedProfile} />)
 assert(
-  unratedHtml.includes('Noch nicht genügend Evidenz vorhanden'),
+  unratedHtml.includes('Noch liegen nicht genug Beobachtungen'),
   'panel renders unrated radar empty state',
 )
 assert(!unratedHtml.includes('Profil aktualisieren'), 'fresh profile has no recompute button')

@@ -4,9 +4,11 @@
  */
 import {
   accessibilitySummary,
+  canShowScorePolygon,
   formatRatioPercent,
   hasAnyRated,
   isFullyUnrated,
+  nodePlotValue,
   ratedCount,
   radarPlotValue,
 } from './competencyLogic'
@@ -29,18 +31,22 @@ assert(unrated.length === 8, 'expected 8 unrated axes')
 assert(isFullyUnrated(unrated), 'full profile should be unrated')
 assert(!hasAnyRated(unrated), 'unrated profile has no rated axes')
 assert(ratedCount(unrated) === 0, 'rated count should be 0')
+assert(!canShowScorePolygon(unrated), 'unrated: no polygon')
 
 assert(!isFullyUnrated(rated), 'rated profile is not fully unrated')
 assert(hasAnyRated(rated), 'rated profile has rated axes')
 assert(ratedCount(rated) === 8, 'rated profile counts 8')
+assert(canShowScorePolygon(rated), 'rated: polygon ok')
 
 assert(ratedCount(partial) === 3, 'partial profile counts 3 rated')
 assert(!isFullyUnrated(partial), 'partial is not fully unrated')
 assert(hasAnyRated(partial), 'partial has rated axes')
+assert(!canShowScorePolygon(partial), 'partial: no polygon')
 assert(partial.every((item) => item.status === 'unrated' || item.score > 0), 'no fake zero-rated scores')
 
 for (const item of unrated) {
-  assert(radarPlotValue(item) === 0, 'unrated axes plot at 0 for polygon')
+  assert(nodePlotValue(item) === null, 'unrated axes have no chart node')
+  assert(radarPlotValue(item) === 0, 'radarPlotValue falls back to 0 only for gated polygon helper')
 }
 
 assert(formatRatioPercent(0.31) === '31%', 'breadth/confidence percent formatting')

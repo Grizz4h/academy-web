@@ -1,8 +1,6 @@
 import type { CompetencyItem } from './types'
 import { capabilityBandForScore } from './capabilityBands'
 
-export const UNRATED_AXIS_MARKER = 8
-
 export function formatRatioPercent(value: number): string {
   const pct = Math.round(Math.max(0, Math.min(1, value)) * 100)
   return `${pct}%`
@@ -10,6 +8,11 @@ export function formatRatioPercent(value: number): string {
 
 export function ratedCount(competencies: readonly CompetencyItem[]): number {
   return competencies.filter((item) => item.status === 'rated').length
+}
+
+/** Score polygon only when every axis is rated — never fake unrated as score 0. */
+export function canShowScorePolygon(competencies: readonly CompetencyItem[]): boolean {
+  return competencies.length > 0 && ratedCount(competencies) === competencies.length
 }
 
 export function isFullyUnrated(competencies: readonly CompetencyItem[]): boolean {
@@ -20,14 +23,16 @@ export function hasAnyRated(competencies: readonly CompetencyItem[]): boolean {
   return competencies.some((item) => item.status === 'rated')
 }
 
+/** Only for closed polygon when `canShowScorePolygon`; callers must gate first. */
 export function radarPlotValue(item: CompetencyItem): number {
   if (item.status !== 'rated') return 0
   return item.score
 }
 
-export function nodePlotValue(item: CompetencyItem): number {
+/** Rated axes only — unrated must not plot near center (looks like skill 0). */
+export function nodePlotValue(item: CompetencyItem): number | null {
   if (item.status === 'rated') return item.score
-  return UNRATED_AXIS_MARKER
+  return null
 }
 
 export function nodeOpacity(item: CompetencyItem): number {

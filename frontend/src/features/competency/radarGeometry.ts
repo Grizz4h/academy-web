@@ -18,10 +18,15 @@ export function radarPolygon(competencies: readonly CompetencyItem[]): string {
     .join(' ')
 }
 
-export function nodePoint(competencies: readonly CompetencyItem[], index: number): { x: number; y: number } {
+export function nodePoint(
+  competencies: readonly CompetencyItem[],
+  index: number,
+): { x: number; y: number } | null {
   const total = competencies.length
   const item = competencies[index]
-  if (!item) return { x: RADAR_CENTER, y: RADAR_CENTER }
-  const [x, y] = radarPoint(index, total, nodePlotValue(item)).split(',').map(Number)
+  if (!item) return null
+  const value = nodePlotValue(item)
+  if (value == null) return null
+  const [x, y] = radarPoint(index, total, value).split(',').map(Number)
   return { x, y }
 }

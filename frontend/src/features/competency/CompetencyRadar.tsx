@@ -1,5 +1,14 @@
 import { useId, useState } from 'react'
-import { capabilityLabelForItem, formatRatioPercent, hasAnyRated, isFullyUnrated, ratedCount, accessibilitySummary, nodeOpacity } from './competencyLogic'
+import {
+  accessibilitySummary,
+  canShowScorePolygon,
+  capabilityLabelForItem,
+  formatRatioPercent,
+  hasAnyRated,
+  isFullyUnrated,
+  nodeOpacity,
+  ratedCount,
+} from './competencyLogic'
 import { RADAR_CENTER, RADAR_RADIUS, nodePoint, radarPoint, radarPolygon } from './radarGeometry'
 import type { CompetencyItem } from './types'
 import styles from './CompetencyRadar.module.css'
@@ -24,7 +33,12 @@ export default function CompetencyRadar({
   const fullyUnrated = isFullyUnrated(competencies)
   const anyRated = hasAnyRated(competencies)
   const rated = ratedCount(competencies)
+  const showPolygon = canShowScorePolygon(competencies)
   const selected = competencies.find((item) => item.competencyId === selectedId) ?? null
+
+  const toggleSelected = (id: string) => {
+    setSelectedId((prev) => (prev === id ? null : id))
+  }
 
   return (
     <section className={styles.shell} aria-label={title}>
@@ -44,11 +58,18 @@ export default function CompetencyRadar({
 
       {fullyUnrated ? (
         <p className={styles.emptyLead}>
-          Dein Kompetenzprofil entsteht mit deinen Analysen. Noch nicht genügend Evidenz vorhanden.
+          Dein Kompetenzprofil entsteht mit deinen Lernaktivitäten. Noch liegen nicht genug
+          Beobachtungen für eine Bewertung vor.
+        </p>
+      ) : showPolygon ? (
+        <p className={styles.note}>
+          {rated}/{total} Kompetenzen bewertet — Score zeigt beobachtetes Niveau, nicht XP oder
+          Abschluss.
         </p>
       ) : (
-        <p className={styles.note}>
-          {rated}/{total} Kompetenzen bewertet — Score zeigt beobachtetes Niveau, nicht XP oder Abschluss.
+        <p className={styles.emptyLead}>
+          {rated}/{total} Achsen bewertet. Das Spinnennetz erscheint, sobald alle acht Kompetenzen
+          Evidenz haben — unbewertete Achsen werden nicht als 0 dargestellt.
         </p>
       )}
 
@@ -91,7 +112,7 @@ export default function CompetencyRadar({
                 />
               )
             })}
-            {anyRated ? (
+            {showPolygon ? (
               <>
                 <polygon className={styles.scoreGlow} points={radarPolygon(competencies)} />
                 <polygon
@@ -102,34 +123,38 @@ export default function CompetencyRadar({
               </>
             ) : null}
             {competencies.map((item, index) => {
-              const { x, y } = nodePoint(competencies, index)
-              const isUnrated = item.status !== 'rated'
+              const point = nodePoint(competencies, index)
+              if (!point) return null
               return (
                 <circle
                   key={item.competencyId}
-                  className={isUnrated ? styles.nodeUnrated : styles.node}
-                  cx={x}
-                  cy={y}
-                  r={isUnrated ? 3 : 3.5}
+                  className={styles.node}
+                  cx={point.x}
+                  cy={point.y}
+                  r={3.5}
                   opacity={nodeOpacity(item)}
                 />
               )
             })}
           </svg>
-          <div className={styles.axisLabels} aria-hidden="true">
+          <div className={styles.axisLabels}>
             {competencies.map((item, index) => {
               const angle = -Math.PI / 2 + (index * Math.PI * 2) / total
               const labelRadius = RADAR_RADIUS + 22
               const x = RADAR_CENTER + Math.cos(angle) * labelRadius
               const y = RADAR_CENTER + Math.sin(angle) * labelRadius
+              const isSelected = selectedId === item.competencyId
               return (
-                <span
+                <button
                   key={item.competencyId}
-                  className={styles.axisLabel}
+                  type="button"
+                  className={`${styles.axisLabel} ${isSelected ? styles.axisLabelSelected : ''}`}
                   style={{ left: `${(x / 320) * 100}%`, top: `${(y / 320) * 100}%` }}
+                  onClick={() => toggleSelected(item.competencyId)}
+                  aria-pressed={isSelected}
                 >
                   {item.label}
-                </span>
+                </button>
               )
             })}
           </div>
@@ -147,7 +172,7 @@ export default function CompetencyRadar({
                   className={`${styles.stat} ${isSelected ? styles.statSelected : ''}`}
                   data-competency-axis={item.competencyId}
                   data-status={item.status}
-                  onClick={() => setSelectedId(isSelected ? null : item.competencyId)}
+                  onClick={() => toggleSelected(item.competencyId)}
                   aria-pressed={isSelected}
                 >
                   <span className={styles.statLabel}>{item.label}</span>
@@ -156,6 +181,9 @@ export default function CompetencyRadar({
                       <>
                         <strong>{Math.round(item.score)}</strong>
                         {band ? <span className={styles.statBand}>{band}</span> : null}
+                        <span className={styles.statMeta}>
+                          Confidence {formatRatioPercent(item.confidence)}
+                        </span>
                       </>
                     ) : (
                       <em className={styles.unrated}>Noch nicht bewertet</em>
@@ -171,13 +199,31 @@ export default function CompetencyRadar({
               <h3 className={styles.detailTitle}>{selected.label}</h3>
               {selected.status === 'rated' ? (
                 <dl className={styles.detailGrid}>
-                  <div><dt>Score</dt><dd>{Math.round(selected.score)}</dd></div>
-                  <div><dt>Confidence</dt><dd>{formatRatioPercent(selected.confidence)}</dd></div>
-                  <div><dt>Breadth</dt><dd>{formatRatioPercent(selected.breadth)}</dd></div>
-                  <div><dt>Evidence</dt><dd>{selected.evidenceCount}</dd></div>
-                  <div><dt>Highest Evidence Level</dt><dd>{selected.highestEvidenceLevel}</dd></div>
+                  <div>
+                    <dt>Score</dt>
+                    <dd>{Math.round(selected.score)}</dd>
+                  </div>
+                  <div>
+                    <dt>Confidence</dt>
+                    <dd>{formatRatioPercent(selected.confidence)}</dd>
+                  </div>
+                  <div>
+                    <dt>Evidenzbreite</dt>
+                    <dd>{formatRatioPercent(selected.breadth)}</dd>
+                  </div>
+                  <div>
+                    <dt>Evidence</dt>
+                    <dd>{selected.evidenceCount}</dd>
+                  </div>
+                  <div>
+                    <dt>Höchstes Evidence-Level</dt>
+                    <dd>{selected.highestEvidenceLevel}</dd>
+                  </div>
                   {capabilityLabelForItem(selected) ? (
-                    <div><dt>Capability Band</dt><dd>{capabilityLabelForItem(selected)}</dd></div>
+                    <div>
+                      <dt>Capability Band</dt>
+                      <dd>{capabilityLabelForItem(selected)}</dd>
+                    </div>
                   ) : null}
                 </dl>
               ) : (
@@ -187,10 +233,13 @@ export default function CompetencyRadar({
               )}
               {selected.status === 'rated' ? (
                 <p className={styles.detailHint}>
-                  Confidence: Sicherheit der Schätzung · Breadth: Vielfalt der Evidenzbasis (nicht Fortschritt zu 100%).
+                  Confidence: Sicherheit der Schätzung · Evidenzbreite: Vielfalt der Evidenzbasis
+                  über Drills/Tracks/Kontexte (nicht Fortschritt zu 100%).
                 </p>
               ) : null}
             </div>
+          ) : anyRated ? (
+            <p className={styles.detailHint}>Achse antippen für Score, Confidence und Evidenzbreite.</p>
           ) : null}
         </div>
       </div>

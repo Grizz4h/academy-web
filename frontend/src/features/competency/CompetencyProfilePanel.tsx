@@ -6,6 +6,7 @@ import type { MyCompetenciesPayload } from './types'
 import styles from './CompetencyProfilePanel.module.css'
 
 const QUERY_KEY = ['me', 'competencies'] as const
+export const COMPETENCY_PROFILE_QUERY_KEY = QUERY_KEY
 
 function CompetencyRadarSkeleton() {
   return (
