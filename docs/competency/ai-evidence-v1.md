@@ -161,3 +161,4 @@ See:
 - `docs/competency/ai-evidence-generic-rubric-v1.md` (Variant B: AI dimensions → backend quality)
 - `docs/competency/ai-evidence-validation-batch.md` (6-drill cross-calibration; not production-wired)
 - `docs/competency/assessment-routing-v1.md` (78-drill least-powerful routing catalog)
+- `docs/competency/assessment-spec-v1.md` (AI assessment specs for ~25 AI-routed drills; no runtime yet)
