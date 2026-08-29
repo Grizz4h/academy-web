@@ -65,25 +65,32 @@ class AiEvidenceEvaluator:
             qualities[competency_id] = max(0.0, min(1.0, float(item.quality)))
         return qualities
 
-    def evaluate(
+    def _run_provider(
         self,
         *,
         drill_id: str,
         answers: Dict[str, Any],
         drill_config: Dict[str, Any],
-        source_id: str,
         drill_title: str = "",
-    ) -> List[EvidenceEventCreate]:
+    ) -> tuple[Optional[AiEvidenceEvaluation], Dict[str, Any], Set[str]]:
+        """Shared AI call path. Never persists. Returns (result, audit, allowed)."""
         drill_id = str(drill_id or "").strip()
+        empty_audit: Dict[str, Any] = {
+            "evaluatorVersion": AI_EVALUATOR_VERSION,
+        }
         if drill_id not in MVP_AI_DRILL_IDS:
-            return []
+            return None, empty_audit, set()
 
         profile = _profile_by_drill_id().get(drill_id)
         if profile is None or not profile.evidence.enabled:
-            return []
+            return None, empty_audit, set()
 
         allowed = self._allowed_competency_ids(profile)
         rubric_version = RUBRIC_VERSION_BY_DRILL.get(drill_id, AI_EVALUATOR_VERSION)
+        audit_metadata: Dict[str, Any] = {
+            "evaluatorVersion": AI_EVALUATOR_VERSION,
+            "rubricVersion": rubric_version,
+        }
 
         evaluation_input = build_ai_evaluation_input(
             drill_id,
@@ -94,14 +101,9 @@ class AiEvidenceEvaluator:
             drill_title=drill_title,
         )
         if evaluation_input is None:
-            return []
+            return None, audit_metadata, allowed
 
         provider = self._provider
-        audit_metadata: Dict[str, Any] = {
-            "evaluatorVersion": AI_EVALUATOR_VERSION,
-            "rubricVersion": rubric_version,
-        }
-
         if isinstance(provider, OpenAiEvidenceProvider):
             ai_result, audit = provider.evaluate_with_audit(evaluation_input)
             audit_metadata.update(audit)
@@ -109,10 +111,58 @@ class AiEvidenceEvaluator:
             ai_result = provider.evaluate(evaluation_input)
 
         if ai_result is None:
+            return None, audit_metadata, allowed
+
+        filtered = [
+            item
+            for item in ai_result.competencies
+            if str(item.competencyId) in allowed
+        ]
+        if not filtered:
+            return None, audit_metadata, allowed
+        return AiEvidenceEvaluation(competencies=filtered), audit_metadata, allowed
+
+    def evaluate_detailed(
+        self,
+        *,
+        drill_id: str,
+        answers: Dict[str, Any],
+        drill_config: Dict[str, Any],
+        drill_title: str = "",
+    ) -> Optional[AiEvidenceEvaluation]:
+        """Full AI quality rows for review/calibration — no EvidenceEvents, no persistence."""
+        result, _audit, _allowed = self._run_provider(
+            drill_id=drill_id,
+            answers=answers,
+            drill_config=drill_config,
+            drill_title=drill_title,
+        )
+        return result
+
+    def evaluate(
+        self,
+        *,
+        drill_id: str,
+        answers: Dict[str, Any],
+        drill_config: Dict[str, Any],
+        source_id: str,
+        drill_title: str = "",
+    ) -> List[EvidenceEventCreate]:
+        ai_result, audit_metadata, _allowed = self._run_provider(
+            drill_id=drill_id,
+            answers=answers,
+            drill_config=drill_config,
+            drill_title=drill_title,
+        )
+        if ai_result is None:
             return []
 
-        qualities = self._validate_ai_output(ai_result, allowed)
+        qualities = self._validate_ai_output(ai_result, {str(c.competencyId) for c in ai_result.competencies})
         if not qualities:
+            return []
+
+        profile = _profile_by_drill_id().get(str(drill_id or "").strip())
+        if profile is None:
             return []
 
         events: List[EvidenceEventCreate] = []

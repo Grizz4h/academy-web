@@ -141,3 +141,15 @@ After manual review of 10–20 synthetic answers:
 - E1 follow-ups once D1 pilot stable
 
 Do **not** batch-migrate all text drills until pilot quality distribution is validated (~0.55–0.65 moderate, ~0.85 strong).
+
+## Calibration review (Phase 5B.1)
+
+Synthetic fixture review (no persistence):
+
+```bash
+cd backend
+.venv/bin/python -m competency.ai.calibration --mock
+.venv/bin/python -m competency.ai.calibration --live   # manual; costs tokens
+```
+
+See `docs/competency/ai-evidence-calibration-review.md`.
