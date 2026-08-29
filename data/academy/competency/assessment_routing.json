@@ -1,0 +1,1488 @@
+{
+  "schemaVersion": 1,
+  "principle": "Use the least powerful evaluator that can produce valid evidence.",
+  "assessmentSources": [
+    "deterministic",
+    "structured_only",
+    "structured_plus_ai_review",
+    "ai_review"
+  ],
+  "readinessValues": [
+    "READY",
+    "NEEDS_SMALL_INPUT_CHANGE",
+    "NEEDS_MECHANIC_CHANGE",
+    "NOT_SUITABLE_FOR_AI_EVIDENCE"
+  ],
+  "scopes": [
+    "single_observation",
+    "single_sequence",
+    "multi_observation",
+    "pattern_synthesis",
+    "comparative_analysis"
+  ],
+  "costLatencyClasses": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "privacyNote": "AI review must receive only drill-necessary inputs — never email, name, full history, or competence profile.",
+  "drills": [
+    {
+      "drillId": "A1_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 1,
+      "maxStrength": 0.45,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "A1_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 1,
+      "maxStrength": 0.55,
+      "notes": "Shift-tracker completeness/specificity is structured-evaluable; AI not needed."
+    },
+    {
+      "drillId": "A1_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.6,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "A1_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.65,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "A1_D5",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.65,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "A2_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.65,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "A2_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "A2_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "A2_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "A2_D5",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "A3_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_sequence",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 1,
+      "maxStrength": 0.65,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "A3_D2",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "scope": "single_sequence",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "specificity",
+        "evidence_alignment",
+        "reasoning"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "Selects carry structure; optional note ≤150 is thin — require short reaction text for AI path."
+    },
+    {
+      "drillId": "A3_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_sequence",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "A3_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_sequence",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "A3_D5",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "single_sequence",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.8,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "B1_D1",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "States/factors structured; optional note ≤120 weak for AI — raise/require note or stay structured-only later."
+    },
+    {
+      "drillId": "B1_D2",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+    },
+    {
+      "drillId": "B1_D3",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+    },
+    {
+      "drillId": "B1_D4",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.8,
+      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+    },
+    {
+      "drillId": "B1_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+    },
+    {
+      "drillId": "B2_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "B2_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.8,
+      "notes": "Decision samples aggregate structurally; optional notes not required for evidence."
+    },
+    {
+      "drillId": "B2_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Decision samples aggregate structurally; optional notes not required for evidence."
+    },
+    {
+      "drillId": "B2_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Decision samples aggregate structurally; optional notes not required for evidence."
+    },
+    {
+      "drillId": "B2_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "reasoning",
+        "unsupported_claims",
+        "outcome_bias"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Radios + pattern_reason free text; production AI pilot."
+    },
+    {
+      "drillId": "B3_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.75,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "B3_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.8,
+      "notes": "Structured observation sufficient; optional note is not AI-necessary."
+    },
+    {
+      "drillId": "B3_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "B3_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "B3_D5",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C1_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C1_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C1_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C1_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C1_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Required profileSummary + structured layers."
+    },
+    {
+      "drillId": "C2_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C2_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C2_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C2_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C2_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "C3_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C3_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C3_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C3_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "C3_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "D1_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D1_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D1_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D1_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D1_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "D2_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D2_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D2_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D2_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D2_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "D3_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D3_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D3_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D3_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D3_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "outcome_bias"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Required profileSummary + structured blue-line radios."
+    },
+    {
+      "drillId": "D4_D1",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 3,
+      "maxStrength": 0.8,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D4_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "D4_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "multi_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.85,
+      "notes": "Prefer structured evidence over optional free-text AI."
+    },
+    {
+      "drillId": "E1_D1",
+      "assessmentSource": "ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration",
+        "uncertainty_calibration"
+      ],
+      "costLatencyClass": "high",
+      "evidenceLevel": 4,
+      "maxStrength": 0.85,
+      "notes": "Pattern summary over logs is the evidence core; production AI pilot."
+    },
+    {
+      "drillId": "E1_D2",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "E1_D3",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "E1_D4",
+      "assessmentSource": "structured_only",
+      "readiness": "NOT_SUITABLE_FOR_AI_EVIDENCE",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "No qualitative free text required; use structured/deterministic rules when available."
+    },
+    {
+      "drillId": "E1_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "pattern_synthesis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "E2_D1",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "E2_D2",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "uncertainty_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 4,
+      "maxStrength": 0.9,
+      "notes": "Summary/min-char constraints imply qualitative synthesis alongside structured fields."
+    },
+    {
+      "drillId": "E2_D3",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration",
+        "uncertainty_calibration",
+        "outcome_bias",
+        "reasoning"
+      ],
+      "costLatencyClass": "high",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "E2_D4",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration",
+        "uncertainty_calibration",
+        "outcome_bias",
+        "reasoning"
+      ],
+      "costLatencyClass": "high",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "E2_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration",
+        "uncertainty_calibration",
+        "outcome_bias",
+        "reasoning"
+      ],
+      "costLatencyClass": "high",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Structured fields plus required qualitative synthesis."
+    },
+    {
+      "drillId": "E3_D1",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "uncertainty_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Summary/min-char constraints imply qualitative synthesis alongside structured fields."
+    },
+    {
+      "drillId": "E3_D2",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "uncertainty_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Summary/min-char constraints imply qualitative synthesis alongside structured fields."
+    },
+    {
+      "drillId": "E3_D3",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "uncertainty_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 5,
+      "maxStrength": 0.95,
+      "notes": "Summary/min-char constraints imply qualitative synthesis alongside structured fields."
+    },
+    {
+      "drillId": "E3_D4",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "NEEDS_MECHANIC_CHANGE",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "unsupported_claims",
+        "scope_calibration"
+      ],
+      "costLatencyClass": "medium",
+      "evidenceLevel": 5,
+      "maxStrength": 1.0,
+      "notes": "Evidence assessment cases are structured; open statement quality may need explicit free-text or stay rule-based — review before AI."
+    },
+    {
+      "drillId": "E3_D5",
+      "assessmentSource": "ai_review",
+      "readiness": "READY",
+      "scope": "comparative_analysis",
+      "existingInputs": {
+        "structured": true,
+        "freeText": false,
+        "freeTextRequired": false,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "evidence_alignment",
+        "specificity",
+        "unsupported_claims",
+        "scope_calibration",
+        "outcome_bias",
+        "uncertainty_calibration"
+      ],
+      "costLatencyClass": "high",
+      "evidenceLevel": 5,
+      "maxStrength": 1.0,
+      "notes": "Claim ladder is primarily open analytical language."
+    }
+  ]
+}
