@@ -27,6 +27,7 @@ from competency.ai.schema import AiCompetencyQuality, AiEvidenceEvaluation
 from competency.map_context import clear_frozen_evidence_map_cache
 from competency.structured.curriculum import clear_curriculum_cache
 from competency.models import CompetencyId
+from entitlements.feature_keys import ACADEMY_PREMIUM
 from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER
 from repositories.wiring import configure_repositories, get_repos
 from security_guards import reset_rate_limiter_for_tests
@@ -158,6 +159,9 @@ class AiEvidenceE2ETests(unittest.TestCase):
             legacy_username="alice",
         )
         self.repos = get_repos()
+        self.repos.entitlements.grant_entitlement(
+            self.alice_id, ACADEMY_PREMIUM, source="manual"
+        )
         self.client = TestClient(backend_main.app)
 
     def tearDown(self):

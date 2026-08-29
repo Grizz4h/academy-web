@@ -155,6 +155,19 @@ class JsonEvidenceEventRepository:
                 out.append(hydrated)
         return out
 
+    def exists_for_source(
+        self,
+        user: AuthContext,
+        *,
+        source_type: str,
+        source_id: str,
+    ) -> bool:
+        doc = self._load_doc(user.rinq_user_id)
+        for row in doc.get("events") or []:
+            if row.get("source_type") == source_type and row.get("source_id") == source_id:
+                return True
+        return False
+
     def delete_for_user(self, user: AuthContext) -> int:
         import os
 

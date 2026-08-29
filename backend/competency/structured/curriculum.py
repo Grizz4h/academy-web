@@ -48,7 +48,20 @@ def resolve_session_drill(session: Dict[str, Any]) -> Optional[Tuple[str, Dict[s
     return None
 
 
+def curriculum_drill_config(drill_id: str) -> Dict[str, Any]:
+    """Evidence-authoritative config: curriculum only — never session/client overrides."""
+    curriculum = load_curriculum_drill(str(drill_id or "").strip())
+    if not curriculum:
+        return {}
+    cfg = curriculum.get("config")
+    return dict(cfg) if isinstance(cfg, dict) else {}
+
+
 def merged_drill_config(session_drill: Dict[str, Any]) -> Dict[str, Any]:
+    """Deprecated for evidence paths — prefer curriculum_drill_config.
+
+    Kept for non-evidence callers; still curriculum-first with session overlay.
+    """
     drill_id = str(session_drill.get("id") or "").strip()
     curriculum = load_curriculum_drill(drill_id) if drill_id else None
     session_cfg = session_drill.get("config") if isinstance(session_drill.get("config"), dict) else {}

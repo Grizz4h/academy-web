@@ -29,6 +29,10 @@ class CompetencyRecomputeService:
         self._states = states
         self._get_catalog = get_catalog
 
+    @property
+    def events(self) -> EvidenceEventRepository:
+        return self._events
+
     def recompute_user(self, user: AuthContext) -> EngineRecomputeResult:
         catalog, map_hash = self._get_catalog()
         event_list = list(self._events.list_for_user(user))

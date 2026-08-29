@@ -316,6 +316,18 @@ def collect_export(
         billing = pg.get("billing")
         withdrawals = pg.get("withdrawals") or []
 
+    competency_states: List[Any] = []
+    competency_evidence_events: List[Any] = []
+    if repos is not None:
+        try:
+            from competency.export import collect_competency_export
+
+            competency_payload = collect_competency_export(user, repos)
+            competency_states = competency_payload.get("competency_states") or []
+            competency_evidence_events = competency_payload.get("competency_evidence_events") or []
+        except Exception as exc:
+            logger.warning("[SEC] account_export_competency_failed err=%s", type(exc).__name__)
+
     return {
         "export_version": 2,
         "exported_at": date.today().isoformat(),
@@ -332,6 +344,8 @@ def collect_export(
         "entitlement_grants": entitlement_grants,
         "billing": billing,
         "withdrawals": withdrawals,
+        "competency_states": competency_states,
+        "competency_evidence_events": competency_evidence_events,
         "settings": {
             "auth_provider_active": user.auth_provider,
             "legacy_username": legacy,

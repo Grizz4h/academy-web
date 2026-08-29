@@ -45,4 +45,12 @@ class EvidenceEventRepository(Protocol):
         drill_id: Optional[str] = None,
     ) -> Iterable[EvidenceEvent]: ...
 
+    def exists_for_source(
+        self,
+        user: AuthContext,
+        *,
+        source_type: str,
+        source_id: str,
+    ) -> bool: ...
+
     def delete_for_user(self, user: AuthContext) -> int: ...

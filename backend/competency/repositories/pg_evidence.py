@@ -219,6 +219,30 @@ class PostgresEvidenceEventRepository:
                 out.append(hydrated)
         return out
 
+    def exists_for_source(
+        self,
+        user: AuthContext,
+        *,
+        source_type: str,
+        source_id: str,
+    ) -> bool:
+        try:
+            with connection() as conn:
+                row = conn.execute(
+                    """
+                    SELECT 1
+                    FROM evidence_events
+                    WHERE rinq_user_id = %s::uuid
+                      AND source_type = %s
+                      AND source_id = %s
+                    LIMIT 1
+                    """,
+                    (user.rinq_user_id, source_type, source_id),
+                ).fetchone()
+            return row is not None
+        except Exception as exc:
+            raise StorageError(str(exc)) from exc
+
     def delete_for_user(self, user: AuthContext) -> int:
         try:
             with transaction() as conn:

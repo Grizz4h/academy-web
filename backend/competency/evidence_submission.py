@@ -7,11 +7,20 @@ from typing import Any, Dict
 
 from identity.context import AuthContext
 
+from competency.ai.constants import SOURCE_TYPE as AI_SOURCE_TYPE
 from competency.ai.evaluator import AiEvidenceEvaluator
+from competency.completion_gate import is_submission_complete_for_evidence
 from competency.service import CompetencyRecomputeService
-from competency.structured.curriculum import merged_drill_config, resolve_session_drill
+from competency.structured.constants import SOURCE_TYPE as STRUCTURED_SOURCE_TYPE
+from competency.structured.curriculum import (
+    curriculum_drill_config,
+    load_curriculum_drill,
+    resolve_session_drill,
+)
 from competency.structured.evaluator import StructuredEvidenceEvaluator
-from repositories.errors import RepositoryError, StorageError
+
+
+EVIDENCE_SOURCE_TYPE = STRUCTURED_SOURCE_TYPE
 
 
 def process_evidence_for_checkin(
@@ -52,14 +61,43 @@ def process_evidence_for_checkin(
 
     if structured.supports_drill(drill_id):
         evaluator = structured
+        evaluator_kind = "structured"
     elif ai.supports_drill(drill_id):
         evaluator = ai
+        evaluator_kind = "ai"
     else:
         return 0
 
-    config = merged_drill_config(session_drill)
+    # H2: curriculum-only config — never session/client overrides
+    config = curriculum_drill_config(drill_id)
     source_id = f"{session_id}:{drill_id}"
-    drill_title = str(session_drill.get("title") or "")
+
+    # H3: idempotency before AI / expensive evaluate
+    if recompute_service.events.exists_for_source(
+        user,
+        source_type=EVIDENCE_SOURCE_TYPE,
+        source_id=source_id,
+    ):
+        logging.info(
+            "[competency] skip evaluate (source exists) session=%s drill=%s user=%s",
+            session_id,
+            drill_id,
+            user.rinq_user_id,
+        )
+        return 0
+
+    # H1: server completion gate — incomplete final must not start pipeline
+    if not is_submission_complete_for_evidence(drill_id, answers or {}, config):
+        logging.info(
+            "[competency] skip evidence (incomplete) session=%s drill=%s user=%s",
+            session_id,
+            drill_id,
+            user.rinq_user_id,
+        )
+        return 0
+
+    curriculum = load_curriculum_drill(drill_id) or {}
+    drill_title = str(curriculum.get("title") or session_drill.get("title") or "")
 
     if isinstance(evaluator, StructuredEvidenceEvaluator):
         events = evaluator.evaluate(
@@ -68,7 +106,6 @@ def process_evidence_for_checkin(
             drill_config=config,
             source_id=source_id,
         )
-        evaluator_kind = "structured"
     else:
         events = evaluator.evaluate(
             drill_id=drill_id,
@@ -77,7 +114,6 @@ def process_evidence_for_checkin(
             source_id=source_id,
             drill_title=drill_title,
         )
-        evaluator_kind = "ai"
 
     if not events:
         return 0
