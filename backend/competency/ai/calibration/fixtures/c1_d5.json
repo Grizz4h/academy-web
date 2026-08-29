@@ -1,0 +1,74 @@
+[
+  {
+    "caseId": "c1_very_weak",
+    "expectedBand": "very_weak",
+    "caseKind": "band",
+    "notes": "very_weak",
+    "answers": {
+      "profileSummary": "Defensive war heute irgendwie stabil oder auch nicht. Schwer zu beurteilen insgesamt."
+    }
+  },
+  {
+    "caseId": "c1_weak",
+    "expectedBand": "weak",
+    "caseKind": "band",
+    "notes": "weak",
+    "answers": {
+      "profileSummary": "Sie wirkten kompakt. Ob das ein Muster ist, weiß ich nicht — nur ein Eindruck."
+    }
+  },
+  {
+    "caseId": "c1_neutral",
+    "expectedBand": "neutral",
+    "caseKind": "band",
+    "notes": "neutral",
+    "answers": {
+      "profileSummary": "In zwei Szenen wirkte die Staffelung stabil, in einer unklar. Eher Hinweis als Tendenz."
+    }
+  },
+  {
+    "caseId": "c1_decent",
+    "expectedBand": "decent",
+    "caseKind": "band",
+    "notes": "decent",
+    "answers": {
+      "profileSummary": "Segment: nach Dump-ins blieben Abstände zwischen den drei Verteidigern wiederholt ähnlich eng; eine Szene mit größerem Gap notiert."
+    }
+  },
+  {
+    "caseId": "c1_strong",
+    "expectedBand": "strong",
+    "caseKind": "band",
+    "notes": "strong",
+    "answers": {
+      "profileSummary": "Mehrere vergleichbare Defensivszenen: enge Staffelung + früher Zugriff auf den Puckträger. Ein Gegenfall bei Überzahl gegen — Segmenttendenz, keine Identität."
+    }
+  },
+  {
+    "caseId": "c1_excellent",
+    "expectedBand": "excellent",
+    "caseKind": "band",
+    "notes": "excellent",
+    "answers": {
+      "profileSummary": "Vier vergleichbare Situationen (Dump-in/Entry): wiederkehrend enge Schichten und kontrollierter Gap. Ein Gegenfall. Stichprobe begrenzt auf heutiges Segment; kein Systemname, keine Ursache."
+    }
+  },
+  {
+    "caseId": "c1_adv_system_label",
+    "expectedBand": "weak",
+    "caseKind": "adversarial",
+    "notes": "system label",
+    "answers": {
+      "profileSummary": "Das ist klassisches 1-2-2 und deshalb sind sie defensiv stabil — Philosophie klar, auch ohne die Szenen einzeln zu belegen."
+    }
+  },
+  {
+    "caseId": "c1_adv_uncertain_good",
+    "expectedBand": "decent",
+    "caseKind": "adversarial",
+    "notes": "uncertain good",
+    "answers": {
+      "profileSummary": "Zwei Dump-ins mit ähnlicher enger Staffelung; dritte Szene anders. Unsicher ob schon Muster — eher segmentbezogener Hinweis."
+    }
+  }
+]

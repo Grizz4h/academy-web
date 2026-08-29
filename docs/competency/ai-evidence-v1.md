@@ -144,14 +144,18 @@ After manual review of 10–20 synthetic answers:
 
 Do **not** batch-migrate all text drills until pilot quality distribution is validated (~0.55–0.65 moderate, ~0.85 strong).
 
-## Calibration review (Phase 5B.1)
+## Calibration review (Phase 5B.1) + Generic Rubric V1
 
 Synthetic fixture review (no persistence):
 
 ```bash
 cd backend
 .venv/bin/python -m competency.ai.calibration --mock
+.venv/bin/python -m competency.ai.calibration --mock --validation
 .venv/bin/python -m competency.ai.calibration --live   # manual; costs tokens
 ```
 
-See `docs/competency/ai-evidence-calibration-review.md`.
+See:
+
+- `docs/competency/ai-evidence-calibration-review.md`
+- `docs/competency/ai-evidence-generic-rubric-v1.md` (Variant B: AI dimensions → backend quality)

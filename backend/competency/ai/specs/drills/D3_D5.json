@@ -1,0 +1,27 @@
+{
+  "drillId": "D3_D5",
+  "specVersion": "D3_D5-spec-v1",
+  "title": "Heutige Beobachtung an den blauen Linien",
+  "scope": "pattern_synthesis",
+  "primaryTextKeys": ["profileSummary", "observation_text"],
+  "evaluationFocus": [
+    "blue-line situations across the segment",
+    "space/options under transfer conditions",
+    "segment-scoped patterns"
+  ],
+  "requiredForStrong": [
+    "references more than one blue-line situation",
+    "connects space or options to visible conditions",
+    "keeps claim scoped to today's segment"
+  ],
+  "commonFailureModes": [
+    "generic blue-line theory",
+    "outcome bias from zone entries",
+    "one clip as season tendency"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "competencyAlignment": "high"
+  },
+  "validationOnly": true
+}

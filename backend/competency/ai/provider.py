@@ -1,4 +1,7 @@
-"""OpenAI provider for AI competency evidence — server-side only."""
+"""OpenAI provider for AI competency evidence — server-side only.
+
+Returns dimension scores only; quality is aggregated in the evaluator.
+"""
 
 from __future__ import annotations
 
@@ -6,28 +9,38 @@ import json
 import logging
 import os
 import time
-from typing import Any, Callable, Optional, Protocol
+from typing import Any, Callable, Optional, Protocol, Union
 
-from competency.ai.constants import AI_PROMPT_VERSION
-from competency.ai.prompt import SYSTEM_PROMPT_V2, build_user_prompt
+from competency.ai.constants import AI_EVALUATOR_VERSION, AI_PROMPT_VERSION
+from competency.ai.prompt import SYSTEM_PROMPT_V3, build_user_prompt
 from competency.ai.rubrics import AiEvaluationInput
-from competency.ai.schema import AI_EVIDENCE_JSON_SCHEMA, AiEvidenceEvaluation
+from competency.ai.schema import (
+    AI_DIMENSION_JSON_SCHEMA,
+    AiDimensionEvaluation,
+    AiEvidenceEvaluation,
+)
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_MODEL = "gpt-5-mini"
 DEFAULT_TIMEOUT_SECONDS = 30.0
 
+ProviderResult = Union[AiDimensionEvaluation, AiEvidenceEvaluation, None]
+
 
 class AiEvidenceProvider(Protocol):
-    def evaluate(self, evaluation: AiEvaluationInput) -> Optional[AiEvidenceEvaluation]:
+    def evaluate(self, evaluation: AiEvaluationInput) -> ProviderResult:
         ...
 
 
 def _config() -> dict[str, str]:
     return {
         "api_key": (os.environ.get("OPENAI_API_KEY") or "").strip(),
-        "model": (os.environ.get("OPENAI_EVIDENCE_MODEL") or os.environ.get("OPENAI_REFLECTION_MODEL") or DEFAULT_MODEL).strip(),
+        "model": (
+            os.environ.get("OPENAI_EVIDENCE_MODEL")
+            or os.environ.get("OPENAI_REFLECTION_MODEL")
+            or DEFAULT_MODEL
+        ).strip(),
         "prompt_version": (os.environ.get("OPENAI_EVIDENCE_PROMPT_VERSION") or AI_PROMPT_VERSION).strip(),
     }
 
@@ -56,15 +69,16 @@ def call_openai_evidence(
     *,
     cfg: Optional[dict[str, str]] = None,
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
-) -> tuple[Optional[AiEvidenceEvaluation], dict[str, str]]:
-    """Returns (evaluation, audit_metadata). None evaluation on any failure."""
+) -> tuple[Optional[AiDimensionEvaluation], dict[str, str]]:
+    """Returns (dimension evaluation, audit_metadata). None evaluation on any failure."""
     cfg = cfg or _config()
     audit = {
-        "evaluatorVersion": "ai-evidence-v1",
+        "evaluatorVersion": AI_EVALUATOR_VERSION,
         "rubricVersion": evaluation.rubric_version,
         "provider": "openai",
         "model": cfg["model"],
         "promptVersion": cfg["prompt_version"],
+        "qualitySource": "backend_aggregation_v1",
     }
 
     if not cfg["api_key"]:
@@ -84,15 +98,15 @@ def call_openai_evidence(
         response = client.responses.create(
             model=cfg["model"],
             input=[
-                {"role": "system", "content": SYSTEM_PROMPT_V2},
+                {"role": "system", "content": SYSTEM_PROMPT_V3},
                 {"role": "user", "content": user_prompt},
             ],
             text={
                 "format": {
                     "type": "json_schema",
-                    "name": "rink_ai_evidence",
+                    "name": "rink_ai_evidence_dimensions",
                     "strict": True,
-                    "schema": AI_EVIDENCE_JSON_SCHEMA,
+                    "schema": AI_DIMENSION_JSON_SCHEMA,
                 }
             },
             store=False,
@@ -120,7 +134,16 @@ def call_openai_evidence(
 
     try:
         parsed = json.loads(raw_text)
-        result = AiEvidenceEvaluation.model_validate(parsed)
+        # Strip accidental quality if model ignores schema
+        for row in parsed.get("competencies") or []:
+            if isinstance(row, dict):
+                row.pop("quality", None)
+                row.pop("score", None)
+                row.pop("confidence", None)
+                row.pop("breadth", None)
+                if "notes" not in row:
+                    row["notes"] = []
+        result = AiDimensionEvaluation.model_validate(parsed)
     except Exception as exc:
         logger.warning("[competency-ai] invalid AI JSON drill=%s: %s", evaluation.drill_id, exc)
         return None, audit
@@ -134,13 +157,15 @@ class OpenAiEvidenceProvider:
         *,
         cfg: Optional[dict[str, str]] = None,
         timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
-        caller: Optional[Callable[..., tuple[Optional[AiEvidenceEvaluation], dict[str, str]]]] = None,
+        caller: Optional[
+            Callable[..., tuple[Optional[AiDimensionEvaluation], dict[str, str]]]
+        ] = None,
     ):
         self._cfg = cfg
         self._timeout_seconds = timeout_seconds
         self._caller = caller or call_openai_evidence
 
-    def evaluate(self, evaluation: AiEvaluationInput) -> Optional[AiEvidenceEvaluation]:
+    def evaluate(self, evaluation: AiEvaluationInput) -> Optional[AiDimensionEvaluation]:
         result, _audit = self._caller(
             evaluation,
             cfg=self._cfg,
@@ -150,7 +175,7 @@ class OpenAiEvidenceProvider:
 
     def evaluate_with_audit(
         self, evaluation: AiEvaluationInput
-    ) -> tuple[Optional[AiEvidenceEvaluation], dict[str, str]]:
+    ) -> tuple[Optional[AiDimensionEvaluation], dict[str, str]]:
         return self._caller(
             evaluation,
             cfg=self._cfg,

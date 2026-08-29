@@ -1,0 +1,74 @@
+[
+  {
+    "caseId": "d3_very_weak",
+    "expectedBand": "very_weak",
+    "caseKind": "band",
+    "notes": "very_weak",
+    "answers": {
+      "profileSummary": "An den blauen Linien passierte irgendwas. Keine klaren Beobachtungen notiert leider."
+    }
+  },
+  {
+    "caseId": "d3_weak",
+    "expectedBand": "weak",
+    "caseKind": "band",
+    "notes": "weak",
+    "answers": {
+      "profileSummary": "Zone Entries wirkten mal gut mal schlecht. Mehr Detail fehlt zur blauen Linie."
+    }
+  },
+  {
+    "caseId": "d3_neutral",
+    "expectedBand": "neutral",
+    "caseKind": "band",
+    "notes": "neutral",
+    "answers": {
+      "profileSummary": "Ein Entry über die blaue Linie wirkte kontrolliert, ein anderer chaotisch — unsicher zum Muster."
+    }
+  },
+  {
+    "caseId": "d3_decent",
+    "expectedBand": "decent",
+    "caseKind": "band",
+    "notes": "decent",
+    "answers": {
+      "profileSummary": "Zwei Entries an der blauen Linie: einmal mit Support hinter dem Träger, einmal isoliert. Unterschiedliche Optionen sichtbar."
+    }
+  },
+  {
+    "caseId": "d3_strong",
+    "expectedBand": "strong",
+    "caseKind": "band",
+    "notes": "strong",
+    "answers": {
+      "profileSummary": "Segment blaue Linie: in drei Entries kam Support/Timing ähnlich; einmal Gap zu groß. Optionen und Raumbedingungen beobachtet, kein Saisonurteil."
+    }
+  },
+  {
+    "caseId": "d3_excellent",
+    "expectedBand": "excellent",
+    "caseKind": "band",
+    "notes": "excellent",
+    "answers": {
+      "profileSummary": "Mehrere Blue-Line-Szenen: wiederkehrend Timing von Support zum Entry, einmal Gegenfall ohne Support. Segment-scoped; Entscheidung ≠ Torerfolg getrennt."
+    }
+  },
+  {
+    "caseId": "d3_adv_outcome",
+    "expectedBand": "weak",
+    "caseKind": "adversarial",
+    "notes": "outcome bias",
+    "answers": {
+      "profileSummary": "Weil sie kein Tor geschossen haben, war die Blue-Line-Arbeit schlecht — das Ergebnis beweist die schwache Struktur klar."
+    }
+  },
+  {
+    "caseId": "d3_adv_short_precise",
+    "expectedBand": "strong",
+    "caseKind": "adversarial",
+    "notes": "short precise",
+    "answers": {
+      "profileSummary": "3 Entries: Support-Timing wiederholt ähnlich; 1 Gegenfall ohne Support. Segmenthinweis, kein Outcome-Urteil."
+    }
+  }
+]

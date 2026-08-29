@@ -1,0 +1,74 @@
+[
+  {
+    "caseId": "e3_very_weak",
+    "expectedBand": "very_weak",
+    "caseKind": "band",
+    "notes": "very_weak",
+    "answers": {
+      "finalClaim": "Das Team ist einfach besser. Mehr Begründung brauche ich nicht für diese Aussagestufe."
+    }
+  },
+  {
+    "caseId": "e3_weak",
+    "expectedBand": "weak",
+    "caseKind": "band",
+    "notes": "weak",
+    "answers": {
+      "finalClaim": "Es gibt ein starkes Muster. Falsifikation unklar, Stichprobe auch."
+    }
+  },
+  {
+    "caseId": "e3_neutral",
+    "expectedBand": "neutral",
+    "caseKind": "band",
+    "notes": "neutral",
+    "answers": {
+      "finalClaim": "Mögliche Tendenz zu früherem Support — aber Stichprobe dünn; Aussage eher vorsichtig."
+    }
+  },
+  {
+    "caseId": "e3_decent",
+    "expectedBand": "decent",
+    "caseKind": "band",
+    "notes": "decent",
+    "answers": {
+      "finalClaim": "Claim: in dieser Stichprobe häufiger Support unter Druck. Falsifikation: wenn nächste drei Druckszenen ohne Support enden."
+    }
+  },
+  {
+    "caseId": "e3_strong",
+    "expectedBand": "strong",
+    "caseKind": "band",
+    "notes": "strong",
+    "answers": {
+      "finalClaim": "Claim (Tendenz, nicht Ursache): Support unter Druck wiederholt sichtbar. Grenze: nur heutige Szenen. Nächster Test: gezielt Gegenfälle suchen."
+    }
+  },
+  {
+    "caseId": "e3_excellent",
+    "expectedBand": "excellent",
+    "caseKind": "band",
+    "notes": "excellent",
+    "answers": {
+      "finalClaim": "Aussagestufe Tendenz: mehrere vergleichbare Fälle + ein Gegenfall. Keine Kausalität. Falsifikation: systematisch andere Druckart ohne Support. Evidenzbasis explizit begrenzt."
+    }
+  },
+  {
+    "caseId": "e3_adv_causal",
+    "expectedBand": "weak",
+    "caseKind": "adversarial",
+    "notes": "causal overclaim",
+    "answers": {
+      "finalClaim": "Weil sie 1-2-2 spielen, verursachen sie zwingend diese Dominanz — kausal bewiesen, keine Gegenprobe nötig."
+    }
+  },
+  {
+    "caseId": "e3_adv_short_precise",
+    "expectedBand": "strong",
+    "caseKind": "adversarial",
+    "notes": "short precise",
+    "answers": {
+      "finalClaim": "Tendenzclaim aus 3 Fällen + 1 Gegenfall. Keine Ursache. Falsifikation: nächste Druckszenen ohne Support."
+    }
+  }
+]

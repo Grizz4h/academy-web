@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "source": "data/academy/competency/taxonomy.json",
+  "competencies": [
+    {
+      "competencyId": "scanning_identification",
+      "strongEvidence": [
+        "identifies relevant players, roles, events, or triggers that were visible",
+        "names concrete observation windows rather than vague 'I watched'",
+        "separates what was seen from what it might mean"
+      ],
+      "weakEvidence": [
+        "generic scanning claims without anchors",
+        "lists hockey roles from memory without scene reference",
+        "outcome-only judgements ('they found him because they scored')"
+      ]
+    },
+    {
+      "competencyId": "roles_support",
+      "strongEvidence": [
+        "describes functional relationships between players (support, cover, outlet)",
+        "ties role claims to visible positioning or actions",
+        "avoids inventing player intent"
+      ],
+      "weakEvidence": [
+        "generic 'good support' with no who/where",
+        "role labels without observable basis",
+        "confuses personal playing skill with reading roles"
+      ]
+    },
+    {
+      "competencyId": "space_structure",
+      "strongEvidence": [
+        "identifies relevant spatial relationships (gaps, layers, width/depth)",
+        "references observable spacing or structure",
+        "connects spatial configuration to available possibilities without inventing intent"
+      ],
+      "weakEvidence": [
+        "generic statements about having space",
+        "outcome-only judgement",
+        "unsupported tactical labels (system names as proof)"
+      ]
+    },
+    {
+      "competencyId": "options_decisions",
+      "strongEvidence": [
+        "names available options under stated conditions",
+        "identifies the chosen action distinctly from the result",
+        "links decision to visible constraints (time/space/pressure)"
+      ],
+      "weakEvidence": [
+        "praises or blames the outcome instead of the decision",
+        "claims 'always the right play' without options considered",
+        "invents what the player 'wanted' to do"
+      ]
+    },
+    {
+      "competencyId": "transition_tempo",
+      "strongEvidence": [
+        "marks a visible change over time (before → after)",
+        "describes first reaction / follow-up sequence with anchors",
+        "scopes claims to the observed transition window"
+      ],
+      "weakEvidence": [
+        "static structure talk with no temporal change",
+        "tempo jargon without sequence",
+        "team-identity claims from one switch"
+      ]
+    },
+    {
+      "competencyId": "pressure_control",
+      "strongEvidence": [
+        "grounds pressure in visible cues (forecheck, gap, stick/body access)",
+        "relates pressure to restricted time/space/options",
+        "avoids equating scoreboard result with control quality"
+      ],
+      "weakEvidence": [
+        "vague 'under pressure' with no cue",
+        "system name as substitute for observed control",
+        "outcome bias (they lost control because they conceded)"
+      ]
+    },
+    {
+      "competencyId": "systems_patterns",
+      "strongEvidence": [
+        "synthesizes recurring collective behaviour across comparable cases",
+        "keeps claims segment-scoped (not eternal team identity)",
+        "notes counterexamples or limits when present"
+      ],
+      "weakEvidence": [
+        "single action sold as system",
+        "memorized formation labels without sample",
+        "causal philosophy claims"
+      ]
+    },
+    {
+      "competencyId": "evidence_analysis",
+      "strongEvidence": [
+        "separates observation from inference",
+        "matches claim strength to sample size / comparability",
+        "avoids unsupported causality; states limits"
+      ],
+      "weakEvidence": [
+        "confident overclaim from thin sample",
+        "invented intent or cause",
+        "hockey theory without reference to delivered observations"
+      ]
+    }
+  ]
+}

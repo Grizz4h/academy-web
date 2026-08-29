@@ -2,15 +2,26 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Set
 
 from competency.ai.evaluator import AiEvidenceEvaluator
 from competency.ai.provider import OpenAiEvidenceProvider
+from competency.ai.specs import load_drill_assessment_spec
 
 from .bands import flags_for_row
 from .fixtures_loader import CalibrationCase, load_cases
 from .mock_provider import CalibrationMockProvider
 from .report import CalibrationReport, ReviewRow, build_report
+
+# Primary axes for validation-only drills (map weights exist; keep fixtures focused)
+VALIDATION_ALLOWED: Dict[str, Set[str]] = {
+    "A1_D2": {"scanning_identification", "roles_support", "space_structure"},
+    "A3_D2": {"transition_tempo", "scanning_identification", "space_structure"},
+    "B1_D1": {"roles_support", "space_structure", "scanning_identification"},
+    "C1_D5": {"systems_patterns", "evidence_analysis", "pressure_control", "space_structure"},
+    "D3_D5": {"systems_patterns", "evidence_analysis", "options_decisions", "space_structure"},
+    "E3_D5": {"evidence_analysis", "systems_patterns"},
+}
 
 
 def _primary_text(case: CalibrationCase) -> str:
@@ -21,7 +32,20 @@ def _primary_text(case: CalibrationCase) -> str:
             return text
         evidence = answers.get("pattern_evidence") or []
         return "; ".join(str(v) for v in evidence if str(v).strip())
-    return str(answers.get("pattern_summary") or "").strip()
+    if case.drill_id == "E1_D1":
+        return str(answers.get("pattern_summary") or "").strip()
+
+    spec = load_drill_assessment_spec(case.drill_id)
+    if spec is not None:
+        for key in spec.primary_text_keys:
+            text = str(answers.get(key) or "").strip()
+            if text:
+                return text
+    for key in ("observation_text", "profileSummary", "finalClaim", "note", "pattern_summary"):
+        text = str(answers.get(key) or "").strip()
+        if text:
+            return text
+    return ""
 
 
 def build_mock_provider(cases: Sequence[CalibrationCase]) -> CalibrationMockProvider:
@@ -35,11 +59,14 @@ def build_mock_provider(cases: Sequence[CalibrationCase]) -> CalibrationMockProv
 
 
 def run_case(evaluator: AiEvidenceEvaluator, case: CalibrationCase) -> List[ReviewRow]:
+    allowed_override = VALIDATION_ALLOWED.get(case.drill_id)
     detailed = evaluator.evaluate_detailed(
         drill_id=case.drill_id,
         answers=case.evaluator_answers(),
         drill_config=case.drill_config or {},
         drill_title=case.drill_title,
+        allow_validation_drills=bool(case.validation_only or allowed_override),
+        allowed_override=allowed_override,
     )
     rows: List[ReviewRow] = []
     if detailed is None:
@@ -98,12 +125,17 @@ def run_calibration(
     drill_ids: Optional[List[str]] = None,
     cases: Optional[List[CalibrationCase]] = None,
     evaluator: Optional[AiEvidenceEvaluator] = None,
+    include_validation: bool = False,
 ) -> CalibrationReport:
     """Evaluate synthetic fixtures. Never persists events/states/sessions."""
     if mode not in ("mock", "live"):
         raise ValueError("mode must be 'mock' or 'live'")
 
-    loaded = cases if cases is not None else load_cases(drill_ids)
+    loaded = (
+        cases
+        if cases is not None
+        else load_cases(drill_ids, include_validation=include_validation)
+    )
 
     if evaluator is None:
         if mode == "mock":

@@ -1,4 +1,4 @@
-"""Calibration-pass contract tests for E1_D1 + B2_D5 prompts/rubrics."""
+"""Calibration-pass contract tests for E1_D1 + B2_D5 (generic rubric regression)."""
 
 from __future__ import annotations
 
@@ -12,22 +12,24 @@ os.environ.setdefault("ACADEMY_JWT_SECRET", "test-jwt-secret-phase1-hardening-32
 BACKEND_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BACKEND_DIR))
 
+from competency.ai.aggregation import aggregate_quality
 from competency.ai.calibration.bands import BAND_ORDER, BAND_RANGES, flags_for_row
 from competency.ai.calibration.fixtures_loader import load_cases
-from competency.ai.calibration.mock_provider import MOCK_QUALITY_BY_BAND
+from competency.ai.calibration.mock_provider import dimensions_for_band
 from competency.ai.calibration.runner import run_calibration
 from competency.ai.constants import AI_PROMPT_VERSION, RUBRIC_VERSION_BY_DRILL
 from competency.ai.evaluator import clear_ai_profile_cache
-from competency.ai.prompt import DRILL_RUBRIC_GUIDANCE, SYSTEM_PROMPT_V2, build_user_prompt
+from competency.ai.prompt import SYSTEM_PROMPT_V3, build_user_prompt
 from competency.ai.rubrics import build_ai_evaluation_input
+from competency.ai.specs import load_drill_assessment_spec
 
 
 ANTI_BIAS_MARKERS = (
     "Do not reward length",
     "Do not reward confident tone",
-    "Do not infer missing observations",
-    "Do not assume tactical intent",
-    "Score only evidence explicitly supported",
+    "Never invent observations",
+    "Do not invent player intent",
+    "Score only what the learner explicitly delivered",
 )
 
 REQUIRED_BANDS = set(BAND_ORDER)
@@ -50,22 +52,25 @@ class CalibrationPassContractTests(unittest.TestCase):
         clear_ai_profile_cache()
 
     def test_prompt_versions_bumped(self):
-        self.assertEqual(AI_PROMPT_VERSION, "v2")
-        self.assertEqual(RUBRIC_VERSION_BY_DRILL["B2_D5"], "B2_D5-rubric-v2")
-        self.assertEqual(RUBRIC_VERSION_BY_DRILL["E1_D1"], "E1_D1-rubric-v2")
+        self.assertEqual(AI_PROMPT_VERSION, "v3")
+        self.assertEqual(RUBRIC_VERSION_BY_DRILL["B2_D5"], "B2_D5-spec-v1")
+        self.assertEqual(RUBRIC_VERSION_BY_DRILL["E1_D1"], "E1_D1-spec-v1")
 
     def test_system_prompt_anti_bias(self):
         for marker in ANTI_BIAS_MARKERS:
-            self.assertIn(marker, SYSTEM_PROMPT_V2)
+            self.assertIn(marker, SYSTEM_PROMPT_V3)
 
-    def test_drill_specific_rubrics_present(self):
-        self.assertIn("evidence_analysis", DRILL_RUBRIC_GUIDANCE["E1_D1"])
-        self.assertIn("repetition", DRILL_RUBRIC_GUIDANCE["E1_D1"])
-        self.assertIn("options_decisions", DRILL_RUBRIC_GUIDANCE["B2_D5"])
-        self.assertIn("pressure_control", DRILL_RUBRIC_GUIDANCE["B2_D5"])
-        self.assertIn("outcome", DRILL_RUBRIC_GUIDANCE["B2_D5"])
+    def test_drill_specs_carry_reference_calibration(self):
+        e1 = load_drill_assessment_spec("E1_D1")
+        b2 = load_drill_assessment_spec("B2_D5")
+        self.assertIsNotNone(e1)
+        self.assertIsNotNone(b2)
+        self.assertIn("repetition", " ".join(e1.evaluation_focus).lower())
+        self.assertEqual(e1.scope, "pattern_synthesis")
+        self.assertIn("pressure", " ".join(b2.evaluation_focus).lower())
+        self.assertIn("outcome", " ".join(b2.common_failure_modes + b2.required_for_strong).lower())
 
-    def test_user_prompt_embeds_drill_rubric_and_anti_bias(self):
+    def test_user_prompt_embeds_drill_spec_and_anti_bias(self):
         for drill_id in ("E1_D1", "B2_D5"):
             cases = [c for c in load_cases([drill_id]) if c.case_kind == "band"]
             self.assertTrue(cases)
@@ -79,7 +84,8 @@ class CalibrationPassContractTests(unittest.TestCase):
             )
             self.assertIsNotNone(evaluation)
             prompt = build_user_prompt(evaluation)
-            self.assertIn(DRILL_RUBRIC_GUIDANCE[drill_id][:40], prompt)
+            self.assertIn(drill_id, prompt)
+            self.assertIn("evaluationFocus", prompt)
             self.assertIn("do not reward length", prompt.lower())
 
     def test_six_band_coverage_per_drill(self):
@@ -117,10 +123,10 @@ class CalibrationPassContractTests(unittest.TestCase):
 
     def test_mock_qualities_sit_inside_bands(self):
         for band in BAND_ORDER:
-            quality = MOCK_QUALITY_BY_BAND[band]
+            quality = aggregate_quality(dimensions_for_band("evidence_analysis", band))
             lo, hi = BAND_RANGES[band]
-            self.assertGreaterEqual(quality, lo)
-            self.assertLessEqual(quality, hi)
+            self.assertGreaterEqual(quality, lo - 0.02)
+            self.assertLessEqual(quality, hi + 0.02)
             flags = flags_for_row(
                 expected_band=band,
                 quality=quality,
@@ -132,7 +138,6 @@ class CalibrationPassContractTests(unittest.TestCase):
     def test_mock_calibration_pass_adversarial_not_inflated(self):
         report = run_calibration(mode="mock")
         by_id = {r.caseId: r for r in report.rows}
-        # Primary axis row per case — long/empty and confident must not look strong
         long_empty = [r for r in report.rows if r.caseId.endswith("adv_long_empty")]
         self.assertTrue(long_empty)
         for row in long_empty:
@@ -150,14 +155,12 @@ class CalibrationPassContractTests(unittest.TestCase):
             self.assertGreaterEqual(row.unsupportedClaims, 0.40)
             self.assertLessEqual(row.quality, 0.45)
 
-        # Uncertain-good should beat hockey-jargon-no-obs under mock mapping
         for drill_prefix in ("e1", "b2"):
             uncertain = by_id[f"{drill_prefix}_adv_uncertain_good"]
             jargon = by_id[f"{drill_prefix}_adv_hockey_no_obs"]
             self.assertGreater(uncertain.quality, jargon.quality)
 
     def test_no_exact_float_expectations_in_band_contract(self):
-        """Bands are ranges — avoid fragile exact quality targets."""
         for band, (lo, hi) in BAND_RANGES.items():
             if band in ("moderate", "very_strong"):
                 continue

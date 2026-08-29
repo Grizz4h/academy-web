@@ -1,0 +1,26 @@
+{
+  "drillId": "A3_D2",
+  "specVersion": "A3_D2-spec-v1",
+  "title": "Erste Reaktion erkennen",
+  "scope": "single_sequence",
+  "primaryTextKeys": ["observation_text", "note"],
+  "evaluationFocus": [
+    "visible transition moment",
+    "first reaction after the switch",
+    "sequence before → after"
+  ],
+  "requiredForStrong": [
+    "marks the switch and the first visible reaction",
+    "keeps claim to the observed sequence window"
+  ],
+  "commonFailureModes": [
+    "static structure with no temporal change",
+    "tempo jargon without sequence",
+    "overgeneralized team tempo identity"
+  ],
+  "dimensionEmphasis": {
+    "relationalReasoning": "medium",
+    "evidenceScope": "medium"
+  },
+  "validationOnly": true
+}

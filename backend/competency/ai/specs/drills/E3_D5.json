@@ -1,0 +1,28 @@
+{
+  "drillId": "E3_D5",
+  "specVersion": "E3_D5-spec-v1",
+  "title": "Aussagestufen",
+  "scope": "comparative_analysis",
+  "primaryTextKeys": ["finalClaim", "falsificationCondition", "observation_text"],
+  "evaluationFocus": [
+    "claim strength matched to evidence base",
+    "falsification / next observation test",
+    "observation vs inference boundaries"
+  ],
+  "requiredForStrong": [
+    "states a claim whose strength fits the available evidence",
+    "includes a meaningful falsification or limit",
+    "does not invent missing observations"
+  ],
+  "commonFailureModes": [
+    "causal claim from thin sample",
+    "no falsification path",
+    "confident tone masking weak basis"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high"
+  },
+  "validationOnly": true
+}

@@ -1,18 +1,20 @@
-"""AiEvidenceEvaluator — competency-specific quality from free-text submissions."""
+"""AiEvidenceEvaluator — dimension scores from AI, quality from backend aggregation."""
 
 from __future__ import annotations
 
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Union
 
 from competency.models import AssessmentSource, CompetencyId, DrillCompetencyProfile, EvidenceEventCreate
 
+from .aggregation import AggregationContext, dimensions_to_quality_row, relational_scale_for_scope
 from .constants import AI_EVALUATOR_VERSION, MVP_AI_DRILL_IDS, RUBRIC_VERSION_BY_DRILL, SOURCE_TYPE
 from .provider import AiEvidenceProvider, OpenAiEvidenceProvider
 from .rubrics import build_ai_evaluation_input
-from .schema import AiEvidenceEvaluation
+from .schema import AiCompetencyQuality, AiDimensionEvaluation, AiEvidenceEvaluation
+from .specs import load_drill_assessment_spec
 
 
 def _profiles_path() -> Path:
@@ -30,6 +32,30 @@ def _profile_by_drill_id() -> Dict[str, DrillCompetencyProfile]:
 
 def clear_ai_profile_cache() -> None:
     _profile_by_drill_id.cache_clear()
+
+
+def _aggregation_context(drill_id: str) -> AggregationContext:
+    spec = load_drill_assessment_spec(drill_id)
+    scope = spec.scope if spec else "multi_observation"
+    return AggregationContext(relational_weight_scale=relational_scale_for_scope(scope))
+
+
+def aggregate_dimension_evaluation(
+    dimension_result: AiDimensionEvaluation,
+    *,
+    drill_id: str,
+    allowed: Set[str],
+) -> Optional[AiEvidenceEvaluation]:
+    ctx = _aggregation_context(drill_id)
+    rows: List[AiCompetencyQuality] = []
+    for item in dimension_result.competencies:
+        competency_id = str(item.competencyId)
+        if competency_id not in allowed:
+            continue
+        rows.append(dimensions_to_quality_row(item, context=ctx))
+    if not rows:
+        return None
+    return AiEvidenceEvaluation(competencies=rows)
 
 
 class AiEvidenceEvaluator:
@@ -65,6 +91,21 @@ class AiEvidenceEvaluator:
             qualities[competency_id] = max(0.0, min(1.0, float(item.quality)))
         return qualities
 
+    def _normalize_provider_result(
+        self,
+        raw: Union[AiDimensionEvaluation, AiEvidenceEvaluation, None],
+        *,
+        drill_id: str,
+        allowed: Set[str],
+    ) -> Optional[AiEvidenceEvaluation]:
+        if raw is None:
+            return None
+        if isinstance(raw, AiEvidenceEvaluation):
+            # Legacy/test providers that already supply quality — keep for unit tests only
+            filtered = [item for item in raw.competencies if str(item.competencyId) in allowed]
+            return AiEvidenceEvaluation(competencies=filtered) if filtered else None
+        return aggregate_dimension_evaluation(raw, drill_id=drill_id, allowed=allowed)
+
     def _run_provider(
         self,
         *,
@@ -72,24 +113,38 @@ class AiEvidenceEvaluator:
         answers: Dict[str, Any],
         drill_config: Dict[str, Any],
         drill_title: str = "",
+        allow_validation_drills: bool = False,
+        allowed_override: Optional[Set[str]] = None,
     ) -> tuple[Optional[AiEvidenceEvaluation], Dict[str, Any], Set[str]]:
         """Shared AI call path. Never persists. Returns (result, audit, allowed)."""
         drill_id = str(drill_id or "").strip()
         empty_audit: Dict[str, Any] = {
             "evaluatorVersion": AI_EVALUATOR_VERSION,
         }
-        if drill_id not in MVP_AI_DRILL_IDS:
+        if drill_id not in MVP_AI_DRILL_IDS and not allow_validation_drills:
             return None, empty_audit, set()
 
         profile = _profile_by_drill_id().get(drill_id)
         if profile is None or not profile.evidence.enabled:
-            return None, empty_audit, set()
+            if not (allow_validation_drills and allowed_override):
+                return None, empty_audit, set()
 
-        allowed = self._allowed_competency_ids(profile)
-        rubric_version = RUBRIC_VERSION_BY_DRILL.get(drill_id, AI_EVALUATOR_VERSION)
+        if allowed_override is not None:
+            allowed = set(allowed_override)
+        else:
+            assert profile is not None
+            allowed = self._allowed_competency_ids(profile)
+
+        spec = load_drill_assessment_spec(drill_id)
+        rubric_version = (
+            (spec.spec_version if spec else None)
+            or RUBRIC_VERSION_BY_DRILL.get(drill_id)
+            or AI_EVALUATOR_VERSION
+        )
         audit_metadata: Dict[str, Any] = {
             "evaluatorVersion": AI_EVALUATOR_VERSION,
             "rubricVersion": rubric_version,
+            "qualitySource": "backend_aggregation_v1",
         }
 
         evaluation_input = build_ai_evaluation_input(
@@ -99,28 +154,22 @@ class AiEvidenceEvaluator:
             allowed_competency_ids=allowed,
             rubric_version=rubric_version,
             drill_title=drill_title,
+            allow_validation_drills=allow_validation_drills,
         )
         if evaluation_input is None:
             return None, audit_metadata, allowed
 
         provider = self._provider
         if isinstance(provider, OpenAiEvidenceProvider):
-            ai_result, audit = provider.evaluate_with_audit(evaluation_input)
+            ai_raw, audit = provider.evaluate_with_audit(evaluation_input)
             audit_metadata.update(audit)
         else:
-            ai_result = provider.evaluate(evaluation_input)
+            ai_raw = provider.evaluate(evaluation_input)
 
-        if ai_result is None:
+        result = self._normalize_provider_result(ai_raw, drill_id=drill_id, allowed=allowed)
+        if result is None:
             return None, audit_metadata, allowed
-
-        filtered = [
-            item
-            for item in ai_result.competencies
-            if str(item.competencyId) in allowed
-        ]
-        if not filtered:
-            return None, audit_metadata, allowed
-        return AiEvidenceEvaluation(competencies=filtered), audit_metadata, allowed
+        return result, audit_metadata, allowed
 
     def evaluate_detailed(
         self,
@@ -129,6 +178,8 @@ class AiEvidenceEvaluator:
         answers: Dict[str, Any],
         drill_config: Dict[str, Any],
         drill_title: str = "",
+        allow_validation_drills: bool = False,
+        allowed_override: Optional[Set[str]] = None,
     ) -> Optional[AiEvidenceEvaluation]:
         """Full AI quality rows for review/calibration — no EvidenceEvents, no persistence."""
         result, _audit, _allowed = self._run_provider(
@@ -136,6 +187,8 @@ class AiEvidenceEvaluator:
             answers=answers,
             drill_config=drill_config,
             drill_title=drill_title,
+            allow_validation_drills=allow_validation_drills,
+            allowed_override=allowed_override,
         )
         return result
 
@@ -153,6 +206,7 @@ class AiEvidenceEvaluator:
             answers=answers,
             drill_config=drill_config,
             drill_title=drill_title,
+            allow_validation_drills=False,
         )
         if ai_result is None:
             return []

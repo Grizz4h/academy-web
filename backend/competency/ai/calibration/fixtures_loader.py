@@ -7,16 +7,30 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from competency.ai.specs import VALIDATION_AI_DRILLS, load_drill_assessment_spec
+
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 DRILL_FIXTURE_FILES = {
     "B2_D5": "b2_d5.json",
     "E1_D1": "e1_d1.json",
+    "A1_D2": "a1_d2.json",
+    "A3_D2": "a3_d2.json",
+    "B1_D1": "b1_d1.json",
+    "C1_D5": "c1_d5.json",
+    "D3_D5": "d3_d5.json",
+    "E3_D5": "e3_d5.json",
 }
 
 DRILL_TITLES = {
     "B2_D5": "Beobachtungstendenzen unter Druck",
     "E1_D1": "Wiederholt sich wirklich etwas?",
+    "A1_D2": "Wo taucht der Center auf?",
+    "A3_D2": "Erste Reaktion erkennen",
+    "B1_D1": "Unterstützung unter dem Puck",
+    "C1_D5": "Heutige Stabilitätsbeobachtung",
+    "D3_D5": "Heutige Beobachtung an den blauen Linien",
+    "E3_D5": "Aussagestufen",
 }
 
 DRILL_CONFIGS: Dict[str, Dict[str, Any]] = {
@@ -65,6 +79,7 @@ class CalibrationCase:
     notes: str = ""
     drill_title: str = ""
     drill_config: Optional[Dict[str, Any]] = None
+    validation_only: bool = False
 
     def evaluator_answers(self) -> Dict[str, Any]:
         """Answers only — no expectedBand / caseKind leakage."""
@@ -87,14 +102,23 @@ def load_fixture_document(drill_id: str, *, directory: Optional[Path] = None) ->
     return data
 
 
+def default_drill_ids(*, include_validation: bool = False) -> List[str]:
+    ids = ["B2_D5", "E1_D1"]
+    if include_validation:
+        ids.extend(sorted(VALIDATION_AI_DRILLS))
+    return ids
+
+
 def load_cases(
     drill_ids: Optional[List[str]] = None,
     *,
     directory: Optional[Path] = None,
+    include_validation: bool = False,
 ) -> List[CalibrationCase]:
-    ids = drill_ids or list(DRILL_FIXTURE_FILES.keys())
+    ids = drill_ids or default_drill_ids(include_validation=include_validation)
     cases: List[CalibrationCase] = []
     for drill_id in ids:
+        spec = load_drill_assessment_spec(drill_id)
         for row in load_fixture_document(drill_id, directory=directory):
             case_id = str(row.get("caseId") or "").strip()
             expected = str(row.get("expectedBand") or "").strip().lower()
@@ -113,6 +137,7 @@ def load_cases(
                     notes=str(row.get("notes") or ""),
                     drill_title=DRILL_TITLES.get(drill_id, drill_id),
                     drill_config=dict(DRILL_CONFIGS.get(drill_id) or {}),
+                    validation_only=bool(spec.validation_only) if spec else drill_id in VALIDATION_AI_DRILLS,
                 )
             )
     return cases

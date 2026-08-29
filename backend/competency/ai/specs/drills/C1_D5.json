@@ -1,0 +1,27 @@
+{
+  "drillId": "C1_D5",
+  "specVersion": "C1_D5-spec-v1",
+  "title": "Heutige Stabilitätsbeobachtung",
+  "scope": "pattern_synthesis",
+  "primaryTextKeys": ["profileSummary", "observation_text"],
+  "evaluationFocus": [
+    "segment-scoped defensive stability patterns",
+    "recurring collective behaviour",
+    "limits of the sample"
+  ],
+  "requiredForStrong": [
+    "ties pattern to multiple comparable situations in the segment",
+    "avoids eternal team-identity claims",
+    "separates observation from system labels"
+  ],
+  "commonFailureModes": [
+    "single scene as system proof",
+    "formation name as evidence",
+    "unsupported causality"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "relationalReasoning": "high"
+  },
+  "validationOnly": true
+}

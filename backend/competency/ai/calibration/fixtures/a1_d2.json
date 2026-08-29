@@ -1,0 +1,74 @@
+[
+  {
+    "caseId": "a1_very_weak",
+    "expectedBand": "very_weak",
+    "caseKind": "band",
+    "notes": "very_weak",
+    "answers": {
+      "observation_text": "Irgendwie war der Center da. Mehr fällt mir nicht ein zum Auffinden."
+    }
+  },
+  {
+    "caseId": "a1_weak",
+    "expectedBand": "weak",
+    "caseKind": "band",
+    "notes": "weak",
+    "answers": {
+      "observation_text": "Der Center war irgendwo in der Neutralzone. Genau weiß ich die Position nicht."
+    }
+  },
+  {
+    "caseId": "a1_neutral",
+    "expectedBand": "neutral",
+    "caseKind": "band",
+    "notes": "neutral",
+    "answers": {
+      "observation_text": "Center tauchte kurz hinter dem Puckführer auf der starken Seite auf — unsicher, ob das die Hauptposition war."
+    }
+  },
+  {
+    "caseId": "a1_decent",
+    "expectedBand": "decent",
+    "caseKind": "band",
+    "notes": "decent",
+    "answers": {
+      "observation_text": "Nach dem Faceoff in NZ links erschien der Center als Anspielstation zwischen den Halbverteidigern, sichtbar durch seine offene Körperhaltung zum Pass."
+    }
+  },
+  {
+    "caseId": "a1_strong",
+    "expectedBand": "strong",
+    "caseKind": "band",
+    "notes": "strong",
+    "answers": {
+      "observation_text": "In der Offensivzone rechts tauchte der Center erneut hinter dem Puckträger auf der Wandseite auf; gleiche sichtbare Position wie zuvor im Clip — kein Intent geraten."
+    }
+  },
+  {
+    "caseId": "a1_excellent",
+    "expectedBand": "excellent",
+    "caseKind": "band",
+    "notes": "excellent",
+    "answers": {
+      "observation_text": "Zwei Sichtungen: 1) NZ Mitte nach Turnover — Center öffnet sich als Outlet. 2) OZ rechts — Center wieder hinter dem Träger an der Wand. Nur Orte/Zeitfenster; keine Teamtendenz behauptet."
+    }
+  },
+  {
+    "caseId": "a1_adv_long_empty",
+    "expectedBand": "very_weak",
+    "caseKind": "adversarial",
+    "notes": "long empty",
+    "answers": {
+      "observation_text": "Centerspieler sind im modernen Hockey natürlich entscheidend für Struktur und Tempo, weshalb man theoretisch oft von ihrer Präsenz sprechen kann, ohne konkrete Orte zu nennen, was hier leider der Fall bleibt trotz ausführlicher Formulierung."
+    }
+  },
+  {
+    "caseId": "a1_adv_short_precise",
+    "expectedBand": "strong",
+    "caseKind": "adversarial",
+    "notes": "short precise",
+    "answers": {
+      "observation_text": "OZ rechts, Wandseite: Center erscheint hinter dem Träger als klare Anspielstation — einmal sichtbar, keine Tendenz behauptet."
+    }
+  }
+]

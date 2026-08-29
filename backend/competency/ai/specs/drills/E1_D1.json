@@ -1,0 +1,30 @@
+{
+  "drillId": "E1_D1",
+  "specVersion": "E1_D1-spec-v1",
+  "title": "Wiederholt sich wirklich etwas?",
+  "scope": "pattern_synthesis",
+  "primaryTextKeys": ["pattern_summary"],
+  "evaluationFocus": [
+    "repetition across multiple observations",
+    "observation vs interpretation",
+    "statement limits",
+    "visible anchors (zone/trigger/reaction/sequence)"
+  ],
+  "requiredForStrong": [
+    "references more than one comparable observation",
+    "separates observation from interpretation",
+    "avoids unsupported causality",
+    "keeps claim scoped to the sample"
+  ],
+  "commonFailureModes": [
+    "single event sold as tendency",
+    "outcome-only similarity",
+    "jargon without observation anchors",
+    "confident unsupported team philosophy"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "relationalReasoning": "medium",
+    "outcomeBias": "medium"
+  }
+}

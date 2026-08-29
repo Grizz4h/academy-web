@@ -1,0 +1,30 @@
+{
+  "drillId": "B2_D5",
+  "specVersion": "B2_D5-spec-v1",
+  "title": "Beobachtungstendenzen unter Druck",
+  "scope": "multi_observation",
+  "primaryTextKeys": ["pattern_reason"],
+  "evaluationFocus": [
+    "visible pressure cue",
+    "available options",
+    "repeated decision",
+    "conditions of occurrence",
+    "counterexamples when present"
+  ],
+  "requiredForStrong": [
+    "references more than one pressure situation",
+    "distinguishes decision from outcome",
+    "ties claim to pressure condition + chosen option"
+  ],
+  "commonFailureModes": [
+    "generic 'under pressure they play fast'",
+    "outcome bias",
+    "team identity without sample",
+    "missing pressure cue"
+  ],
+  "dimensionEmphasis": {
+    "relationalReasoning": "high",
+    "outcomeBias": "high",
+    "evidenceScope": "high"
+  }
+}

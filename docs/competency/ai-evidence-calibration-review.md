@@ -1,7 +1,7 @@
 # AI Evidence Calibration Review — Phase 5B.1 / Calibration Pass
 
 **Status:** tooling only (not production pipeline)  
-**Prompt:** `ai-evidence` prompt `v2` · rubrics `B2_D5-rubric-v2` / `E1_D1-rubric-v2`
+**Prompt:** `ai-evidence` prompt `v3` · specs `*-spec-v1` · aggregator `backend_aggregation_v1`
 
 ## Purpose
 

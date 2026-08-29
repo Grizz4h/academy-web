@@ -193,7 +193,7 @@ class AiEvidenceE2ETests(unittest.TestCase):
     def test_pilot_final_checkin_creates_ai_evidence(self, mock_openai):
         mock_openai.return_value = (
             _mock_b2_d5_ai_result(),
-            {"evaluatorVersion": "ai-evidence-v1", "model": "mock"},
+            {"evaluatorVersion": "ai-evidence-v2", "model": "mock"},
         )
         session_id = self._create_session(drill_id="B2_D5", module_id="B2")
         res = self.client.post(

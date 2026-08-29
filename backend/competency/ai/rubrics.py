@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set
 
 from .constants import MIN_FREE_TEXT_CHARS, MVP_AI_DRILL_IDS
+from .specs import load_drill_assessment_spec
 
 
 def _as_str(value: Any) -> str:
@@ -28,6 +29,8 @@ class AiEvaluationInput:
     structured_context: Dict[str, Any]
     allowed_competency_ids: Set[str]
     rubric_version: str
+    drill_assessment_spec: Dict[str, Any] = field(default_factory=dict)
+    scope: str = "multi_observation"
 
 
 def _label_for_option(questions: List[Dict[str, Any]], key: str, value: str) -> str:
@@ -55,6 +58,22 @@ def _summarize_observations(observations: List[Any], *, max_items: int = 5) -> L
             }
         )
     return rows
+
+
+def _attach_spec(evaluation: AiEvaluationInput) -> AiEvaluationInput:
+    spec = load_drill_assessment_spec(evaluation.drill_id)
+    if spec is None:
+        return evaluation
+    return AiEvaluationInput(
+        drill_id=evaluation.drill_id,
+        drill_title=evaluation.drill_title or spec.title,
+        primary_text=evaluation.primary_text,
+        structured_context=evaluation.structured_context,
+        allowed_competency_ids=evaluation.allowed_competency_ids,
+        rubric_version=spec.spec_version,
+        drill_assessment_spec=spec.to_prompt_dict(),
+        scope=spec.scope,
+    )
 
 
 def build_b2_d5_input(
@@ -92,13 +111,15 @@ def build_b2_d5_input(
     if not primary_text and evidence_values:
         primary_text = "; ".join(structured_context["pattern_evidence_labels"])
 
-    return AiEvaluationInput(
-        drill_id="B2_D5",
-        drill_title=drill_title,
-        primary_text=primary_text,
-        structured_context=structured_context,
-        allowed_competency_ids=allowed_competency_ids,
-        rubric_version=rubric_version,
+    return _attach_spec(
+        AiEvaluationInput(
+            drill_id="B2_D5",
+            drill_title=drill_title,
+            primary_text=primary_text,
+            structured_context=structured_context,
+            allowed_competency_ids=allowed_competency_ids,
+            rubric_version=rubric_version,
+        )
     )
 
 
@@ -133,13 +154,63 @@ def build_e1_d1_input(
         "observations": _summarize_observations(observations),
     }
 
+    return _attach_spec(
+        AiEvaluationInput(
+            drill_id="E1_D1",
+            drill_title=drill_title,
+            primary_text=pattern_summary,
+            structured_context=structured_context,
+            allowed_competency_ids=allowed_competency_ids,
+            rubric_version=rubric_version,
+        )
+    )
+
+
+def build_generic_spec_input(
+    drill_id: str,
+    answers: Dict[str, Any],
+    drill_config: Dict[str, Any],
+    *,
+    allowed_competency_ids: Set[str],
+    rubric_version: str = "",
+    drill_title: str = "",
+) -> Optional[AiEvaluationInput]:
+    """Validation / future drills: primary text from assessment spec keys."""
+    spec = load_drill_assessment_spec(drill_id)
+    if spec is None:
+        return None
+
+    primary_text = ""
+    for key in spec.primary_text_keys:
+        candidate = _as_str(answers.get(key))
+        if len(candidate) >= MIN_FREE_TEXT_CHARS:
+            primary_text = candidate
+            break
+        if candidate and not primary_text:
+            primary_text = candidate
+
+    if len(primary_text) < MIN_FREE_TEXT_CHARS:
+        return None
+
+    # Keep a small trusted context: non-primary answer keys (truncated)
+    context: Dict[str, Any] = {"drill_config_keys": sorted(str(k) for k in (drill_config or {}).keys())[:12]}
+    for key, value in (answers or {}).items():
+        if key in spec.primary_text_keys:
+            continue
+        if isinstance(value, (str, int, float, bool)):
+            context[str(key)] = value if not isinstance(value, str) else value[:200]
+        elif isinstance(value, list) and len(value) <= 8:
+            context[str(key)] = value
+
     return AiEvaluationInput(
-        drill_id="E1_D1",
-        drill_title=drill_title,
-        primary_text=pattern_summary,
-        structured_context=structured_context,
+        drill_id=spec.drill_id,
+        drill_title=drill_title or spec.title,
+        primary_text=primary_text,
+        structured_context=context,
         allowed_competency_ids=allowed_competency_ids,
-        rubric_version=rubric_version,
+        rubric_version=rubric_version or spec.spec_version,
+        drill_assessment_spec=spec.to_prompt_dict(),
+        scope=spec.scope,
     )
 
 
@@ -157,17 +228,28 @@ def build_ai_evaluation_input(
     allowed_competency_ids: Set[str],
     rubric_version: str,
     drill_title: str = "",
+    allow_validation_drills: bool = False,
 ) -> Optional[AiEvaluationInput]:
     drill_id = _as_str(drill_id)
-    if drill_id not in MVP_AI_DRILL_IDS:
-        return None
     builder = INPUT_BUILDER_BY_DRILL.get(drill_id)
-    if builder is None:
-        return None
-    return builder(
-        answers or {},
-        drill_config or {},
-        allowed_competency_ids=allowed_competency_ids,
-        rubric_version=rubric_version,
-        drill_title=drill_title or drill_id,
-    )
+    if builder is not None:
+        if drill_id not in MVP_AI_DRILL_IDS and not allow_validation_drills:
+            return None
+        return builder(
+            answers or {},
+            drill_config or {},
+            allowed_competency_ids=allowed_competency_ids,
+            rubric_version=rubric_version,
+            drill_title=drill_title or drill_id,
+        )
+
+    if allow_validation_drills:
+        return build_generic_spec_input(
+            drill_id,
+            answers or {},
+            drill_config or {},
+            allowed_competency_ids=allowed_competency_ids,
+            rubric_version=rubric_version,
+            drill_title=drill_title,
+        )
+    return None

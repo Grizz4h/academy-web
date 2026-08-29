@@ -1,13 +1,18 @@
-"""Versioning and pilot drill IDs for AI competency evidence (Phase 5B)."""
+"""Versioning and pilot drill IDs for AI competency evidence."""
 
-AI_EVALUATOR_VERSION = "ai-evidence-v1"
-AI_PROMPT_VERSION = "v2"
+from competency.ai.specs import PRODUCTION_AI_DRILLS, VALIDATION_AI_DRILLS
+
+AI_EVALUATOR_VERSION = "ai-evidence-v2"
+AI_PROMPT_VERSION = "v3"
+AI_RUBRIC_VERSION = "generic-rubric-v1"
 SOURCE_TYPE = "drill_submission"
 
-RUBRIC_B2_D5 = "B2_D5-rubric-v2"
-RUBRIC_E1_D1 = "E1_D1-rubric-v2"
+# Production pilots only — validation specs exist but are not wired into checkin dispatch
+MVP_AI_DRILL_IDS = frozenset(PRODUCTION_AI_DRILLS)
+VALIDATION_DRILL_IDS = frozenset(VALIDATION_AI_DRILLS)
 
-MVP_AI_DRILL_IDS = frozenset({"B2_D5", "E1_D1"})
+RUBRIC_B2_D5 = "B2_D5-spec-v1"
+RUBRIC_E1_D1 = "E1_D1-spec-v1"
 
 RUBRIC_VERSION_BY_DRILL = {
     "B2_D5": RUBRIC_B2_D5,

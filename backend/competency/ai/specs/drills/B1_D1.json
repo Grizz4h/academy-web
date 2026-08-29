@@ -1,0 +1,26 @@
+{
+  "drillId": "B1_D1",
+  "specVersion": "B1_D1-spec-v1",
+  "title": "Unterstützung unter dem Puck",
+  "scope": "single_observation",
+  "primaryTextKeys": ["observation_text", "note"],
+  "evaluationFocus": [
+    "who supports whom",
+    "functional support relation under the puck",
+    "visible positioning / action"
+  ],
+  "requiredForStrong": [
+    "identifies support relationship with observable anchors",
+    "does not invent player intent"
+  ],
+  "commonFailureModes": [
+    "generic 'good support'",
+    "role label without who/where",
+    "outcome-only praise"
+  ],
+  "dimensionEmphasis": {
+    "competencyAlignment": "high",
+    "observationGrounding": "high"
+  },
+  "validationOnly": true
+}

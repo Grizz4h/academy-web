@@ -39,6 +39,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Limit to drill id (repeatable). Default: B2_D5 and E1_D1",
     )
     parser.add_argument(
+        "--validation",
+        action="store_true",
+        help="Include 6 cross-drill validation fixtures (generic rubric check)",
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="Emit JSON instead of Markdown",
@@ -48,6 +53,7 @@ def main(argv: list[str] | None = None) -> int:
     report = run_calibration(
         mode="live" if args.live else "mock",
         drill_ids=args.drills,
+        include_validation=bool(args.validation),
     )
 
     if args.json:
