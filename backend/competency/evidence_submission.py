@@ -46,6 +46,12 @@ def process_evidence_for_checkin(
     if not final:
         return 0
     if session.get("is_dummy") is True:
+        logging.info(
+            "[competency] skip evidence (dummy session) session=%s drill=%s user=%s",
+            session_id,
+            (session.get("drill_id") or ""),
+            user.rinq_user_id,
+        )
         return 0
 
     resolved = resolve_session_drill(session)

@@ -144,7 +144,18 @@ export default function History() {
   });
 
   const uniqueModules = [...new Set(sessionList.map(s => s.module_id) || [])]
-  const uniqueCreators = [...new Set(sessionList.map(s => s.created_by).filter(Boolean) || [])] as string[]
+  const uniqueCreators = useMemo(() => {
+    const byId = new Map<string, string>()
+    for (const session of sessionList) {
+      const id = session.created_by || session.user
+      if (!id) continue
+      const label = (session.display_name || '').trim() || id
+      if (!byId.has(id)) byId.set(id, label)
+    }
+    return [...byId.entries()].map(([id, label]) => ({ id, label }))
+  }, [sessionList])
+
+  const creatorFilterLabel = uniqueCreators.find((c) => c.id === filterCreator)?.label || filterCreator
 
   const scenesBySession = useMemo(() => {
     const map = new Map<string, Array<{ id: string; game_time: string; period?: string; created_at: string }>>()
@@ -256,7 +267,7 @@ export default function History() {
   const activeFilterChips = [
     filterYear ? { key: 'year', label: `Jahr: ${filterYear}`, clear: () => { setFilterYear(''); setFilterMonth('') } } : null,
     filterMonth ? { key: 'month', label: `Monat: ${getMonthLabel(filterMonth)}`, clear: () => setFilterMonth('') } : null,
-    filterCreator ? { key: 'creator', label: `Ersteller: ${filterCreator}`, clear: () => setFilterCreator('') } : null,
+    filterCreator ? { key: 'creator', label: `Ersteller: ${creatorFilterLabel}`, clear: () => setFilterCreator('') } : null,
     filterModule ? { key: 'module', label: `Modul: ${filterModule}`, clear: () => setFilterModule('') } : null,
     filterStatus ? { key: 'status', label: `Status: ${statusLabel(filterStatus)}`, clear: () => setFilterStatus('') } : null,
   ].filter(Boolean) as Array<{ key: string; label: string; clear: () => void }>
@@ -415,7 +426,7 @@ export default function History() {
                   onChange={e => setFilterCreator(e.target.value)}
                 >
                   <option value="">Alle</option>
-                  {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+                  {uniqueCreators.map(creator => (<option key={creator.id} value={creator.id}>{creator.label}</option>))}
                 </select>
               </div>
               <div className={styles.filterField}>
@@ -521,7 +532,7 @@ export default function History() {
           <FilterSheetStack>
             <select className="appSelect" value={filterCreator} onChange={e => setFilterCreator(e.target.value)} aria-label="Ersteller">
               <option value="">Ersteller: Alle</option>
-              {uniqueCreators.map(creator => (<option key={creator} value={creator}>{creator}</option>))}
+              {uniqueCreators.map(creator => (<option key={creator.id} value={creator.id}>{creator.label}</option>))}
             </select>
             <select className="appSelect" value={filterModule} onChange={e => setFilterModule(e.target.value)} aria-label="Modul">
               <option value="">Modul: Alle</option>

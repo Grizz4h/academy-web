@@ -1,0 +1,48 @@
+{
+  "drillId": "E2_D5",
+  "specVersion": "E2_D5-spec-v1",
+  "title": "Mögliche Spielanpassungen im beobachteten Segment",
+  "scope": "comparative_analysis",
+  "primaryTextKeys": ["segmentSummary", "falsificationNote", "noAdjustmentReason"],
+  "primaryCompetencies": [
+    "evidence_analysis",
+    "systems_patterns",
+    "transition_tempo",
+    "options_decisions"
+  ],
+  "observableEvidence": [
+    "before/after behavior change grounded in comparable scenes",
+    "trigger evidence kept separate from guessed cause",
+    "explicit uncertainty / no-clear-adjustment when warranted"
+  ],
+  "evaluationFocus": [
+    "adjustment profile synthesis for the observed segment",
+    "separate observed change from causal speculation",
+    "uncertainty and alternatives without outcome bias"
+  ],
+  "requiredForStrong": [
+    "describes visible before/after change or justified no-clear path",
+    "keeps trigger evidence observational",
+    "avoids coach intention and system identity as proof"
+  ],
+  "commonFailureModes": [
+    "cause asserted without comparable before/after",
+    "single highlight as adjustment",
+    "outcome bias from goals",
+    "empty wrap-up without segment grounding"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high",
+    "outcomeBias": "high",
+    "relationalReasoning": "high",
+    "specificity": "high",
+    "competencyAlignment": "high"
+  },
+  "fairnessNote": "Excellent means excellent change/uncertainty calibration for THIS drill — a justified no-clear-adjustment can outrank a confident overclaim.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required segmentSummary (≥40) already usable; adjustment entries or noClearAdjustment path provide structured support.",
+  "validationOnly": false
+}

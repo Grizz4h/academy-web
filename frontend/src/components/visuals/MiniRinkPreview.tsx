@@ -63,8 +63,8 @@ export function MiniRinkPreview({
   const rinkH = height - padY * 2
   const rx = Math.min(rinkW, rinkH) * 0.18
   const cx = padX + rinkW / 2
-  const leftBlue = padX + rinkW * 0.33
-  const rightBlue = padX + rinkW * 0.67
+  const leftBlue = padX + rinkW * 0.38
+  const rightBlue = padX + rinkW * 0.62
 
   const toX = (x: number) => padX + clamp01(x) * rinkW
   const toY = (y: number) => padY + clamp01(y) * rinkH

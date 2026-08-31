@@ -65,9 +65,10 @@ Code: `backend/competency/ai/aggregation.py`
 
 Schema fields: `drillId`, `specVersion`, `scope`, `primaryTextKeys`, `evaluationFocus`, `requiredForStrong`, `commonFailureModes`, `dimensionEmphasis`, optional `validationOnly`.
 
-**Production pilots (wired):** `E1_D1`, `B2_D5`  
+**Production (wired):** `A3_D2`, `B1_D1`–`B1_D5`, `E1_D1`, `E1_D5`, `B2_D5`, `C1_D5`, `C2_D5`, `C3_D5`, `D1_D5`, `D2_D5`, `D3_D5`, `E2_D1`–`E2_D5`, `E3_D1`–`E3_D5`
 **Validation-only (specs + fixtures, not checkin-wired):**  
-`A1_D2`, `A3_D2`, `B1_D1`, `C1_D5`, `D3_D5`, `E3_D5`
+`A1_D2`, `A3_D2`, `B1_D1`  
+(`C1_D5` / `D3_D5` / `E3_D5` remain in the validation matrix for calibration.)
 
 Scope types: `single_observation` · `single_sequence` · `multi_observation` · `pattern_synthesis` · `comparative_analysis`
 

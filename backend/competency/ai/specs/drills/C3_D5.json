@@ -1,0 +1,48 @@
+{
+  "drillId": "C3_D5",
+  "specVersion": "C3_D5-spec-v1",
+  "title": "Heutige Offensivstruktur-Beobachtung",
+  "scope": "pattern_synthesis",
+  "primaryTextKeys": ["profileSummary", "observation_text"],
+  "primaryCompetencies": [
+    "systems_patterns",
+    "evidence_analysis",
+    "space_structure",
+    "options_decisions"
+  ],
+  "observableEvidence": [
+    "recurring offensive space / connection / decision patterns across comparable scenes",
+    "segment-scoped structure cues independent of scoring outcomes",
+    "counterexamples or limits when present"
+  ],
+  "evaluationFocus": [
+    "segment-scoped offensive structure recurrence",
+    "space creation and connections without outcome bias",
+    "limits of the sample; no system or coach identity"
+  ],
+  "requiredForStrong": [
+    "ties pattern to multiple comparable situations in the segment",
+    "avoids formation/system names as proof",
+    "separates structure observation from scoring success"
+  ],
+  "commonFailureModes": [
+    "single scene sold as offensive identity",
+    "goals or highlights as structure proof",
+    "formation/system name as evidence",
+    "unsupported causality / philosophy"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "relationalReasoning": "high",
+    "competencyAlignment": "high",
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high",
+    "observationGrounding": "medium",
+    "specificity": "medium"
+  },
+  "fairnessNote": "Excellent here means excellent synthesis for THIS drill — structure quality is not scoring quality. Same quality band scale as other C-track summaries.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required profileSummary (20–800 chars) is already usable. Structured radios remain authoritative for layers; AI evaluates the summary.",
+  "validationOnly": false
+}

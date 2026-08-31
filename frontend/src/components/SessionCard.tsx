@@ -23,6 +23,7 @@ import {
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import { RinQIcon } from './icons'
 import { useCreatorMode } from '../features/creator'
+import { useUser } from '../context/UserContext'
 
 interface SessionCardProps {
   session: Session
@@ -32,6 +33,23 @@ interface SessionCardProps {
   selectionMode?: boolean
   selected?: boolean
   onToggleSelect?: (id: string) => void
+}
+
+function sessionCreatorLabel(
+  session: Session,
+  displayName: string | null,
+  userId: string | null,
+): string {
+  const stored = typeof session.display_name === 'string' ? session.display_name.trim() : ''
+  if (stored) return stored
+  const owner = session.created_by || session.user || ''
+  if (displayName && userId && (owner === userId || session.user === userId)) return displayName
+  if (displayName && owner && displayName === owner) return displayName
+  // Avoid showing rinq UUIDs as the user-facing label.
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(owner)) {
+    return displayName?.trim() || 'Spieler'
+  }
+  return owner || 'Unbekannt'
 }
 
 export default function SessionCard({
@@ -44,7 +62,9 @@ export default function SessionCard({
   onToggleSelect,
 }: SessionCardProps) {
   const queryClient = useQueryClient()
+  const { user, userId } = useUser()
   const creatorMode = useCreatorMode()
+  const creatorLabel = sessionCreatorLabel(session, user, userId)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [expandedPhases, setExpandedPhases] = useState<Set<number>>(new Set())
   const [isEditingSeason, setIsEditingSeason] = useState<boolean>(false)
@@ -252,7 +272,7 @@ export default function SessionCard({
               </UiPill>
             )}
             {isLabPredict && <UiPill tone="accent">Lab · Predict</UiPill>}
-            {session.ai_reflection && <UiPill tone="ok">Reflection</UiPill>}
+            {session.ai_reflection && <UiPill tone="ok">Reflexion</UiPill>}
           </div>
         )}
 
@@ -274,7 +294,7 @@ export default function SessionCard({
             )}
             <div className={styles.metaItem}>
               <span className={styles.metaLabel}>User</span>
-              <span className={styles.metaValue}>{session.created_by || 'Unbekannt'}</span>
+              <span className={styles.metaValue}>{creatorLabel}</span>
             </div>
             {session.game_info?.season && (
               <div className={styles.metaItem}>

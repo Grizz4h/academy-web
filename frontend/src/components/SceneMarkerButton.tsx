@@ -129,7 +129,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             drillId: activeDrill?.id,
           gameId: session.game_id || session.game_info?.game_id,
           }),
-        ])
+        ], { showToasts: false })
       }
     } catch {
       setError('Fehler beim Speichern. Bitte nochmal versuchen.')

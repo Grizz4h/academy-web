@@ -71,6 +71,8 @@ export type TutorialContextValue = {
   complete: () => void
   restart: () => void
   resetState: () => void
+  /** DEV: reset tutorial + force welcome surface (ignores prior sessions). */
+  simulateNewProfile: () => void
   next: () => void
   back: () => void
   goToStep: (stepId: string) => void

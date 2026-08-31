@@ -22,8 +22,8 @@ Excellent A1 and excellent E3 may share the ~0.85–1.0 band. Difficulty is **no
 | Drill | Scope | Readiness | Source recommendation |
 |-------|-------|-----------|------------------------|
 | A1_D2 | `single_observation` | `NOT_SUITABLE_FOR_AI_EVIDENCE` | `structured_only` |
-| A3_D2 | `single_sequence` | `NEEDS_SMALL_INPUT_CHANGE` | `structured_plus_ai_review` |
-| B1_D1 | `single_observation` | `NEEDS_SMALL_INPUT_CHANGE` | `structured_plus_ai_review` |
+| A3_D2 | `single_sequence` | `READY` | `structured_plus_ai_review` |
+| B1_D1 | `single_observation` | `READY` | `structured_plus_ai_review` |
 | C1_D5 | `pattern_synthesis` | `READY` | `structured_plus_ai_review` |
 | D3_D5 | `pattern_synthesis` | `READY` | `structured_plus_ai_review` |
 | E3_D5 | `comparative_analysis` | `READY` | `ai_review` |
@@ -31,12 +31,12 @@ Excellent A1 and excellent E3 may share the ~0.85–1.0 band. Difficulty is **no
 Specs live under `backend/competency/ai/specs/drills/`.  
 Design metadata (`freeTextReadiness`, `evidenceSourceRecommendation`, `minimalInputChange`) is **not** LLM prompt solution text.
 
-### Minimal input changes (if AI later)
+### Minimal input changes
 
 - **A1_D2:** keep structured shift_tracker; AI not required
-- **A3_D2:** require short free-text (~60–150 chars) for first-reaction sequence, or stay structured-only
-- **B1_D1:** raise/require note (~150–250 chars) on final sample, or stay structured-only
+- **A3_D2 / B1_D1–D5:** required free-text shipped and production-wired
 - **C1/D3/E3:** already READY
+- **E3_D4:** READY — required `userStatement` (≥80) per case
 
 ## Synthetic calibration matrix
 

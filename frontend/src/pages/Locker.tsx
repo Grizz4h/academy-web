@@ -670,7 +670,10 @@ export default function LockerPage() {
             {selected.definition.flavorText && !selected.mystery && (
               <p className={styles.flavor}>“{selected.definition.flavorText}”</p>
             )}
-            {selected.displayDescription && <p className={styles.muted}>{selected.displayDescription}</p>}
+            {selected.displayDescription &&
+              selected.displayDescription !== selected.definition.flavorText && (
+              <p className={styles.muted}>{selected.displayDescription}</p>
+            )}
             <p><strong>{selected.owned ? 'Herkunft' : 'Freischalten'}</strong><br />{selected.owned ? selected.originLabel : selected.unlockHint}</p>
             {selected.definition.collectionId && !selected.mystery && (
               <p><strong>Collection</strong><br />{COLLECTIONS.find((c) => c.id === selected.definition.collectionId)?.name || selected.definition.collectionId}</p>

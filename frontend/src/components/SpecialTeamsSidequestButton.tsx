@@ -89,6 +89,12 @@ const PERSPECTIVE_LABELS: Record<SidequestPerspective, { label: string; hint: st
   },
 }
 
+function endSituationLabel(hubCategory: HubCategory | null, gameState: SpecialTeamsGameState | null): string {
+  if (hubCategory === 'power_play' || gameState === 'power_play') return 'Powerplay beenden'
+  if (hubCategory === 'penalty_kill' || gameState === 'penalty_kill') return 'Penalty Kill beenden'
+  return 'Situation beenden'
+}
+
 export function SpecialTeamsSidequestButton({
   session,
   currentPhase,
@@ -109,6 +115,9 @@ export function SpecialTeamsSidequestButton({
   const [error, setError] = useState<string | null>(null)
   const [savedMsg, setSavedMsg] = useState<string | null>(null)
   const [lastSaved, setLastSaved] = useState<SessionSidequest | null>(null)
+  const [situationGroupId, setSituationGroupId] = useState<string | null>(null)
+  const [scenesInSituation, setScenesInSituation] = useState(0)
+  const [situationCompleted, setSituationCompleted] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
   const stCatalog = specialTeamsCatalog as any
@@ -148,6 +157,13 @@ export function SpecialTeamsSidequestButton({
     }
   }, [selectedDrill])
 
+  const ensureSituationGroup = () => {
+    if (situationGroupId) return situationGroupId
+    const nextId = createSidequestId()
+    setSituationGroupId(nextId)
+    return nextId
+  }
+
   const resetFlow = () => {
     setStep('category')
     setHubCategory(null)
@@ -159,6 +175,9 @@ export function SpecialTeamsSidequestButton({
     setGameTime('')
     setError(null)
     setLastSaved(null)
+    setSituationGroupId(null)
+    setScenesInSituation(0)
+    setSituationCompleted(false)
   }
 
   const handleOpen = () => {
@@ -194,7 +213,7 @@ export function SpecialTeamsSidequestButton({
     setError(null)
   }
 
-  const handleSave = () => {
+  const handleSaveScene = () => {
     if (!selectedDrill || !syntheticDrill || !hubCategory) return
     const validationError = validateMiniAnswers(selectedDrill, miniAnswers)
     if (validationError) {
@@ -211,6 +230,7 @@ export function SpecialTeamsSidequestButton({
     setIsSaving(true)
     setError(null)
 
+    const groupId = ensureSituationGroup()
     let entry: SessionSidequest
     if (hubCategory === 'numerical_situation') {
       if (!situationType || !perspective) {
@@ -232,6 +252,7 @@ export function SpecialTeamsSidequestButton({
         observedTeam: observedTeam || undefined,
         answers: { ...miniAnswers },
         createdAt: new Date().toISOString(),
+        situationGroupId: groupId,
       }
     } else {
       if (!gameState) {
@@ -252,32 +273,59 @@ export function SpecialTeamsSidequestButton({
         observedTeam: observedTeam || undefined,
         answers: { ...miniAnswers },
         createdAt: new Date().toISOString(),
+        situationGroupId: groupId,
       }
     }
 
     const nextAnswers = appendSidequest(phaseAnswers, entry)
     onAppendSidequest(nextAnswers)
 
-    if (!isDummySession(session)) {
-      void ingestActivityEvents([
-        buildSidequestCompletedEvent({
-          sidequestId: entry.id,
-          category: entry.category,
-          occurredAt: entry.createdAt,
-          sessionId: session.id,
-          situationType: 'situationType' in entry ? entry.situationType : undefined,
-          isDummy: false,
-        }),
-      ])
-    }
-
-    const returnTitle = activeDrill?.title || 'Hauptdrill'
-    const label = formatSidequestLabel(entry)
+    const nextCount = scenesInSituation + 1
+    setScenesInSituation(nextCount)
     setLastSaved(entry)
-    setSavedMsg(`✓ ${label} Sidequest gespeichert · Zurück zu ${returnTitle}`)
+    setSavedMsg(`✓ Szene ${nextCount} geloggt · Situation läuft weiter`)
     setIsSaving(false)
     setStep('saved')
     window.setTimeout(() => setSavedMsg(null), 3200)
+  }
+
+  const handleAnotherScene = () => {
+    setMiniAnswers({})
+    setGameTime('')
+    setError(null)
+    setLastSaved(null)
+    setStep('drill')
+  }
+
+  const handleEndSituation = () => {
+    if (!hubCategory || !lastSaved || situationCompleted) {
+      handleClose()
+      return
+    }
+
+    const completionId = situationGroupId || lastSaved.id
+    if (!isDummySession(session)) {
+      void ingestActivityEvents(
+        [
+          buildSidequestCompletedEvent({
+            sidequestId: completionId,
+            category: lastSaved.category,
+            occurredAt: new Date().toISOString(),
+            sessionId: session.id,
+            situationType: 'situationType' in lastSaved ? lastSaved.situationType : undefined,
+            isDummy: false,
+          }),
+        ],
+        { showToasts: false },
+      )
+    }
+
+    setSituationCompleted(true)
+    const label = formatSidequestLabel(lastSaved)
+    const returnTitle = activeDrill?.title || 'Hauptdrill'
+    setSavedMsg(`✓ ${label} Situation beendet (${scenesInSituation} Szene${scenesInSituation === 1 ? '' : 'n'}) · Zurück zu ${returnTitle}`)
+    window.setTimeout(() => setSavedMsg(null), 3200)
+    handleClose()
   }
 
   const phaseLabel =
@@ -493,6 +541,12 @@ export function SpecialTeamsSidequestButton({
               }}
             />
 
+            {scenesInSituation > 0 ? (
+              <p style={{ margin: '0 0 0.65rem', fontSize: '0.85rem', color: 'rgba(251,191,36,0.9)' }}>
+                Situation läuft · {scenesInSituation} Szene{scenesInSituation === 1 ? '' : 'n'} geloggt
+              </p>
+            ) : null}
+
             <label className={uiSheetStyles.fieldLabel}>
               Spielzeit <span className={uiSheetStyles.optional}>(optional)</span>
             </label>
@@ -523,8 +577,8 @@ export function SpecialTeamsSidequestButton({
                 </UiButton>
               }
               primary={
-                <UiButton onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? 'Speichere…' : 'Speichern'}
+                <UiButton onClick={handleSaveScene} disabled={isSaving}>
+                  {isSaving ? 'Speichere…' : 'Szene speichern'}
                 </UiButton>
               }
             />
@@ -533,16 +587,26 @@ export function SpecialTeamsSidequestButton({
 
         {step === 'saved' && lastSaved && (
           <div>
-            <h4 style={{ margin: '0 0 0.45rem', color: '#99f6e4' }}>✓ {formatSidequestLabel(lastSaved)} Sidequest gespeichert</h4>
+            <h4 style={{ margin: '0 0 0.45rem', color: '#99f6e4' }}>
+              ✓ Szene {scenesInSituation} geloggt
+            </h4>
+            <p style={{ margin: '0 0 0.65rem', fontSize: '0.86rem', color: 'rgba(255,255,255,0.78)' }}>
+              {formatSidequestLabel(lastSaved)} läuft weiter — speichere so viele Szenen wie du willst.
+            </p>
             <div style={{ display: 'grid', gap: '0.25rem', marginBottom: '0.85rem', fontSize: '0.86rem', color: 'rgba(255,255,255,0.78)' }}>
               {summarizeSidequestAnswers(lastSaved).map((line) => (
                 <div key={line}>{line}</div>
               ))}
             </div>
             <UiSheetActions
+              secondary={
+                <UiButton variant="secondary" onClick={handleEndSituation}>
+                  {endSituationLabel(hubCategory, gameState)}
+                </UiButton>
+              }
               primary={
-                <UiButton onClick={handleClose}>
-                  Zurück zum Drill
+                <UiButton onClick={handleAnotherScene}>
+                  Weitere Szene
                 </UiButton>
               }
             />

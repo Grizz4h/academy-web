@@ -1,0 +1,47 @@
+{
+  "drillId": "E3_D3",
+  "specVersion": "E3_D3-spec-v1",
+  "title": "Bedingte Zusammenhänge erkennen",
+  "scope": "comparative_analysis",
+  "primaryTextKeys": ["userConclusion", "alternativeExplanation"],
+  "primaryCompetencies": [
+    "evidence_analysis",
+    "options_decisions",
+    "space_structure",
+    "systems_patterns"
+  ],
+  "observableEvidence": [
+    "conditional present/absent contrast with shared opportunity definition",
+    "hypothesis check against counterexamples",
+    "alternative explanation kept distinct from causality"
+  ],
+  "evaluationFocus": [
+    "conditional outcome compare",
+    "alternative explanations",
+    "base rates respected"
+  ],
+  "requiredForStrong": [
+    "separates condition presence from outcome",
+    "acknowledges counterexamples",
+    "offers an alternative without claiming coach intent"
+  ],
+  "commonFailureModes": [
+    "causal claim from conditional pattern alone",
+    "ignoring counterexamples",
+    "base-rate blindness",
+    "empty conclusion or missing alternative"
+  ],
+  "dimensionEmphasis": {
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high",
+    "specificity": "high",
+    "outcomeBias": "medium",
+    "evidenceScope": "high",
+    "competencyAlignment": "high"
+  },
+  "fairnessNote": "Excellent means excellent conditional discipline for THIS drill — alternatives and counterexamples beat confident causality.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required userConclusion (≥40) plus alternativeExplanation and ≥10 conditional observations already usable.",
+  "validationOnly": false
+}

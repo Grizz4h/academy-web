@@ -51,4 +51,14 @@ This prefers scientific honesty over an early incomplete polygon.
 
 ## Detail interaction
 
-Tap/click a side-list row (or axis label) to open the detail block for that competency.
+Scout cards use `AnchoredPopover` (exclusive) for Score / Confidence / Evidenzbreite.  
+Axis labels only highlight the radar spoke; tapping a card opens the detail.
+
+## Visual polish (Account)
+
+- Progress pill (`n/8 bewertet` → `Profil vollständig`) + Schwerpunkt story line
+- Capability-band rings (20/40/60/80/100); center Ø only when 8/8
+- Polygon draw-in + ambient drift (`prefers-reduced-motion` respected)
+- Scout cards: score bar, confidence ring, Evidenzbreite track; unrated dashed
+- Desktop (≥720px): radar left, scout cards as **2×4 grid** on the right (not 8 stacked)
+- Mobile: scout cards already 2-column; very narrow (<380px) single column

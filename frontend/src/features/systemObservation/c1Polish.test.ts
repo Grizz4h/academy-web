@@ -48,9 +48,11 @@ assert.deepEqual(
 )
 
 assert.equal(c1.drills[0].drill_type, 'paintable_rink_observation')
-assert.equal(c1.drills[1].drill_type, 'clickable_rink_observation')
+assert.equal(c1.drills[1].config.mode, 'defensive_structure')
+assert.equal(c1.drills[1].config.rink_view, 'defensive_half')
 assert.equal(c1.drills[2].config.mode, 'single_marker_observation')
 assert.equal(c1.drills[3].config.mode, 'formation_shift')
+assert.equal(c1.drills[3].config.rink_view, 'defensive_half')
 assert.equal(c1.drills[4].drill_type, 'period_checkin')
 
 for (const drill of c1.drills) {

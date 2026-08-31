@@ -52,8 +52,19 @@ def _summarize_observations(observations: List[Any], *, max_items: int = 5) -> L
             {
                 "zone": _as_str(item.get("zone")),
                 "trigger": _as_str(item.get("trigger")),
-                "reaction": _as_str(item.get("reaction")),
-                "sequence": _as_str(item.get("sequence")),
+                "reaction": _as_str(item.get("reaction") or item.get("teamReaction")),
+                "sequence": _as_str(
+                    item.get("sequence")
+                    or (
+                        ", ".join(
+                            _as_str(v)
+                            for v in (item.get("similarities") or [])
+                            if _as_str(v)
+                        )
+                        if isinstance(item.get("similarities"), list)
+                        else ""
+                    )
+                ),
                 "note": _as_str(item.get("note") or item.get("midLabel")),
             }
         )
@@ -175,32 +186,248 @@ def build_generic_spec_input(
     rubric_version: str = "",
     drill_title: str = "",
 ) -> Optional[AiEvaluationInput]:
-    """Validation / future drills: primary text from assessment spec keys."""
+    """Production / validation drills: primary text from assessment spec keys."""
     spec = load_drill_assessment_spec(drill_id)
     if spec is None:
         return None
 
+    # Flatten nested claim-ladder / profile bags so primaryTextKeys resolve.
+    bags: List[Dict[str, Any]] = [answers or {}]
+    for nest_key in ("evidenceProfile", "evidence_profile"):
+        nested = (answers or {}).get(nest_key)
+        if isinstance(nested, dict):
+            bags.append(nested)
+
+    b1_joined = ""
+    # B1 sample_log: last sample note is the AI primary text (also join earlier notes).
+    if drill_id in ("B1_D1", "B1_D2", "B1_D3", "B1_D4", "B1_D5"):
+        sample_key = _as_str((drill_config or {}).get("sample_key"))
+        candidate_keys = [sample_key] if sample_key else []
+        candidate_keys.extend(
+            (
+                "support_samples",
+                "triangle_samples",
+                "read_samples",
+                "outlet_samples",
+                "timing_samples",
+                "samples",
+            )
+        )
+        samples = None
+        for key in candidate_keys:
+            if not key:
+                continue
+            value = (answers or {}).get(key)
+            if isinstance(value, list) and value:
+                samples = value
+                break
+        if isinstance(samples, list) and samples:
+            last = samples[-1]
+            if isinstance(last, dict):
+                bags.append(last)
+            parts = []
+            for idx, row in enumerate(samples[:5]):
+                if not isinstance(row, dict):
+                    continue
+                note = _as_str(row.get("note"))
+                if note:
+                    parts.append(f"sample[{idx}].note: {note}")
+            joined = "\n".join(parts)
+            if len(joined) >= MIN_FREE_TEXT_CHARS:
+                b1_joined = joined
+
     primary_text = ""
     for key in spec.primary_text_keys:
-        candidate = _as_str(answers.get(key))
-        if len(candidate) >= MIN_FREE_TEXT_CHARS:
-            primary_text = candidate
+        for bag in bags:
+            candidate = _as_str(bag.get(key))
+            if len(candidate) >= MIN_FREE_TEXT_CHARS:
+                primary_text = candidate
+                break
+            if candidate and not primary_text:
+                primary_text = candidate
+        if len(primary_text) >= MIN_FREE_TEXT_CHARS:
             break
-        if candidate and not primary_text:
-            primary_text = candidate
+
+    if b1_joined:
+        primary_text = b1_joined
+
+    # Prefer joining claim + falsification when both present (E3)
+    if drill_id == "E3_D5":
+        parts: List[str] = []
+        for key in ("finalClaim", "falsificationCondition", "nextObservationTest"):
+            for bag in bags:
+                text = _as_str(bag.get(key))
+                if text:
+                    parts.append(f"{key}: {text}")
+                    break
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E1_D5: segment summary + tendency free-text cores
+    if drill_id == "E1_D5":
+        parts = []
+        summary = _as_str((answers or {}).get("segment_summary"))
+        if summary:
+            parts.append(f"segment_summary: {summary}")
+        note = _as_str((answers or {}).get("falsification_note"))
+        if note:
+            parts.append(f"falsification_note: {note}")
+        entries = (answers or {}).get("tendency_entries")
+        if isinstance(entries, list):
+            for idx, entry in enumerate(entries[:3]):
+                if not isinstance(entry, dict):
+                    continue
+                tend = _as_str(entry.get("summary"))
+                evidence = _as_str(entry.get("strongestEvidence"))
+                if tend or evidence:
+                    parts.append(f"tendency[{idx}]: {tend} | evidence: {evidence}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E2_D5: segment summary + before/after change cores
+    if drill_id == "E2_D5":
+        parts = []
+        summary = _as_str((answers or {}).get("segmentSummary"))
+        if summary:
+            parts.append(f"segmentSummary: {summary}")
+        if (answers or {}).get("noClearAdjustment") is True:
+            reason = _as_str((answers or {}).get("noAdjustmentReason"))
+            if reason:
+                parts.append(f"noClearAdjustment: {reason}")
+        entries = (answers or {}).get("adjustment_entries")
+        if isinstance(entries, list):
+            for idx, entry in enumerate(entries[:2]):
+                if not isinstance(entry, dict):
+                    continue
+                before = _as_str(entry.get("beforeBehavior"))
+                after = _as_str(entry.get("changedBehavior"))
+                trigger = _as_str(entry.get("triggerEvidence"))
+                if before or after or trigger:
+                    parts.append(
+                        f"adjustment[{idx}]: before={before} | after={after} | trigger={trigger}"
+                    )
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E2_D1: change summary + before/after descriptions
+    if drill_id == "E2_D1":
+        parts = []
+        summary = _as_str((answers or {}).get("changeSummary"))
+        if summary:
+            parts.append(f"changeSummary: {summary}")
+        for label in ("before", "after"):
+            bag = (answers or {}).get(label)
+            if isinstance(bag, dict):
+                desc = _as_str(bag.get("description"))
+                if desc:
+                    parts.append(f"{label}: {desc}")
+        limit = _as_str((answers or {}).get("comparabilityLimit"))
+        if limit:
+            parts.append(f"comparabilityLimit: {limit}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E2_D2: change summary + baseline + observation snippets
+    if drill_id == "E2_D2":
+        parts = []
+        for key in ("observationFocus", "baselineDescription", "changeSummary"):
+            text = _as_str((answers or {}).get(key))
+            if text:
+                parts.append(f"{key}: {text}")
+        logs = (answers or {}).get("change_timeline_observations")
+        if isinstance(logs, list):
+            for idx, obs in enumerate(logs[:6]):
+                if not isinstance(obs, dict):
+                    continue
+                desc = _as_str(obs.get("description"))
+                if desc:
+                    parts.append(f"obs[{idx}]: {desc}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E2_D3: hypothesis summary + functional link + observed change
+    if drill_id == "E2_D3":
+        parts = []
+        for key in ("observedChange", "functionalLink", "hypothesisSummary", "alternativeDetail"):
+            text = _as_str((answers or {}).get(key))
+            if text:
+                parts.append(f"{key}: {text}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E2_D4: chain summary + problem/adjustment/response descriptions
+    if drill_id == "E2_D4":
+        parts = []
+        for key in (
+            "problemDescription",
+            "adjustmentDescription",
+            "responseDescription",
+            "chainSummary",
+            "tradeoffDetail",
+        ):
+            text = _as_str((answers or {}).get(key))
+            if text:
+                parts.append(f"{key}: {text}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E3_D1–D3: userConclusion (+ optional alternative / confounder)
+    if drill_id in ("E3_D1", "E3_D2", "E3_D3"):
+        parts = []
+        conclusion = _as_str((answers or {}).get("userConclusion"))
+        if conclusion:
+            parts.append(f"userConclusion: {conclusion}")
+        if drill_id == "E3_D2":
+            confounder = _as_str((answers or {}).get("possibleConfounder"))
+            if confounder:
+                parts.append(f"possibleConfounder: {confounder}")
+        if drill_id == "E3_D3":
+            alt = _as_str((answers or {}).get("alternativeExplanation"))
+            if alt:
+                parts.append(f"alternativeExplanation: {alt}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
+
+    # E3_D4: join required userStatements across evidence cases
+    if drill_id == "E3_D4":
+        assessments_key = _as_str((drill_config or {}).get("assessments_key") or (drill_config or {}).get("assessmentsKey")) or "evidence_assessments"
+        bag = (answers or {}).get(assessments_key)
+        parts = []
+        if isinstance(bag, dict):
+            for case_id, assessment in list(bag.items())[:6]:
+                if not isinstance(assessment, dict):
+                    continue
+                statement = _as_str(assessment.get("userStatement"))
+                if statement:
+                    parts.append(f"{case_id}.userStatement: {statement}")
+                strength = _as_str(assessment.get("overallStrength"))
+                if strength:
+                    parts.append(f"{case_id}.overallStrength: {strength}")
+        joined = "\n".join(parts)
+        if len(joined) >= MIN_FREE_TEXT_CHARS:
+            primary_text = joined
 
     if len(primary_text) < MIN_FREE_TEXT_CHARS:
         return None
 
     # Keep a small trusted context: non-primary answer keys (truncated)
     context: Dict[str, Any] = {"drill_config_keys": sorted(str(k) for k in (drill_config or {}).keys())[:12]}
-    for key, value in (answers or {}).items():
-        if key in spec.primary_text_keys:
-            continue
-        if isinstance(value, (str, int, float, bool)):
-            context[str(key)] = value if not isinstance(value, str) else value[:200]
-        elif isinstance(value, list) and len(value) <= 8:
-            context[str(key)] = value
+    for bag in bags:
+        for key, value in bag.items():
+            if key in spec.primary_text_keys:
+                continue
+            if isinstance(value, (str, int, float, bool)):
+                context[str(key)] = value if not isinstance(value, str) else value[:200]
+            elif isinstance(value, list) and len(value) <= 8:
+                context[str(key)] = value
 
     return AiEvaluationInput(
         drill_id=spec.drill_id,
@@ -243,7 +470,7 @@ def build_ai_evaluation_input(
             drill_title=drill_title or drill_id,
         )
 
-    if allow_validation_drills:
+    if drill_id in MVP_AI_DRILL_IDS or allow_validation_drills:
         return build_generic_spec_input(
             drill_id,
             answers or {},

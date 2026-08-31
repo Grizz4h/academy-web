@@ -14,10 +14,10 @@ export default function Drills() {
     queryFn: () => api.getCurriculum()
   })
 
-  if (isLoading) return <div className="card">Lade Drills...</div>
+  if (isLoading || !curriculum) return <div className="card">Lade Drills...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
 
-  const currentModule = curriculum?.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
+  const currentModule = curriculum.tracks.flatMap(t => t.modules).find(m => m.id === moduleId)
 
   if (!currentModule) {
     return <div className="card">Modul nicht gefunden.</div>
@@ -55,7 +55,7 @@ export default function Drills() {
       <div style={{ display: 'grid', gap: '1rem' }}>
         {currentModule.drills.map((drill) => (
           <div key={drill.id} className="card">
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
               <MechanicGlyph
                 drillType={drill.drill_type}
                 mode={drill.config?.mode}

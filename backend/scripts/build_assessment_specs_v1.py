@@ -134,7 +134,7 @@ FOCUS = {
     "E3_D4": [
         "evidence strength of a statement vs sample",
         "rate sensitivity to classification",
-        "blocker: open statement text may be missing",
+        "required userStatement matched to assessed strength",
     ],
     "E3_D5": [
         "claim ladder strength ≤ evidence base",
@@ -172,30 +172,6 @@ MUST_NOT = {
 }
 
 MISSING = {
-    "A3_D2": {
-        "missingInput": "optional note ≤150 chars is too thin / optional",
-        "minimalRequiredChange": "Require short free-text (~60–150 chars) describing first-reaction sequence, or keep structured-only.",
-    },
-    "B1_D1": {
-        "missingInput": "optional note ≤120 chars",
-        "minimalRequiredChange": "Require note ~150–250 chars on final sample describing support relation, or keep structured-only.",
-    },
-    "B1_D2": {
-        "missingInput": "optional note ≤120 chars",
-        "minimalRequiredChange": "Same as B1_D1 family: required short relation note or structured-only.",
-    },
-    "B1_D3": {
-        "missingInput": "optional note ≤120 chars",
-        "minimalRequiredChange": "Same as B1_D1 family.",
-    },
-    "B1_D4": {
-        "missingInput": "optional note ≤120 chars",
-        "minimalRequiredChange": "Same as B1_D1 family.",
-    },
-    "B1_D5": {
-        "missingInput": "optional note ≤120 chars",
-        "minimalRequiredChange": "Same as B1_D1 family.",
-    },
 }
 
 
@@ -235,12 +211,7 @@ def main() -> None:
         if did in MISSING:
             row.update(MISSING[did])
         if did == "E3_D4":
-            row["mechanicBlocker"] = {
-                "why": "Evidence-assessment cases appear structured; open statement quality for AI is not clearly captured as required free text.",
-                "missingInformation": "Explicit learner statement + basis/denominator language to evaluate claim strength.",
-                "minimalMechanicChange": "Add required short statement field (claim + sample limit note) or keep fully structured rule scoring — decide before AI production.",
-            }
-            row["productionReadyForAiEvidence"] = False
+            pass  # required userStatement shipped; READY via routing
         if did in ("E1_D1", "E3_D5"):
             row["pureAiReview"] = {
                 "whyStructuredInsufficient": "Core performance is open analytical language that cannot be reduced to selects alone.",

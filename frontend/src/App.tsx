@@ -40,6 +40,7 @@ import WiderrufPage from './pages/Widerruf'
 import VertragKuendigenPage from './pages/VertragKuendigen'
 import VertragWiderrufenPage from './pages/VertragWiderrufen'
 import NotFoundPage from './pages/NotFound'
+import AdminPage from './pages/Admin'
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/locker" element={<LockerPage />} />
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/lab" element={<LabPage />} />

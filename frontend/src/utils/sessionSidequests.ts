@@ -27,6 +27,8 @@ export type SpecialTeamsSidequest = {
   observedTeam?: string
   answers: Record<string, unknown>
   createdAt: string
+  /** Groups multiple scene logs into one special-teams situation. */
+  situationGroupId?: string
 }
 
 export type NumericalSituationSidequest = {
@@ -43,6 +45,8 @@ export type NumericalSituationSidequest = {
   observedTeam?: string
   answers: Record<string, unknown>
   createdAt: string
+  /** Groups multiple scene logs into one special-teams situation. */
+  situationGroupId?: string
 }
 
 export type SessionSidequest = SpecialTeamsSidequest | NumericalSituationSidequest

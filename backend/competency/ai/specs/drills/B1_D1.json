@@ -1,10 +1,17 @@
 {
   "drillId": "B1_D1",
-  "specVersion": "B1_D1-spec-v2",
+  "specVersion": "B1_D1-spec-v3",
   "title": "Unterstützung unter dem Puck",
   "scope": "single_observation",
-  "primaryTextKeys": ["observation_text", "note"],
-  "primaryCompetencies": ["roles_support", "space_structure", "scanning_identification"],
+  "primaryTextKeys": [
+    "note",
+    "observation_text"
+  ],
+  "primaryCompetencies": [
+    "roles_support",
+    "space_structure",
+    "scanning_identification"
+  ],
   "observableEvidence": [
     "who supports whom under the puck",
     "pass lane / distance / body orientation / timing cues",
@@ -35,8 +42,8 @@
     "uncertaintyCalibration": "medium"
   },
   "fairnessNote": "One well-anchored support relation can score excellent. Pattern synthesis across many samples is out of scope for quality.",
-  "freeTextReadiness": "NEEDS_SMALL_INPUT_CHANGE",
+  "freeTextReadiness": "READY",
   "evidenceSourceRecommendation": "structured_plus_ai_review",
-  "minimalInputChange": "sample_log states/factors can drive structured quality. Optional note ≤120 chars is weak for AI. Minimal: raise note to ~150–250 chars and require it on final sample, or keep structured-only.",
-  "validationOnly": true
+  "minimalInputChange": "Required sample note ≥150 chars (max 250) on logged moments; states/factors remain structured.",
+  "validationOnly": false
 }

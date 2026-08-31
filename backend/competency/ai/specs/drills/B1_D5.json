@@ -1,0 +1,49 @@
+{
+  "drillId": "B1_D5",
+  "specVersion": "B1_D5-spec-v1",
+  "title": "Timing & sichtbare Vorbereitung",
+  "scope": "single_observation",
+  "primaryTextKeys": [
+    "note",
+    "observation_text"
+  ],
+  "primaryCompetencies": [
+    "roles_support",
+    "space_structure",
+    "scanning_identification"
+  ],
+  "observableEvidence": [
+    "timing or preparation of support",
+    "pressure/time constraints if visible",
+    "sample-scoped claims"
+  ],
+  "evaluationFocus": [
+    "when support becomes playable",
+    "visible preparation cues",
+    "no coach-intent as fact"
+  ],
+  "requiredForStrong": [
+    "anchors timing/preparation in visible cues",
+    "keeps claim sample-scoped",
+    "avoids outcome-as-timing"
+  ],
+  "commonFailureModes": [
+    "timing jargon without cue",
+    "intent invention",
+    "outcome bias",
+    "empty note"
+  ],
+  "dimensionEmphasis": {
+    "relationalReasoning": "high",
+    "competencyAlignment": "high",
+    "observationGrounding": "high",
+    "specificity": "high",
+    "evidenceScope": "low",
+    "uncertaintyCalibration": "medium"
+  },
+  "fairnessNote": "One well-anchored sample relation can score excellent. Pattern synthesis across many samples is out of scope for quality.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required sample note ≥150 chars (max 250) on logged moments; states/factors remain structured.",
+  "validationOnly": false
+}

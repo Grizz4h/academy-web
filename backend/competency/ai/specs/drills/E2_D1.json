@@ -1,0 +1,47 @@
+{
+  "drillId": "E2_D1",
+  "specVersion": "E2_D1-spec-v1",
+  "title": "Was hat sich verändert?",
+  "scope": "comparative_analysis",
+  "primaryTextKeys": ["changeSummary", "comparabilityLimit"],
+  "primaryCompetencies": [
+    "evidence_analysis",
+    "systems_patterns",
+    "transition_tempo",
+    "space_structure"
+  ],
+  "observableEvidence": [
+    "before vs after descriptions of comparable situations",
+    "explicit comparability judgment and limits",
+    "change dimension without premature cause"
+  ],
+  "evaluationFocus": [
+    "before/after change description for comparable scenes",
+    "comparability discipline",
+    "no premature cause or coaching intention"
+  ],
+  "requiredForStrong": [
+    "describes visible before and after behavior",
+    "keeps situations comparable or states the limit",
+    "does not treat outcome as proof of change quality"
+  ],
+  "commonFailureModes": [
+    "cause asserted instead of change description",
+    "incomparable scenes treated as proof",
+    "single highlight as structural change",
+    "empty summary with only radio clicks"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "specificity": "high",
+    "unsupportedClaims": "high",
+    "uncertaintyCalibration": "high",
+    "outcomeBias": "high",
+    "competencyAlignment": "high"
+  },
+  "fairnessNote": "Excellent means excellent before/after discipline for THIS drill — a careful no-clear-change can outrank a confident overclaim.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required changeSummary (AI gate ≥40) already usable with structured before/after radios.",
+  "validationOnly": false
+}

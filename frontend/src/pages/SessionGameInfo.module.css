@@ -1,0 +1,271 @@
+.root {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.05rem 1.1rem 1.1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(94, 234, 212, 0.22);
+  background:
+    radial-gradient(120% 90% at 8% -20%, rgba(45, 212, 191, 0.16), transparent 52%),
+    radial-gradient(90% 70% at 100% 0%, rgba(56, 189, 248, 0.12), transparent 48%),
+    linear-gradient(165deg, rgba(8, 20, 34, 0.96), rgba(7, 16, 28, 0.94));
+  box-shadow:
+    0 14px 36px rgba(2, 8, 20, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(153, 246, 228, 0.82);
+}
+
+.title {
+  margin: 0.15rem 0 0;
+  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: rgba(248, 250, 252, 0.96);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.desktopRow {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.matchBoard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.45rem 0.55rem;
+  padding: 0.85rem 0.55rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.35), rgba(8, 47, 73, 0.18));
+}
+
+.teamCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.teamColObserved {
+  position: relative;
+}
+
+.teamColObserved::before {
+  content: '';
+  position: absolute;
+  inset: -0.3rem -0.15rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(45, 212, 191, 0.32);
+  background: rgba(13, 148, 136, 0.1);
+  pointer-events: none;
+}
+
+.crestSlot {
+  position: relative;
+  display: inline-flex;
+  transform-origin: center;
+}
+
+.teamName {
+  position: relative;
+  margin: 0;
+  max-width: 100%;
+  font-size: clamp(0.78rem, 2.1vw, 1.05rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: rgba(244, 251, 255, 0.96);
+  overflow-wrap: anywhere;
+}
+
+.teamNameObserved {
+  color: #99f6e4;
+}
+
+.observedChip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  background: rgba(15, 118, 110, 0.28);
+  color: #99f6e4;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vs {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(2, 12, 24, 0.55);
+  color: rgba(186, 230, 253, 0.82);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.foundationLead {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-weight: 700;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.foundationHint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(167, 243, 208, 0.88);
+}
+
+.noteBlock {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.noteLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.88);
+}
+
+.noteField {
+  width: 100%;
+  min-height: 2.6rem;
+  max-height: 5.5rem;
+  margin: 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(2, 12, 24, 0.35);
+  color: rgba(241, 245, 249, 0.95);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.noteField::placeholder {
+  color: rgba(148, 163, 184, 0.68);
+}
+
+.noteField:focus {
+  outline: 2px solid rgba(94, 234, 212, 0.32);
+  outline-offset: 1px;
+  border-color: rgba(94, 234, 212, 0.4);
+}
+
+@media (min-width: 769px) {
+  .root {
+    gap: 1rem;
+    padding: 1.2rem 1.35rem 1.25rem;
+  }
+
+  .desktopRow {
+    grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.8fr);
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .matchBoard {
+    gap: 1rem 1.25rem;
+    padding: 1.15rem 1.2rem;
+  }
+
+  .crestSlot {
+    transform: scale(1.35);
+  }
+
+  .teamCol {
+    gap: 0.5rem;
+  }
+
+  .teamName {
+    font-size: 1.12rem;
+  }
+
+  .observedChip {
+    font-size: 0.62rem;
+    padding: 0.12rem 0.45rem;
+  }
+
+  .vs {
+    width: 2.7rem;
+    height: 2.7rem;
+    font-size: 0.74rem;
+    box-shadow: 0 0 0 6px rgba(8, 47, 73, 0.25);
+  }
+
+  .noteAside {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.75rem 0.85rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(15, 23, 42, 0.28);
+  }
+
+  .noteAside .noteField {
+    flex: 1;
+    min-height: 4.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    padding: 0.9rem 0.85rem 1rem;
+    border-radius: 0.9rem;
+  }
+
+  .matchBoard {
+    padding: 0.65rem 0.35rem;
+    gap: 0.3rem 0.35rem;
+  }
+
+  .teamName {
+    font-size: 0.76rem;
+  }
+
+  .vs {
+    width: 1.9rem;
+    height: 1.9rem;
+    font-size: 0.6rem;
+  }
+}

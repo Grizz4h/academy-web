@@ -342,8 +342,8 @@
       "drillId": "A3_D2",
       "scope": "single_sequence",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "low",
       "competencies": [
         "pressure_control",
@@ -367,16 +367,14 @@
         "specificity",
         "evidence_alignment",
         "reasoning"
-      ],
-      "missingInput": "optional note ≤150 chars is too thin / optional",
-      "minimalRequiredChange": "Require short free-text (~60–150 chars) describing first-reaction sequence, or keep structured-only."
+      ]
     },
     {
       "drillId": "B1_D1",
       "scope": "single_observation",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "low",
       "competencies": [
         "roles_support",
@@ -398,16 +396,14 @@
         "relational_reasoning",
         "specificity",
         "unsupported_claims"
-      ],
-      "missingInput": "optional note ≤120 chars",
-      "minimalRequiredChange": "Require note ~150–250 chars on final sample describing support relation, or keep structured-only."
+      ]
     },
     {
       "drillId": "B1_D2",
       "scope": "single_observation",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "low",
       "competencies": [
         "roles_support",
@@ -431,16 +427,14 @@
         "relational_reasoning",
         "specificity",
         "unsupported_claims"
-      ],
-      "missingInput": "optional note ≤120 chars",
-      "minimalRequiredChange": "Same as B1_D1 family: required short relation note or structured-only."
+      ]
     },
     {
       "drillId": "B1_D3",
       "scope": "single_observation",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "low",
       "competencies": [
         "roles_support",
@@ -463,16 +457,14 @@
         "relational_reasoning",
         "specificity",
         "unsupported_claims"
-      ],
-      "missingInput": "optional note ≤120 chars",
-      "minimalRequiredChange": "Same as B1_D1 family."
+      ]
     },
     {
       "drillId": "B1_D4",
       "scope": "single_observation",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "low",
       "competencies": [
         "options_decisions",
@@ -496,16 +488,14 @@
         "relational_reasoning",
         "specificity",
         "unsupported_claims"
-      ],
-      "missingInput": "optional note ≤120 chars",
-      "minimalRequiredChange": "Same as B1_D1 family."
+      ]
     },
     {
       "drillId": "B1_D5",
       "scope": "single_observation",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "low",
       "competencies": [
         "options_decisions",
@@ -530,9 +520,7 @@
         "relational_reasoning",
         "specificity",
         "unsupported_claims"
-      ],
-      "missingInput": "optional note ≤120 chars",
-      "minimalRequiredChange": "Same as B1_D1 family."
+      ]
     },
     {
       "drillId": "B2_D5",
@@ -1123,8 +1111,8 @@
       "drillId": "E3_D4",
       "scope": "comparative_analysis",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_MECHANIC_CHANGE",
-      "productionReadyForAiEvidence": false,
+      "readiness": "READY",
+      "productionReadyForAiEvidence": true,
       "costLatencyClass": "medium",
       "competencies": [
         "evidence_analysis",
@@ -1133,7 +1121,7 @@
       "focus": [
         "evidence strength of a statement vs sample",
         "rate sensitivity to classification",
-        "blocker: open statement text may be missing"
+        "required userStatement matched to assessed strength"
       ],
       "mustNotInfer": [
         "coach intention as fact",
@@ -1145,12 +1133,7 @@
         "evidence_alignment",
         "unsupported_claims",
         "scope_calibration"
-      ],
-      "mechanicBlocker": {
-        "why": "Evidence-assessment cases appear structured; open statement quality for AI is not clearly captured as required free text.",
-        "missingInformation": "Explicit learner statement + basis/denominator language to evaluate claim strength.",
-        "minimalMechanicChange": "Add required short statement field (claim + sample limit note) or keep fully structured rule scoring — decide before AI production."
-      }
+      ]
     },
     {
       "drillId": "E3_D5",

@@ -47,10 +47,10 @@ Also cancel the test subscription in **Stripe Dashboard (Test mode)** if you wan
 
 ## DevLab access (without admin)
 
-`paywall-test` is on the default **`ACADEMY_DEV_USERNAMES`** allowlist:
+`paywall-test` and **`paywall-widerruf`** are on the default **`ACADEMY_DEV_USERNAMES`** allowlist:
 
-- `/dev` routes (Progression Test-Suite, Persona-Sim, Rewards Lab)
+- `/dev` routes (Progression Test-Suite, Persona-Sim, Rewards Lab, Competency reset)
 - 5× logo tap → Dev-Nav chrome
 - **No** premium bypass · **No** DEL import / admin APIs
 
-Override: `ACADEMY_DEV_USERNAMES=paywall-test,other-user` in backend `.env.local`. Restart: `sudo systemctl restart academy-web`.
+Override: `ACADEMY_DEV_USERNAMES=paywall-test,paywall-widerruf,other-user` in backend `.env.local`. Restart: `sudo systemctl restart academy-web`.

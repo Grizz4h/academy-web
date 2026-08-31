@@ -1,0 +1,47 @@
+{
+  "drillId": "E2_D3",
+  "specVersion": "E2_D3-spec-v1",
+  "title": "Worauf könnte die Veränderung reagiert haben?",
+  "scope": "comparative_analysis",
+  "primaryTextKeys": ["hypothesisSummary", "functionalLink", "observedChange"],
+  "primaryCompetencies": [
+    "evidence_analysis",
+    "systems_patterns",
+    "options_decisions",
+    "transition_tempo"
+  ],
+  "observableEvidence": [
+    "observed change described without coach intent as fact",
+    "functional link between prior problem and change",
+    "explicit alternative explanation and uncertainty"
+  ],
+  "evaluationFocus": [
+    "testable adjustment hypothesis",
+    "functional link + alternative explanation",
+    "no coach-intent as fact"
+  ],
+  "requiredForStrong": [
+    "keeps hypothesis provisional and testable",
+    "states a functional link or explicitly denies one",
+    "names a plausible alternative without collapsing to coaching fact"
+  ],
+  "commonFailureModes": [
+    "coach changed the system as fact",
+    "scoreboard as sole proof of adjustment",
+    "no alternative explanation",
+    "empty hypothesis summary"
+  ],
+  "dimensionEmphasis": {
+    "unsupportedClaims": "high",
+    "uncertaintyCalibration": "high",
+    "specificity": "high",
+    "outcomeBias": "high",
+    "evidenceScope": "high",
+    "competencyAlignment": "high"
+  },
+  "fairnessNote": "Excellent means excellent hypothesis discipline for THIS drill — naming uncertainty and alternatives is rewarded.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required hypothesisSummary (AI gate ≥40) plus functional link / alternative already usable.",
+  "validationOnly": false
+}

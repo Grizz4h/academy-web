@@ -149,12 +149,12 @@ def validate_assessment_specs(document: Optional[Dict[str, Any]] = None) -> List
                 errors.append(f"{drill_id}: missingInput/minimalRequiredChange required")
 
         if drill_id == "E3_D4":
-            if readiness != "NEEDS_MECHANIC_CHANGE":
-                errors.append("E3_D4 must remain NEEDS_MECHANIC_CHANGE")
-            if not row.get("mechanicBlocker"):
-                errors.append("E3_D4 needs mechanicBlocker documentation")
-            if prod_ready:
-                errors.append("E3_D4 must not be production-ready")
+            if readiness != "READY":
+                errors.append("E3_D4 must be READY after required userStatement")
+            if not prod_ready:
+                errors.append("E3_D4 must be production-ready")
+            if row.get("mechanicBlocker"):
+                errors.append("E3_D4 mechanicBlocker should be cleared")
 
         if drill_id in ("E1_D1", "E3_D5"):
             if row.get("assessmentSource") != "ai_review":

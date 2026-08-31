@@ -12,7 +12,6 @@ import styles from './RinkIdentityCard.module.css'
 export type PremiumStatusPresentation = {
   badgeLabel: string
   badgeTone: UiPillTone
-  profileLine: string | null
 }
 
 export type RinkIdentityStats = {
@@ -110,19 +109,19 @@ export default function RinkIdentityCard({
         <div className={styles.identity}>
           <div className={styles.nameRow}>
             <h2 className={styles.name}>{displayName}</h2>
-            {hasAcademyPremium && premiumStatus ? (
-              <UiPill tone={premiumStatus.badgeTone} className={styles.premiumBadge}>
-                {premiumStatus.badgeLabel}
+            {hasAcademyPremium ? (
+              <UiPill
+                tone={premiumStatus?.badgeTone === 'warn' || premiumStatus?.badgeTone === 'danger'
+                  ? premiumStatus.badgeTone
+                  : 'accent'}
+                className={styles.premiumBadge}
+              >
+                {premiumStatus?.badgeTone === 'warn' || premiumStatus?.badgeTone === 'danger'
+                  ? premiumStatus.badgeLabel
+                  : 'Premium'}
               </UiPill>
-            ) : hasAcademyPremium ? (
-              <UiPill tone="accent" className={styles.premiumBadge}>Premium</UiPill>
             ) : null}
           </div>
-          {premiumStatus?.profileLine ? (
-            <p className={styles.premiumLine} data-tone={premiumStatus.badgeTone}>
-              {premiumStatus.profileLine}
-            </p>
-          ) : null}
           {(jersey || title) && (
             <p className={styles.meta}>
               {jersey ? <span>#{jersey}</span> : null}

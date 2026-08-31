@@ -27,6 +27,7 @@ import { resolveSimpleStructureConfig } from "../../features/simpleStructure/str
 import { TacticalObservationDrill } from "../../features/tacticalObservation/TacticalObservationDrill";
 import { resolveTacticalObservationConfig } from "../../features/tacticalObservation/tacticalLogic";
 import FoundationLessonDrill from "../../features/foundation/FoundationLessonDrill";
+import { inferAutoAttackDirection as inferAutoAttackDirectionFromSession } from "../../utils/attackDirection";
 
 interface DrillRendererV2Props {
   drill: Drill;
@@ -1653,24 +1654,150 @@ function applyAttackDirectionToSegmentZone(
 }
 
 const DETAILED_RINK_VIEWBOX = { width: 900, height: 620 };
+const DETAILED_RINK_SURFACE = { x: 30, y: 40, width: 840, height: 540 };
+/**
+ * Fraction of the ice surface from each end boards to the blue line.
+ * Slightly tactical-board compressed vs literal NHL (~0.375 / NZ 25%):
+ * end zones read larger, NZ a bit narrower.
+ */
+const DETAILED_RINK_BLUE_LINE_FROM_END = 0.38;
 
 /** Blue-line x as fraction of the detailed viewBox (for zone_boundaries). Matches painted blue lines. */
 const DETAILED_RINK_ZONE_BOUNDARIES = {
-	left_blue_line_x: (30 + 840 * 0.3438) / DETAILED_RINK_VIEWBOX.width,
-	right_blue_line_x: (30 + 840 * 0.6562) / DETAILED_RINK_VIEWBOX.width,
+	left_blue_line_x: (DETAILED_RINK_SURFACE.x + DETAILED_RINK_SURFACE.width * DETAILED_RINK_BLUE_LINE_FROM_END) / DETAILED_RINK_VIEWBOX.width,
+	right_blue_line_x: (DETAILED_RINK_SURFACE.x + DETAILED_RINK_SURFACE.width * (1 - DETAILED_RINK_BLUE_LINE_FROM_END)) / DETAILED_RINK_VIEWBOX.width,
 };
+
+const SIMPLE_RINK_VIEWBOX = { width: 1100, height: 700 };
+const SIMPLE_RINK_SURFACE = { x: 28, y: 28, width: 1044, height: 644 };
+const SIMPLE_RINK_ZONE_BOUNDARIES = {
+	left_blue_line_x: (SIMPLE_RINK_SURFACE.x + SIMPLE_RINK_SURFACE.width * DETAILED_RINK_BLUE_LINE_FROM_END) / SIMPLE_RINK_VIEWBOX.width,
+	right_blue_line_x: (SIMPLE_RINK_SURFACE.x + SIMPLE_RINK_SURFACE.width * (1 - DETAILED_RINK_BLUE_LINE_FROM_END)) / SIMPLE_RINK_VIEWBOX.width,
+};
+const SIMPLE_RINK_LEFT_BLUE_X = SIMPLE_RINK_SURFACE.x + SIMPLE_RINK_SURFACE.width * DETAILED_RINK_BLUE_LINE_FROM_END;
+const SIMPLE_RINK_RIGHT_BLUE_X = SIMPLE_RINK_SURFACE.x + SIMPLE_RINK_SURFACE.width * (1 - DETAILED_RINK_BLUE_LINE_FROM_END);
+
+/** Extra NZ past the defending blue line so Staffelung stays readable. */
+const DEFENSIVE_HALF_NZ_PAD = 0.16;
+/** Half-ice crop is a mobile readability fix; desktop keeps full ice. */
+const DEFENSIVE_HALF_MOBILE_MQ = "(max-width: 768px)";
+
+type RinkCropNorm = { xMin: number; xMax: number };
+
+function useIsMobileViewport(query = DEFENSIVE_HALF_MOBILE_MQ) {
+	const [isMobile, setIsMobile] = useState(() => (
+		typeof window !== "undefined" ? window.matchMedia(query).matches : false
+	));
+
+	useEffect(() => {
+		const mq = window.matchMedia(query);
+		const sync = () => setIsMobile(mq.matches);
+		sync();
+		mq.addEventListener("change", sync);
+		return () => mq.removeEventListener("change", sync);
+	}, [query]);
+
+	return isMobile;
+}
+
+function getDefensiveHalfCrop(attackDirection: "left" | "right"): RinkCropNorm {
+	const leftBlue = DETAILED_RINK_ZONE_BOUNDARIES.left_blue_line_x;
+	const rightBlue = DETAILED_RINK_ZONE_BOUNDARIES.right_blue_line_x;
+	if (attackDirection === "right") {
+		return { xMin: 0, xMax: Math.min(1, leftBlue + DEFENSIVE_HALF_NZ_PAD) };
+	}
+	return { xMin: Math.max(0, rightBlue - DEFENSIVE_HALF_NZ_PAD), xMax: 1 };
+}
+
+/**
+ * Pull default bubble starts into the defending end zone so mobile half-ice
+ * crop does not clip wings/center at the NZ edge.
+ */
+function fitFormationIntoDefensiveZone(
+	formation: Record<string, { x: number; y: number }>,
+	attackDirection: "left" | "right",
+): Record<string, { x: number; y: number }> {
+	const roles = Object.keys(formation);
+	if (roles.length === 0) return formation;
+
+	const leftBlue = DETAILED_RINK_ZONE_BOUNDARIES.left_blue_line_x;
+	const rightBlue = DETAILED_RINK_ZONE_BOUNDARIES.right_blue_line_x;
+	const boardsInset = 0.12;
+	const blueInset = 0.05;
+	const bandMin = attackDirection === "right"
+		? boardsInset
+		: rightBlue + blueInset;
+	const bandMax = attackDirection === "right"
+		? leftBlue - blueInset
+		: 1 - boardsInset;
+	if (bandMax <= bandMin) return formation;
+
+	const xs = roles.map((role) => formation[role].x);
+	const minX = Math.min(...xs);
+	const maxX = Math.max(...xs);
+	const span = Math.max(0.001, maxX - minX);
+
+	return Object.fromEntries(
+		roles.map((role) => {
+			const point = formation[role];
+			const t = (point.x - minX) / span;
+			return [
+				role,
+				{
+					x: Number((bandMin + t * (bandMax - bandMin)).toFixed(3)),
+					y: point.y,
+				},
+			];
+		}),
+	);
+}
+
+function fullToVisibleX(fullX: number, crop: RinkCropNorm): number {
+	const span = crop.xMax - crop.xMin;
+	if (span <= 0) return clamp01(fullX);
+	return clamp01((fullX - crop.xMin) / span);
+}
+
+function visibleToFullX(visibleX: number, crop: RinkCropNorm): number {
+	const span = crop.xMax - crop.xMin;
+	return clamp01(crop.xMin + clamp01(visibleX) * span);
+}
+
+function mapPointFullToVisible(
+	point: { x: number; y: number } | null | undefined,
+	crop: RinkCropNorm | null,
+): { x: number; y: number } | null {
+	if (!point) return null;
+	if (!crop) return { x: clamp01(point.x), y: clamp01(point.y) };
+	return {
+		x: Number(fullToVisibleX(Number(point.x), crop).toFixed(3)),
+		y: clamp01(Number(point.y)),
+	};
+}
+
+function mapPointVisibleToFull(
+	point: { x: number; y: number } | null | undefined,
+	crop: RinkCropNorm | null,
+): { x: number; y: number } | null {
+	if (!point) return null;
+	if (!crop) return { x: clamp01(point.x), y: clamp01(point.y) };
+	return {
+		x: Number(visibleToFullX(Number(point.x), crop).toFixed(3)),
+		y: clamp01(Number(point.y)),
+	};
+}
 
 /** Geometry aligned with C1_D1 / paintable detailed rink visuals. */
 function getDetailedRinkMetrics() {
-	const rinkX = 30;
-	const rinkY = 40;
-	const rinkWidth = 840;
-	const rinkHeight = 540;
+	const rinkX = DETAILED_RINK_SURFACE.x;
+	const rinkY = DETAILED_RINK_SURFACE.y;
+	const rinkWidth = DETAILED_RINK_SURFACE.width;
+	const rinkHeight = DETAILED_RINK_SURFACE.height;
 	const rinkRight = rinkX + rinkWidth;
 	const rinkCenterX = rinkX + rinkWidth / 2;
 	const rinkCenterY = rinkY + rinkHeight / 2;
-	const leftBlueLineX = rinkX + rinkWidth * 0.3438;
-	const rightBlueLineX = rinkX + rinkWidth * 0.6562;
+	const leftBlueLineX = rinkX + rinkWidth * DETAILED_RINK_BLUE_LINE_FROM_END;
+	const rightBlueLineX = rinkX + rinkWidth * (1 - DETAILED_RINK_BLUE_LINE_FROM_END);
 	const leftGoalLineX = rinkX + rinkWidth * 0.11;
 	const rightGoalLineX = rinkRight - rinkWidth * 0.11;
 	const goalMouth = rinkHeight * 0.078;
@@ -1682,7 +1809,7 @@ function getDetailedRinkMetrics() {
 	const rightZoneFaceoffX = rinkRight - rinkWidth * 0.26;
 	const topFaceoffY = rinkCenterY - rinkHeight * 0.26;
 	const bottomFaceoffY = rinkCenterY + rinkHeight * 0.26;
-	const neutralOffsetX = rinkWidth * 0.11;
+	const neutralOffsetX = rinkWidth * 0.08;
 	const neutralOffsetY = rinkHeight * 0.22;
 	const neutralDots = [
 		{ x: rinkCenterX - neutralOffsetX, y: rinkCenterY - neutralOffsetY },
@@ -1826,7 +1953,6 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 
 	const attackDirectionKey = config?.attack_direction_key || "attackDirection";
 	const attackDirectionOverrideKey = config?.attack_direction_override_key || attackDirectionKey;
-	const attackDirectionDefault = config?.attack_direction_default === "left" ? "left" : "right";
 	const homeAttackDirectionP1 = config?.home_attack_direction_p1 === "left" ? "left" : "right";
 	const authoredOffensiveEnd = config?.authored_offensive_end === "left" ? "left" : "right";
 	const mirrorZonesWithAttackDirection = config?.mirror_zones_with_attack_direction === true
@@ -1843,32 +1969,11 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 			: "occupiedZones");
 	const summaryLayoutStacked = String(config?.summary_layout || "").toLowerCase() === "stacked";
 
-	const normalizeTeam = (value: any) => String(value || "").trim().toLowerCase();
-	const inferPeriodNumber = () => {
-		const fromPhase = String(phase || session?.current_phase || "").toUpperCase();
-		if (fromPhase.startsWith("P")) {
-			const n = Number(fromPhase.replace("P", ""));
-			if (Number.isFinite(n) && n >= 1) return n;
-		}
-		return 1;
-	};
-	const inferAutoAttackDirection = (): "left" | "right" => {
-		const period = inferPeriodNumber();
-		const homeDirection = period % 2 === 1
-			? homeAttackDirectionP1
-			: (homeAttackDirectionP1 === "right" ? "left" : "right");
-		const observedTeam = normalizeTeam(session?.game_info?.observed_team || session?.observed_team);
-		const homeTeam = normalizeTeam(session?.game_info?.team_home);
-		const awayTeam = normalizeTeam(session?.game_info?.team_away);
-		if (observedTeam && homeTeam && observedTeam === homeTeam) {
-			return homeDirection === "left" ? "left" : "right";
-		}
-		if (observedTeam && awayTeam && observedTeam === awayTeam) {
-			return homeDirection === "left" ? "right" : "left";
-		}
-		return attackDirectionDefault;
-	};
-	const autoAttackDirection = inferAutoAttackDirection();
+	const autoAttackDirection = inferAutoAttackDirectionFromSession({
+		phase,
+		session,
+		homeAttackDirectionP1,
+	});
 	const attackDirection: "left" | "right" = manualAttackDirection === "left" || manualAttackDirection === "right"
 		? manualAttackDirection
 		: autoAttackDirection;
@@ -3067,13 +3172,15 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const isSingleMarkerMode = rinkMode === "single_marker_observation";
 	const isDirectionalPathMode = rinkMode === "directional_path_observation";
 	const usesDetailedRink = wantsDetailedHockeyRink(rinkMode, config);
+	const rinkViewMode = String(config?.rink_view || "").trim().toLowerCase();
+	const isMobileViewport = useIsMobileViewport();
+	const wantsDefensiveHalfView = rinkViewMode === "defensive_half" && usesDetailedRink && isMobileViewport;
 	const rinkOverlays = normalizeRinkOverlays(usesDetailedRink ? "detailed" : rinkMode, config);
 
 	const observationCount = Number(config?.observation_count || 3);
 	const observationsKey = config?.observations_key || "observations";
 	const attackDirectionKey = config?.attack_direction_key || "attackDirection";
 	const attackDirectionOverrideKey = config?.attack_direction_override_key || attackDirectionKey;
-	const attackDirectionDefault = config?.attack_direction_default || "right";
 	const homeAttackDirectionP1 = config?.home_attack_direction_p1 || "right";
 	const mirrorBubblesWithDirection = config?.mirror_bubbles_with_attack_direction !== false;
 	const manualAttackDirection = safeAnswers[attackDirectionOverrideKey] || "";
@@ -3195,11 +3302,11 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		: presetPositionBubbles;
 	const leftBlueLineX = Number(
 		config?.zone_boundaries?.left_blue_line_x
-		?? (usesDetailedRink ? DETAILED_RINK_ZONE_BOUNDARIES.left_blue_line_x : 0.291),
+		?? (usesDetailedRink ? DETAILED_RINK_ZONE_BOUNDARIES.left_blue_line_x : SIMPLE_RINK_ZONE_BOUNDARIES.left_blue_line_x),
 	);
 	const rightBlueLineX = Number(
 		config?.zone_boundaries?.right_blue_line_x
-		?? (usesDetailedRink ? DETAILED_RINK_ZONE_BOUNDARIES.right_blue_line_x : 0.709),
+		?? (usesDetailedRink ? DETAILED_RINK_ZONE_BOUNDARIES.right_blue_line_x : SIMPLE_RINK_ZONE_BOUNDARIES.right_blue_line_x),
 	);
 	const zoneLabels = {
 		defensive: config?.zone_labels?.defensive || "Defensive Zone",
@@ -3338,41 +3445,28 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		setLocalFormationStates(normalizeStateMap(draft[formationStatesKey] || {}));
 	}, [isFormationShiftMode, serializedDraftFormationStates]);
 
-	const normalizeTeam = (value: any) => String(value || "").trim().toLowerCase();
-	const inferPeriodNumber = () => {
-		const fromPhase = String(phase || session?.current_phase || "").toUpperCase();
-		if (fromPhase.startsWith("P")) {
-			const n = Number(fromPhase.replace("P", ""));
-			if (Number.isFinite(n) && n >= 1) return n;
-		}
-		return 1;
-	};
-
-	const inferAutoAttackDirection = (): "left" | "right" => {
-		const period = inferPeriodNumber();
-		const homeDirection = period % 2 === 1
-			? homeAttackDirectionP1
-			: (homeAttackDirectionP1 === "right" ? "left" : "right");
-
-		const observedTeam = normalizeTeam(session?.game_info?.observed_team || session?.observed_team);
-		const homeTeam = normalizeTeam(session?.game_info?.team_home);
-		const awayTeam = normalizeTeam(session?.game_info?.team_away);
-
-		if (observedTeam && homeTeam && observedTeam === homeTeam) {
-			return homeDirection === "left" ? "left" : "right";
-		}
-		if (observedTeam && awayTeam && observedTeam === awayTeam) {
-			return homeDirection === "left" ? "right" : "left";
-		}
-
-		return attackDirectionDefault === "left" ? "left" : "right";
-	};
-
-	const autoAttackDirection = inferAutoAttackDirection();
+	const autoAttackDirection = inferAutoAttackDirectionFromSession({
+		phase,
+		session,
+		homeAttackDirectionP1,
+	});
 	const attackDirection: "left" | "right" = manualAttackDirection === "left" || manualAttackDirection === "right"
 		? manualAttackDirection
 		: autoAttackDirection;
 	const isDirectionOverrideActive = manualAttackDirection === "left" || manualAttackDirection === "right";
+	const defensiveHalfCrop = wantsDefensiveHalfView ? getDefensiveHalfCrop(attackDirection) : null;
+	const rinkCropViewBox = defensiveHalfCrop
+		? {
+			x: defensiveHalfCrop.xMin * DETAILED_RINK_VIEWBOX.width,
+			y: 0,
+			width: (defensiveHalfCrop.xMax - defensiveHalfCrop.xMin) * DETAILED_RINK_VIEWBOX.width,
+			height: DETAILED_RINK_VIEWBOX.height,
+		}
+		: null;
+	const rinkAspectRatio = rinkCropViewBox
+		? `${rinkCropViewBox.width} / ${rinkCropViewBox.height}`
+		: (usesDetailedRink ? "900 / 620" : "11 / 7");
+	const rinkMaxWidth = defensiveHalfCrop ? "820px" : (usesDetailedRink ? "760px" : "660px");
 
 	const normalizeLocation = (location: any): { x: number; y: number } | null => {
 		const x = Number(location?.x);
@@ -3422,10 +3516,11 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		);
 	};
 
-	const startByPosition: Record<string, { x: number; y: number }> = useMemo(
-		() => getFormationForDirection(baseFormationByRole, attackDirection),
-		[attackDirection, baseFormationByRole, mirrorBubblesWithDirection],
-	);
+	const startByPosition: Record<string, { x: number; y: number }> = useMemo(() => {
+		const oriented = getFormationForDirection(baseFormationByRole, attackDirection);
+		if (!wantsDefensiveHalfView) return oriented;
+		return fitFormationIntoDefensiveZone(oriented, attackDirection);
+	}, [attackDirection, baseFormationByRole, mirrorBubblesWithDirection, wantsDefensiveHalfView]);
 
 	const getBaseZone = (x: number): "left" | "neutral" | "right" => {
 		if (x < leftBlueLineX) return "left";
@@ -3514,10 +3609,15 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const locationFromPointer = (event: PointerEvent) => {
 		if (!rinkRef.current) return null;
 		const rect = rinkRef.current.getBoundingClientRect();
-		const x = clamp((event.clientX - rect.left) / rect.width);
-		const y = clamp((event.clientY - rect.top) / rect.height);
-		return { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) };
+		const visibleX = clamp((event.clientX - rect.left) / rect.width);
+		const visibleY = clamp((event.clientY - rect.top) / rect.height);
+		const full = mapPointVisibleToFull({ x: visibleX, y: visibleY }, defensiveHalfCrop);
+		if (!full) return null;
+		return { x: Number(full.x.toFixed(3)), y: Number(full.y.toFixed(3)) };
 	};
+
+	const toVisibleLocation = (point: { x: number; y: number } | null | undefined) =>
+		mapPointFullToVisible(point, defensiveHalfCrop);
 
 	useEffect(() => {
 		if (!draggingPosition) return;
@@ -4242,8 +4342,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						style={{
 							position: "relative",
 							width: "100%",
-							maxWidth: usesDetailedRink ? "760px" : "660px",
-							aspectRatio: usesDetailedRink ? "900 / 620" : "11 / 7",
+							maxWidth: rinkMaxWidth,
+							aspectRatio: rinkAspectRatio,
 							borderRadius: "10px",
 							border: "1px solid rgba(81,145,162,0.45)",
 							overflow: "hidden",
@@ -4257,18 +4357,44 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 						}}
 					>
 						{usesDetailedRink ? (
-							<svg viewBox="0 0 900 620" role="img" aria-label="Klickbare Eisfläche" style={{ width: "100%", height: "100%", display: "block" }}>
+							<svg
+								viewBox={rinkCropViewBox
+									? `${rinkCropViewBox.x} ${rinkCropViewBox.y} ${rinkCropViewBox.width} ${rinkCropViewBox.height}`
+									: "0 0 900 620"}
+								role="img"
+								aria-label={defensiveHalfCrop ? "Defensive Hälfte der Eisfläche" : "Klickbare Eisfläche"}
+								style={{ width: "100%", height: "100%", display: "block" }}
+							>
 								<DetailedHockeyRinkLayers overlays={rinkOverlays} />
 							</svg>
 						) : (
 							<svg viewBox="0 0 1100 700" role="img" aria-label="Klickbare Eisfläche" style={{ width: "100%", height: "100%", display: "block" }}>
 								<rect x="28" y="28" width="1044" height="644" rx="78" ry="78" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
 								<line x1="550" y1="34" x2="550" y2="666" stroke="rgba(255,120,120,0.65)" strokeWidth="4" />
-								<line x1="320" y1="34" x2="320" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-								<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+								<line x1={SIMPLE_RINK_LEFT_BLUE_X} y1="34" x2={SIMPLE_RINK_LEFT_BLUE_X} y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+								<line x1={SIMPLE_RINK_RIGHT_BLUE_X} y1="34" x2={SIMPLE_RINK_RIGHT_BLUE_X} y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
 								<circle cx="550" cy="350" r="74" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
 							</svg>
 						)}
+
+						{defensiveHalfCrop ? (
+							<div style={{
+								position: "absolute",
+								top: "0.35rem",
+								left: "0.45rem",
+								padding: "0.12rem 0.45rem",
+								borderRadius: "999px",
+								border: "1px solid rgba(148,163,184,0.35)",
+								background: "rgba(15,23,42,0.72)",
+								color: "rgba(226,232,240,0.88)",
+								fontSize: "0.72rem",
+								fontWeight: 600,
+								pointerEvents: "none",
+								zIndex: 3,
+							}}>
+								Eigene Zone
+							</div>
+						) : null}
 
 						{isDirectionalPathMode && pathStartEffective && pathEndEffective && (
 							<DirectionalPathConnection
@@ -4282,6 +4408,10 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 						{isSingleMarkerMode ? (
 							markerLocationEffective ? (
+								(() => {
+									const visibleMarker = toVisibleLocation(markerLocationEffective);
+									if (!visibleMarker) return null;
+									return (
 								<button
 									key={markerId}
 									type="button"
@@ -4293,8 +4423,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									aria-label={markerLabel}
 									style={{
 										position: "absolute",
-										left: `${Number(markerLocationEffective.x) * 100}%`,
-										top: `${Number(markerLocationEffective.y) * 100}%`,
+										left: `${Number(visibleMarker.x) * 100}%`,
+										top: `${Number(visibleMarker.y) * 100}%`,
 										transform: "translate(-50%, -50%)",
 										minWidth: "46px",
 										height: "46px",
@@ -4314,10 +4444,15 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								>
 									{markerLabel}
 								</button>
+									);
+								})()
 							) : null
 						) : isDirectionalPathMode ? (
 							<>
-								{pathStartEffective && (
+								{pathStartEffective && (() => {
+									const visibleStart = toVisibleLocation(pathStartEffective);
+									if (!visibleStart) return null;
+									return (
 									<button
 										key={pathStartDragId}
 										type="button"
@@ -4329,8 +4464,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 										aria-label={pathStartLabel}
 										style={{
 											position: "absolute",
-											left: `${Number(pathStartEffective.x) * 100}%`,
-											top: `${Number(pathStartEffective.y) * 100}%`,
+											left: `${Number(visibleStart.x) * 100}%`,
+											top: `${Number(visibleStart.y) * 100}%`,
 											transform: "translate(-50%, -50%)",
 											minWidth: "46px",
 											height: "46px",
@@ -4351,8 +4486,12 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									>
 										{pathStartLabel}
 									</button>
-								)}
-								{pathEndEffective && (
+									);
+								})()}
+								{pathEndEffective && (() => {
+									const visibleEnd = toVisibleLocation(pathEndEffective);
+									if (!visibleEnd) return null;
+									return (
 									<button
 										key={pathEndDragId}
 										type="button"
@@ -4364,8 +4503,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 										aria-label={pathEndLabel}
 										style={{
 											position: "absolute",
-											left: `${Number(pathEndEffective.x) * 100}%`,
-											top: `${Number(pathEndEffective.y) * 100}%`,
+											left: `${Number(visibleEnd.x) * 100}%`,
+											top: `${Number(visibleEnd.y) * 100}%`,
 											transform: "translate(-50%, -50%)",
 											minWidth: "46px",
 											height: "46px",
@@ -4386,7 +4525,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									>
 										{pathEndLabel}
 									</button>
-								)}
+									);
+								})()}
 							</>
 						) : positionBubbles.map((bubble: any) => {
 							const isActive = (isDefensiveStructureMode || isFormationShiftMode)
@@ -4401,6 +4541,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								: (isActive && effectiveLocation
 									? effectiveLocation
 									: mirroredStart);
+							const visibleLocation = toVisibleLocation(renderedLocation);
+							if (!visibleLocation) return null;
 							const bubbleVisual = resolvePositionBubbleStyle(bubble, { isActive, isMuted });
 							return (
 								<button
@@ -4411,8 +4553,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 									aria-label={bubble.label || bubble.value}
 									style={{
 										position: "absolute",
-										left: `${Number(renderedLocation.x) * 100}%`,
-										top: `${Number(renderedLocation.y) * 100}%`,
+										left: `${Number(visibleLocation.x) * 100}%`,
+										top: `${Number(visibleLocation.y) * 100}%`,
 										transform: "translate(-50%, -50%)",
 										padding: "0 0.55rem",
 										borderRadius: "999px",
@@ -5048,8 +5190,8 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 								<svg viewBox="0 0 1100 700" role="img" aria-label="Rink Übersicht" style={{ width: "100%", height: "100%", display: "block" }}>
 									<rect x="28" y="28" width="1044" height="644" rx="78" ry="78" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
 									<line x1="550" y1="34" x2="550" y2="666" stroke="rgba(255,120,120,0.65)" strokeWidth="4" />
-									<line x1="320" y1="34" x2="320" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
-									<line x1="780" y1="34" x2="780" y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+									<line x1={SIMPLE_RINK_LEFT_BLUE_X} y1="34" x2={SIMPLE_RINK_LEFT_BLUE_X} y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
+									<line x1={SIMPLE_RINK_RIGHT_BLUE_X} y1="34" x2={SIMPLE_RINK_RIGHT_BLUE_X} y2="666" stroke="rgba(86,153,255,0.75)" strokeWidth="4" />
 								</svg>
 							)}
 							{observations.map((entry: any, idx: number) => {
@@ -6675,7 +6817,9 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 	const qualityLabel: string = drill?.config?.quality_label || "Qualität";
 	const qualityOptions: string[] = Array.isArray(drill?.config?.quality_options) ? drill.config.quality_options : [];
 	const noteKey: string = drill?.config?.note_key || "note";
-	const noteLabel: string = drill?.config?.note_label || "Notiz (optional)";
+	const noteRequired: boolean = drill?.config?.note_required === true;
+	const noteMinChars: number = Number(drill?.config?.note_min_chars || 0);
+	const noteLabel: string = drill?.config?.note_label || (noteRequired ? "Notiz" : "Notiz (optional)");
 	const noteMaxChars: number = drill?.config?.note_max_chars || 120;
 	const stateOptions: string[] = Array.isArray(drill?.config?.state_options) ? drill.config.state_options : [];
 	const factorsByState: Record<string, string[]> = drill?.config?.factors_by_state || {};
@@ -6711,6 +6855,8 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 	const addSample = () => {
 		if (!form[stateKey] || !form[factorKey]) return;
 		if (qualityKey && qualityOptions.length > 0 && !form[qualityKey]) return;
+		const noteValue = (form[noteKey] || "").trim();
+		if (noteRequired && noteValue.length < Math.max(1, noteMinChars)) return;
 
 		const nextSamples = [
 			...samples,
@@ -6718,7 +6864,7 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 				[stateKey]: form[stateKey],
 				[factorKey]: form[factorKey],
 				...(qualityKey ? { [qualityKey]: form[qualityKey] || "" } : {}),
-				[noteKey]: (form[noteKey] || "").trim(),
+				[noteKey]: noteValue,
 			},
 		];
 
@@ -6849,13 +6995,15 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 					)}
 
 					<div style={{ marginBottom: "0.75rem" }}>
-						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{noteLabel}</label>
-						<input
-							type="text"
+						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>
+							{noteLabel}
+						</label>
+						<textarea
 							value={form[noteKey]}
 							onChange={e => updateFormField(noteKey, e.target.value)}
 							maxLength={noteMaxChars}
-							placeholder="Sehr kurz"
+							rows={noteMaxChars > 120 ? 3 : 2}
+							placeholder={noteRequired ? `Mind. ${Math.max(1, noteMinChars)} Zeichen — sichtbare Anker, keine Bewertung` : "Sehr kurz"}
 							style={{
 								width: "100%",
 								padding: "0.45rem 0.55rem",
@@ -6863,8 +7011,15 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 								color: "#f7f7ff",
 								border: "1px solid rgba(81,145,162,0.5)",
 								borderRadius: "4px",
+								resize: "vertical",
 							}}
 						/>
+						{noteRequired && (
+							<div style={{ marginTop: "0.25rem", fontSize: "0.78rem", color: "rgba(255,255,255,0.55)" }}>
+								{(form[noteKey] || "").trim().length}/{noteMaxChars}
+								{noteMinChars > 0 ? ` · mind. ${noteMinChars}` : ""}
+							</div>
+						)}
 					</div>
 
 					<div style={{ display: "flex", gap: "0.45rem", justifyContent: "flex-end" }}>
@@ -6874,7 +7029,12 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 						<button
 							type="button"
 							onClick={addSample}
-							disabled={!form[stateKey] || !form[factorKey] || !!(qualityKey && qualityOptions.length > 0 && !form[qualityKey])}
+							disabled={
+								!form[stateKey]
+								|| !form[factorKey]
+								|| !!(qualityKey && qualityOptions.length > 0 && !form[qualityKey])
+								|| (noteRequired && (form[noteKey] || "").trim().length < Math.max(1, noteMinChars))
+							}
 							style={{ padding: "0.35rem 0.7rem", fontWeight: 600 }}
 						>
 							Speichern

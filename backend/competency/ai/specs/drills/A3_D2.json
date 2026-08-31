@@ -1,10 +1,18 @@
 {
   "drillId": "A3_D2",
-  "specVersion": "A3_D2-spec-v2",
+  "specVersion": "A3_D2-spec-v3",
   "title": "Erste Reaktion erkennen",
   "scope": "single_sequence",
-  "primaryTextKeys": ["observation_text", "note"],
-  "primaryCompetencies": ["transition_tempo", "scanning_identification", "space_structure", "roles_support"],
+  "primaryTextKeys": [
+    "note",
+    "observation_text"
+  ],
+  "primaryCompetencies": [
+    "transition_tempo",
+    "scanning_identification",
+    "space_structure",
+    "roles_support"
+  ],
   "observableEvidence": [
     "visible possession switch / transition moment",
     "first 2–3 seconds of behaviour change",
@@ -35,8 +43,8 @@
     "uncertaintyCalibration": "medium"
   },
   "fairnessNote": "A clear single-sequence observation can reach excellent. Multi-scene synthesis is not required for high quality here.",
-  "freeTextReadiness": "NEEDS_SMALL_INPUT_CHANGE",
+  "freeTextReadiness": "READY",
   "evidenceSourceRecommendation": "structured_plus_ai_review",
-  "minimalInputChange": "Primary answers are selects. Optional note ≤150 chars is too thin. Minimal: require a short free-text (≈60–150 chars) describing the first reaction sequence, or keep structured-only from selects.",
-  "validationOnly": true
+  "minimalInputChange": "Required note ≥60 chars (max 200) describing first-reaction sequence; validate_answers on checkin.",
+  "validationOnly": false
 }

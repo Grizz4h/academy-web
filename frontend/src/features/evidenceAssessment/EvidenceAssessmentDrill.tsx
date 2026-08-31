@@ -127,7 +127,14 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
     if (step === 'difference') return Boolean(dims.differenceClarity)
     if (step === 'definition') return Boolean(dims.definitionClarity)
     if (step === 'overall') return Boolean(assessment.overallStrength)
-    if (step === 'statements') return Boolean(assessment.strongestSupportedStatement && assessment.tooStrongStatement)
+    if (step === 'statements') {
+      const supported = Boolean(assessment.strongestSupportedStatement && assessment.tooStrongStatement)
+      if (!supported) return false
+      if (cfg.userStatementMinChars > 0) {
+        return String(assessment.userStatement || '').trim().length >= cfg.userStatementMinChars
+      }
+      return true
+    }
     return Boolean(String(assessment.evidenceNeededNext || '').trim())
   }
 
@@ -152,7 +159,11 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
     return (
       <div className={rateStyles.drillRoot}>
         <span className={rateStyles.completeBadge}>✓ Tragfähigkeitsprüfung abgeschlossen</span>
-        <ReviewBlock cfgCases={cfg.cases} assessments={assessments} />
+        <ReviewBlock
+          cfgCases={cfg.cases}
+          assessments={assessments}
+          userStatementMinChars={cfg.userStatementMinChars}
+        />
         <div className={rateStyles.actions}>
           <button type="button" className={rateStyles.secondaryBtn} onClick={() => setStage('review')}>
             Bearbeiten
@@ -208,6 +219,7 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
               assessment={assessment}
               step={step}
               statementHint={cfg.statementHint}
+              userStatementMinChars={cfg.userStatementMinChars}
               onChange={writeAssessment}
             />
             <div className={rateStyles.actions}>
@@ -240,7 +252,11 @@ export function EvidenceAssessmentDrill({ drill, answers, setAnswers }: Props) {
       {stage === 'review' && (
         <section className={`${rateStyles.panel} ui-flat-mobile mobile-flatten-card`}>
           <h3 className={rateStyles.panelTitle}>Deine Tragfähigkeits-Checks</h3>
-          <ReviewBlock cfgCases={cfg.cases} assessments={assessments} />
+          <ReviewBlock
+          cfgCases={cfg.cases}
+          assessments={assessments}
+          userStatementMinChars={cfg.userStatementMinChars}
+        />
           <div className={rateStyles.fieldBlock}>
             <div className={rateStyles.fieldLabel}>Welche Dimension hat deine Einschätzung der Evidenz am stärksten verändert?</div>
             <OptionChips
@@ -297,12 +313,14 @@ function CaseStepFields({
   assessment,
   step,
   statementHint,
+  userStatementMinChars,
   onChange,
 }: {
   caseDef: EvidenceCaseDefinition
   assessment: EvidenceAssessment
   step: EvidenceCaseStep
   statementHint: string
+  userStatementMinChars: number
   onChange: (next: EvidenceAssessment) => void
 }) {
   const setDimension = (id: EvidenceDimensionId, value: string) => {
@@ -382,7 +400,10 @@ function CaseStepFields({
           {tooStrong && <p className={styles.feedback}>{statementToneExplanation(tooStrong.tone)}</p>}
         </div>
         <div className={rateStyles.fieldBlock}>
-          <div className={rateStyles.fieldLabel}>Formuliere selbst eine Aussage, die zur Tragfähigkeit der Beobachtungsgrundlage passt. (empfohlen)</div>
+          <div className={rateStyles.fieldLabel}>
+            Formuliere selbst eine Aussage, die zur Tragfähigkeit der Beobachtungsgrundlage passt.
+            {userStatementMinChars > 0 ? '' : ' (empfohlen)'}
+          </div>
           <textarea
             className={rateStyles.textarea}
             value={assessment.userStatement || ''}
@@ -390,6 +411,11 @@ function CaseStepFields({
             placeholder="In dieser Stichprobe … Die Sample Size begrenzt aber …"
             onChange={(event) => onChange({ ...assessment, userStatement: event.target.value })}
           />
+          {userStatementMinChars > 0 && (
+            <p className={rateStyles.fieldHelp}>
+              {String(assessment.userStatement || '').trim().length}/320 · mind. {userStatementMinChars} Zeichen
+            </p>
+          )}
         </div>
       </>
     )
@@ -422,9 +448,11 @@ function CaseStepFields({
 function ReviewBlock({
   cfgCases,
   assessments,
+  userStatementMinChars = 0,
 }: {
   cfgCases: EvidenceCaseDefinition[]
   assessments: Record<string, EvidenceAssessment>
+  userStatementMinChars?: number
 }) {
   return (
     <div className={styles.reviewList}>
@@ -466,7 +494,7 @@ function ReviewBlock({
                 <p className={rateStyles.resultValue}>{nextLabel}</p>
               </div>
             )}
-            {!isCaseAssessmentComplete(item) && (
+            {!isCaseAssessmentComplete(item, userStatementMinChars) && (
               <p className={rateStyles.fieldHelp}>Dieser Fall ist noch nicht vollständig bewertet.</p>
             )}
           </div>

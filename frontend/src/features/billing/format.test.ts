@@ -33,8 +33,8 @@ describe('billing format helpers', () => {
     }
     const view = describeAcademyBilling(true, billing)
     expect(view.badgeLabel).toBe('Auslaufend')
-    expect(view.statusHeadline).toMatch(/^Auslaufend zum /)
-    expect(view.profileLine).toMatch(/^Premium · auslaufend /)
+    expect(view.statusHeadline).toMatch(/^Zugang bis /)
+    expect(view.profileLine).toMatch(/^Auslaufend · /)
   })
 
   it('describes active renewal', () => {
@@ -44,7 +44,8 @@ describe('billing format helpers', () => {
       subscriptions: [{ status: 'active', cancel_at_period_end: false }],
     }
     const view = describeAcademyBilling(true, billing)
-    expect(view.badgeLabel).toBe('Premium aktiv')
-    expect(view.statusHeadline).toMatch(/^Aktiv · Verlängerung am /)
+    expect(view.badgeLabel).toBe('Aktiv')
+    expect(view.statusHeadline).toMatch(/^Verlängerung am /)
+    expect(view.profileLine).toMatch(/^Aktiv · /)
   })
 })

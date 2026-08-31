@@ -33,6 +33,8 @@ const d1 = e3.drills.find((d: { id: string }) => d.id === 'E3_D1')
 const d2 = e3.drills.find((d: { id: string }) => d.id === 'E3_D2')
 const d3 = e3.drills.find((d: { id: string }) => d.id === 'E3_D3')
 const d4 = e3.drills.find((d: { id: string }) => d.id === 'E3_D4')
+assert.ok(Number(d4.config.user_statement_min_chars) >= 80)
+
 const d5 = e3.drills.find((d: { id: string }) => d.id === 'E3_D5')
 
 assert.ok(/Übung|nicht repräsentativ|Evidenzschwelle/i.test(d1.didactics.explanation))

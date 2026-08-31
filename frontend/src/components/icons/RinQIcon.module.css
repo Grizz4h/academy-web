@@ -49,6 +49,7 @@
   background: rgba(81, 145, 162, 0.1);
   padding: 0.18rem;
   line-height: 0;
+  margin-inline: 0.35rem;
 }
 
 .badgeSm {
@@ -61,6 +62,11 @@
   border-radius: 7px;
 }
 
+/* Keep icons from sticking to adjacent labels/text. */
 .inline {
-  margin-right: 0.55em;
+  margin-inline: 0.45rem;
+}
+
+.badge.inline {
+  margin-inline: 0.5rem;
 }

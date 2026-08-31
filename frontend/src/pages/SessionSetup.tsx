@@ -181,7 +181,7 @@ export default function SessionSetup() {
     localStorage.setItem(draftKey, JSON.stringify(draft))
   }, [draftKey, goal, confidence, league, teamHome, teamAway, season, competitionPhase, competitionValue, selectedDrill, observationScope, observedTeam, selectedGameId])
 
-  const { data: curriculum } = useQuery({
+  const { data: curriculum, isLoading: curriculumLoading, isError: curriculumError } = useQuery({
     queryKey: ['curriculum', user],
     queryFn: () => api.getCurriculum()
   })
@@ -473,6 +473,14 @@ export default function SessionSetup() {
     }
   }, [league, season, seasonOptions])
 
+  if (curriculumLoading || !curriculum) {
+    return <div className="card">Lade Modul…</div>
+  }
+
+  if (curriculumError) {
+    return <div className="card">Lehrplan konnte nicht geladen werden.</div>
+  }
+
   if (!currentModule) {
     return <div className="card">Modul nicht gefunden</div>
   }
@@ -674,6 +682,9 @@ export default function SessionSetup() {
         : matchedCatalogGame && observedTeam === (matchedCatalogGame.away_team_name || matchedCatalogGame.away_team_id)
           ? matchedCatalogGame.away_team_id
           : undefined
+    if (observedTeamId) {
+      gameInfo.observed_team_id = observedTeamId
+    }
     const locationVerification = dummyGame || !matchedCatalogGame?.id
       ? undefined
       : readPendingVenuePresence(matchedCatalogGame.id) || undefined
@@ -1020,7 +1031,7 @@ export default function SessionSetup() {
                   style={{ marginRight: '0.5rem', cursor: 'pointer', flexShrink: 0 }}
                 />
                 <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
                     <MechanicGlyph
                       drillType={drill.drill_type}
                       mode={drill.config?.mode}

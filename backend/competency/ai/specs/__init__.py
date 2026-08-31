@@ -38,16 +38,44 @@ EVIDENCE_SOURCE_STRATEGIES = frozenset(
     }
 )
 
-# Production AI pilots + cross-drill validation set (not a 78-drill rollout)
-PRODUCTION_AI_DRILLS = frozenset({"B2_D5", "E1_D1"})
+# Production AI checkin dispatch (expand carefully after smoke)
+PRODUCTION_AI_DRILLS = frozenset(
+    {
+        "A3_D2",
+        "B1_D1",
+        "B1_D2",
+        "B1_D3",
+        "B1_D4",
+        "B1_D5",
+        "B2_D5",
+        "E1_D1",
+        "E1_D5",
+        "C1_D5",
+        "C2_D5",
+        "C3_D5",
+        "D1_D5",
+        "D2_D5",
+        "D3_D5",
+        "E2_D1",
+        "E2_D2",
+        "E2_D3",
+        "E2_D4",
+        "E2_D5",
+        "E3_D1",
+        "E3_D2",
+        "E3_D3",
+        "E3_D4",
+        "E3_D5",
+    }
+)
 VALIDATION_AI_DRILLS = frozenset(
     {
         "A1_D2",  # A-recognition
         "A3_D2",  # A/B transition
         "B1_D1",  # roles-support
-        "C1_D5",  # C-system
-        "D3_D5",  # D-transfer
-        "E3_D5",  # E3-analysis
+        "C1_D5",  # also production — kept for calibration matrix
+        "D3_D5",
+        "E3_D5",
     }
 )
 GENERIC_EVAL_DRILLS = PRODUCTION_AI_DRILLS | VALIDATION_AI_DRILLS

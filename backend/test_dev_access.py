@@ -16,23 +16,23 @@ from identity.context import AuthContext
 from security_guards import is_dev_access_auth
 
 
+def _auth(username: str, rinq_suffix: str) -> AuthContext:
+    return AuthContext(
+        auth_subject=username,
+        legacy_username=username,
+        display_name=username,
+        rinq_user_id=f"00000000-0000-4000-8000-0000000000{rinq_suffix}",
+        auth_provider="legacy_password",
+    )
+
+
 class DevAccessTests(unittest.TestCase):
-    def test_paywall_test_default(self):
+    def test_paywall_accounts_default(self):
         env = os.environ.pop("ACADEMY_DEV_USERNAMES", None)
         try:
-            auth = AuthContext(
-                auth_subject="paywall-test",
-                legacy_username="paywall-test",
-                rinq_user_id="00000000-0000-4000-8000-000000000099",
-                auth_provider="legacy_password",
-            )
-            self.assertTrue(is_dev_access_auth(auth))
-            self.assertFalse(is_dev_access_auth(AuthContext(
-                auth_subject="random-user",
-                legacy_username="random-user",
-                rinq_user_id="00000000-0000-4000-8000-000000000098",
-                auth_provider="legacy_password",
-            )))
+            self.assertTrue(is_dev_access_auth(_auth("paywall-test", "99")))
+            self.assertTrue(is_dev_access_auth(_auth("paywall-widerruf", "97")))
+            self.assertFalse(is_dev_access_auth(_auth("random-user", "98")))
         finally:
             if env is not None:
                 os.environ["ACADEMY_DEV_USERNAMES"] = env

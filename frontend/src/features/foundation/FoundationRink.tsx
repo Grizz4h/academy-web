@@ -28,13 +28,14 @@ const MARKERS: Record<string, MarkerSpec> = {
   support_player: { id: 'support_player', cx: 220, cy: 75, label: 'Mitspieler', kind: 'player', team: 'blue' },
 }
 
-/** Zone edges meet exactly at the blue lines — no gap, no overlap. */
+/** Zone edges meet exactly at the blue lines — no gap, no overlap.
+ *  Same tactical NZ compression as the academy detailed rink (~38% / 24% / 38%). */
 const ZONE_Y = 20
 const ZONE_H = 200
-const BLUE_NEAR = 140
-const BLUE_FAR = 270
 const ICE_LEFT = 20
 const ICE_RIGHT = 380
+const BLUE_NEAR = ICE_LEFT + (ICE_RIGHT - ICE_LEFT) * 0.38
+const BLUE_FAR = ICE_LEFT + (ICE_RIGHT - ICE_LEFT) * 0.62
 
 type FoundationRinkProps = {
   attackDirection?: FoundationAttackDirection

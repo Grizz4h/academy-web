@@ -13,6 +13,19 @@ Wenn kein Tutorial aktiv ist, ändert sich das App-Verhalten nicht. Targets sind
 5. **Wiederverwenden:** `UiButton`, bestehendes Profil (`dashboardPreferences`), Foundation-Empfehlung, Nav-Tabs.
 6. **Architektur:** Eigene kleine Engine. Keine Joyride-Library. `@floating-ui/react` nur für Desktop-Coachmark-Position.
 
+## So teste ich schnell
+
+Dev-Modus (`isDevNavEnabled`): unten rechts erscheint das **Tutorial-Dev-Panel**.
+
+| Button | Wirkung |
+|--------|---------|
+| **Neues Profil** | Tutorial zurück auf `not_started`, öffnet den **Willkommens-Screen** (auch wenn schon Sessions existieren) |
+| Restart | Tutorial-Flow ab Step 1 aktiv |
+| Reset | Progress leeren, kein erzwungenes Welcome |
+| Prev / Next | Steps springen |
+
+Ohne Dev-Button wäre Welcome nur bei wirklich neuem Account (0 Sessions + `not_started`) sichtbar.
+
 ## So füge ich ein Feature ins Tutorial ein
 
 1. Stabile `data-tutorial-id` am echten UI-Element setzen (`TUTORIAL_TARGET` in `ids.ts`).

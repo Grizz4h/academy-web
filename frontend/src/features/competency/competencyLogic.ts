@@ -53,3 +53,42 @@ export function accessibilitySummary(item: CompetencyItem): string {
   const score = Math.round(item.score)
   return band ? `${item.label} — ${band} — ${score}` : `${item.label} — ${score}`
 }
+
+/** Highest-score rated axis (ties → first in taxonomy order). */
+export function strongestRatedCompetency(
+  competencies: readonly CompetencyItem[],
+): CompetencyItem | null {
+  let best: CompetencyItem | null = null
+  for (const item of competencies) {
+    if (item.status !== 'rated') continue
+    if (!best || item.score > best.score) best = item
+  }
+  return best
+}
+
+/** Mean score across rated axes only — used for center glyph when profile is complete. */
+export function meanRatedScore(competencies: readonly CompetencyItem[]): number | null {
+  const rated = competencies.filter((item) => item.status === 'rated')
+  if (rated.length === 0) return null
+  const sum = rated.reduce((acc, item) => acc + item.score, 0)
+  return sum / rated.length
+}
+
+export function profileProgressLabel(
+  competencies: readonly CompetencyItem[],
+): { short: string; complete: boolean } {
+  const total = competencies.length
+  const rated = ratedCount(competencies)
+  if (total > 0 && rated === total) {
+    return { short: 'Profil vollständig', complete: true }
+  }
+  return { short: `${rated}/${total} bewertet`, complete: false }
+}
+
+export function profileStoryLine(competencies: readonly CompetencyItem[]): string | null {
+  const strongest = strongestRatedCompetency(competencies)
+  if (!strongest) return null
+  const band = capabilityLabelForItem(strongest)
+  if (band) return `Schwerpunkt: ${strongest.label} · ${band}`
+  return `Schwerpunkt: ${strongest.label}`
+}

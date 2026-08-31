@@ -386,14 +386,20 @@ export function hasDimensionsComplete(assessment: EvidenceAssessment | undefined
   )
 }
 
-export function isCaseAssessmentComplete(assessment: EvidenceAssessment | undefined): boolean {
+export function isCaseAssessmentComplete(
+  assessment: EvidenceAssessment | undefined,
+  userStatementMinChars = 0,
+): boolean {
   if (!assessment || !hasDimensionsComplete(assessment)) return false
-  return Boolean(
-    assessment.overallStrength
-    && assessment.strongestSupportedStatement
-    && assessment.tooStrongStatement
-    && String(assessment.evidenceNeededNext || '').trim(),
-  )
+  if (!assessment.overallStrength || !assessment.strongestSupportedStatement || !assessment.tooStrongStatement) {
+    return false
+  }
+  if (!String(assessment.evidenceNeededNext || '').trim()) return false
+  if (userStatementMinChars > 0) {
+    const statement = String(assessment.userStatement || '').trim()
+    if (statement.length < userStatementMinChars) return false
+  }
+  return true
 }
 
 export function statementToneExplanation(tone: EvidenceStatementTone): string {
@@ -448,7 +454,7 @@ export function validateEvidenceAssessmentAnswers(
 ): string | null {
   const assessments = readAssessments(answers, cfg.assessmentsKey)
   for (const caseDef of cfg.cases) {
-    if (!isCaseAssessmentComplete(assessments[caseDef.id])) {
+    if (!isCaseAssessmentComplete(assessments[caseDef.id], cfg.userStatementMinChars)) {
       return `Bitte schließe die Evidenzbewertung für „${caseDef.title}“ vollständig ab.`
     }
   }

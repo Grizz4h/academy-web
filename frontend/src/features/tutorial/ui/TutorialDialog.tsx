@@ -8,6 +8,8 @@ type Props = {
   body?: string
   kicker?: string
   children?: ReactNode
+  /** Wider layout for first-login welcome */
+  size?: 'default' | 'welcome'
   primaryLabel: string
   onPrimary: () => void
   secondaryLabel?: string
@@ -21,6 +23,7 @@ export function TutorialDialog({
   body,
   kicker,
   children,
+  size = 'default',
   primaryLabel,
   onPrimary,
   secondaryLabel,
@@ -28,10 +31,10 @@ export function TutorialDialog({
   quietLabel,
   onQuiet,
 }: Props) {
-  const primaryRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    primaryRef.current?.focus()
+    dialogRef.current?.querySelector<HTMLButtonElement>('button.ui-btn--primary, button')?.focus()
   }, [])
 
   useEffect(() => {
@@ -45,7 +48,8 @@ export function TutorialDialog({
   return createPortal(
     <div className={styles.dialogOverlay} role="presentation">
       <div
-        className={styles.dialog}
+        ref={dialogRef}
+        className={[styles.dialog, size === 'welcome' ? styles.dialogWelcome : ''].filter(Boolean).join(' ')}
         role="dialog"
         aria-modal="true"
         aria-labelledby="tutorial-dialog-title"

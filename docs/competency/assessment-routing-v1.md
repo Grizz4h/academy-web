@@ -47,9 +47,9 @@ cd backend && .venv/bin/python -m unittest test_assessment_routing_v1 -q
 | readiness | count |
 |-----------|------:|
 | NOT_SUITABLE_FOR_AI_EVIDENCE | 53 |
-| READY | 18 |
-| NEEDS_SMALL_INPUT_CHANGE | 6 |
-| NEEDS_MECHANIC_CHANGE | 1 |
+| READY | 25 |
+| NEEDS_SMALL_INPUT_CHANGE | 0 |
+| NEEDS_MECHANIC_CHANGE | 0 |
 
 Pure `ai_review`: **E1_D1**, **E3_D5** only.
 
@@ -60,18 +60,18 @@ AI-involved share ≈ **25 / 78 (~32%)** — majority stay structured.
 | Drill | Source | Readiness |
 |-------|--------|-----------|
 | A1_D2 | structured_only | NOT_SUITABLE_FOR_AI_EVIDENCE |
-| A3_D2 | structured_plus_ai_review | NEEDS_SMALL_INPUT_CHANGE |
-| B1_D1 | structured_plus_ai_review | NEEDS_SMALL_INPUT_CHANGE |
+| A3_D2 | structured_plus_ai_review | READY |
+| B1_D1 | structured_plus_ai_review | READY |
 | C1_D5 | structured_plus_ai_review | READY |
 | D3_D5 | structured_plus_ai_review | READY |
 | E3_D5 | ai_review | READY |
 
-Also: production AI pilots **B2_D5** (`structured_plus_ai_review` / READY) and **E1_D1** (`ai_review` / READY).
+Production AI allowlist: **A3_D2**, **B1_D1–D5**, **B2_D5**, **E1_D1**, **E1_D5**, **C1–C3_D5**, **D1–D3_D5**, **E2_D1–D5**, **E3_D1–D5** (all 25 READY).
 
-## Input changes (no UI yet)
+## Input changes
 
-- **NEEDS_SMALL_INPUT_CHANGE:** A3_D2, B1_D1–B1_D5 — optional short notes → require short free-text *only if* AI path is chosen later; otherwise keep structured-only.
-- **NEEDS_MECHANIC_CHANGE:** E3_D4 — review whether open statement quality needs explicit free-text or stays rule-based.
+- **NEEDS_SMALL_INPUT_CHANGE:** cleared — A3_D2 / B1 family require free-text and are production-wired.
+- **NEEDS_MECHANIC_CHANGE:** cleared — E3_D4 requires `userStatement` (≥80) per case and is production-wired.
 
 ## Scopes reused
 

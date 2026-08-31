@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, getRegistrationStatus } from "../api";
 import { isSupabaseConfigured, signInWithGoogle } from "../lib/supabase";
@@ -20,8 +20,7 @@ import { selectAchievementViews, selectLevelProgress } from '../features/progres
 import { lockerTaskHref } from '../features/progression/tasks';
 import { computeObservedTeamStats } from '../stats/exposureStats';
 import { buildWeeklyActivity } from '../stats/learningRhythm';
-import { getActivePeriodsForScope } from '../utils/observationScope';
-import { sessionExpectsPeriodMicrofeedback } from '../utils/sessionMicrofeedback';
+import { sessionExpectsPeriodMicrofeedback, missingPeriodMicrofeedbackLabels } from '../utils/sessionMicrofeedback';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
 import { UiActionRow, UiButton, UiButtonLink, UiProgress } from '../components/ui';
@@ -58,6 +57,8 @@ export default function Dashboard() {
   const tutorial = useTutorialOptional();
   const queryClient = useQueryClient();
   const devMode = useDevNavEnabled();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const skipBasicsMutation = useMutation({
     mutationFn: () =>
@@ -215,6 +216,7 @@ export default function Dashboard() {
       setPasswordInput("");
       return;
     }
+    if (searchParams.get("next") === "/admin") navigate("/admin", { replace: true });
   };
 
   // ✅ WICHTIG: useMemo läuft IMMER (auch wenn user null ist). Das verhindert React #310.
@@ -459,25 +461,10 @@ export default function Dashboard() {
       // Nur abgeschlossene Sessions — laufende Sessions dürfen offenes Microfeedback haben.
       if (String(s.state || '').toUpperCase() !== 'COMPLETED') continue;
 
-      const matchup = s.game_info?.team_home && s.game_info?.team_away
-        ? `${s.game_info.team_home} vs ${s.game_info.team_away}`
-        : s.id;
-
-      // Scope-aware: Nur aktive Drittel mit Checkin auf Microfeedback prüfen.
+      // Scope-aware: only Drittel im Beobachtungsumfang mit Check-in.
       // Track 0 / LESSON sessions have no period microfeedback.
       if (!sessionExpectsPeriodMicrofeedback(s, curriculum)) continue;
-      const checkedPhases = new Set(
-        (s.checkins || [])
-          .map((c: any) => String(c.phase || '').toUpperCase())
-          .filter((phase: string) => phase === 'P1' || phase === 'P2' || phase === 'P3'),
-      );
-      getActivePeriodsForScope(s.observation_scope).forEach((phase) => {
-        if (!checkedPhases.has(phase)) return;
-        const mf = s.microfeedback?.[phase];
-        if (!mf || !mf.done) {
-          hygieneIssues.push(`${matchup}: Microfeedback fehlt in ${phase}`);
-        }
-      });
+      hygieneIssues.push(...missingPeriodMicrofeedbackLabels(s, curriculum));
     }
 
     const recentSessions = list

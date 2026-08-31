@@ -18,6 +18,7 @@ from competency.ai.schema import (
     AI_DIMENSION_JSON_SCHEMA,
     AiDimensionEvaluation,
     AiEvidenceEvaluation,
+    normalize_reason_code,
 )
 
 logger = logging.getLogger(__name__)
@@ -143,6 +144,12 @@ def call_openai_evidence(
                 row.pop("breadth", None)
                 if "notes" not in row:
                     row["notes"] = []
+                # Defensive: verbose model reasonCodes used to fail the whole payload.
+                if "reasonCode" in row:
+                    try:
+                        row["reasonCode"] = normalize_reason_code(row.get("reasonCode"))
+                    except ValueError:
+                        row.pop("reasonCode", None)
         result = AiDimensionEvaluation.model_validate(parsed)
     except Exception as exc:
         logger.warning("[competency-ai] invalid AI JSON drill=%s: %s", evaluation.drill_id, exc)

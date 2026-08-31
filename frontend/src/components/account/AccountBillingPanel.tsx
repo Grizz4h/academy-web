@@ -28,61 +28,58 @@ export default function AccountBillingPanel({
   const billingPortal = useBillingPortal()
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const busy = billingPortal.isPending
+  const showFreeLead = presentation.showCheckout && !hasAcademyPremium
+  const detailIsWarn =
+    presentation.badgeTone === 'warn' || presentation.badgeTone === 'danger'
 
   return (
     <Card surface="section">
-      <h2 className="ui-section-title">rInQ Premium</h2>
-      <p className={styles.lead}>
-        Track A2+ und weitere Premium-Inhalte. Zugang wird serverseitig über dein Abo freigeschaltet.
-      </p>
+      <h2 className="ui-section-title">Abo</h2>
+
+      {showFreeLead ? (
+        <p className={styles.lead}>
+          Mit Premium schaltest du Track A2+ und weitere Inhalte frei.
+        </p>
+      ) : null}
 
       {checkoutNotice === 'success' ? (
         <div className={styles.noticeOk}>
           <p>
-            Checkout bei Stripe abgeschlossen. Premium wird nach bestätigtem Stripe-Webhook
-            freigeschaltet — ggf. kurz neu laden.
+            Checkout bei Stripe abgeschlossen. Zugang folgt nach bestätigtem Webhook —
+            ggf. kurz neu laden.
           </p>
           <p className={styles.metaItem}>
-            Für Verbraucher gilt grundsätzlich eine 14-tägige Widerrufsfrist. Details:{' '}
+            14 Tage Widerruf:{' '}
             <Link to={LEGAL_PUBLIC_PATHS.widerruf}>Widerrufsbelehrung</Link>
             {' · '}
             <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Vertrag widerrufen</Link>
             {' · '}
-            <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Vertrag kündigen</Link>
-            {' · '}
-            <Link to="/account">Kundenkonto</Link>
+            <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Kündigen</Link>
           </p>
         </div>
       ) : null}
       {checkoutNotice === 'cancel' ? (
-        <p className={styles.noticeWarn}>Checkout abgebrochen. Du kannst Premium jederzeit erneut freischalten.</p>
+        <p className={styles.noticeWarn}>Checkout abgebrochen. Du kannst jederzeit erneut freischalten.</p>
       ) : null}
 
       {billingLoading ? (
-        <p className={styles.lead}>Abo-Status wird geladen …</p>
+        <p className={styles.lead}>Status wird geladen …</p>
       ) : billingError ? (
         <p className={styles.error}>Abo-Status konnte nicht geladen werden.</p>
       ) : (
-        <>
+        <div className={styles.statusBlock}>
           <div className={styles.statusRow}>
-            <p className={styles.planName}>{presentation.planLabel}</p>
-            {hasAcademyPremium || presentation.badgeLabel !== 'Free' ? (
-              <UiPill tone={presentation.badgeTone}>{presentation.badgeLabel}</UiPill>
-            ) : (
-              <UiPill tone="neutral">Free</UiPill>
-            )}
+            <UiPill tone={presentation.badgeTone}>{presentation.badgeLabel}</UiPill>
+            {presentation.statusHeadline ? (
+              <p className={styles.periodLine}>{presentation.statusHeadline}</p>
+            ) : null}
           </div>
-
-          <p className={styles.statusHeadline}>{presentation.statusHeadline}</p>
           {presentation.statusDetail ? (
-            <p className={presentation.badgeTone === 'warn' || presentation.badgeTone === 'danger'
-              ? styles.noticeWarn
-              : styles.metaItem}
-            >
+            <p className={detailIsWarn ? styles.noticeWarn : styles.metaItem}>
               {presentation.statusDetail}
             </p>
           ) : null}
-        </>
+        </div>
       )}
 
       <p className={styles.metaItem}>
@@ -124,8 +121,8 @@ export default function AccountBillingPanel({
       ) : null}
 
       {hasAcademyPremium && !presentation.canManage ? (
-        <p className={styles.lead}>
-          Abo-Verwaltung ist noch nicht verknüpft. Nach dem nächsten Checkout steht hier „Abo verwalten“ bereit.
+        <p className={styles.metaItem}>
+          Abo-Verwaltung erscheint hier nach dem nächsten Checkout.
         </p>
       ) : null}
 

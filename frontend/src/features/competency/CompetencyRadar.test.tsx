@@ -36,20 +36,26 @@ assert(unratedHtml.includes('Scanning — noch nicht bewertet'), 'unrated: acces
 const ratedHtml = renderToStaticMarkup(<CompetencyRadar competencies={rated} />)
 assert((ratedHtml.match(/data-competency-axis=/g) || []).length === 8, 'rated: expected 8 axes')
 assert(ratedHtml.includes('8/8 Kompetenzen bewertet'), 'rated: progress note')
+assert(ratedHtml.includes('Profil vollständig'), 'rated: complete progress badge')
+assert(ratedHtml.includes('Schwerpunkt:'), 'rated: story line for strongest axis')
 assert(ratedHtml.includes('Integration'), 'rated: capability band visible')
 assert(ratedHtml.includes('Scanning — Integration — 72'), 'rated: accessibility summary')
 assert(ratedHtml.includes('scoreGlow'), 'rated: polygon rendered')
-assert(ratedHtml.includes('Confidence'), 'rated: confidence in list')
+assert(ratedHtml.includes('Ø Score'), 'rated: center mean glyph')
+assert(ratedHtml.includes('Confidence'), 'rated: confidence in detail panel copy path')
+assert(ratedHtml.includes('Evidenzbreite'), 'rated: breadth track label')
 assert(
-  ratedHtml.includes('Achse antippen für Score, Confidence und Evidenzbreite'),
+  ratedHtml.includes('Kachel antippen für Score, Confidence und Evidenzbreite'),
   'rated: detail nudge mentions Evidenzbreite',
 )
 
 const partialHtml = renderToStaticMarkup(<CompetencyRadar competencies={partial} />)
 assert(partialHtml.includes('3/8 Achsen bewertet'), 'partial: rated count note')
+assert(partialHtml.includes('3/8 bewertet'), 'partial: progress badge')
 assert(partialHtml.includes('Noch nicht bewertet'), 'partial: unrated label in stats')
 assert(partialHtml.includes('data-status="unrated"'), 'partial: unrated axis marked')
 assert(!partialHtml.includes('scoreGlow'), 'partial: no filled polygon (Option A)')
+assert(!partialHtml.includes('Ø Score'), 'partial: no center mean until complete')
 
 const previewHtml = renderToStaticMarkup(
   <CompetencyRadar competencies={rated} preview />,

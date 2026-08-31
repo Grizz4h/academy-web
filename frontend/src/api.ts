@@ -59,8 +59,8 @@ export async function login(
 import { labModules, predictionTemplates } from './features/lab/config'
 import type { UserAccountPayload, UserProfileCustomization } from './data/profile/types'
 import type { MyCompetenciesPayload } from './features/competency/types'
-import type { MyEntitlementsPayload } from './features/entitlements/types'
 import type { MyBillingPayload } from './features/billing/types'
+import type { MyEntitlementsPayload } from './features/entitlements/types'
 
 
 // ==== Type Definitions ====
@@ -207,6 +207,8 @@ export interface Session {
   id: string
   user: string
   created_by?: string
+  /** Profile display name at create (or enriched on list for own sessions). */
+  display_name?: string
   module_id: string
   goal: string
   confidence: number
@@ -721,6 +723,8 @@ export interface RewardApplyResponse {
   applied: boolean
   granted_pux: number
   granted_xp?: number
+  server_granted_xp?: number
+  server_granted_pux?: number
   reward_events: Array<Record<string, any>>
   reason?: string
 }
@@ -1691,6 +1695,19 @@ export const api = {
     return res.json()
   },
 
+  resetMyCompetencyProfileDev: async (): Promise<{
+    ok: boolean
+    deleted_events: number
+    deleted_states: number
+  }> => {
+    const res = await fetch(buildUrl('/dev/competency/reset'), {
+      method: 'POST',
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Competency-Reset fehlgeschlagen')
+    return res.json()
+  },
+
   getMyEntitlements: async (): Promise<MyEntitlementsPayload> => {
     const res = await fetch(buildUrl('/me/entitlements'), {
       headers: { ...authHeaders() },
@@ -1863,6 +1880,12 @@ export const api = {
       body: JSON.stringify(payload),
     })
     if (!res.ok) throw await readApiError(res, 'Account konnte nicht gelöscht werden')
+    return res.json()
+  },
+
+  createSupportCode: async (): Promise<{ code: string; expires_at: string; valid_for_minutes: number }> => {
+    const res = await fetch(buildUrl('/me/support-code'), { method: 'POST', headers: { ...authHeaders() } })
+    if (!res.ok) throw await readApiError(res, 'Support-Code konnte nicht erstellt werden')
     return res.json()
   },
 

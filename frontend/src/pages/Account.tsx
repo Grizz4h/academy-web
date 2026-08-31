@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
 import Card from '../components/Card'
@@ -31,6 +31,8 @@ import { useEntitlements } from '../features/entitlements'
 import { describeAcademyBilling, useBilling } from '../features/billing'
 import AccountBillingPanel from '../components/account/AccountBillingPanel'
 import { CompetencyProfilePanel } from '../features/competency'
+import { useDevNavEnabled } from '../config/featureFlags'
+import DevCompetencyTools from '../components/dev/DevCompetencyTools'
 import { isSupabaseConfigured, signInWithGoogle } from '../lib/supabase'
 import styles from './Account.module.css'
 
@@ -61,11 +63,41 @@ function deriveTopTrack(sessions: Array<{ module_id?: string; state?: string }>)
   return ranked[0]?.[0] || null
 }
 
+function profileSnapshot(profile: UserProfileCustomization) {
+  return JSON.stringify({
+    displayName: profile.displayName,
+    avatar: profile.avatar,
+    bannerId: profile.bannerId ?? null,
+    frameId: profile.frameId ?? null,
+    emblem: profile.emblem,
+    customEmblemId: profile.customEmblemId ?? null,
+    customEmblems: profile.customEmblems || [],
+    profileTitle: profile.profileTitle ?? null,
+    jerseyNumber: profile.jerseyNumber ?? null,
+    favoriteLeague: profile.favoriteLeague ?? null,
+    favoriteTeamName: profile.favoriteTeamName ?? null,
+    profileTagline: profile.profileTagline ?? null,
+    academyHelpLevel: profile.academyHelpLevel,
+    terminologyMode: profile.terminologyMode,
+    preferredAttackDirection: profile.preferredAttackDirection,
+    hockeyExperience: profile.hockeyExperience ?? null,
+    experiencePromptDismissed: profile.experiencePromptDismissed ?? false,
+    dashboardPreferences: profile.dashboardPreferences || {},
+  })
+}
+
 export default function AccountPage() {
-  const { user, authMode, logout } = useUser()
+  const { user, userId, authMode, logout } = useUser()
+  const navigate = useNavigate()
+  const devMode = useDevNavEnabled()
   const { rewardState } = useRewards()
   const tutorial = useTutorialOptional()
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const handleLogout = (opts?: { global?: boolean }) => {
+    logout(opts)
+    navigate('/', { replace: true })
+  }
   const [linkBusy, setLinkBusy] = useState(false)
   const [linkError, setLinkError] = useState('')
   const [linkSuccess, setLinkSuccess] = useState('')
@@ -78,6 +110,9 @@ export default function AccountPage() {
   const [deletePassword, setDeletePassword] = useState('')
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [checkoutNotice, setCheckoutNotice] = useState<'success' | 'cancel' | null>(null)
+  const [supportCode, setSupportCode] = useState<{ code: string; expires_at: string } | null>(null)
+  const [supportBusy, setSupportBusy] = useState(false)
+  const [supportError, setSupportError] = useState('')
   const googleConfigured = isSupabaseConfigured()
 
   const { hasAcademyPremium, refetch: refetchEntitlements } = useEntitlements()
@@ -87,11 +122,10 @@ export default function AccountPage() {
     [hasAcademyPremium, billingQuery.data],
   )
   const premiumStatusForProfile = useMemo(
-    () => (hasAcademyPremium || billingPresentation.profileLine
+    () => (hasAcademyPremium
       ? {
           badgeLabel: billingPresentation.badgeLabel,
           badgeTone: billingPresentation.badgeTone,
-          profileLine: billingPresentation.profileLine,
         }
       : null),
     [hasAcademyPremium, billingPresentation],
@@ -220,6 +254,41 @@ export default function AccountPage() {
     setSaveState('idle')
   }
 
+  const isDirty = useMemo(() => {
+    if (!draft || !account?.profile) return false
+    const baseline = {
+      ...createDefaultProfile(account.profile.displayName || user || 'Spieler'),
+      ...account.profile,
+    }
+    return profileSnapshot(draft) !== profileSnapshot(baseline)
+  }, [draft, account?.profile, user])
+
+  const showSaveBar =
+    isDirty || saveState === 'saving' || saveState === 'error' || saveState === 'saved'
+  const saveDockEndRef = useRef<HTMLDivElement | null>(null)
+  const [saveDocked, setSaveDocked] = useState(false)
+
+  useEffect(() => {
+    if (saveState !== 'saved') return
+    const t = window.setTimeout(() => setSaveState('idle'), 1600)
+    return () => window.clearTimeout(t)
+  }, [saveState])
+
+  useEffect(() => {
+    if (!showSaveBar) {
+      setSaveDocked(false)
+      return
+    }
+    const node = saveDockEndRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(
+      ([entry]) => setSaveDocked(Boolean(entry?.isIntersecting)),
+      { root: null, threshold: 0, rootMargin: '0px 0px -8px 0px' },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [showSaveBar])
+
   const handleSave = async () => {
     if (!draft) return
     setSaveState('saving')
@@ -304,25 +373,13 @@ export default function AccountPage() {
   }
 
   return (
-    <div className={`${styles.page} ui-page-shell`}>
+    <div className={`${styles.page} ui-page-shell ${showSaveBar ? styles.pageWithSaveDock : ''}`}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Account</h1>
         <p className="ui-page-lead">
           Baue deine RINK ID und speichere persönliche Präferenzen. Keine zweite Stats-Seite – nur Profil und Identität.
         </p>
       </header>
-
-      {tutorial ? (
-        <Card surface="section" className={styles.sectionCard}>
-          <h2 className="ui-section-title">Hilfe</h2>
-          <p className={styles.sectionLead}>
-            Das Tutorial zeigt dir, wo du Übungen findest und wie du eine Session startest.
-          </p>
-          <UiButton type="button" onClick={tutorial.restart}>
-            Tutorial erneut starten
-          </UiButton>
-        </Card>
-      ) : null}
 
       <AccountBillingPanel
         hasAcademyPremium={hasAcademyPremium}
@@ -331,208 +388,6 @@ export default function AccountPage() {
         billingLoading={billingQuery.isLoading}
         billingError={billingQuery.isError}
       />
-
-      {googleConfigured || (account?.auth_providers && account.auth_providers.length > 0) ? (
-        <Card surface="section" className={styles.sectionCard}>
-          <h2 className="ui-section-title">Login-Methoden</h2>
-          <p className={styles.sectionLead}>
-            Verknüpfte Anmeldewege für diesen RinQ-Account. Die letzte Methode kann nicht entfernt werden.
-          </p>
-          <ul className={styles.providerList}>
-            {(account?.auth_providers || []).map((provider) => {
-              const canUnlink = (account?.auth_providers?.length || 0) > 1
-              return (
-                <li key={provider} className={styles.providerRow}>
-                  <UiPill tone="ok">{PROVIDER_LABELS[provider] || provider} verbunden</UiPill>
-                  {canUnlink ? (
-                    <UiButton
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      disabled={unlinkBusy === provider}
-                      onClick={async () => {
-                        setLifecycleError('')
-                        setUnlinkBusy(provider)
-                        try {
-                          await api.unlinkAuthProvider(provider)
-                          setLinkSuccess(`${PROVIDER_LABELS[provider] || provider} getrennt.`)
-                          await refetch()
-                        } catch (e: any) {
-                          setLifecycleError(e?.message || 'Trennen fehlgeschlagen')
-                        } finally {
-                          setUnlinkBusy(null)
-                        }
-                      }}
-                    >
-                      Trennen
-                    </UiButton>
-                  ) : null}
-                </li>
-              )
-            })}
-          </ul>
-          {googleConfigured && !account?.auth_providers?.includes('supabase_google') ? (
-            <div className={styles.field}>
-              <UiButton
-                type="button"
-                variant="secondary"
-                disabled={linkBusy || authMode === 'supabase'}
-                onClick={async () => {
-                  setLinkError('')
-                  setLinkSuccess('')
-                  setLinkBusy(true)
-                  try {
-                    const result = await signInWithGoogle({ intent: 'link' })
-                    if (result.error) setLinkError(result.error)
-                  } finally {
-                    setLinkBusy(false)
-                  }
-                }}
-              >
-                {linkBusy ? 'Weiterleitung…' : 'Google-Konto verbinden'}
-              </UiButton>
-              {authMode === 'supabase' ? (
-                <p className={styles.hint}>
-                  Zum Verknüpfen mit Legacy zuerst mit Name/Passwort einloggen.
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-          {linkSuccess ? <p className={styles.hint}>{linkSuccess}</p> : null}
-          {linkError ? <p className={styles.error}>{linkError}</p> : null}
-          {lifecycleError ? <p className={styles.error}>{lifecycleError}</p> : null}
-        </Card>
-      ) : null}
-
-      <Card surface="section" className={styles.sectionCard}>
-        <h2 className="ui-section-title">Daten & Sessions</h2>
-        <p className={styles.sectionLead}>
-          Export enthält deine Runtime-Daten als JSON. Keine Passwort-Hashes oder Tokens.
-        </p>
-        <div className={styles.lifecycleActions}>
-          <UiButton
-            type="button"
-            variant="secondary"
-            disabled={exportBusy}
-            onClick={async () => {
-              setLifecycleError('')
-              setLifecycleInfo('')
-              setExportBusy(true)
-              try {
-                const blob = await api.exportMyData()
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = `rinq-user-export-${new Date().toISOString().slice(0, 10)}.json`
-                a.click()
-                URL.revokeObjectURL(url)
-                setLifecycleInfo('Export gestartet.')
-              } catch (e: any) {
-                setLifecycleError(e?.message || 'Export fehlgeschlagen')
-              } finally {
-                setExportBusy(false)
-              }
-            }}
-          >
-            {exportBusy ? 'Exportiere…' : 'Daten exportieren'}
-          </UiButton>
-          <UiButton type="button" variant="secondary" onClick={() => logout()}>
-            Abmelden
-          </UiButton>
-          {authMode === 'supabase' || googleConfigured ? (
-            <UiButton
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                logout({ global: true })
-              }}
-            >
-              Auf allen Geräten abmelden
-            </UiButton>
-          ) : null}
-        </div>
-        {authMode === 'legacy' ? (
-          <p className={styles.hint}>
-            Legacy-JWTs können ohne Session-Registry nicht global widerrufen werden — nur dieses Gerät wird abgemeldet.
-          </p>
-        ) : null}
-        {lifecycleInfo ? <p className={styles.hint}>{lifecycleInfo}</p> : null}
-      </Card>
-
-      <Card surface="section" className={styles.sectionCard}>
-        <h2 className="ui-section-title">Account löschen</h2>
-        <p className={styles.sectionLead}>
-          Unwiderruflich: Profil, Sessions, Rewards, Observations, Scenes, Uploads, Login-Wege und Managed-Auth-User.
-        </p>
-        <UiButton type="button" variant="secondary" onClick={() => setDeleteOpen(true)}>
-          Account löschen…
-        </UiButton>
-      </Card>
-
-      <UiSheet
-        open={deleteOpen}
-        onClose={() => {
-          if (!deleteBusy) setDeleteOpen(false)
-        }}
-        title="Account wirklich löschen?"
-        meta="Diese Aktion kann nicht rückgängig gemacht werden. Tippe LÖSCHEN zur Bestätigung."
-      >
-        <label className={styles.field}>
-          <span className={styles.label}>Bestätigung</span>
-          <input
-            className={styles.input}
-            value={deleteConfirm}
-            placeholder="LÖSCHEN"
-            disabled={deleteBusy}
-            onChange={(e) => setDeleteConfirm(e.target.value)}
-          />
-        </label>
-        {authMode === 'legacy' || account?.auth_providers?.includes('legacy_password') ? (
-          <label className={styles.field}>
-            <span className={styles.label}>Passwort</span>
-            <input
-              className={styles.input}
-              type="password"
-              autoComplete="current-password"
-              value={deletePassword}
-              disabled={deleteBusy}
-              onChange={(e) => setDeletePassword(e.target.value)}
-            />
-          </label>
-        ) : null}
-        {lifecycleError ? <p className={styles.error}>{lifecycleError}</p> : null}
-        <UiSheetActions
-          secondary={
-            <UiButton type="button" variant="ghost" disabled={deleteBusy} onClick={() => setDeleteOpen(false)}>
-              Abbrechen
-            </UiButton>
-          }
-          primary={
-            <UiButton
-              type="button"
-              disabled={deleteBusy || deleteConfirm.trim() !== 'LÖSCHEN'}
-              onClick={async () => {
-                setLifecycleError('')
-                setDeleteBusy(true)
-                try {
-                  await api.deleteMyAccount({
-                    confirm: deleteConfirm.trim(),
-                    password: deletePassword || undefined,
-                  })
-                  setDeleteOpen(false)
-                  logout({ global: true })
-                } catch (e: any) {
-                  setLifecycleError(e?.message || 'Löschen fehlgeschlagen')
-                } finally {
-                  setDeleteBusy(false)
-                }
-              }}
-            >
-              {deleteBusy ? 'Lösche…' : 'Endgültig löschen'}
-            </UiButton>
-          }
-        />
-      </UiSheet>
 
       <section className={styles.section}>
         <h2 className="ui-section-title">RINK ID</h2>
@@ -554,6 +409,7 @@ export default function AccountPage() {
       </Card>
 
       <CompetencyProfilePanel />
+      {devMode ? <DevCompetencyTools variant="inline" /> : null}
 
       <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Profil</h2>
@@ -582,7 +438,10 @@ export default function AccountPage() {
 
         <div className={styles.field}>
           <span className={styles.label}>Avatar</span>
-          <p className={styles.hint}>Nur freigeschaltete Items. Weitere freischalten im <Link to="/locker">Spind</Link>.</p>
+          <p className={styles.hint}>
+            Nur freigeschaltete Items. Weitere freischalten im{' '}
+            <Link to="/locker" className={styles.inlineLink}>Spind</Link>.
+          </p>
           <ProfileAssetSelector
             type="avatar"
             items={avatarItems}
@@ -726,6 +585,41 @@ export default function AccountPage() {
       </Card>
 
       <Card surface="section" className={styles.sectionCard}>
+        <h2 className="ui-section-title">Account-Status</h2>
+        <div className={styles.statusGrid}>
+          <div>
+            <div className={styles.statusLabel}>Sessions abgeschlossen</div>
+            <div className={styles.statusValue}>{identityStats.drillsCompleted}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>Szenen im Pool</div>
+            <div className={styles.statusValue}>{identityStats.scenesCount}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>Top Track</div>
+            <div className={styles.statusValue}>{identityStats.topTrack || '—'}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>Level</div>
+            <div className={styles.statusValue}>{identityStats.level}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>XP</div>
+            <div className={styles.statusValue}>{identityStats.xpLabel}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>PUX</div>
+            <div className={styles.statusValue}>{identityStats.pux}</div>
+          </div>
+          <div>
+            <div className={styles.statusLabel}>Aktiv seit</div>
+            <div className={styles.statusValue}>{identityStats.memberSince || '—'}</div>
+          </div>
+        </div>
+        <Link className={styles.statsLink} to="/progress">Alle Statistiken ansehen →</Link>
+      </Card>
+
+      <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Academy-Personalisierung</h2>
         <p className={styles.sectionLead}>
           Präferenzen werden gespeichert. Die Academy nutzt sie später, ohne bestehende Drills jetzt umzubauen.
@@ -817,47 +711,264 @@ export default function AccountPage() {
         </fieldset>
       </Card>
 
+      {tutorial ? (
+        <Card surface="section" className={styles.sectionCard}>
+          <h2 className="ui-section-title">Hilfe</h2>
+          <p className={styles.sectionLead}>
+            Das Tutorial zeigt dir, wo du Übungen findest und wie du eine Session startest.
+          </p>
+          <UiButton type="button" onClick={tutorial.restart}>
+            Tutorial erneut starten
+          </UiButton>
+        </Card>
+      ) : null}
+
       <Card surface="section" className={styles.sectionCard}>
-        <h2 className="ui-section-title">Account-Status</h2>
-        <div className={styles.statusGrid}>
-          <div>
-            <div className={styles.statusLabel}>Sessions abgeschlossen</div>
-            <div className={styles.statusValue}>{identityStats.drillsCompleted}</div>
-          </div>
-          <div>
-            <div className={styles.statusLabel}>Szenen im Pool</div>
-            <div className={styles.statusValue}>{identityStats.scenesCount}</div>
-          </div>
-          <div>
-            <div className={styles.statusLabel}>Top Track</div>
-            <div className={styles.statusValue}>{identityStats.topTrack || '—'}</div>
-          </div>
-          <div>
-            <div className={styles.statusLabel}>Level</div>
-            <div className={styles.statusValue}>{identityStats.level}</div>
-          </div>
-          <div>
-            <div className={styles.statusLabel}>XP</div>
-            <div className={styles.statusValue}>{identityStats.xpLabel}</div>
-          </div>
-          <div>
-            <div className={styles.statusLabel}>PUX</div>
-            <div className={styles.statusValue}>{identityStats.pux}</div>
-          </div>
-          <div>
-            <div className={styles.statusLabel}>Aktiv seit</div>
-            <div className={styles.statusValue}>{identityStats.memberSince || '—'}</div>
-          </div>
+        <h2 className="ui-section-title">Support</h2>
+        <p className={styles.sectionLead}>Teile dem Support keine Login-E-Mail mit. Erstelle stattdessen einen zufälligen Code, der 30 Minuten gilt und nicht dauerhaft gespeichert wird.</p>
+        {supportCode ? <div className={styles.supportCodeBox}><strong>{supportCode.code}</strong><span>Gültig bis {new Date(supportCode.expires_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span></div> : null}
+        <div className={styles.supportActions}>
+          <UiButton type="button" disabled={supportBusy} onClick={async () => {
+            setSupportBusy(true); setSupportError('')
+            try { const result = await api.createSupportCode(); setSupportCode(result); await navigator.clipboard?.writeText(result.code) }
+            catch (e: any) { setSupportError(e?.message || 'Support-Code konnte nicht erstellt werden') }
+            finally { setSupportBusy(false) }
+          }}>{supportCode ? 'Neuen Code erstellen' : 'Support-Code erstellen und kopieren'}</UiButton>
+          {userId ? <span className={styles.supportId}>Interne ID: <code>{userId}</code></span> : null}
         </div>
-        <Link className={styles.statsLink} to="/progress">Alle Statistiken ansehen →</Link>
+        {supportError ? <p className={styles.errorText}>{supportError}</p> : null}
       </Card>
 
-      <div className={styles.saveBar}>
-        <UiButton type="button" onClick={handleSave} disabled={saveState === 'saving'}>
-          {saveState === 'saving' ? 'Speichert …' : 'Änderungen speichern'}
+      {googleConfigured || (account?.auth_providers && account.auth_providers.length > 0) ? (
+        <Card surface="section" className={styles.sectionCard}>
+          <h2 className="ui-section-title">Login-Methoden</h2>
+          <p className={styles.sectionLead}>
+            Verknüpfte Anmeldewege für diesen RinQ-Account. Die letzte Methode kann nicht entfernt werden.
+          </p>
+          <ul className={styles.providerList}>
+            {(account?.auth_providers || []).map((provider) => {
+              const canUnlink = (account?.auth_providers?.length || 0) > 1
+              return (
+                <li key={provider} className={styles.providerRow}>
+                  <UiPill tone="ok">{PROVIDER_LABELS[provider] || provider} verbunden</UiPill>
+                  {canUnlink ? (
+                    <UiButton
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={unlinkBusy === provider}
+                      onClick={async () => {
+                        setLifecycleError('')
+                        setUnlinkBusy(provider)
+                        try {
+                          await api.unlinkAuthProvider(provider)
+                          setLinkSuccess(`${PROVIDER_LABELS[provider] || provider} getrennt.`)
+                          await refetch()
+                        } catch (e: any) {
+                          setLifecycleError(e?.message || 'Trennen fehlgeschlagen')
+                        } finally {
+                          setUnlinkBusy(null)
+                        }
+                      }}
+                    >
+                      Trennen
+                    </UiButton>
+                  ) : null}
+                </li>
+              )
+            })}
+          </ul>
+          {googleConfigured && !account?.auth_providers?.includes('supabase_google') ? (
+            <div className={styles.field}>
+              <UiButton
+                type="button"
+                variant="secondary"
+                disabled={linkBusy || authMode === 'supabase'}
+                onClick={async () => {
+                  setLinkError('')
+                  setLinkSuccess('')
+                  setLinkBusy(true)
+                  try {
+                    const result = await signInWithGoogle({ intent: 'link' })
+                    if (result.error) setLinkError(result.error)
+                  } finally {
+                    setLinkBusy(false)
+                  }
+                }}
+              >
+                {linkBusy ? 'Weiterleitung…' : 'Google-Konto verbinden'}
+              </UiButton>
+              {authMode === 'supabase' ? (
+                <p className={styles.hint}>
+                  Zum Verknüpfen mit Legacy zuerst mit Name/Passwort einloggen.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          {linkSuccess ? <p className={styles.hint}>{linkSuccess}</p> : null}
+          {linkError ? <p className={styles.error}>{linkError}</p> : null}
+          {lifecycleError ? <p className={styles.error}>{lifecycleError}</p> : null}
+        </Card>
+      ) : null}
+
+      <Card surface="section" className={styles.sectionCard}>
+        <h2 className="ui-section-title">Daten & Sessions</h2>
+        <p className={styles.sectionLead}>
+          Export enthält deine Runtime-Daten als JSON. Keine Passwort-Hashes oder Tokens.
+        </p>
+        <div className={styles.lifecycleActions}>
+          <UiButton
+            type="button"
+            variant="secondary"
+            disabled={exportBusy}
+            onClick={async () => {
+              setLifecycleError('')
+              setLifecycleInfo('')
+              setExportBusy(true)
+              try {
+                const blob = await api.exportMyData()
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `rinq-user-export-${new Date().toISOString().slice(0, 10)}.json`
+                a.click()
+                URL.revokeObjectURL(url)
+                setLifecycleInfo('Export gestartet.')
+              } catch (e: any) {
+                setLifecycleError(e?.message || 'Export fehlgeschlagen')
+              } finally {
+                setExportBusy(false)
+              }
+            }}
+          >
+            {exportBusy ? 'Exportiere…' : 'Daten exportieren'}
+          </UiButton>
+          <UiButton type="button" variant="secondary" onClick={() => handleLogout()}>
+            Abmelden
+          </UiButton>
+          {authMode === 'supabase' || googleConfigured ? (
+            <UiButton
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                handleLogout({ global: true })
+              }}
+            >
+              Auf allen Geräten abmelden
+            </UiButton>
+          ) : null}
+        </div>
+        {authMode === 'legacy' ? (
+          <p className={styles.hint}>
+            Legacy-JWTs können ohne Session-Registry nicht global widerrufen werden — nur dieses Gerät wird abgemeldet.
+          </p>
+        ) : null}
+        {lifecycleInfo ? <p className={styles.hint}>{lifecycleInfo}</p> : null}
+      </Card>
+
+      <Card surface="section" className={styles.sectionCard}>
+        <h2 className="ui-section-title">Account löschen</h2>
+        <p className={styles.sectionLead}>
+          Unwiderruflich: Profil, Sessions, Rewards, Observations, Scenes, Uploads, Login-Wege und Managed-Auth-User.
+        </p>
+        <UiButton type="button" variant="secondary" onClick={() => setDeleteOpen(true)}>
+          Account löschen…
         </UiButton>
-        {saveState === 'saved' && <span className={styles.saveOk}>Gespeichert</span>}
-        {saveState === 'error' && <span className={styles.error}>{saveError}</span>}
+      </Card>
+
+      <UiSheet
+        open={deleteOpen}
+        onClose={() => {
+          if (!deleteBusy) setDeleteOpen(false)
+        }}
+        title="Account wirklich löschen?"
+        meta="Diese Aktion kann nicht rückgängig gemacht werden. Tippe LÖSCHEN zur Bestätigung."
+      >
+        <label className={styles.field}>
+          <span className={styles.label}>Bestätigung</span>
+          <input
+            className={styles.input}
+            value={deleteConfirm}
+            placeholder="LÖSCHEN"
+            disabled={deleteBusy}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+          />
+        </label>
+        {authMode === 'legacy' || account?.auth_providers?.includes('legacy_password') ? (
+          <label className={styles.field}>
+            <span className={styles.label}>Passwort</span>
+            <input
+              className={styles.input}
+              type="password"
+              autoComplete="current-password"
+              value={deletePassword}
+              disabled={deleteBusy}
+              onChange={(e) => setDeletePassword(e.target.value)}
+            />
+          </label>
+        ) : null}
+        {lifecycleError ? <p className={styles.error}>{lifecycleError}</p> : null}
+        <UiSheetActions
+          secondary={
+            <UiButton type="button" variant="ghost" disabled={deleteBusy} onClick={() => setDeleteOpen(false)}>
+              Abbrechen
+            </UiButton>
+          }
+          primary={
+            <UiButton
+              type="button"
+              disabled={deleteBusy || deleteConfirm.trim() !== 'LÖSCHEN'}
+              onClick={async () => {
+                setLifecycleError('')
+                setDeleteBusy(true)
+                try {
+                  await api.deleteMyAccount({
+                    confirm: deleteConfirm.trim(),
+                    password: deletePassword || undefined,
+                  })
+                  setDeleteOpen(false)
+                  handleLogout({ global: true })
+                } catch (e: any) {
+                  setLifecycleError(e?.message || 'Löschen fehlgeschlagen')
+                } finally {
+                  setDeleteBusy(false)
+                }
+              }}
+            >
+              {deleteBusy ? 'Lösche…' : 'Endgültig löschen'}
+            </UiButton>
+          }
+        />
+      </UiSheet>
+
+      <div
+        ref={saveDockEndRef}
+        className={`${styles.saveDockSlot} ${showSaveBar ? styles.saveDockSlotActive : ''}`}
+      >
+        {showSaveBar ? (
+          <div
+            className={`${styles.saveDock} ${saveDocked ? styles.saveDockParked : styles.saveDockFloating}`}
+            role="status"
+            aria-live="polite"
+          >
+            <div className={styles.saveDockInner}>
+              <UiButton
+                type="button"
+                variant="primary"
+                size="sm"
+                onClick={handleSave}
+                disabled={saveState === 'saving' || (!isDirty && saveState !== 'error')}
+              >
+                {saveState === 'saving' ? 'Speichert …' : 'Speichern'}
+              </UiButton>
+              {saveState === 'saved' && <span className={styles.saveOk}>Gespeichert</span>}
+              {saveState === 'error' && <span className={styles.error}>{saveError}</span>}
+              {isDirty && saveState === 'idle' ? (
+                <span className={styles.saveHint}>Ungespeichert</span>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   )

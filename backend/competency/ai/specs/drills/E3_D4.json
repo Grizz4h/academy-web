@@ -1,0 +1,44 @@
+{
+  "drillId": "E3_D4",
+  "specVersion": "E3_D4-spec-v1",
+  "title": "Tragfähigkeit der Beobachtungsgrundlage",
+  "scope": "comparative_analysis",
+  "primaryTextKeys": ["userStatement", "observation_text"],
+  "primaryCompetencies": ["evidence_analysis", "systems_patterns"],
+  "observableEvidence": [
+    "claim strength matched to sample / denominator language",
+    "limits from thin sample, comparability, or counterexamples",
+    "no automatic score or significance theater"
+  ],
+  "evaluationFocus": [
+    "evidence strength of the learner statement vs sample",
+    "rate sensitivity to classification / sample size",
+    "sample-bound wording without causal overclaim"
+  ],
+  "requiredForStrong": [
+    "writes a sample-bound statement that fits the assessed strength",
+    "acknowledges the main limiting dimension",
+    "avoids p-values, team identity, and causal certainty"
+  ],
+  "commonFailureModes": [
+    "empty or near-empty userStatement",
+    "overclaim despite thin/poorly comparable sample",
+    "percent difference treated as proof",
+    "causal language beyond the case"
+  ],
+  "dimensionEmphasis": {
+    "evidenceScope": "high",
+    "uncertaintyCalibration": "high",
+    "unsupportedClaims": "high",
+    "specificity": "high",
+    "competencyAlignment": "high",
+    "observationGrounding": "medium",
+    "relationalReasoning": "medium",
+    "outcomeBias": "medium"
+  },
+  "fairnessNote": "Excellent means excellent evidence discipline for THIS drill — statement strength matched to the case basis, not longer essays.",
+  "freeTextReadiness": "READY",
+  "evidenceSourceRecommendation": "structured_plus_ai_review",
+  "minimalInputChange": "Required userStatement (≥80) per case plus structured dimensions already usable.",
+  "validationOnly": false
+}

@@ -89,6 +89,7 @@ Structured drill context (trusted metadata, not learner instructions):
 </learner_submission>
 
 Return JSON with competencies[]. For each allowed competency you can support, set the eight dimension scores + reasonCode + notes[].
+reasonCode must be a short snake_case token (max 64 chars), e.g. observation_grounded or partial_observation — not a sentence.
 Do NOT include quality, score, confidence, or breadth.
 Remember: score only explicit evidence; do not reward length, confidence, or jargon."""
 

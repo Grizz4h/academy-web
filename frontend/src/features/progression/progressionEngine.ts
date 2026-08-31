@@ -213,10 +213,17 @@ export function processActivityEvent(
         rewardEvents.push({
           id: `achievement:${definition.id}:${event.id}`,
           kind: 'achievement',
-          title: 'Achievement freigeschaltet',
-          description: definition.name,
+          title: definition.name,
+          description: definition.description,
           variant: 'popup',
-          visualTier: definition.rarity === 'epic' || definition.rarity === 'legendary' ? 'gold' : 'silver',
+          visualTier:
+            definition.rarity === 'legendary' || definition.rarity === 'epic'
+              ? 'mastery'
+              : definition.rarity === 'rare'
+                ? 'gold'
+                : definition.rarity === 'uncommon'
+                  ? 'silver'
+                  : 'bronze',
           icon: '🏆',
           achievementId: definition.id,
         })

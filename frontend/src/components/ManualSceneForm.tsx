@@ -189,7 +189,7 @@ export function ManualSceneForm({
           drillId: scene.drill_id || undefined,
           trackId: scene.track_id || scene.module_id || undefined,
         }),
-      ])
+      ], { showToasts: false })
       if (typeof rating === 'number' && rating >= 1) {
         void ingestActivityEvents([
           buildSceneRatedEvent({
@@ -197,7 +197,7 @@ export function ManualSceneForm({
             rating,
             occurredAt: scene.created_at,
           }),
-        ])
+        ], { showToasts: false })
       }
       if (continueEditing) {
         setPostQuickSaveScene(scene)
@@ -247,7 +247,7 @@ export function ManualSceneForm({
             sceneId: scene.id,
             rating,
           }),
-        ])
+        ], { showToasts: false })
       }
       onSaved(scene)
       onClose()

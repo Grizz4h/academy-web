@@ -31,6 +31,22 @@ import type { MatchdayContext } from '../../progression/challenges/types'
 import { applyVenuePresenceToEvents } from '../../location/visits'
 import { createEmptyRewardState, type RewardEvent, type RewardState } from '../types'
 
+export type ActivityIngestResult = {
+  grantedXp: number
+  grantedPux: number
+  previousXp: number
+  nextXp: number
+  rewardEvents: RewardEvent[]
+}
+
+const EMPTY_INGEST_RESULT = (previousXp = 0): ActivityIngestResult => ({
+  grantedXp: 0,
+  grantedPux: 0,
+  previousXp,
+  nextXp: previousXp,
+  rewardEvents: [],
+})
+
 type RewardContextValue = {
   rewardState: RewardState
   activeReward: RewardEvent | null
@@ -42,7 +58,7 @@ type RewardContextValue = {
   ingestActivityEvents: (
     events: RinkActivityEvent[],
     options?: { showToasts?: boolean },
-  ) => Promise<void>
+  ) => Promise<ActivityIngestResult>
   rebuildProgression: (input: {
     sessions: Parameters<typeof bootstrapProgression>[0]['sessions']
     scenes: Parameters<typeof bootstrapProgression>[0]['scenes']
@@ -55,7 +71,8 @@ type RewardContextValue = {
   evaluateLockerMetaProgress: (input: {
     sessions: Parameters<typeof bootstrapProgression>[0]['sessions']
     trackDrills: Record<string, string[]>
-  }) => Promise<void>
+    showToasts?: boolean
+  }) => Promise<ActivityIngestResult>
   syncChallengeBoard: (input?: { matchday?: MatchdayContext | null }) => Promise<void>
   bootstrapStatus: 'idle' | 'running' | 'done' | 'error'
   rewardStateLoaded: boolean
@@ -367,8 +384,9 @@ export function RewardProvider({ children }: { children: ReactNode }) {
   )
 
   const ingestActivityEvents = useCallback(
-    async (events: RinkActivityEvent[], options?: { showToasts?: boolean }) => {
-      if (!events.length) return
+    async (events: RinkActivityEvent[], options?: { showToasts?: boolean }): Promise<ActivityIngestResult> => {
+      const previousXp = Number(rewardStateRef.current.xp || 0)
+      if (!events.length) return EMPTY_INGEST_RESULT(previousXp)
       const showToasts = options?.showToasts !== false
       const current = rewardStateRef.current
       const presence = applyVenuePresenceToEvents(events, current.venueVisits || {})
@@ -404,19 +422,26 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         starterOwned: isStarterCosmetic,
       })
 
-      const grantedXp = aggregate.grantedXp + challengeResult.grantedXp + collectionResult.grantedXp
-      const grantedPux = aggregate.grantedPux + challengeResult.grantedPux + collectionResult.grantedPux
+      const clientGrantedXp = aggregate.grantedXp + challengeResult.grantedXp + collectionResult.grantedXp
+      const clientGrantedPux = aggregate.grantedPux + challengeResult.grantedPux + collectionResult.grantedPux
       const hasProgression =
-        grantedXp ||
-        grantedPux ||
+        clientGrantedXp ||
+        clientGrantedPux ||
         aggregate.unlockedAchievements.length ||
         aggregate.unlockedCosmetics.length ||
         challengeResult.unlockedCosmetics.length ||
         collectionResult.unlockedCosmetics.length
       const hasChallenge = challengeResult.changed || challengeResult.processedEventIds.length
       const hasVenueVisits = presence.changed
+      const hasServerableActivity = aggregate.activityEventsAppended.length > 0
 
-      if (!hasProgression && !hasChallenge && !hasVenueVisits) {
+      const rewardEvents = [
+        ...aggregate.rewardEvents,
+        ...challengeResult.rewardEvents,
+        ...collectionResult.rewardEvents,
+      ].map((event) => normalizeReward(event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>))
+
+      if (!hasProgression && !hasChallenge && !hasVenueVisits && !hasServerableActivity) {
         if (Object.keys(nextSlice.processedEvents).length !== Object.keys(slice.processedEvents).length) {
           setRewardState((previous) => ({
             ...previous,
@@ -424,7 +449,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
             activityLog: nextSlice.activityLog,
           }))
         }
-        return
+        return EMPTY_INGEST_RESULT(previousXp)
       }
 
       const processedEventIds = [
@@ -441,20 +466,19 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         ...challengeResult.unlockHistory,
         ...collectionResult.unlockHistory,
       ]
-      const rewardEvents = [
-        ...aggregate.rewardEvents,
-        ...challengeResult.rewardEvents,
-        ...collectionResult.rewardEvents,
-      ]
 
       const primaryEventId = events[0]?.id || processedEventIds[0] || `batch:${Date.now()}`
+      let resultGrantedXp = clientGrantedXp
+      let resultGrantedPux = clientGrantedPux
+      let resultNextXp = previousXp + clientGrantedXp
+
       try {
         const response = await api.applyRewardResult({
           event_id: primaryEventId,
           session_id: events.find((e) => e.type === 'session_completed' && 'sessionId' in e)?.sessionId,
           evaluated_at: aggregate.evaluatedAt || new Date().toISOString(),
-          granted_pux: grantedPux,
-          granted_xp: grantedXp,
+          granted_pux: clientGrantedPux,
+          granted_xp: clientGrantedXp,
           reward_events: showToasts ? rewardEvents : [],
           unlocked_achievements: aggregate.unlockedAchievements.map((item) => ({
             id: item.achievementId,
@@ -474,16 +498,26 @@ export function RewardProvider({ children }: { children: ReactNode }) {
           challenge_progress: challengeResult.progress,
           challenge_rotation: challengeResult.rotation,
           venue_visits: presence.visits,
-          skip_idempotency: !hasProgression,
+          skip_idempotency: !hasProgression && !hasServerableActivity,
         })
 
         const normalized = normalizeRewardState(response.state)
+        // Server XP includes unified unit grants; never overwrite with client-only calc.
+        const serverXp = Number(response.state?.xp ?? normalized.xp ?? previousXp)
+        const serverGrantedTotal = Number(
+          response.granted_xp
+          ?? (Number(response.server_granted_xp || 0) + clientGrantedXp),
+        )
+        resultGrantedXp = Math.max(0, Number.isFinite(serverGrantedTotal) ? serverGrantedTotal : (serverXp - previousXp))
+        resultGrantedPux = Number(response.granted_pux ?? clientGrantedPux)
+        resultNextXp = Math.max(previousXp, serverXp)
+
+        normalized.xp = resultNextXp
         normalized.processedEvents = {
           ...normalized.processedEvents,
           ...nextSlice.processedEvents,
           ...Object.fromEntries(processedEventIds.map((id) => [id, { eventId: id, processedAt: aggregate.evaluatedAt, grantedXp: 0, grantedPux: 0 }])),
         }
-        normalized.xp = nextSlice.xp + challengeResult.grantedXp + collectionResult.grantedXp
         normalized.activityLog = nextSlice.activityLog
         normalized.unlockHistory = [...unlockHistory, ...(normalized.unlockHistory || [])].slice(0, 100)
         normalized.unlockedCosmetics = {
@@ -513,12 +547,15 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         console.error('Failed to apply progression events', err)
+        resultNextXp = previousXp + clientGrantedXp
+        resultGrantedXp = clientGrantedXp
+        resultGrantedPux = clientGrantedPux
         setRewardState((previous) => ({
           ...previous,
-          xp: nextSlice.xp + challengeResult.grantedXp + collectionResult.grantedXp,
+          xp: resultNextXp,
           currency: {
             ...previous.currency,
-            PUX: (previous.currency.PUX || 0) + grantedPux,
+            PUX: (previous.currency.PUX || 0) + clientGrantedPux,
           },
           unlockedAchievements: {
             ...previous.unlockedAchievements,
@@ -549,6 +586,28 @@ export function RewardProvider({ children }: { children: ReactNode }) {
               ),
           )
         }
+      }
+
+      // Synthetic XP toast for the recap when server unit XP landed without client reward events.
+      if (resultGrantedXp > 0 && !rewardEvents.some((event) => event.kind === 'system' && String(event.title || '').includes('XP'))) {
+        rewardEvents.unshift(
+          normalizeReward({
+            id: `xp:session:${primaryEventId}`,
+            kind: 'system',
+            title: `+${resultGrantedXp} XP`,
+            description: 'Session-Fortschritt',
+            variant: 'small',
+            meta: { amountXp: resultGrantedXp },
+          }),
+        )
+      }
+
+      return {
+        grantedXp: resultGrantedXp,
+        grantedPux: resultGrantedPux,
+        previousXp,
+        nextXp: resultNextXp,
+        rewardEvents,
       }
     },
     [enqueueRewards, user],
@@ -796,8 +855,11 @@ export function RewardProvider({ children }: { children: ReactNode }) {
     async (input: {
       sessions: Parameters<typeof bootstrapProgression>[0]['sessions']
       trackDrills: Record<string, string[]>
-    }) => {
-      if (metaInFlightRef.current) return
+      showToasts?: boolean
+    }): Promise<ActivityIngestResult> => {
+      const previousXp = Number(rewardStateRef.current.xp || 0)
+      if (metaInFlightRef.current) return EMPTY_INGEST_RESULT(previousXp)
+      const showToasts = input.showToasts !== false
       const current = rewardStateRef.current
       const mastery = evaluateMasteryGrants({
         sessions: input.sessions,
@@ -823,8 +885,11 @@ export function RewardProvider({ children }: { children: ReactNode }) {
       const allEventIds = [...mastery.processedEventIds, ...collections.processedEventIds]
       const grantedXp = mastery.grantedXp + collections.grantedXp
       const grantedPux = mastery.grantedPux + collections.grantedPux
+      const rewardEvents = [...mastery.rewardEvents, ...collections.rewardEvents].map((event) =>
+        normalizeReward(event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>),
+      )
       if (!allEventIds.length && !grantedXp && !grantedPux) {
-        return
+        return EMPTY_INGEST_RESULT(previousXp)
       }
 
       // Optimistic lock: mark all event ids locally BEFORE await so concurrent calls no-op.
@@ -851,7 +916,7 @@ export function RewardProvider({ children }: { children: ReactNode }) {
           evaluated_at: evaluatedAt,
           granted_pux: grantedPux,
           granted_xp: grantedXp,
-          reward_events: [...mastery.rewardEvents, ...collections.rewardEvents],
+          reward_events: showToasts ? rewardEvents : [],
           unlocked_achievements: [],
           unlocked_masteries: [],
           unlocked_cosmetics: [...mastery.unlockedCosmetics, ...collections.unlockedCosmetics],
@@ -869,10 +934,9 @@ export function RewardProvider({ children }: { children: ReactNode }) {
           ...optimisticProcessed,
         }
         setRewardState(normalized)
-        const toasts = [...mastery.rewardEvents, ...collections.rewardEvents]
-        if (toasts.length) {
+        if (showToasts && rewardEvents.length) {
           enqueueRewards(
-            toasts.map((event) => event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>),
+            rewardEvents.map((event) => event as Partial<RewardEvent> & Pick<RewardEvent, 'kind' | 'title' | 'variant'>),
           )
         }
       } catch (err) {
@@ -887,6 +951,14 @@ export function RewardProvider({ children }: { children: ReactNode }) {
         }))
       } finally {
         metaInFlightRef.current = false
+      }
+
+      return {
+        grantedXp,
+        grantedPux,
+        previousXp,
+        nextXp: previousXp + grantedXp,
+        rewardEvents,
       }
     },
     [enqueueRewards],

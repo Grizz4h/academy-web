@@ -1,17 +1,22 @@
-import { useId, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
+import { CompetencyScoutCard } from './CompetencyScoutCard'
 import {
   accessibilitySummary,
   canShowScorePolygon,
-  capabilityLabelForItem,
-  formatRatioPercent,
   hasAnyRated,
   isFullyUnrated,
+  meanRatedScore,
   nodeOpacity,
+  profileProgressLabel,
+  profileStoryLine,
   ratedCount,
 } from './competencyLogic'
 import { RADAR_CENTER, RADAR_RADIUS, nodePoint, radarPoint, radarPolygon } from './radarGeometry'
 import type { CompetencyItem } from './types'
 import styles from './CompetencyRadar.module.css'
+
+/** Capability band thresholds as radar rings (plus outer rim). */
+const BAND_RINGS = [20, 40, 60, 80, 100] as const
 
 type CompetencyRadarProps = {
   competencies: readonly CompetencyItem[]
@@ -28,20 +33,29 @@ export default function CompetencyRadar({
   preview = false,
 }: CompetencyRadarProps) {
   const gradientId = useId().replace(/:/g, '')
+  const glowId = useId().replace(/:/g, '')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const total = competencies.length
   const fullyUnrated = isFullyUnrated(competencies)
   const anyRated = hasAnyRated(competencies)
   const rated = ratedCount(competencies)
   const showPolygon = canShowScorePolygon(competencies)
-  const selected = competencies.find((item) => item.competencyId === selectedId) ?? null
+  const progress = profileProgressLabel(competencies)
+  const story = profileStoryLine(competencies)
+  const centerScore = showPolygon ? meanRatedScore(competencies) : null
+  const hasSelection = Boolean(selectedId)
+
+  const highlight = useCallback((id: string) => {
+    setSelectedId(id)
+  }, [])
 
   const toggleSelected = (id: string) => {
     setSelectedId((prev) => (prev === id ? null : id))
   }
 
   return (
-    <section className={styles.shell} aria-label={title}>
+    <section className={styles.shell} aria-label={title} data-complete={showPolygon ? 'true' : 'false'}>
+      <div className={styles.ambient} aria-hidden="true" />
       <ul className={styles.a11yList}>
         {competencies.map((item) => (
           <li key={item.competencyId}>{accessibilitySummary(item)}</li>
@@ -52,8 +66,11 @@ export default function CompetencyRadar({
         <div>
           {preview ? <span className={styles.kicker}>Dev · Mock preview</span> : null}
           <h2 className={styles.title}>{title}</h2>
+          {story ? <p className={styles.story}>{story}</p> : null}
         </div>
-        <span className={styles.badge}>8 Achsen</span>
+        <span className={`${styles.badge} ${progress.complete ? styles.badgeComplete : ''}`}>
+          {progress.short}
+        </span>
       </div>
 
       {fullyUnrated ? (
@@ -91,20 +108,40 @@ export default function CompetencyRadar({
                 <stop offset="0" stopColor="#62f6d5" />
                 <stop offset="1" stopColor="#33a7ff" />
               </linearGradient>
+              <radialGradient id={glowId} cx="50%" cy="50%" r="50%">
+                <stop offset="0" stopColor="rgba(98, 246, 213, 0.35)" />
+                <stop offset="0.55" stopColor="rgba(45, 212, 191, 0.12)" />
+                <stop offset="1" stopColor="rgba(45, 212, 191, 0)" />
+              </radialGradient>
             </defs>
-            {[25, 50, 75, 100].map((level) => (
+
+            {showPolygon ? (
+              <circle
+                className={styles.centerGlow}
+                cx={RADAR_CENTER}
+                cy={RADAR_CENTER}
+                r={RADAR_RADIUS * 0.42}
+                fill={`url(#${glowId})`}
+              />
+            ) : null}
+
+            {BAND_RINGS.map((level) => (
               <polygon
                 key={level}
-                className={styles.grid}
+                className={`${styles.grid} ${level === 100 ? styles.gridOuter : styles.gridBand}`}
                 points={competencies.map((_, index) => radarPoint(index, total, level)).join(' ')}
               />
             ))}
+
             {competencies.map((axis, index) => {
               const [x2, y2] = radarPoint(index, total, 100).split(',')
+              const isActive = selectedId === axis.competencyId
               return (
                 <line
                   key={axis.competencyId}
-                  className={styles.axis}
+                  className={`${styles.axis} ${isActive ? styles.axisActive : ''} ${
+                    hasSelection && !isActive ? styles.axisDim : ''
+                  }`}
                   x1={RADAR_CENTER}
                   y1={RADAR_CENTER}
                   x2={x2}
@@ -112,6 +149,7 @@ export default function CompetencyRadar({
                 />
               )
             })}
+
             {showPolygon ? (
               <>
                 <polygon className={styles.scoreGlow} points={radarPolygon(competencies)} />
@@ -122,21 +160,61 @@ export default function CompetencyRadar({
                 />
               </>
             ) : null}
+
             {competencies.map((item, index) => {
               const point = nodePoint(competencies, index)
               if (!point) return null
+              const isActive = selectedId === item.competencyId
               return (
                 <circle
                   key={item.competencyId}
-                  className={styles.node}
+                  className={`${styles.node} ${isActive ? styles.nodeActive : ''} ${
+                    hasSelection && !isActive ? styles.nodeDim : ''
+                  }`}
                   cx={point.x}
                   cy={point.y}
-                  r={3.5}
+                  r={isActive ? 5.5 : 3.5}
                   opacity={nodeOpacity(item)}
                 />
               )
             })}
+
+            {showPolygon && centerScore != null ? (
+              <g className={styles.centerGlyph}>
+                <circle
+                  className={styles.centerRing}
+                  cx={RADAR_CENTER}
+                  cy={RADAR_CENTER}
+                  r={28}
+                />
+                <text
+                  className={styles.centerValue}
+                  x={RADAR_CENTER}
+                  y={RADAR_CENTER - 2}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {Math.round(centerScore)}
+                </text>
+                <text
+                  className={styles.centerCaption}
+                  x={RADAR_CENTER}
+                  y={RADAR_CENTER + 14}
+                  textAnchor="middle"
+                >
+                  Ø Score
+                </text>
+              </g>
+            ) : (
+              <circle
+                className={styles.centerEmpty}
+                cx={RADAR_CENTER}
+                cy={RADAR_CENTER}
+                r={6}
+              />
+            )}
           </svg>
+
           <div className={styles.axisLabels}>
             {competencies.map((item, index) => {
               const angle = -Math.PI / 2 + (index * Math.PI * 2) / total
@@ -148,7 +226,9 @@ export default function CompetencyRadar({
                 <button
                   key={item.competencyId}
                   type="button"
-                  className={`${styles.axisLabel} ${isSelected ? styles.axisLabelSelected : ''}`}
+                  className={`${styles.axisLabel} ${isSelected ? styles.axisLabelSelected : ''} ${
+                    hasSelection && !isSelected ? styles.axisLabelDim : ''
+                  }`}
                   style={{ left: `${(x / 320) * 100}%`, top: `${(y / 320) * 100}%` }}
                   onClick={() => toggleSelected(item.competencyId)}
                   aria-pressed={isSelected}
@@ -162,84 +242,19 @@ export default function CompetencyRadar({
 
         <div className={styles.side}>
           <div className={styles.stats} role="list">
-            {competencies.map((item) => {
-              const isSelected = selectedId === item.competencyId
-              const band = capabilityLabelForItem(item)
-              return (
-                <button
-                  key={item.competencyId}
-                  type="button"
-                  className={`${styles.stat} ${isSelected ? styles.statSelected : ''}`}
-                  data-competency-axis={item.competencyId}
-                  data-status={item.status}
-                  onClick={() => toggleSelected(item.competencyId)}
-                  aria-pressed={isSelected}
-                >
-                  <span className={styles.statLabel}>{item.label}</span>
-                  <span className={styles.statValue}>
-                    {item.status === 'rated' ? (
-                      <>
-                        <strong>{Math.round(item.score)}</strong>
-                        {band ? <span className={styles.statBand}>{band}</span> : null}
-                        <span className={styles.statMeta}>
-                          Confidence {formatRatioPercent(item.confidence)}
-                        </span>
-                      </>
-                    ) : (
-                      <em className={styles.unrated}>Noch nicht bewertet</em>
-                    )}
-                  </span>
-                </button>
-              )
-            })}
+            {competencies.map((item, index) => (
+              <div key={item.competencyId} role="listitem">
+                <CompetencyScoutCard
+                  item={item}
+                  selected={selectedId === item.competencyId}
+                  onHighlight={highlight}
+                  align={index % 2 === 0 ? 'left' : 'right'}
+                />
+              </div>
+            ))}
           </div>
-
-          {selected ? (
-            <div className={styles.detail} aria-live="polite">
-              <h3 className={styles.detailTitle}>{selected.label}</h3>
-              {selected.status === 'rated' ? (
-                <dl className={styles.detailGrid}>
-                  <div>
-                    <dt>Score</dt>
-                    <dd>{Math.round(selected.score)}</dd>
-                  </div>
-                  <div>
-                    <dt>Confidence</dt>
-                    <dd>{formatRatioPercent(selected.confidence)}</dd>
-                  </div>
-                  <div>
-                    <dt>Evidenzbreite</dt>
-                    <dd>{formatRatioPercent(selected.breadth)}</dd>
-                  </div>
-                  <div>
-                    <dt>Evidence</dt>
-                    <dd>{selected.evidenceCount}</dd>
-                  </div>
-                  <div>
-                    <dt>Höchstes Evidence-Level</dt>
-                    <dd>{selected.highestEvidenceLevel}</dd>
-                  </div>
-                  {capabilityLabelForItem(selected) ? (
-                    <div>
-                      <dt>Capability Band</dt>
-                      <dd>{capabilityLabelForItem(selected)}</dd>
-                    </div>
-                  ) : null}
-                </dl>
-              ) : (
-                <p className={styles.detailMuted}>
-                  Für diese Kompetenz liegt noch keine auswertbare Evidenz vor.
-                </p>
-              )}
-              {selected.status === 'rated' ? (
-                <p className={styles.detailHint}>
-                  Confidence: Sicherheit der Schätzung · Evidenzbreite: Vielfalt der Evidenzbasis
-                  über Drills/Tracks/Kontexte (nicht Fortschritt zu 100%).
-                </p>
-              ) : null}
-            </div>
-          ) : anyRated ? (
-            <p className={styles.detailHint}>Achse antippen für Score, Confidence und Evidenzbreite.</p>
+          {anyRated ? (
+            <p className={styles.detailHint}>Kachel antippen für Score, Confidence und Evidenzbreite.</p>
           ) : null}
         </div>
       </div>

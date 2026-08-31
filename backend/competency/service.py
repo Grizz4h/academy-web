@@ -65,3 +65,12 @@ class CompetencyRecomputeService:
             appended.append(self._events.append(user, create))
         result = self.recompute_user(user)
         return appended, result
+
+    def reset_user_profile(self, user: AuthContext) -> dict[str, int]:
+        """Dev/ops: wipe evidence history + cached states for this user only."""
+        deleted_events = self._events.delete_for_user(user)
+        deleted_states = self._states.delete_for_user(user)
+        return {
+            "deleted_events": int(deleted_events),
+            "deleted_states": int(deleted_states),
+        }

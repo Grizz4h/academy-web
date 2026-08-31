@@ -69,17 +69,17 @@ Drill specs add focus, evidence competencies, `mustNotInfer`, readiness gates.
 
 | Readiness | Count | AI evidence production |
 |-----------|------:|------------------------|
-| READY | 18 | allowed later (after runtime wiring) |
-| NEEDS_SMALL_INPUT_CHANGE | 6 | blocked until minimal input change |
-| NEEDS_MECHANIC_CHANGE | 1 (E3_D4) | blocked |
+| READY | 25 | production AI allowlist after runtime wiring |
+| NEEDS_SMALL_INPUT_CHANGE | 0 | — |
+| NEEDS_MECHANIC_CHANGE | 0 | — |
 
-### Small input changes (not implemented)
+### Small input changes (done)
 
-`A3_D2`, `B1_D1`–`B1_D5`: optional short notes → require short free-text **or** keep structured-only.
+`A3_D2`, `B1_D1`–`B1_D5`: required free-text notes shipped (A3 ≥60, B1 ≥150) and wired.
 
 ### E3_D4
 
-Mechanic blocker documented; not production-ready for AI evidence.
+Required `userStatement` (≥80) per evidence case; production-wired.
 
 ## Pure AI review
 
@@ -102,16 +102,15 @@ assessmentSpecVersion
 assessmentModel
 ```
 
-## Next implementation step (suggested)
+## Production AI allowlist
 
-Runtime pilot **only**:
+Wired at checkin (`PRODUCTION_AI_DRILLS`):
 
 ```text
-B2_D5
-E1_D1
+A3_D2 · B1_D1–D5 · B2_D5 · E1_D1 · E1_D5 · C1–C3_D5 · D1–D3_D5 · E2_D1–D5 · E3_D1–D5
 ```
 
-before enabling the remaining READY AI specs.
+All 25 READY AI drills are wired.
 
 ## Validate
 

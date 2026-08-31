@@ -17,7 +17,7 @@ _load_env_files()
 import json
 import jwt
 from datetime import datetime, timedelta
-from fastapi import Header, HTTPException, Depends, Request
+from fastapi import Header, HTTPException, Depends, Request, BackgroundTasks
 from auth_utils import hash_password, verify_password
 from player_importer import PennyDelImporter
 from del_data.season_utils import season_to_display, season_to_file_key
@@ -2330,6 +2330,8 @@ async def get_session(session_id: str, current_user: AuthContext = Depends(get_c
     should_save = False
 
     session["observation_scope"] = scope
+    if _prune_microfeedback_to_scope(session):
+        should_save = True
 
     if current_phase == "PRE" or not current_phase:
         session["current_phase"] = _initial_phase_for_scope(scope)
@@ -2375,7 +2377,13 @@ async def update_session(session_id: str, updates: dict, current_user: AuthConte
     return session
 
 @app.post("/api/sessions/{session_id}/checkins")
-async def save_checkin(session_id: str, checkin: CheckinData, request: Request, current_user: AuthContext = Depends(get_current_user)):
+async def save_checkin(
+    session_id: str,
+    checkin: CheckinData,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    current_user: AuthContext = Depends(get_current_user),
+):
     """Checkin speichern (owner only)"""
     req_id = uuid4().hex[:8]
     phase_raw = checkin.phase
@@ -2453,33 +2461,56 @@ async def save_checkin(session_id: str, checkin: CheckinData, request: Request, 
     logging.info(f"[checkin:{req_id}] session={session_id} counts_after={dict(counts_after)}")
 
     if checkin.final:
-        from competency.evidence_submission import process_evidence_for_checkin
-        from competency.service import CompetencyRecomputeService
-        from repositories.errors import RepositoryError, StorageError
+        # AI evidence can take several seconds — do not block session advance UX.
+        # Checkin already persisted; evidence failures are logged, never undo the checkin.
+        import copy
 
-        repos = get_repos()
-        recompute = CompetencyRecomputeService(repos.competency_events, repos.competency_states)
-        try:
-            process_evidence_for_checkin(
-                current_user,
-                session_id=session_id,
-                session=session,
-                answers=checkin.answers,
-                final=True,
-                recompute_service=recompute,
-            )
-        except (StorageError, RepositoryError) as exc:
-            logging.exception(
-                "[competency] evidence failed session=%s user=%s",
-                session_id,
-                current_user.rinq_user_id,
-            )
-            raise HTTPException(
-                status_code=500,
-                detail="Kompetenz-Evidenz konnte nicht gespeichert werden",
-            ) from exc
+        session_snapshot = copy.deepcopy(session)
+        answers_snapshot = copy.deepcopy(checkin.answers or {})
+        background_tasks.add_task(
+            _process_competency_evidence_background,
+            current_user,
+            session_id,
+            session_snapshot,
+            answers_snapshot,
+        )
 
     return session
+
+
+def _process_competency_evidence_background(
+    user: AuthContext,
+    session_id: str,
+    session: dict,
+    answers: dict,
+) -> None:
+    from competency.evidence_submission import process_evidence_for_checkin
+    from competency.service import CompetencyRecomputeService
+    from repositories.errors import RepositoryError, StorageError
+
+    try:
+        repos = get_repos()
+        recompute = CompetencyRecomputeService(repos.competency_events, repos.competency_states)
+        process_evidence_for_checkin(
+            user,
+            session_id=session_id,
+            session=session,
+            answers=answers,
+            final=True,
+            recompute_service=recompute,
+        )
+    except (StorageError, RepositoryError):
+        logging.exception(
+            "[competency] background evidence failed session=%s user=%s",
+            session_id,
+            user.rinq_user_id,
+        )
+    except Exception:
+        logging.exception(
+            "[competency] background evidence unexpected error session=%s user=%s",
+            session_id,
+            user.rinq_user_id,
+        )
 
 @app.post("/api/sessions/{session_id}/post")
 async def complete_session(session_id: str, post: PostData, current_user: AuthContext = Depends(get_current_user)):
@@ -2727,18 +2758,28 @@ async def add_microfeedback(
     request: Request,
     current_user: AuthContext = Depends(get_current_user),
 ):
-    """Microfeedback für P1/P2/P3 speichern (Session-Block, nicht Checkin; owner only)"""
-    valid_phases = {"P1", "P2", "P3"}
+    """Microfeedback für aktive Beobachtungs-Drittel speichern (Session-Block, nicht Checkin; owner only)"""
     phase = data.phase.strip().upper()
-    if phase not in valid_phases:
+    if phase not in {"P1", "P2", "P3"}:
         raise HTTPException(status_code=400, detail="Invalid phase for microfeedback")
     enforce_max_text_length(data.text, "microfeedback.text")
     session_path, session = _require_session_owner(session_id, current_user)
-    if "microfeedback" not in session:
-        session["microfeedback"] = {p: {"done": False, "text": ""} for p in valid_phases}
-    session["microfeedback"][phase]["done"] = True
-    session["microfeedback"][phase]["text"] = data.text
-    session["microfeedback"][phase]["ts"] = datetime.now().isoformat()
+    active_phases = set(_active_periods_for_scope(session.get("observation_scope")))
+    if phase not in active_phases:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Phase {phase} is outside observation_scope={session.get('observation_scope')}",
+        )
+    if not isinstance(session.get("microfeedback"), dict):
+        session["microfeedback"] = _empty_microfeedback_for_scope(session.get("observation_scope"))
+    slot = session["microfeedback"].get(phase)
+    if not isinstance(slot, dict):
+        slot = {"done": False, "text": ""}
+        session["microfeedback"][phase] = slot
+    slot["done"] = True
+    slot["text"] = data.text
+    slot["ts"] = datetime.now().isoformat()
+    session["microfeedback"][phase] = slot
     # Logging
     trace_id = request.headers.get("X-Trace-Id")
     trace_action = request.headers.get("X-Trace-Action")
@@ -2801,6 +2842,45 @@ async def create_session_reflection(
 async def get_rewards_state(current_user: AuthContext = Depends(get_current_user)):
     state = _load_reward_state(current_user)
     return state
+
+
+@app.post("/api/dev/competency/reset")
+async def reset_my_competency_profile_dev(
+    request: Request,
+    current_user: AuthContext = Depends(require_dev_access),
+):
+    """Wipe competency evidence + cached states for the logged-in user (dev only).
+
+    Server-gated via require_dev_access — hidden UI is not authorization.
+    Does not delete sessions, rewards, or entitlements.
+    """
+    rate_limit(
+        request,
+        "dev_competency_reset",
+        limit=10,
+        window_sec=60.0,
+        subject=current_user.rinq_user_id,
+    )
+    from competency.service import CompetencyRecomputeService
+    from repositories.errors import StorageError
+
+    try:
+        service = CompetencyRecomputeService(
+            get_repos().competency_events,
+            get_repos().competency_states,
+        )
+        result = service.reset_user_profile(current_user)
+    except StorageError as exc:
+        logging.exception("[competency] dev reset failed rinq=%s", current_user.rinq_user_id)
+        raise HTTPException(status_code=500, detail="Competency reset unavailable") from exc
+
+    logging.info(
+        "[competency] dev reset rinq=%s events=%s states=%s",
+        current_user.rinq_user_id,
+        result["deleted_events"],
+        result["deleted_states"],
+    )
+    return {"ok": True, **result}
 
 
 @app.post("/api/dev/progression/preview-grants")
@@ -3406,14 +3486,55 @@ def _build_scene_path(scene_id: str, created_at: Optional[str]) -> str:
 
 
 def _empty_microfeedback_for_scope(scope: Optional[str]) -> dict:
-    """Foundation lessons (LESSON) do not collect period microfeedback."""
+    """Only allocate period slots that belong to the observation scope.
+
+    Foundation lessons (LESSON) do not collect period microfeedback.
+    P1/P2/P3 scopes must not create empty unfinished slots for other periods —
+    those false gaps show up as Session-Qualität noise.
+    """
     if _normalize_observation_scope(scope) == "LESSON":
         return {}
     return {
-        "P1": {"done": False, "text": ""},
-        "P2": {"done": False, "text": ""},
-        "P3": {"done": False, "text": ""},
+        phase: {"done": False, "text": ""}
+        for phase in _active_periods_for_scope(scope)
     }
+
+
+def _prune_microfeedback_to_scope(session: dict) -> bool:
+    """Drop unfinished out-of-scope microfeedback slots; keep in-scope + done/checkin data."""
+    if _normalize_observation_scope(session.get("observation_scope")) == "LESSON":
+        if session.get("microfeedback"):
+            session["microfeedback"] = {}
+            return True
+        session["microfeedback"] = {}
+        return False
+
+    active = _active_periods_for_scope(session.get("observation_scope"))
+    active_set = set(active)
+    checked = {
+        str(c.get("phase") or "").strip().upper()
+        for c in (session.get("checkins") or [])
+        if str(c.get("phase") or "").strip().upper() in {"P1", "P2", "P3"}
+    }
+    raw = session.get("microfeedback") if isinstance(session.get("microfeedback"), dict) else {}
+    next_mf: dict = {}
+    for phase in active:
+        existing = raw.get(phase)
+        next_mf[phase] = existing if isinstance(existing, dict) else {"done": False, "text": ""}
+    # Preserve completed / checkin-backed slots outside the declared scope (legacy data).
+    for phase, payload in raw.items():
+        key = str(phase or "").strip().upper()
+        if key in next_mf or key not in {"P1", "P2", "P3"}:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        if payload.get("done") or key in checked:
+            next_mf[key] = payload
+    if next_mf != raw:
+        session["microfeedback"] = next_mf
+        return True
+    session["microfeedback"] = next_mf
+    return False
 
 
 def _normalize_observation_scope(scope: Optional[str]) -> str:

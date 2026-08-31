@@ -2463,11 +2463,14 @@
                   {
                     "key": "note",
                     "type": "text",
-                    "label": "Was fällt dir besonders auf?",
-                    "optional": true,
-                    "max_chars": 150
+                    "label": "Beschreibe kurz die erste Reaktion nach dem Wechsel (2–3 Sekunden)",
+                    "optional": false,
+                    "max_chars": 200,
+                    "required": true,
+                    "min_chars": 60
                   }
-                ]
+                ],
+                "validate_answers": true
               },
               "sceneSlug": "Post-Win-Reaction"
             },
@@ -2949,7 +2952,7 @@
                 "state_key": "support_state",
                 "factor_key": "main_factor",
                 "note_key": "note",
-                "note_max_chars": 120,
+                "note_max_chars": 250,
                 "state_options": [
                   "klar spielbar",
                   "eingeschränkt",
@@ -2974,7 +2977,10 @@
                     "erst nach Schließen des Fensters sichtbar",
                     "keine erkennbare Passmöglichkeit"
                   ]
-                }
+                },
+                "note_required": true,
+                "note_min_chars": 150,
+                "note_label": "Woran war die Support-Relation sichtbar? (wer/wo, Passbahn, Abstand, Timing)"
               },
               "sceneSlug": "Center-Reads"
             },
@@ -3056,7 +3062,7 @@
                 "state_key": "center_connection_state",
                 "factor_key": "main_factor",
                 "note_key": "note",
-                "note_max_chars": 120,
+                "note_max_chars": 250,
                 "state_options": [
                   "Neue Verbindung entsteht",
                   "Verbindungen bleiben erhalten",
@@ -3088,7 +3094,10 @@
                     "keine Rückoption sichtbar",
                     "Szene / Perspektive unklar"
                   ]
-                }
+                },
+                "note_required": true,
+                "note_min_chars": 150,
+                "note_label": "Woran hast du die spielbare Verbindung erkannt oder verändert gesehen?"
               },
               "sceneSlug": "Triangle-Stability"
             },
@@ -3189,8 +3198,8 @@
                   "unklar"
                 ],
                 "note_key": "note",
-                "note_label": "Notiz (optional)",
-                "note_max_chars": 120,
+                "note_label": "Woran war die Center-Funktion in dieser Szene sichtbar?",
+                "note_max_chars": 250,
                 "state_options": [
                   "Anspielstation anbieten",
                   "Absichern",
@@ -3244,7 +3253,9 @@
                     ]
                   }
                 ],
-                "label_migration_note": "UI 2026-08-24: Support geben→Anspielstation anbieten; Anschluss herstellen→Verbinden; Räume öffnen→Angriff unterstützen; Absichern bleibt (offensiv). Gespeicherte Samples können noch alte Labels enthalten."
+                "label_migration_note": "UI 2026-08-24: Support geben→Anspielstation anbieten; Anschluss herstellen→Verbinden; Räume öffnen→Angriff unterstützen; Absichern bleibt (offensiv). Gespeicherte Samples können noch alte Labels enthalten.",
+                "note_required": true,
+                "note_min_chars": 150
               },
               "sceneSlug": "Center-Tasks"
             },
@@ -3362,8 +3373,8 @@
                   "kaum sichtbar"
                 ],
                 "note_key": "note",
-                "note_label": "Notiz (optional)",
-                "note_max_chars": 120,
+                "note_label": "Woran war die Anspiel-/Anschlussoption spielbar erkennbar?",
+                "note_max_chars": 250,
                 "state_options": [
                   "früh verfügbar",
                   "verfügbar",
@@ -3402,7 +3413,9 @@
                     "Rollenzuordnung unklar",
                     "Anspielstation-Verfügbarkeit nicht sicher beurteilbar"
                   ]
-                }
+                },
+                "note_required": true,
+                "note_min_chars": 150
               },
               "sceneSlug": "Center-Outlet"
             },
@@ -3465,8 +3478,8 @@
                   "unklar"
                 ],
                 "note_key": "note",
-                "note_label": "Notiz (optional)",
-                "note_max_chars": 120,
+                "note_label": "Woran war Timing oder Vorbereitung der Unterstützung sichtbar?",
+                "note_max_chars": 250,
                 "state_options": [
                   "Vor dem Druck vorbereitet",
                   "Im nutzbaren Zeitfenster verfügbar",
@@ -3505,7 +3518,9 @@
                     "Vorbereitung nicht eindeutig",
                     "zu wenig Wiederholung"
                   ]
-                }
+                },
+                "note_required": true,
+                "note_min_chars": 150
               },
               "sceneSlug": "Support-Timing"
             }
@@ -4513,8 +4528,8 @@
                   }
                 ],
                 "zone_boundaries": {
-                  "left_blue_line_x": 0.354,
-                  "right_blue_line_x": 0.646
+                  "left_blue_line_x": 0.388,
+                  "right_blue_line_x": 0.612
                 },
                 "zone_labels": {
                   "defensive": "Defensive Zone",
@@ -5568,6 +5583,7 @@
               },
               "config": {
                 "mode": "defensive_structure",
+                "rink_view": "defensive_half",
                 "observation_count": 3,
                 "observations_key": "defensive_structure_observations",
                 "player_positions_key": "playerPositions",
@@ -5991,6 +6007,7 @@
               },
               "config": {
                 "mode": "formation_shift",
+                "rink_view": "defensive_half",
                 "observation_count": 3,
                 "observations_key": "formation_shift_observations",
                 "observation_index_key": "observationIndex",
@@ -16260,7 +16277,8 @@
                   "small_difference",
                   "poor_comparability",
                   "solid_picture"
-                ]
+                ],
+                "user_statement_min_chars": 80
               },
               "sceneSlug": "Evidence-Assessment"
             },

@@ -102,7 +102,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const [active, setActive] = useState(false)
   const [snoozed, setSnoozed] = useState(false)
   const [showComplete, setShowComplete] = useState(false)
-  const [surfaceOverride, setSurfaceOverride] = useState<Extract<TutorialSurface, 'end-confirm' | 'none'> | null>(null)
+  const [surfaceOverride, setSurfaceOverride] = useState<Extract<TutorialSurface, 'end-confirm' | 'welcome' | 'none'> | null>(null)
   const [targetMissing, setTargetMissing] = useState(false)
   const persistTimer = useRef<number | null>(null)
   const skippedTarget = useRef<string | null>(null)
@@ -177,6 +177,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const surface: TutorialSurface = useMemo(() => {
     if (!user || !hydrated) return 'none'
     if (!sessionsFetched) return 'none'
+    if (surfaceOverride === 'welcome') return 'welcome'
     if (surfaceOverride === 'end-confirm') return 'end-confirm'
     if (showComplete) return 'complete'
     if (active) return 'active'
@@ -283,9 +284,21 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const resetState = useCallback(() => {
     const empty = emptyProgress(MAIN_ID, definition.version)
     setActive(false)
+    setSnoozed(false)
+    setShowComplete(false)
     setSurfaceOverride(null)
     updateProgress(empty)
   }, [definition.version, updateProgress])
+
+  const simulateNewProfile = useCallback(() => {
+    const empty = emptyProgress(MAIN_ID, definition.version)
+    setActive(false)
+    setSnoozed(false)
+    setShowComplete(false)
+    updateProgress(empty)
+    setSurfaceOverride('welcome')
+    navigate('/')
+  }, [definition.version, navigate, updateProgress])
 
   const markStepDone = useCallback((stepId: string) => {
     updateProgress((prev) => ({
@@ -457,6 +470,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     complete,
     restart,
     resetState,
+    simulateNewProfile,
     next,
     back,
     goToStep,
@@ -480,6 +494,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     resetState,
     restart,
     resume,
+    simulateNewProfile,
     start,
     steps,
     surface,

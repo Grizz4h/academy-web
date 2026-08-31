@@ -59,22 +59,18 @@ class AssessmentSpecsV1Tests(unittest.TestCase):
             self.assertEqual(routing[drill_id]["readiness"], readiness)
 
     def test_small_input_change_docs(self):
-        expected = {"A3_D2", "B1_D1", "B1_D2", "B1_D3", "B1_D4", "B1_D5"}
         found = {
             r["drillId"]
             for r in assessment_spec_rows()
             if r["readiness"] == "NEEDS_SMALL_INPUT_CHANGE"
         }
-        self.assertEqual(found, expected)
-        for row in assessment_spec_rows():
-            if row["drillId"] in expected:
-                self.assertFalse(row["productionReadyForAiEvidence"])
+        self.assertEqual(found, set())
 
-    def test_e3_d4_blocker(self):
+    def test_e3_d4_ready_after_user_statement(self):
         row = next(r for r in assessment_spec_rows() if r["drillId"] == "E3_D4")
-        self.assertEqual(row["readiness"], "NEEDS_MECHANIC_CHANGE")
-        self.assertFalse(row["productionReadyForAiEvidence"])
-        self.assertIn("mechanicBlocker", row)
+        self.assertEqual(row["readiness"], "READY")
+        self.assertTrue(row["productionReadyForAiEvidence"])
+        self.assertNotIn("mechanicBlocker", row)
 
     def test_pure_ai_reviews(self):
         for drill_id in ("E1_D1", "E3_D5"):

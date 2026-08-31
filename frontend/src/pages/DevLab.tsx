@@ -7,6 +7,7 @@ import { getHiddenNavTabs, isDevNavEnabled, setDevNavEnabled } from '../config/f
 import DevActionLogPanel from '../components/dev/DevActionLogPanel'
 import ProgressionPersonaSimPanel from '../components/dev/ProgressionPersonaSimPanel'
 import ProgressionHarnessPanel from '../components/dev/ProgressionHarnessPanel'
+import DevCompetencyTools from '../components/dev/DevCompetencyTools'
 import {
   buildGameStatsBatchLogDetail,
   buildGameStatsImportLogDetail,
@@ -714,6 +715,8 @@ export default function DevLab() {
       <ProgressionPersonaSimPanel />
 
       <ProgressionHarnessPanel />
+
+      <DevCompetencyTools />
 
       <section className={styles.card}>
         <h2 className="ui-section-title">Rewards Lab</h2>

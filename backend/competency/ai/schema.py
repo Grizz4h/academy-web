@@ -8,11 +8,21 @@ Variant B:
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import Field, field_validator
 
 from competency.models import CompetencyId, StrictContract
+
+REASON_CODE_MAX_LEN = 64
+
+
+def normalize_reason_code(value: Any) -> str:
+    """Normalize + hard-truncate so verbose model reasonCodes don't fail the whole payload."""
+    text = str(value or "").strip().lower().replace(" ", "_")
+    if not text:
+        raise ValueError("reasonCode empty")
+    return text[:REASON_CODE_MAX_LEN]
 
 
 class AiCompetencyDimensions(StrictContract):
@@ -27,13 +37,13 @@ class AiCompetencyDimensions(StrictContract):
     uncertaintyCalibration: float = Field(ge=0, le=1)
     unsupportedClaims: float = Field(ge=0, le=1)
     outcomeBias: float = Field(ge=0, le=1)
-    reasonCode: str = Field(min_length=1, max_length=64)
+    reasonCode: str = Field(min_length=1, max_length=REASON_CODE_MAX_LEN)
     notes: List[str] = Field(default_factory=list)
 
-    @field_validator("reasonCode")
+    @field_validator("reasonCode", mode="before")
     @classmethod
-    def normalize_reason(cls, value: str) -> str:
-        return value.strip().lower().replace(" ", "_")
+    def normalize_reason(cls, value: Any) -> str:
+        return normalize_reason_code(value)
 
     @field_validator("notes")
     @classmethod
@@ -60,7 +70,7 @@ class AiCompetencyQuality(StrictContract):
     specificity: float = Field(ge=0, le=1)
     evidenceAlignment: float = Field(ge=0, le=1)
     unsupportedClaims: float = Field(ge=0, le=1)
-    reasonCode: str = Field(min_length=1, max_length=64)
+    reasonCode: str = Field(min_length=1, max_length=REASON_CODE_MAX_LEN)
     # Optional dimension audit (filled by aggregator; not required from legacy mocks)
     observationGrounding: Optional[float] = Field(default=None, ge=0, le=1)
     competencyAlignment: Optional[float] = Field(default=None, ge=0, le=1)
@@ -69,10 +79,10 @@ class AiCompetencyQuality(StrictContract):
     uncertaintyCalibration: Optional[float] = Field(default=None, ge=0, le=1)
     outcomeBias: Optional[float] = Field(default=None, ge=0, le=1)
 
-    @field_validator("reasonCode")
+    @field_validator("reasonCode", mode="before")
     @classmethod
-    def normalize_reason(cls, value: str) -> str:
-        return value.strip().lower().replace(" ", "_")
+    def normalize_reason(cls, value: Any) -> str:
+        return normalize_reason_code(value)
 
 
 class AiEvidenceEvaluation(StrictContract):
@@ -98,7 +108,7 @@ AI_DIMENSION_JSON_SCHEMA = {
                     "uncertaintyCalibration": {"type": "number", "minimum": 0, "maximum": 1},
                     "unsupportedClaims": {"type": "number", "minimum": 0, "maximum": 1},
                     "outcomeBias": {"type": "number", "minimum": 0, "maximum": 1},
-                    "reasonCode": {"type": "string"},
+                    "reasonCode": {"type": "string", "maxLength": 64},
                     "notes": {"type": "array", "items": {"type": "string"}},
                 },
                 "required": [

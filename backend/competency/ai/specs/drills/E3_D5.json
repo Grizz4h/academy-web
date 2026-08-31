@@ -40,5 +40,5 @@
   "freeTextReadiness": "READY",
   "evidenceSourceRecommendation": "ai_review",
   "minimalInputChange": "Claim ladder already produces free-text claims / falsification fields suitable for AI dimension scoring. Prefer AI over forcing a brittle structured claim scorer.",
-  "validationOnly": true
+  "validationOnly": false
 }

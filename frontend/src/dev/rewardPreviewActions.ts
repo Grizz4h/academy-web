@@ -71,6 +71,53 @@ export const REWARD_PREVIEW_SESSION_QUEUE = [
   REWARD_PREVIEW_MASTERY,
 ] as const
 
+/** Full SessionRewardRecap fixture (XP bar + achievement cards + popups). */
+export function buildDevSessionRewardRecap(previousXp: number): {
+  grantedXp: number
+  grantedPux: number
+  previousXp: number
+  nextXp: number
+  rewardEvents: RewardEvent[]
+} {
+  const stamp = Date.now()
+  const grantedXp = 120
+  const grantedPux = 45
+  return {
+    grantedXp,
+    grantedPux,
+    previousXp,
+    nextXp: previousXp + grantedXp,
+    rewardEvents: [
+      {
+        id: `dev:xp:${stamp}`,
+        kind: 'system',
+        title: `+${grantedXp} XP`,
+        description: 'DEV · Session-Fortschritt',
+        variant: 'small',
+        meta: { amountXp: grantedXp },
+      },
+      {
+        ...REWARD_PREVIEW_BRONZE,
+        id: `dev:bronze:${stamp}`,
+        title: 'DEV Bronze',
+        description: 'Dummy-Achievement zum Testen des Belohnungs-Screens.',
+      },
+      {
+        ...REWARD_PREVIEW_SILVER,
+        id: `dev:silver:${stamp}`,
+        title: 'DEV Silver',
+        description: 'Zweites Dummy-Achievement in der Queue.',
+      },
+      {
+        ...REWARD_PREVIEW_GOLD,
+        id: `dev:gold:${stamp}`,
+        title: 'DEV Gold',
+        description: 'Gold-Tier Popup + Karte prüfen.',
+      },
+    ],
+  }
+}
+
 export const DEV_REWARDS_STORAGE_KEY = 'academy.devRewards'
 export const DEV_LAST_PUX_GRANT_KEY = 'academy.devLastPuxGrant'
 

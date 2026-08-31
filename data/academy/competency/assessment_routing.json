@@ -217,13 +217,13 @@
     {
       "drillId": "A3_D2",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "readiness": "READY",
       "scope": "single_sequence",
       "existingInputs": {
         "structured": true,
         "freeText": true,
-        "freeTextRequired": false,
-        "freeTextOptional": true
+        "freeTextRequired": true,
+        "freeTextOptional": false
       },
       "aiNeededFor": [
         "specificity",
@@ -233,7 +233,7 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.7,
-      "notes": "Selects carry structure; optional note ≤150 is thin — require short reaction text for AI path."
+      "notes": "Required short free-text (≥60) describes first-reaction sequence; selects remain structured base."
     },
     {
       "drillId": "A3_D3",
@@ -289,13 +289,13 @@
     {
       "drillId": "B1_D1",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "readiness": "READY",
       "scope": "single_observation",
       "existingInputs": {
         "structured": true,
         "freeText": true,
-        "freeTextRequired": false,
-        "freeTextOptional": true
+        "freeTextRequired": true,
+        "freeTextOptional": false
       },
       "aiNeededFor": [
         "relational_reasoning",
@@ -305,18 +305,18 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.7,
-      "notes": "States/factors structured; optional note ≤120 weak for AI — raise/require note or stay structured-only later."
+      "notes": "Required sample note (≥150) on logged moments; states/factors remain structured base."
     },
     {
       "drillId": "B1_D2",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "readiness": "READY",
       "scope": "single_observation",
       "existingInputs": {
         "structured": true,
         "freeText": true,
-        "freeTextRequired": false,
-        "freeTextOptional": true
+        "freeTextRequired": true,
+        "freeTextOptional": false
       },
       "aiNeededFor": [
         "relational_reasoning",
@@ -326,18 +326,18 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.75,
-      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+      "notes": "B1 sample_log family: required relation note (≥150), aligned with B1_D1."
     },
     {
       "drillId": "B1_D3",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "readiness": "READY",
       "scope": "single_observation",
       "existingInputs": {
         "structured": true,
         "freeText": true,
-        "freeTextRequired": false,
-        "freeTextOptional": true
+        "freeTextRequired": true,
+        "freeTextOptional": false
       },
       "aiNeededFor": [
         "relational_reasoning",
@@ -347,18 +347,18 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.75,
-      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+      "notes": "B1 sample_log family: required relation note (≥150), aligned with B1_D1."
     },
     {
       "drillId": "B1_D4",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "readiness": "READY",
       "scope": "single_observation",
       "existingInputs": {
         "structured": true,
         "freeText": true,
-        "freeTextRequired": false,
-        "freeTextOptional": true
+        "freeTextRequired": true,
+        "freeTextOptional": false
       },
       "aiNeededFor": [
         "relational_reasoning",
@@ -368,18 +368,18 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.8,
-      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+      "notes": "B1 sample_log family: required relation note (≥150), aligned with B1_D1."
     },
     {
       "drillId": "B1_D5",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_SMALL_INPUT_CHANGE",
+      "readiness": "READY",
       "scope": "single_observation",
       "existingInputs": {
         "structured": true,
         "freeText": true,
-        "freeTextRequired": false,
-        "freeTextOptional": true
+        "freeTextRequired": true,
+        "freeTextOptional": false
       },
       "aiNeededFor": [
         "relational_reasoning",
@@ -389,7 +389,7 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.75,
-      "notes": "B1 sample_log family aligned with B1_D1 validation routing."
+      "notes": "B1 sample_log family: required relation note (≥150), aligned with B1_D1."
     },
     {
       "drillId": "B2_D1",
@@ -1442,12 +1442,12 @@
     {
       "drillId": "E3_D4",
       "assessmentSource": "structured_plus_ai_review",
-      "readiness": "NEEDS_MECHANIC_CHANGE",
+      "readiness": "READY",
       "scope": "comparative_analysis",
       "existingInputs": {
         "structured": true,
-        "freeText": false,
-        "freeTextRequired": false,
+        "freeText": true,
+        "freeTextRequired": true,
         "freeTextOptional": false
       },
       "aiNeededFor": [
@@ -1458,7 +1458,7 @@
       "costLatencyClass": "medium",
       "evidenceLevel": 5,
       "maxStrength": 1.0,
-      "notes": "Evidence assessment cases are structured; open statement quality may need explicit free-text or stay rule-based — review before AI."
+      "notes": "Required userStatement (≥80) per case; structured dimensions remain the evidence checklist."
     },
     {
       "drillId": "E3_D5",

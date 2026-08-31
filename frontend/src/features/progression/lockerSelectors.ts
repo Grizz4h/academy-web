@@ -174,7 +174,9 @@ export function selectLockerItems(
       displayName: mystery ? 'Geheimnis' : definition.name,
       displayDescription: mystery
         ? 'Noch nicht entdeckt.'
-        : definition.description || definition.flavorText,
+        : definition.description && definition.description !== definition.flavorText
+          ? definition.description
+          : undefined,
       artworkUrl: mystery ? undefined : artworkFor(definition),
       originLabel: mystery ? 'Geheimnis' : formatOriginLabel(definition.origin),
       unlockHint: owned

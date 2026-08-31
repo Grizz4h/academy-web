@@ -232,8 +232,10 @@ class EntitlementApiTests(unittest.TestCase):
             backend_main.IDENTITY_STORE_FILE
         )
         alice = backend_main._identity_store.ensure_legacy_identity("alice")
-        backend_main._identity_store.ensure_legacy_identity("adminuser")
+        admin = backend_main._identity_store.ensure_legacy_identity("adminuser")
         self.alice_id = alice.rinq_user_id
+        self._old_rinq_admin_ids = os.environ.get("RINQ_ADMIN_USER_IDS")
+        os.environ["RINQ_ADMIN_USER_IDS"] = admin.rinq_user_id
         configure_repositories(
             get_identity_store=lambda: backend_main._identity_store,
             get_users_file=lambda: backend_main.USERS_FILE,
@@ -246,6 +248,10 @@ class EntitlementApiTests(unittest.TestCase):
         self.client = TestClient(backend_main.app)
 
     def tearDown(self):
+        if self._old_rinq_admin_ids is None:
+            os.environ.pop("RINQ_ADMIN_USER_IDS", None)
+        else:
+            os.environ["RINQ_ADMIN_USER_IDS"] = self._old_rinq_admin_ids
         for key, value in self._prev.items():
             setattr(backend_main, key, value)
         backend_main._identity_store = backend_main.configure_identity_store(

@@ -39,5 +39,5 @@
   "freeTextReadiness": "READY",
   "evidenceSourceRecommendation": "structured_plus_ai_review",
   "minimalInputChange": "Required profileSummary already sufficient for AI review alongside structured entry/exit radios.",
-  "validationOnly": true
+  "validationOnly": false
 }

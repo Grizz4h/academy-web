@@ -106,13 +106,13 @@ export function SessionReflectionPanel({
   }
 
   return (
-    <section className={styles.sessionReflection} aria-labelledby="rink-reflection-heading">
+    <section className={styles.sessionReflection} aria-labelledby="rinq-reflection-heading">
       <p className={styles.eyebrow}>KI-Reflexion</p>
-      <h3 id="rink-reflection-heading" className="ui-section-title">
-        RINK Reflection
+      <h3 id="rinq-reflection-heading" className="ui-section-title">
+        rInQ Reflexion
       </h3>
       <p className={styles.intro}>
-        Lass deine Beobachtungen von RINK Reflection auf innere Logik, Evidenz und mögliche blinde
+        Lass deine Beobachtungen von rInQ Reflexion auf innere Logik, Evidenz und mögliche blinde
         Flecken prüfen.
       </p>
       <p className={styles.disclaimer}>
@@ -144,7 +144,7 @@ export function SessionReflectionPanel({
 
           {loading && (
             <p className={styles.loading} aria-live="polite">
-              RINK Reflection schaut sich deine Beobachtungen an …
+              rInQ Reflexion schaut sich deine Beobachtungen an …
             </p>
           )}
 

@@ -7,23 +7,71 @@ Launch gate (must work end-to-end):
 
 > Register → A1 free → understands value → A2 locked → pays → immediate access → does A2 → progress persists → cancel / delete → we can debug failures.
 
-Related: [security-and-privacy.md](../ai-rules/security-and-privacy.md) · [stripe-billing.md](stripe-billing.md) · [postgres-migration.md](postgres-migration.md)
+Related: [security-and-privacy.md](../ai-rules/security-and-privacy.md) · [stripe-billing.md](stripe-billing.md) · [launch-ops.md](launch-ops.md) · [admin.md](admin.md)
 
-**Status legend:** `GO` done · `PARTIAL` exists but not launch-safe · `NO-GO` missing / untested · `LATER` consciously deferred
+**Status legend:** `GO` done · `PARTIAL` exists but not launch-safe · `NO-GO` missing / untested · `LATER` consciously deferred  
+**Owner:** who drives the next step (empty = TBD)
+
+---
+
+## Next 5 (do these before new features)
+
+| # | Action | Owner | Target | Status |
+|---|--------|-------|--------|--------|
+| 1 | Lawyer: AGB / Widerruf / Datenschutz / 18+ sign-off | Christoph | before Stripe Live | NO-GO |
+| 2 | Stripe Live flip per [launch-ops.md](launch-ops.md) §2 | Christoph | after #1 | PARTIAL (`sk_test_`) |
+| 3 | Fresh account E2E: Register → A1 → Pay → A2 → Cancel → Delete | Christoph | after #2 | NO-GO |
+| 4 | Blind tests: 3–5 strangers, “Hier Link, mach A1”, no coaching | Christoph | parallel | NO-GO |
+| 5 | Branding + DEL-logo policy pass | Christoph | before public share | PARTIAL |
+
+---
+
+## Top 30 Go / No-Go
+
+Concrete checkboxes for the launch gate. Flip to `GO` only when verified (date + who).
+
+| # | Check | Status | Owner | Verified | Notes |
+|---|-------|--------|-------|----------|-------|
+| 1 | Google login works on `rinq-tank.de` | PARTIAL | | | Ops docs exist; live spotcheck open |
+| 2 | E-Mail OTP works; mail not spam | PARTIAL | | | SPF/DKIM/DMARC live; deliverability spotcheck open |
+| 3 | Fresh user can finish A1 free | PARTIAL | | | Code gates OK; prod fresh-account pass open |
+| 4 | A2 locked without Premium (server) | GO | | 2026-08-27 | Entitlements server-side |
+| 5 | Checkout starts only when not already subscribed | GO | | 2026-08-27 | HTTP 409 |
+| 6 | Stripe webhook → Premium within seconds | PARTIAL | | | Test mode OK; Live pending |
+| 7 | After pay, A2 opens without support ticket | PARTIAL | | | Depends on #6 Live |
+| 8 | Cancel keeps access until period end | PARTIAL | | | Code/copy OK; Live verify |
+| 9 | Account delete stops Stripe + removes PG data | GO | | 2026-08-27 | Fail-closed cleanup |
+| 10 | Export downloadable, no password hashes | GO | | 2026-08-27 | Export v2 |
+| 11 | Session survives refresh / short lock | PARTIAL | | | Drafts exist; Safari spotcheck open |
+| 12 | No double XP on repeat complete / dummy | GO | | 2026-08-27 | Idempotency |
+| 13 | Impressum accurate | PARTIAL | | | Live; MStV legal review open |
+| 14 | Datenschutz lists real processors (Stripe, Supabase, OpenAI) | PARTIAL | | | Page live; AVV / retention TODOs |
+| 15 | AGB + Widerruf digital accepted by lawyer | NO-GO | | | Drafts + flow exist; sign-off open |
+| 16 | 18+ gate on signup + checkout | PARTIAL | | | Checkbox shipped; legal sign-off open |
+| 17 | No “DEB-certified / official course” claim in UI | PARTIAL | | | QA disclaimers; marketing pass open |
+| 18 | Stripe Live keys only (no test mix) | PARTIAL | | | Still `sk_test_` |
+| 19 | Nightly PG backup exists | GO | | 2026-08-27 | Cron + first dump |
+| 20 | Restore path documented (optional drill) | GO | | 2026-08-27 | Docs; full restore optional |
+| 21 | Admin: find user + see billing/progress | GO | | 2026-08-31 | `/admin` + search + support code ([admin.md](admin.md)) |
+| 22 | Admin: grant/revoke / Stripe resync | GO | | 2026-08-31 | Audit log; no free-form refunds |
+| 23 | “Problem melden” reachable | PARTIAL | | | Footer mailto; denser session context later |
+| 24 | Security headers / HTTPS | GO | | 2026-08-27 | HSTS baseline |
+| 25 | Welcome / tutorial explains product | PARTIAL | | 2026-08-31 | Welcome screen + DEV „Neues Profil“; blind tests still NO-GO |
+| 26 | Blind test notes captured (3–5 people) | NO-GO | | | |
+| 27 | Mobile spotcheck (keyboard / touch / arena) | PARTIAL | | | |
+| 28 | Branding: no Vite / no wrong product name in chrome | PARTIAL | | | OG/favicon OK; copy mix residual |
+| 29 | 404 + robots.txt | GO | | 2026-08-27 | |
+| 30 | DEL logos: keep / attribute / remove decision | PARTIAL | | | Assets present; policy missing |
 
 ---
 
 ## Priority order (A → C before polish)
 
-Recommended sequence before taking real money from strangers:
-
-1. **B Legal / Trust** — Impressum, Datenschutz, AGB/Widerruf, age decision (blocks monetization legally)
-2. **A Launch-Loop** — auth on prod domain, paywall, Stripe → grant, delete path on Postgres
-3. **C Ops / Sicherheit** — webhook hardening, checkout double-buy, reflection limits, backup restore drill, minimal admin + report channel
-4. **D Produkt-Klarheit** — blind tests, branding/OG/404, logo policy
-5. **E Später** — Apple, curriculum versions, multi-tab locks, analytics, shop curation
-
-Defer or date anything in A–C only with an explicit note below.
+1. **B Legal / Trust** — Impressum, Datenschutz, AGB/Widerruf, age (blocks monetization legally)
+2. **A Launch-Loop** — auth on prod, paywall, Stripe → grant, delete on Postgres
+3. **C Ops / Sicherheit** — Live Stripe discipline, limits, backup, admin, report channel
+4. **D Produkt-Klarheit** — blind tests, branding, logo policy
+5. **E Später** — Apple, curriculum versions, multi-tab, analytics, demo scenes
 
 ---
 
@@ -31,14 +79,14 @@ Defer or date anything in A–C only with an explicit note below.
 
 | # | Item | Status | Evidence / Notes |
 |---|------|--------|------------------|
-| A1 | Register Google + E-Mail-OTP on prod domain | PARTIAL | Code: `frontend/src/lib/supabase.ts`, `backend/supabase_auth.py`, Phase 3C/3F. Ops: [supabase-google-auth.md](supabase-google-auth.md), [rinq-domain.md](rinq-domain.md). **Still verify** redirect URLs / mail deliverability on live domain. |
-| A2 | A1 free end-to-end | PARTIAL | Free modules `T0`/`A1` in `backend/entitlements/access_config.py`; curriculum filter + session gates. **Still:** prod spotcheck with fresh account. |
-| A3 | A2+ server-gated (not UI-only) | GO | `can_access` / `_require_module_access`; FE uses `premium_locked` from API. Tests: `test_entitlements_5a.py`, `5b`. Residual: full premium drill JSON may still ship in FE bundle (harden later). |
-| A4 | Stripe Checkout → webhook → immediate `academy_premium` | PARTIAL | Test-mode E2E OK. Still on `sk_test_`. Live go-live: [launch-ops.md](launch-ops.md) §2 + [stripe-billing.md](stripe-billing.md). |
-| A5 | Portal cancel; access until period end (copy = server) | PARTIAL | Cancel-at-period-end kept while Stripe `active`. FE `past_due`/`unpaid` copy aligned: premium paused / no false „gilt bis“ when grant revoked. Residual: grace policy still undecided. |
-| A6 | Account delete incl. Supabase + grants (Postgres path) | GO | PG CASCADE + spotcheck. Stripe cancel/customer delete on delete (`billing/account_cleanup.py`, fail-closed). Export v2 Postgres-aware. |
-| A7 | Session autosave + refresh resume (Mobile Safari spotcheck) | PARTIAL | Debounced drafts + localStorage in `Session.tsx`; resume from Dashboard. **Still:** Safari / lock-screen spotcheck. Multi-tab LWW = LATER. |
-| A8 | No double XP on repeat-complete / dummy | GO | `processedEvents` / unit keys / dummy skip (`is_dummy`). |
+| A1 | Register Google + E-Mail-OTP on prod domain | PARTIAL | Ops: [supabase-google-auth.md](supabase-google-auth.md), [rinq-domain.md](rinq-domain.md). **Still verify** live redirects + mail deliverability. |
+| A2 | A1 free end-to-end | PARTIAL | Free `T0`/`A1` in entitlements. **Still:** prod spotcheck with fresh account. |
+| A3 | A2+ server-gated (not UI-only) | GO | `can_access` / `_require_module_access`. Residual: premium drill JSON may still ship in FE bundle. |
+| A4 | Stripe Checkout → webhook → `academy_premium` | PARTIAL | Test E2E OK. Live: [launch-ops.md](launch-ops.md) §2. |
+| A5 | Portal cancel; access until period end | PARTIAL | Cancel-at-period-end while Stripe `active`. Grace policy undecided. |
+| A6 | Account delete incl. Supabase + grants | GO | PG CASCADE + Stripe detach fail-closed. |
+| A7 | Session autosave + refresh resume | PARTIAL | Drafts + localStorage; Safari / lock-screen spotcheck open. Multi-tab = LATER. |
+| A8 | No double XP on repeat-complete / dummy | GO | `processedEvents` / dummy skip. |
 
 ---
 
@@ -46,11 +94,11 @@ Defer or date anything in A–C only with an explicit note below.
 
 | # | Item | Status | Evidence / Notes |
 |---|------|--------|------------------|
-| B1 | Impressum | PARTIAL | Page + footer link live at `/impressum`. Contact confirmed: `kontakt@rinq-tank.de`. **Open:** § 18 Abs. 2 MStV legal review. |
-| B2 | Datenschutz (incl. KI / Stripe / Supabase) | PARTIAL | Page live at `/datenschutz`. Contact: `kontakt@rinq-tank.de`. Still open: AVVs, log retention, KI legal basis, Fonts strategy — see TODOs on page. |
-| B3 | AGB + Widerruf digitale Inhalte | PARTIAL | Draft legal pages; Bestellübersicht; Postgres `withdrawal_requests`; exact refund anchors; SMTP OK. SPF/DKIM/DMARC published (IONOS, 2026-08-27). **Open:** lawyer review; Dashboard ToS URLs (Live). |
-| B4 | Age policy (18+ gate or written legal decision) | PARTIAL | Signup 18+ + Checkout Bestellübersicht Checkbox (`age_confirmed` → Stripe metadata). Kein Geburtsdatum. **Open:** formal legal sign-off. |
-| B5 | No DEB/partnership certification suggestion (copy pass) | PARTIAL | Glossary/QA disclaimers exist; do one global marketing/UI copy pass before launch. |
+| B1 | Impressum | PARTIAL | `/impressum` live. **Open:** MStV legal review. |
+| B2 | Datenschutz (KI / Stripe / Supabase) | PARTIAL | `/datenschutz` live. **Open:** AVVs, log retention, KI basis, Fonts. |
+| B3 | AGB + Widerruf digitale Inhalte | PARTIAL | Draft pages + withdrawal flow + SMTP/DNS. **Open:** lawyer review; Stripe Dashboard ToS URLs (Live). |
+| B4 | Age policy (18+) | PARTIAL | Signup + checkout checkbox. **Open:** formal legal sign-off. |
+| B5 | No DEB/partnership certification suggestion | PARTIAL | Glossary/QA disclaimers; marketing/UI copy pass open. |
 
 ---
 
@@ -58,15 +106,15 @@ Defer or date anything in A–C only with an explicit note below.
 
 | # | Item | Status | Evidence / Notes |
 |---|------|--------|------------------|
-| C1 | Stripe live/test keys + webhook; no accidental test mode | PARTIAL | Still `sk_test_`. Checklist: [launch-ops.md](launch-ops.md) §2. Do not mix Live/Test secrets. |
-| C2 | Webhook: process-then-idempotent / reprocess on fail | GO | `handle_stripe_event` marks `processed_webhook_events` **after** successful sync; failures stay unmarked for Stripe retry. Tests in `test_billing_5d.py`. |
-| C3 | Block checkout if already active/trialing | GO | `create_checkout_session` rejects active/trialing plan/sub + existing `academy_premium` grant → HTTP 409. |
-| C4 | Reflection rate-limit + cost cap | PARTIAL | 8/h per user + 40/h IP on uncached generate; cached hits free. Hard $ budget still open. |
-| C5 | Backup restore practiced once | GO | Nightly `pg_dump` (no Supabase Pro). First dump 2026-08-27; cron `15 3 * * *`. Docs: [pg-backup.md](pg-backup.md), [launch-ops.md](launch-ops.md) §1. Optional later: full `pg_restore` drill / Pro when customers pay. |
-| C6 | Admin minimum: find user + grant/revoke | PARTIAL | API grant/revoke + `require_admin`; **no** user-search / subscription ops UI. |
-| C7 | In-app “report problem” (drill id, app version) | PARTIAL | Footer + Kontakt mailto with path + app version (`buildProblemReportMailto`). Drill/session IDs optional via helper args — wire denser context from Session later if needed. |
-| C8 | Security headers / HSTS / dependency audit | GO | Headers live on `rinq-tank.de` (HSTS + baseline). Runbook: [security-headers.md](security-headers.md). `pip-audit` clean; `npm audit` → react-router 7.18.2, 0 vulns; frontend build OK. CSP later. |
-| C9 | Export/Delete complete on Postgres | GO | Export v2 pulls PG profile/rewards/sessions/grants + redacted billing/withdrawals; delete Stripe+CASCADE. File-only leftovers: scenes/obs/avatars (still walked). |
+| C1 | Stripe live/test keys; no accidental test mode | PARTIAL | Still `sk_test_`. |
+| C2 | Webhook process-then-idempotent | GO | Mark processed only after success. |
+| C3 | Block checkout if already active/trialing | GO | HTTP 409. |
+| C4 | Reflection rate-limit + cost cap | PARTIAL | Per-user/IP limits; hard $ budget open. |
+| C5 | Backup restore practiced | GO | Nightly dump; full restore drill optional. |
+| C6 | Admin: find user + billing/progress + grant/resync | GO | `/admin` + support codes + audit log ([admin.md](admin.md)). Ban/lock/delete still out of scope. |
+| C7 | In-app “report problem” | PARTIAL | Footer + Kontakt mailto; richer Session context later. |
+| C8 | Security headers / dependency audit | GO | HSTS baseline; audits clean as of 2026-08-27. |
+| C9 | Export/Delete complete on Postgres | GO | Export v2 + Stripe+CASCADE delete. |
 
 ---
 
@@ -74,75 +122,97 @@ Defer or date anything in A–C only with an explicit note below.
 
 | # | Item | Status | Evidence / Notes |
 |---|------|--------|------------------|
-| D1 | Onboarding blind test (3–5 strangers, no coaching) | NO-GO | Tutorial engine exists (`features/tutorial`); tests not run. |
-| D2 | Mobile arena/couch spotcheck (keyboard, touch) | PARTIAL | UI kit / sheets / hover policy strong; real-world pass pending. |
-| D3 | Empty state without live game understandable | PARTIAL | Schedule empty in prod; no demo-scene library for users. |
-| D4 | Branding pass (rInQ, OG, favicon; no Vite) | PARTIAL | Favicon/title/OG/Twitter meta in `index.html`; mix “Rink Tank” / rInQ residual in UI copy. |
-| D5 | 404 + robots.txt | GO | Branded `/` catch-all `NotFound`; `public/robots.txt` + minimal `sitemap.xml`. |
-| D6 | Logo/trademark risk decided (DEL logos) | PARTIAL | Logos in `public/teams/del/`; no attribution/trademark policy. |
+| D1 | Onboarding blind test (3–5 strangers) | NO-GO | Welcome screen + tutorial + DEV „Neues Profil“ shipped 2026-08-31; **tests not run**. |
+| D2 | Mobile arena/couch spotcheck | PARTIAL | UI kit strong; real-world pass pending. |
+| D3 | Empty state without live game | PARTIAL | No user-facing demo-scene library. |
+| D4 | Branding pass (rInQ, OG, favicon) | PARTIAL | Meta OK; residual “Rink Tank” copy possible. |
+| D5 | 404 + robots.txt | GO | |
+| D6 | Logo/trademark risk (DEL) | PARTIAL | Logos present; policy missing. |
 
 ---
 
 ## E. Consciously later (not launch-block)
 
 - Apple Sign-In / Hide My Email
-- Formal curriculum `contentVersion` / `drillVersion` + answer migration
+- Formal curriculum `contentVersion` / `drillVersion` (see below — **not needed for launch if IDs/schemas stay stable**)
 - Multi-tab draft conflict protection
 - Product analytics + consent
-- Night Circuit / shop curation (cosmetic pool)
-- Full admin suite (lock, ban, progress browser)
+- Night Circuit / shop curation
+- Admin: lock / ban / progress reset
 - Embedded demo scenes for drills without live games
 - PayPal
-- Formal competence radar / “IQ” (explicitly avoided)
+- Hard AI $ budget / circuit breaker
+- Formal “IQ” marketing language (explicitly avoided)
 
 ---
 
-## Ampel: original risk themes (1–20)
+## Why curriculum versioning? (and when we need it)
 
-Cross-check from 2026-08-27 audit vs ChatGPT pre-launch list:
+**Problem:** Sessions store **answers as JSON** keyed to the drill shape of that day (`observations`, option IDs, reflection keys, …). Progress/XP also keys off stable `drill_id`s.
 
-| # | Theme | Status |
-|---|--------|--------|
-| 1 | Content credibility / QA | PARTIAL |
-| 2 | Login / account lifecycle | PARTIAL |
-| 3 | Payment / subscription | PARTIAL |
-| 4 | Privacy / data flow | PARTIAL |
-| 5 | Impressum / ToS / withdrawal | PARTIAL | Impressum+Datenschutz+Kontakt live; AGB/Widerruf still missing |
-| 6 | Minors / 18+ | PARTIAL | Checkbox gate shipped; legal sign-off open |
-| 7 | Progress durability | GO (+ multi-tab gap) |
-| 8 | Curriculum versioning | NO-GO |
-| 9 | AI as coach-god | GO (intent; limits missing) |
-| 10 | Competence language | GO |
-| 11 | Mobile | GO |
-| 12 | Onboarding clarity | GO (blind tests pending) |
-| 13 | No live game situation | PARTIAL |
-| 14 | Video copyright | GO (strategy) |
-| 15 | Logos / trademarks | PARTIAL |
-| 16 | Support / report | PARTIAL | Kontakt + Footer „Problem melden“ mailto |
-| 17 | Admin backend | PARTIAL |
-| 18 | Backups / restore | GO | Nightly dump; Pro/PITR deferred |
-| 19 | Analytics | LATER (none by policy) |
-| 20 | AI cost explosion | PARTIAL | Reflection rate-limit shipped; hard budget open |
+If we later:
 
-**Banale killers already mitigated:** server ownership; premium not trusted from client; no service-role in `VITE_*`; `/dev` admin-gated in prod; dummy sessions skip grants; XP idempotency; HTTPS nginx docs.
+1. **rename** `A2_D3` → something else, or  
+2. **change answer keys / option IDs / meaning** of a field, or  
+3. **delete** a published drill instead of deactivating it,
 
-**Still dangerous:** legal AVVs / AGB sign-off; branding mix residual; multi-tab LWW; prod/test Stripe discipline until live flip; curriculum ID renames without version.
+then old sessions still point at the old shape. History, KI-Reflexion, Competency-Evidence and “Modul fertig” can misread or break — without anyone noticing until a user complains.
+
+**Versioning** would mean: at answer time, store e.g. `drillVersion` / content hash, so we know which schema those answers belong to and can migrate or display “legacy”.
+
+**For launch we do not need a full versioning system if we follow a hard rule:**
+
+> Do not rename published `drill_id`s. Do not change the meaning of persisted answer keys for live drills. Prefer add/deprecate over rewrite. Deactivate content instead of deleting it.
+
+That is enough until we intentionally ship incompatible curriculum rewrites — then versioning becomes a real project, not a pre-launch blocker.
+
+---
+
+## Ampel: risk themes (1–20)
+
+| # | Theme | Status | Note |
+|---|--------|--------|------|
+| 1 | Content credibility / QA | PARTIAL | `docs/qa/` exists; process + marketing pass open |
+| 2 | Login / account lifecycle | PARTIAL | Google+OTP+delete; prod spotcheck + Apple LATER |
+| 3 | Payment / subscription | PARTIAL | Test OK; Live flip open |
+| 4 | Privacy / data flow | PARTIAL | Inventory + page; AVV/retention open |
+| 5 | Impressum / ToS / withdrawal | PARTIAL | Pages + flow; lawyer sign-off open |
+| 6 | Minors / 18+ | PARTIAL | Gate shipped; legal sign-off open |
+| 7 | Progress durability | GO | Multi-tab LATER |
+| 8 | Curriculum versioning | LATER | See section above; process rule until then |
+| 9 | AI as coach-god | GO | Intent + rubrics; hard cost cap open |
+| 10 | Competence language | GO | Score ≠ XP |
+| 11 | Mobile | PARTIAL | Spotcheck open (was over-marked GO) |
+| 12 | Onboarding clarity | PARTIAL | Welcome shipped; blind tests open |
+| 13 | No live game situation | PARTIAL | |
+| 14 | Video copyright | GO | Board strategy |
+| 15 | Logos / trademarks | PARTIAL | |
+| 16 | Support / report | PARTIAL | Mailto + support codes |
+| 17 | Admin backend | GO | Minimum for launch; ban/lock LATER |
+| 18 | Backups / restore | GO | Nightly dump |
+| 19 | Analytics | LATER | |
+| 20 | AI cost explosion | PARTIAL | Rate limit; $ budget open |
+
+**Banale killers already mitigated:** server ownership; premium not from client; no service-role in `VITE_*`; `/dev` admin-gated in prod; dummy skip grants; XP idempotency; HTTPS.
+
+**Still dangerous:** legal sign-off; Stripe Live discipline; branding residual; curriculum ID renames without a migration plan; multi-tab LWW.
 
 ---
 
 ## How to use this board
 
 1. Do not start large new feature work until **A–C** are GO or explicitly dated deferred.
-2. Each release before public money: re-run A4–A6 and C1 on the target environment.
-3. When an item flips to GO, note date + who verified in the Notes column (or a short changelog under this heading).
+2. Each release before public money: re-run items **6–9** and **18** on the target environment.
+3. When an item flips to GO, fill **Verified** (date + who) in Top 30 or the log below.
 
 ### Verification log
 
 | Date | Item | Verified by | Note |
 |------|------|-------------|------|
-| 2026-08-27 | Board created | Cursor audit | Initial HAVE/PARTIAL/MISSING from repo audit |
-| 2026-08-27 | C3, C4, C7, D5, B1 email, B4 gate, A5 copy, OG | Cursor | Low-hanging launch pack 1–8 |
-| 2026-08-27 | Mail SPF/DKIM/DMARC | Cursor | IONOS records live; see [launch-ops.md](launch-ops.md) §0/§3 |
-| 2026-08-27 | C1/A4 Stripe mode | Cursor | Still `sk_test_`; live checklist documented |
-| 2026-08-27 | C5 backup | Cursor + Christoph | Nightly pg_dump live; Supabase Pro deferred |
-| 2026-08-27 | A6/C2/C9 lifecycle | Cursor | Stripe detach on delete; export v2 PG; webhook process-then-mark |
+| 2026-08-27 | Board created | Cursor audit | Initial HAVE/PARTIAL/MISSING |
+| 2026-08-27 | C3, C4, C7, D5, B1 email, B4 gate, A5 copy, OG | Cursor | Low-hanging pack |
+| 2026-08-27 | Mail SPF/DKIM/DMARC | Cursor | IONOS; [launch-ops.md](launch-ops.md) |
+| 2026-08-27 | C1/A4 Stripe mode | Cursor | Still `sk_test_` |
+| 2026-08-27 | C5 backup | Cursor + Christoph | Nightly pg_dump |
+| 2026-08-27 | A6/C2/C9 lifecycle | Cursor | Stripe detach; export v2; webhook mark-after-success |
+| 2026-08-31 | C6 admin, D1 welcome, board refresh | Cursor | `/admin` ops UI; welcome + DEV Neues Profil; Top 30 + versioning note |

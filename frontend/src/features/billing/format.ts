@@ -17,8 +17,10 @@ export type AcademyBillingPresentation = {
   planLabel: string
   badgeLabel: string
   badgeTone: AcademyBillingTone
-  statusHeadline: string
+  /** Short secondary line under the badge (date / period). Null when badge is enough. */
+  statusHeadline: string | null
   statusDetail: string | null
+  /** Compact line for RINK ID card — state only, no repeated “Premium”. */
   profileLine: string | null
   canManage: boolean
   showCheckout: boolean
@@ -65,10 +67,10 @@ export function describeAcademyBilling(
         planLabel: 'Free',
         badgeLabel: 'Zahlung fehlgeschlagen',
         badgeTone: 'danger',
-        statusHeadline: 'Premium pausiert',
+        statusHeadline: null,
         statusDetail:
-          'Die Zahlung ist fehlgeschlagen. Premium-Zugang ist gesperrt, bis du die Zahlungsmethode im Kundenportal aktualisierst.',
-        profileLine: 'Premium · Zahlung fehlgeschlagen',
+          'Premium-Zugang ist gesperrt, bis du die Zahlungsmethode im Kundenportal aktualisierst.',
+        profileLine: 'Zahlung fehlgeschlagen',
         canManage,
         showCheckout: false,
       }
@@ -78,7 +80,7 @@ export function describeAcademyBilling(
       planLabel: 'Free',
       badgeLabel: 'Free',
       badgeTone: 'neutral',
-      statusHeadline: 'Kein Premium-Abo',
+      statusHeadline: null,
       statusDetail: 'Track A2+ und weitere Premium-Inhalte sind gesperrt.',
       profileLine: null,
       canManage,
@@ -91,9 +93,9 @@ export function describeAcademyBilling(
       planLabel: 'rInQ Premium',
       badgeLabel: 'Auslaufend',
       badgeTone: 'warn',
-      statusHeadline: `Auslaufend zum ${endDate}`,
-      statusDetail: 'Premium bleibt bis zu diesem Datum aktiv. Danach wechselst du zurück auf Free.',
-      profileLine: `Premium · auslaufend ${endDate}`,
+      statusHeadline: `Zugang bis ${endDate}`,
+      statusDetail: 'Danach wechselst du zurück auf Free.',
+      profileLine: `Auslaufend · ${endDate}`,
       canManage,
       showCheckout: false,
     }
@@ -104,10 +106,10 @@ export function describeAcademyBilling(
       planLabel: 'rInQ Premium',
       badgeLabel: 'Zahlung ausstehend',
       badgeTone: 'danger',
-      statusHeadline: 'Zahlung ausstehend',
+      statusHeadline: null,
       statusDetail:
-        'Bitte Zahlungsmethode im Kundenportal prüfen. Ohne Klärung wird der Premium-Zugang gesperrt.',
-      profileLine: 'Premium · Zahlung ausstehend',
+        'Bitte Zahlungsmethode im Kundenportal prüfen. Ohne Klärung wird der Zugang gesperrt.',
+      profileLine: 'Zahlung ausstehend',
       canManage,
       showCheckout: false,
     }
@@ -118,9 +120,9 @@ export function describeAcademyBilling(
       planLabel: 'rInQ Premium',
       badgeLabel: 'Testphase',
       badgeTone: 'ok',
-      statusHeadline: endDate ? `Testphase bis ${endDate}` : 'Testphase',
-      statusDetail: 'Premium-Inhalte sind während der Testphase freigeschaltet.',
-      profileLine: endDate ? `Premium · Testphase bis ${endDate}` : 'Premium · Testphase',
+      statusHeadline: endDate ? `Bis ${endDate}` : null,
+      statusDetail: null,
+      profileLine: endDate ? `Testphase · ${endDate}` : 'Testphase',
       canManage,
       showCheckout: false,
     }
@@ -131,9 +133,9 @@ export function describeAcademyBilling(
       planLabel: 'rInQ Premium',
       badgeLabel: 'Beendet',
       badgeTone: 'neutral',
-      statusHeadline: endDate ? `Beendet · Zugang bis ${endDate}` : 'Beendet',
+      statusHeadline: endDate ? `Zugang bis ${endDate}` : null,
       statusDetail: null,
-      profileLine: endDate ? `Premium · beendet ${endDate}` : 'Premium · beendet',
+      profileLine: endDate ? `Beendet · ${endDate}` : 'Beendet',
       canManage,
       showCheckout: true,
     }
@@ -141,11 +143,11 @@ export function describeAcademyBilling(
 
   return {
     planLabel: 'rInQ Premium',
-    badgeLabel: 'Premium aktiv',
+    badgeLabel: 'Aktiv',
     badgeTone: 'accent',
-    statusHeadline: endDate ? `Aktiv · Verlängerung am ${endDate}` : 'Aktiv',
+    statusHeadline: endDate ? `Verlängerung am ${endDate}` : null,
     statusDetail: null,
-    profileLine: endDate ? `Premium · aktiv bis ${endDate}` : 'Premium · aktiv',
+    profileLine: endDate ? `Aktiv · ${endDate}` : 'Aktiv',
     canManage,
     showCheckout: false,
   }

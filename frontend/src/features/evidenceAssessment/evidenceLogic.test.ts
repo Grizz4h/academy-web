@@ -108,6 +108,27 @@ function completeAssessment(caseId: string): EvidenceAssessment {
 
 assert.equal(isCaseAssessmentComplete(emptyAssessment('thin_sample')), false)
 assert.equal(isCaseAssessmentComplete(completeAssessment('thin_sample')), true)
+assert.equal(isCaseAssessmentComplete(completeAssessment('thin_sample'), 80), true)
+assert.equal(
+  isCaseAssessmentComplete({ ...completeAssessment('thin_sample'), userStatement: 'zu kurz' }, 80),
+  false,
+)
+
+const cfgRequired = resolveEvidenceAssessmentConfig({
+  mechanic: 'evidence_assessment',
+  user_statement_min_chars: 80,
+})
+assert.equal(cfgRequired.userStatementMinChars, 80)
+assert.notEqual(
+  validateEvidenceAssessmentAnswers(cfgRequired, {
+    [cfgRequired.assessmentsKey]: Object.fromEntries(
+      cfgRequired.cases.map((item) => [item.id, { ...completeAssessment(item.id), userStatement: 'kurz' }]),
+    ),
+    [cfgRequired.microfeedbackKey]: 'sample',
+    [cfgRequired.stageKey]: 'complete',
+  }),
+  null,
+)
 
 const incompleteAnswers = {
   [cfg.assessmentsKey]: { thin_sample: completeAssessment('thin_sample') },

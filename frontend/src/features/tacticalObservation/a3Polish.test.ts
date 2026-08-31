@@ -38,6 +38,11 @@ assert.deepEqual(
   ['Puckführer', 'Erste Passoption', 'Tiefenläufer', 'Absicherung'],
 )
 assert.ok(/situative Funktionen/i.test(a3d2.didactics.role_context.hint))
+assert.equal(a3d2.config.validate_answers, true)
+const a3d2Note = a3d2.config.questions.find((q: { key: string }) => q.key === 'note')
+assert.equal(a3d2Note.required, true)
+assert.equal(a3d2Note.optional, false)
+assert.ok(Number(a3d2Note.min_chars) >= 60)
 assert.ok(!/Beschleuniger|Tiefengeber|Unterstützer/i.test(JSON.stringify(a3d2.didactics.role_context)))
 assert.ok(!/geplanter Schritt oder ein Zeichen von Unsicherheit/i.test(JSON.stringify(a3d2.miniFeedback)))
 assert.ok(!/hätte Stabilität erzeugt/i.test(JSON.stringify(a3d2.miniFeedback)))

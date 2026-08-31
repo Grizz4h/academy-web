@@ -36,8 +36,8 @@ COST_CLASSES = frozenset({"low", "medium", "high"})
 
 PILOT_ROUTING = {
     "A1_D2": ("structured_only", "NOT_SUITABLE_FOR_AI_EVIDENCE"),
-    "A3_D2": ("structured_plus_ai_review", "NEEDS_SMALL_INPUT_CHANGE"),
-    "B1_D1": ("structured_plus_ai_review", "NEEDS_SMALL_INPUT_CHANGE"),
+    "A3_D2": ("structured_plus_ai_review", "READY"),
+    "B1_D1": ("structured_plus_ai_review", "READY"),
     "C1_D5": ("structured_plus_ai_review", "READY"),
     "D3_D5": ("structured_plus_ai_review", "READY"),
     "E3_D5": ("ai_review", "READY"),

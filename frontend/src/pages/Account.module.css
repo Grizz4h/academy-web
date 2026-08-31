@@ -155,38 +155,92 @@
 }
 
 .statsLink {
-  color: #8fd3df;
-  text-decoration: none;
   font-size: 0.9rem;
 }
 
-.statsLink:hover {
-  text-decoration: underline;
+.statsLink,
+.inlineLink {
+  color: var(--text-accent, #8fd3df);
+  text-decoration: none;
+  font-weight: 550;
 }
 
-.saveBar {
+@media (hover: hover) and (pointer: fine) {
+  .statsLink:hover,
+  .inlineLink:hover {
+    text-decoration: underline;
+  }
+}
+
+.saveDockSlot {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 0;
+}
+
+.saveDockSlotActive {
+  min-height: 2.75rem;
+  padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+}
+
+.saveDock {
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+}
+
+.saveDockFloating {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  padding: 0 var(--page-pad-x, 1rem) calc(0.65rem + env(safe-area-inset-bottom, 0px));
+}
+
+.saveDockFloating .saveDockInner {
+  pointer-events: auto;
+}
+
+.saveDockParked {
+  position: relative;
+  width: 100%;
+}
+
+.saveDockInner {
+  display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  position: sticky;
-  bottom: 0.5rem;
-  padding: 0.75rem 0.85rem;
-  border-radius: 10px;
-  border: 1px solid rgba(81, 145, 162, 0.35);
-  background: rgba(10, 14, 28, 0.92);
-  backdrop-filter: blur(12px);
+  gap: 0.55rem;
+  max-width: 100%;
+  padding: 0.4rem 0.5rem 0.4rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 160, 175, 0.22);
+  background: rgba(8, 12, 22, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.saveHint {
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+  padding-right: 0.35rem;
+  white-space: nowrap;
 }
 
 .saveOk {
   color: #99f6e4;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
+  padding-right: 0.35rem;
+}
+
+.pageWithSaveDock {
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 .error {
   margin: 0;
   color: #fca5a5;
-  font-size: 0.86rem;
+  font-size: 0.78rem;
+  padding-right: 0.35rem;
 }
 
 .progressionWrap {
@@ -242,7 +296,7 @@
 
 .unlockItem {
   display: flex;
-  gap: 0.55rem;
+  gap: 0.7rem;
   align-items: flex-start;
   padding: 0.45rem 0.55rem;
   border-radius: 10px;
@@ -443,3 +497,7 @@ a.nearItem:hover {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 0.75rem;
 }
+
+.supportCodeBox{display:flex;flex-direction:column;gap:.35rem;margin:1rem 0;padding:1rem;border:1px solid rgba(71,228,237,.45);border-radius:12px;background:rgba(14,47,55,.65)}
+.supportCodeBox strong{font-size:1.35rem;letter-spacing:.12em;color:#77e7ef}.supportCodeBox span,.supportId{font-size:.85rem;color:rgba(220,235,240,.75)}
+.supportActions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.supportId code{overflow-wrap:anywhere}.errorText{color:#ff9fc8}

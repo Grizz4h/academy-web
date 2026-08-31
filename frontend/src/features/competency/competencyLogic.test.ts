@@ -8,9 +8,13 @@ import {
   formatRatioPercent,
   hasAnyRated,
   isFullyUnrated,
+  meanRatedScore,
   nodePlotValue,
+  profileProgressLabel,
+  profileStoryLine,
   ratedCount,
   radarPlotValue,
+  strongestRatedCompetency,
 } from './competencyLogic'
 import { capabilityBandForScore } from './capabilityBands'
 import {
@@ -68,5 +72,17 @@ assert(
   accessibilitySummary(unrated[0]) === 'Scanning — noch nicht bewertet',
   'accessibility summary for unrated axis',
 )
+
+assert(strongestRatedCompetency(unrated) === null, 'unrated: no strongest axis')
+assert(strongestRatedCompetency(rated)?.competencyId === 'space_structure', 'rated: Space is strongest')
+assert(meanRatedScore(rated) !== null && Math.round(meanRatedScore(rated)!) === 68, 'rated: mean ~68')
+assert(meanRatedScore(unrated) === null, 'unrated: no mean')
+assert(profileProgressLabel(rated).complete === true, 'rated: progress complete')
+assert(profileProgressLabel(partial).short === '3/8 bewertet', 'partial: progress short label')
+assert(
+  profileStoryLine(rated) === 'Schwerpunkt: Space · Analytical Transfer',
+  'rated: story line uses strongest band',
+)
+assert(profileStoryLine(unrated) === null, 'unrated: no story line')
 
 console.log('competencyLogic.test.ts OK')

@@ -20,6 +20,15 @@ export function TutorialDevPanel() {
       <div>Route: {tutorial.currentStep?.route || '—'}</div>
       <div>Status: {tutorial.progress.status} · Surface: {tutorial.surface}</div>
       <div className={styles.devRow}>
+        <UiButton
+          type="button"
+          size="sm"
+          variant="dev"
+          onClick={tutorial.simulateNewProfile}
+          title="Setzt Tutorial zurück und öffnet den Willkommens-Screen (auch mit bestehenden Sessions)"
+        >
+          Neues Profil
+        </UiButton>
         <UiButton type="button" size="sm" variant="dev" onClick={tutorial.back}>Prev</UiButton>
         <UiButton type="button" size="sm" variant="dev" onClick={tutorial.next}>Next</UiButton>
         <UiButton type="button" size="sm" variant="dev" onClick={tutorial.restart}>Restart</UiButton>

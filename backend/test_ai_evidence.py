@@ -264,7 +264,59 @@ class AiEvidenceUnitTests(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_mvp_drill_ids(self):
-        self.assertEqual(MVP_AI_DRILL_IDS, frozenset({"B2_D5", "E1_D1"}))
+        self.assertEqual(
+            MVP_AI_DRILL_IDS,
+            frozenset(
+                {
+                    "A3_D2",
+                    "B1_D1",
+                    "B1_D2",
+                    "B1_D3",
+                    "B1_D4",
+                    "B1_D5",
+                    "B2_D5",
+                    "E1_D1",
+                    "E1_D5",
+                    "C1_D5",
+                    "C2_D5",
+                    "C3_D5",
+                    "D1_D5",
+                    "D2_D5",
+                    "D3_D5",
+                    "E2_D1",
+                    "E2_D2",
+                    "E2_D3",
+                    "E2_D4",
+                    "E2_D5",
+                    "E3_D1",
+                    "E3_D2",
+                    "E3_D3",
+                    "E3_D4",
+                    "E3_D5",
+                }
+            ),
+        )
+
+    def test_long_reason_code_is_truncated(self):
+        from competency.ai.schema import AiCompetencyDimensions, REASON_CODE_MAX_LEN
+
+        long_code = "multiple_comparable_before_after_cases_with_cautious_inference_extra"
+        self.assertGreater(len(long_code), REASON_CODE_MAX_LEN)
+        row = AiCompetencyDimensions(
+            competencyId="evidence_analysis",
+            observationGrounding=0.8,
+            specificity=0.7,
+            competencyAlignment=0.7,
+            relationalReasoning=0.6,
+            evidenceScope=0.7,
+            uncertaintyCalibration=0.8,
+            unsupportedClaims=0.2,
+            outcomeBias=0.2,
+            reasonCode=long_code,
+            notes=[],
+        )
+        self.assertEqual(len(row.reasonCode), REASON_CODE_MAX_LEN)
+        self.assertEqual(row.reasonCode, long_code[:REASON_CODE_MAX_LEN])
 
     def test_build_inputs_require_substantive_text(self):
         allowed = {"systems_patterns", "evidence_analysis"}

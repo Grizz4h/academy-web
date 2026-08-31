@@ -31,6 +31,17 @@ def admin_username_allowlist() -> Set[str]:
     return {normalize_subject(part) for part in raw.split(",") if part.strip()}
 
 
+def admin_user_id_allowlist() -> Set[str]:
+    raw = (os.environ.get("RINQ_ADMIN_USER_IDS") or "").strip()
+    return {part.strip().lower() for part in raw.split(",") if part.strip()}
+
+
+def is_rinq_admin(auth: AuthContext) -> bool:
+    """Strict server-side check for the operational admin area."""
+    user_id = (auth.rinq_user_id or "").strip().lower()
+    return bool(user_id and user_id in admin_user_id_allowlist())
+
+
 def is_admin_auth(
     auth: AuthContext,
     *,
@@ -47,8 +58,8 @@ def is_admin_auth(
 
 
 def dev_username_allowlist() -> Set[str]:
-    """DevLab /dev* access without admin or premium bypass. Default includes paywall-test."""
-    raw = (os.environ.get("ACADEMY_DEV_USERNAMES") or "paywall-test").strip()
+    """DevLab /dev* access without admin or premium bypass. Default: paywall test accounts."""
+    raw = (os.environ.get("ACADEMY_DEV_USERNAMES") or "paywall-test,paywall-widerruf").strip()
     if not raw:
         return set()
     return {normalize_subject(part) for part in raw.split(",") if part.strip()}

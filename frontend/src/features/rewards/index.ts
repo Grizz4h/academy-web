@@ -1,5 +1,8 @@
 export { RewardProvider, useRewards } from './state/RewardContext'
+export type { ActivityIngestResult } from './state/RewardContext'
 export { default as RewardHost } from './ui/RewardHost'
 export { default as RewardDevTools } from './ui/RewardDevTools'
+export { default as SessionRewardRecap } from './ui/SessionRewardRecap'
+export type { SessionRewardRecapData } from './ui/SessionRewardRecap'
 export { getTopNearAchievements, getRecentUnlockedAchievements, getAchievementProgressItems } from './logic/achievementProgress'
 export { DISPLAY_CURRENCY_LABEL, formatPux } from './types'

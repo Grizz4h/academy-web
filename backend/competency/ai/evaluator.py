@@ -223,6 +223,8 @@ class AiEvidenceEvaluator:
         if profile is None:
             return []
 
+        by_id = {str(item.competencyId): item for item in ai_result.competencies}
+
         events: List[EvidenceEventCreate] = []
         for competency_key, weight in profile.evidence.weights.items():
             if float(weight) <= 0:
@@ -231,6 +233,21 @@ class AiEvidenceEvaluator:
             quality = qualities.get(competency_id)
             if quality is None:
                 continue
+            row = by_id.get(competency_id)
+            meta = dict(audit_metadata)
+            if row is not None:
+                # Compact dimension audit — explains near-floor quality without storing prompts
+                meta["dimensions"] = {
+                    "observationGrounding": row.observationGrounding,
+                    "specificity": row.specificity,
+                    "competencyAlignment": row.competencyAlignment,
+                    "relationalReasoning": row.relationalReasoning,
+                    "evidenceScope": row.evidenceScope,
+                    "uncertaintyCalibration": row.uncertaintyCalibration,
+                    "unsupportedClaims": row.unsupportedClaims,
+                    "outcomeBias": row.outcomeBias,
+                    "reasonCode": row.reasonCode,
+                }
             events.append(
                 EvidenceEventCreate(
                     drillId=drill_id,
@@ -239,7 +256,7 @@ class AiEvidenceEvaluator:
                     assessmentSource=AssessmentSource.AI_REVIEW,
                     sourceType=SOURCE_TYPE,
                     sourceId=source_id,
-                    metadata=dict(audit_metadata),
+                    metadata=meta,
                 )
             )
         return events

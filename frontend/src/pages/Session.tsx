@@ -2,10 +2,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
-import { useRewards } from '../features/rewards'
+import { useRewards, SessionRewardRecap, type SessionRewardRecapData } from '../features/rewards'
 import { buildEventsFromCompletedSession, buildReflectionCreatedEvent, buildTrackCompletionEvents, buildModuleCompletionEvents, buildCurriculumProgressionMaps } from '../features/progression'
 import { isDummySession, isProgressionEligibleSession, getRealSessions } from '../utils/sessionEligibility'
 import { isDevNavEnabled } from '../config/featureFlags'
+import { getCompetencyFillFixture } from '../dev/competencyFixtures'
+import { buildDevSessionRewardRecap } from '../dev/rewardPreviewActions'
 import { UiButton } from '../components/ui'
 import { RinQIcon } from '../components/icons'
 
@@ -13,10 +15,10 @@ import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
 import { SpecialTeamsSidequestButton } from '../components/SpecialTeamsSidequestButton';
 import SyncStatusChip, { type SyncStatus } from '../components/SyncStatusChip';
-import { formatCompetitionContext } from '../data/competitionConfig';
 import { shareOrCopy } from '../utils/share';
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { getActivePeriodsForScope, getObservationScopeLabel, isLessonScope, getNextPhaseForScope, getPreviousPhaseForScope } from '../utils/observationScope'
+import { getActivePeriodsForScope, isLessonScope, getNextPhaseForScope, getPreviousPhaseForScope } from '../utils/observationScope'
+import { SessionGameInfo } from './SessionGameInfo'
 import { sessionExpectsPeriodMicrofeedback } from '../utils/sessionMicrofeedback'
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import type { StoredAiReflection } from '../features/reflection/types'
@@ -113,7 +115,7 @@ export default function SessionPage() {
   const queryClient = useQueryClient()
   const { user } = useUser()
   const tutorial = useTutorialOptional()
-  const { ingestActivityEvents, evaluateLockerMetaProgress } = useRewards()
+  const { ingestActivityEvents, evaluateLockerMetaProgress, rewardState, rewardStateLoaded } = useRewards()
 
   type Phase = 'PRE' | 'P1' | 'P2' | 'P3' | 'POST';
   type PeriodPhase = 'P1' | 'P2' | 'P3'
@@ -121,8 +123,12 @@ export default function SessionPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>('P1')
   const [drillCompleted, setDrillCompleted] = useState(false)
   const [isAdvancing, setIsAdvancing] = useState(false)
+  const [isPostCompleting, setIsPostCompleting] = useState(false)
+  const [postCompleteError, setPostCompleteError] = useState('')
   /** Prevents sticky chrome from covering the post-complete CTA during refetch races */
   const [sessionFinished, setSessionFinished] = useState(false)
+  const [rewardRecap, setRewardRecap] = useState<SessionRewardRecapData | null>(null)
+  const [rewardRecapLoading, setRewardRecapLoading] = useState(false)
 
   const [answersByPhase, setAnswersByPhase] = useState<Record<Phase, any>>({
     PRE: {},
@@ -363,8 +369,78 @@ export default function SessionPage() {
     }
   }
 
+  const sessionDockEndRef = useRef<HTMLDivElement | null>(null)
+  const [sessionDocked, setSessionDocked] = useState(false)
+  const completeDockEndRef = useRef<HTMLDivElement | null>(null)
+  const [completeDocked, setCompleteDocked] = useState(false)
+
+  const showSessionAdvanceDock =
+    session?.state !== 'COMPLETED' &&
+    !sessionFinished &&
+    session?.state !== 'ABORTED' &&
+    (['P1', 'P2', 'P3'] as Phase[]).includes(currentPhase) &&
+    Boolean(getNextPhaseForFlow(currentPhase) || isFoundationSession)
+
+  const showCompleteDock =
+    session?.state === 'COMPLETED' || sessionFinished
+
+  useEffect(() => {
+    if (!showSessionAdvanceDock) {
+      setSessionDocked(false)
+      return
+    }
+    const node = sessionDockEndRef.current
+    if (!node) return
+
+    const update = () => {
+      const rect = node.getBoundingClientRect()
+      const vh = window.innerHeight || 0
+      // Park when natural slot reaches the float zone — also stays parked when scrolled past
+      setSessionDocked(rect.top <= vh - 12)
+    }
+
+    update()
+    const observer = new IntersectionObserver(update, { root: null, threshold: [0, 0.01, 1] })
+    observer.observe(node)
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [showSessionAdvanceDock, currentPhase, session?.state])
+
+  useEffect(() => {
+    if (!showCompleteDock) {
+      setCompleteDocked(false)
+      return
+    }
+    const node = completeDockEndRef.current
+    if (!node) return
+
+    const update = () => {
+      const rect = node.getBoundingClientRect()
+      const vh = window.innerHeight || 0
+      setCompleteDocked(rect.top <= vh - 12)
+    }
+
+    // Wait a frame so reward/reflection layout settles
+    const raf = window.requestAnimationFrame(update)
+    const observer = new IntersectionObserver(update, { root: null, threshold: [0, 0.01, 1] })
+    observer.observe(node)
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.cancelAnimationFrame(raf)
+      observer.disconnect()
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [showCompleteDock, rewardRecapLoading, rewardRecap])
+
   const checkinMutation = useMutation({
-    mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string }) => api.saveCheckin(id!, data),
+    mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string; final?: boolean }) => api.saveCheckin(id!, data),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['session', id] })
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
@@ -475,6 +551,8 @@ export default function SessionPage() {
 
   useEffect(() => {
     setSessionFinished(false)
+    setRewardRecap(null)
+    setRewardRecapLoading(false)
   }, [id])
 
   useEffect(() => {
@@ -488,6 +566,21 @@ export default function SessionPage() {
   }, [currentPhase])
 
   const finalizeSessionRewards = async (completedSession: any) => {
+    setRewardRecapLoading(true)
+    // Seed with live account XP so the recap never flashes Level 1.
+    setRewardRecap({
+      grantedXp: 0,
+      grantedPux: 0,
+      previousXp: Number(rewardState.xp || 0),
+      nextXp: Number(rewardState.xp || 0),
+      rewardEvents: [],
+    })
+
+    if (!rewardStateLoaded) {
+      // Soft wait: reward state usually loaded during the session; give it a short chance.
+      await new Promise((resolve) => window.setTimeout(resolve, 250))
+    }
+
     await queryClient.invalidateQueries({ queryKey: ['session', id] })
     await queryClient.invalidateQueries({ queryKey: ['sessions'] })
 
@@ -495,6 +588,14 @@ export default function SessionPage() {
       queryKey: ['sessions', user],
       queryFn: () => api.getSessions(user || undefined)
     })
+
+    let recap: SessionRewardRecapData = {
+      grantedXp: 0,
+      grantedPux: 0,
+      previousXp: Number(rewardState.xp || 0),
+      nextXp: Number(rewardState.xp || 0),
+      rewardEvents: [],
+    }
 
     if (isProgressionEligibleSession(completedSession)) {
       const priorDrillIds = new Set(
@@ -525,52 +626,80 @@ export default function SessionPage() {
         // Track/module completion optional
       }
 
-      await ingestActivityEvents(progressionEvents)
+      const ingestResult = await ingestActivityEvents(progressionEvents, { showToasts: false })
+      recap = {
+        grantedXp: ingestResult.grantedXp,
+        grantedPux: ingestResult.grantedPux,
+        previousXp: ingestResult.previousXp,
+        nextXp: ingestResult.nextXp,
+        rewardEvents: [...ingestResult.rewardEvents],
+      }
 
       try {
-        await evaluateLockerMetaProgress({
+        const metaResult = await evaluateLockerMetaProgress({
           sessions: getRealSessions(freshSessions).filter((s) => s.state === 'COMPLETED'),
           trackDrills,
+          showToasts: false,
         })
+        recap = {
+          grantedXp: recap.grantedXp + metaResult.grantedXp,
+          grantedPux: recap.grantedPux + metaResult.grantedPux,
+          previousXp: recap.previousXp,
+          nextXp: recap.nextXp + metaResult.grantedXp,
+          rewardEvents: [...recap.rewardEvents, ...metaResult.rewardEvents],
+        }
       } catch (metaError) {
         console.error('Locker mastery/collection evaluation failed', metaError)
       }
     }
+
+    setRewardRecap(recap)
+    setRewardRecapLoading(false)
+  }
+
+  const handlePostDrillComplete = async () => {
+    if (isPostCompleting || isAdvancing) return
+    setPostCompleteError('')
+    setIsPostCompleting(true)
+    try {
+      await api.saveCheckin(id!, {
+        phase: currentPhase,
+        answers: answersByPhase[currentPhase],
+        final: true,
+      })
+      await clearDraft()
+      setDrillCompleted(true)
+      const completedSession = await api.completeSession(id!, {
+        summary: '',
+        unclear: '',
+        next_module: '',
+        helpfulness: 0,
+      })
+      if (completedSession) {
+        setSessionFinished(true)
+        setRewardRecapLoading(true)
+        queryClient.setQueryData(['session', id], completedSession)
+      }
+      await queryClient.invalidateQueries({ queryKey: ['session', id] })
+      await queryClient.invalidateQueries({ queryKey: ['sessions'] })
+      window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
+        detail: { sessionId: id, moduleId: completedSession?.module_id ?? session?.module_id },
+      }))
+      void finalizeSessionRewards(completedSession).catch((rewardError) => {
+        console.error('Reward evaluation failed', rewardError)
+        setRewardRecapLoading(false)
+      })
+    } catch (err: any) {
+      console.error('[POST complete]', err)
+      setPostCompleteError(err?.message || 'Abschluss fehlgeschlagen — bitte erneut versuchen.')
+    } finally {
+      setIsPostCompleting(false)
+    }
   }
 
   const handleDrillComplete = (answers: any) => {
-    checkinMutation.mutate({
-      phase: currentPhase,
-      answers,
-      final: true,
-    }, {
-      onSuccess: async () => {
-        queryClient.invalidateQueries({ queryKey: ['session', id] })
-        queryClient.invalidateQueries({ queryKey: ['sessions'] })
-        await clearDraft()
-        setDrillCompleted(true)
-        if (currentPhase === 'POST') {
-          try {
-            const completedSession = await api.completeSession(id!, {
-              summary: '',
-              unclear: '',
-              next_module: '',
-              helpfulness: 0
-            })
-            if (completedSession) {
-              setSessionFinished(true)
-              queryClient.setQueryData(['session', id], completedSession)
-            }
-            window.dispatchEvent(new CustomEvent('academy-tutorial-session-completed', {
-              detail: { sessionId: id, moduleId: completedSession?.module_id },
-            }))
-            void finalizeSessionRewards(completedSession).catch((rewardError) => {
-              console.error('Reward evaluation failed', rewardError)
-            })
-          } catch (e) {}
-        }
-      }
-    })
+    setAnswersByPhase(prev => ({ ...prev, [currentPhase]: answers || {} }))
+    void handlePostDrillComplete()
   }
 
   function validateDrillBeforeAdvance(phase: Phase, drill: any, answers: any): string | null {
@@ -1117,6 +1246,25 @@ export default function SessionPage() {
       }
     }
 
+    if (drill.drill_type === 'sample_log') {
+      const cfg = drill?.config || {}
+      const sampleKey = String(cfg.sample_key || 'samples')
+      const noteKey = String(cfg.note_key || 'note')
+      const targetSamples = Number(cfg.required_samples || cfg.max_samples_per_phase || 3)
+      const samples = Array.isArray(answers?.[sampleKey]) ? answers[sampleKey] : []
+      if (samples.length < targetSamples) {
+        return `Bitte erfasse mindestens ${targetSamples} Momente, bevor du weitergehst.`
+      }
+      if (cfg.note_required === true) {
+        const noteMin = Number(cfg.note_min_chars || 0)
+        const last = samples[samples.length - 1]
+        const note = String((last && typeof last === 'object' ? last[noteKey] : '') || '').trim()
+        if (!note || (noteMin > 0 && note.length < noteMin)) {
+          return 'Bitte beschreibe den letzten Moment mit einer ausreichend langen Notiz, bevor du weitergehst.'
+        }
+      }
+    }
+
     const isDecisionAnalysis =
       drill?.config?.mechanic === 'decision_analysis'
       || drill.drill_type === 'pressure_diagnosis'
@@ -1212,7 +1360,6 @@ export default function SessionPage() {
         }
       }
 
-      // 1) Checkin speichern
       await api.saveCheckin(id as string, {
         phase,
         answers: answersByPhase[currentPhase],
@@ -1243,6 +1390,12 @@ export default function SessionPage() {
 
       // Foundation / lesson: skip period walking and POST form — complete in one step
       if (isFoundationSession) {
+        await api.saveCheckin(id as string, {
+          phase,
+          answers: answersByPhase[currentPhase],
+          final: true,
+          _trace: clickId,
+        })
         await clearDraft()
         setDrillCompleted(true)
         const completedSession = await api.completeSession(id!, {
@@ -1261,8 +1414,10 @@ export default function SessionPage() {
           detail: { sessionId: id, moduleId: session?.module_id },
         }))
         // Rewards/progression must not block "Zurück zur Übersicht"
+        setRewardRecapLoading(true)
         void finalizeSessionRewards(completedSession).catch((rewardError) => {
           console.error('Reward evaluation failed', rewardError)
+          setRewardRecapLoading(false)
         })
         console.log(`[ADVANCE ${clickId}] FOUNDATION COMPLETE`)
         console.groupEnd()
@@ -1351,7 +1506,7 @@ export default function SessionPage() {
 
   // Keep completion CTA reachable; sticky/reward overlays previously ate the first taps
   useEffect(() => {
-    if (!isCompleted) return
+    if (!isCompleted || rewardRecapLoading || rewardRecap) return
     const timer = window.setTimeout(() => {
       const node =
         document.querySelector<HTMLElement>('[data-session-complete-cta="true"]')
@@ -1359,7 +1514,44 @@ export default function SessionPage() {
       node?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }, 80)
     return () => window.clearTimeout(timer)
-  }, [isCompleted])
+  }, [isCompleted, rewardRecapLoading, rewardRecap])
+
+  const handleDevPreviewRewardScreen = async () => {
+    if (!id || !session || isAdvancing || isPostCompleting) return
+    setRewardRecapLoading(true)
+    try {
+      if (session.state !== 'COMPLETED' && !sessionFinished) {
+        try {
+          await api.saveCheckin(id, {
+            phase: currentPhase,
+            answers: answersByPhase[currentPhase] || {},
+            final: true,
+          })
+        } catch {
+          // Preview still works without a clean final check-in
+        }
+        try {
+          const completedSession = await api.completeSession(id, {
+            summary: 'DEV reward preview',
+            unclear: '',
+            next_module: '',
+            helpfulness: 0,
+          })
+          queryClient.setQueryData(['session', id], completedSession)
+          await queryClient.invalidateQueries({ queryKey: ['sessions'] })
+        } catch (completeError) {
+          console.warn('DEV reward preview: completeSession failed, showing UI anyway', completeError)
+        }
+        setSessionFinished(true)
+      } else {
+        setSessionFinished(true)
+      }
+    } finally {
+      const previousXp = Number(rewardState.xp || 0)
+      setRewardRecap(buildDevSessionRewardRecap(previousXp))
+      setRewardRecapLoading(false)
+    }
+  }
 
   const getPhaseTitle = (phase: string) => {
     if (isFoundationSession || isLessonScope(session?.observation_scope)) {
@@ -1375,22 +1567,33 @@ export default function SessionPage() {
   }
 
   const foundationReady = Boolean(answersByPhase[currentPhase]?.foundationComplete)
+  const showSessionBack =
+    !isFoundationSession &&
+    currentPhase !== firstActivePeriod &&
+    Boolean(getPreviousPhaseForFlow(currentPhase))
+  const showSessionAdvance = Boolean(getNextPhaseForFlow(currentPhase) || isFoundationSession)
   const showDevSkip =
     Boolean(session) &&
     !isCompleted &&
     session?.state !== 'ABORTED' &&
     (isDummySession(session) || isDevNavEnabled()) &&
     Boolean(getNextPhaseForFlow(currentPhase) || isFoundationSession)
+  const fillFixture = getCompetencyFillFixture(session?.drill_id)
+  const showDevFill =
+    Boolean(session) &&
+    !isCompleted &&
+    session?.state !== 'ABORTED' &&
+    isDevNavEnabled() &&
+    Boolean(fillFixture) &&
+    currentPhase !== 'POST'
+  const showDevRewardPreview =
+    Boolean(session) &&
+    session?.state !== 'ABORTED' &&
+    isDevNavEnabled()
   const advanceCtaLabel = (() => {
     if (isAdvancing) return 'Speichere…'
     if (isFoundationSession) return 'Session abschließen'
     if (getNextPhaseForFlow(currentPhase) === 'POST') return 'Session abschließen'
-    return 'Weiter →'
-  })()
-  const stickyCtaLabel = (() => {
-    if (isAdvancing) return 'Speichere…'
-    if (isFoundationSession) return 'Session abschließen'
-    if (getNextPhaseForFlow(currentPhase) === 'POST') return 'Abschließen'
     return 'Weiter →'
   })()
   const devSkipLabel = (() => {
@@ -1406,78 +1609,96 @@ export default function SessionPage() {
     }
   }
 
+  async function handleDevFillDrill(): Promise<void> {
+    const fixture = getCompetencyFillFixture(session?.drill_id)
+    if (!fixture || !id) return
+    if (isDummySession(session)) {
+      window.alert(
+        'Diese Session ist ein DEV-Dummy. Competency-Evidence wird dafür nicht geschrieben.\n\nBitte eine echte (nicht-Dummy) Session starten — Autofill geht dort genauso.',
+      )
+    }
+    const answers = { ...fixture.answers }
+    setAnswersByPhase((prev) => ({ ...prev, [currentPhase]: answers }))
+    if (draftKey) {
+      localStorage.setItem(draftKey, JSON.stringify(answers))
+    }
+    const nextDrafts = {
+      ...(session?.drafts || {}),
+      ...Object.fromEntries(
+        Object.entries(answersByPhase).map(([phase, value]) => [phase, value]),
+      ),
+      [currentPhase]: answers,
+    }
+    try {
+      setSyncStatus('saving')
+      await api.saveDrafts(id, nextDrafts)
+      queryClient.setQueryData(['session', id], (prev: any) => (prev ? { ...prev, drafts: nextDrafts } : prev))
+      setSyncStatus('saved')
+    } catch (err) {
+      console.error('DEV fill draft save failed', err)
+      setSyncStatus('error')
+    }
+  }
+
   if (isLoading) return <div className="card">Lade Session...</div>
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
   if (!session) return <div className="card">Session nicht gefunden.</div>
 
   return (
-    <div className="ui-page-shell" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div
+      className={`ui-page-shell ${showSessionAdvanceDock && !sessionDocked ? stickyStyles.pageWithSessionDock : ''} ${showCompleteDock && !completeDocked ? stickyStyles.pageWithCompleteDock : ''}`}
+      style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+    >
       <header className="ui-page-header">
         <h1 className="ui-page-title">{isFoundationSession ? 'Foundation-Lektion' : 'Live-Session'}</h1>
         <p className="ui-section-title-content" style={{ margin: 0 }}>{session.module_id}</p>
       </header>
 
-      <div className="card ui-surface ui-surface--section ui-flat-mobile">
-        <h2 className="ui-section-title">{isFoundationSession ? 'Lektion' : 'Spiel-Info'}</h2>
-        {isFoundationSession ? (
-          <>
-            <p><strong>Modul:</strong> {session.module_id}</p>
-            {session.drill_id && <p><strong>Drill:</strong> {session.drill_id}</p>}
-            <p><strong>Umfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
-            <p style={{ margin: '0.35rem 0 0', fontSize: '0.82rem', color: 'rgba(167, 243, 208, 0.88)' }}>
-              Foundation — keine Live-Paarung nötig.
-            </p>
-          </>
-        ) : session.game_info ? (
-          <>
-            <p><strong>Teams:</strong> {session.game_info.team_home} vs {session.game_info.team_away}</p>
-            <p><strong>Beobachtetes Team:</strong> {session.game_info.observed_team_name || session.game_info.observed_team || session.observed_team || 'Beobachtetes Team nicht hinterlegt'}</p>
-            <p><strong>Datum:</strong> {session.game_info.date}</p>
-            <p><strong>Liga:</strong> {session.game_info.league.replace(/_/g, ' ')}</p>
-            {session.game_info.season && <p><strong>Saison:</strong> {session.game_info.season}</p>}
-            {(session.game_info.competition_phase || session.game_info.matchday) && (
-              <p><strong>Wettbewerb:</strong> {formatCompetitionContext(session.game_info) || session.game_info.matchday}</p>
-            )}
-            <p><strong>Beobachtungsumfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
-            {activeDrill && (
-              <p><strong>Drill:</strong> {activeDrill.title || activeDrill.id}{activeDrill.id ? ` (${activeDrill.id})` : ''}</p>
-            )}
-          </>
-        ) : (
-          <>
-            <p>Keine Spiel-Info verfügbar</p>
-            <p><strong>Beobachtetes Team:</strong> {session.observed_team || 'Beobachtetes Team nicht hinterlegt'}</p>
-            <p><strong>Ziel:</strong> {session.goal}</p>
-            <p><strong>Status:</strong> {session.state}</p>
-            <p><strong>Beobachtungsumfang:</strong> {getObservationScopeLabel(session.observation_scope)}</p>
-          </>
-        )}
+      <SessionGameInfo
+        session={session}
+        isFoundationSession={isFoundationSession}
+        activeDrillTitle={activeDrill ? (activeDrill.title || activeDrill.id) : null}
+        note={sessionNote}
+        onNoteChange={(value) => {
+          setSessionNote(value)
+          const noteKey = id ? `academy.session.${id}.note` : null
+          if (noteKey) localStorage.setItem(noteKey, value)
+        }}
+      />
 
-        {/* Notizfeld */}
-        <div style={{ marginTop: '1rem' }}>
-          <label htmlFor="session-note" style={{ fontWeight: 500 }}>Notiz zur Session:</label>
-          <textarea
-            id="session-note"
-            value={sessionNote}
-            onChange={e => {
-              setSessionNote(e.target.value)
-              const noteKey = id ? `academy.session.${id}.note` : null
-              if (noteKey) localStorage.setItem(noteKey, e.target.value)
-            }}
-            rows={2}
-            style={{ width: '100%', minHeight: 48, maxHeight: 80, marginTop: 4, borderRadius: 4, padding: 6, resize: 'vertical', fontSize: '1rem', lineHeight: 1.4 }}
-            placeholder="Hier kannst du eine Notiz für die gesamte Session festhalten..."
-          />
+      {showDevRewardPreview ? (
+        <div className="card" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', alignItems: 'center' }}>
+          <UiButton
+            type="button"
+            variant="dev"
+            size="sm"
+            disabled={isAdvancing || isPostCompleting || rewardRecapLoading}
+            onClick={() => void handleDevPreviewRewardScreen()}
+            title="Schließt die Session (falls nötig) und öffnet den Belohnungs-Screen mit Dummy-Achievements + Popups"
+          >
+            DEV: Belohnungs-Screen
+          </UiButton>
+          <span style={{ fontSize: '0.8rem', color: 'rgba(148,163,184,0.9)' }}>
+            Dummy XP + Bronze/Silver/Gold zum Testen
+          </span>
         </div>
-      </div>
+      ) : null}
 
       {!isCompleted && (
         <div className={`card ${(currentPhase === 'P1' || currentPhase === 'P2' || currentPhase === 'P3') ? 'period-analysis-wrapper' : ''}`}>
           {currentPhase === 'POST' && (
             <div>
-              <button onClick={() => handleDrillComplete(answersByPhase[currentPhase])} className="btn btn-success" style={{ minWidth: 120 }}>
-                Drill abschließen
-              </button>
+              <UiButton
+                type="button"
+                variant="primary"
+                onClick={() => handleDrillComplete(answersByPhase[currentPhase])}
+                disabled={isPostCompleting || isAdvancing}
+              >
+                {isPostCompleting ? 'Speichere…' : 'Drill abschließen'}
+              </UiButton>
+              {postCompleteError ? (
+                <p style={{ marginTop: '0.65rem', color: '#ffb7bf', fontSize: '0.9rem' }}>{postCompleteError}</p>
+              ) : null}
             </div>
           )}
 
@@ -1525,87 +1746,69 @@ export default function SessionPage() {
                 />
               </div>
               )}
-              {!isCompleted && session.state !== 'ABORTED' && (['P1', 'P2', 'P3'] as Phase[]).includes(currentPhase) && (
-                <div className={stickyStyles.stickyClearance} aria-hidden="true" />
-              )}
 
-              <div className={stickyStyles.inlineNav}>
-                <div className={stickyStyles.inlinePhase}>{getPhaseTitle(currentPhase)}</div>
-                <div className={stickyStyles.inlineActions}>
-                  {!isFoundationSession && currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
-                    <button onClick={handleGoBack} className="btn" style={{ backgroundColor: '#6c757d', borderColor: '#6c757d', minWidth: 120 }}>
-                      ← Zurück
-                    </button>
-                  )}
-                  {(getNextPhaseForFlow(currentPhase) || isFoundationSession) && (
-                    <button
-                      onClick={handleAdvanceToNext}
-                      className="btn"
-                      style={{ minWidth: 140 }}
-                      data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
-                      disabled={isAdvancing || (isFoundationSession && !foundationReady)}
-                    >
-                      {advanceCtaLabel}
-                    </button>
-                  )}
-                  {showDevSkip ? (
-                    <UiButton
-                      type="button"
-                      variant="dev"
-                      size="sm"
-                      disabled={isAdvancing}
-                      onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
-                      title="Überspringt Drill-Pflicht und Microfeedback"
-                    >
-                      {devSkipLabel}
-                    </UiButton>
-                  ) : null}
-                </div>
-                <SyncStatusChip status={syncStatus} />
+              <div
+                ref={sessionDockEndRef}
+                className={`${stickyStyles.sessionDockSlot} ${showSessionAdvanceDock ? stickyStyles.sessionDockSlotActive : ''}`}
+              >
+                {showSessionAdvanceDock ? (
+                  <div
+                    className={`${stickyStyles.sessionDock} ${sessionDocked ? stickyStyles.sessionDockParked : stickyStyles.sessionDockFloating}`}
+                    data-session-sticky="true"
+                  >
+                    <div className={stickyStyles.sessionDockInner}>
+                      <span className={stickyStyles.sessionDockHint}>{getPhaseTitle(currentPhase)}</span>
+                      <div className={stickyStyles.sessionDockRow}>
+                        {showSessionBack ? (
+                          <UiButton type="button" variant="secondary" size="sm" onClick={handleGoBack}>
+                            ← Zurück
+                          </UiButton>
+                        ) : null}
+                        <SyncStatusChip status={syncStatus} />
+                        {showSessionAdvance ? (
+                          <UiButton
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            onClick={handleAdvanceToNext}
+                            data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
+                            disabled={isAdvancing || (isFoundationSession && !foundationReady)}
+                          >
+                            {advanceCtaLabel}
+                          </UiButton>
+                        ) : null}
+                        {showDevFill ? (
+                          <UiButton
+                            type="button"
+                            variant="dev"
+                            size="sm"
+                            onClick={() => void handleDevFillDrill()}
+                            title={
+                              isDummySession(session)
+                                ? 'Füllt Antworten — Achtung: Dummy-Session erzeugt keine Competency-Evidence'
+                                : fillFixture?.label || 'Drill mit Testantworten füllen'
+                            }
+                          >
+                            DEV: Drill füllen
+                          </UiButton>
+                        ) : null}
+                        {showDevSkip ? (
+                          <UiButton
+                            type="button"
+                            variant="dev"
+                            size="sm"
+                            disabled={isAdvancing}
+                            onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
+                            title="Überspringt Drill-Pflicht und Microfeedback"
+                          >
+                            {devSkipLabel}
+                          </UiButton>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
               </div>
-
-              {!isCompleted && session.state !== 'ABORTED' && (['P1', 'P2', 'P3'] as Phase[]).includes(currentPhase) && (
-                <div className={stickyStyles.stickyBar} data-session-sticky="true">
-                  <div className={stickyStyles.stickyTop}>
-                    <span className={stickyStyles.phaseLabel}>{getPhaseTitle(currentPhase)}</span>
-                    <SyncStatusChip status={syncStatus} />
-                  </div>
-                  <div className={stickyStyles.stickyActions}>
-                    {!isFoundationSession && currentPhase !== firstActivePeriod && getPreviousPhaseForFlow(currentPhase) && (
-                      <button type="button" className={stickyStyles.stickyBtn} onClick={handleGoBack}>
-                        ← Zurück
-                      </button>
-                    )}
-                    {(getNextPhaseForFlow(currentPhase) || isFoundationSession) && (
-                      <button
-                        type="button"
-                        className={`${stickyStyles.stickyBtn} ${stickyStyles.stickyBtnPrimary}`}
-                        onClick={handleAdvanceToNext}
-                        data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
-                        disabled={isAdvancing || (isFoundationSession && !foundationReady)}
-                      >
-                        {stickyCtaLabel}
-                      </button>
-                    )}
-                    {showDevSkip ? (
-                      <button
-                        type="button"
-                        className={stickyStyles.stickyBtn}
-                        disabled={isAdvancing}
-                        onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
-                        title="Überspringt Drill-Pflicht und Microfeedback"
-                        style={{
-                          borderColor: 'rgba(245, 158, 11, 0.55)',
-                          color: 'rgba(253, 186, 116, 1)',
-                          background: 'rgba(245, 158, 11, 0.12)',
-                        }}
-                      >
-                        {devSkipLabel}
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -1619,11 +1822,11 @@ export default function SessionPage() {
         </div>
       )}
 
-      {session.checkins && session.checkins.length > 0 && (
+      {isDevNavEnabled() && session.checkins && session.checkins.length > 0 && (
         <div className="card">
           <details>
             <summary style={{ cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-              Check-in-Verlauf (klicken zum Ausklappen)
+              DEV · Check-in-Verlauf
             </summary>
             {session.checkins.map((checkin: any, i: number) => (
               <div key={i} style={{ marginBottom: '1rem', padding: '0.5rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '5px' }}>
@@ -1637,21 +1840,32 @@ export default function SessionPage() {
         </div>
       )}
 
+      {isCompleted && (rewardRecapLoading || rewardRecap) ? (
+        <SessionRewardRecap
+          data={rewardRecap || {
+            grantedXp: 0,
+            grantedPux: 0,
+            previousXp: Number(rewardState.xp || 0),
+            nextXp: Number(rewardState.xp || 0),
+            rewardEvents: [],
+          }}
+          loading={rewardRecapLoading}
+        />
+      ) : null}
+
       {isCompleted && (
         <div className="card" data-tutorial-id={TUTORIAL_TARGET.sessionResult} style={{ position: 'relative', zIndex: 2 }}>
-          <h2 className="flex items-center justify-center gap-2 flex-wrap">
-            Session abgeschlossen!
-            <RinQIcon name="celebrate" size="lg" tone="accent" badge />
+          <h2 className="flex items-center justify-center gap-2 flex-wrap" style={{ marginTop: 0 }}>
+            Session abgeschlossen
+            <RinQIcon name="celebrate" size="lg" tone="accent" badge inline />
           </h2>
-          <p>Alle aktiven Phasen wurden erfolgreich absolviert.</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.85rem' }}>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => navigate('/')}
-            >
-              Zurück zur Übersicht
-            </button>
+          <p style={{ marginBottom: '0.85rem', color: 'rgba(226,232,240,0.82)' }}>
+            {session?.game_info?.team_home && session?.game_info?.team_away
+              ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
+              : 'Alle aktiven Phasen sind durch.'}
+            {session?.module_id ? ` · ${session.module_id}` : ''}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
             <button
               type="button"
               className="btn"
@@ -1675,21 +1889,8 @@ export default function SessionPage() {
             </button>
           </div>
           {shareNote && <p style={{ marginTop: '0.55rem', color: '#99f6e4', fontSize: '0.85rem' }}>{shareNote}</p>}
-          <div className={stickyStyles.completeClearance} aria-hidden="true" />
         </div>
       )}
-
-      {isCompleted ? (
-        <div className={stickyStyles.completeBar} data-session-complete-cta="true">
-          <button
-            type="button"
-            className={`${stickyStyles.stickyBtn} ${stickyStyles.stickyBtnPrimary}`}
-            onClick={() => navigate('/')}
-          >
-            Zurück zur Übersicht
-          </button>
-        </div>
-      ) : null}
 
       {isCompleted && session && (
         <SessionReflectionPanel
@@ -1711,11 +1912,29 @@ export default function SessionPage() {
                   occurredAt: reflection.createdAt || new Date().toISOString(),
                   isDummy: false,
                 }),
-              ])
+              ], { showToasts: false })
             }
           }}
         />
       )}
+
+      {showCompleteDock ? (
+        <div
+          ref={completeDockEndRef}
+          className={`${stickyStyles.completeDockSlot} ${stickyStyles.completeDockSlotActive}`}
+        >
+          <div
+            className={`${stickyStyles.completeDock} ${completeDocked ? stickyStyles.completeDockParked : stickyStyles.completeDockFloating}`}
+            data-session-complete-cta="true"
+          >
+            <div className={stickyStyles.completeDockInner}>
+              <UiButton type="button" variant="primary" onClick={() => navigate('/')}>
+                Zurück zur Übersicht
+              </UiButton>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {session?.state === 'ABORTED' && (
         <div className="card">
@@ -1741,7 +1960,7 @@ export default function SessionPage() {
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="card" style={{ maxWidth: 500, width: '95%', margin: '0 auto' }}>
               <h3 className="flex items-center gap-2">
-                <RinQIcon name="terms" size="md" badge />
+                <RinQIcon name="terms" size="md" badge inline />
                 Microfeedback
               </h3>
               {contextSummary && (
