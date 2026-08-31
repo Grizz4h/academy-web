@@ -13,6 +13,8 @@ import ObservationSetup from './pages/ObservationSetup'
 import ObservationRun from './pages/ObservationRun'
 import ObservationStats from './pages/ObservationStats'
 import RingAbout from './pages/RingAbout'
+import OffTheRinkPage from './pages/OffTheRink'
+import OffTheRinkColumnPage from './pages/OffTheRinkColumn'
 import LabPage from './pages/Lab'
 import LabPredictSetup from './pages/LabPredictSetup'
 import LabPredictSession from './pages/LabPredictSession'
@@ -69,6 +71,8 @@ function App() {
             <Route path="/observation/run/:runId" element={<ObservationRun />} />
             <Route path="/observation/stats" element={<ObservationStats />} />
             <Route path="/ringabout" element={<CreatorRouteGuard><RingAbout /></CreatorRouteGuard>} />
+            <Route path="/off-the-rink" element={<CreatorRouteGuard><OffTheRinkPage /></CreatorRouteGuard>} />
+            <Route path="/off-the-rink/:slug" element={<CreatorRouteGuard><OffTheRinkColumnPage /></CreatorRouteGuard>} />
             <Route path="/legal" element={<LegalPage />} />
             <Route path="/impressum" element={<ImpressumPage />} />
             <Route path="/datenschutz" element={<DatenschutzPage />} />

@@ -1,0 +1,37 @@
+---
+description: OFF THE RINK — persönliche Kolumne in rInQ, isoliert vom Rest der App
+globs: frontend/src/content/offTheRink/**/*,frontend/src/pages/OffTheRink*.tsx,frontend/src/pages/OffTheRink.module.css
+alwaysApply: false
+---
+
+# OFF THE RINK
+
+Christophs Kolumnen-Hub in rInQ. Hockey oft Ausgangspunkt, Thema darf größer sein. Ruhig, textorientiert, nicht Newsportal / Blog / Magazin.
+
+## Isolation
+
+- Nur Dateien unter `frontend/src/content/offTheRink/` und `pages/OffTheRink*`.
+- Bestehende UI (`Card`, `UiButton`, `UiActionRow`, `UiPill`, `shareOrCopy`, `RINQ_CONTACT_EMAIL`) wiederverwenden.
+- Keine neuen Dependencies. Keine Änderungen an Akademie, Drills, Nav-Kern, Legal, Backend.
+- Tab bleibt `creatorOnly` + `CreatorRouteGuard`, bis Christoph öffentlich schaltet.
+
+## Inhalt
+
+Neue Kolumne = neue Datei in `content/offTheRink/columns/`, dann ins Array in `index.ts`. Felder: `slug`, `number`, `title`, `date`, `readingTime`, `teaser`, `content`, optional `image` + `imageAlt` + `imageCaption`. Nicht in die UI-Komponente hart kodieren.
+
+## Erlaubt
+
+- Archiv nach Jahr, „Neu“ nur auf der jüngsten Ausgabe
+- Eine Teilen-Aktion (`shareOrCopy`, native + Link kopieren) — keine Social-Icon-Leiste
+- „An Christoph schreiben“ per `mailto` (kein Kommentarthread)
+- Vorher/Nächste: genau eine ältere und eine neuere Kolumne
+- Autorzeile, kurzes „Über das Format“
+- Document-Title / OG-Tags nur solange die Seite gemountet ist, danach restore
+
+## Nicht bauen
+
+Sterne, Likes, Claps, Related-Raster, Most Read, Tags, Newsletter-Popup, Infinite Scroll, CMS.
+
+## Teilen / Vorschau
+
+Solange die Route gated ist, sehen Crawler `index.html` (rInQ-Defaults). Share-Sheet trägt Titel/Teaser/URL. Echte Bot-HTML für WhatsApp erst, wenn die Seite öffentlich wird — nicht `index.html` siteweit umbiegen.

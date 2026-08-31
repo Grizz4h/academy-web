@@ -121,6 +121,28 @@ export function NavIconLocker({ className }: IconProps) {
   )
 }
 
+export function NavIconColumn({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect
+        x="5"
+        y="3.5"
+        width="14"
+        height="17"
+        rx="1.6"
+        stroke="currentColor"
+        strokeWidth={stroke.width}
+      />
+      <path
+        d="M8.2 8h7.6M8.2 11.2h7.6M8.2 14.4h5.2"
+        stroke="currentColor"
+        strokeWidth={stroke.width}
+        strokeLinecap={stroke.cap}
+      />
+    </Svg>
+  )
+}
+
 export function NavIconClapper({ className }: IconProps) {
   return (
     <Svg className={className}>
@@ -232,6 +254,7 @@ const CORE_NAV_ICONS: Record<string, (props: IconProps) => ReactElement> = {
 
 const SECONDARY_NAV_ICONS: Record<string, (props: IconProps) => ReactElement> = {
   '/ringabout': NavIconClapper,
+  '/off-the-rink': NavIconColumn,
   '/lab': NavIconLab,
   '/observation/setup': NavIconEye,
   '/observation/stats': NavIconEyeStats,

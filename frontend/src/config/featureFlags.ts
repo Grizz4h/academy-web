@@ -48,6 +48,7 @@ export const NAV_FEATURES: NavFeature[] = [
     note: 'Spielerbeobachtung Stats – intern, noch nicht Demo-ready.',
   },
   { to: '/ringabout', label: 'Rink About It!', navVisible: true, group: 'core', creatorOnly: true },
+  { to: '/off-the-rink', label: 'Off the Rink', navVisible: true, group: 'core', creatorOnly: true },
   { to: '/locker', label: 'Spind', navVisible: true, group: 'core' },
 ]
 
