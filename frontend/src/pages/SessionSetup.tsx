@@ -24,7 +24,7 @@ import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { LiveObservationPanel } from '../components/game/LiveObservationPanel'
 import ArenaCheckPanel from '../components/game/ArenaCheckPanel'
-import { UiActionRow, UiButton } from '../components/ui'
+import { UiActionRow, UiButton, ScrollActionDock, scrollActionDockPageClass } from '../components/ui'
 import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
 import { PastDrillSessions } from '../features/reflection/PastDrillSessions'
 import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
@@ -88,6 +88,7 @@ export default function SessionSetup() {
   const queryClient = useQueryClient()
   const { user } = useUser()
   const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [setupDocked, setSetupDocked] = useState(true)
   const [goal, setGoal] = useState<string>('')
   const [observedTeam, setObservedTeam] = useState<string>('')
   const [confidence, setConfidence] = useState<number>(3)
@@ -108,6 +109,36 @@ export default function SessionSetup() {
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
   const competitionConfig = getCompetitionConfig(league)
   const selectedCompetitionPhase = competitionConfig?.phases.find((phase) => phase.id === competitionPhase) || competitionConfig?.phases[0]
+
+  const setupDockHint = useMemo(() => {
+    if (!user) return 'Bitte zuerst anmelden'
+    if (!league) return 'Liga wählen'
+    if (!teamHome || !teamAway) return 'Paarung wählen'
+    if (teamHome === teamAway) return 'Teams müssen unterschiedlich sein'
+    if (!observedTeam) return 'Beobachtetes Team wählen'
+    if (competitionConfig && !selectedCompetitionPhase) return 'Wettbewerbsphase wählen'
+    if (selectedCompetitionPhase) {
+      const numericValue = Number(competitionValue)
+      if (
+        !competitionValue
+        || !Number.isFinite(numericValue)
+        || numericValue < selectedCompetitionPhase.unit.min
+        || numericValue > selectedCompetitionPhase.unit.max
+      ) {
+        return `${selectedCompetitionPhase.unit.label} ${selectedCompetitionPhase.unit.min}–${selectedCompetitionPhase.unit.max}`
+      }
+    }
+    return 'Bereit zum Start'
+  }, [
+    user,
+    league,
+    teamHome,
+    teamAway,
+    observedTeam,
+    competitionConfig,
+    selectedCompetitionPhase,
+    competitionValue,
+  ])
 
   useEffect(() => {
     const syncDevMode = () => setDevMode(isDevNavEnabled())
@@ -256,6 +287,14 @@ export default function SessionSetup() {
     (track) => track.trackType === 'foundation' && (track.modules || []).some((m) => m.id === moduleId),
   )
   const isFoundationModule = Boolean(foundationTrack)
+
+  const foundationDockHint = useMemo(() => {
+    if (!user) return 'Bitte zuerst anmelden'
+    if (!selectedDrill) return 'Lektion wählen'
+    const drill = currentModule?.drills?.find((item) => item.id === selectedDrill)
+    return drill?.title ? `Lektion: ${drill.title}` : 'Bereit zum Start'
+  }, [user, selectedDrill, currentModule?.drills])
+
   const premiumLocked = isModulePremiumLocked(currentModule)
   const moduleInactive = currentModule?.active === false
   const moduleDeprecationNote = currentModule?.deprecation_note
@@ -715,7 +754,7 @@ export default function SessionSetup() {
   if (isFoundationModule) {
     const drills = currentModule.drills || []
     return (
-      <div className="ui-page-shell" style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div className={`ui-page-shell ${scrollActionDockPageClass(true, setupDocked)}`} style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <header className="ui-page-header">
           <p className={setupStyles.foundationEyebrow}>
             {foundationTrack?.foundationLabel || 'FOUNDATION · TRACK 0'}
@@ -765,24 +804,6 @@ export default function SessionSetup() {
             ))}
           </div>
 
-          <button
-            type="button"
-            className="btn"
-            data-tutorial-id={TUTORIAL_TARGET.setupStart}
-            onClick={handleCreateSession}
-            disabled={!user || !selectedDrill || createSessionMutation.isPending}
-            style={{
-              width: '100%',
-              marginTop: '1rem',
-              padding: '1rem',
-              fontSize: '1.05rem',
-              backgroundColor: '#0d9488',
-              opacity: !user || !selectedDrill || createSessionMutation.isPending ? 0.55 : 1,
-            }}
-          >
-            {createSessionMutation.isPending ? 'Starte Lektion…' : 'Lektion starten'}
-          </button>
-
           {createError && (
             <div style={{ marginTop: '0.75rem', color: '#ff8e8e', fontSize: '0.9rem', whiteSpace: 'pre-wrap' }}>
               {createError}
@@ -805,15 +826,33 @@ export default function SessionSetup() {
           )}
         </details>
 
-        <button type="button" className="btn" style={{ background: 'transparent', borderColor: 'rgba(255,255,255,0.2)' }} onClick={() => navigate('/curriculum')}>
-          Zurück zum Lehrplan
-        </button>
+        <ScrollActionDock
+          enabled
+          resetKey={`${selectedDrill}-${createSessionMutation.isPending}`}
+          onDockedChange={setSetupDocked}
+          hint={foundationDockHint}
+          htmlAttrs={{ 'data-session-sticky': 'true' }}
+        >
+          <UiButton type="button" variant="ghost" size="sm" onClick={() => navigate('/curriculum')}>
+            Abbrechen
+          </UiButton>
+          <UiButton
+            type="button"
+            variant="primary"
+            size="sm"
+            data-tutorial-id={TUTORIAL_TARGET.setupStart}
+            onClick={handleCreateSession}
+            disabled={!user || !selectedDrill || createSessionMutation.isPending}
+          >
+            {createSessionMutation.isPending ? 'Starte Lektion…' : 'Lektion starten'}
+          </UiButton>
+        </ScrollActionDock>
       </div>
     )
   }
 
   return (
-    <div className="ui-page-shell" style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className={`ui-page-shell ${scrollActionDockPageClass(true, setupDocked)}`} style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <header className="ui-page-header">
         <h1 className="ui-page-title">Session Setup</h1>
         <p className="ui-section-title-content" style={{ margin: 0 }}>{currentModule.title}</p>
@@ -1244,20 +1283,6 @@ export default function SessionSetup() {
 
       <ArenaCheckPanel game={isDummyCatalogGame(matchedCatalogGame) ? null : matchedCatalogGame} />
 
-      <button
-        onClick={handleCreateSession}
-        className="btn"
-        data-tutorial-id={TUTORIAL_TARGET.setupStart}
-        style={{
-          padding: '1rem',
-          fontSize: '1.1rem',
-          backgroundColor: '#5191a2'
-        }}
-        disabled={createSessionMutation.isPending}
-      >
-        {createSessionMutation.isPending ? 'Erstelle Session...' : 'Session starten'}
-      </button>
-
       {devMode && (
         <div
           className="card"
@@ -1340,19 +1365,27 @@ export default function SessionSetup() {
         </div>
       )}
 
-      <button
-        onClick={() => navigate('/curriculum')}
-        style={{
-          padding: '0.5rem',
-          backgroundColor: 'transparent',
-          border: '1px solid rgba(255,255,255,0.3)',
-          color: '#f7f7ff',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
+      <ScrollActionDock
+        enabled
+        resetKey={`${league}-${teamHome}-${teamAway}-${observedTeam}-${selectedDrill}-${competitionPhase}-${competitionValue}`}
+        onDockedChange={setSetupDocked}
+        hint={setupDockHint}
+        htmlAttrs={{ 'data-session-sticky': 'true' }}
       >
-        Abbrechen
-      </button>
+        <UiButton type="button" variant="ghost" size="sm" onClick={() => navigate('/curriculum')}>
+          Abbrechen
+        </UiButton>
+        <UiButton
+          type="button"
+          variant="primary"
+          size="sm"
+          data-tutorial-id={TUTORIAL_TARGET.setupStart}
+          onClick={handleCreateSession}
+          disabled={createSessionMutation.isPending || !user}
+        >
+          {createSessionMutation.isPending ? 'Erstelle Session…' : 'Session starten'}
+        </UiButton>
+      </ScrollActionDock>
     </div>
   )
 }

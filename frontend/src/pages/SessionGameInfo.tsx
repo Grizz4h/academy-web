@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '../api'
 import { TeamCrest } from '../components/game/TeamCrest'
+import { MatchupVs } from '../components/game/MatchupVs'
 import { UiPill } from '../components/ui'
 import { formatCompetitionContext } from '../data/competitionConfig'
 import { getObservationScopeLabel } from '../utils/observationScope'
@@ -26,26 +27,38 @@ function formatGameDate(value?: string): string | null {
   })
 }
 
-function TeamSide({
+function TeamColumn({
   name,
   teamId,
   observed,
   crestSize,
+  side,
 }: {
   name: string
   teamId?: string
   observed: boolean
   crestSize: 'md' | 'lg'
+  side: 'home' | 'away'
 }) {
   return (
-    <div className={[styles.teamCol, observed ? styles.teamColObserved : ''].filter(Boolean).join(' ')}>
+    <div
+      className={[
+        styles.teamColumn,
+        side === 'home' ? styles.teamColumnHome : styles.teamColumnAway,
+        observed ? styles.teamColumnObserved : '',
+      ].filter(Boolean).join(' ')}
+    >
       <span className={styles.crestSlot}>
         <TeamCrest name={name} teamId={teamId} size={crestSize} />
       </span>
       <p className={[styles.teamName, observed ? styles.teamNameObserved : ''].filter(Boolean).join(' ')}>
         {name}
       </p>
-      {observed ? <span className={styles.observedChip}>Beobachtet</span> : null}
+      {observed ? (
+        <span className={styles.observedChip}>Beobachtet</span>
+      ) : (
+        <span className={styles.observedChipSpacer} aria-hidden="true">Beobachtet</span>
+      )}
     </div>
   )
 }
@@ -145,9 +158,23 @@ export function SessionGameInfo({
         <>
           <div className={styles.desktopRow}>
             <div className={styles.matchBoard} aria-label={`${home} gegen ${away}`}>
-              <TeamSide name={home} teamId={game.home_team_id} observed={observed === home} crestSize={crestSize} />
-              <div className={styles.vs} aria-hidden="true">vs</div>
-              <TeamSide name={away} teamId={game.away_team_id} observed={observed === away} crestSize={crestSize} />
+              <TeamColumn
+                name={home}
+                teamId={game.home_team_id}
+                observed={observed === home}
+                crestSize={crestSize}
+                side="home"
+              />
+              <div className={styles.vsRail}>
+                <MatchupVs variant="board" />
+              </div>
+              <TeamColumn
+                name={away}
+                teamId={game.away_team_id}
+                observed={observed === away}
+                crestSize={crestSize}
+                side="away"
+              />
             </div>
             <SessionNote note={note} onNoteChange={onNoteChange} className={styles.noteAside} />
           </div>

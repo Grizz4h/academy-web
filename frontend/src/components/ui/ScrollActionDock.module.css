@@ -1,0 +1,159 @@
+.slot {
+  --scroll-dock-height: 5.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  width: 100%;
+}
+
+.slotActive {
+  margin-top: 1.2rem;
+  padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+}
+
+.slotParked .inner {
+  animation: scroll-dock-park 0.32s var(--motion-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+.sentinel {
+  width: 100%;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.slotActive:not(.slotParked) .sentinel {
+  min-height: var(--scroll-dock-height);
+}
+
+.dock {
+  z-index: 55;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.dockFloating {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  padding: 0 var(--page-pad-x, 1rem) calc(0.65rem + env(safe-area-inset-bottom, 0px));
+}
+
+.dockFloating .inner {
+  pointer-events: auto;
+}
+
+.dockParked {
+  position: relative;
+  width: 100%;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  max-width: 100%;
+  padding: 0.4rem 0.5rem 0.4rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 160, 175, 0.22);
+  background: rgba(8, 12, 22, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    border-color var(--motion-med, 220ms) var(--motion-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    background var(--motion-med, 220ms) var(--motion-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow var(--motion-med, 220ms) var(--motion-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.dockParked .inner {
+  border-color: rgba(120, 160, 175, 0.28);
+  background: rgba(8, 14, 24, 0.82);
+  box-shadow: 0 10px 28px rgba(2, 8, 20, 0.22);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  max-width: 100%;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+  padding: 0 0.15rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pageWithDock {
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+@keyframes scroll-dock-park {
+  from {
+    opacity: 0.9;
+    transform: translateY(0.45rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .slot {
+    --scroll-dock-height: 6.25rem;
+  }
+
+  .dockFloating .inner {
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    padding: 0.5rem 0.55rem 0.45rem;
+  }
+
+  .row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 160, 175, 0.35) transparent;
+    padding-bottom: 0.1rem;
+  }
+
+  .row > * {
+    flex: 0 0 auto;
+  }
+
+  .pageWithDock {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 769px) {
+  .dockFloating {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(720px, calc(100% - 2rem));
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slotParked .inner {
+    animation: none;
+  }
+
+  .inner {
+    transition: none;
+  }
+}

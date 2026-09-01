@@ -28,6 +28,7 @@ import GameStatsDevPanel from './GameStatsDevPanel'
 import { TeamCrest } from './TeamCrest'
 import setupStyles from '../../pages/SessionSetup.module.css'
 import styles from './LiveObservationPanel.module.css'
+import { MatchupVs } from './MatchupVs'
 
 export type LiveObservationFields = {
   league: string
@@ -573,8 +574,8 @@ export function LiveObservationPanel({
             ) : null}
           </div>
 
-          <div className={styles.vs} aria-hidden="true">
-            <span className={styles.vsMark}>VS</span>
+          <div className={styles.vsSlot}>
+            <MatchupVs />
           </div>
 
           <div className={styles.tileWrap}>

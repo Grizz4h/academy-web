@@ -1,3 +1,4 @@
+export { ScrollActionDock, scrollActionDockPageClass } from './ScrollActionDock'
 export { UiButton, UiButtonLink, buttonClassName } from './UiButton'
 export type { UiButtonVariant, UiButtonSize } from './UiButton'
 export { UiActionRow } from './UiActionRow'

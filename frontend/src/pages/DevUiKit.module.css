@@ -96,6 +96,10 @@
   color: rgba(143, 211, 223, 0.65);
 }
 
+.dockDemoSecond {
+  margin-top: 0.85rem;
+}
+
 @media (max-width: 640px) {
   .kpiRow {
     grid-template-columns: 1fr;

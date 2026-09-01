@@ -42,42 +42,62 @@
 .desktopRow {
   display: grid;
   gap: 0.85rem;
+  align-items: start;
 }
 
 .matchBoard {
+  --crest-size: 3rem;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: stretch;
-  gap: 0.45rem 0.55rem;
-  padding: 0.85rem 0.55rem;
+  justify-items: center;
+  column-gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.55rem 0.65rem;
   border-radius: 0.9rem;
   border: 1px solid rgba(148, 163, 184, 0.16);
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.35), rgba(8, 47, 73, 0.18));
 }
 
-.teamCol {
+.teamColumn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.28rem;
+  width: 100%;
   min-width: 0;
+  min-height: 100%;
   padding: 0.45rem 0.35rem 0.4rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
   text-align: center;
 }
 
-.teamColObserved {
-  position: relative;
+.teamColumnHome {
+  grid-column: 1;
 }
 
-.teamColObserved::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(45, 212, 191, 0.32);
-  background: rgba(13, 148, 136, 0.1);
-  pointer-events: none;
+.teamColumnAway {
+  grid-column: 3;
+}
+
+.teamColumnObserved {
+  border-color: rgba(45, 212, 191, 0.32);
+  background:
+    radial-gradient(ellipse 88% 70% at 50% 36%, rgba(45, 212, 191, 0.14), transparent 68%),
+    rgba(13, 148, 136, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.12);
+}
+
+.vsRail {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  padding: 0 0.25rem;
+  min-width: 2.75rem;
 }
 
 .crestSlot {
@@ -87,8 +107,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 3rem;
-  height: 3rem;
+  width: var(--crest-size);
+  height: var(--crest-size);
 }
 
 .teamName {
@@ -122,21 +142,16 @@
   text-transform: uppercase;
 }
 
-.vs {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 2.15rem;
-  height: 2.15rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  background: rgba(2, 12, 24, 0.55);
-  color: rgba(186, 230, 253, 0.82);
-  font-size: 0.64rem;
+.observedChipSpacer {
+  visibility: hidden;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  line-height: 1.2;
 }
 
 .metaRow {
@@ -207,39 +222,27 @@
   .desktopRow {
     grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
     gap: 0.85rem;
-    align-items: stretch;
   }
 
   .matchBoard {
-    gap: 0.65rem 0.85rem;
-    padding: 0.95rem 0.85rem;
+    --crest-size: 4.6rem;
+    column-gap: 1.1rem;
+    padding: 0.85rem 0.85rem 0.75rem;
   }
 
-  .crestSlot {
-    width: 4.6rem;
-    height: 4.6rem;
-  }
-
-  .teamCol {
-    gap: 0.45rem;
+  .teamColumn {
     padding: 0.55rem 0.45rem 0.5rem;
+    gap: 0.32rem;
   }
 
   .teamName {
     font-size: 1rem;
   }
 
-  .observedChip {
+  .observedChip,
+  .observedChipSpacer {
     font-size: 0.62rem;
     padding: 0.12rem 0.45rem;
-  }
-
-  .vs {
-    align-self: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    font-size: 0.72rem;
-    box-shadow: 0 0 0 5px rgba(8, 47, 73, 0.22);
   }
 
   .noteAside {
@@ -265,21 +268,16 @@
   }
 
   .matchBoard {
-    padding: 0.65rem 0.35rem;
-    gap: 0.3rem 0.35rem;
+    column-gap: 0.5rem;
+    padding: 0.65rem 0.35rem 0.55rem;
   }
 
-  .teamCol {
-    padding: 0.35rem 0.2rem 0.3rem;
+  .teamColumn {
+    padding: 0.4rem 0.25rem 0.35rem;
+    gap: 0.24rem;
   }
 
   .teamName {
     font-size: 0.76rem;
-  }
-
-  .vs {
-    width: 1.9rem;
-    height: 1.9rem;
-    font-size: 0.6rem;
   }
 }

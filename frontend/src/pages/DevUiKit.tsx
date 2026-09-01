@@ -5,6 +5,7 @@ import { CosmeticGlyph, MechanicGlyph } from '../components/visuals'
 import { RINQ_ICON_LABELS, RinQIcon, type RinQIconName } from '../components/icons'
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard'
 import {
+  ScrollActionDock,
   TapReveal,
   UiActionRow,
   UiButton,
@@ -52,6 +53,23 @@ export default function DevUiKit() {
           <UiButton size="sm">Weiter</UiButton>
           <UiButton size="sm">Abbrechen</UiButton>
         </UiActionRow>
+      </Card>
+
+      <Card surface="section">
+        <h2 className="ui-section-title">ScrollActionDock</h2>
+        <p className="ui-page-lead">
+          Schwebende Aktions-Pille: Hinweiszeile oben, Buttons in einer Reihe (1–3 Slots).
+          Scrollt mit, rastet am Seitenende ein. Session-Setup, aktive Session, Abschluss.
+        </p>
+        <ScrollActionDock enabled hint="1. Drittel · Bereit">
+          <UiButton size="sm" variant="secondary">← Zurück</UiButton>
+          <UiPill tone="ok">Gespeichert</UiPill>
+          <UiButton size="sm">Weiter →</UiButton>
+        </ScrollActionDock>
+        <ScrollActionDock enabled hint="Paarung wählen" className={styles.dockDemoSecond}>
+          <UiButton size="sm" variant="ghost">Abbrechen</UiButton>
+          <UiButton size="sm">Session starten</UiButton>
+        </ScrollActionDock>
       </Card>
 
       <Card surface="section">

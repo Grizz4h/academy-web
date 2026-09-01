@@ -1,0 +1,78 @@
+.vs {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.35rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mark {
+  display: block;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: clamp(1.85rem, 4.8vw, 2.65rem);
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--text-accent, #8fd3df);
+  -webkit-text-stroke: 0.5px rgba(110, 193, 212, 0.7);
+  text-shadow:
+    0 0 14px rgba(129, 221, 245, 0.5),
+    0 0 28px rgba(81, 145, 162, 0.32),
+    2px 3px 10px rgba(0, 0, 0, 0.42);
+  transform: skewX(-6deg);
+}
+
+.inline .mark {
+  font-size: clamp(1.25rem, 3.2vw, 1.75rem);
+  letter-spacing: 0.03em;
+  transform: skewX(-6deg) translateY(0.08rem);
+}
+
+.board {
+  padding: 0.1rem 0.5rem;
+}
+
+.board .mark {
+  font-size: clamp(2.35rem, 6.5vw, 3.75rem);
+  letter-spacing: 0.045em;
+  -webkit-text-stroke: 0.65px rgba(110, 193, 212, 0.75);
+  text-shadow:
+    0 0 18px rgba(129, 221, 245, 0.58),
+    0 0 36px rgba(81, 145, 162, 0.38),
+    2px 4px 12px rgba(0, 0, 0, 0.45);
+  transform: skewX(-6deg);
+}
+
+@media (max-width: 768px) {
+  .mark {
+    font-size: clamp(1.55rem, 7.5vw, 2rem);
+    letter-spacing: 0.03em;
+  }
+
+  .inline .mark {
+    font-size: clamp(1.15rem, 4.5vw, 1.45rem);
+  }
+
+  .board .mark {
+    font-size: clamp(2rem, 11vw, 3rem);
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    transform: none;
+  }
+
+  .inline .mark {
+    transform: none;
+  }
+
+  .board .mark {
+    transform: none;
+  }
+}

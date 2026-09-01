@@ -8,7 +8,7 @@ import { isDummySession, isProgressionEligibleSession, getRealSessions } from '.
 import { isDevNavEnabled } from '../config/featureFlags'
 import { getCompetencyFillFixture } from '../dev/competencyFixtures'
 import { buildDevSessionRewardRecap } from '../dev/rewardPreviewActions'
-import { UiButton } from '../components/ui'
+import { UiButton, ScrollActionDock, scrollActionDockPageClass } from '../components/ui'
 import { RinQIcon } from '../components/icons'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
@@ -369,11 +369,6 @@ export default function SessionPage() {
     }
   }
 
-  const sessionDockEndRef = useRef<HTMLDivElement | null>(null)
-  const [sessionDocked, setSessionDocked] = useState(false)
-  const completeDockEndRef = useRef<HTMLDivElement | null>(null)
-  const [completeDocked, setCompleteDocked] = useState(false)
-
   const showSessionAdvanceDock =
     session?.state !== 'COMPLETED' &&
     !sessionFinished &&
@@ -384,60 +379,8 @@ export default function SessionPage() {
   const showCompleteDock =
     session?.state === 'COMPLETED' || sessionFinished
 
-  useEffect(() => {
-    if (!showSessionAdvanceDock) {
-      setSessionDocked(false)
-      return
-    }
-    const node = sessionDockEndRef.current
-    if (!node) return
-
-    const update = () => {
-      const rect = node.getBoundingClientRect()
-      const vh = window.innerHeight || 0
-      // Park when natural slot reaches the float zone — also stays parked when scrolled past
-      setSessionDocked(rect.top <= vh - 12)
-    }
-
-    update()
-    const observer = new IntersectionObserver(update, { root: null, threshold: [0, 0.01, 1] })
-    observer.observe(node)
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
-    }
-  }, [showSessionAdvanceDock, currentPhase, session?.state])
-
-  useEffect(() => {
-    if (!showCompleteDock) {
-      setCompleteDocked(false)
-      return
-    }
-    const node = completeDockEndRef.current
-    if (!node) return
-
-    const update = () => {
-      const rect = node.getBoundingClientRect()
-      const vh = window.innerHeight || 0
-      setCompleteDocked(rect.top <= vh - 12)
-    }
-
-    // Wait a frame so reward/reflection layout settles
-    const raf = window.requestAnimationFrame(update)
-    const observer = new IntersectionObserver(update, { root: null, threshold: [0, 0.01, 1] })
-    observer.observe(node)
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
-    return () => {
-      window.cancelAnimationFrame(raf)
-      observer.disconnect()
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
-    }
-  }, [showCompleteDock, rewardRecapLoading, rewardRecap])
+  const [sessionDocked, setSessionDocked] = useState(true)
+  const [completeDocked, setCompleteDocked] = useState(true)
 
   const checkinMutation = useMutation({
     mutationFn: (data: { phase: string; answers: any; feedback?: string; next_task?: string; final?: boolean }) => api.saveCheckin(id!, data),
@@ -1646,7 +1589,7 @@ export default function SessionPage() {
 
   return (
     <div
-      className={`ui-page-shell ${showSessionAdvanceDock && !sessionDocked ? stickyStyles.pageWithSessionDock : ''} ${showCompleteDock && !completeDocked ? stickyStyles.pageWithCompleteDock : ''}`}
+      className={`ui-page-shell ${scrollActionDockPageClass(showSessionAdvanceDock, sessionDocked)} ${scrollActionDockPageClass(showCompleteDock, completeDocked)}`}
       style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
     >
       <header className="ui-page-header">
@@ -1747,68 +1690,59 @@ export default function SessionPage() {
               </div>
               )}
 
-              <div
-                ref={sessionDockEndRef}
-                className={`${stickyStyles.sessionDockSlot} ${showSessionAdvanceDock ? stickyStyles.sessionDockSlotActive : ''}`}
+              <ScrollActionDock
+                enabled={showSessionAdvanceDock}
+                resetKey={`${currentPhase}-${session?.state ?? 'none'}`}
+                onDockedChange={setSessionDocked}
+                hint={getPhaseTitle(currentPhase)}
+                htmlAttrs={{ 'data-session-sticky': 'true' }}
               >
-                {showSessionAdvanceDock ? (
-                  <div
-                    className={`${stickyStyles.sessionDock} ${sessionDocked ? stickyStyles.sessionDockParked : stickyStyles.sessionDockFloating}`}
-                    data-session-sticky="true"
-                  >
-                    <div className={stickyStyles.sessionDockInner}>
-                      <span className={stickyStyles.sessionDockHint}>{getPhaseTitle(currentPhase)}</span>
-                      <div className={stickyStyles.sessionDockRow}>
-                        {showSessionBack ? (
-                          <UiButton type="button" variant="secondary" size="sm" onClick={handleGoBack}>
-                            ← Zurück
-                          </UiButton>
-                        ) : null}
-                        <SyncStatusChip status={syncStatus} />
-                        {showSessionAdvance ? (
-                          <UiButton
-                            type="button"
-                            variant="primary"
-                            size="sm"
-                            onClick={handleAdvanceToNext}
-                            data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
-                            disabled={isAdvancing || (isFoundationSession && !foundationReady)}
-                          >
-                            {advanceCtaLabel}
-                          </UiButton>
-                        ) : null}
-                        {showDevFill ? (
-                          <UiButton
-                            type="button"
-                            variant="dev"
-                            size="sm"
-                            onClick={() => void handleDevFillDrill()}
-                            title={
-                              isDummySession(session)
-                                ? 'Füllt Antworten — Achtung: Dummy-Session erzeugt keine Competency-Evidence'
-                                : fillFixture?.label || 'Drill mit Testantworten füllen'
-                            }
-                          >
-                            DEV: Drill füllen
-                          </UiButton>
-                        ) : null}
-                        {showDevSkip ? (
-                          <UiButton
-                            type="button"
-                            variant="dev"
-                            size="sm"
-                            disabled={isAdvancing}
-                            onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
-                            title="Überspringt Drill-Pflicht und Microfeedback"
-                          >
-                            {devSkipLabel}
-                          </UiButton>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
+                {showSessionBack ? (
+                  <UiButton type="button" variant="secondary" size="sm" onClick={handleGoBack}>
+                    ← Zurück
+                  </UiButton>
                 ) : null}
-              </div>
+                <SyncStatusChip status={syncStatus} />
+                {showSessionAdvance ? (
+                  <UiButton
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={handleAdvanceToNext}
+                    data-tutorial-id={TUTORIAL_TARGET.sessionAdvance}
+                    disabled={isAdvancing || (isFoundationSession && !foundationReady)}
+                  >
+                    {advanceCtaLabel}
+                  </UiButton>
+                ) : null}
+                {showDevFill ? (
+                  <UiButton
+                    type="button"
+                    variant="dev"
+                    size="sm"
+                    onClick={() => void handleDevFillDrill()}
+                    title={
+                      isDummySession(session)
+                        ? 'Füllt Antworten — Achtung: Dummy-Session erzeugt keine Competency-Evidence'
+                        : fillFixture?.label || 'Drill mit Testantworten füllen'
+                    }
+                  >
+                    DEV: Drill füllen
+                  </UiButton>
+                ) : null}
+                {showDevSkip ? (
+                  <UiButton
+                    type="button"
+                    variant="dev"
+                    size="sm"
+                    disabled={isAdvancing}
+                    onClick={(e) => handleAdvanceToNext(e, { skipGates: true })}
+                    title="Überspringt Drill-Pflicht und Microfeedback"
+                  >
+                    {devSkipLabel}
+                  </UiButton>
+                ) : null}
+              </ScrollActionDock>
             </div>
           )}
         </div>
@@ -1918,23 +1852,16 @@ export default function SessionPage() {
         />
       )}
 
-      {showCompleteDock ? (
-        <div
-          ref={completeDockEndRef}
-          className={`${stickyStyles.completeDockSlot} ${stickyStyles.completeDockSlotActive}`}
-        >
-          <div
-            className={`${stickyStyles.completeDock} ${completeDocked ? stickyStyles.completeDockParked : stickyStyles.completeDockFloating}`}
-            data-session-complete-cta="true"
-          >
-            <div className={stickyStyles.completeDockInner}>
-              <UiButton type="button" variant="primary" onClick={() => navigate('/')}>
-                Zurück zur Übersicht
-              </UiButton>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <ScrollActionDock
+        enabled={showCompleteDock}
+        resetKey={`${rewardRecapLoading}-${Boolean(rewardRecap)}`}
+        onDockedChange={setCompleteDocked}
+        htmlAttrs={{ 'data-session-complete-cta': 'true' }}
+      >
+        <UiButton type="button" variant="primary" size="sm" onClick={() => navigate('/')}>
+          Zurück zur Übersicht
+        </UiButton>
+      </ScrollActionDock>
 
       {session?.state === 'ABORTED' && (
         <div className="card">
