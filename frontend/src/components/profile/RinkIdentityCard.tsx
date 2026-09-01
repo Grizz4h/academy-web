@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { getAvatarAsset, DEFAULT_AVATAR_ID } from '../../data/profile/avatarCatalog'
 import { getBannerAsset, DEFAULT_BANNER_ID } from '../../data/profile/bannerCatalog'
 import { getCoinAsset } from '../../data/profile/coinCatalog'
@@ -31,6 +32,8 @@ type RinkIdentityCardProps = {
   coinIds?: string[]
   hasAcademyPremium?: boolean
   premiumStatus?: PremiumStatusPresentation | null
+  /** Desktop: right column inside the card (e.g. billing). Mobile: below identity. */
+  aside?: ReactNode
 }
 
 function formatJersey(value: number | null | undefined): string | null {
@@ -45,6 +48,7 @@ export default function RinkIdentityCard({
   coinIds = [],
   hasAcademyPremium = false,
   premiumStatus = null,
+  aside = null,
 }: RinkIdentityCardProps) {
   const banner = getBannerAsset(profile.bannerId || DEFAULT_BANNER_ID) || getBannerAsset(DEFAULT_BANNER_ID)
   const title = resolveEquippedTitle(profile.profileTitle)
@@ -84,6 +88,16 @@ export default function RinkIdentityCard({
 
   return (
     <article className={`${styles.card} ${className}`}>
+      <header className={styles.brandBar} aria-label="rInQ ID">
+        <div className={styles.brandMark}>
+          <span className={styles.brandWord}>
+            r<span className={styles.brandAccent}>InQ</span>
+          </span>
+          <span className={styles.brandId}>ID</span>
+        </div>
+        <span className={styles.brandTagline}>Spielerprofil</span>
+      </header>
+
       <div className={styles.banner} style={banner ? { backgroundImage: `url(${banner.src})` } : undefined}>
         {emblemSrc && (
           <div className={styles.emblem} aria-hidden="true">
@@ -101,12 +115,13 @@ export default function RinkIdentityCard({
         ))}
       </div>
 
-      <div className={styles.body}>
-        <div className={styles.avatarWrap} data-avatar-rarity={avatarRarity}>
-          <img className={styles.avatar} src={avatarSrc} alt="" />
-        </div>
+      <div className={`${styles.body} ${aside ? styles.bodyWithAside : ''}`}>
+        <div className={styles.profileColumn}>
+          <div className={styles.avatarWrap} data-avatar-rarity={avatarRarity}>
+            <img className={styles.avatar} src={avatarSrc} alt="" />
+          </div>
 
-        <div className={styles.identity}>
+          <div className={styles.identity}>
           <div className={styles.nameRow}>
             <h2 className={styles.name}>{displayName}</h2>
             {hasAcademyPremium ? (
@@ -152,7 +167,9 @@ export default function RinkIdentityCard({
           {stats?.memberSince && (
             <p className={styles.since}>Aktiv seit {stats.memberSince}</p>
           )}
+          </div>
         </div>
+        {aside ? <div className={styles.aside}>{aside}</div> : null}
       </div>
     </article>
   )

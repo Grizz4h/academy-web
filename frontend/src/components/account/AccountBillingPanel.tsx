@@ -16,6 +16,8 @@ type AccountBillingPanelProps = {
   presentation: AcademyBillingPresentation
   billingLoading?: boolean
   billingError?: boolean
+  /** card = standalone section; embedded = inside rInQ ID hero */
+  variant?: 'card' | 'embedded'
 }
 
 export default function AccountBillingPanel({
@@ -24,42 +26,47 @@ export default function AccountBillingPanel({
   presentation,
   billingLoading = false,
   billingError = false,
+  variant = 'card',
 }: AccountBillingPanelProps) {
   const billingPortal = useBillingPortal()
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const busy = billingPortal.isPending
+  const embedded = variant === 'embedded'
   const showFreeLead = presentation.showCheckout && !hasAcademyPremium
   const detailIsWarn =
     presentation.badgeTone === 'warn' || presentation.badgeTone === 'danger'
 
-  return (
-    <Card surface="section">
-      <h2 className="ui-section-title">Abo</h2>
-
+  const content = (
+    <>
       {showFreeLead ? (
         <p className={styles.lead}>
-          Mit Premium schaltest du Track A2+ und weitere Inhalte frei.
+          {embedded
+            ? 'Track A2+ und weitere Inhalte mit Premium.'
+            : 'Mit Premium schaltest du Track A2+ und weitere Inhalte frei.'}
         </p>
       ) : null}
 
       {checkoutNotice === 'success' ? (
         <div className={styles.noticeOk}>
           <p>
-            Checkout bei Stripe abgeschlossen. Zugang folgt nach bestätigtem Webhook —
-            ggf. kurz neu laden.
+            Checkout abgeschlossen. Zugang folgt nach Webhook — ggf. kurz neu laden.
           </p>
-          <p className={styles.metaItem}>
-            14 Tage Widerruf:{' '}
-            <Link to={LEGAL_PUBLIC_PATHS.widerruf}>Widerrufsbelehrung</Link>
-            {' · '}
-            <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Vertrag widerrufen</Link>
-            {' · '}
-            <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Kündigen</Link>
-          </p>
+          {!embedded ? (
+            <p className={styles.metaItem}>
+              14 Tage Widerruf:{' '}
+              <Link to={LEGAL_PUBLIC_PATHS.widerruf}>Widerrufsbelehrung</Link>
+              {' · '}
+              <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Vertrag widerrufen</Link>
+              {' · '}
+              <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Kündigen</Link>
+            </p>
+          ) : null}
         </div>
       ) : null}
       {checkoutNotice === 'cancel' ? (
-        <p className={styles.noticeWarn}>Checkout abgebrochen. Du kannst jederzeit erneut freischalten.</p>
+        <p className={styles.noticeWarn}>
+          Checkout abgebrochen. Du kannst jederzeit erneut freischalten.
+        </p>
       ) : null}
 
       {billingLoading ? (
@@ -82,16 +89,20 @@ export default function AccountBillingPanel({
         </div>
       )}
 
-      <p className={styles.metaItem}>
+      <p className={embedded ? styles.legalCompact : styles.metaItem}>
         <Link to={LEGAL_PUBLIC_PATHS.agb}>AGB</Link>
         {' · '}
         <Link to={LEGAL_PUBLIC_PATHS.widerruf}>Widerruf</Link>
         {' · '}
         <Link to={LEGAL_PUBLIC_PATHS.datenschutz}>Datenschutz</Link>
-        {' · '}
-        <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Kündigen</Link>
-        {' · '}
-        <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Widerrufen</Link>
+        {!embedded ? (
+          <>
+            {' · '}
+            <Link to={LEGAL_PUBLIC_PATHS.kuendigen}>Kündigen</Link>
+            {' · '}
+            <Link to={LEGAL_PUBLIC_PATHS.widerrufAntrag}>Widerrufen</Link>
+          </>
+        ) : null}
       </p>
 
       <UiActionRow className={styles.actions}>
@@ -122,11 +133,27 @@ export default function AccountBillingPanel({
 
       {hasAcademyPremium && !presentation.canManage ? (
         <p className={styles.metaItem}>
-          Abo-Verwaltung erscheint hier nach dem nächsten Checkout.
+          Abo-Verwaltung erscheint nach dem nächsten Checkout.
         </p>
       ) : null}
 
       <PremiumCheckoutSheet open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
+    </>
+  )
+
+  if (embedded) {
+    return (
+      <div className={styles.embedded}>
+        <p className={styles.embeddedTitle}>Abo</p>
+        {content}
+      </div>
+    )
+  }
+
+  return (
+    <Card surface="section">
+      <h2 className="ui-section-title">Abo</h2>
+      {content}
     </Card>
   )
 }

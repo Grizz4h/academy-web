@@ -344,7 +344,7 @@ export default function AccountPage() {
       <div className={styles.page}>
         <header className="ui-page-header">
           <h1 className="ui-page-title">Account</h1>
-          <p className="ui-page-lead">Bitte melde dich an, um dein RINK-Profil zu bearbeiten.</p>
+          <p className="ui-page-lead">Bitte melde dich an, um dein rInQ-Profil zu bearbeiten.</p>
         </header>
       </div>
     )
@@ -374,31 +374,32 @@ export default function AccountPage() {
 
   return (
     <div className={`${styles.page} ui-page-shell ${showSaveBar ? styles.pageWithSaveDock : ''}`}>
-      <header className="ui-page-header">
-        <h1 className="ui-page-title">Account</h1>
-        <p className="ui-page-lead">
-          Baue deine RINK ID und speichere persönliche Präferenzen. Keine zweite Stats-Seite – nur Profil und Identität.
-        </p>
-      </header>
-
-      <AccountBillingPanel
-        hasAcademyPremium={hasAcademyPremium}
-        checkoutNotice={checkoutNotice}
-        presentation={billingPresentation}
-        billingLoading={billingQuery.isLoading}
-        billingError={billingQuery.isError}
-      />
-
-      <section className={styles.section}>
-        <h2 className="ui-section-title">RINK ID</h2>
+      <section className={styles.identityHero}>
         <RinkIdentityCard
           profile={draft}
           stats={identityStats}
           coinIds={ownedCoinIds}
           hasAcademyPremium={hasAcademyPremium}
           premiumStatus={premiumStatusForProfile}
+          aside={(
+            <AccountBillingPanel
+              variant="embedded"
+              hasAcademyPremium={hasAcademyPremium}
+              checkoutNotice={checkoutNotice}
+              presentation={billingPresentation}
+              billingLoading={billingQuery.isLoading}
+              billingError={billingQuery.isError}
+            />
+          )}
         />
       </section>
+
+      <header className="ui-page-header">
+        <h1 className="ui-page-title">Profil</h1>
+        <p className="ui-page-lead">
+          Personalisiere deine rInQ ID und speichere Präferenzen — ohne zweite Stats-Seite.
+        </p>
+      </header>
 
       <Card surface="section" className={styles.sectionCard}>
         <h2 className="ui-section-title">Progression & Achievements</h2>

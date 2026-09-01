@@ -573,7 +573,9 @@ export function LiveObservationPanel({
             ) : null}
           </div>
 
-          <div className={styles.vs} aria-hidden="true">VS</div>
+          <div className={styles.vs} aria-hidden="true">
+            <span className={styles.vsMark}>VS</span>
+          </div>
 
           <div className={styles.tileWrap}>
             <button

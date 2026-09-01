@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { Session } from '../api'
 import { TeamCrest } from '../components/game/TeamCrest'
 import { UiPill } from '../components/ui'
@@ -29,15 +30,17 @@ function TeamSide({
   name,
   teamId,
   observed,
+  crestSize,
 }: {
   name: string
   teamId?: string
   observed: boolean
+  crestSize: 'md' | 'lg'
 }) {
   return (
     <div className={[styles.teamCol, observed ? styles.teamColObserved : ''].filter(Boolean).join(' ')}>
       <span className={styles.crestSlot}>
-        <TeamCrest name={name} teamId={teamId} size="md" />
+        <TeamCrest name={name} teamId={teamId} size={crestSize} />
       </span>
       <p className={[styles.teamName, observed ? styles.teamNameObserved : ''].filter(Boolean).join(' ')}>
         {name}
@@ -80,6 +83,18 @@ export function SessionGameInfo({
   note,
   onNoteChange,
 }: SessionGameInfoProps) {
+  const [crestSize, setCrestSize] = useState<'md' | 'lg'>(() => (
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 769px)').matches ? 'lg' : 'md'
+  ))
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 769px)')
+    const sync = () => setCrestSize(mq.matches ? 'lg' : 'md')
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
   const game = session.game_info
   const home = game?.team_home || ''
   const away = game?.team_away || ''
@@ -130,9 +145,9 @@ export function SessionGameInfo({
         <>
           <div className={styles.desktopRow}>
             <div className={styles.matchBoard} aria-label={`${home} gegen ${away}`}>
-              <TeamSide name={home} teamId={game.home_team_id} observed={observed === home} />
+              <TeamSide name={home} teamId={game.home_team_id} observed={observed === home} crestSize={crestSize} />
               <div className={styles.vs} aria-hidden="true">vs</div>
-              <TeamSide name={away} teamId={game.away_team_id} observed={observed === away} />
+              <TeamSide name={away} teamId={game.away_team_id} observed={observed === away} crestSize={crestSize} />
             </div>
             <SessionNote note={note} onNoteChange={onNoteChange} className={styles.noteAside} />
           </div>

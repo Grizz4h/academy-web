@@ -23,15 +23,6 @@
     0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
-.stage::before {
-  content: '';
-  position: absolute;
-  inset: 18% 8%;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 999px;
-  pointer-events: none;
-}
-
 .header {
   position: relative;
   display: grid;
@@ -356,19 +347,29 @@
 }
 
 .vs {
+  position: relative;
   align-self: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #99f6e4;
-  background: rgba(6, 18, 28, 0.9);
-  border: 1px solid rgba(82, 229, 255, 0.4);
-  box-shadow: 0 0 18px rgba(82, 229, 255, 0.2);
+  flex-shrink: 0;
+  padding: 0.15rem 0.4rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.vsMark {
+  display: block;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: clamp(1.85rem, 4.8vw, 2.65rem);
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--text-accent, #8fd3df);
+  -webkit-text-stroke: 0.5px rgba(110, 193, 212, 0.7);
+  text-shadow:
+    0 0 14px rgba(129, 221, 245, 0.5),
+    0 0 28px rgba(81, 145, 162, 0.32),
+    2px 3px 10px rgba(0, 0, 0, 0.42);
+  transform: skewX(-6deg);
 }
 
 .tileWrap {
@@ -512,10 +513,9 @@
     padding: 0.7rem 0.45rem 0.65rem;
   }
 
-  .vs {
-    width: 2rem;
-    height: 2rem;
-    font-size: 0.6rem;
+  .vsMark {
+    font-size: clamp(1.55rem, 7.5vw, 2rem);
+    letter-spacing: 0.03em;
   }
 }
 
@@ -523,7 +523,8 @@
   .livePulse::before,
   .arena,
   .tileObserved,
-  .tileObserved:hover {
+  .tileObserved:hover,
+  .vsMark {
     animation: none;
     transform: none;
   }

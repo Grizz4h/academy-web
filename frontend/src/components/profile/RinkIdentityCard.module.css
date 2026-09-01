@@ -9,9 +9,75 @@
     var(--elev-featured-shadow, 0 18px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(81, 145, 162, 0.22));
 }
 
+.brandBar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem 0.55rem;
+  background:
+    linear-gradient(90deg, rgba(45, 212, 191, 0.12) 0%, rgba(5, 10, 20, 0.92) 28%, rgba(5, 10, 20, 0.96) 100%);
+  border-bottom: 1px solid rgba(81, 145, 162, 0.28);
+}
+
+.brandBar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #5eead4 0%, #5191a2 100%);
+}
+
+.brandMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-left: 0.35rem;
+}
+
+.brandWord {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #f7f7ff;
+  line-height: 1;
+}
+
+.brandAccent {
+  color: #99f6e4;
+}
+
+.brandId {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ccfbf1;
+  background: rgba(45, 212, 191, 0.16);
+  border: 1px solid rgba(45, 212, 191, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.brandTagline {
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(186, 230, 253, 0.62);
+  white-space: nowrap;
+}
+
 .banner {
   position: relative;
-  height: clamp(110px, 28vw, 160px);
+  height: clamp(100px, 24vw, 148px);
   background-color: #0d1d2e;
   background-size: cover;
   background-position: center;
@@ -67,7 +133,7 @@
 
 .sticker[data-slot='0'] {
   left: 0.7rem;
-  top: 0.65rem;
+  top: 0.55rem;
   transform: rotate(-11deg);
 }
 
@@ -99,6 +165,39 @@
 .body {
   position: relative;
   padding: 0 1rem 1.1rem;
+}
+
+.bodyWithAside {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 0 0;
+}
+
+.profileColumn {
+  position: relative;
+  padding: 0 1rem 1.1rem;
+  padding-top: 0.15rem;
+}
+
+.bodyWithAside .profileColumn {
+  min-width: 0;
+}
+
+.aside {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .bodyWithAside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    align-items: stretch;
+  }
+
+  .bodyWithAside .profileColumn {
+    padding: 0 1rem 1.15rem;
+  }
 }
 
 .avatarWrap {
@@ -211,6 +310,22 @@
 }
 
 @media (max-width: 520px) {
+  .brandBar {
+    padding: 0.55rem 0.85rem 0.5rem;
+  }
+
+  .brandTagline {
+    display: none;
+  }
+
+  .brandWord {
+    font-size: 0.98rem;
+  }
+
+  .profileColumn {
+    padding: 0 0.85rem 1rem;
+  }
+
   .body {
     padding: 0 0.85rem 1rem;
   }

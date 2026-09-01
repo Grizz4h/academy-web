@@ -1,3 +1,11 @@
+.identityHero {
+  margin-bottom: 0.25rem;
+}
+
+.page :global(.ui-page-header) {
+  margin-top: 0.15rem;
+}
+
 .page {
   display: flex;
   flex-direction: column;
