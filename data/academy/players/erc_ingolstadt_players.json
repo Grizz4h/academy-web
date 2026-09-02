@@ -1,6 +1,6 @@
 {
   "team_id": "erc_ingolstadt",
-  "updated_at": "2026-08-23T10:15:04.292597Z",
+  "updated_at": "2026-09-02T19:23:05.021157Z",
   "players": [
     {
       "player_name": "Philipp Krauß",
@@ -428,7 +428,7 @@
       "position": "Defender",
       "position_group": "defense",
       "nationality": "GER",
-      "age": 19,
+      "age": 20,
       "height_cm": 181,
       "weight_kg": 80.0,
       "birthplace": "Rosenheim",

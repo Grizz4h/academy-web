@@ -4,6 +4,12 @@
   "seasons": {
     "2025/26": [
       {
+        "id": "anaheim_ducks",
+        "name": "Anaheim Ducks",
+        "short": "ANA",
+        "division": "Pacific"
+      },
+      {
         "id": "boston_bruins",
         "name": "Boston Bruins",
         "short": "BOS",
@@ -16,40 +22,10 @@
         "division": "Atlantic"
       },
       {
-        "id": "detroit_red_wings",
-        "name": "Detroit Red Wings",
-        "short": "DET",
-        "division": "Atlantic"
-      },
-      {
-        "id": "florida_panthers",
-        "name": "Florida Panthers",
-        "short": "FLA",
-        "division": "Atlantic"
-      },
-      {
-        "id": "montreal_canadiens",
-        "name": "Montreal Canadiens",
-        "short": "MTL",
-        "division": "Atlantic"
-      },
-      {
-        "id": "ottawa_senators",
-        "name": "Ottawa Senators",
-        "short": "OTT",
-        "division": "Atlantic"
-      },
-      {
-        "id": "tampa_bay_lightning",
-        "name": "Tampa Bay Lightning",
-        "short": "TBL",
-        "division": "Atlantic"
-      },
-      {
-        "id": "toronto_maple_leafs",
-        "name": "Toronto Maple Leafs",
-        "short": "TOR",
-        "division": "Atlantic"
+        "id": "calgary_flames",
+        "name": "Calgary Flames",
+        "short": "CGY",
+        "division": "Pacific"
       },
       {
         "id": "carolina_hurricanes",
@@ -58,10 +34,70 @@
         "division": "Metropolitan"
       },
       {
+        "id": "chicago_blackhawks",
+        "name": "Chicago Blackhawks",
+        "short": "CHI",
+        "division": "Central"
+      },
+      {
+        "id": "colorado_avalanche",
+        "name": "Colorado Avalanche",
+        "short": "COL",
+        "division": "Central"
+      },
+      {
         "id": "columbus_blue_jackets",
         "name": "Columbus Blue Jackets",
         "short": "CBJ",
         "division": "Metropolitan"
+      },
+      {
+        "id": "dallas_stars",
+        "name": "Dallas Stars",
+        "short": "DAL",
+        "division": "Central"
+      },
+      {
+        "id": "detroit_red_wings",
+        "name": "Detroit Red Wings",
+        "short": "DET",
+        "division": "Atlantic"
+      },
+      {
+        "id": "edmonton_oilers",
+        "name": "Edmonton Oilers",
+        "short": "EDM",
+        "division": "Pacific"
+      },
+      {
+        "id": "florida_panthers",
+        "name": "Florida Panthers",
+        "short": "FLA",
+        "division": "Atlantic"
+      },
+      {
+        "id": "los_angeles_kings",
+        "name": "Los Angeles Kings",
+        "short": "LAK",
+        "division": "Pacific"
+      },
+      {
+        "id": "minnesota_wild",
+        "name": "Minnesota Wild",
+        "short": "MIN",
+        "division": "Central"
+      },
+      {
+        "id": "montreal_canadiens",
+        "name": "Montréal Canadiens",
+        "short": "MTL",
+        "division": "Atlantic"
+      },
+      {
+        "id": "nashville_predators",
+        "name": "Nashville Predators",
+        "short": "NSH",
+        "division": "Central"
       },
       {
         "id": "new_jersey_devils",
@@ -82,6 +118,12 @@
         "division": "Metropolitan"
       },
       {
+        "id": "ottawa_senators",
+        "name": "Ottawa Senators",
+        "short": "OTT",
+        "division": "Atlantic"
+      },
+      {
         "id": "philadelphia_flyers",
         "name": "Philadelphia Flyers",
         "short": "PHI",
@@ -92,90 +134,6 @@
         "name": "Pittsburgh Penguins",
         "short": "PIT",
         "division": "Metropolitan"
-      },
-      {
-        "id": "washington_capitals",
-        "name": "Washington Capitals",
-        "short": "WSH",
-        "division": "Metropolitan"
-      },
-      {
-        "id": "utah_mammoth",
-        "name": "Utah Mammoth",
-        "short": "UTA",
-        "division": "Central"
-      },
-      {
-        "id": "arizona_coyotes",
-        "name": "Arizona Coyotes",
-        "short": "ARI",
-        "division": "Central"
-      },
-      {
-        "id": "chicago_blackhawks",
-        "name": "Chicago Blackhawks",
-        "short": "CHI",
-        "division": "Central"
-      },
-      {
-        "id": "colorado_avalanche",
-        "name": "Colorado Avalanche",
-        "short": "COL",
-        "division": "Central"
-      },
-      {
-        "id": "dallas_stars",
-        "name": "Dallas Stars",
-        "short": "DAL",
-        "division": "Central"
-      },
-      {
-        "id": "minnesota_wild",
-        "name": "Minnesota Wild",
-        "short": "MIN",
-        "division": "Central"
-      },
-      {
-        "id": "nashville_predators",
-        "name": "Nashville Predators",
-        "short": "NSH",
-        "division": "Central"
-      },
-      {
-        "id": "st_louis_blues",
-        "name": "St. Louis Blues",
-        "short": "STL",
-        "division": "Central"
-      },
-      {
-        "id": "winnipeg_jets",
-        "name": "Winnipeg Jets",
-        "short": "WPG",
-        "division": "Central"
-      },
-      {
-        "id": "anaheim_ducks",
-        "name": "Anaheim Ducks",
-        "short": "ANA",
-        "division": "Pacific"
-      },
-      {
-        "id": "calgary_flames",
-        "name": "Calgary Flames",
-        "short": "CGY",
-        "division": "Pacific"
-      },
-      {
-        "id": "edmonton_oilers",
-        "name": "Edmonton Oilers",
-        "short": "EDM",
-        "division": "Pacific"
-      },
-      {
-        "id": "los_angeles_kings",
-        "name": "Los Angeles Kings",
-        "short": "LAK",
-        "division": "Pacific"
       },
       {
         "id": "san_jose_sharks",
@@ -190,6 +148,30 @@
         "division": "Pacific"
       },
       {
+        "id": "st_louis_blues",
+        "name": "St. Louis Blues",
+        "short": "STL",
+        "division": "Central"
+      },
+      {
+        "id": "tampa_bay_lightning",
+        "name": "Tampa Bay Lightning",
+        "short": "TBL",
+        "division": "Atlantic"
+      },
+      {
+        "id": "toronto_maple_leafs",
+        "name": "Toronto Maple Leafs",
+        "short": "TOR",
+        "division": "Atlantic"
+      },
+      {
+        "id": "utah_mammoth",
+        "name": "Utah Mammoth",
+        "short": "UTA",
+        "division": "Central"
+      },
+      {
         "id": "vancouver_canucks",
         "name": "Vancouver Canucks",
         "short": "VAN",
@@ -200,10 +182,28 @@
         "name": "Vegas Golden Knights",
         "short": "VGK",
         "division": "Pacific"
+      },
+      {
+        "id": "washington_capitals",
+        "name": "Washington Capitals",
+        "short": "WSH",
+        "division": "Metropolitan"
+      },
+      {
+        "id": "winnipeg_jets",
+        "name": "Winnipeg Jets",
+        "short": "WPG",
+        "division": "Central"
       }
     ],
     "2026/27": [
       {
+        "id": "anaheim_ducks",
+        "name": "Anaheim Ducks",
+        "short": "ANA",
+        "division": "Pacific"
+      },
+      {
         "id": "boston_bruins",
         "name": "Boston Bruins",
         "short": "BOS",
@@ -216,40 +216,10 @@
         "division": "Atlantic"
       },
       {
-        "id": "detroit_red_wings",
-        "name": "Detroit Red Wings",
-        "short": "DET",
-        "division": "Atlantic"
-      },
-      {
-        "id": "florida_panthers",
-        "name": "Florida Panthers",
-        "short": "FLA",
-        "division": "Atlantic"
-      },
-      {
-        "id": "montreal_canadiens",
-        "name": "Montreal Canadiens",
-        "short": "MTL",
-        "division": "Atlantic"
-      },
-      {
-        "id": "ottawa_senators",
-        "name": "Ottawa Senators",
-        "short": "OTT",
-        "division": "Atlantic"
-      },
-      {
-        "id": "tampa_bay_lightning",
-        "name": "Tampa Bay Lightning",
-        "short": "TBL",
-        "division": "Atlantic"
-      },
-      {
-        "id": "toronto_maple_leafs",
-        "name": "Toronto Maple Leafs",
-        "short": "TOR",
-        "division": "Atlantic"
+        "id": "calgary_flames",
+        "name": "Calgary Flames",
+        "short": "CGY",
+        "division": "Pacific"
       },
       {
         "id": "carolina_hurricanes",
@@ -258,10 +228,70 @@
         "division": "Metropolitan"
       },
       {
+        "id": "chicago_blackhawks",
+        "name": "Chicago Blackhawks",
+        "short": "CHI",
+        "division": "Central"
+      },
+      {
+        "id": "colorado_avalanche",
+        "name": "Colorado Avalanche",
+        "short": "COL",
+        "division": "Central"
+      },
+      {
         "id": "columbus_blue_jackets",
         "name": "Columbus Blue Jackets",
         "short": "CBJ",
         "division": "Metropolitan"
+      },
+      {
+        "id": "dallas_stars",
+        "name": "Dallas Stars",
+        "short": "DAL",
+        "division": "Central"
+      },
+      {
+        "id": "detroit_red_wings",
+        "name": "Detroit Red Wings",
+        "short": "DET",
+        "division": "Atlantic"
+      },
+      {
+        "id": "edmonton_oilers",
+        "name": "Edmonton Oilers",
+        "short": "EDM",
+        "division": "Pacific"
+      },
+      {
+        "id": "florida_panthers",
+        "name": "Florida Panthers",
+        "short": "FLA",
+        "division": "Atlantic"
+      },
+      {
+        "id": "los_angeles_kings",
+        "name": "Los Angeles Kings",
+        "short": "LAK",
+        "division": "Pacific"
+      },
+      {
+        "id": "minnesota_wild",
+        "name": "Minnesota Wild",
+        "short": "MIN",
+        "division": "Central"
+      },
+      {
+        "id": "montreal_canadiens",
+        "name": "Montréal Canadiens",
+        "short": "MTL",
+        "division": "Atlantic"
+      },
+      {
+        "id": "nashville_predators",
+        "name": "Nashville Predators",
+        "short": "NSH",
+        "division": "Central"
       },
       {
         "id": "new_jersey_devils",
@@ -282,6 +312,12 @@
         "division": "Metropolitan"
       },
       {
+        "id": "ottawa_senators",
+        "name": "Ottawa Senators",
+        "short": "OTT",
+        "division": "Atlantic"
+      },
+      {
         "id": "philadelphia_flyers",
         "name": "Philadelphia Flyers",
         "short": "PHI",
@@ -292,90 +328,6 @@
         "name": "Pittsburgh Penguins",
         "short": "PIT",
         "division": "Metropolitan"
-      },
-      {
-        "id": "washington_capitals",
-        "name": "Washington Capitals",
-        "short": "WSH",
-        "division": "Metropolitan"
-      },
-      {
-        "id": "utah_mammoth",
-        "name": "Utah Mammoth",
-        "short": "UTA",
-        "division": "Central"
-      },
-      {
-        "id": "arizona_coyotes",
-        "name": "Arizona Coyotes",
-        "short": "ARI",
-        "division": "Central"
-      },
-      {
-        "id": "chicago_blackhawks",
-        "name": "Chicago Blackhawks",
-        "short": "CHI",
-        "division": "Central"
-      },
-      {
-        "id": "colorado_avalanche",
-        "name": "Colorado Avalanche",
-        "short": "COL",
-        "division": "Central"
-      },
-      {
-        "id": "dallas_stars",
-        "name": "Dallas Stars",
-        "short": "DAL",
-        "division": "Central"
-      },
-      {
-        "id": "minnesota_wild",
-        "name": "Minnesota Wild",
-        "short": "MIN",
-        "division": "Central"
-      },
-      {
-        "id": "nashville_predators",
-        "name": "Nashville Predators",
-        "short": "NSH",
-        "division": "Central"
-      },
-      {
-        "id": "st_louis_blues",
-        "name": "St. Louis Blues",
-        "short": "STL",
-        "division": "Central"
-      },
-      {
-        "id": "winnipeg_jets",
-        "name": "Winnipeg Jets",
-        "short": "WPG",
-        "division": "Central"
-      },
-      {
-        "id": "anaheim_ducks",
-        "name": "Anaheim Ducks",
-        "short": "ANA",
-        "division": "Pacific"
-      },
-      {
-        "id": "calgary_flames",
-        "name": "Calgary Flames",
-        "short": "CGY",
-        "division": "Pacific"
-      },
-      {
-        "id": "edmonton_oilers",
-        "name": "Edmonton Oilers",
-        "short": "EDM",
-        "division": "Pacific"
-      },
-      {
-        "id": "los_angeles_kings",
-        "name": "Los Angeles Kings",
-        "short": "LAK",
-        "division": "Pacific"
       },
       {
         "id": "san_jose_sharks",
@@ -390,6 +342,30 @@
         "division": "Pacific"
       },
       {
+        "id": "st_louis_blues",
+        "name": "St. Louis Blues",
+        "short": "STL",
+        "division": "Central"
+      },
+      {
+        "id": "tampa_bay_lightning",
+        "name": "Tampa Bay Lightning",
+        "short": "TBL",
+        "division": "Atlantic"
+      },
+      {
+        "id": "toronto_maple_leafs",
+        "name": "Toronto Maple Leafs",
+        "short": "TOR",
+        "division": "Atlantic"
+      },
+      {
+        "id": "utah_mammoth",
+        "name": "Utah Mammoth",
+        "short": "UTA",
+        "division": "Central"
+      },
+      {
         "id": "vancouver_canucks",
         "name": "Vancouver Canucks",
         "short": "VAN",
@@ -400,6 +376,18 @@
         "name": "Vegas Golden Knights",
         "short": "VGK",
         "division": "Pacific"
+      },
+      {
+        "id": "washington_capitals",
+        "name": "Washington Capitals",
+        "short": "WSH",
+        "division": "Metropolitan"
+      },
+      {
+        "id": "winnipeg_jets",
+        "name": "Winnipeg Jets",
+        "short": "WPG",
+        "division": "Central"
       }
     ]
   }

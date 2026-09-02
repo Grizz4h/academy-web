@@ -1,5 +1,8 @@
 import type { CatalogGame } from '../../api'
 import { getCatalogTeamsForLeague } from '../../data/teamCatalog'
+import type { ScheduleLeague } from '../../features/schedule/scheduleLeagues'
+import { SCHEDULE_LEAGUES } from '../../features/schedule/scheduleLeagues'
+import { inferSplitSeasonLabelForDate } from '../../stats/seasonNormalization'
 
 export const DEV_FIXTURE_PROVIDER = 'dev_fixture'
 
@@ -47,13 +50,15 @@ function dummyGame(params: {
   status: CatalogGame['status']
   score?: CatalogGame['score']
   stats?: CatalogGame['stats']
+  phaseId?: string
+  phaseLabel?: string
 }): CatalogGame {
   return {
     id: dummyId(params.league, params.season, params.slug),
     league_id: params.league,
     season_id: params.season,
-    phase_id: 'hauptrunde',
-    phase_label: 'Hauptrunde',
+    phase_id: params.phaseId || 'hauptrunde',
+    phase_label: params.phaseLabel || 'Hauptrunde',
     matchday: params.matchday,
     date: params.date,
     time: params.time || '19:30',
@@ -193,4 +198,77 @@ export function buildDevFixtureGames(params: {
       },
     }),
   ]
+}
+
+type ShowcaseSlot = {
+  time: string
+  status: CatalogGame['status']
+  score?: CatalogGame['score']
+}
+
+/** Rich cross-league slate for Dev UI preview — never persisted. */
+export function buildDevTodayShowcaseByLeague(date: string): Record<ScheduleLeague, CatalogGame[]> {
+  const referenceDate = new Date(`${date}T12:00:00`)
+  const season = inferSplitSeasonLabelForDate(referenceDate)
+  const out = {} as Record<ScheduleLeague, CatalogGame[]>
+
+  const leagueSlots: Record<ScheduleLeague, ShowcaseSlot[]> = {
+    DEL: [
+      { time: '17:00', status: 'final', score: { home: 3, away: 2 } },
+      { time: '17:30', status: 'live' },
+      { time: '19:00', status: 'scheduled' },
+      { time: '19:30', status: 'scheduled' },
+    ],
+    DEL2: [
+      { time: '18:00', status: 'scheduled' },
+      { time: '19:00', status: 'live' },
+      { time: '19:30', status: 'scheduled' },
+    ],
+    CHL: [
+      { time: '18:30', status: 'scheduled' },
+      { time: '20:00', status: 'scheduled' },
+    ],
+    U20_DNL: [
+      { time: '16:00', status: 'final', score: { home: 4, away: 1 } },
+      { time: '18:00', status: 'scheduled' },
+      { time: '19:30', status: 'scheduled' },
+    ],
+    NHL: [
+      { time: '01:00', status: 'final', score: { home: 2, away: 5 } },
+      { time: '03:30', status: 'final', score: { home: 1, away: 1 } },
+      { time: '22:00', status: 'scheduled' },
+      { time: '22:30', status: 'scheduled' },
+    ],
+  }
+
+  SCHEDULE_LEAGUES.forEach((league) => {
+    const teams = teamsForFixtures(league, season)
+    const [homeA, awayA, homeB, awayB] = teams
+    const pairings = [
+      [homeA, awayA],
+      [homeB, awayB],
+      [homeA, awayB],
+      [awayA, homeB],
+    ] as const
+
+    out[league] = leagueSlots[league].map((slot, index) => {
+      const [home, away] = pairings[index] || pairings[0]
+      return dummyGame({
+        league,
+        season,
+        slug: `showcase_${date.replace(/-/g, '')}_${index + 1}`,
+        matchday: 12,
+        date,
+        time: slot.time,
+        home,
+        away,
+        status: slot.status,
+        score: slot.score,
+        phaseId: league === 'U20_DNL' ? 'finding_a_g1' : 'hauptrunde',
+        phaseLabel: league === 'U20_DNL' ? 'Findung A · Gruppe 1' : 'Hauptrunde',
+      })
+    })
+  })
+
+  return out
 }

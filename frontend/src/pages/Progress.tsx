@@ -346,7 +346,7 @@ export default function Progress() {
 
   if (!user) {
     return (
-      <div className={styles.page}>
+      <div className={`${styles.page} ui-page-shell`}>
         <header className="ui-page-header">
           <h1 className="ui-page-title">Stats</h1>
           <p className="ui-page-lead">Melde dich an, um Fortschritt, Teams und Belohnungen zu sehen.</p>

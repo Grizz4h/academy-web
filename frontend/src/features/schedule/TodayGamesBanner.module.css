@@ -1,0 +1,48 @@
+.wrap {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.summary {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(241, 245, 249, 0.96);
+}
+
+.lead {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(203, 213, 225, 0.78);
+}
+
+.chips {
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding-bottom: 0.1rem;
+}
+
+.chips::-webkit-scrollbar {
+  height: 4px;
+}
+
+@media (max-width: 768px) {
+  .chips {
+    margin-inline: -0.15rem;
+    padding-inline: 0.15rem;
+  }
+}

@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
@@ -20,6 +21,13 @@ type AnchoredPopoverProps = {
   id?: string
   ariaLabel?: string
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
+  /** Close on outside tap, Escape, and tap on panel surface (not buttons/links/inputs). */
+  onDismiss?: () => void
+  /**
+   * When onDismiss is set, tapping the panel closes it unless the target is interactive.
+   * Default true.
+   */
+  dismissOnContentClick?: boolean
   preferredWidth?: number
   align?: AnchoredPopoverAlign
 }
@@ -55,6 +63,15 @@ function readViewport(): ViewportBox {
   }
 }
 
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false
+  return Boolean(
+    target.closest(
+      'button, a[href], input, select, textarea, label, [role="button"], [data-popover-no-dismiss]',
+    ),
+  )
+}
+
 function computePosition(
   anchor: HTMLElement,
   popover: HTMLElement | null,
@@ -65,12 +82,12 @@ function computePosition(
   const gap = 8
   const vp = readViewport()
   const rect = anchor.getBoundingClientRect()
-  const popupWidth = Math.min(preferredWidth, Math.max(160, vp.width - margin * 2))
-  const maxHeight = Math.max(140, vp.height - margin * 2)
+  const popupWidth = Math.min(preferredWidth, Math.max(180, vp.width - margin * 2))
+  const maxHeight = Math.max(160, vp.height - margin * 2)
 
   // Prefer measured height; avoid tiny guesses that flip placement and cause jumps.
-  const measured = popover?.offsetHeight ?? 0
-  const popupHeight = Math.min(measured > 0 ? measured : Math.min(220, maxHeight * 0.55), maxHeight)
+  const measured = popover?.scrollHeight ?? popover?.offsetHeight ?? 0
+  const popupHeight = Math.min(measured > 0 ? measured : Math.min(260, maxHeight * 0.65), maxHeight)
 
   let left = rect.left
   if (align === 'right') left = rect.right - popupWidth
@@ -92,6 +109,7 @@ function computePosition(
     width: `${Math.round(popupWidth)}px`,
     maxHeight: `${Math.round(maxHeight)}px`,
     overflowY: 'auto',
+    overflowX: 'hidden',
     WebkitOverflowScrolling: 'touch',
     zIndex: 220,
   }
@@ -106,7 +124,9 @@ export const AnchoredPopover = forwardRef<HTMLDivElement, AnchoredPopoverProps>(
     id,
     ariaLabel,
     onClick,
-    preferredWidth = 260,
+    onDismiss,
+    dismissOnContentClick = true,
+    preferredWidth = 300,
     align = 'left',
   },
   ref,
@@ -178,6 +198,28 @@ export const AnchoredPopover = forwardRef<HTMLDivElement, AnchoredPopoverProps>(
     }
   }, [open, anchorRef, preferredWidth, align])
 
+  useEffect(() => {
+    if (!open || !onDismiss) return
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null
+      if (!target) return
+      if (anchorRef.current?.contains(target)) return
+      if (innerRef.current?.contains(target)) return
+      onDismiss()
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onDismiss()
+    }
+
+    document.addEventListener('pointerdown', onPointerDown, true)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown, true)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open, onDismiss, anchorRef])
+
   if (!open) return null
 
   return createPortal(
@@ -194,7 +236,12 @@ export const AnchoredPopover = forwardRef<HTMLDivElement, AnchoredPopoverProps>(
         .filter(Boolean)
         .join(' ')}
       style={style}
-      onClick={onClick}
+      onClick={(event) => {
+        onClick?.(event)
+        if (!onDismiss || dismissOnContentClick === false) return
+        if (isInteractiveTarget(event.target)) return
+        onDismiss()
+      }}
     >
       {children}
     </div>,

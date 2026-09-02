@@ -515,11 +515,13 @@ export function uniqueMatchdaysForDate(games: CatalogGame[], date: string): numb
   return Array.from(days).sort((a, b) => a - b)
 }
 
-export function formatGameTimeLabel(time?: string): string {
+export function formatGameTimeLabel(time?: string, options?: { omitSuffix?: boolean }): string {
   if (!time) return ''
   const trimmed = time.trim()
   if (!trimmed) return ''
-  return trimmed.endsWith(' Uhr') ? trimmed : `${trimmed} Uhr`
+  const clock = trimmed.replace(/ Uhr$/, '')
+  if (options?.omitSuffix) return clock
+  return trimmed.endsWith(' Uhr') ? trimmed : `${clock} Uhr`
 }
 
 export function formatCatalogGameOptionLabel(game: CatalogGame): string {
@@ -550,4 +552,45 @@ export function formatGameStatusLabel(game: CatalogGame, hideSpoilers = false): 
   if (status === 'live') return 'Live'
   if (status === 'scheduled') return 'Geplant'
   return game.status || 'Geplant'
+}
+
+/** Local kickoff ms from catalog date + HH:MM time, or null if unknown. */
+export function catalogGameKickoffMs(game: CatalogGame): number | null {
+  if (!game.date) return null
+  const raw = String(game.time || '').trim().replace(/\s*Uhr$/i, '')
+  const match = raw.match(/^(\d{1,2}):(\d{2})$/)
+  if (!match) return null
+  const hours = match[1].padStart(2, '0')
+  const minutes = match[2]
+  const kickoff = new Date(`${game.date}T${hours}:${minutes}:00`)
+  if (Number.isNaN(kickoff.getTime())) return null
+  return kickoff.getTime()
+}
+
+/**
+ * Spoiler-free game state for strip + calendar: Geplant · Live · Beendet.
+ * Uses import status/score first; if still scheduled, infers from kickoff clock.
+ */
+export function formatGameStripStatusLabel(game: CatalogGame, nowMs: number = Date.now()): 'Geplant' | 'Live' | 'Beendet' {
+  const status = String(game.status || '').toLowerCase()
+  if (status === 'live') return 'Live'
+  if (status === 'final' || status === 'finished' || status === 'off') return 'Beendet'
+  if (game.score) return 'Beendet'
+
+  const kickoffMs = catalogGameKickoffMs(game)
+  if (kickoffMs != null) {
+    const liveWindowMs = 3 * 60 * 60 * 1000
+    if (nowMs < kickoffMs) return 'Geplant'
+    if (nowMs < kickoffMs + liveWindowMs) return 'Live'
+    return 'Beendet'
+  }
+
+  if (game.date) {
+    const today = localTodayIsoDate(new Date(nowMs))
+    if (game.date < today) return 'Beendet'
+    if (game.date > today) return 'Geplant'
+  }
+
+  if (status === 'scheduled') return 'Geplant'
+  return 'Geplant'
 }

@@ -1,0 +1,157 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.calendarCard,
+.detailCard {
+  margin-bottom: 0 !important;
+}
+
+.detailHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.detailHeader :global(.ui-section-title) {
+  margin: 0;
+}
+
+.spoilerToggle {
+  margin: 0;
+}
+
+.monthNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.monthTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(241, 245, 249, 0.96);
+}
+
+.monthBtn {
+  all: unset;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: rgba(226, 232, 240, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.monthBtn:hover,
+.monthBtn:focus-visible {
+  border-color: rgba(52, 211, 153, 0.42);
+  outline: none;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.weekdays {
+  margin-bottom: 0.35rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(148, 163, 184, 0.88);
+  text-align: center;
+}
+
+.day {
+  all: unset;
+  cursor: pointer;
+  min-height: 3.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  display: grid;
+  place-items: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.day:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.dayHasGames:not(:disabled) {
+  border-color: rgba(52, 211, 153, 0.28);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.daySelected:not(:disabled) {
+  border-color: rgba(52, 211, 153, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.35);
+}
+
+.dayToday:not(:disabled) .dayNumber {
+  color: rgba(167, 243, 208, 0.98);
+}
+
+.dayNumber {
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: rgba(241, 245, 249, 0.94);
+}
+
+.dayBadge {
+  position: absolute;
+  right: 0.28rem;
+  bottom: 0.24rem;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  color: rgba(6, 24, 20, 0.95);
+  background: rgba(110, 231, 183, 0.92);
+}
+
+.leagueBlocks {
+  display: grid;
+  gap: 1rem;
+}
+
+.leagueBlock {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.note {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  color: rgba(148, 163, 184, 0.92);
+}
+
+@media (max-width: 768px) {
+  .day {
+    min-height: 2.6rem;
+  }
+
+  .dayBadge {
+    right: 0.15rem;
+    bottom: 0.12rem;
+  }
+}

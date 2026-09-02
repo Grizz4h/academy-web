@@ -28,9 +28,9 @@
     padding: var(--page-pad-y, 1rem) var(--page-pad-x, 0.7rem);
   }
 
-  /* Sticky session bar: enough clearance so sidequest buttons stay tappable */
+  /* Sticky session bar: clearance for sidequest buttons + compact scroll dock */
   .app:has([data-session-sticky="true"]) .container {
-    padding-bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(6.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
 

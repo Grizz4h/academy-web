@@ -24,18 +24,69 @@ penny-del.org → PennyDelScheduleImporter → data/games/del_*.json → /api/ga
 penny-del.org/teams/…/uebersicht → logo_importer → frontend/public/teams/del + delTeamLogos.json
 ```
 
+## DEL2
+
+```text
+del-2.org Spielseiten → Del2ScheduleImporter → data/games/del2_*.json → /api/games
+del-2.org Clubs / esvk.de → del2_logo_importer → frontend/public/teams/del2 + del2TeamLogos.json
+```
+
+## CHL
+
+Offizielle JSON-Feeds (kein HTML-Scrape):
+
+```text
+chl.hockey/api/s3?q=schedule-…json → ChlScheduleImporter → data/games/chl_*.json → /api/games
+Cloudinary chl-prod/assets/teams/{externalId} → chl_logo_importer → frontend/public/teams/chl + chlTeamLogos.json
+DEL-Overlap (Berlin, Ingolstadt, Mannheim, Haie, Bremerhaven) → reuse delTeamLogos
+```
+
+## NHL
+
+Offizielle JSON-Feeds:
+
+```text
+api-web.nhle.com/v1/schedule/{date} → NhlScheduleImporter → data/games/nhl_*.json → /api/games
+assets.nhle.com/logos/nhl/svg/{TRI}_light.svg → nhl_logo_importer → frontend/public/teams/nhl + nhlTeamLogos.json
+```
+
+## U20 DNL
+
+DEB LIVE über öffentliche hockeydata Schedule-API (Widget-Key nur zur Laufzeit aus der Seite, nicht im Repo):
+
+```text
+deb-online.live/liga/herren/u20-dnl/ → api.hockeydata.net/data/ebel/Schedule
+  → DnlScheduleImporter → data/games/u20_dnl_*.json → /api/games
+Parent-Club-Crests (DEL/DEL2) + hockeydata team-logos → dnl_logo_importer → u20DnlTeamLogos.json
+```
+
+Saisonfluss (UI: Staffel-Unterfilter + Runde):
+
+```text
+Findung A · Gruppe 1 / Gruppe 2  →  Top Division | Quali 1   (Division 1)
+parallel: Division 2 · Division 3 Nord / Süd
+danach: Pre-Playoffs · Playoffs · Playdowns
+25/26: Div 2 = „Findung B“, Div 3 = „Quali 3 Nord/Süd“
+```
+
+Spieltage: hockeydata `gameDay` nicht 1:1 übernehmen — Nachholer an anderen Daten bekommen oft eine eigene Nummer.
+Importer baut Spieltage neu: bei N Teams hat ein Spieltag N/2 Partien, jedes Team höchstens 1× (Daten dürfen über mehrere Kalendertage gehen).
+
 ## Andere Ligen
 
 Keine Website scrapen, keine kostenpflichtige API, keine fragilen URLs. Adapter später an denselben kanonischen `CatalogGame`-Layer hängen.
 
-## Dummy-Games (nur Dev Mode)
+## Dummy-Games (nur DevLab)
 
 ```text
-echte Games → echte Games
-keine echten Games + Dev Mode → Dummy-Fixtures (isDummy: true, DEV · TESTSPIEL)
-keine echten Games + normal → Empty State
+echte Games → echte Games (Live-Leiste unter TopNav)
+keine echten Games heute → Leiste ausblenden (kein Empty-Banner)
+Dummy-Spieltag-Toggle → nur DevLab-Vorschau, nie die Live-Leiste
 ```
 
-Dummy nie in `data/games/` schreiben, keine PENNY-IDs vortäuschen, keine Stats/Achievements beeinflussen. Sobald echte Games da sind, verschwindet der Fallback von selbst.
+Dummy nie in `data/games/` schreiben, keine PENNY-IDs vortäuschen, keine Stats/Achievements beeinflussen.
+
+Live-Leiste: `TodayGamesStripBar` → `useTodayGamesSchedule` (echte Importe).
+Dev-Vorschau: `useTodayGamesDisplay` + Dummy-Toggle nur in DevLab.
 
 Fixtures zentral: `frontend/src/dev/devFixtures/games.ts`

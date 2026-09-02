@@ -44,69 +44,6 @@
   color: #f4fbff;
 }
 
-.spoilerToggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  justify-self: start;
-  margin: 0.2rem 0 0.05rem;
-  padding: 0.4rem 0.78rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.38);
-  background: rgba(15, 23, 42, 0.55);
-  color: rgba(203, 213, 225, 0.9);
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.spoilerOn,
-.spoilerOn:hover {
-  border-color: rgba(251, 191, 36, 0.82);
-  background: rgba(251, 191, 36, 0.22);
-  color: #fef3c7;
-  box-shadow:
-    0 0 0 1px rgba(251, 191, 36, 0.22),
-    0 0 22px rgba(251, 191, 36, 0.34);
-}
-
-.spoilerMark {
-  width: 0.48rem;
-  height: 0.48rem;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: rgba(148, 163, 184, 0.85);
-}
-
-.spoilerOn .spoilerMark {
-  background: #fbbf24;
-  box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
-  animation: obs-spoiler-dot 1.6s ease-out infinite;
-}
-
-.spoilerHint {
-  font-weight: 650;
-  letter-spacing: 0.01em;
-  text-transform: none;
-  opacity: 0.88;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .spoilerToggle:hover:not(.spoilerOn) {
-    border-color: rgba(203, 213, 225, 0.5);
-  }
-}
-
-@media (max-width: 480px) {
-  .spoilerHint {
-    display: none;
-  }
-}
-
 .lead {
   margin: 0;
   font-size: 0.86rem;
@@ -167,6 +104,13 @@
   display: none;
   width: 0;
   height: 0;
+}
+
+.stageHint {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: rgba(210, 230, 240, 0.72);
 }
 
 .metaGrid {
@@ -509,12 +453,6 @@
   0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.65); }
   70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
   100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-}
-
-@keyframes obs-spoiler-dot {
-  0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.65); }
-  70% { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
 }
 
 @keyframes obs-rise {

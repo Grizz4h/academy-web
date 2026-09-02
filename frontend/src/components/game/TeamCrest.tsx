@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from 'react'
 import { resolveTeamLogo } from '../../data/teamLogos'
+import { resolveNationalTeamFlag } from '../../data/nationalTeamFlags'
 import { resolveTeamShortCode } from '../../data/teamShortCodes'
 import styles from './TeamCrest.module.css'
 
@@ -27,9 +28,22 @@ export function TeamCrest({
   size?: 'sm' | 'md' | 'lg'
 }) {
   const logo = resolveTeamLogo(teamId) || resolveTeamLogo(name)
+  const flag = resolveNationalTeamFlag(teamId) || resolveNationalTeamFlag(name)
   const [logoFailed, setLogoFailed] = useState(false)
   const letters = crestLetters(name)
   const showLogo = Boolean(logo) && !logoFailed
+
+  if (flag) {
+    return (
+      <span
+        className={[styles.crest, styles.hasFlag, styles[size]].join(' ')}
+        role="img"
+        aria-label={name}
+      >
+        <span className={styles.flagEmoji} aria-hidden="true">{flag}</span>
+      </span>
+    )
+  }
 
   if (showLogo && logo) {
     return (
@@ -37,7 +51,7 @@ export function TeamCrest({
         className={[styles.crest, styles.hasLogo, styles[size]].join(' ')}
         aria-hidden="true"
       >
-        {size === 'sm' ? <span className={styles.crestGlow} /> : null}
+        <span className={styles.crestGlow} />
         <img className={styles.logo} src={logo} alt="" onError={() => setLogoFailed(true)} />
       </span>
     )

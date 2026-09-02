@@ -43,12 +43,12 @@ const CATALOGS: Record<string, SeasonTeamCatalog> = {
 /** Liga-Reihenfolge in Session-Setup / Beobachtungsmaske */
 export const TEAM_CATALOG_LEAGUES = [
   'DEL',
-  'Testspiele',
   'DEL2',
-  'NHL',
   'CHL',
   'U20_DNL',
+  'NHL',
   'Nationalmannschaften',
+  'Testspiele',
 ]
 
 export function resolveCatalogSeasonKey(

@@ -98,7 +98,7 @@ Klick = Antwort auf die Frage beim Ansehen. Tote Zahlen vermeiden.
 | Achievement | Fortschritt + Detail |
 | Track | Fortschritt / Start |
 
-`TapReveal` / `KpiRevealCard`: Outside-Click + Escape schließen. Hinweis `.ui-tap-hint`. Kein `<button>` mit Block-`div`-Kindern.
+`TapReveal` / `KpiRevealCard`: Schließen ohne × — siehe Popovers. Hinweis `.ui-tap-hint`. Kein `<button>` mit Block-`div`-Kindern.
 
 **Exclusive open:** Nur eine Explain-Box gleichzeitig (`useExclusivePopover`) — Glyphs, TapReveal, Track-Map, PUX.
 
@@ -110,7 +110,12 @@ Nicht: `position: absolute` am Trigger. Das läuft auf Mobile aus dem Bildschirm
 
 `TapReveal` nutzt `AnchoredPopover`. Neue Popovers nicht selbst positionieren.
 
-**Padding:** nur in `styles/anchored-popover.css` (`.ui-anchored-popover`). Consumer-Klassen (`MechanicGlyph`, Track-Map, TapReveal, PUX) dürfen das **nicht** auf `padding: 0` setzen — sonst klebt der Text am Rahmen.
+**Schließen (Standard):** `onDismiss` setzen. Kein ×-Kreuz.
+- Tippen irgendwo auf die Popover-Fläche schließt (außer Buttons/Links/Inputs — oder `[data-popover-no-dismiss]`)
+- Tippen außerhalb schließt
+- Escape schließt
+
+**Padding:** nur in `styles/anchored-popover.css` (`.ui-anchored-popover`). Consumer-Klassen (`MechanicGlyph`, Track-Map, TapReveal, PUX) dürfen das **nicht** auf `padding: 0` setzen — sonst klebt der Text am Rahmen. Titel/Fließtext: `overflow-wrap: break-word`, kein Mid-Glyph-Break.
 
 Sichtprüfung: `/dev/ui` → KPI + TapReveal + Glyphs.
 

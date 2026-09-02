@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api'
 import { useUser } from '../context/UserContext'
@@ -25,10 +25,11 @@ import {
 } from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { isStarterCosmetic } from '../features/progression/cosmetics/cosmeticCatalog'
+import Card from '../components/Card'
 import { Puck3DLab } from '../components/puck3d'
 import { CosmeticGlyph } from '../components/visuals/CosmeticGlyph'
 import { useDevNavEnabled } from '../config/featureFlags'
-import { UiActionRow, UiButton, UiChip, UiPill, UiProgress } from '../components/ui'
+import { UiActionRow, UiButton, UiButtonLink, UiChip, UiPill, UiProgress } from '../components/ui'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import { AccountPillFrame } from '../components/profile/AccountPillFrame'
 import { CollectionArtwork, CosmeticArtwork, hasCosmeticArt } from '../assets/collections/collectionArtwork'
@@ -158,6 +159,25 @@ function LockerArt({
   )
 }
 
+function LockerPlaceholderTile({
+  cosmeticId,
+  name,
+  type,
+}: {
+  cosmeticId: string
+  name: string
+  type: CosmeticType
+}) {
+  return (
+    <Card surface="nested" elevation="quiet" className={styles.placeholderTile}>
+      <LockMark />
+      <LockerArt type={type} muted cosmeticId={cosmeticId} />
+      <div className={styles.tileName}>{name}</div>
+      <div className={styles.tileMeta}>Gesperrt</div>
+    </Card>
+  )
+}
+
 function LockerItemCard({
   item,
   previewUnlocked,
@@ -216,6 +236,7 @@ export default function LockerPage() {
   const taskLane = parseTaskLane(params.get('lane'))
   const taskStatus = parseTaskStatus(params.get('status'))
   const selectedTaskId = params.get('task')
+  const focusCollectionId = params.get('collection')
 
   const setTab = (next: LockerTab) => {
     const nextParams = new URLSearchParams(params)
@@ -226,8 +247,28 @@ export default function LockerPage() {
       nextParams.delete('status')
       nextParams.delete('task')
     }
+    if (next !== 'collections') nextParams.delete('collection')
     setParams(nextParams, { replace: true })
   }
+
+  const openCollection = (collectionId: string) => {
+    const nextParams = new URLSearchParams(params)
+    nextParams.set('tab', 'collections')
+    nextParams.set('collection', collectionId)
+    nextParams.delete('lane')
+    nextParams.delete('status')
+    nextParams.delete('task')
+    setParams(nextParams, { replace: true })
+  }
+
+  useEffect(() => {
+    if (tab !== 'collections' || !focusCollectionId) return
+    const timer = window.setTimeout(() => {
+      document.getElementById(`locker-collection-${focusCollectionId}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 80)
+    return () => window.clearTimeout(timer)
+  }, [tab, focusCollectionId])
 
   const patchTaskParams = (patch: { lane?: TaskLaneFilter; status?: TaskStatusFilter; task?: string | null }) => {
     const nextParams = new URLSearchParams(params)
@@ -393,7 +434,7 @@ export default function LockerPage() {
 
   if (!user) {
     return (
-      <div className={styles.page}>
+      <div className={`${styles.page} ui-page-shell`}>
         <header className="ui-page-header">
           <h1 className="ui-page-title">Spind</h1>
           <p className="ui-page-lead">Bitte melde dich an, um deinen Spind zu öffnen.</p>
@@ -403,23 +444,23 @@ export default function LockerPage() {
   }
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ui-page-shell`}>
       <header className="ui-page-header ui-page-header--row" data-tutorial-id={TUTORIAL_TARGET.lockerHome}>
         <div>
           <h1 className="ui-page-title">Spind</h1>
           <p className="ui-page-lead">Sammeln · Browsen · Freischalten · Ausrüsten</p>
         </div>
-        <Link className={styles.accountLink} to="/account">
+        <UiButtonLink to="/account" variant="ghost" size="sm">
           Profil bearbeiten →
-        </Link>
+        </UiButtonLink>
       </header>
 
-      <section className={styles.statusStrip}>
+      <Card surface="section" elevation="quiet" className={styles.statusStrip}>
         <div><strong>Level {stats.level}</strong></div>
         <div>{stats.xpIntoLevel.toLocaleString('de-DE')} / {stats.xpForNextLevel.toLocaleString('de-DE')} XP</div>
         <div>{stats.pux.toLocaleString('de-DE')} Pux</div>
         <div>{stats.cosmeticsOwned} / {stats.cosmeticsTotal} Cosmetics</div>
-      </section>
+      </Card>
 
       <nav className="ui-tablist" aria-label="Spind-Bereiche">
         {([
@@ -469,23 +510,29 @@ export default function LockerPage() {
             <h2 className="ui-section-title">Collections</h2>
             <div className={styles.collectionRow}>
               {collections.map((entry) => (
-                <button key={entry.collection.id} type="button" className={styles.collectionCard} onClick={() => setTab('collections')}>
-                  <div className={styles.collectionCover}>
-                    <CollectionArtwork collectionId={entry.collection.id} variant="card" title={entry.collection.name} />
-                  </div>
-                  <strong>{entry.collection.name}</strong>
-                  <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
-                  <span className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Complete' : ''}</span>
-                </button>
+                <Card key={entry.collection.id} surface="nested" elevation="quiet" className={styles.collectionCard}>
+                  <button
+                    type="button"
+                    className={styles.collectionCardButton}
+                    onClick={() => openCollection(entry.collection.id)}
+                  >
+                    <div className={styles.collectionCover}>
+                      <CollectionArtwork collectionId={entry.collection.id} variant="card" title={entry.collection.name} />
+                    </div>
+                    <strong>{entry.collection.name}</strong>
+                    <UiProgress value={entry.owned} max={entry.total || 1} label={entry.collection.name} />
+                    <span className={styles.muted}>{entry.owned} / {entry.total}{entry.completed ? ' · Complete' : ''}</span>
+                  </button>
+                </Card>
               ))}
             </div>
           </section>
 
-          <section className={styles.statMini}>
+          <Card surface="inline" elevation="quiet" className={styles.statMini}>
             <div>Collections {stats.collectionsDone} / {stats.collectionsTotal}</div>
             <div>Legendary {stats.legendary}</div>
             <div>Secrets {stats.secretsDiscovered}</div>
-          </section>
+          </Card>
         </div>
       )}
 
@@ -527,7 +574,18 @@ export default function LockerPage() {
       {tab === 'collections' && (
         <div className={styles.stack}>
           {collections.map((entry) => (
-            <article key={entry.collection.id} className={styles.collectionDetail}>
+            <div
+              key={entry.collection.id}
+              id={`locker-collection-${entry.collection.id}`}
+            >
+            <Card
+              surface="section"
+              elevation="quiet"
+              className={[
+                styles.collectionDetail,
+                focusCollectionId === entry.collection.id ? styles.collectionDetailFocus : '',
+              ].filter(Boolean).join(' ')}
+            >
               <header>
                 <div className={styles.collectionHero}>
                   <CollectionArtwork collectionId={entry.collection.id} variant="detail" labeled title={entry.collection.name} />
@@ -546,12 +604,12 @@ export default function LockerPage() {
                   if (!item) {
                     const def = getCosmetic(id)
                     return (
-                      <div key={id} className={`${styles.tile} ${styles.tileLocked}`}>
-                        <LockMark />
-                        <LockerArt type={def?.type || 'title'} muted cosmeticId={id} />
-                        <div className={styles.tileName}>{def?.name || id}</div>
-                        <div className={styles.tileMeta}>Gesperrt</div>
-                      </div>
+                      <LockerPlaceholderTile
+                        key={id}
+                        cosmeticId={id}
+                        name={def?.name || id}
+                        type={def?.type || 'title'}
+                      />
                     )
                   }
                   return (
@@ -564,7 +622,8 @@ export default function LockerPage() {
                   )
                 })}
               </div>
-            </article>
+              </Card>
+            </div>
           ))}
         </div>
       )}
@@ -604,7 +663,7 @@ export default function LockerPage() {
       {tab === 'mastery' && (
         <div className={styles.stack}>
           {masteryViews.map((view) => (
-            <article key={view.masteryId} className={styles.masteryCard}>
+            <Card key={view.masteryId} surface="section" elevation="quiet" className={styles.masteryCard}>
               <h2 className="ui-section-title-content">{view.name}</h2>
               {view.description && <p className={styles.muted}>{view.description}</p>}
               <div className={styles.muted}>
@@ -616,7 +675,7 @@ export default function LockerPage() {
               </div>
               <UiProgress value={Math.round(view.nextRatio * 100)} label={view.name} />
               <div className={styles.tileMeta}>Freigeschaltet: {view.unlockedThresholds.join(', ') || '—'}</div>
-            </article>
+            </Card>
           ))}
         </div>
       )}

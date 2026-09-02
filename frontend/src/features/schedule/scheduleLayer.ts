@@ -48,6 +48,8 @@ export function resolveScheduleGames(params: {
 export function catalogPhaseToCompetitionPhase(phaseId?: string): string | undefined {
   if (!phaseId) return undefined
   if (phaseId === 'hauptrunde' || phaseId === 'upcoming') return 'regular_season'
+  // Legacy U20 DNL import before Gruppe 1/2 split
+  if (phaseId === 'finding_a') return 'finding_a_g1'
   return phaseId
 }
 

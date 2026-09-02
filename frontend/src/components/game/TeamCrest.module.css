@@ -45,6 +45,33 @@
   border-radius: 0;
 }
 
+.hasFlag {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 14px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+.flagEmoji {
+  display: block;
+  line-height: 1;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.sm .flagEmoji {
+  font-size: 1.35rem;
+}
+
+.md .flagEmoji {
+  font-size: 2rem;
+}
+
+.lg .flagEmoji {
+  font-size: 2.85rem;
+}
+
 .logo,
 .letters {
   position: relative;
@@ -72,4 +99,20 @@
     transparent 70%
   );
   filter: blur(8px);
+}
+
+.md .crestGlow {
+  inset: -36%;
+  filter: blur(10px);
+}
+
+.lg .crestGlow {
+  inset: -28%;
+  filter: blur(12px);
+  background: radial-gradient(
+    circle,
+    rgba(236, 248, 255, 0.58) 0%,
+    rgba(180, 224, 240, 0.26) 40%,
+    transparent 72%
+  );
 }

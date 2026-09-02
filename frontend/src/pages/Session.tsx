@@ -8,8 +8,9 @@ import { isDummySession, isProgressionEligibleSession, getRealSessions } from '.
 import { isDevNavEnabled } from '../config/featureFlags'
 import { getCompetencyFillFixture } from '../dev/competencyFixtures'
 import { buildDevSessionRewardRecap } from '../dev/rewardPreviewActions'
-import { UiButton, ScrollActionDock, scrollActionDockPageClass } from '../components/ui'
+import { UiButton, ScrollActionDock, scrollActionDockPageClass, UiSheet, UiSheetActions } from '../components/ui'
 import { RinQIcon } from '../components/icons'
+import Card from '../components/Card'
 
 import { DrillRendererRouter } from '../components/DrillRendererRouter';
 import { SceneMarkerButton } from '../components/SceneMarkerButton';
@@ -1587,6 +1588,18 @@ export default function SessionPage() {
   if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
   if (!session) return <div className="card">Session nicht gefunden.</div>
 
+  const microfeedbackContent = showMicroModal
+    ? resolveMicrofeedbackContent(activeDrill, answersByPhase[currentPhase] || {})
+    : null
+
+  const closeMicrofeedbackModal = () => {
+    setShowMicroModal(false)
+    setMicroPhase(null)
+    setPendingNextPhase(null)
+    setMicroText('')
+    setMicroFeedbackError('')
+  }
+
   return (
     <div
       className={`ui-page-shell ${scrollActionDockPageClass(showSessionAdvanceDock, sessionDocked)} ${scrollActionDockPageClass(showCompleteDock, completeDocked)}`}
@@ -1749,11 +1762,16 @@ export default function SessionPage() {
       )}
 
       {!isCompleted && session.state !== 'ABORTED' && (
-        <div className="card">
-          <button onClick={handleSessionAbort} className="btn" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }} disabled={abortMutation.isPending}>
+        <Card surface="section">
+          <UiButton
+            type="button"
+            variant="danger"
+            onClick={handleSessionAbort}
+            disabled={abortMutation.isPending}
+          >
             {abortMutation.isPending ? 'Breche ab...' : 'Session abbrechen'}
-          </button>
-        </div>
+          </UiButton>
+        </Card>
       )}
 
       {isDevNavEnabled() && session.checkins && session.checkins.length > 0 && (
@@ -1788,7 +1806,8 @@ export default function SessionPage() {
       ) : null}
 
       {isCompleted && (
-        <div className="card" data-tutorial-id={TUTORIAL_TARGET.sessionResult} style={{ position: 'relative', zIndex: 2 }}>
+        <div data-tutorial-id={TUTORIAL_TARGET.sessionResult} style={{ position: 'relative', zIndex: 2 }}>
+        <Card surface="section">
           <h2 className="flex items-center justify-center gap-2 flex-wrap" style={{ marginTop: 0 }}>
             Session abgeschlossen
             <RinQIcon name="celebrate" size="lg" tone="accent" badge inline />
@@ -1799,30 +1818,28 @@ export default function SessionPage() {
               : 'Alle aktiven Phasen sind durch.'}
             {session?.module_id ? ` · ${session.module_id}` : ''}
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
-            <button
-              type="button"
-              className="btn"
-              style={{ background: 'transparent', border: '1px solid rgba(129,221,245,0.45)', color: '#bae6fd' }}
-              onClick={async () => {
-                try {
-                  const matchup = session.game_info?.team_home && session.game_info?.team_away
-                    ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
-                    : session.module_id
-                  const result = await shareOrCopy({
-                    title: 'rInQ Tank Session',
-                    text: `Session abgeschlossen: ${matchup} · ${session.module_id}`,
-                  })
-                  setShareNote(result === 'shared' ? 'Geteilt.' : 'In Zwischenablage kopiert.')
-                } catch {
-                  // user cancelled share
-                }
-              }}
-            >
-              Teilen
-            </button>
-          </div>
+          <UiButton
+            type="button"
+            variant="secondary"
+            onClick={async () => {
+              try {
+                const matchup = session.game_info?.team_home && session.game_info?.team_away
+                  ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
+                  : session.module_id
+                const result = await shareOrCopy({
+                  title: 'rInQ Tank Session',
+                  text: `Session abgeschlossen: ${matchup} · ${session.module_id}`,
+                })
+                setShareNote(result === 'shared' ? 'Geteilt.' : 'In Zwischenablage kopiert.')
+              } catch {
+                // user cancelled share
+              }
+            }}
+          >
+            Teilen
+          </UiButton>
           {shareNote && <p style={{ marginTop: '0.55rem', color: '#99f6e4', fontSize: '0.85rem' }}>{shareNote}</p>}
+        </Card>
         </div>
       )}
 
@@ -1864,123 +1881,108 @@ export default function SessionPage() {
       </ScrollActionDock>
 
       {session?.state === 'ABORTED' && (
-        <div className="card">
+        <Card surface="section">
           <h2>Session abgebrochen</h2>
           <p><strong>Grund:</strong> {session.abort?.reason}</p>
           {session.abort?.note && <p><strong>Notiz:</strong> {session.abort.note}</p>}
           <p><strong>Abgebrochen am:</strong> {session.abort?.aborted_at ? new Date(session.abort.aborted_at).toLocaleString() : 'Unbekannt'}</p>
-          <button type="button" className="btn" onClick={() => navigate('/')}>
+          <UiButton type="button" variant="primary" onClick={() => navigate('/')}>
             Zurück zur Übersicht
-          </button>
-        </div>
+          </UiButton>
+        </Card>
       )}
 
-      {/* Microfeedback Modal */}
-      {showMicroModal && (() => {
-        const drill = activeDrill
-        const resolved = resolveMicrofeedbackContent(drill, answersByPhase[currentPhase] || {})
-        if (!resolved) return null
+      {microfeedbackContent ? (
+        <UiSheet
+          open={showMicroModal}
+          onClose={closeMicrofeedbackModal}
+          title="Microfeedback"
+          label="Microfeedback"
+        >
+          {microfeedbackContent.contextSummary ? (
+            <div style={{ marginBottom: '0.75rem', padding: '0.6rem 0.8rem', background: 'rgba(255,255,255,0.06)', borderRadius: '0.4rem', fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5 }}>
+              <span style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', marginBottom: '0.3rem' }}>Ausgewählter Moment</span>
+              {microfeedbackContent.contextSummary}
+            </div>
+          ) : null}
+          <div style={{ marginBottom: microfeedbackContent.hint ? '0.45rem' : '1rem', fontWeight: 600, textAlign: 'center', color: '#b6e2f7', fontSize: '1.02rem', lineHeight: 1.4 }}>
+            {microfeedbackContent.question}
+          </div>
+          {microfeedbackContent.hint ? (
+            <p style={{ marginTop: 0, marginBottom: '1.1rem', textAlign: 'center', color: 'rgba(255,255,255,0.72)', fontSize: '0.88rem', lineHeight: 1.45 }}>
+              {microfeedbackContent.hint}
+            </p>
+          ) : null}
+          <textarea
+            value={microText}
+            onChange={(e) => setMicroText(e.target.value)}
+            placeholder="Kurze Antwort …"
+            rows={3}
+            style={{
+              width: '100%',
+              padding: '0.65rem 0.75rem',
+              borderRadius: '0.55rem',
+              border: '1px solid rgba(125, 211, 252, 0.22)',
+              background: 'rgba(2, 12, 24, 0.35)',
+              color: 'rgba(241, 245, 249, 0.95)',
+              marginBottom: '0.85rem',
+            }}
+          />
+          {microFeedbackError ? (
+            <p style={{ margin: '0 0 0.85rem', color: '#fca5a5', fontSize: '0.88rem' }}>{microFeedbackError}</p>
+          ) : null}
+          <UiSheetActions
+            secondary={(
+              <UiButton type="button" variant="ghost" size="sm" onClick={closeMicrofeedbackModal}>
+                Abbrechen
+              </UiButton>
+            )}
+            primary={(
+              <UiButton
+                type="button"
+                variant="primary"
+                size="sm"
+                disabled={!microText.trim()}
+                onClick={async () => {
+                  if (!microText.trim() || !microPhase) return
 
-        const { question, hint, contextSummary } = resolved
-
-        return (
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="card" style={{ maxWidth: 500, width: '95%', margin: '0 auto' }}>
-              <h3 className="flex items-center gap-2">
-                <RinQIcon name="terms" size="md" badge inline />
-                Microfeedback
-              </h3>
-              {contextSummary && (
-                <div style={{ marginBottom: '0.75rem', padding: '0.6rem 0.8rem', background: 'rgba(255,255,255,0.06)', borderRadius: '0.4rem', fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5 }}>
-                  <span style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', marginBottom: '0.3rem' }}>Ausgewählter Moment</span>
-                  {contextSummary}
-                </div>
-              )}
-              <div style={{ marginBottom: hint ? '0.45rem' : '1.2rem', fontWeight: 600, textAlign: 'center', color: '#b6e2f7', fontSize: '1.02rem', lineHeight: 1.4 }}>
-                {question}
-              </div>
-              {hint && (
-                <p style={{ marginTop: 0, marginBottom: '1.1rem', textAlign: 'center', color: 'rgba(255,255,255,0.72)', fontSize: '0.88rem', lineHeight: 1.45 }}>
-                  {hint}
-                </p>
-              )}
-
-              <textarea
-                value={microText}
-                onChange={e => setMicroText(e.target.value)}
-                placeholder="Kurze Antwort …"
-                rows={3}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ccc', marginBottom: 8 }}
-              />
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                <button
-                  className="btn"
-                  style={{ background: '#6c757d' }}
-                  onClick={() => {
+                  try {
+                    const next = pendingNextPhase
+                    await api.addMicrofeedback(id!, microPhase as 'P1' | 'P2' | 'P3', microText.trim())
                     setShowMicroModal(false)
-                    setMicroPhase(null)
-                    setPendingNextPhase(null)
                     setMicroText('')
                     setMicroFeedbackError('')
-                  }}
-                >
-                  Abbrechen
-                </button>
+                    setMicroPhase(null)
+                    setPendingNextPhase(null)
 
-                <button
-                  className="btn"
-                  disabled={!microText.trim()}
-                  onClick={async () => {
-                    if (!microText.trim()) return
-                    if (!microPhase) return
+                    if (next) {
+                      await api.updateSessionPhase(id as string, { phase: next })
+                      setCurrentPhase(next)
+                      setDrillCompleted(false)
 
-                    try {
-                      // 1) Microfeedback für DIE Phase speichern, in der du gerade warst (P1/P2/P3)
-                      await api.addMicrofeedback(id!, microPhase as 'P1' | 'P2' | 'P3', microText.trim())
+                      const sessionFresh = await queryClient.fetchQuery({ queryKey: ['session', id] })
+                      const sessionObj = sessionFresh as any
 
-                      // 2) UI schließen
-                      setShowMicroModal(false)
-                      setMicroText('')
-                      setMicroFeedbackError('')
-
-                      // 3) Jetzt Phase wechseln
-                      const next = pendingNextPhase
-                      setMicroPhase(null)
-                      setPendingNextPhase(null)
-
-                      if (next) {
-                        await api.updateSessionPhase(id as string, { phase: next })
-                        setCurrentPhase(next)
-                        setDrillCompleted(false)
-
-                        // answers für next laden (draft oder checkin), aber nix resetten
-                        const sessionFresh = await queryClient.fetchQuery({ queryKey: ["session", id] })
-                        const sessionObj = sessionFresh as any
-
-                        if (sessionObj?.drafts && sessionObj.drafts[next]) {
-                          setAnswersByPhase(prev => ({ ...prev, [next]: sessionObj.drafts[next] || {} }))
-                        } else {
-                          const existingCheckin = sessionObj?.checkins?.find((c: any) => c.phase === next)
-                          setAnswersByPhase(prev => ({ ...prev, [next]: existingCheckin?.answers || {} }))
-                        }
+                      if (sessionObj?.drafts && sessionObj.drafts[next]) {
+                        setAnswersByPhase((prev) => ({ ...prev, [next]: sessionObj.drafts[next] || {} }))
+                      } else {
+                        const existingCheckin = sessionObj?.checkins?.find((c: any) => c.phase === next)
+                        setAnswersByPhase((prev) => ({ ...prev, [next]: existingCheckin?.answers || {} }))
                       }
-
-                      await queryClient.invalidateQueries({ queryKey: ['session', id] })
-                    } catch (err: any) {
-                      setMicroFeedbackError(err?.message || 'Speichern fehlgeschlagen')
                     }
-                  }}
-                >
-                  {pendingNextPhase === 'POST' ? 'Speichern & Session abschließen' : 'Speichern & Weiter'}
-                </button>
-              </div>
 
-              {microFeedbackError && <div style={{ color: 'red', marginTop: '1rem' }}>{microFeedbackError}</div>}
-            </div>
-          </div>
-        )
-      })()}
+                    await queryClient.invalidateQueries({ queryKey: ['session', id] })
+                  } catch (err: any) {
+                    setMicroFeedbackError(err?.message || 'Speichern fehlgeschlagen')
+                  }
+                }}
+              >
+                {pendingNextPhase === 'POST' ? 'Speichern & Session abschließen' : 'Speichern & Weiter'}
+              </UiButton>
+            )}
+          />
+        </UiSheet>
+      ) : null}
     </div>
   )
 }

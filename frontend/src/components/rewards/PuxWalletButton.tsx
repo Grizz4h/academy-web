@@ -45,25 +45,13 @@ export default function PuxWalletButton() {
         ariaLabel="PUX Wallet"
         className={styles.popup}
         preferredWidth={300}
-        onClick={(event) => event.stopPropagation()}
+        onDismiss={close}
       >
         <div className={styles.popupHeader}>
           <div className={styles.balanceBlock}>
             <p className={styles.balanceLabel}>{DISPLAY_CURRENCY_LABEL}</p>
             <p className={styles.balanceValue}>{balance.toLocaleString('de-DE')}</p>
           </div>
-          <button
-            type="button"
-            className={styles.popupClose}
-            aria-label="Schließen"
-            onClick={(event) => {
-              event.preventDefault()
-              event.stopPropagation()
-              close()
-            }}
-          >
-            ×
-          </button>
         </div>
 
         <p className={styles.summary}>

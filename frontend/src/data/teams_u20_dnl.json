@@ -4,14 +4,134 @@
   "seasons": {
     "2025/26": [
       {
-        "id": "jungadler_mannheim",
-        "name": "Jungadler Mannheim",
-        "short": "JAM"
+        "id": "1_ev_weiden",
+        "name": "1. EV Weiden U20",
+        "short": "EVW"
+      },
+      {
+        "id": "augsburger_ev",
+        "name": "Augsburger EV U20",
+        "short": "AEV"
+      },
+      {
+        "id": "crocodiles_im_ftv_hh",
+        "name": "Crocodiles im FTV HH U20",
+        "short": "CRO"
+      },
+      {
+        "id": "deggendorfer_sc",
+        "name": "Deggendorfer SC U20",
+        "short": "DSC"
+      },
+      {
+        "id": "dusseldorfer_eg",
+        "name": "Düsseldorfer EG U20",
+        "short": "DEG"
+      },
+      {
+        "id": "ec_bad_tolz",
+        "name": "EC Bad Tölz U20",
+        "short": "ECT"
+      },
+      {
+        "id": "ehc_80_nurnberg",
+        "name": "EHC 80 Nürnberg U20",
+        "short": "NÜR"
+      },
+      {
+        "id": "ehc_freiburg",
+        "name": "EHC Freiburg U20",
+        "short": "FRB"
+      },
+      {
+        "id": "ehc_grizzly_adams_wolfsburg",
+        "name": "EHC Grizzly Adams Wolfsburg U20",
+        "short": "WOB"
+      },
+      {
+        "id": "ehc_klostersee",
+        "name": "EHC Klostersee U20",
+        "short": "EHC"
+      },
+      {
+        "id": "ehc_young_dragons_erfurt",
+        "name": "EHC Young Dragons Erfurt U20",
+        "short": "ERF"
+      },
+      {
+        "id": "eisbaren_juniors_berlin",
+        "name": "Eisbären Juniors Berlin",
+        "short": "EJB"
+      },
+      {
+        "id": "ej_kassel",
+        "name": "EJ Kassel U20",
+        "short": "EJK"
       },
       {
         "id": "erc_ingolstadt",
         "name": "ERC Ingolstadt U20",
-        "short": "ING"
+        "short": "ERC"
+      },
+      {
+        "id": "esc_dresden",
+        "name": "ESC Dresden U20",
+        "short": "DRE"
+      },
+      {
+        "id": "esc_eagles_essen_west",
+        "name": "ESC Eagles Essen-West U20",
+        "short": "EEW"
+      },
+      {
+        "id": "esv_03_chemnitz",
+        "name": "ESV 03 Chemnitz U20",
+        "short": "CHE"
+      },
+      {
+        "id": "esv_kaufbeuren",
+        "name": "ESV Kaufbeuren U20",
+        "short": "ESV"
+      },
+      {
+        "id": "ev_duisburg",
+        "name": "EV Duisburg U20",
+        "short": "EVD"
+      },
+      {
+        "id": "ev_fuessen",
+        "name": "EV Füssen U20",
+        "short": "EVF"
+      },
+      {
+        "id": "ev_landshut",
+        "name": "EV Landshut U20",
+        "short": "EVL"
+      },
+      {
+        "id": "ev_ravensburg",
+        "name": "EV Ravensburg U20",
+        "short": "RAV"
+      },
+      {
+        "id": "hc_landsberg_riverkings",
+        "name": "HC Landsberg Riverkings U20",
+        "short": "HCL"
+      },
+      {
+        "id": "iserlohner_ec",
+        "name": "Iserlohner EC U20",
+        "short": "IEC"
+      },
+      {
+        "id": "jung_eisbaren_regensburg",
+        "name": "Jung-Eisbären Regensburg",
+        "short": "EVR"
+      },
+      {
+        "id": "jungadler_mannheim",
+        "name": "Jungadler Mannheim",
+        "short": "JAM"
       },
       {
         "id": "krefelder_ev_81",
@@ -21,57 +141,47 @@
       {
         "id": "kolner_junghaie",
         "name": "Kölner Junghaie",
-        "short": "KJH"
+        "short": "KEC"
       },
       {
-        "id": "eisbaren_juniors_berlin",
-        "name": "Eisbären Juniors Berlin",
-        "short": "EJB"
+        "id": "lowen_frankfurt",
+        "name": "Löwen Frankfurt U20",
+        "short": "FRA"
       },
       {
-        "id": "ev_landshut",
-        "name": "EV Landshut U20",
-        "short": "EVL"
+        "id": "mannheimer_erc",
+        "name": "Mannheimer ERC U20",
+        "short": "MER"
       },
       {
-        "id": "esc_dresden",
-        "name": "ESC Dresden U20",
-        "short": "ESD"
+        "id": "rev_bremerhaven",
+        "name": "REV Bremerhaven U20",
+        "short": "REV"
       },
       {
-        "id": "iserlohner_ec",
-        "name": "Iserlohner EC U20",
-        "short": "IEC"
+        "id": "rookie_bulls_munchen",
+        "name": "Rookie Bulls München U20",
+        "short": "RBM"
       },
       {
-        "id": "dusseldorfer_eg",
-        "name": "Düsseldorfer EG U20",
-        "short": "DEG"
+        "id": "rt_bad_nauheim",
+        "name": "RT Bad Nauheim U20",
+        "short": "RTB"
       },
       {
         "id": "sc_bietigheim_bissingen",
         "name": "SC Bietigheim-Bissingen U20",
-        "short": "BIE"
+        "short": "SCB"
       },
       {
-        "id": "esv_kaufbeuren",
-        "name": "ESV Kaufbeuren U20",
-        "short": "KAU"
+        "id": "sc_riessersee",
+        "name": "SC Riessersee U20",
+        "short": "SCR"
       },
       {
-        "id": "ec_bad_tolz",
-        "name": "EC Bad Tölz U20",
-        "short": "TOL"
-      },
-      {
-        "id": "augsburger_ev",
-        "name": "Augsburger EV U20",
-        "short": "AEV"
-      },
-      {
-        "id": "starbulls_rosenheim",
-        "name": "Starbulls Rosenheim U20",
-        "short": "ROS"
+        "id": "scc_adler_berlin",
+        "name": "SCC Adler Berlin U20",
+        "short": "SCC"
       },
       {
         "id": "schwenninger_erc",
@@ -79,27 +189,157 @@
         "short": "SER"
       },
       {
-        "id": "jung_eisbaren_regensburg",
-        "name": "Jung-Eisbären Regensburg",
-        "short": "JER"
+        "id": "starbulls_rosenheim",
+        "name": "Starbulls Rosenheim U20",
+        "short": "SBR"
       },
       {
         "id": "hungary_u20",
         "name": "Ungarn U20 (HUN)",
         "short": "HUN",
         "country": "Hungary"
+      },
+      {
+        "id": "ver_selb",
+        "name": "VER Selb U20",
+        "short": "SEL"
       }
     ],
     "2026/27": [
       {
-        "id": "jungadler_mannheim",
-        "name": "Jungadler Mannheim",
-        "short": "JAM"
+        "id": "1_ev_weiden",
+        "name": "1. EV Weiden U20",
+        "short": "EVW"
+      },
+      {
+        "id": "augsburger_ev",
+        "name": "Augsburger EV U20",
+        "short": "AEV"
+      },
+      {
+        "id": "crocodiles_im_ftv_hh",
+        "name": "Crocodiles im FTV HH U20",
+        "short": "CRO"
+      },
+      {
+        "id": "deggendorfer_sc",
+        "name": "Deggendorfer SC U20",
+        "short": "DSC"
+      },
+      {
+        "id": "dusseldorfer_eg",
+        "name": "Düsseldorfer EG U20",
+        "short": "DEG"
+      },
+      {
+        "id": "ec_bad_tolz",
+        "name": "EC Bad Tölz U20",
+        "short": "ECT"
+      },
+      {
+        "id": "ec_peiting",
+        "name": "EC Peiting U20",
+        "short": "ECP"
+      },
+      {
+        "id": "ehc_80_nurnberg",
+        "name": "EHC 80 Nürnberg U20",
+        "short": "NÜR"
+      },
+      {
+        "id": "ehc_freiburg",
+        "name": "EHC Freiburg U20",
+        "short": "FRB"
+      },
+      {
+        "id": "ehc_grizzly_adams_wolfsburg",
+        "name": "EHC Grizzly Adams Wolfsburg U20",
+        "short": "WOB"
+      },
+      {
+        "id": "ehc_klostersee",
+        "name": "EHC Klostersee U20",
+        "short": "EHC"
+      },
+      {
+        "id": "ehc_young_dragons_erfurt",
+        "name": "EHC Young Dragons Erfurt U20",
+        "short": "ERF"
+      },
+      {
+        "id": "eisbaren_juniors_berlin",
+        "name": "Eisbären Juniors Berlin",
+        "short": "EJB"
+      },
+      {
+        "id": "ej_kassel",
+        "name": "EJ Kassel U20",
+        "short": "EJK"
       },
       {
         "id": "erc_ingolstadt",
         "name": "ERC Ingolstadt U20",
-        "short": "ING"
+        "short": "ERC"
+      },
+      {
+        "id": "es_weisswasser",
+        "name": "ES Weißwasser U20",
+        "short": "ESW"
+      },
+      {
+        "id": "esc_dresden",
+        "name": "ESC Dresden U20",
+        "short": "DRE"
+      },
+      {
+        "id": "esv_03_chemnitz",
+        "name": "ESV 03 Chemnitz U20",
+        "short": "CHE"
+      },
+      {
+        "id": "esv_kaufbeuren",
+        "name": "ESV Kaufbeuren U20",
+        "short": "ESV"
+      },
+      {
+        "id": "ev_duisburg",
+        "name": "EV Duisburg U20",
+        "short": "EVD"
+      },
+      {
+        "id": "ev_fuessen",
+        "name": "EV Füssen U20",
+        "short": "EVF"
+      },
+      {
+        "id": "ev_landshut",
+        "name": "EV Landshut U20",
+        "short": "EVL"
+      },
+      {
+        "id": "ev_ravensburg",
+        "name": "EV Ravensburg U20",
+        "short": "RAV"
+      },
+      {
+        "id": "hc_landsberg_riverkings",
+        "name": "HC Landsberg Riverkings U20",
+        "short": "HCL"
+      },
+      {
+        "id": "iserlohner_ec",
+        "name": "Iserlohner EC U20",
+        "short": "IEC"
+      },
+      {
+        "id": "jung_eisbaren_regensburg",
+        "name": "Jung-Eisbären Regensburg",
+        "short": "EVR"
+      },
+      {
+        "id": "jungadler_mannheim",
+        "name": "Jungadler Mannheim",
+        "short": "JAM"
       },
       {
         "id": "krefelder_ev_81",
@@ -109,57 +349,42 @@
       {
         "id": "kolner_junghaie",
         "name": "Kölner Junghaie",
-        "short": "KJH"
+        "short": "KEC"
       },
       {
-        "id": "eisbaren_juniors_berlin",
-        "name": "Eisbären Juniors Berlin",
-        "short": "EJB"
+        "id": "mannheimer_erc",
+        "name": "Mannheimer ERC U20",
+        "short": "MER"
       },
       {
-        "id": "ev_landshut",
-        "name": "EV Landshut U20",
-        "short": "EVL"
+        "id": "rev_bremerhaven",
+        "name": "REV Bremerhaven U20",
+        "short": "REV"
       },
       {
-        "id": "esc_dresden",
-        "name": "ESC Dresden U20",
-        "short": "ESD"
+        "id": "rookie_bulls_munchen",
+        "name": "Rookie Bulls München U20",
+        "short": "RBM"
       },
       {
-        "id": "iserlohner_ec",
-        "name": "Iserlohner EC U20",
-        "short": "IEC"
-      },
-      {
-        "id": "dusseldorfer_eg",
-        "name": "Düsseldorfer EG U20",
-        "short": "DEG"
+        "id": "rt_bad_nauheim",
+        "name": "RT Bad Nauheim U20",
+        "short": "RTB"
       },
       {
         "id": "sc_bietigheim_bissingen",
         "name": "SC Bietigheim-Bissingen U20",
-        "short": "BIE"
+        "short": "SCB"
       },
       {
-        "id": "esv_kaufbeuren",
-        "name": "ESV Kaufbeuren U20",
-        "short": "KAU"
+        "id": "sc_riessersee",
+        "name": "SC Riessersee U20",
+        "short": "SCR"
       },
       {
-        "id": "ec_bad_tolz",
-        "name": "EC Bad Tölz U20",
-        "short": "TOL"
-      },
-      {
-        "id": "augsburger_ev",
-        "name": "Augsburger EV U20",
-        "short": "AEV"
-      },
-      {
-        "id": "starbulls_rosenheim",
-        "name": "Starbulls Rosenheim U20",
-        "short": "ROS"
+        "id": "scc_adler_berlin",
+        "name": "SCC Adler Berlin U20",
+        "short": "SCC"
       },
       {
         "id": "schwenninger_erc",
@@ -167,15 +392,20 @@
         "short": "SER"
       },
       {
-        "id": "jung_eisbaren_regensburg",
-        "name": "Jung-Eisbären Regensburg",
-        "short": "JER"
+        "id": "starbulls_rosenheim",
+        "name": "Starbulls Rosenheim U20",
+        "short": "SBR"
       },
       {
         "id": "hungary_u20",
         "name": "Ungarn U20 (HUN)",
         "short": "HUN",
         "country": "Hungary"
+      },
+      {
+        "id": "ver_selb",
+        "name": "VER Selb U20",
+        "short": "SEL"
       }
     ]
   }

@@ -1,7 +1,7 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import React, { useState, useEffect } from 'react'
 import theoryData from '../data/theoryData.json'
-import { UiButtonLink } from '../components/ui'
+import { UiButtonLink, UiActionRow } from '../components/ui'
 import styles from './TheoryDetail.module.css'
 
 type TheoryContentItem = {
@@ -15,7 +15,6 @@ type TheoryContentItem = {
 
 export default function TheoryDetail() {
   const { moduleId } = useParams<{ moduleId: string }>()
-  const navigate = useNavigate()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -143,14 +142,14 @@ export default function TheoryDetail() {
 
   if (!data) {
     return (
-      <div className={styles.page}>
+      <div className={`${styles.page} ui-page-shell`}>
         <header className="ui-page-header">
           <h1 className="ui-page-title">Theorie</h1>
           <p className="ui-page-lead">
             Detaillierte Theorie für diesen Track ist noch nicht verfügbar.
           </p>
         </header>
-        <UiButtonLink to="/curriculum" variant="secondary" size="sm">
+        <UiButtonLink to="/curriculum" variant="ghost" size="sm">
           Zurück zur Akademie
         </UiButtonLink>
       </div>
@@ -158,14 +157,10 @@ export default function TheoryDetail() {
   }
 
   return (
-    <div className={styles.page}>
-      <button
-        type="button"
-        className={styles.backLink}
-        onClick={() => navigate('/curriculum')}
-      >
+    <div className={`${styles.page} ui-page-shell`}>
+      <UiButtonLink to="/curriculum" variant="ghost" size="sm">
         ← Akademie
-      </button>
+      </UiButtonLink>
 
       <header className="ui-page-header">
         {data.badge ? <p className={styles.badge}>{data.badge}</p> : null}
@@ -219,21 +214,21 @@ export default function TheoryDetail() {
               <p className={styles.footerHint}>
                 Sidequest-Hilfe — kein regulärer Pflichttrack. Erfasse numerische Sondersituationen opportunistisch über Special Teams in einer Session.
               </p>
-              <div className={styles.footerActions}>
+              <UiActionRow>
                 <UiButtonLink to="/curriculum" variant="secondary">
                   Zur Akademie
                 </UiButtonLink>
-              </div>
+              </UiActionRow>
             </>
           ) : (
             <>
               <p className={styles.footerHint}>Bereit zum Anwenden?</p>
-              <div className={styles.footerActions}>
+              <UiActionRow>
                 <UiButtonLink to={`/setup/${moduleId}`}>Session starten</UiButtonLink>
                 <UiButtonLink to="/curriculum" variant="secondary">
                   Zur Akademie
                 </UiButtonLink>
-              </div>
+              </UiActionRow>
             </>
           )}
         </div>

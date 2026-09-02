@@ -189,6 +189,22 @@
   color: rgba(148, 163, 184, 0.95);
 }
 
+.inlineField {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  color: rgba(203, 213, 225, 0.82);
+}
+
+.previewFrame {
+  margin-top: 0.85rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(52, 211, 153, 0.24);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(8, 16, 35, 0.42) 100%);
+}
+
 @media (max-width: 640px) {
   .item {
     flex-direction: column;

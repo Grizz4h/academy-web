@@ -50,6 +50,14 @@ export const NAV_FEATURES: NavFeature[] = [
   { to: '/ringabout', label: 'Rink About It!', navVisible: true, group: 'core', creatorOnly: true },
   { to: '/off-the-rink', label: 'Off the Rink', navVisible: true, group: 'core', creatorOnly: true },
   { to: '/locker', label: 'Spind', navVisible: true, group: 'core' },
+  {
+    to: '/sport-kalender',
+    label: 'Kalender',
+    navVisible: true,
+    group: 'core',
+    creatorOnly: true,
+    note: 'Monatskalender über importierte Spielpläne — nur Creator-Modus.',
+  },
 ]
 
 export type PublicNavTabsOptions = {

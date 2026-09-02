@@ -1,8 +1,18 @@
 import delTeamLogos from './delTeamLogos.json'
+import del2TeamLogos from './del2TeamLogos.json'
+import chlTeamLogos from './chlTeamLogos.json'
+import nhlTeamLogos from './nhlTeamLogos.json'
+import u20DnlTeamLogos from './u20DnlTeamLogos.json'
 import { getAllCatalogTeams } from './teamCatalog'
 import { resolveTeamShortCode } from './teamShortCodes'
 
-const LOGOS_BY_ID: Record<string, string> = { ...(delTeamLogos as Record<string, string>) }
+const LOGOS_BY_ID: Record<string, string> = {
+  ...(delTeamLogos as Record<string, string>),
+  ...(del2TeamLogos as Record<string, string>),
+  ...(chlTeamLogos as Record<string, string>),
+  ...(nhlTeamLogos as Record<string, string>),
+  ...(u20DnlTeamLogos as Record<string, string>),
+}
 
 function normalizeKey(value: string): string {
   return value

@@ -81,29 +81,55 @@
   gap: 0.45rem;
 }
 
-/* Embedded in rInQ ID hero */
+/* Embedded in rInQ ID — flush rail, no nested card chrome */
 .embedded {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 0.1rem;
+  flex: 1;
   min-height: 100%;
-  padding: 0.85rem 0.95rem 1rem;
-  border-top: 1px solid rgba(81, 145, 162, 0.22);
-  background: rgba(5, 10, 20, 0.42);
+  margin: 0;
+  padding: 0.9rem 1rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.embeddedHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .embeddedTitle {
-  margin: 0 0 0.55rem;
-  font-size: var(--type-eyebrow, 0.72rem);
-  letter-spacing: 0.1em;
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-weight: 650;
-  color: rgba(186, 230, 253, 0.72);
+  font-weight: 700;
+  color: rgba(186, 220, 230, 0.78);
+}
+
+.embedded .lead {
+  color: rgba(210, 224, 240, 0.78);
+}
+
+.embedded .statusBlock {
+  margin-bottom: 0.45rem;
+}
+
+.embedded .legalCompact {
+  margin-top: 0.1rem;
+  margin-bottom: 0.55rem;
+  color: rgba(148, 163, 184, 0.78);
 }
 
 .embedded .actions {
   margin-top: auto;
-  padding-top: 0.35rem;
+  padding-top: 0.45rem;
 }
 
 .embedded .actions :global(.ui-action-row) {
@@ -118,9 +144,14 @@
 
 @media (min-width: 900px) {
   .embedded {
-    border-top: 0;
-    border-left: 1px solid rgba(81, 145, 162, 0.28);
-    padding: 1rem 1.1rem 1.15rem;
+    /* Align with avatar overhang so content meets the name block */
+    padding: 2.65rem 1.15rem 1.2rem;
     justify-content: flex-start;
+  }
+
+  .embeddedHead {
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(81, 145, 162, 0.2);
   }
 }

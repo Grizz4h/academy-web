@@ -1,0 +1,83 @@
+[
+  {
+    "catalog_id": "eislowen_dresden",
+    "team": "Dresdner Eislöwen",
+    "club_path": "/clubs/dresdner-eisloewen_44"
+  },
+  {
+    "catalog_id": "ec_kassel_huskies",
+    "team": "EC Kassel Huskies",
+    "club_path": "/clubs/ec-kassel-huskies_17"
+  },
+  {
+    "catalog_id": "starbulls_rosenheim",
+    "team": "Starbulls Rosenheim",
+    "club_path": "/clubs/starbulls-rosenheim_16"
+  },
+  {
+    "catalog_id": "ravensburg_towerstars",
+    "team": "Ravensburg Towerstars",
+    "club_path": "/clubs/ravensburg-towerstars_39"
+  },
+  {
+    "catalog_id": "bietigheim_steelers",
+    "team": "Bietigheim Steelers",
+    "club_path": "/clubs/bietigheim-steelers_36"
+  },
+  {
+    "catalog_id": "eisbaren_regensburg",
+    "team": "Eisbären Regensburg",
+    "club_path": "/clubs/eisbaren-regensburg_38"
+  },
+  {
+    "catalog_id": "lausitzer_fuchse",
+    "team": "Lausitzer Füchse",
+    "club_path": "/clubs/lausitzer-fuechse_30"
+  },
+  {
+    "catalog_id": "ev_landshut",
+    "team": "EV Landshut",
+    "club_path": "/clubs/ev-landshut_27"
+  },
+  {
+    "catalog_id": "dusseldorfer_eg",
+    "team": "Düsseldorfer EG",
+    "club_path": "/clubs/duesseldorfer-eg_7"
+  },
+  {
+    "catalog_id": "eispiraten_crimmitschau",
+    "team": "Eispiraten Crimmitschau",
+    "club_path": "/clubs/eispiraten-crimmitschau_37"
+  },
+  {
+    "catalog_id": "ehc_freiburg",
+    "team": "EHC Freiburg",
+    "club_path": "/clubs/ehc-freiburg_24"
+  },
+  {
+    "catalog_id": "blue_devils_weiden",
+    "team": "Blue Devils Weiden",
+    "club_path": "/clubs/blue-devils-weiden_73"
+  },
+  {
+    "catalog_id": "ec_bad_nauheim",
+    "team": "EC Bad Nauheim",
+    "club_path": "/clubs/ec-bad-nauheim_45"
+  },
+  {
+    "catalog_id": "ecdc_memmingen",
+    "team": "ECDC Memmingen Indians",
+    "club_path": "/clubs/ecdc-memmingen-indians_95"
+  },
+  {
+    "catalog_id": "krefeld_pinguine",
+    "team": "Krefeld Pinguine",
+    "reuse_del_logo": "krefeld_pinguine"
+  },
+  {
+    "catalog_id": "esv_kaufbeuren",
+    "team": "ESV Kaufbeuren",
+    "logo_url": "https://www.esvk.de/files/esvk_theme/img/logo.png",
+    "note": "Kein del-2.org club_path; Crest von esvk.de (Oberliga-Seite lädt Logos via hockeydata API)"
+  }
+]

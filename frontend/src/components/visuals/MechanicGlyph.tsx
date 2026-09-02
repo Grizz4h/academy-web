@@ -160,25 +160,14 @@ export function MechanicGlyph({
           id={panelId}
           ariaLabel={info.label}
           className={styles.popup}
-          onClick={(event) => event.stopPropagation()}
+          preferredWidth={300}
+          onDismiss={close}
         >
           <div className={styles.popupHeader}>
             <span className={styles.popupGlyph} data-kind={resolved} aria-hidden="true">
               <GlyphArt kind={resolved} />
             </span>
             <strong className={styles.popupTitle}>{info.label}</strong>
-            <button
-              type="button"
-              className={styles.popupClose}
-              aria-label="Schließen"
-              onClick={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-                close()
-              }}
-            >
-              ×
-            </button>
           </div>
           <p className={styles.popupSummary}>{info.summary}</p>
           <p className={styles.popupDetail}>{info.detail}</p>

@@ -90,8 +90,8 @@ export default function RinkIdentityCard({
     <article className={`${styles.card} ${className}`}>
       <header className={styles.brandBar} aria-label="rInQ ID">
         <div className={styles.brandMark}>
-          <span className={styles.brandWord}>
-            r<span className={styles.brandAccent}>InQ</span>
+          <span className={styles.brandWord} aria-hidden="true">
+            r<span className={styles.brandAccent}>I</span>n<span className={styles.brandAccent}>Q</span>
           </span>
           <span className={styles.brandId}>ID</span>
         </div>

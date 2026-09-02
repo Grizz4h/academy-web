@@ -812,20 +812,22 @@ export default function RingAbout() {
           Szenenpool und redaktionelle Insights — filtern, bewerten und für die nächste Episode vorbereiten.
         </p>
         <div className={styles.headerRow}>
-          <div className={styles.tabs}>
+          <nav className={`ui-tablist ${styles.headerTabs}`} aria-label="Rink-Bereiche">
             <button
               type="button"
+              role="tab"
               onClick={() => setActiveTab('pool')}
-              aria-pressed={activeTab === 'pool'}
-              className={`${styles.tab}${activeTab === 'pool' ? ` ${styles.tabActive}` : ''}`}
+              aria-selected={activeTab === 'pool'}
+              className={`ui-tab ${activeTab === 'pool' ? 'is-active' : ''}`}
             >
               Szenenpool
             </button>
             <button
               type="button"
+              role="tab"
               onClick={() => setActiveTab('insights')}
-              aria-pressed={activeTab === 'insights'}
-              className={`${styles.tab}${activeTab === 'insights' ? ` ${styles.tabActiveInsights}` : ''}`}
+              aria-selected={activeTab === 'insights'}
+              className={`ui-tab ${activeTab === 'insights' ? 'is-active' : ''} ${activeTab === 'insights' ? styles.tabInsightsActive : ''}`}
             >
               Insights
             </button>
@@ -841,7 +843,7 @@ export default function RingAbout() {
                 Szene hinzufügen
               </UiButton>
             </span>
-          </div>
+          </nav>
         </div>
       </header>
 
@@ -1085,13 +1087,14 @@ export default function RingAbout() {
               </div>
             </details>
 
-            <button
+            <UiButton
               type="button"
-              className={styles.filterOpenBtn}
+              variant="secondary"
+              size="sm"
               onClick={() => setFilterSheetOpen(true)}
             >
               Weitere Filter{advancedFilterCount > 0 ? ` · ${advancedFilterCount} aktiv` : ''}
-            </button>
+            </UiButton>
 
             <FilterSheet
               open={filterSheetOpen}

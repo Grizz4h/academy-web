@@ -143,10 +143,12 @@ export default function AccountBillingPanel({
 
   if (embedded) {
     return (
-      <div className={styles.embedded}>
-        <p className={styles.embeddedTitle}>Abo</p>
+      <aside className={styles.embedded} aria-label="Mitgliedschaft">
+        <div className={styles.embeddedHead}>
+          <p className={styles.embeddedTitle}>Mitgliedschaft</p>
+        </div>
         {content}
-      </div>
+      </aside>
     )
   }
 

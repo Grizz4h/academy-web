@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Session } from '../api'
 import { TeamCrest } from '../components/game/TeamCrest'
 import { MatchupVs } from '../components/game/MatchupVs'
+import arenaStyles from '../components/game/MatchupArena.module.css'
 import { UiPill } from '../components/ui'
 import { formatCompetitionContext } from '../data/competitionConfig'
 import { getObservationScopeLabel } from '../utils/observationScope'
@@ -157,7 +158,7 @@ export function SessionGameInfo({
       ) : game && home && away ? (
         <>
           <div className={styles.desktopRow}>
-            <div className={styles.matchBoard} aria-label={`${home} gegen ${away}`}>
+            <div className={arenaStyles.arenaBoard} aria-label={`${home} gegen ${away}`}>
               <TeamColumn
                 name={home}
                 teamId={game.home_team_id}
@@ -165,7 +166,7 @@ export function SessionGameInfo({
                 crestSize={crestSize}
                 side="home"
               />
-              <div className={styles.vsRail}>
+              <div className={arenaStyles.vsRail}>
                 <MatchupVs variant="board" />
               </div>
               <TeamColumn

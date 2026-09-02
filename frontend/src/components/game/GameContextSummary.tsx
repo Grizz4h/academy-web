@@ -99,7 +99,19 @@ export default function GameContextSummary({
           <span className={isArchive ? styles.badgeArchive : styles.badgePlan}>
             {isArchive ? (hideSpoilers ? 'Archiv' : 'Archiv · Ergebnis') : 'Spielplan · Termin'}
           </span>
-          <span className={styles.sourceProvider}>PENNY DEL Import</span>
+          <span className={styles.sourceProvider}>
+            {game?.source?.provider === 'chl'
+              ? 'CHL Import'
+              : game?.source?.provider === 'nhl'
+                ? 'NHL Import'
+                : game?.source?.provider === 'deb_hockeydata'
+                  ? 'U20 DNL Import'
+                  : game?.source?.provider === 'del2'
+                    ? 'DEL2 Import'
+                    : game?.source?.provider === 'penny_del'
+                      ? 'PENNY DEL Import'
+                      : 'Katalog-Import'}
+          </span>
         </div>
       )}
       {importChrome && contextHint && (

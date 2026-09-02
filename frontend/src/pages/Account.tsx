@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api'
@@ -25,7 +25,7 @@ import type {
 } from '../data/profile/types'
 import { LEAGUES, teamsByLeague } from '../data/teamsByLeague'
 import { getRealSessions } from '../utils/sessionEligibility'
-import { UiButton, UiPill, UiSheet, UiSheetActions } from '../components/ui'
+import { UiButton, UiPill, UiSheet, UiSheetActions, ScrollActionDock, scrollActionDockPageClass } from '../components/ui'
 import { useTutorialOptional } from '../features/tutorial'
 import { useEntitlements } from '../features/entitlements'
 import { describeAcademyBilling, useBilling } from '../features/billing'
@@ -265,29 +265,21 @@ export default function AccountPage() {
 
   const showSaveBar =
     isDirty || saveState === 'saving' || saveState === 'error' || saveState === 'saved'
-  const saveDockEndRef = useRef<HTMLDivElement | null>(null)
-  const [saveDocked, setSaveDocked] = useState(false)
+  const [saveDocked, setSaveDocked] = useState(true)
+
+  const saveDockHint = useMemo(() => {
+    if (saveState === 'saving') return 'Speichert …'
+    if (saveState === 'saved') return 'Gespeichert'
+    if (saveState === 'error') return saveError || 'Speichern fehlgeschlagen'
+    if (isDirty) return 'Ungespeicherte Änderungen'
+    return 'Profil'
+  }, [saveState, saveError, isDirty])
 
   useEffect(() => {
     if (saveState !== 'saved') return
     const t = window.setTimeout(() => setSaveState('idle'), 1600)
     return () => window.clearTimeout(t)
   }, [saveState])
-
-  useEffect(() => {
-    if (!showSaveBar) {
-      setSaveDocked(false)
-      return
-    }
-    const node = saveDockEndRef.current
-    if (!node || typeof IntersectionObserver === 'undefined') return
-    const observer = new IntersectionObserver(
-      ([entry]) => setSaveDocked(Boolean(entry?.isIntersecting)),
-      { root: null, threshold: 0, rootMargin: '0px 0px -8px 0px' },
-    )
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [showSaveBar])
 
   const handleSave = async () => {
     if (!draft) return
@@ -373,7 +365,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className={`${styles.page} ui-page-shell ${showSaveBar ? styles.pageWithSaveDock : ''}`}>
+    <div className={`${styles.page} ui-page-shell ${scrollActionDockPageClass(showSaveBar, saveDocked)}`}>
       <section className={styles.identityHero}>
         <RinkIdentityCard
           profile={draft}
@@ -942,35 +934,24 @@ export default function AccountPage() {
         />
       </UiSheet>
 
-      <div
-        ref={saveDockEndRef}
-        className={`${styles.saveDockSlot} ${showSaveBar ? styles.saveDockSlotActive : ''}`}
+      <ScrollActionDock
+        enabled={showSaveBar}
+        resetKey={`${saveState}-${isDirty}`}
+        onDockedChange={setSaveDocked}
+        hint={saveDockHint}
       >
-        {showSaveBar ? (
-          <div
-            className={`${styles.saveDock} ${saveDocked ? styles.saveDockParked : styles.saveDockFloating}`}
-            role="status"
-            aria-live="polite"
-          >
-            <div className={styles.saveDockInner}>
-              <UiButton
-                type="button"
-                variant="primary"
-                size="sm"
-                onClick={handleSave}
-                disabled={saveState === 'saving' || (!isDirty && saveState !== 'error')}
-              >
-                {saveState === 'saving' ? 'Speichert …' : 'Speichern'}
-              </UiButton>
-              {saveState === 'saved' && <span className={styles.saveOk}>Gespeichert</span>}
-              {saveState === 'error' && <span className={styles.error}>{saveError}</span>}
-              {isDirty && saveState === 'idle' ? (
-                <span className={styles.saveHint}>Ungespeichert</span>
-              ) : null}
-            </div>
-          </div>
-        ) : null}
-      </div>
+        <UiButton
+          type="button"
+          variant="primary"
+          size="sm"
+          onClick={handleSave}
+          disabled={saveState === 'saving' || (!isDirty && saveState !== 'error')}
+        >
+          {saveState === 'saving' ? 'Speichert …' : 'Speichern'}
+        </UiButton>
+        {saveState === 'saved' ? <span className={styles.saveOk}>Gespeichert</span> : null}
+        {saveState === 'error' ? <span className={styles.error}>{saveError}</span> : null}
+      </ScrollActionDock>
     </div>
   )
 }

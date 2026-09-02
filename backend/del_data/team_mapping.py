@@ -75,6 +75,10 @@ class TeamCatalogMapper:
             self._slug_to_id[slug.replace("_", "-")] = catalog_id
             self._slug_to_id[slug.replace("-", "_")] = catalog_id
 
+    def register_name(self, name: str, catalog_id: str) -> None:
+        if name and catalog_id:
+            self._name_to_id[_normalize_name(name)] = catalog_id
+
     def resolve(self, *, slug: Optional[str] = None, name: Optional[str] = None, team_id: Optional[str] = None) -> Optional[str]:
         if team_id and team_id in self._id_to_name:
             return team_id

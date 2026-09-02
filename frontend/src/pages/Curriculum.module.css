@@ -10,21 +10,19 @@
   gap: 0.85rem;
 }
 
-.track {
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(140, 150, 180, 0.35);
-  background: rgba(18, 24, 38, 0.72);
-  overflow: visible;
+.trackCard {
+  margin-bottom: 0;
+  padding: 0.35rem 0.85rem 0.85rem;
 }
 
 .trackCluster {
-  border-color: rgba(81, 145, 162, 0.35);
-  background: linear-gradient(180deg, rgba(10, 12, 26, 0.94) 0%, rgba(8, 16, 30, 0.96) 100%);
+  border-color: rgba(81, 145, 162, 0.35) !important;
+  background: linear-gradient(180deg, rgba(10, 12, 26, 0.94) 0%, rgba(8, 16, 30, 0.96) 100%) !important;
 }
 
 .trackFoundation {
-  border-color: rgba(52, 211, 153, 0.4);
-  background: linear-gradient(180deg, rgba(8, 28, 24, 0.92) 0%, rgba(8, 16, 30, 0.96) 100%);
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  background: linear-gradient(180deg, rgba(8, 28, 24, 0.92) 0%, rgba(8, 16, 30, 0.96) 100%) !important;
 }
 
 .foundationLabel {
@@ -35,19 +33,12 @@
   margin-bottom: 0.2rem;
 }
 
-.trackSummary {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.9rem 1rem;
-  cursor: pointer;
-  user-select: none;
+.trackDetails {
+  overflow: visible;
 }
 
-.trackSummary::-webkit-details-marker {
-  display: none;
+.trackSummary {
+  align-items: flex-start;
 }
 
 .trackSummaryMain {
@@ -63,22 +54,30 @@
   margin-bottom: 0.2rem;
 }
 
-.trackTitle {
-  margin: 0;
-  font-size: 1.05rem;
-  color: rgba(240, 248, 255, 0.96);
+/* Headings must not inherit Card/ui-surface `overflow-wrap: anywhere`. */
+.trackTitle,
+.moduleTitle {
   hyphens: none;
-  /* Desktop: prefer natural breaks; avoid mid-word wraps that leave "A –" alone. */
+  -webkit-hyphens: none;
   overflow-wrap: normal;
+  word-wrap: normal;
   word-break: normal;
   text-wrap: pretty;
 }
 
+.trackTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  color: rgba(240, 248, 255, 0.96);
+}
+
 @media (max-width: 768px) {
-  .trackTitle {
-    /* Mobile already wraps cleanly; allow wrapping under tight width. */
-    word-wrap: break-word;
+  .trackTitle,
+  .moduleTitle {
+    /* Tight mobile widths: wrap at word boundaries only, never mid-glyph. */
     overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: normal;
     text-wrap: wrap;
   }
 }
@@ -93,29 +92,8 @@
   white-space: nowrap;
 }
 
-.chevron {
-  display: inline-block;
-  width: 0.55rem;
-  height: 0.55rem;
-  border-right: 2px solid rgba(148, 196, 214, 0.85);
-  border-bottom: 2px solid rgba(148, 196, 214, 0.85);
-  transform: rotate(45deg);
-  transition: transform 160ms ease;
-  margin-top: -0.15rem;
-}
-
-.track[open] .chevron {
-  transform: rotate(-135deg);
-  margin-top: 0.15rem;
-}
-
-.trackBody {
-  padding: 0 1rem 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .trackDescription {
-  margin: 0.85rem 0 0;
+  margin: 0;
   color: rgba(216, 225, 255, 0.82);
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -123,7 +101,7 @@
 
 .moduleGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: 0.85rem;
   margin-top: 0.9rem;
   align-items: stretch;
@@ -133,22 +111,28 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1rem;
-  border-radius: 0.5rem;
   min-width: 0;
   overflow: visible;
-  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 0;
 }
 
 .moduleCardCluster {
-  border-color: rgba(81, 145, 162, 0.22);
-  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(81, 145, 162, 0.22) !important;
 }
 
 .moduleCardLocked {
-  border-color: rgba(251, 191, 36, 0.28);
-  background: rgba(251, 191, 36, 0.04);
+  border-color: rgba(251, 191, 36, 0.28) !important;
+  background: rgba(251, 191, 36, 0.04) !important;
+}
+
+.moduleCardPendingGame {
+  border-color: rgba(52, 211, 153, 0.45) !important;
+  box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.12), 0 10px 28px rgba(16, 185, 129, 0.08);
+}
+
+.pendingGamePill {
+  margin-left: 0.45rem;
+  vertical-align: middle;
 }
 
 .premiumPill {
@@ -160,8 +144,6 @@
   margin: 0;
   flex: 1 1 auto;
   min-width: 0;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 .moduleTop {
@@ -190,12 +172,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-}
-
-.moduleMechanics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
 }
 
 .learningGoals {
@@ -231,16 +207,12 @@
     gap: 0.55rem;
   }
 
-  .trackSummary {
-    padding: 0.8rem 0.85rem;
+  .trackCard {
+    padding: 0.25rem 0.7rem 0.7rem;
   }
 
   .trackTitle {
     font-size: 0.98rem;
-  }
-
-  .trackBody {
-    padding: 0 0.85rem 0.85rem;
   }
 
   .moduleGrid {

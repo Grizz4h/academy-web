@@ -5,7 +5,8 @@ const BUS = 'academy:exclusive-popover'
 type BusDetail = { id: string }
 
 /**
- * One open explain-popover at a time + Escape / outside pointer close.
+ * One open explain-popover at a time.
+ * Dismiss UX lives on AnchoredPopover (`onDismiss`: outside / Escape / panel tap).
  * Shared by MechanicGlyph, TapReveal, TrackProgressMap, PUX wallet.
  */
 export function useExclusivePopover() {

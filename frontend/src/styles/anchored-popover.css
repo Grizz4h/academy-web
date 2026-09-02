@@ -11,17 +11,32 @@
     0 12px 28px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
   color: rgba(226, 232, 240, 0.92);
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
+  -webkit-hyphens: none;
   opacity: 0;
   transform: translate3d(0, 6px, 0);
   transition:
     opacity 150ms ease,
     transform 150ms ease;
   will-change: opacity, transform;
+  cursor: pointer;
 }
 
 .ui-anchored-popover--placed {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+}
+
+.ui-anchored-popover button,
+.ui-anchored-popover a,
+.ui-anchored-popover input,
+.ui-anchored-popover select,
+.ui-anchored-popover textarea,
+.ui-anchored-popover [role='button'],
+.ui-anchored-popover [data-popover-no-dismiss] {
+  cursor: pointer;
 }
 
 @media (prefers-reduced-motion: reduce) {

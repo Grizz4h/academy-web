@@ -1,6 +1,6 @@
 {
   "team_id": "grizzlys_wolfsburg",
-  "updated_at": "2026-08-11T09:37:21.557542Z",
+  "updated_at": "2026-09-02T19:23:36.158576Z",
   "players": [
     {
       "player_name": "Jimmy Lambert",
@@ -344,7 +344,7 @@
       "position": "Forward",
       "position_group": "forward",
       "nationality": "USA",
-      "age": 36,
+      "age": 37,
       "height_cm": 175,
       "weight_kg": 87.0,
       "birthplace": "Whittier, CA",

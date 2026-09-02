@@ -43,11 +43,21 @@ import { formatPux } from '../features/rewards/types'
 import { countDummySessions, getRealSessions } from '../utils/sessionEligibility'
 import { getDevLocationScenario, setDevLocationScenario, type DevLocationScenario } from '../features/location'
 import { UiButton, UiButtonLink } from '../components/ui'
+import {
+  setDevTodaySlatePreviewEnabled,
+  useDevTodaySlatePreview,
+} from '../dev/devTodaySlatePreview'
+import TodayGamesBanner from '../features/schedule/TodayGamesBanner'
+import { useGameSetupLauncher } from '../features/schedule/GameSetupLauncherProvider'
+import { useTodayGamesDisplay } from '../features/schedule/useTodayGamesDisplay'
+import { TutorialDevPanel } from '../features/tutorial/ui/TutorialDevPanel'
+import { localTodayIsoDate } from '../components/game/gameCatalogUtils'
 import styles from './DevLab.module.css'
 
 export default function DevLab() {
   const { user } = useUser()
   const navigate = useNavigate()
+  const { requestGameSetup } = useGameSetupLauncher()
   const queryClient = useQueryClient()
   const { rewardState, enqueueReward, enqueueRewards, rebuildProgression, bootstrapStatus } = useRewards()
   const hidden = getHiddenNavTabs()
@@ -61,6 +71,16 @@ export default function DevLab() {
   const [statsBatchLimit, setStatsBatchLimit] = useState(5)
   const [statsGameId, setStatsGameId] = useState('')
   const [locationScenario, setLocationScenario] = useState<DevLocationScenario>(() => getDevLocationScenario())
+  const [todayPreviewDate, setTodayPreviewDate] = useState(localTodayIsoDate())
+  const dummyTodaySlateOn = useDevTodaySlatePreview()
+  const {
+    gamesByLeague: previewGamesByLeague,
+    leaguesWithGames: previewLeaguesWithGames,
+    devPreview,
+  } = useTodayGamesDisplay({
+    date: todayPreviewDate,
+    enabled: Boolean(user),
+  })
 
   const appendLog = useCallback((entry: Omit<DevLogEntry, 'id' | 'at'> & { at?: string }) => {
     setLogEntries((prev) => prependDevLogEntry(prev, entry))
@@ -752,6 +772,69 @@ export default function DevLab() {
           >
             Queue Session
           </UiButton>
+        </div>
+      </section>
+
+      <section className={styles.card}>
+        <h2 className="ui-section-title">Tutorial</h2>
+        <p className={styles.note}>
+          Steuerung nur hier im DevLab — kein schwebendes Panel mehr auf den Seiten.
+        </p>
+        <TutorialDevPanel />
+      </section>
+
+      <section className={styles.card}>
+        <h2 className="ui-section-title">Spiele heute — Vorschau</h2>
+        <p className={styles.note}>
+          Dummy-Spieltag füllt nur die DevLab-Vorschau unten.
+          Die Live-Leiste unter der TopNav zeigt echte importierte Spiele (DEL, DEL2, CHL, U20 DNL, NHL)
+          und bleibt an spielfreien Tagen unsichtbar.
+        </p>
+        <div className={styles.actions}>
+          <UiButton
+            type="button"
+            size="sm"
+            variant={dummyTodaySlateOn ? 'primary' : 'secondary'}
+            onClick={() => setDevTodaySlatePreviewEnabled(!dummyTodaySlateOn)}
+          >
+            Dummy-Spieltag {dummyTodaySlateOn ? 'an' : 'aus'}
+          </UiButton>
+          <label className={styles.inlineField}>
+            <span>Datum</span>
+            <input
+              className="appSelect"
+              type="date"
+              value={todayPreviewDate}
+              onChange={(event) => setTodayPreviewDate(event.target.value)}
+            />
+          </label>
+          <UiButton
+            type="button"
+            size="sm"
+            variant="secondary"
+            onClick={() => setTodayPreviewDate(localTodayIsoDate())}
+          >
+            Heute
+          </UiButton>
+          <UiButtonLink to="/" size="sm" variant="secondary">Start (live)</UiButtonLink>
+          <UiButtonLink to="/sport-kalender" size="sm" variant="secondary">Kalender (Creator)</UiButtonLink>
+        </div>
+        {dummyTodaySlateOn ? (
+          <p className={styles.note}>
+            Dummy aktiv — nur diese Vorschau. Die globale Live-Leiste bleibt an echte Spiele gebunden.
+          </p>
+        ) : null}
+        <div className={styles.previewFrame}>
+          {previewLeaguesWithGames.length > 0 ? (
+            <TodayGamesBanner
+              gamesByLeague={previewGamesByLeague}
+              date={todayPreviewDate}
+              onSelectGame={requestGameSetup}
+              devPreview={devPreview}
+            />
+          ) : (
+            <p className={styles.note}>Keine importierten Spiele am {todayPreviewDate}.</p>
+          )}
         </div>
       </section>
 

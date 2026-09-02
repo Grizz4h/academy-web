@@ -1,16 +1,13 @@
 import { Fragment, useEffect, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { api } from '../../../api'
 import { useUser } from '../../../context/UserContext'
 import { contentRegistry } from '../../../content/registry'
 import { getMatchdayGroup } from '../../../content/matchdays'
 import { getVenue } from '../../../data/venues'
-import { filterCatalogGamesForSeason } from '../../../components/game/gameCatalogUtils'
+import { useTodayGamesSchedule } from '../../schedule/useTodayGamesSchedule'
 import { UiButton, UiChip, UiPill, UiProgress, UiSheet, UiSheetActions } from '../../../components/ui'
 import { useRewards } from '../../rewards'
 import { resolveMatchdayContext } from '../challenges/matchdayContext'
 import { syncChallengeRotation } from '../challenges/challengeEngine'
-import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../../../stats/seasonNormalization'
 import {
   LANE_LABELS,
   compactRewardLabel,
@@ -71,21 +68,10 @@ export function LockerTasksPanel({
   const { user, userId } = useUser()
   const seedId = userId || user
   const { rewardState, rewardStateLoaded, syncChallengeBoard } = useRewards()
-  const slateSeason = useMemo(
-    () => normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate(),
-    [],
-  )
-  const { data: slateGamesData } = useQuery({
-    queryKey: ['games', 'DEL', slateSeason, 'today-slate'],
-    queryFn: () => api.getGames({ league: 'DEL', season: slateSeason }),
-    enabled: Boolean(user && slateSeason),
-    staleTime: 60_000,
+  const { allTodayGames } = useTodayGamesSchedule({
+    enabled: Boolean(user),
   })
-  const games = useMemo(
-    () => filterCatalogGamesForSeason(slateGamesData?.games || [], slateSeason),
-    [slateGamesData?.games, slateSeason],
-  )
-  const matchday = useMemo(() => resolveMatchdayContext(games), [games])
+  const matchday = useMemo(() => resolveMatchdayContext(allTodayGames), [allTodayGames])
 
   useEffect(() => {
     if (!user || !rewardStateLoaded) return

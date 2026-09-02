@@ -36,6 +36,8 @@ const NAME_ALIASES: Record<string, string> = {
   'Schwenninger ERC U20': 'SWW',
   'EC Bad Tölz U20': 'TOL',
   'SC Bietigheim-Bissingen U20': 'SBB',
+  'EV Füssen U20': 'EVF',
+  'EV Füssen': 'EVF',
 }
 
 function normalizeTeamKey(value: string): string {
@@ -133,4 +135,43 @@ export function formatMatchupShortCodes(
   const away = resolveTeamShortCode(teamAway)
   if (!home || !away) return null
   return `${home}-${away}`
+}
+
+function fallbackShortCode(raw: string): string {
+  return raw.replace(/[^A-Za-zÄÖÜäöüß0-9]/g, '').slice(0, 3).toUpperCase() || '???'
+}
+
+/** Resolve catalog game team id/name to a display short code (STR, AEV, BOS, …). */
+export function resolveGameTeamShortCode(
+  nameOrId: string | null | undefined,
+  league?: string | null,
+  season?: string | null,
+): string {
+  const raw = String(nameOrId || '').trim()
+  if (!raw) return '???'
+
+  const direct = resolveTeamShortCode(raw)
+  if (direct) return direct
+
+  const catalogName = resolveCatalogTeamName(raw, league, season)
+  const fromCatalog = resolveTeamShortCode(catalogName)
+  if (fromCatalog) return fromCatalog
+
+  return fallbackShortCode(catalogName || raw)
+}
+
+export function formatGamePairingShortCodes(
+  game: {
+    home_team_name?: string | null
+    home_team_id?: string | null
+    away_team_name?: string | null
+    away_team_id?: string | null
+    league_id?: string | null
+    season_id?: string | null
+  },
+  separator = ' – ',
+): string {
+  const home = resolveGameTeamShortCode(game.home_team_name || game.home_team_id, game.league_id, game.season_id)
+  const away = resolveGameTeamShortCode(game.away_team_name || game.away_team_id, game.league_id, game.season_id)
+  return `${home}${separator}${away}`
 }

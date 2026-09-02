@@ -36,6 +36,10 @@ from del_data.game_store import (
     games_status_summary,
     update_game_stats,
 )
+from del_data.chl_schedule_importer import ChlScheduleImporter, build_chl_team_mapper
+from del_data.del2_schedule_importer import Del2ScheduleImporter, build_del2_team_mapper
+from del_data.dnl_schedule_importer import DnlScheduleImporter, build_dnl_team_mapper
+from del_data.nhl_schedule_importer import NhlScheduleImporter, build_nhl_team_mapper
 from del_data.schedule_importer import PennyDelScheduleImporter
 from del_data.spieldetails_importer import PennyDelSpieldetailsImporter
 # JWT config
@@ -1201,6 +1205,35 @@ def _team_catalog_mapper() -> TeamCatalogMapper:
     return mapper
 
 
+def _del2_team_catalog_mapper() -> TeamCatalogMapper:
+    return build_del2_team_mapper(DATA_DIR)
+
+
+def _chl_team_catalog_mapper() -> TeamCatalogMapper:
+    return build_chl_team_mapper(os.path.join(DATA_DIR, "teams_chl.json"))
+
+
+def _nhl_team_catalog_mapper() -> TeamCatalogMapper:
+    return build_nhl_team_mapper(os.path.join(DATA_DIR, "teams_nhl.json"))
+
+
+def _dnl_team_catalog_mapper() -> TeamCatalogMapper:
+    return build_dnl_team_mapper(os.path.join(DATA_DIR, "teams_u20_dnl.json"))
+
+
+def _schedule_team_mapper(league: str) -> TeamCatalogMapper:
+    key = (league or "DEL").strip().upper()
+    if key == "DEL2":
+        return _del2_team_catalog_mapper()
+    if key == "CHL":
+        return _chl_team_catalog_mapper()
+    if key == "NHL":
+        return _nhl_team_catalog_mapper()
+    if key in {"U20_DNL", "U20"}:
+        return _dnl_team_catalog_mapper()
+    return _team_catalog_mapper()
+
+
 def _resolve_catalog_team_id(team_id: str) -> str:
     mapper = _team_catalog_mapper()
     resolved = mapper.resolve(team_id=team_id) or mapper.resolve(slug=team_id)
@@ -1977,7 +2010,7 @@ async def get_games(
         phase_id=phase_id,
         status=status,
     )
-    mapper = _team_catalog_mapper()
+    mapper = _schedule_team_mapper(league)
     for game in games:
         game["home_team_name"] = game.get("home_team_name") or mapper.team_name(game.get("home_team_id") or "")
         game["away_team_name"] = game.get("away_team_name") or mapper.team_name(game.get("away_team_id") or "")
@@ -1989,7 +2022,7 @@ async def get_game_by_id(game_id: str, current_user: AuthContext = Depends(get_c
     game = get_game(GAMES_DIR, game_id)
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
-    mapper = _team_catalog_mapper()
+    mapper = _schedule_team_mapper(str(game.get("league_id") or game_id.split(":", 1)[0]))
     game["home_team_name"] = game.get("home_team_name") or mapper.team_name(game.get("home_team_id") or "")
     game["away_team_name"] = game.get("away_team_name") or mapper.team_name(game.get("away_team_id") or "")
     return game
@@ -2001,9 +2034,23 @@ async def import_del_schedule(
     league: str = Query(default="DEL"),
     current_user: AuthContext = Depends(require_admin),
 ):
-    mapper = _team_catalog_mapper()
-    importer = PennyDelScheduleImporter(mapper)
-    result = importer.import_season(season, league=league)
+    league_key = (league or "DEL").strip().upper()
+    if league_key == "DEL2":
+        mapper = _del2_team_catalog_mapper()
+        importer = Del2ScheduleImporter(mapper, data_dir=DATA_DIR)
+    elif league_key == "CHL":
+        mapper = _chl_team_catalog_mapper()
+        importer = ChlScheduleImporter(mapper)
+    elif league_key == "NHL":
+        mapper = _nhl_team_catalog_mapper()
+        importer = NhlScheduleImporter(mapper)
+    elif league_key in {"U20_DNL", "U20"}:
+        mapper = _dnl_team_catalog_mapper()
+        importer = DnlScheduleImporter(mapper)
+    else:
+        mapper = _team_catalog_mapper()
+        importer = PennyDelScheduleImporter(mapper)
+    result = importer.import_season(season, league=league_key)
     if not result.get("games"):
         raise HTTPException(
             status_code=502,

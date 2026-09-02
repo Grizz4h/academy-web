@@ -1,0 +1,2533 @@
+{
+  "league": "CHL",
+  "season": "2025_2026",
+  "season_label": "2025/26",
+  "games": [
+    {
+      "id": "chl:2025_2026:2866",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-28",
+      "time": "17:00",
+      "home_team_id": "lulea_hockey",
+      "away_team_id": "ev_zug",
+      "home_team_name": "Luleå Hockey",
+      "away_team_name": "EV Zug",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2866",
+        "entity_id": "1f3a497406961f04bdac3d6b",
+        "imported_at": "2026-09-02T07:51:00.755515Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2867",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-28",
+      "time": "17:00",
+      "home_team_id": "storhamar_hamar",
+      "away_team_id": "eisbaren_berlin",
+      "home_team_name": "Storhamar Hamar",
+      "away_team_name": "Eisbären Berlin",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2867",
+        "entity_id": "88bd5113b59c4346ea869592",
+        "imported_at": "2026-09-02T07:51:00.755606Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2868",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-28",
+      "time": "18:00",
+      "home_team_id": "belfast_giants",
+      "away_team_id": "kalpa_kuopio",
+      "home_team_name": "Belfast Giants",
+      "away_team_name": "KalPa Kuopio",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2868",
+        "entity_id": "2d1dd84241d5210bc9b3456b",
+        "imported_at": "2026-09-02T07:51:00.755698Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2869",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-28",
+      "time": "17:30",
+      "home_team_id": "erc_ingolstadt",
+      "away_team_id": "ilves_tampere",
+      "home_team_name": "ERC Ingolstadt",
+      "away_team_name": "Ilves Tampere",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2869",
+        "entity_id": "9957caffc26392ca361e2fd8",
+        "imported_at": "2026-09-02T07:51:00.755790Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2870",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-28",
+      "time": "18:15",
+      "home_team_id": "grenoble",
+      "away_team_id": "sc_bern",
+      "home_team_name": "Grenoble",
+      "away_team_name": "SC Bern",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2870",
+        "entity_id": "e9ae6bffac2123274404c679",
+        "imported_at": "2026-09-02T07:51:00.755928Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2871",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-28",
+      "time": "18:20",
+      "home_team_id": "kac_klagenfurt",
+      "away_team_id": "sparta_prague",
+      "home_team_name": "KAC Klagenfurt",
+      "away_team_name": "Sparta Prague",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2871",
+        "entity_id": "8343c231c56ecc85e6d20d50",
+        "imported_at": "2026-09-02T07:51:00.756004Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2872",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-29",
+      "time": "15:30",
+      "home_team_id": "mountfield_hk",
+      "away_team_id": "odense_bulldogs",
+      "home_team_name": "Mountfield HK",
+      "away_team_name": "Odense Bulldogs",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2872",
+        "entity_id": "a0dedd257aff92689a14b8d3",
+        "imported_at": "2026-09-02T07:51:00.756073Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2873",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-29",
+      "time": "15:30",
+      "home_team_id": "lukko_rauma",
+      "away_team_id": "lausanne_hc",
+      "home_team_name": "Lukko Rauma",
+      "away_team_name": "Lausanne HC",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2873",
+        "entity_id": "ae7cf5b1a9823908898252ac",
+        "imported_at": "2026-09-02T07:51:00.756139Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2874",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-29",
+      "time": "17:00",
+      "home_team_id": "kometa_brno",
+      "away_team_id": "brynas_if",
+      "home_team_name": "Kometa Brno",
+      "away_team_name": "Brynäs IF",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2874",
+        "entity_id": "0d94db7e6c7bea067d5233fe",
+        "imported_at": "2026-09-02T07:51:00.756210Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2875",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-29",
+      "time": "17:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "hc_bolzano",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "HC Bolzano",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2875",
+        "entity_id": "19b338eccf63a981f5bb4ed3",
+        "imported_at": "2026-09-02T07:51:00.756330Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2876",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-29",
+      "time": "17:45",
+      "home_team_id": "zsc_lions_zurich",
+      "away_team_id": "pinguins_bremerhaven",
+      "home_team_name": "ZSC Lions Zurich",
+      "away_team_name": "Pinguins Bremerhaven",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2876",
+        "entity_id": "b913877d430b191a2f26bb1d",
+        "imported_at": "2026-09-02T07:51:00.756410Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2877",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 1,
+      "date": "2025-08-29",
+      "time": "18:20",
+      "home_team_id": "red_bull_salzburg",
+      "away_team_id": "gks_tychy",
+      "home_team_name": "Red Bull Salzburg",
+      "away_team_name": "GKS Tychy",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2877",
+        "entity_id": "c89056827551806ff208f1da",
+        "imported_at": "2026-09-02T07:51:00.756479Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2878",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-30",
+      "time": "14:00",
+      "home_team_id": "lulea_hockey",
+      "away_team_id": "sc_bern",
+      "home_team_name": "Luleå Hockey",
+      "away_team_name": "SC Bern",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2878",
+        "entity_id": "5bf39f1015dfa68d29ef538f",
+        "imported_at": "2026-09-02T07:51:00.756549Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2879",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-30",
+      "time": "16:00",
+      "home_team_id": "storhamar_hamar",
+      "away_team_id": "sparta_prague",
+      "home_team_name": "Storhamar Hamar",
+      "away_team_name": "Sparta Prague",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2879",
+        "entity_id": "4f20b6c66ed3f1f43b2f7717",
+        "imported_at": "2026-09-02T07:51:00.756627Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2880",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-30",
+      "time": "16:30",
+      "home_team_id": "erc_ingolstadt",
+      "away_team_id": "kalpa_kuopio",
+      "home_team_name": "ERC Ingolstadt",
+      "away_team_name": "KalPa Kuopio",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2880",
+        "entity_id": "4ac86560ed617ac04c1a4326",
+        "imported_at": "2026-09-02T07:51:00.756712Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2881",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-30",
+      "time": "18:00",
+      "home_team_id": "belfast_giants",
+      "away_team_id": "ilves_tampere",
+      "home_team_name": "Belfast Giants",
+      "away_team_name": "Ilves Tampere",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 7
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2881",
+        "entity_id": "5b258fed284c4c3c7eeec02f",
+        "imported_at": "2026-09-02T07:51:00.756781Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2882",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-30",
+      "time": "18:15",
+      "home_team_id": "grenoble",
+      "away_team_id": "ev_zug",
+      "home_team_name": "Grenoble",
+      "away_team_name": "EV Zug",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2882",
+        "entity_id": "0305ccc0bf33b1adab187b38",
+        "imported_at": "2026-09-02T07:51:00.756906Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2883",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-30",
+      "time": "18:20",
+      "home_team_id": "kac_klagenfurt",
+      "away_team_id": "eisbaren_berlin",
+      "home_team_name": "KAC Klagenfurt",
+      "away_team_name": "Eisbären Berlin",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2883",
+        "entity_id": "89b65ff6b214b499bee4963b",
+        "imported_at": "2026-09-02T07:51:00.757010Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2884",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-31",
+      "time": "13:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "lausanne_hc",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "Lausanne HC",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2884",
+        "entity_id": "4db447e7ae21739daac67d2d",
+        "imported_at": "2026-09-02T07:51:00.757110Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2885",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-31",
+      "time": "13:45",
+      "home_team_id": "zsc_lions_zurich",
+      "away_team_id": "gks_tychy",
+      "home_team_name": "ZSC Lions Zurich",
+      "away_team_name": "GKS Tychy",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2885",
+        "entity_id": "5aefa3b952345a262e3567b1",
+        "imported_at": "2026-09-02T07:51:00.757195Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2886",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-31",
+      "time": "13:00",
+      "home_team_id": "lukko_rauma",
+      "away_team_id": "hc_bolzano",
+      "home_team_name": "Lukko Rauma",
+      "away_team_name": "HC Bolzano",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2886",
+        "entity_id": "4d6eea1788f93323249ed2be",
+        "imported_at": "2026-09-02T07:51:00.757273Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2887",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-31",
+      "time": "14:00",
+      "home_team_id": "kometa_brno",
+      "away_team_id": "odense_bulldogs",
+      "home_team_name": "Kometa Brno",
+      "away_team_name": "Odense Bulldogs",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2887",
+        "entity_id": "408fabeb5779921d7eed3dd2",
+        "imported_at": "2026-09-02T07:51:00.757386Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2888",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-31",
+      "time": "14:00",
+      "home_team_id": "mountfield_hk",
+      "away_team_id": "brynas_if",
+      "home_team_name": "Mountfield HK",
+      "away_team_name": "Brynäs IF",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2888",
+        "entity_id": "47bb2285a161a0cbe57fe8a3",
+        "imported_at": "2026-09-02T07:51:00.757460Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2889",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 2,
+      "date": "2025-08-31",
+      "time": "15:30",
+      "home_team_id": "red_bull_salzburg",
+      "away_team_id": "pinguins_bremerhaven",
+      "home_team_name": "Red Bull Salzburg",
+      "away_team_name": "Pinguins Bremerhaven",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2889",
+        "entity_id": "3887bd879eb543527f68726b",
+        "imported_at": "2026-09-02T07:51:00.757559Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2890",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-04",
+      "time": "15:00",
+      "home_team_id": "gks_tychy",
+      "away_team_id": "frolunda_gothenburg",
+      "home_team_name": "GKS Tychy",
+      "away_team_name": "Frölunda Gothenburg",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2890",
+        "entity_id": "63e54cf9e6892da365a984e4",
+        "imported_at": "2026-09-02T07:51:00.757607Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2891",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-04",
+      "time": "15:30",
+      "home_team_id": "kalpa_kuopio",
+      "away_team_id": "storhamar_hamar",
+      "home_team_name": "KalPa Kuopio",
+      "away_team_name": "Storhamar Hamar",
+      "status": "final",
+      "score": {
+        "home": 6,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2891",
+        "entity_id": "0a90f6c743fcb6316c464e76",
+        "imported_at": "2026-09-02T07:51:00.757645Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2892",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-04",
+      "time": "15:30",
+      "home_team_id": "ilves_tampere",
+      "away_team_id": "red_bull_salzburg",
+      "home_team_name": "Ilves Tampere",
+      "away_team_name": "Red Bull Salzburg",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2892",
+        "entity_id": "dbb2d24ea631c6e9c4c7d606",
+        "imported_at": "2026-09-02T07:51:00.757699Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2893",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-04",
+      "time": "16:30",
+      "home_team_id": "sparta_prague",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "Sparta Prague",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2893",
+        "entity_id": "266bd61d197381b9752e84b6",
+        "imported_at": "2026-09-02T07:51:00.757737Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2894",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-04",
+      "time": "17:00",
+      "home_team_id": "brynas_if",
+      "away_team_id": "kac_klagenfurt",
+      "home_team_name": "Brynäs IF",
+      "away_team_name": "KAC Klagenfurt",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2894",
+        "entity_id": "bef835ff88f9c8413c842863",
+        "imported_at": "2026-09-02T07:51:00.757773Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2895",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-04",
+      "time": "17:00",
+      "home_team_id": "odense_bulldogs",
+      "away_team_id": "zsc_lions_zurich",
+      "home_team_name": "Odense Bulldogs",
+      "away_team_name": "ZSC Lions Zurich",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2895",
+        "entity_id": "fe75f615fd3a4ffdcb15ea26",
+        "imported_at": "2026-09-02T07:51:00.757904Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2896",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-05",
+      "time": "16:00",
+      "home_team_id": "lausanne_hc",
+      "away_team_id": "belfast_giants",
+      "home_team_name": "Lausanne HC",
+      "away_team_name": "Belfast Giants",
+      "status": "final",
+      "score": {
+        "home": 7,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2896",
+        "entity_id": "7752fb03185f9ffcb68c8374",
+        "imported_at": "2026-09-02T07:51:00.757956Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2897",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-05",
+      "time": "17:30",
+      "home_team_id": "eisbaren_berlin",
+      "away_team_id": "lukko_rauma",
+      "home_team_name": "Eisbären Berlin",
+      "away_team_name": "Lukko Rauma",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 6
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2897",
+        "entity_id": "784ac2956cffc47ed998b633",
+        "imported_at": "2026-09-02T07:51:00.757997Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2898",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-05",
+      "time": "17:30",
+      "home_team_id": "pinguins_bremerhaven",
+      "away_team_id": "grenoble",
+      "home_team_name": "Pinguins Bremerhaven",
+      "away_team_name": "Grenoble",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 8
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2898",
+        "entity_id": "d075f0f34e475507e5a8639b",
+        "imported_at": "2026-09-02T07:51:00.758034Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2899",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-05",
+      "time": "17:45",
+      "home_team_id": "sc_bern",
+      "away_team_id": "mountfield_hk",
+      "home_team_name": "SC Bern",
+      "away_team_name": "Mountfield HK",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2899",
+        "entity_id": "c05c19f2f6b0c2c53ef3e85f",
+        "imported_at": "2026-09-02T07:51:00.758070Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2900",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-05",
+      "time": "17:45",
+      "home_team_id": "ev_zug",
+      "away_team_id": "erc_ingolstadt",
+      "home_team_name": "EV Zug",
+      "away_team_name": "ERC Ingolstadt",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 7
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2900",
+        "entity_id": "ba484475da6efc94cca36497",
+        "imported_at": "2026-09-02T07:51:00.758105Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2901",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 3,
+      "date": "2025-09-05",
+      "time": "17:45",
+      "home_team_id": "hc_bolzano",
+      "away_team_id": "kometa_brno",
+      "home_team_name": "HC Bolzano",
+      "away_team_name": "Kometa Brno",
+      "status": "final",
+      "score": {
+        "home": 6,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2901",
+        "entity_id": "44acb73664d561589a090786",
+        "imported_at": "2026-09-02T07:51:00.758139Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2902",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-06",
+      "time": "13:30",
+      "home_team_id": "sparta_prague",
+      "away_team_id": "frolunda_gothenburg",
+      "home_team_name": "Sparta Prague",
+      "away_team_name": "Frölunda Gothenburg",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2902",
+        "entity_id": "a5f2d63c28d1ce1a34a9f483",
+        "imported_at": "2026-09-02T07:51:00.758175Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2903",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-06",
+      "time": "14:00",
+      "home_team_id": "brynas_if",
+      "away_team_id": "zsc_lions_zurich",
+      "home_team_name": "Brynäs IF",
+      "away_team_name": "ZSC Lions Zurich",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2903",
+        "entity_id": "2d927ffe383d503b86d616ca",
+        "imported_at": "2026-09-02T07:51:00.758212Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2904",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-06",
+      "time": "14:00",
+      "home_team_id": "kalpa_kuopio",
+      "away_team_id": "red_bull_salzburg",
+      "home_team_name": "KalPa Kuopio",
+      "away_team_name": "Red Bull Salzburg",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2904",
+        "entity_id": "18827f4b3bd2fd4b1fa37e85",
+        "imported_at": "2026-09-02T07:51:00.758246Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2905",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-06",
+      "time": "14:00",
+      "home_team_id": "ilves_tampere",
+      "away_team_id": "storhamar_hamar",
+      "home_team_name": "Ilves Tampere",
+      "away_team_name": "Storhamar Hamar",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2905",
+        "entity_id": "48561a6af3252698692209af",
+        "imported_at": "2026-09-02T07:51:00.758323Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2906",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-06",
+      "time": "16:00",
+      "home_team_id": "gks_tychy",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "GKS Tychy",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2906",
+        "entity_id": "94db83f3d4ae133b93183a6b",
+        "imported_at": "2026-09-02T07:51:00.758409Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2907",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-06",
+      "time": "17:00",
+      "home_team_id": "odense_bulldogs",
+      "away_team_id": "kac_klagenfurt",
+      "home_team_name": "Odense Bulldogs",
+      "away_team_name": "KAC Klagenfurt",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 6
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2907",
+        "entity_id": "d606fa8acc99317221b326fd",
+        "imported_at": "2026-09-02T07:51:00.758497Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2908",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-07",
+      "time": "12:00",
+      "home_team_id": "lausanne_hc",
+      "away_team_id": "erc_ingolstadt",
+      "home_team_name": "Lausanne HC",
+      "away_team_name": "ERC Ingolstadt",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2908",
+        "entity_id": "eb0e6670a1debf41220ffeac",
+        "imported_at": "2026-09-02T07:51:00.758577Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2909",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-07",
+      "time": "12:00",
+      "home_team_id": "ev_zug",
+      "away_team_id": "belfast_giants",
+      "home_team_name": "EV Zug",
+      "away_team_name": "Belfast Giants",
+      "status": "final",
+      "score": {
+        "home": 6,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2909",
+        "entity_id": "6f30e6290ace50850a662b86",
+        "imported_at": "2026-09-02T07:51:00.758644Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2910",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-07",
+      "time": "13:30",
+      "home_team_id": "hc_bolzano",
+      "away_team_id": "mountfield_hk",
+      "home_team_name": "HC Bolzano",
+      "away_team_name": "Mountfield HK",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2910",
+        "entity_id": "790a3f24a41b1b50906fbc2d",
+        "imported_at": "2026-09-02T07:51:00.758730Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2911",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-07",
+      "time": "12:00",
+      "home_team_id": "sc_bern",
+      "away_team_id": "kometa_brno",
+      "home_team_name": "SC Bern",
+      "away_team_name": "Kometa Brno",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2911",
+        "entity_id": "82998412302729428dd39847",
+        "imported_at": "2026-09-02T07:51:00.758772Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2912",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-07",
+      "time": "14:30",
+      "home_team_id": "pinguins_bremerhaven",
+      "away_team_id": "lukko_rauma",
+      "home_team_name": "Pinguins Bremerhaven",
+      "away_team_name": "Lukko Rauma",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2912",
+        "entity_id": "bc981cadb0894b2e437ddf24",
+        "imported_at": "2026-09-02T07:51:00.758811Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2913",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 4,
+      "date": "2025-09-07",
+      "time": "17:00",
+      "home_team_id": "eisbaren_berlin",
+      "away_team_id": "grenoble",
+      "home_team_name": "Eisbären Berlin",
+      "away_team_name": "Grenoble",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2913",
+        "entity_id": "7956b3a1b08d5c7d6d138356",
+        "imported_at": "2026-09-02T07:51:00.758857Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2914",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-07",
+      "time": "16:00",
+      "home_team_id": "mountfield_hk",
+      "away_team_id": "kalpa_kuopio",
+      "home_team_name": "Mountfield HK",
+      "away_team_name": "KalPa Kuopio",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2914",
+        "entity_id": "42017fe3420e1129e0b80d09",
+        "imported_at": "2026-09-02T07:51:00.758997Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2915",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-07",
+      "time": "15:30",
+      "home_team_id": "lukko_rauma",
+      "away_team_id": "ev_zug",
+      "home_team_name": "Lukko Rauma",
+      "away_team_name": "EV Zug",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2915",
+        "entity_id": "471dc97fe52be8e39014ae9e",
+        "imported_at": "2026-09-02T07:51:00.759043Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2916",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-07",
+      "time": "17:00",
+      "home_team_id": "brynas_if",
+      "away_team_id": "storhamar_hamar",
+      "home_team_name": "Brynäs IF",
+      "away_team_name": "Storhamar Hamar",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2916",
+        "entity_id": "e44fb0e02d2c4f41f33d8ccd",
+        "imported_at": "2026-09-02T07:51:00.759084Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2917",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-07",
+      "time": "17:30",
+      "home_team_id": "eisbaren_berlin",
+      "away_team_id": "frolunda_gothenburg",
+      "home_team_name": "Eisbären Berlin",
+      "away_team_name": "Frölunda Gothenburg",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2917",
+        "entity_id": "7a6f439b6e41f7d0ab0a2914",
+        "imported_at": "2026-09-02T07:51:00.759124Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2918",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-07",
+      "time": "17:30",
+      "home_team_id": "pinguins_bremerhaven",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "Pinguins Bremerhaven",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2918",
+        "entity_id": "cb4098b1f1909bd3a2c7b97a",
+        "imported_at": "2026-09-02T07:51:00.759163Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2919",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-07",
+      "time": "17:45",
+      "home_team_id": "zsc_lions_zurich",
+      "away_team_id": "sparta_prague",
+      "home_team_name": "ZSC Lions Zurich",
+      "away_team_name": "Sparta Prague",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2919",
+        "entity_id": "b5b4ec890d7812d0483b5e91",
+        "imported_at": "2026-09-02T07:51:00.759199Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2920",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-08",
+      "time": "16:00",
+      "home_team_id": "kometa_brno",
+      "away_team_id": "ilves_tampere",
+      "home_team_name": "Kometa Brno",
+      "away_team_name": "Ilves Tampere",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2920",
+        "entity_id": "f80691dc52576f283f5c2892",
+        "imported_at": "2026-09-02T07:51:00.759233Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2921",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-08",
+      "time": "17:00",
+      "home_team_id": "odense_bulldogs",
+      "away_team_id": "red_bull_salzburg",
+      "home_team_name": "Odense Bulldogs",
+      "away_team_name": "Red Bull Salzburg",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2921",
+        "entity_id": "ffd68ef0643081363b9bd49f",
+        "imported_at": "2026-09-02T07:51:00.759269Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2922",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-08",
+      "time": "17:45",
+      "home_team_id": "sc_bern",
+      "away_team_id": "belfast_giants",
+      "home_team_name": "SC Bern",
+      "away_team_name": "Belfast Giants",
+      "status": "final",
+      "score": {
+        "home": 7,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2922",
+        "entity_id": "e68ec0b1f32ddd1d6b287402",
+        "imported_at": "2026-09-02T07:51:00.759305Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2923",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-08",
+      "time": "17:45",
+      "home_team_id": "hc_bolzano",
+      "away_team_id": "erc_ingolstadt",
+      "home_team_name": "HC Bolzano",
+      "away_team_name": "ERC Ingolstadt",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2923",
+        "entity_id": "3bc4ab12e7c12144422226e7",
+        "imported_at": "2026-09-02T07:51:00.759354Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2924",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-08",
+      "time": "18:15",
+      "home_team_id": "grenoble",
+      "away_team_id": "lausanne_hc",
+      "home_team_name": "Grenoble",
+      "away_team_name": "Lausanne HC",
+      "status": "final",
+      "score": {
+        "home": 7,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2924",
+        "entity_id": "be67daa5096e6b42b4556fd5",
+        "imported_at": "2026-09-02T07:51:00.759456Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2925",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 5,
+      "date": "2025-10-08",
+      "time": "18:20",
+      "home_team_id": "kac_klagenfurt",
+      "away_team_id": "gks_tychy",
+      "home_team_name": "KAC Klagenfurt",
+      "away_team_name": "GKS Tychy",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2925",
+        "entity_id": "5e427d508d650bbd9b6cbc5f",
+        "imported_at": "2026-09-02T07:51:00.759500Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2926",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-14",
+      "time": "15:30",
+      "home_team_id": "ilves_tampere",
+      "away_team_id": "zsc_lions_zurich",
+      "home_team_name": "Ilves Tampere",
+      "away_team_name": "ZSC Lions Zurich",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2926",
+        "entity_id": "14b338f256cd80e11e92e6ae",
+        "imported_at": "2026-09-02T07:51:00.759537Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2927",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-14",
+      "time": "16:30",
+      "home_team_id": "sparta_prague",
+      "away_team_id": "grenoble",
+      "home_team_name": "Sparta Prague",
+      "away_team_name": "Grenoble",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2927",
+        "entity_id": "3d46809922788462297082b3",
+        "imported_at": "2026-09-02T07:51:00.759571Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2928",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-14",
+      "time": "17:00",
+      "home_team_id": "lulea_hockey",
+      "away_team_id": "hc_bolzano",
+      "home_team_name": "Luleå Hockey",
+      "away_team_name": "HC Bolzano",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2928",
+        "entity_id": "39452901e644e5ee15997b7c",
+        "imported_at": "2026-09-02T07:51:00.759609Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2929",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-14",
+      "time": "17:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "sc_bern",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "SC Bern",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2929",
+        "entity_id": "c9ba0de11a76f80b184650cc",
+        "imported_at": "2026-09-02T07:51:00.759646Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2930",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-14",
+      "time": "17:00",
+      "home_team_id": "storhamar_hamar",
+      "away_team_id": "pinguins_bremerhaven",
+      "home_team_name": "Storhamar Hamar",
+      "away_team_name": "Pinguins Bremerhaven",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2930",
+        "entity_id": "aedcaeef27aab2faad11bfbc",
+        "imported_at": "2026-09-02T07:51:00.759711Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2931",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-14",
+      "time": "18:00",
+      "home_team_id": "belfast_giants",
+      "away_team_id": "brynas_if",
+      "home_team_name": "Belfast Giants",
+      "away_team_name": "Brynäs IF",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2931",
+        "entity_id": "99836faa8ab0fcdc24eeaa5d",
+        "imported_at": "2026-09-02T07:51:00.759747Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2932",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-15",
+      "time": "16:00",
+      "home_team_id": "gks_tychy",
+      "away_team_id": "lukko_rauma",
+      "home_team_name": "GKS Tychy",
+      "away_team_name": "Lukko Rauma",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2932",
+        "entity_id": "b33b70c86138ac4d55f6e5c9",
+        "imported_at": "2026-09-02T07:51:00.759781Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2933",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-15",
+      "time": "15:30",
+      "home_team_id": "kalpa_kuopio",
+      "away_team_id": "kac_klagenfurt",
+      "home_team_name": "KalPa Kuopio",
+      "away_team_name": "KAC Klagenfurt",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2933",
+        "entity_id": "bf7eae7936032ccfe14013a8",
+        "imported_at": "2026-09-02T07:51:00.759815Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2934",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-15",
+      "time": "17:30",
+      "home_team_id": "erc_ingolstadt",
+      "away_team_id": "odense_bulldogs",
+      "home_team_name": "ERC Ingolstadt",
+      "away_team_name": "Odense Bulldogs",
+      "status": "final",
+      "score": {
+        "home": 8,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2934",
+        "entity_id": "34fc62e5071c3ffe21b7a014",
+        "imported_at": "2026-09-02T07:51:00.759951Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2935",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-15",
+      "time": "17:45",
+      "home_team_id": "lausanne_hc",
+      "away_team_id": "mountfield_hk",
+      "home_team_name": "Lausanne HC",
+      "away_team_name": "Mountfield HK",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2935",
+        "entity_id": "d30e2482185ac2c968895151",
+        "imported_at": "2026-09-02T07:51:00.760034Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2936",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-15",
+      "time": "17:45",
+      "home_team_id": "ev_zug",
+      "away_team_id": "kometa_brno",
+      "home_team_name": "EV Zug",
+      "away_team_name": "Kometa Brno",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2936",
+        "entity_id": "ace07a1de6b6d755fa685fc7",
+        "imported_at": "2026-09-02T07:51:00.760118Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2937",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "hauptrunde",
+      "phase_label": "Regular Season",
+      "matchday": 6,
+      "date": "2025-10-15",
+      "time": "18:20",
+      "home_team_id": "red_bull_salzburg",
+      "away_team_id": "eisbaren_berlin",
+      "home_team_name": "Red Bull Salzburg",
+      "away_team_name": "Eisbären Berlin",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2937",
+        "entity_id": "03251b5319e8a71af8476e0a",
+        "imported_at": "2026-09-02T07:51:00.760164Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2958",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-11",
+      "time": "18:00",
+      "home_team_id": "lulea_hockey",
+      "away_team_id": "kometa_brno",
+      "home_team_name": "Luleå Hockey",
+      "away_team_name": "Kometa Brno",
+      "status": "final",
+      "score": {
+        "home": 6,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2958",
+        "entity_id": "c149933620bc77c00eb4f877",
+        "imported_at": "2026-09-02T07:51:00.760211Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2959",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-11",
+      "time": "18:00",
+      "home_team_id": "brynas_if",
+      "away_team_id": "sc_bern",
+      "home_team_name": "Brynäs IF",
+      "away_team_name": "SC Bern",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2959",
+        "entity_id": "4137301b8886e4752b31e17f",
+        "imported_at": "2026-09-02T07:51:00.760253Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2960",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-11",
+      "time": "18:30",
+      "home_team_id": "pinguins_bremerhaven",
+      "away_team_id": "ilves_tampere",
+      "home_team_name": "Pinguins Bremerhaven",
+      "away_team_name": "Ilves Tampere",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2960",
+        "entity_id": "0f7105e5b22fcbfb6c79a6dd",
+        "imported_at": "2026-09-02T07:51:00.760348Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2961",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-11",
+      "time": "18:45",
+      "home_team_id": "zsc_lions_zurich",
+      "away_team_id": "kalpa_kuopio",
+      "home_team_name": "ZSC Lions Zurich",
+      "away_team_name": "KalPa Kuopio",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 4
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2961",
+        "entity_id": "70dbb365d18b243fb8255021",
+        "imported_at": "2026-09-02T07:51:00.760472Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2962",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-11",
+      "time": "19:15",
+      "home_team_id": "grenoble",
+      "away_team_id": "frolunda_gothenburg",
+      "home_team_name": "Grenoble",
+      "away_team_name": "Frölunda Gothenburg",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2962",
+        "entity_id": "ba7357fda5a13e3f116ba87c",
+        "imported_at": "2026-09-02T07:51:00.760537Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2963",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-12",
+      "time": "17:30",
+      "home_team_id": "storhamar_hamar",
+      "away_team_id": "lukko_rauma",
+      "home_team_name": "Storhamar Hamar",
+      "away_team_name": "Lukko Rauma",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2963",
+        "entity_id": "9b53e3878e2932be5f09846a",
+        "imported_at": "2026-09-02T07:51:00.760578Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2964",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-12",
+      "time": "18:30",
+      "home_team_id": "erc_ingolstadt",
+      "away_team_id": "red_bull_salzburg",
+      "home_team_name": "ERC Ingolstadt",
+      "away_team_name": "Red Bull Salzburg",
+      "status": "final",
+      "score": {
+        "home": 6,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2964",
+        "entity_id": "754a98c889abc3a94810645c",
+        "imported_at": "2026-09-02T07:51:00.760617Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2965",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 1,
+      "date": "2025-11-12",
+      "time": "18:45",
+      "home_team_id": "ev_zug",
+      "away_team_id": "sparta_prague",
+      "home_team_name": "EV Zug",
+      "away_team_name": "Sparta Prague",
+      "status": "final",
+      "score": {
+        "home": 6,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2965",
+        "entity_id": "6dcdd2892fe8183ed3d53852",
+        "imported_at": "2026-09-02T07:51:00.760653Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2966",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-18",
+      "time": "16:30",
+      "home_team_id": "lukko_rauma",
+      "away_team_id": "storhamar_hamar",
+      "home_team_name": "Lukko Rauma",
+      "away_team_name": "Storhamar Hamar",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2966",
+        "entity_id": "17d8105913b0dfbe4b0571c1",
+        "imported_at": "2026-09-02T07:51:00.760709Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2967",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-18",
+      "time": "17:00",
+      "home_team_id": "sparta_prague",
+      "away_team_id": "ev_zug",
+      "home_team_name": "Sparta Prague",
+      "away_team_name": "EV Zug",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2967",
+        "entity_id": "59cced728c546de62ba44eaf",
+        "imported_at": "2026-09-02T07:51:00.760747Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2968",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-18",
+      "time": "17:00",
+      "home_team_id": "kometa_brno",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "Kometa Brno",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2968",
+        "entity_id": "d096235b5367428242fb83ed",
+        "imported_at": "2026-09-02T07:51:00.760847Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2969",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-18",
+      "time": "18:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "grenoble",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "Grenoble",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2969",
+        "entity_id": "bdef327b6fb3bf6484d5e13b",
+        "imported_at": "2026-09-02T07:51:00.760998Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2970",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-18",
+      "time": "18:45",
+      "home_team_id": "sc_bern",
+      "away_team_id": "brynas_if",
+      "home_team_name": "SC Bern",
+      "away_team_name": "Brynäs IF",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 5
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2970",
+        "entity_id": "04d9eebeb3d2090876e69bec",
+        "imported_at": "2026-09-02T07:51:00.761049Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2971",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-19",
+      "time": "15:30",
+      "home_team_id": "ilves_tampere",
+      "away_team_id": "pinguins_bremerhaven",
+      "home_team_name": "Ilves Tampere",
+      "away_team_name": "Pinguins Bremerhaven",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2971",
+        "entity_id": "06169709e9a8be4c81e984ee",
+        "imported_at": "2026-09-02T07:51:00.761093Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2972",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-19",
+      "time": "16:30",
+      "home_team_id": "kalpa_kuopio",
+      "away_team_id": "zsc_lions_zurich",
+      "home_team_name": "KalPa Kuopio",
+      "away_team_name": "ZSC Lions Zurich",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2972",
+        "entity_id": "4d2ad1c25f0310315391c8a1",
+        "imported_at": "2026-09-02T07:51:00.761139Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2973",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "round_of_16",
+      "phase_label": "Round of 16",
+      "matchday": 2,
+      "date": "2025-11-19",
+      "time": "18:15",
+      "home_team_id": "red_bull_salzburg",
+      "away_team_id": "erc_ingolstadt",
+      "home_team_name": "Red Bull Salzburg",
+      "away_team_name": "ERC Ingolstadt",
+      "status": "final",
+      "score": {
+        "home": 4,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2973",
+        "entity_id": "6d780dc72bf8f6754aebf174",
+        "imported_at": "2026-09-02T07:51:00.761179Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2976",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 1,
+      "date": "2025-12-02",
+      "time": "17:00",
+      "home_team_id": "lulea_hockey",
+      "away_team_id": "ilves_tampere",
+      "home_team_name": "Luleå Hockey",
+      "away_team_name": "Ilves Tampere",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2976",
+        "entity_id": "76171ad75816e0907e4524d2",
+        "imported_at": "2026-09-02T07:51:00.761219Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2977",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 1,
+      "date": "2025-12-02",
+      "time": "18:00",
+      "home_team_id": "brynas_if",
+      "away_team_id": "kalpa_kuopio",
+      "home_team_name": "Brynäs IF",
+      "away_team_name": "KalPa Kuopio",
+      "status": "final",
+      "score": {
+        "home": 5,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2977",
+        "entity_id": "f857b63340fa52bed204c465",
+        "imported_at": "2026-09-02T07:51:00.761261Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2978",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 1,
+      "date": "2025-12-02",
+      "time": "18:30",
+      "home_team_id": "erc_ingolstadt",
+      "away_team_id": "frolunda_gothenburg",
+      "home_team_name": "ERC Ingolstadt",
+      "away_team_name": "Frölunda Gothenburg",
+      "status": "final",
+      "score": {
+        "home": 1,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2978",
+        "entity_id": "e1ad7e13e880fac3cd97055f",
+        "imported_at": "2026-09-02T07:51:00.761358Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2979",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 1,
+      "date": "2025-12-03",
+      "time": "16:30",
+      "home_team_id": "lukko_rauma",
+      "away_team_id": "ev_zug",
+      "home_team_name": "Lukko Rauma",
+      "away_team_name": "EV Zug",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 1
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2979",
+        "entity_id": "cd8c610240e7121798df260b",
+        "imported_at": "2026-09-02T07:51:00.761431Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2980",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 2,
+      "date": "2025-12-16",
+      "time": "16:30",
+      "home_team_id": "ilves_tampere",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "Ilves Tampere",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2980",
+        "entity_id": "f983d5463abc36d71d2dd971",
+        "imported_at": "2026-09-02T07:51:00.761545Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2981",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 2,
+      "date": "2025-12-16",
+      "time": "16:30",
+      "home_team_id": "kalpa_kuopio",
+      "away_team_id": "brynas_if",
+      "home_team_name": "KalPa Kuopio",
+      "away_team_name": "Brynäs IF",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2981",
+        "entity_id": "c4bc9f01bdb4bb20334237a0",
+        "imported_at": "2026-09-02T07:51:00.761595Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2982",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 2,
+      "date": "2025-12-16",
+      "time": "17:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "erc_ingolstadt",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "ERC Ingolstadt",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2982",
+        "entity_id": "81599a9ed75bacd3d085a51e",
+        "imported_at": "2026-09-02T07:51:00.761637Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2983",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "quarterfinal",
+      "phase_label": "Viertelfinale",
+      "matchday": 2,
+      "date": "2025-12-16",
+      "time": "18:45",
+      "home_team_id": "ev_zug",
+      "away_team_id": "lukko_rauma",
+      "home_team_name": "EV Zug",
+      "away_team_name": "Lukko Rauma",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 0
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2983",
+        "entity_id": "9fff9eb42ffb73a05229faa7",
+        "imported_at": "2026-09-02T07:51:00.761692Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2984",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "semifinal",
+      "phase_label": "Halbfinale",
+      "matchday": 1,
+      "date": "2026-01-13",
+      "time": "18:00",
+      "home_team_id": "brynas_if",
+      "away_team_id": "frolunda_gothenburg",
+      "home_team_name": "Brynäs IF",
+      "away_team_name": "Frölunda Gothenburg",
+      "status": "final",
+      "score": {
+        "home": 0,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2984",
+        "entity_id": "b7348744bc6de2943f78d1f2",
+        "imported_at": "2026-09-02T07:51:00.761803Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2985",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "semifinal",
+      "phase_label": "Halbfinale",
+      "matchday": 1,
+      "date": "2026-01-13",
+      "time": "18:45",
+      "home_team_id": "ev_zug",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "EV Zug",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 3
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2985",
+        "entity_id": "634bb71f7a2c91d4071bf027",
+        "imported_at": "2026-09-02T07:51:00.761909Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2986",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "semifinal",
+      "phase_label": "Halbfinale",
+      "matchday": 2,
+      "date": "2026-01-20",
+      "time": "18:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "brynas_if",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "Brynäs IF",
+      "status": "final",
+      "score": {
+        "home": 2,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2986",
+        "entity_id": "3c954c8d2126b49826448b38",
+        "imported_at": "2026-09-02T07:51:00.762002Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2987",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "semifinal",
+      "phase_label": "Halbfinale",
+      "matchday": 2,
+      "date": "2026-01-20",
+      "time": "18:00",
+      "home_team_id": "lulea_hockey",
+      "away_team_id": "ev_zug",
+      "home_team_name": "Luleå Hockey",
+      "away_team_name": "EV Zug",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2987",
+        "entity_id": "dd079c473d183caadc2a8a50",
+        "imported_at": "2026-09-02T07:51:00.762102Z"
+      }
+    },
+    {
+      "id": "chl:2025_2026:2865",
+      "league_id": "CHL",
+      "season_id": "2025/26",
+      "phase_id": "final",
+      "phase_label": "Finale",
+      "matchday": 1,
+      "date": "2026-03-03",
+      "time": "18:00",
+      "home_team_id": "frolunda_gothenburg",
+      "away_team_id": "lulea_hockey",
+      "home_team_name": "Frölunda Gothenburg",
+      "away_team_name": "Luleå Hockey",
+      "status": "final",
+      "score": {
+        "home": 3,
+        "away": 2
+      },
+      "source": {
+        "provider": "chl",
+        "external_id": "2865",
+        "entity_id": "2598d33681bd2c7bf1310768",
+        "imported_at": "2026-09-02T07:51:00.755328Z"
+      }
+    }
+  ],
+  "updated_at": "2026-09-02T07:51:00.767213Z"
+}

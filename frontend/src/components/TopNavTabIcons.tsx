@@ -244,6 +244,31 @@ export function NavIconDev({ className }: IconProps) {
   )
 }
 
+export function NavIconCalendar({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect
+        x="4.5"
+        y="5.5"
+        width="15"
+        height="14"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth={stroke.width}
+      />
+      <path
+        d="M4.5 9.5h15M8.5 3.5v3M15.5 3.5v3"
+        stroke="currentColor"
+        strokeWidth={stroke.width}
+        strokeLinecap={stroke.cap}
+      />
+      <circle cx="9" cy="14" r="1" fill="currentColor" />
+      <circle cx="12" cy="14" r="1" fill="currentColor" />
+      <circle cx="15" cy="14" r="1" fill="currentColor" />
+    </Svg>
+  )
+}
+
 const CORE_NAV_ICONS: Record<string, (props: IconProps) => ReactElement> = {
   '/': NavIconHome,
   '/curriculum': NavIconAcademy,
@@ -253,6 +278,7 @@ const CORE_NAV_ICONS: Record<string, (props: IconProps) => ReactElement> = {
 }
 
 const SECONDARY_NAV_ICONS: Record<string, (props: IconProps) => ReactElement> = {
+  '/sport-kalender': NavIconCalendar,
   '/ringabout': NavIconClapper,
   '/off-the-rink': NavIconColumn,
   '/lab': NavIconLab,

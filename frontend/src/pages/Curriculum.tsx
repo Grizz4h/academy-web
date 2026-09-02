@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
@@ -6,10 +6,9 @@ import type { CurriculumTrack, CurriculumModule, Session } from '../api'
 import theoryData from '../data/theoryData.json'
 import { getLastActivityTrackId } from '../utils/curriculumActivity'
 import { getRealSessions } from '../utils/sessionEligibility'
-import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
-import { UiActionRow, UiButton, UiPill } from '../components/ui'
+import Card from '../components/Card'
 import { useUser } from '../context/UserContext'
-import { isModulePremiumLocked, premiumLockMessage } from '../features/entitlements'
+import { isModulePremiumLocked } from '../features/entitlements'
 import PremiumCheckoutSheet from '../components/billing/PremiumCheckoutSheet'
 import {
   getFoundationTrack,
@@ -20,6 +19,11 @@ import {
 import { useDevNavEnabled } from '../config/featureFlags'
 import { selectTutorialEntryRecommendation } from '../features/tutorial/resolveEntry'
 import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial'
+import PendingGameSetupSheet from '../features/schedule/PendingGameSetupBanner'
+import { clearGameSetupPrefill } from '../features/schedule/gameSetupPrefill'
+import { usePendingGameSetupFocus } from '../features/schedule/usePendingGameSetupFocus'
+import { CurriculumModuleCard } from './CurriculumModuleCard'
+import { CurriculumTrackPanel } from './CurriculumTrackPanel'
 import styles from './Curriculum.module.css'
 
 const CLUSTER2_CURRICULUM_TRACK_IDS = new Set(['M'])
@@ -51,12 +55,11 @@ function moduleCountLabel(count: number): string {
   return count === 1 ? '1 Modul' : `${count} Module`
 }
 
-/** Keep letter prefix / en-dash / & from orphaning onto their own line. */
+/** Keep letter prefix + dash from orphaning ("A" alone on a line). */
 function displayTrackTitle(title: string): string {
   return String(title || '')
-    .replace(/\s+[–—-]\s+/g, '\u00A0–\u00A0')
-    .replace(/\s+&\s+/g, '\u00A0&\u00A0')
-    .replace(/-\s+(?=&)/g, '-\u00A0')
+    .replace(/^([A-Za-z0-9]+)\s*[–—-]\s+/u, '$1\u00A0– ')
+    .replace(/\s+&\s+/g, ' &\u00A0')
 }
 
 function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> {
@@ -123,17 +126,30 @@ export default function Curriculum() {
       .filter(Boolean),
     hockeyExperience: account?.profile?.hockeyExperience,
   })
+  const { prefill, focus, refreshPrefill } = usePendingGameSetupFocus({
+    curriculum,
+    sessions,
+    hockeyExperience: account?.profile?.hockeyExperience,
+    devMode,
+    tutorialActive: Boolean(tutorial?.active),
+  })
+  const [pairingConfirmed, setPairingConfirmed] = useState(false)
+  const showPairingSheet = Boolean(prefill) && !pairingConfirmed
   const lastActivityTrackId = useMemo(
     () => getLastActivityTrackId(sessions, curriculum),
     [sessions, curriculum],
   )
   const defaultOpenTrackId = useMemo(() => {
+    if (prefill && pairingConfirmed && focus?.trackId) return focus.trackId
     if (!sessionsFetched) return null
     if (tutorial?.active && entryTrackId) return entryTrackId
     if (lastActivityTrackId) return lastActivityTrackId
     if (foundationTrack && !foundationDone) return foundationTrack.id
     return null
   }, [
+    prefill,
+    pairingConfirmed,
+    focus?.trackId,
     sessionsFetched,
     tutorial?.active,
     entryTrackId,
@@ -159,8 +175,51 @@ export default function Curriculum() {
     })
   }
 
-  if (isLoading) return <div className="card">Lade Lehrplan...</div>
-  if (error) return <div className="card">Fehler beim Laden: {(error as Error).message}</div>
+  useEffect(() => {
+    if (!prefill) {
+      setPairingConfirmed(false)
+    }
+  }, [prefill])
+
+  useEffect(() => {
+    if (!prefill || !pairingConfirmed || !focus?.moduleId) return
+    const timer = window.setTimeout(() => {
+      document.getElementById(`curriculum-module-${focus.moduleId}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 180)
+    return () => window.clearTimeout(timer)
+  }, [prefill, pairingConfirmed, focus?.moduleId])
+
+  const handleConfirmPairing = () => {
+    setPairingConfirmed(true)
+    if (focus?.trackId) {
+      setOpenOverride((prev) => ({
+        ...(prev ?? {}),
+        [focus.trackId]: true,
+      }))
+    }
+  }
+
+  const handleDismissPairing = () => {
+    clearGameSetupPrefill()
+    setPairingConfirmed(false)
+    refreshPrefill()
+  }
+
+  if (isLoading) {
+    return (
+      <div className={`${styles.page} ui-page-shell`}>
+        <Card surface="section">Lade Lehrplan…</Card>
+      </div>
+    )
+  }
+  if (error) {
+    return (
+      <div className={`${styles.page} ui-page-shell`}>
+        <Card surface="section">Fehler beim Laden: {(error as Error).message}</Card>
+      </div>
+    )
+  }
 
   const orderedTracks = [...(curriculum?.tracks || [])]
     .filter((track) => !CLUSTER2_CURRICULUM_TRACK_IDS.has(track.id))
@@ -174,12 +233,57 @@ export default function Curriculum() {
     CLUSTER2_CURRICULUM_TRACK_IDS.has(track.id),
   )
 
+  const renderModuleCard = (
+    module: CurriculumModule,
+    trackFoundation: boolean,
+    cluster = false,
+  ) => {
+    const premiumLocked = isModulePremiumLocked(module)
+    const startBlocked = (academyLocked && !trackFoundation) || premiumLocked
+    const startLabel = premiumLocked
+      ? 'Premium'
+      : academyLocked && !trackFoundation
+        ? 'Zuerst Track 0'
+        : 'Starten'
+    const highlightPendingGame = Boolean(prefill && pairingConfirmed && focus?.moduleId === module.id)
+    return (
+      <CurriculumModuleCard
+        key={module.id}
+        id={`curriculum-module-${module.id}`}
+        module={module}
+        premiumLocked={premiumLocked}
+        startBlocked={startBlocked}
+        startLabel={startLabel}
+        highlightStart={module.id === entryModuleId && Boolean(tutorial?.active)}
+        highlightPendingGame={highlightPendingGame}
+        isEntryModule={module.id === entryModuleId}
+        cluster={cluster}
+        showTheory={module.id in theoryData}
+        showPremiumCheckout={premiumLocked && Boolean(user)}
+        completedDrillIds={completedDrillIds}
+        onStart={() => navigate(`/setup/${module.id}`)}
+        onTheory={() => navigate(`/theory/${module.id}`)}
+        onCheckout={() => setCheckoutOpen(true)}
+      />
+    )
+  }
+
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ui-page-shell`}>
       <header className="ui-page-header" data-tutorial-id={TUTORIAL_TARGET.academyTitle}>
         <h1 className="ui-page-title">Lehrplan</h1>
         <p className="ui-page-lead">Tracks antippen, um Module und Details auszuklappen.</p>
       </header>
+
+      {prefill ? (
+        <PendingGameSetupSheet
+          open={showPairingSheet}
+          prefill={prefill}
+          focusLead={focus?.nextStepLead}
+          onConfirm={handleConfirmPairing}
+          onDismiss={handleDismissPairing}
+        />
+      ) : null}
 
       <div className={styles.trackList}>
       {orderedTracks.map((track: CurriculumTrack) => {
@@ -188,312 +292,91 @@ export default function Curriculum() {
         const foundation = isFoundationTrack(track)
         const isEntryTrack = track.id === entryTrackId
         return (
-        <details
+        <CurriculumTrackPanel
           key={track.id}
-          className={`${styles.track} ${foundation ? styles.trackFoundation : ''}`}
+          trackId={track.id}
           open={trackIsOpen(track.id)}
+          onToggle={() => toggleTrack(track.id)}
+          foundation={foundation}
+          eyebrow={foundation ? (
+            <div className={styles.foundationLabel}>
+              {track.foundationLabel || 'FOUNDATION · TRACK 0'}
+            </div>
+          ) : undefined}
+          title={displayTrackTitle(track.title)}
+          titleTutorialId={isEntryTrack ? TUTORIAL_TARGET.academyEntryTrack : undefined}
+          moduleCountLabel={moduleCountLabel(activeModules.length)}
         >
-          <summary
-            className={styles.trackSummary}
-            onClick={(event) => {
-              event.preventDefault()
-              toggleTrack(track.id)
-            }}
-          >
-            <div className={styles.trackSummaryMain}>
-              {foundation && (
-                <div className={styles.foundationLabel}>
-                  {track.foundationLabel || 'FOUNDATION · TRACK 0'}
-                </div>
-              )}
-              <h2
-                className={styles.trackTitle}
-                {...(isEntryTrack ? { 'data-tutorial-id': TUTORIAL_TARGET.academyEntryTrack } : {})}
-              >
-                {displayTrackTitle(track.title)}
-              </h2>
-            </div>
-            <div className={styles.trackMeta}>
-              <span>{moduleCountLabel(activeModules.length)}</span>
-              <span className={styles.chevron} aria-hidden="true" />
-            </div>
-          </summary>
-
-          <div className={styles.trackBody}>
-            {track.description && (
-              <p className={styles.trackDescription}>{track.description}</p>
-            )}
-
-            <div className={styles.moduleGrid}>
-              {activeModules.map((module: CurriculumModule) => {
-                const drills = module.drills || []
-                const premiumLocked = isModulePremiumLocked(module)
-                const progressNodes = buildDrillProgressNodes(
-                  drills.map((d) => ({ id: d.id, title: d.title })),
-                  { completedIds: completedDrillIds },
-                )
-                const startBlocked = (academyLocked && !foundation) || premiumLocked
-                const startLabel = premiumLocked
-                  ? 'Premium'
-                  : academyLocked && !foundation
-                    ? 'Zuerst Track 0'
-                    : 'Starten'
-                return (
-                <div
-                  key={module.id}
-                  className={`${styles.moduleCard}${premiumLocked ? ` ${styles.moduleCardLocked}` : ''}`}
-                >
-                  <div className={styles.moduleTop}>
-                    <h3 className={styles.moduleTitle}>
-                      {module.title}
-                      {premiumLocked ? (
-                        <UiPill tone="warn" className={styles.premiumPill}>Premium</UiPill>
-                      ) : null}
-                    </h3>
-                    <UiActionRow className={styles.moduleActions}>
-                      <UiButton
-                        type="button"
-                        size={module.id === entryModuleId && tutorial?.active ? 'md' : 'sm'}
-                        onClick={() => navigate(`/setup/${module.id}`)}
-                        disabled={startBlocked}
-                        {...(module.id === entryModuleId ? { 'data-tutorial-id': TUTORIAL_TARGET.academyEntryStart } : {})}
-                      >
-                        {startLabel}
-                      </UiButton>
-                      {module.id in theoryData ? (
-                        <UiButton type="button" size="sm" onClick={() => navigate(`/theory/${module.id}`)}>
-                          Theorie lesen
-                        </UiButton>
-                      ) : null}
-                    </UiActionRow>
-                  </div>
-                  <p className={styles.moduleText}>{module.summary}</p>
-                  {premiumLocked ? (
-                    <p className={styles.moduleMuted}>{premiumLockMessage(module.id)}</p>
-                  ) : null}
-                  {premiumLocked && user ? (
-                    <UiActionRow className={styles.moduleActions}>
-                      <UiButton
-                        type="button"
-                        size="sm"
-                        onClick={() => setCheckoutOpen(true)}
-                      >
-                        Premium freischalten
-                      </UiButton>
-                    </UiActionRow>
-                  ) : null}
-                  {module.description && (
-                    <p className={styles.moduleMuted}>{module.description}</p>
-                  )}
-                  {progressNodes.length > 0 && (
-                    <div className={styles.moduleProgress}>
-                      <TrackProgressMap nodes={progressNodes} compact />
-                      <div className={styles.moduleMechanics}>
-                        {drills.slice(0, 5).map((drill) => (
-                          <MechanicGlyph
-                            key={drill.id}
-                            drillType={drill.drill_type}
-                            mode={drill.config?.mode}
-                            mechanic={drill.config?.mechanic}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {module.learningGoals && module.learningGoals.length > 0 && (
-                    <div className={styles.learningGoals}>
-                      <strong>Lernziele:</strong>
-                      <ul>
-                        {module.learningGoals.map((goal, i) => (
-                          <li key={i}>{goal}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <div className={styles.moduleStats}>
-                    Schwierigkeit: {module.difficulty || 1}
-                  </div>
-                </div>
-                )
-              })}
-            </div>
+          {track.description ? (
+            <p className={styles.trackDescription}>{track.description}</p>
+          ) : null}
+          <div className={styles.moduleGrid}>
+            {activeModules.map((module: CurriculumModule) => renderModuleCard(module, foundation))}
           </div>
-        </details>
+        </CurriculumTrackPanel>
         )
       })}
 
       {devMode && (
         <>
-          {cluster2PilotTracks.map((track) => (
-            <details key={`cluster2-pilot-${track.id}`} className={`${styles.track} ${styles.trackCluster}`}>
-              <summary className={styles.trackSummary}>
-                <div className={styles.trackSummaryMain}>
-                  <div className={styles.clusterLabel}>{track.clusterLabel}</div>
-                  <h2 className={styles.trackTitle}>{displayTrackTitle(track.title)}</h2>
-                </div>
-                <div className={styles.trackMeta}>
-                  <span>{moduleCountLabel(track.modules.length)}</span>
-                  <span className={styles.chevron} aria-hidden="true" />
-                </div>
-              </summary>
-
-              <div className={styles.trackBody}>
-                <p className={styles.trackDescription}>{track.description}</p>
-
-                <div className={styles.moduleGrid}>
-                  {track.modules.map((module) => (
-                    <div key={module.id} className={`${styles.moduleCard} ${styles.moduleCardCluster}`}>
-                      <div className={styles.moduleTop}>
-                        <h3 className={styles.moduleTitle}>{module.title}</h3>
-                        <UiActionRow className={styles.moduleActions}>
-                          <UiButton
-                            type="button"
-                            size="sm"
-                            onClick={() => navigate('/cluster2/f')}
-                            disabled={academyLocked}
-                          >
-                            {academyLocked ? 'Zuerst Track 0' : 'Starten'}
-                          </UiButton>
-                        </UiActionRow>
-                      </div>
-                      <p className={styles.moduleText}>{module.summary}</p>
-                      {module.description && (
-                        <p className={styles.moduleMuted}>{module.description}</p>
-                      )}
-                      {module.learningGoals && module.learningGoals.length > 0 && (
-                        <div className={styles.learningGoals}>
-                          <strong>Lernziele:</strong>
-                          <ul>
-                            {module.learningGoals.map((goal, i) => (
-                              <li key={i}>{goal}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      <div className={styles.moduleStats}>
-                        Schwierigkeit: {module.difficulty || 1}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {cluster2PilotTracks.map((track) => {
+            const pilotTrackId = `cluster2-pilot-${track.id}`
+            return (
+            <CurriculumTrackPanel
+              key={pilotTrackId}
+              trackId={pilotTrackId}
+              open={trackIsOpen(pilotTrackId)}
+              onToggle={() => toggleTrack(pilotTrackId)}
+              cluster
+              eyebrow={<div className={styles.clusterLabel}>{track.clusterLabel}</div>}
+              title={displayTrackTitle(track.title)}
+              moduleCountLabel={moduleCountLabel(track.modules.length)}
+            >
+              <p className={styles.trackDescription}>{track.description}</p>
+              <div className={styles.moduleGrid}>
+                {track.modules.map((module) => (
+                  <CurriculumModuleCard
+                    key={module.id}
+                    module={module as CurriculumModule}
+                    premiumLocked={false}
+                    startBlocked={academyLocked}
+                    startLabel={academyLocked ? 'Zuerst Track 0' : 'Starten'}
+                    cluster
+                    showTheory={false}
+                    showPremiumCheckout={false}
+                    completedDrillIds={completedDrillIds}
+                    onStart={() => navigate('/cluster2/f')}
+                    onTheory={() => {}}
+                    onCheckout={() => {}}
+                  />
+                ))}
               </div>
-            </details>
-          ))}
+            </CurriculumTrackPanel>
+            )
+          })}
 
           {cluster2CurriculumTracks.map((track: CurriculumTrack) => {
             const activeModules = (track.modules || []).filter((module: CurriculumModule) => module.active !== false)
             if (activeModules.length === 0) return null
+            const trackFoundation = isFoundationTrack(track)
             return (
-              <details
+              <CurriculumTrackPanel
                 key={`cluster2-${track.id}`}
-                className={`${styles.track} ${styles.trackCluster}`}
+                trackId={track.id}
                 open={trackIsOpen(track.id)}
+                onToggle={() => toggleTrack(track.id)}
+                cluster
+                eyebrow={<div className={styles.clusterLabel}>Cluster 2</div>}
+                title={displayTrackTitle(track.title)}
+                moduleCountLabel={moduleCountLabel(activeModules.length)}
               >
-                <summary
-                  className={styles.trackSummary}
-                  onClick={(event) => {
-                    event.preventDefault()
-                    toggleTrack(track.id)
-                  }}
-                >
-                  <div className={styles.trackSummaryMain}>
-                    <div className={styles.clusterLabel}>Cluster 2</div>
-                    <h2 className={styles.trackTitle}>{displayTrackTitle(track.title)}</h2>
-                  </div>
-                  <div className={styles.trackMeta}>
-                    <span>{moduleCountLabel(activeModules.length)}</span>
-                    <span className={styles.chevron} aria-hidden="true" />
-                  </div>
-                </summary>
-
-                <div className={styles.trackBody}>
-                  {track.description && (
-                    <p className={styles.trackDescription}>{track.description}</p>
-                  )}
-
-                  <div className={styles.moduleGrid}>
-                    {activeModules.map((module: CurriculumModule) => {
-                      const drills = module.drills || []
-                      const premiumLocked = isModulePremiumLocked(module)
-                      const progressNodes = buildDrillProgressNodes(
-                        drills.map((d) => ({ id: d.id, title: d.title })),
-                        { completedIds: completedDrillIds },
-                      )
-                      const startBlocked = (academyLocked && !isFoundationTrack(track)) || premiumLocked
-                      const startLabel = premiumLocked
-                        ? 'Premium'
-                        : academyLocked
-                          ? 'Zuerst Track 0'
-                          : 'Starten'
-                      return (
-                        <div
-                          key={module.id}
-                          className={`${styles.moduleCard} ${styles.moduleCardCluster}${premiumLocked ? ` ${styles.moduleCardLocked}` : ''}`}
-                        >
-                          <div className={styles.moduleTop}>
-                            <h3 className={styles.moduleTitle}>
-                              {module.title}
-                              {premiumLocked ? (
-                                <UiPill tone="warn" className={styles.premiumPill}>Premium</UiPill>
-                              ) : null}
-                            </h3>
-                            <UiActionRow className={styles.moduleActions}>
-                              <UiButton
-                                type="button"
-                                size="sm"
-                                onClick={() => navigate(`/setup/${module.id}`)}
-                                disabled={startBlocked}
-                              >
-                                {startLabel}
-                              </UiButton>
-                              {module.id in theoryData ? (
-                                <UiButton type="button" size="sm" onClick={() => navigate(`/theory/${module.id}`)}>
-                                  Theorie lesen
-                                </UiButton>
-                              ) : null}
-                            </UiActionRow>
-                          </div>
-                          <p className={styles.moduleText}>{module.summary}</p>
-                          {premiumLocked ? (
-                            <p className={styles.moduleMuted}>{premiumLockMessage(module.id)}</p>
-                          ) : null}
-                          {module.description && (
-                            <p className={styles.moduleMuted}>{module.description}</p>
-                          )}
-                          {progressNodes.length > 0 && (
-                            <div className={styles.moduleProgress}>
-                              <TrackProgressMap nodes={progressNodes} compact />
-                              <div className={styles.moduleMechanics}>
-                                {drills.slice(0, 5).map((drill) => (
-                                  <MechanicGlyph
-                                    key={drill.id}
-                                    drillType={drill.drill_type}
-                                    mode={drill.config?.mode}
-                                    mechanic={drill.config?.mechanic}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          {module.learningGoals && module.learningGoals.length > 0 && (
-                            <div className={styles.learningGoals}>
-                              <strong>Lernziele:</strong>
-                              <ul>
-                                {module.learningGoals.map((goal, i) => (
-                                  <li key={i}>{goal}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          <div className={styles.moduleStats}>
-                            Schwierigkeit: {module.difficulty || 1}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
+                {track.description ? (
+                  <p className={styles.trackDescription}>{track.description}</p>
+                ) : null}
+                <div className={styles.moduleGrid}>
+                  {activeModules.map((module: CurriculumModule) => renderModuleCard(module, trackFoundation, true))}
                 </div>
-              </details>
+              </CurriculumTrackPanel>
             )
           })}
         </>

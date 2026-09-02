@@ -25,6 +25,7 @@ import DevCosmetics from './pages/DevCosmetics'
 import DevProgression from './pages/DevProgression'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
+import SportCalendarPage from './pages/SportCalendar'
 import AuthCallbackPage from './pages/AuthCallback'
 import CreatorRouteGuard from './components/CreatorRouteGuard'
 import TopNav from './components/TopNav'
@@ -33,6 +34,8 @@ import { DevRouteGuard } from './components/DevRouteGuard'
 import { DisplayNameSetupSheet } from './components/DisplayNameSetupSheet'
 import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 import { TutorialHost } from './features/tutorial'
+import { GameSetupLauncherProvider } from './features/schedule/GameSetupLauncherProvider'
+import TodayGamesStripBar from './features/schedule/TodayGamesStripBar'
 import ImpressumPage from './pages/Impressum'
 import DatenschutzPage from './pages/Datenschutz'
 import KontaktPage from './pages/Kontakt'
@@ -47,15 +50,18 @@ import AdminPage from './pages/Admin'
 function App() {
   return (
     <RewardProvider>
-      <div className="app">
-        <TopNav />
-        <main className="container">
-          <Routes>
+      <GameSetupLauncherProvider>
+        <div className="app">
+          <TopNav />
+          <TodayGamesStripBar />
+          <main className="container">
+            <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/locker" element={<LockerPage />} />
+            <Route path="/sport-kalender" element={<CreatorRouteGuard><SportCalendarPage /></CreatorRouteGuard>} />
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/lab" element={<LabPage />} />
             <Route path="/lab/predict/setup" element={<LabPredictSetup />} />
@@ -93,10 +99,11 @@ function App() {
             <Route path="/dev/cosmetics" element={<DevRouteGuard><DevCosmetics /></DevRouteGuard>} />
             <Route path="/dev/progression" element={<DevRouteGuard><DevProgression /></DevRouteGuard>} />
             <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </main>
-        <AppFooter />
-      </div>
+            </Routes>
+          </main>
+          <AppFooter />
+        </div>
+      </GameSetupLauncherProvider>
       <DisplayNameSetupSheet />
       <RewardHost />
       <RewardDevTools />

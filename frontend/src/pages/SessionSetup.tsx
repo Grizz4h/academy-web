@@ -24,10 +24,12 @@ import { getRealSessions } from '../utils/sessionEligibility'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { LiveObservationPanel } from '../components/game/LiveObservationPanel'
 import ArenaCheckPanel from '../components/game/ArenaCheckPanel'
+import Card from '../components/Card'
 import { UiActionRow, UiButton, ScrollActionDock, scrollActionDockPageClass } from '../components/ui'
 import { useGameCatalogMatch } from '../components/game/useGameCatalogMatch'
 import { PastDrillSessions } from '../features/reflection/PastDrillSessions'
 import { isDummyCatalogGame } from '../features/schedule/scheduleLayer'
+import { consumeGameSetupPrefill } from '../features/schedule/gameSetupPrefill'
 import { readPendingVenuePresence } from '../features/location'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import { getFoundationModule, isAcademyLocked } from '../features/foundation/recommendations'
@@ -186,6 +188,18 @@ export default function SessionSetup() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftKey])
+
+  useEffect(() => {
+    const prefill = consumeGameSetupPrefill()
+    if (!prefill) return
+    if (prefill.league) setLeague(prefill.league)
+    if (prefill.season) setSeason(prefill.season)
+    if (prefill.teamHome) setTeamHome(prefill.teamHome)
+    if (prefill.teamAway) setTeamAway(prefill.teamAway)
+    if (prefill.competitionPhase) setCompetitionPhase(prefill.competitionPhase)
+    if (prefill.competitionValue) setCompetitionValue(prefill.competitionValue)
+    if (prefill.selectedGameId) setSelectedGameId(prefill.selectedGameId)
+  }, [moduleId])
 
   // Reset query-apply marker when module changes
   useEffect(() => {
@@ -556,13 +570,13 @@ export default function SessionSetup() {
             Starte mit der Einstiegs-Lektion. Danach ist Track A1 freigeschaltet.
           </p>
         </header>
-        <button
+        <UiButton
           type="button"
-          className="btn"
+          variant="primary"
           onClick={() => navigate(`/setup/${foundationModule?.id || 'T0'}`)}
         >
           Track 0 starten
-        </button>
+        </UiButton>
       </div>
     )
   }
@@ -595,18 +609,20 @@ export default function SessionSetup() {
 
   if (moduleInactive) {
     return (
-      <div className="card" style={{ maxWidth: 640 }}>
-        <h2 style={{ marginTop: 0 }}>{currentModule.title}</h2>
-        <p style={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.45 }}>
-          {moduleDeprecationNote}
-        </p>
-        <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.45 }}>
-          Starte einen normalen Track-Drill und nutze während der Session{' '}
-          <strong>⚡ Special Teams → Numerical Situation</strong>, wenn die Sondersituation im Spiel auftaucht.
-        </p>
-        <button type="button" className="btn" onClick={() => navigate('/curriculum')}>
-          Zurück zum Lehrplan
-        </button>
+      <div className="ui-page-shell" style={{ maxWidth: '640px', margin: '0 auto' }}>
+        <Card surface="primary">
+          <h2 className="ui-section-title" style={{ marginTop: 0 }}>{currentModule.title}</h2>
+          <p style={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.45 }}>
+            {moduleDeprecationNote}
+          </p>
+          <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.45 }}>
+            Starte einen normalen Track-Drill und nutze während der Session{' '}
+            <strong>⚡ Special Teams → Numerical Situation</strong>, wenn die Sondersituation im Spiel auftaucht.
+          </p>
+          <UiButton type="button" variant="ghost" onClick={() => navigate('/curriculum')}>
+            Zurück zum Lehrplan
+          </UiButton>
+        </Card>
       </div>
     )
   }
@@ -771,10 +787,8 @@ export default function SessionSetup() {
           </div>
         )}
 
-        <div
-          className={`card ui-surface ui-surface--primary primary-card ${setupStyles.foundationCard}`}
-          data-tutorial-id={TUTORIAL_TARGET.setupMain}
-        >
+        <div data-tutorial-id={TUTORIAL_TARGET.setupMain}>
+          <Card surface="primary" className={setupStyles.foundationCard}>
           <h2 className="ui-section-title">Welche Lektion?</h2>
           <p className={setupStyles.setupIntro}>
             Keine Paarung, kein Spieltag — einfach eine Lektion wählen und starten.
@@ -809,6 +823,7 @@ export default function SessionSetup() {
               {createError}
             </div>
           )}
+          </Card>
         </div>
 
         <details className={setupStyles.foundationMore}>
@@ -877,7 +892,8 @@ export default function SessionSetup() {
         </div>
       </div>
 
-      <div className="card ui-surface ui-surface--primary primary-card" data-tutorial-id={TUTORIAL_TARGET.setupMain}>
+      <div data-tutorial-id={TUTORIAL_TARGET.setupMain}>
+        <Card surface="primary">
         <h2 className="ui-section-title">Session vorbereiten</h2>
         <LiveObservationPanel
           intro="Liga und Saison wählen, dann ein Spiel. Heim-/Auswärtsteam, Datum und Spieltag kommen aus dem Spielplan. Welches Team du beobachtest, bleibt deine Auswahl."
@@ -921,6 +937,7 @@ export default function SessionSetup() {
             <div>{teamAway} <span style={{ color: 'rgba(255,255,255,0.5)' }}>({getTeamDivision(teamAway)})</span></div>
           </div>
         )}
+        </Card>
       </div>
 
       {matchupPanelData && (
@@ -1308,26 +1325,18 @@ export default function SessionSetup() {
               DEV
             </span>
           </div>
-          <button
+          <UiButton
             type="button"
-            className="btn"
+            variant="dev"
+            block
             onClick={() => {
               setDummyError('')
               dummySessionMutation.mutate()
             }}
             disabled={!selectedDrill || dummySessionMutation.isPending || createSessionMutation.isPending}
-            style={{
-              width: '100%',
-              padding: '0.85rem 1rem',
-              fontSize: '1rem',
-              backgroundColor: 'rgba(245, 158, 11, 0.25)',
-              border: '1px solid rgba(245, 158, 11, 0.55)',
-              color: '#fff7ed',
-              opacity: !selectedDrill || dummySessionMutation.isPending ? 0.55 : 1,
-            }}
           >
             {dummySessionMutation.isPending ? 'Starte Dummy-Session…' : '⚡ Dummy-Session starten'}
-          </button>
+          </UiButton>
           <p style={{ margin: '0.55rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.72)' }}>
             Startet diesen Drill sofort mit Testdaten. Zählt nicht in Stats oder Fortschritt.
           </p>
@@ -1340,12 +1349,14 @@ export default function SessionSetup() {
       )}
 
       {createError && (
-        <div className="card" style={{ border: '1px solid #dc3545', background: 'rgba(220,53,69,0.08)' }}>
+        <div style={{ border: '1px solid #dc3545', background: 'rgba(220,53,69,0.08)', borderRadius: 'var(--radius-card, 16px)' }}>
+        <Card surface="section">
           <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#ff8e8e' }}>Session konnte nicht erstellt werden</div>
           <div style={{ whiteSpace: 'pre-wrap', fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)' }}>{createError}</div>
-          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem' }}>
-            <button
-              className="btn"
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <UiButton
+              type="button"
+              variant="secondary"
               onClick={() => {
                 if (creatingSessionRef.current || createSessionMutation.isPending) return
                 if (lastPayloadRef.current) {
@@ -1357,11 +1368,12 @@ export default function SessionSetup() {
               disabled={createSessionMutation.isPending}
             >
               Erneut versuchen
-            </button>
+            </UiButton>
             {!navigator.onLine && (
-              <span style={{ alignSelf: 'center', color: 'rgba(255,255,255,0.7)' }}>Offline erkannt – bitte Internet prüfen</span>
+              <span style={{ color: 'rgba(255,255,255,0.7)' }}>Offline erkannt – bitte Internet prüfen</span>
             )}
           </div>
+        </Card>
         </div>
       )}
 

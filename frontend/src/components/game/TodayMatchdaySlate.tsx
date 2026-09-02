@@ -1,11 +1,17 @@
 import type { CatalogGame } from '../../api'
+import { TeamCrest } from './TeamCrest'
+import {
+  resolveCatalogTeamName,
+  resolveGameTeamShortCode,
+} from '../../data/teamShortCodes'
 import {
   filterGamesForDate,
-  formatGameStatusLabel,
+  formatGameStripStatusLabel,
   formatGameTimeLabel,
   localTodayIsoDate,
   uniqueMatchdaysForDate,
 } from './gameCatalogUtils'
+import { COMPETITION_CONFIGS } from '../../data/competitionConfig'
 import styles from './TodayMatchdaySlate.module.css'
 
 type TodayMatchdaySlateProps = {
@@ -17,6 +23,8 @@ type TodayMatchdaySlateProps = {
   leagueOptions?: string[]
   selectable?: boolean
   hint?: string
+  /** When true, append official score next to status (creator calendar). */
+  showScores?: boolean
 }
 
 function formatTodayLabel(date: string): string {
@@ -39,6 +47,7 @@ export default function TodayMatchdaySlate({
   leagueOptions,
   selectable = Boolean(onSelectGame),
   hint,
+  showScores = false,
 }: TodayMatchdaySlateProps) {
   const todayGames = filterGamesForDate(games, date)
   if (todayGames.length === 0) return null
@@ -51,10 +60,10 @@ export default function TodayMatchdaySlate({
       : 'Spieltag'
 
   return (
-    <section className={styles.wrap} aria-label={`Heutige Spiele ${league}`}>
+    <section className={styles.wrap} aria-label={`Spiele ${league}`}>
       <div className={styles.header}>
         <div className={styles.titleBlock}>
-          <h2 className={styles.title}>Heute in {league.replace(/_/g, ' ')}</h2>
+          <h2 className={styles.title}>{league.replace(/_/g, ' ')}</h2>
           <p className={styles.subtitle}>
             {formatTodayLabel(date)} · {matchdayLabel} · {todayGames.length}{' '}
             {todayGames.length === 1 ? 'Paarung' : 'Paarungen'}
@@ -76,27 +85,40 @@ export default function TodayMatchdaySlate({
 
       <ul className={styles.list}>
         {todayGames.map((game) => {
-          const home = game.home_team_name || game.home_team_id
-          const away = game.away_team_name || game.away_team_id
-          const status = formatGameStatusLabel(game)
-          const statusClass = game.status === 'live'
+          const homeName = resolveCatalogTeamName(game.home_team_name || game.home_team_id, game.league_id, game.season_id)
+          const awayName = resolveCatalogTeamName(game.away_team_name || game.away_team_id, game.league_id, game.season_id)
+          const home = resolveGameTeamShortCode(game.home_team_name || game.home_team_id, game.league_id, game.season_id)
+          const away = resolveGameTeamShortCode(game.away_team_name || game.away_team_id, game.league_id, game.season_id)
+          const time = formatGameTimeLabel(game.time, { omitSuffix: true })
+          const leagueLabel = COMPETITION_CONFIGS[game.league_id]?.label || league.replace(/_/g, ' ')
+          const status = formatGameStripStatusLabel(game)
+          const statusClass = status === 'Live'
             ? styles.statusLive
-            : game.status === 'scheduled'
+            : status === 'Geplant'
               ? styles.statusScheduled
-              : ''
+              : styles.statusEnded
+          const metaParts = [
+            time || null,
+            game.matchday != null ? `ST ${game.matchday}` : null,
+            game.phase_label || null,
+            showScores && game.score ? `${game.score.home}:${game.score.away}` : null,
+          ].filter(Boolean)
+
           const content = (
-            <>
-              <span className={styles.timeCol}>{formatGameTimeLabel(game.time) || '–'}</span>
-              <span className={styles.pairing}>
-                <strong>{home}</strong>
-                {' vs '}
-                <strong>{away}</strong>
-                {game.matchday ? (
-                  <span className={styles.meta}>Spieltag {game.matchday}</span>
-                ) : null}
+            <span className={styles.badge}>
+              <TeamCrest name={homeName} teamId={game.home_team_id} size="sm" />
+              <span className={styles.badgeCopy}>
+                <span className={styles.badgeKicker}>{leagueLabel}</span>
+                <span className={styles.badgePairing}>{home} – {away}</span>
+                <span className={styles.badgeMetaRow}>
+                  {metaParts.length > 0 ? (
+                    <span className={styles.badgeMeta}>{metaParts.join(' · ')}</span>
+                  ) : null}
+                  <span className={`${styles.statusWord} ${statusClass}`}>{status}</span>
+                </span>
               </span>
-              <span className={`${styles.statusCol} ${statusClass}`}>{status}</span>
-            </>
+              <TeamCrest name={awayName} teamId={game.away_team_id} size="sm" />
+            </span>
           )
 
           return (
@@ -106,7 +128,7 @@ export default function TodayMatchdaySlate({
                   type="button"
                   className={styles.itemButton}
                   onClick={() => onSelectGame(game)}
-                  title={`${home} vs ${away} übernehmen`}
+                  title={`${homeName} vs ${awayName} · ${status}`}
                 >
                   {content}
                 </button>

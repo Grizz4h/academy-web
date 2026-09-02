@@ -60,22 +60,10 @@ export function TapReveal({
         id={panelId}
         ariaLabel={title}
         className="ui-tap-reveal-panel"
-        onClick={(event) => event.stopPropagation()}
+        onDismiss={close}
       >
         <div className="ui-tap-reveal-header">
           <h3 className="ui-tap-reveal-title">{title}</h3>
-          <button
-            type="button"
-            className="ui-tap-reveal-close"
-            aria-label="Schließen"
-            onClick={(event) => {
-              event.preventDefault()
-              event.stopPropagation()
-              close()
-            }}
-          >
-            ×
-          </button>
         </div>
         <div className="ui-tap-reveal-body">{children}</div>
       </AnchoredPopover>

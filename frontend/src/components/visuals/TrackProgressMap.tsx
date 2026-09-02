@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
 import { claimExclusivePopover, subscribeExclusivePopover } from '../ui/useExclusivePopover'
 import styles from './TrackProgressMap.module.css'
@@ -15,6 +15,8 @@ type TrackProgressMapProps = {
   nodes: TrackProgressNode[]
   className?: string
   compact?: boolean
+  /** Optional content centered under each D-pill (e.g. MechanicGlyph). */
+  renderBeneath?: (node: TrackProgressNode, index: number) => ReactNode
 }
 
 const STATUS_LABEL: Record<TrackProgressNode['status'], string> = {
@@ -25,7 +27,12 @@ const STATUS_LABEL: Record<TrackProgressNode['status'], string> = {
 }
 
 /** Compact D1 ●── D2 progression map. Status only — no invented gamification. */
-export function TrackProgressMap({ nodes, className, compact = false }: TrackProgressMapProps) {
+export function TrackProgressMap({
+  nodes,
+  className,
+  compact = false,
+  renderBeneath,
+}: TrackProgressMapProps) {
   const [openId, setOpenId] = useState<string | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
@@ -34,40 +41,28 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
 
   useEffect(() => subscribeExclusivePopover(exclusiveId, () => setOpenId(null)), [exclusiveId])
 
-  useEffect(() => {
-    if (!openId) return
-
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null
-      if (triggerRef.current?.contains(target)) return
-      if (popoverRef.current?.contains(target)) return
-      setOpenId(null)
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenId(null)
-    }
-
-    document.addEventListener('pointerdown', onPointerDown, true)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown, true)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [openId])
-
   if (!nodes.length) return null
 
   return (
     <ol
-      className={[styles.map, compact ? styles.compact : '', className].filter(Boolean).join(' ')}
+      className={[
+        styles.map,
+        compact ? styles.compact : '',
+        className,
+      ].filter(Boolean).join(' ')}
       aria-label="Drill-Progression"
     >
       {nodes.map((node, index) => {
         const name = node.title || node.label || node.id
         const short = node.label || node.id
         const open = openId === node.id
+        const beneath = renderBeneath?.(node, index) ?? null
         return (
-          <li key={node.id} className={styles.item} data-status={node.status}>
+          <li
+            key={node.id}
+            className={[styles.item, index > 0 ? styles.itemWithConnector : ''].filter(Boolean).join(' ')}
+            data-status={node.status}
+          >
             {index > 0 && <span className={styles.connector} aria-hidden="true" />}
             <span className={styles.wrap}>
               <button
@@ -102,25 +97,14 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
                   id={panelId}
                   ariaLabel={name}
                   className={styles.popup}
-                  onClick={(event) => event.stopPropagation()}
+                  preferredWidth={300}
+                  onDismiss={() => setOpenId(null)}
                 >
                   <div className={styles.popupHeader}>
                     <span className={styles.popupBadge} data-status={node.status} aria-hidden="true">
                       {short}
                     </span>
                     <strong className={styles.popupTitle}>{name}</strong>
-                    <button
-                      type="button"
-                      className={styles.popupClose}
-                      aria-label="Schließen"
-                      onClick={(event) => {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        setOpenId(null)
-                      }}
-                    >
-                      ×
-                    </button>
                   </div>
                   <p className={styles.popupSummary}>{STATUS_LABEL[node.status]}</p>
                   {node.title && node.label && node.title !== node.label ? (
@@ -129,6 +113,9 @@ export function TrackProgressMap({ nodes, className, compact = false }: TrackPro
                 </AnchoredPopover>
               )}
             </span>
+            {beneath != null ? (
+              <span className={styles.beneath}>{beneath}</span>
+            ) : null}
           </li>
         )
       })}

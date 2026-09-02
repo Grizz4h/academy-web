@@ -35,7 +35,6 @@
 .ui-tap-reveal-header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.4rem;
 }
@@ -45,26 +44,10 @@
   font-size: 0.95rem;
   font-weight: 700;
   color: rgba(247, 247, 255, 0.96);
-  line-height: 1.25;
-}
-
-.ui-tap-reveal-close {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: rgba(198, 214, 232, 0.72);
-  font-size: 1.15rem;
-  line-height: 1;
-  padding: 0.1rem 0.25rem;
-  cursor: pointer;
-  border-radius: 6px;
-  flex: 0 0 auto;
-}
-
-.ui-tap-reveal-close:hover,
-.ui-tap-reveal-close:focus-visible {
-  color: rgba(247, 247, 255, 0.95);
-  background: rgba(255, 255, 255, 0.06);
+  line-height: 1.3;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .ui-tap-reveal-body {

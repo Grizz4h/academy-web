@@ -281,26 +281,22 @@
   margin-top: 0.9rem;
 }
 
-.devPanel {
-  position: fixed;
-  right: 12px;
-  bottom: 12px;
-  z-index: 4200;
-  width: min(320px, calc(100vw - 24px));
-  padding: 0.7rem 0.75rem;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.94);
-  border: 1px dashed rgba(245, 158, 11, 0.55);
-  color: #fde68a;
-  font-size: 0.75rem;
+.devInline {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.devMeta {
+  margin: 0;
+  font-size: 0.78rem;
   line-height: 1.4;
+  color: rgba(253, 230, 138, 0.88);
 }
 
 .devRow {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin-top: 0.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

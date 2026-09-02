@@ -180,68 +180,10 @@
   }
 }
 
-.saveDockSlot {
-  display: flex;
-  justify-content: center;
-  min-height: 0;
-}
-
-.saveDockSlotActive {
-  min-height: 2.75rem;
-  padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
-}
-
-.saveDock {
-  z-index: 40;
-  display: flex;
-  justify-content: center;
-}
-
-.saveDockFloating {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  padding: 0 var(--page-pad-x, 1rem) calc(0.65rem + env(safe-area-inset-bottom, 0px));
-}
-
-.saveDockFloating .saveDockInner {
-  pointer-events: auto;
-}
-
-.saveDockParked {
-  position: relative;
-  width: 100%;
-}
-
-.saveDockInner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  max-width: 100%;
-  padding: 0.4rem 0.5rem 0.4rem 0.45rem;
-  border-radius: 999px;
-  border: 1px solid rgba(120, 160, 175, 0.22);
-  background: rgba(8, 12, 22, 0.78);
-  backdrop-filter: blur(10px);
-}
-
-.saveHint {
-  font-size: 0.78rem;
-  color: var(--text-subtle);
-  padding-right: 0.35rem;
-  white-space: nowrap;
-}
-
 .saveOk {
   color: #99f6e4;
   font-size: 0.78rem;
   padding-right: 0.35rem;
-}
-
-.pageWithSaveDock {
-  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 .error {

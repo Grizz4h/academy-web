@@ -25,18 +25,9 @@ import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
 import { UiActionRow, UiButton, UiButtonLink, UiProgress } from '../components/ui';
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard';
-import TodayMatchdaySlate from '../components/game/TodayMatchdaySlate';
+import { useTodayGamesSchedule } from '../features/schedule/useTodayGamesSchedule';
 import TodayChallenges from '../features/progression/challenges/TodayChallenges';
-import { filterCatalogGamesForSeason, filterGamesForDate, localTodayIsoDate } from '../components/game/gameCatalogUtils';
-import { inferSplitSeasonLabelForDate, normalizeSeasonValue } from '../stats/seasonNormalization';
-import {
-  getAcademyEntryModule,
-  getFoundationModule,
-  hasCompletedAnyFoundationDrill,
-  isAcademyLocked,
-  selectNextStepRecommendation,
-  shouldPromptHockeyExperience,
-} from '../features/foundation/recommendations';
+import { getAcademyEntryModule, getFoundationModule, hasCompletedAnyFoundationDrill, isAcademyLocked, selectNextStepRecommendation, shouldPromptHockeyExperience } from '../features/foundation/recommendations';
 import HockeyExperiencePrompt from '../features/foundation/HockeyExperiencePrompt';
 import { selectTutorialEntryRecommendation } from '../features/tutorial/resolveEntry';
 import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial';
@@ -105,28 +96,12 @@ export default function Dashboard() {
   // Scope State für modulbasierte Filterung
   const [currentScope, setCurrentScope] = useState<string>("Gesamt");
   const [scopeInitialized, setScopeInitialized] = useState(false);
-  const [showAllTracks, setShowAllTracks] = useState(false);
 
-  const slateSeason = useMemo(
-    () => normalizeSeasonValue(inferSplitSeasonLabelForDate(), 'DEL') || inferSplitSeasonLabelForDate(),
-    [],
-  );
-
-  const { data: slateGamesData } = useQuery({
-    queryKey: ['games', 'DEL', slateSeason, 'today-slate'],
-    queryFn: () => api.getGames({ league: 'DEL', season: slateSeason }),
-    enabled: Boolean(user && slateSeason),
-    staleTime: 60_000,
+  const {
+    allTodayGames,
+  } = useTodayGamesSchedule({
+    enabled: Boolean(user),
   });
-
-  const slateCatalogGames = useMemo(
-    () => filterCatalogGamesForSeason(slateGamesData?.games || [], slateSeason),
-    [slateGamesData?.games, slateSeason],
-  );
-  const todaySlateGames = useMemo(
-    () => filterGamesForDate(slateCatalogGames, localTodayIsoDate()),
-    [slateCatalogGames],
-  );
 
   const { data: sessions, isLoading, error } = useQuery({
     queryKey: ["sessions", user],
@@ -855,7 +830,7 @@ export default function Dashboard() {
   const drillProgressPct = derived.totalDrills
     ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
     : 0;
-  const TRACK_PREVIEW = 3;
+  const TRACK_PREVIEW = 6;
   const trackProgressList = Object.values(derived.trackProgress)
     .map((track) => {
       const total = track.total || 0;
@@ -864,8 +839,9 @@ export default function Dashboard() {
       return { ...track, pct };
     })
     .sort((a, b) => a.pct - b.pct || String(a.title).localeCompare(String(b.title), 'de'));
-  const visibleTracks = showAllTracks ? trackProgressList : trackProgressList.slice(0, TRACK_PREVIEW);
-  const hiddenTrackCount = Math.max(0, trackProgressList.length - TRACK_PREVIEW);
+  const visibleTracks = trackProgressList.slice(0, TRACK_PREVIEW);
+  const hiddenTracks = trackProgressList.slice(TRACK_PREVIEW);
+  const hiddenTrackCount = hiddenTracks.length;
 
   return (
     <div className={`${styles.dashboardPage} ui-page-shell`}>
@@ -874,17 +850,7 @@ export default function Dashboard() {
         <p className="ui-page-lead">Stand und nächster Schritt.</p>
       </header>
 
-      {todaySlateGames.length > 0 ? (
-        <Card surface="primary" className={styles.todaySlateCard}>
-          <TodayMatchdaySlate
-            league="DEL"
-            games={slateCatalogGames}
-            hint="Spielplan aus dem DEL-Import. In der Session-Vorbereitung kannst du eine Paarung antippen und Teams + Spieltag übernehmen."
-          />
-        </Card>
-      ) : null}
-
-      {user ? <TodayChallenges games={slateCatalogGames} /> : null}
+      {user ? <TodayChallenges games={allTodayGames} /> : null}
 
       <div className={styles.nextStepShell} data-tutorial-id={TUTORIAL_TARGET.homeNextStep}>
       <Card className={styles.nextStepCard} elevation="featured" surface="primary">
@@ -1155,12 +1121,12 @@ export default function Dashboard() {
         )}
       </Card>
 
-      <details className={styles.morePanel}>
-        <summary className={styles.moreSummary}>
+      <details className="ui-more">
+        <summary className="ui-more__summary">
           <span>Fortschritt & Session-Qualität</span>
-          <span className={styles.moreChevron} aria-hidden="true" />
+          <span className="ui-more__chevron" aria-hidden="true" />
         </summary>
-        <div className={styles.moreBody}>
+        <div className="ui-more__body">
           <div className={styles.flexWrapRow}>
             <Card surface="nested" className={styles.flexCard}>
               <h2 className="ui-section-title">Fortschritt</h2>
@@ -1188,17 +1154,29 @@ export default function Dashboard() {
                           </span>
                         </div>
                       ))}
-                      {hiddenTrackCount > 0 && (
-                        <UiButton
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className={styles.trackMoreBtn}
-                          onClick={() => setShowAllTracks((value) => !value)}
-                        >
-                          {showAllTracks ? 'Weniger anzeigen' : `${hiddenTrackCount} weitere Tracks`}
-                        </UiButton>
-                      )}
+                      {hiddenTrackCount > 0 ? (
+                        <details className="ui-more ui-more--flush">
+                          <summary className="ui-more__summary">
+                            <span>{hiddenTrackCount} weitere Tracks</span>
+                            <span className="ui-more__chevron" aria-hidden="true" />
+                          </summary>
+                          <div className="ui-more__body">
+                            {hiddenTracks.map((track) => (
+                              <div key={track.title} className={styles.trackProgressItem}>
+                                <span className={styles.trackTitle}>{track.title}</span>
+                                <UiProgress
+                                  value={track.completed}
+                                  max={track.total || 1}
+                                  label={`${track.title} Fortschritt`}
+                                />
+                                <span className={styles.trackBarLabel}>
+                                  {track.total ? Math.round((track.completed / track.total) * 100) : 0}% ({track.completed}/{track.total})
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -1223,12 +1201,12 @@ export default function Dashboard() {
         </div>
       </details>
 
-      <details className={styles.morePanel}>
-        <summary className={styles.moreSummary}>
+      <details className="ui-more">
+        <summary className="ui-more__summary">
           <span>Belohnungen</span>
-          <span className={styles.moreChevron} aria-hidden="true" />
+          <span className="ui-more__chevron" aria-hidden="true" />
         </summary>
-        <div className={styles.moreBody}>
+        <div className="ui-more__body">
           <Card surface="section">
             <div className={styles.rewardHeaderRow}>
               <div className={styles.rewardHeaderItem}>
@@ -1295,12 +1273,12 @@ export default function Dashboard() {
         </div>
       </details>
 
-      <details className={styles.morePanel}>
-        <summary className={styles.moreSummary}>
+      <details className="ui-more">
+        <summary className="ui-more__summary">
           <span>Teams & Modul-Abdeckung</span>
-          <span className={styles.moreChevron} aria-hidden="true" />
+          <span className="ui-more__chevron" aria-hidden="true" />
         </summary>
-        <div className={styles.moreBody}>
+        <div className="ui-more__body">
           <Card surface="section">
             <h2 className="ui-section-title">Meist beobachtete Teams</h2>
             {derived.mostObservedTeams.length === 0 ? (

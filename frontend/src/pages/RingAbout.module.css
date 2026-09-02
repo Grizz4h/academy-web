@@ -11,46 +11,16 @@
   margin-top: 0.55rem;
 }
 
-.tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.4rem;
+.headerTabs {
   min-width: 0;
   width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
 
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.tab {
-  flex: 0 0 auto;
-  padding: 0.42rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 178, 198, 0.32);
-  background: rgba(12, 20, 34, 0.55);
-  color: rgba(210, 224, 240, 0.88);
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.tabActive {
-  border-color: var(--selected-border);
-  background: var(--selected-bg);
-  box-shadow: var(--selected-glow);
-  color: #99f6e4;
-}
-
-.tabActiveInsights {
+.tabInsightsActive {
   border-color: rgba(74, 222, 128, 0.5);
   background: rgba(34, 197, 94, 0.16);
   color: #dcfce7;
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.18);
 }
 
 .addBtnSlot {

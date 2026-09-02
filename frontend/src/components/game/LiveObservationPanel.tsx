@@ -12,7 +12,7 @@ import {
   uniqueMatchdays,
 } from './gameCatalogUtils'
 import { LEAGUES } from '../../data/teamsByLeague'
-import { getCompetitionConfig } from '../../data/competitionConfig'
+import { getCompetitionConfig, getCompetitionStageGroup, phasesForStageGroup } from '../../data/competitionConfig'
 import { isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../../stats/seasonNormalization'
 import { OBSERVATION_SCOPE_OPTIONS, type ObservationScope } from '../../utils/observationScope'
 import { useDevNavEnabled } from '../../config/featureFlags'
@@ -21,10 +21,12 @@ import {
   gamesForCompetitionPhase,
   isDummyCatalogGame,
 } from '../../features/schedule/scheduleLayer'
+import { useSpoilerProtection } from '../../features/schedule/useSpoilerProtection'
 import { resolveTeamShortCode } from '../../data/teamShortCodes'
 import { UiButton, UiChip, UiSheet, UiSheetActions, UiSheetChoice, UiSheetChoiceList } from '../ui'
 import GameContextSummary from './GameContextSummary'
 import GameStatsDevPanel from './GameStatsDevPanel'
+import { SpoilerProtectionToggle } from './SpoilerProtectionToggle'
 import { TeamCrest } from './TeamCrest'
 import setupStyles from '../../pages/SessionSetup.module.css'
 import styles from './LiveObservationPanel.module.css'
@@ -108,8 +110,33 @@ export function LiveObservationPanel({
     selectedGameId,
   } = fields
   const competitionConfig = getCompetitionConfig(league)
+  const stageGroups = competitionConfig?.stageGroups || []
+  const catalogPhaseIds = useMemo(
+    () => new Set((catalog.catalogGames || []).map((game) => game.phase_id).filter(Boolean) as string[]),
+    [catalog.catalogGames],
+  )
+  const visibleStageGroups = useMemo(() => {
+    if (!stageGroups.length) return []
+    const withGames = stageGroups.filter((group) => group.phaseIds.some((id) => catalogPhaseIds.has(id)))
+    return withGames.length ? withGames : stageGroups
+  }, [stageGroups, catalogPhaseIds])
+  const selectedStageGroup =
+    getCompetitionStageGroup(league, competitionPhase)
+    || visibleStageGroups[0]
+    || stageGroups[0]
+  const visiblePhases = useMemo(() => {
+    if (!competitionConfig) return []
+    if (!selectedStageGroup) return competitionConfig.phases
+    const phases = phasesForStageGroup(competitionConfig, selectedStageGroup.id)
+    const withGames = phases.filter((phase) => catalogPhaseIds.has(phase.id))
+    // Keep configured order; prefer phases that exist in the imported schedule.
+    return withGames.length ? withGames : phases
+  }, [competitionConfig, selectedStageGroup, catalogPhaseIds])
   const selectedCompetitionPhase =
-    competitionConfig?.phases.find((phase) => phase.id === competitionPhase) || competitionConfig?.phases[0]
+    visiblePhases.find((phase) => phase.id === competitionPhase)
+    || competitionConfig?.phases.find((phase) => phase.id === competitionPhase)
+    || visiblePhases[0]
+    || competitionConfig?.phases[0]
   const useSplitSeason = isSplitSeasonLeague(league)
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
   const devMode = useDevNavEnabled()
@@ -137,7 +164,7 @@ export function LiveObservationPanel({
   const emptySeason = Boolean(league && season && catalog.catalogReady && !catalog.useCatalogFlow)
   const isTestspiele = league === 'Testspiele'
   const [browseMatchday, setBrowseMatchday] = useState<number | 'other' | null>(null)
-  const [hideSpoilers, setHideSpoilers] = useState(true)
+  const [hideSpoilers] = useSpoilerProtection()
   const [teamPicker, setTeamPicker] = useState<TeamPicker>(null)
   const matchdayRowRef = useRef<HTMLDivElement | null>(null)
 
@@ -273,19 +300,7 @@ export function LiveObservationPanel({
             <span className={styles.livePulse}>Live</span>
             <h3 className={styles.title}>Deine Beobachtung</h3>
           </div>
-          <button
-            type="button"
-            className={`${styles.spoilerToggle} ${hideSpoilers ? styles.spoilerOn : ''}`}
-            onClick={() => setHideSpoilers((current) => !current)}
-            aria-pressed={hideSpoilers}
-            title={hideSpoilers ? 'Ergebnisse sind ausgeblendet — antippen zum Anzeigen' : 'Ergebnisse sichtbar — antippen zum Ausblenden'}
-          >
-            <span className={styles.spoilerMark} aria-hidden="true" />
-            <span className={styles.spoilerLabel}>{hideSpoilers ? 'Spoiler-Schutz an' : 'Spoiler-Schutz aus'}</span>
-            <span className={styles.spoilerHint}>
-              {hideSpoilers ? 'Ergebnisse ausgeblendet' : 'Ergebnisse sichtbar'}
-            </span>
-          </button>
+          <SpoilerProtectionToggle />
           <p className={styles.lead}>
             {isSeriesPhase
               ? 'Serie wählen, dann das Spiel dieser Paarung.'
@@ -336,11 +351,48 @@ export function LiveObservationPanel({
                 ))}
               </div>
             </div>
+            {visibleStageGroups.length > 0 && selectedStageGroup ? (
+              <div className={styles.block}>
+                <span className={styles.kicker}>DNL Staffel</span>
+                <div className={styles.chipRow}>
+                  {visibleStageGroups.map((group) => (
+                    <UiChip
+                      key={group.id}
+                      size="sm"
+                      active={selectedStageGroup.id === group.id}
+                      onClick={() => {
+                        const nextPhase =
+                          phasesForStageGroup(competitionConfig, group.id).find((phase) =>
+                            catalogPhaseIds.has(phase.id),
+                          )
+                          || phasesForStageGroup(competitionConfig, group.id)[0]
+                        setBrowseMatchday(null)
+                        onChange({
+                          competitionPhase: nextPhase?.id || '',
+                          competitionValue: '',
+                          selectedGameId: '',
+                          teamHome: '',
+                          teamAway: '',
+                          observedTeam: '',
+                        })
+                      }}
+                    >
+                      {group.label}
+                    </UiChip>
+                  ))}
+                </div>
+                {selectedStageGroup.hint ? (
+                  <p className={styles.stageHint}>{selectedStageGroup.hint}</p>
+                ) : null}
+              </div>
+            ) : null}
             {competitionConfig && selectedCompetitionPhase ? (
               <div className={styles.block}>
-                <span className={styles.kicker}>Phase</span>
+                <span className={styles.kicker}>
+                  {visibleStageGroups.length ? 'Runde' : 'Phase'}
+                </span>
                 <div className={styles.chipRow}>
-                  {competitionConfig.phases.map((phase) => (
+                  {(visiblePhases.length ? visiblePhases : competitionConfig.phases).map((phase) => (
                     <UiChip
                       key={phase.id}
                       size="sm"
@@ -651,7 +703,7 @@ export function LiveObservationPanel({
             <div className={setupStyles.panelTitleRow}>
               <span className={setupStyles.importBadge}>{dummyFallback ? 'DEV' : 'Import'}</span>
               <h3 className={setupStyles.panelTitle}>
-                {dummyFallback ? 'Spielkontext · Testdaten' : 'Spielkontext · PENNY DEL'}
+                {dummyFallback ? 'Spielkontext · Testdaten' : `Spielkontext · ${league === 'DEL' ? 'PENNY DEL' : league || 'Katalog'}`}
               </h3>
             </div>
             <p className={setupStyles.panelLead}>
