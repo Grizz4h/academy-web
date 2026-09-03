@@ -30,6 +30,6 @@
   <ellipse cx="480" cy="148" rx="16" ry="5" fill="#08131D" opacity=".45"/>
   <ellipse cx="480" cy="118" rx="15" ry="9" fill="#14181d" stroke="#5191A2" stroke-width="2"/>
   <ellipse cx="480" cy="114" rx="9" ry="3" fill="#EAF7FA" opacity=".16"/>
-  <text x="72" y="48" fill="#F2A65A" font-size="22" font-family="system-ui,sans-serif" font-weight="700" letter-spacing="3">26·27</text>
+  <text x="72" y="48" fill="#F2A65A" font-size="22" font-family="system-ui,sans-serif" font-weight="700" letter-spacing="3">26/27</text>
   <text x="888" y="48" text-anchor="end" fill="#5191A2" font-size="14" font-family="system-ui,sans-serif" font-weight="600" letter-spacing="2" opacity=".85">OPENING FACEOFF</text>
 </svg>

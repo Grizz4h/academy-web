@@ -1,3 +1,9 @@
+.factsHost {
+  position: relative;
+  display: inline-flex;
+  cursor: help;
+}
+
 .crest {
   --crest-hue: 168;
   position: relative;
@@ -18,6 +24,17 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.25),
     0 0 0 1px rgba(0, 0, 0, 0.25),
     0 8px 18px hsl(var(--crest-hue) 80% 20% / 0.35);
+  transition:
+    transform var(--motion-fast, 140ms) var(--motion-ease, ease),
+    filter var(--motion-fast, 140ms) var(--motion-ease, ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .crest:hover,
+  .factsHost:hover .crest {
+    transform: scale(1.06);
+    filter: brightness(1.08);
+  }
 }
 
 .sm {

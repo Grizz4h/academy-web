@@ -1,3 +1,4 @@
+import { withProfileAssetCacheBust } from './profileAssetUrl'
 import type { ProfileAsset } from './types'
 
 /**
@@ -109,5 +110,7 @@ export const DEFAULT_AVATAR_ID = 'avatar_chalk_01'
 
 export function getAvatarAsset(id: string | null | undefined): ProfileAsset | undefined {
   if (!id) return undefined
-  return avatarCatalog.find((item) => item.id === id)
+  const item = avatarCatalog.find((entry) => entry.id === id)
+  if (!item) return undefined
+  return { ...item, src: withProfileAssetCacheBust(item.src) }
 }

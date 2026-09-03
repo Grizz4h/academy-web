@@ -46,15 +46,24 @@ Beispiel `location /`:
     }
 ```
 
-Beispiel Assets:
+Beispiel Assets (nur **content-hashed** `/assets/` — nicht `/profile/*.svg`):
 
 ```nginx
-    location ~* \.(?:js|css|svg|png|jpg|jpeg|gif|woff2?)$ {
+    location ^~ /assets/ {
+        try_files $uri =404;
         expires 7d;
         include /etc/nginx/snippets/academy-security-headers.conf;
-        add_header Cache-Control "public, max-age=604800, immutable";
+        add_header Cache-Control "public, max-age=604800, immutable" always;
+    }
+
+    location ^~ /profile/ {
+        try_files $uri =404;
+        include /etc/nginx/snippets/academy-security-headers.conf;
+        add_header Cache-Control "public, max-age=0, must-revalidate" always;
     }
 ```
+
+Referenz-Vhost: [`rinq-tank.de.nginx.conf`](rinq-tank.de.nginx.conf). **Nicht** alle `.svg` unter `immutable` legen — fehlende Profile-Assets wurden sonst 7 Tage als 404 gecacht.
 
 Optional dasselbe für `academy.conf` (academy.highspeed-novadelta.de).
 

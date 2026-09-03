@@ -318,6 +318,12 @@
   text-align: center;
 }
 
+.tile[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .tileEmpty {
   border-style: dashed;
   color: rgba(186, 230, 253, 0.7);

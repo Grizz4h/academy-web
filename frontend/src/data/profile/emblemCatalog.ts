@@ -1,3 +1,4 @@
+import { withProfileAssetCacheBust } from './profileAssetUrl'
 import type { ProfileAsset } from './types'
 
 /**
@@ -157,5 +158,7 @@ export const DEFAULT_EMBLEM_ID = 'emblem_puck_01'
 
 export function getEmblemAsset(id: string | null | undefined): ProfileAsset | undefined {
   if (!id) return undefined
-  return emblemCatalog.find((item) => item.id === id)
+  const item = emblemCatalog.find((entry) => entry.id === id)
+  if (!item) return undefined
+  return { ...item, src: withProfileAssetCacheBust(item.src) }
 }

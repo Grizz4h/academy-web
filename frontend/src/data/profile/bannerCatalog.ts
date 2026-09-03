@@ -1,3 +1,4 @@
+import { withProfileAssetCacheBust } from './profileAssetUrl'
 import type { ProfileAsset } from './types'
 
 /**
@@ -132,5 +133,7 @@ export const DEFAULT_BANNER_ID = 'banner_neutral_01'
 
 export function getBannerAsset(id: string | null | undefined): ProfileAsset | undefined {
   if (!id) return undefined
-  return bannerCatalog.find((item) => item.id === id)
+  const item = bannerCatalog.find((entry) => entry.id === id)
+  if (!item) return undefined
+  return { ...item, src: withProfileAssetCacheBust(item.src) }
 }

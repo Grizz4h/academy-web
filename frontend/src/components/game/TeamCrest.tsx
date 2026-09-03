@@ -20,6 +20,7 @@ function crestLetters(name: string): string {
   return resolveTeamShortCode(name) || name.replace(/[^A-Za-zÄÖÜäöüß]/g, '').slice(0, 3).toUpperCase() || '?'
 }
 
+/** True for mouse / trackpad — CSS hover media. Not used to gate fact clicks. */
 export function useFinePointer(): boolean {
   const [fine, setFine] = useState(() => (
     typeof window !== 'undefined'
@@ -35,28 +36,26 @@ export function useFinePointer(): boolean {
   return fine
 }
 
+export function resolveTeamFacts(teamId: string | undefined, name: string) {
+  return (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name)
+}
+
 type TeamCrestProps = {
   name: string
   teamId?: string
   size?: 'sm' | 'md' | 'lg'
-  /** Enable club-facts popover (CHL). */
+  /** Enable club-facts popover (typically CHL). */
   showFacts?: boolean
-  /**
-   * Touch only: first tap should select the parent tile.
-   * Pass true once that tile/team is already active — then the next tap opens facts.
-   * Desktop ignores this and keeps hover.
-   */
-  factsArmed?: boolean
-  /** Controlled open (e.g. second tap on the whole tile). */
+  /** Controlled open from parent (second tap/click on tile). */
   factsOpen?: boolean
   onFactsOpenChange?: (open: boolean) => void
 }
 
 function FactsPopover({ teamId, name }: { teamId?: string; name: string }) {
-  const facts = (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name)
+  const facts = resolveTeamFacts(teamId, name)
   if (!facts) return null
   return (
-    <div style={{ minWidth: 220 }}>
+    <div style={{ minWidth: 220 }} data-popover-no-dismiss>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.55rem' }}>
         <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{facts.countryFlag}</span>
         <div>
@@ -116,7 +115,6 @@ export function TeamCrest({
   teamId,
   size = 'md',
   showFacts = false,
-  factsArmed = true,
   factsOpen,
   onFactsOpenChange,
 }: TeamCrestProps) {
@@ -124,25 +122,38 @@ export function TeamCrest({
   const flag = resolveNationalTeamFlag(teamId) || resolveNationalTeamFlag(name)
   const [logoFailed, setLogoFailed] = useState(false)
   const [internalOpen, setInternalOpen] = useState(false)
+  const [hoverOpen, setHoverOpen] = useState(false)
   const leaveTimer = useRef<number | null>(null)
-  const triggerRef = useRef<HTMLButtonElement | HTMLSpanElement | null>(null)
-  const finePointer = useFinePointer()
+  const triggerRef = useRef<HTMLSpanElement | null>(null)
   const letters = crestLetters(name)
   const showLogo = Boolean(logo) && !logoFailed
+  const hasFacts = Boolean(resolveTeamFacts(teamId, name))
+  const factsEnabled = showFacts && hasFacts
 
-  const hasFacts = showFacts && Boolean(
-    (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name),
-  )
   const controlled = typeof factsOpen === 'boolean'
-  const open = controlled ? factsOpen : internalOpen
+  const pinnedOpen = controlled ? Boolean(factsOpen) : internalOpen
+  const open = factsEnabled && (hoverOpen || pinnedOpen)
 
-  const setOpen = (next: boolean) => {
+  const setPinnedOpen = (next: boolean) => {
     if (!controlled) setInternalOpen(next)
     onFactsOpenChange?.(next)
   }
 
+  const clearLeaveTimer = () => {
+    if (leaveTimer.current != null) {
+      window.clearTimeout(leaveTimer.current)
+      leaveTimer.current = null
+    }
+  }
+
+  const dismissAll = () => {
+    clearLeaveTimer()
+    setHoverOpen(false)
+    setPinnedOpen(false)
+  }
+
   useEffect(() => () => {
-    if (leaveTimer.current != null) window.clearTimeout(leaveTimer.current)
+    clearLeaveTimer()
   }, [])
 
   const inner = flag ? (
@@ -171,46 +182,44 @@ export function TeamCrest({
     </span>
   )
 
-  if (!hasFacts) return inner
+  if (!factsEnabled) return inner
 
-  // Desktop: hover shows facts; clicks pass through so the parent tile can select.
-  // Touch (not armed): first tap hits the parent tile. Armed: parent handles second tap.
-  const interceptTouch = !finePointer && factsArmed
-
+  // Clicks pass through to the parent tile (1st = select, 2nd = pin facts).
+  // Desktop also opens on hover over the crest.
   return (
     <span
-      ref={(el) => { triggerRef.current = el }}
-      style={{ position: 'relative', display: 'inline-flex' }}
-      aria-label={finePointer ? `${name}: Fakten` : undefined}
-      onClick={interceptTouch ? (e) => {
-        e.stopPropagation()
-        setOpen(!open)
-      } : undefined}
+      ref={triggerRef}
+      className={styles.factsHost}
+      aria-label={`${name}: Club-Infos`}
       onMouseEnter={() => {
-        if (!finePointer) return
-        if (leaveTimer.current != null) {
-          window.clearTimeout(leaveTimer.current)
-          leaveTimer.current = null
-        }
-        setOpen(true)
+        clearLeaveTimer()
+        setHoverOpen(true)
       }}
       onMouseLeave={() => {
-        if (!finePointer) return
-        leaveTimer.current = window.setTimeout(() => setOpen(false), 180)
+        leaveTimer.current = window.setTimeout(() => setHoverOpen(false), 220)
       }}
     >
       {inner}
-      {open && (
+      {open ? (
         <AnchoredPopover
           open={open}
           anchorRef={triggerRef as RefObject<HTMLElement | null>}
-          ariaLabel={`${name} Fakten`}
+          ariaLabel={`${name} Club-Infos`}
           preferredWidth={260}
-          onDismiss={() => setOpen(false)}
+          dismissOnContentClick={false}
+          onDismiss={dismissAll}
         >
-          <FactsPopover teamId={teamId} name={name} />
+          <div
+            data-popover-no-dismiss
+            onMouseEnter={clearLeaveTimer}
+            onMouseLeave={() => {
+              leaveTimer.current = window.setTimeout(() => setHoverOpen(false), 220)
+            }}
+          >
+            <FactsPopover teamId={teamId} name={name} />
+          </div>
         </AnchoredPopover>
-      )}
+      ) : null}
     </span>
   )
 }

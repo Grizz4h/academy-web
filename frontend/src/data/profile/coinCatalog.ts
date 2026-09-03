@@ -1,3 +1,4 @@
+import { withProfileAssetCacheBust } from './profileAssetUrl'
 import type { ProfileAsset } from './types'
 
 export const coinCatalog: ProfileAsset[] = [
@@ -11,5 +12,7 @@ export const coinCatalog: ProfileAsset[] = [
 
 export function getCoinAsset(id: string | null | undefined): ProfileAsset | undefined {
   if (!id) return undefined
-  return coinCatalog.find((item) => item.id === id)
+  const item = coinCatalog.find((entry) => entry.id === id)
+  if (!item) return undefined
+  return { ...item, src: withProfileAssetCacheBust(item.src) }
 }

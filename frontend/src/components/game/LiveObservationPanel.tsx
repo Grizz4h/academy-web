@@ -27,7 +27,7 @@ import { UiButton, UiChip, UiSheet, UiSheetActions, UiSheetChoice, UiSheetChoice
 import GameContextSummary from './GameContextSummary'
 import GameStatsDevPanel from './GameStatsDevPanel'
 import { SpoilerProtectionToggle } from './SpoilerProtectionToggle'
-import { TeamCrest, useFinePointer } from './TeamCrest'
+import { TeamCrest, resolveTeamFacts } from './TeamCrest'
 import setupStyles from '../../pages/SessionSetup.module.css'
 import styles from './LiveObservationPanel.module.css'
 import { MatchupVs } from './MatchupVs'
@@ -166,9 +166,8 @@ export function LiveObservationPanel({
   const [browseMatchday, setBrowseMatchday] = useState<number | 'other' | null>(null)
   const [hideSpoilers] = useSpoilerProtection()
   const [teamPicker, setTeamPicker] = useState<TeamPicker>(null)
-  /** Touch: second tap on already-observed tile opens club facts. */
+  /** Second tap/click on already-observed CHL tile pins club facts. */
   const [factsSide, setFactsSide] = useState<'home' | 'away' | null>(null)
-  const finePointer = useFinePointer()
   const matchdayRowRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -587,26 +586,38 @@ export function LiveObservationPanel({
 
         <div className={styles.arena} key={`${teamHome}-${teamAway}-${selectedGame?.id || 'open'}`}>
           <div className={styles.tileWrap}>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={(!league || (catalog.useCatalogFlow && !teamHome)) ? -1 : 0}
+              aria-disabled={!league || (catalog.useCatalogFlow && !teamHome) || undefined}
               className={[
                 styles.tile,
                 !teamHome ? styles.tileEmpty : '',
                 observedTeam === teamHome && teamHome ? styles.tileObserved : '',
               ].filter(Boolean).join(' ')}
-              disabled={!league || (catalog.useCatalogFlow && !teamHome)}
               onClick={() => {
+                if (!league || (catalog.useCatalogFlow && !teamHome)) return
                 if (!teamHome && !catalog.useCatalogFlow) {
                   setTeamPicker('home')
                   return
                 }
                 if (!teamHome) return
-                if (!finePointer && observedTeam === teamHome && league === 'CHL') {
+                // 1st interaction = select · 2nd on same team (with facts) = pin info popover
+                if (
+                  observedTeam === teamHome
+                  && league === 'CHL'
+                  && resolveTeamFacts(selectedGame?.home_team_id, teamHome)
+                ) {
                   setFactsSide((prev) => (prev === 'home' ? null : 'home'))
                   return
                 }
                 setFactsSide(null)
                 onChange({ observedTeam: teamHome })
+              }}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return
+                e.preventDefault()
+                e.currentTarget.click()
               }}
             >
               <span className={styles.sideLabel}>Heim</span>
@@ -616,7 +627,6 @@ export function LiveObservationPanel({
                   teamId={selectedGame?.home_team_id}
                   size="lg"
                   showFacts={league === 'CHL'}
-                  factsArmed={observedTeam === teamHome}
                   factsOpen={factsSide === 'home'}
                   onFactsOpenChange={(open) => setFactsSide(open ? 'home' : null)}
                 />
@@ -631,10 +641,14 @@ export function LiveObservationPanel({
               </span>
               {teamHome ? (
                 <span className={styles.observeCue}>
-                  {observedTeam === teamHome ? 'Beobachtest du' : 'Tippen: beobachten'}
+                  {observedTeam === teamHome
+                    ? (league === 'CHL' && resolveTeamFacts(selectedGame?.home_team_id, teamHome)
+                      ? (factsSide === 'home' ? 'Infos · tippen schließt' : 'Beobachtest du · tippen: Infos')
+                      : 'Beobachtest du')
+                    : 'Tippen: beobachten'}
                 </span>
               ) : null}
-            </button>
+            </div>
             {!catalog.useCatalogFlow ? (
               <button type="button" className={styles.changeBtn} onClick={() => setTeamPicker('home')} disabled={!league}>
                 {teamHome ? 'anderes Heimteam' : 'Heimteam wählen'}
@@ -647,26 +661,37 @@ export function LiveObservationPanel({
           </div>
 
           <div className={styles.tileWrap}>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={(!league || (catalog.useCatalogFlow && !teamAway)) ? -1 : 0}
+              aria-disabled={!league || (catalog.useCatalogFlow && !teamAway) || undefined}
               className={[
                 styles.tile,
                 !teamAway ? styles.tileEmpty : '',
                 observedTeam === teamAway && teamAway ? styles.tileObserved : '',
               ].filter(Boolean).join(' ')}
-              disabled={!league || (catalog.useCatalogFlow && !teamAway)}
               onClick={() => {
+                if (!league || (catalog.useCatalogFlow && !teamAway)) return
                 if (!teamAway && !catalog.useCatalogFlow) {
                   setTeamPicker('away')
                   return
                 }
                 if (!teamAway) return
-                if (!finePointer && observedTeam === teamAway && league === 'CHL') {
+                if (
+                  observedTeam === teamAway
+                  && league === 'CHL'
+                  && resolveTeamFacts(selectedGame?.away_team_id, teamAway)
+                ) {
                   setFactsSide((prev) => (prev === 'away' ? null : 'away'))
                   return
                 }
                 setFactsSide(null)
                 onChange({ observedTeam: teamAway })
+              }}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return
+                e.preventDefault()
+                e.currentTarget.click()
               }}
             >
               <span className={styles.sideLabel}>Auswärts</span>
@@ -676,7 +701,6 @@ export function LiveObservationPanel({
                   teamId={selectedGame?.away_team_id}
                   size="lg"
                   showFacts={league === 'CHL'}
-                  factsArmed={observedTeam === teamAway}
                   factsOpen={factsSide === 'away'}
                   onFactsOpenChange={(open) => setFactsSide(open ? 'away' : null)}
                 />
@@ -691,10 +715,14 @@ export function LiveObservationPanel({
               </span>
               {teamAway ? (
                 <span className={styles.observeCue}>
-                  {observedTeam === teamAway ? 'Beobachtest du' : 'Tippen: beobachten'}
+                  {observedTeam === teamAway
+                    ? (league === 'CHL' && resolveTeamFacts(selectedGame?.away_team_id, teamAway)
+                      ? (factsSide === 'away' ? 'Infos · tippen schließt' : 'Beobachtest du · tippen: Infos')
+                      : 'Beobachtest du')
+                    : 'Tippen: beobachten'}
                 </span>
               ) : null}
-            </button>
+            </div>
             {!catalog.useCatalogFlow ? (
               <button type="button" className={styles.changeBtn} onClick={() => setTeamPicker('away')} disabled={!league}>
                 {teamAway ? 'anderes Auswärtsteam' : 'Auswärtsteam wählen'}

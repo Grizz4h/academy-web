@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img">
   <defs>
-    <radialGradient id="ofStickerIce" cx="50%" cy="42%" r="60%">
-      <stop offset="0%" stop-color="#102736"/>
-      <stop offset="100%" stop-color="#08131D"/>
-    </radialGradient>
+    <linearGradient id="sPeel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F2A65A"/>
+      <stop offset="100%" stop-color="#B84A52"/>
+    </linearGradient>
   </defs>
-  <rect x="6" y="6" width="84" height="84" rx="20" fill="url(#ofStickerIce)" stroke="#5191A2" stroke-width="2.5"/>
-  <circle cx="48" cy="50" r="28" fill="none" stroke="#EAF7FA" stroke-width="2" opacity=".85"/>
-  <circle cx="48" cy="50" r="10" fill="none" stroke="#B84A52" stroke-width="2"/>
-  <line x1="20" y1="50" x2="38" y2="50" stroke="#B84A52" stroke-width="2" stroke-linecap="round"/>
-  <line x1="58" y1="50" x2="76" y2="50" stroke="#B84A52" stroke-width="2" stroke-linecap="round"/>
-  <ellipse cx="48" cy="58" rx="9" ry="3.2" fill="#08131D" opacity=".45"/>
-  <ellipse cx="48" cy="46" rx="8" ry="5.5" fill="#1a1f24" stroke="#5191A2" stroke-width="1.5"/>
-  <ellipse cx="48" cy="44.5" rx="5.5" ry="2.2" fill="#EAF7FA" opacity=".18"/>
-  <path d="M28 68 Q36 62 42 66" fill="none" stroke="#5191A2" stroke-width="1.2" opacity=".55" stroke-linecap="round"/>
-  <path d="M54 64 Q62 60 70 66" fill="none" stroke="#5191A2" stroke-width="1.2" opacity=".45" stroke-linecap="round"/>
-  <text x="48" y="22" text-anchor="middle" fill="#F2A65A" font-size="9" font-family="system-ui,sans-serif" font-weight="700" letter-spacing="1.2">26·27</text>
+  <rect x="7" y="9" width="82" height="78" rx="16" fill="#EAF7FA"/>
+  <rect x="7" y="9" width="82" height="78" rx="16" fill="none" stroke="#08131D" stroke-width="3.5"/>
+  <rect x="12" y="14" width="72" height="68" rx="12" fill="none" stroke="#5191A2" stroke-width="1.8" opacity=".85"/>
+  <path d="M65 9 H89 V33 Z" fill="url(#sPeel)"/>
+  <path d="M65 9 L89 33" stroke="#08131D" stroke-width="1.2" opacity=".35"/>
+  <circle cx="44" cy="52" r="22" fill="none" stroke="#102736" stroke-width="3.2" stroke-dasharray="48 28" stroke-linecap="round" transform="rotate(-28 44 52)"/>
+  <line x1="24" y1="52" x2="40" y2="52" stroke="#B84A52" stroke-width="3.2" stroke-linecap="round"/>
+  <line x1="48" y1="52" x2="64" y2="52" stroke="#B84A52" stroke-width="3.2" stroke-linecap="round"/>
+  <rect x="41" y="49.2" width="6" height="5.6" rx="1.2" fill="#F2A65A"/>
+  <rect x="18" y="24" width="10" height="2.2" rx="1" fill="#5191A2"/>
+  <rect x="30" y="24" width="4" height="2.2" rx="1" fill="#08131D" opacity=".35"/>
 </svg>

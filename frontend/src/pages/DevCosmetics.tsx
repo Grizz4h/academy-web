@@ -7,6 +7,7 @@ import { avatarCatalog, getAvatarAsset } from '../data/profile/avatarCatalog'
 import { bannerCatalog, getBannerAsset } from '../data/profile/bannerCatalog'
 import { coinCatalog, getCoinAsset } from '../data/profile/coinCatalog'
 import { emblemCatalog, getEmblemAsset } from '../data/profile/emblemCatalog'
+import { withProfileAssetCacheBust } from '../data/profile/profileAssetUrl'
 import { stickerCatalog, getStickerAsset } from '../data/profile/stickerCatalog'
 import { profileTitleCatalog } from '../data/profile/profileTitleCatalog'
 import {
@@ -183,7 +184,7 @@ function AssetGrid({
         const inStarterPool = item.starter !== false
         return (
           <figure key={item.id} className={styles.tile}>
-            <img src={item.src} alt="" className={styles.art} />
+            <img src={withProfileAssetCacheBust(item.src)} alt="" className={styles.art} />
             <figcaption>
               <code>{item.id}</code>
               <span className={styles.meta}>

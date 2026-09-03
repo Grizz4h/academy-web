@@ -1,3 +1,4 @@
+import { withProfileAssetCacheBust } from './profileAssetUrl'
 import type { ProfileAsset } from './types'
 
 export const MAX_PROFILE_STICKERS = 3
@@ -18,7 +19,9 @@ export const stickerCatalog: ProfileAsset[] = [
 
 export function getStickerAsset(id: string | null | undefined): ProfileAsset | undefined {
   if (!id) return undefined
-  return stickerCatalog.find((item) => item.id === id)
+  const item = stickerCatalog.find((entry) => entry.id === id)
+  if (!item) return undefined
+  return { ...item, src: withProfileAssetCacheBust(item.src) }
 }
 
 export function toggleProfileSticker(current: string[] | null | undefined, stickerId: string): string[] {
