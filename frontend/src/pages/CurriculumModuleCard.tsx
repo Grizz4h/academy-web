@@ -22,6 +22,8 @@ type CurriculumModuleCardProps = {
   onStart: () => void
   onTheory: () => void
   onCheckout: () => void
+  /** D-pill → Setup with that drill selected (ADS loop). */
+  onSelectDrill?: (drillId: string) => void
 }
 
 export function CurriculumModuleCard({
@@ -40,6 +42,7 @@ export function CurriculumModuleCard({
   onStart,
   onTheory,
   onCheckout,
+  onSelectDrill,
 }: CurriculumModuleCardProps) {
   const drills = module.drills || []
   const progressNodes = buildDrillProgressNodes(
@@ -105,6 +108,11 @@ export function CurriculumModuleCard({
           <TrackProgressMap
             nodes={progressNodes}
             compact
+            onSelectNode={
+              premiumLocked || !onSelectDrill
+                ? undefined
+                : (node) => onSelectDrill(node.id)
+            }
             renderBeneath={(node) => {
               const drill = drills.find((entry) => entry.id === node.id)
               if (!drill) return null

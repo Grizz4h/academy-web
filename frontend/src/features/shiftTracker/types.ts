@@ -73,6 +73,7 @@ export type ShiftObservationDraft = {
   position: string
   trigger: string
   roleFunction: string
+  note: string
 }
 
 export type ShiftObservation = {
@@ -81,6 +82,7 @@ export type ShiftObservation = {
   position: string
   trigger?: string
   roleFunction?: string
+  note?: string
 }
 
 export type ShiftTrackerResult = {

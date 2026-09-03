@@ -117,6 +117,23 @@ export const COLLECTIONS: CollectionDefinition[] = [
     completionRewards: [{ type: 'pux', amount: 40 }],
     visibility: 'secret',
   },
+  {
+    id: 'event_opening_faceoff_2026_27',
+    name: 'OPENING FACEOFF 26/27',
+    description:
+      'Saisonstart 2026/27 — Moment vor dem ersten Bully. Preview only; Event-Grants folgen später. Kein Completion-Reward (Frame kommt vom Meta-Achievement).',
+    artworkAssetId: 'banner_opening_faceoff_2627',
+    itemIds: [
+      'sticker_opening_faceoff_2627',
+      'tagline_new_season_new_read_2627',
+      'emblem_opening_faceoff_2627',
+      'banner_opening_faceoff_2627',
+      'avatar_opening_faceoff_2627',
+      'title_season_opener_2627',
+      'frame_opening_faceoff_2627',
+    ],
+    visibility: 'secret',
+  },
 ]
 
 export const COLLECTION_BY_ID: Record<string, CollectionDefinition> = Object.fromEntries(

@@ -689,10 +689,6 @@
                     "label": "Defense"
                   },
                   {
-                    "id": "center",
-                    "label": "Center"
-                  },
-                  {
                     "id": "wing",
                     "label": "Wing"
                   },
@@ -1057,12 +1053,12 @@
               "id": "A2_D1",
               "title": "Struktur erkennen",
               "drill_type": "tactical_observation",
-              "description": "Erkenne die Struktur, die vor einer Aktion entsteht. 3–6 kurze Situationen — ohne Qualität zu bewerten.",
+              "description": "Erkenne die Struktur unmittelbar vor dem nächsten Spielschritt. 3–6 kurze Situationen — ohne Qualität zu bewerten.",
               "didactics": {
-                "explanation": "Eine Spielsituation als Zusammenspiel mehrerer Spieler lesen.\n\nDu weißt aus A1, wie Rollen, Beziehungen und einfache Strukturen aussehen. Jetzt schaust du auf eine konkrete Situation: Wer startet? Welche Unterstützung ist da? Welche Grundstruktur erkennst du?\n\nNicht: Breakout analysieren. Nicht: gut oder schlecht. Nur: Struktur erkennen, die vor einer Aktion entsteht.",
+                "explanation": "Eine Spielsituation als Zusammenspiel mehrerer Spieler lesen.\n\nDu weißt aus A1, wie Rollen, Beziehungen und einfache Strukturen aussehen. Jetzt schaust du auf eine konkrete Situation: Wer startet den nächsten Spielschritt? Welche Unterstützung ist da? Welche Grundstruktur erkennst du?\n\nMit Aktion meinen wir den nächsten klar erkennbaren Spielschritt. Du schaust hier auf die Anordnung der Spieler unmittelbar davor – noch ohne zu bewerten, was danach passiert. Die Struktur ist schon da; die Aktion kommt danach.\n\nNicht: Breakout analysieren. Nicht: gut oder schlecht. Nicht: welche Art von Spielschritt folgt. Nur: die bereits vorhandene Struktur unmittelbar vor dem nächsten Spielschritt erkennen.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wer startet die Aktion? (Defense, Center, Wing, anderer, unklar)",
+                    "Wer startet den nächsten Spielschritt? (Defense, Center, Wing, anderer, unklar)",
                     "Welche Unterstützung ist vorhanden?",
                     "Welche Grundstruktur erkennst du: geordnet, mehrere Optionen, unter Druck, unklar?"
                   ],
@@ -1129,7 +1125,7 @@
                 "situationLabel": "Spielsituation",
                 "supportsUnclear": true,
                 "whyThisDrill": "A1 hat einzelne Beziehungen und kleine Strukturen gezeigt. Jetzt: eine konkrete Spielsituation als gemeinsames Bild lesen.",
-                "decisionRule": "Erkenne die Struktur, die vor einer Aktion entsteht — nicht die Qualität der Aktion.",
+                "decisionRule": "Erkenne die bereits vorhandene Struktur unmittelbar vor dem nächsten Spielschritt — nicht die Qualität der Aktion und nicht, welcher Spielschritt folgt.",
                 "coreHint": "Einzelne Spieler ergeben zusammen eine Struktur. Du musst sie noch nicht bewerten und noch kein Umschalten lesen.",
                 "handoffText": "Du kannst jetzt erkennen, wie Spieler sich gemeinsam ordnen. Als Nächstes schaust du darauf, welche Möglichkeiten aus dieser Struktur entstehen.",
                 "collectEyebrow": "Struktur erkennen",
@@ -1138,12 +1134,12 @@
                 "saveButtonLabel": "Situation speichern",
                 "countNoun": "Situationen",
                 "countNounSingular": "Situation",
-                "initiatorPrompt": "Wer startet die Aktion?",
+                "initiatorPrompt": "Wer startet den nächsten Spielschritt?",
                 "supportPrompt": "Welche Unterstützung ist vorhanden?",
                 "structurePrompt": "Welche Grundstruktur erkennst du?",
                 "structureHint": "Du liest eine Situation als Zusammenspiel mehrerer Spieler — ohne Qualität zu bewerten.",
                 "structureGuideTitle": "Grundstruktur",
-                "initiatorTitle": "Start der Aktion",
+                "initiatorTitle": "Start des nächsten Spielschritts",
                 "supportTitle": "Unterstützung",
                 "structureTitle": "Struktur",
                 "patternPrompt": "Was hat dir geholfen, die Struktur zu erkennen?",
@@ -1266,14 +1262,14 @@
                 "explanation": "Du kannst aus A2_D1 eine Struktur lesen. Jetzt schaust du darauf, welche Handlungsmöglichkeiten diese Struktur erzeugt.\n\nPositionen erzeugen Möglichkeiten. Mehrere Optionen können gleichzeitig existieren. Du erkennst, was möglich ist — nicht, was gewählt werden sollte.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welche Option ist vorhanden? (Center, Wing, Defense, mehrere, keine klare, unklar)",
-                    "Welche Art von Option ist es: direkt, weiterführend, Sicherheit, unklar?",
-                    "Wie viele Möglichkeiten erkennst du: eine, mehrere, keine, unklar?"
+                    "Welche Optionen sind vorhanden? (Center, Wing, Defense — mehrere gleichzeitig möglich; keine klare Option; unklar)",
+                    "Welche Art von Option fällt dir auf: direkt, weiterführend, Sicherheit, unklar?"
                   ],
                   "how_to_decide": [
                     "Lies zuerst die vorhandene Struktur — du musst Rollen nicht neu erklären",
-                    "Frage: Welche Möglichkeit ist da? — nicht: Welche sollte gewählt werden?",
-                    "Mehrere Optionen gleichzeitig sind normal",
+                    "Frage: Welche Möglichkeiten sind da? — nicht: Welche sollte gewählt werden?",
+                    "Mehrere Optionen gleichzeitig sind normal — markiere die konkreten Rollen, die du siehst",
+                    "Bei mehreren Optionen nennst du die Funktion, die dir besonders auffällt — nicht, dass alle denselben Typ haben",
                     "Unklar ist eine vollwertige Antwort"
                   ],
                   "ignore": [
@@ -1323,7 +1319,7 @@
                     "questions": [
                       "Welche verschiedenen Möglichkeiten hast du gleichzeitig gesehen?"
                     ],
-                    "hint": "Mehrere Optionen heißt Entscheidungsraum — nicht Linienzählung."
+                    "hint": "Mehrere Optionen heißt Entscheidungsraum — nicht Linienzählung. Die Anzahl ergibt sich aus den markierten Rollen."
                   }
                 ]
               },
@@ -1333,8 +1329,10 @@
                 "supportsUnclear": true,
                 "observationLayers": [
                   "available_option",
-                  "option_type",
-                  "option_count"
+                  "option_type"
+                ],
+                "multiSelectLayers": [
+                  "available_option"
                 ],
                 "whyThisDrill": "A2_D1 hat gezeigt, wie sich Spieler ordnen. Jetzt: welche Möglichkeiten entstehen aus dieser Struktur?",
                 "decisionRule": "Erkenne vorhandene Möglichkeiten — nicht, welche Option gewählt werden sollte.",
@@ -1354,7 +1352,7 @@
                 "patternRequiredMessage": "Bitte beantworte, was dir geholfen hat, eine Option zu erkennen.",
                 "closingNoteLabel": "Notiz (optional)",
                 "closingNotePlaceholder": "Optional. Ohne zu bewerten, welche Option besser gewesen wäre.",
-                "incompleteObservationMessage": "Bitte wähle für jede Situation Option, Typ und Entscheidungsraum.",
+                "incompleteObservationMessage": "Bitte wähle für jede Situation vorhandene Optionen und die Art, die dir auffällt.",
                 "minObservations": 3,
                 "recommendedObservations": 5,
                 "maxObservations": 6,
@@ -1388,10 +1386,6 @@
                     "label": "Defense"
                   },
                   {
-                    "id": "multiple",
-                    "label": "mehrere Optionen"
-                  },
-                  {
                     "id": "none",
                     "label": "keine klare Option"
                   },
@@ -1400,8 +1394,8 @@
                     "label": "Unklar"
                   }
                 ],
-                "availableOptionPrompt": "Welche Option erkennst du?",
-                "availableOptionTitle": "Erkannte Option",
+                "availableOptionPrompt": "Welche Optionen erkennst du?",
+                "availableOptionTitle": "Erkannte Optionen",
                 "optionTypeOptions": [
                   {
                     "id": "direct_option",
@@ -1426,28 +1420,8 @@
                     "label": "Unklar"
                   }
                 ],
-                "optionTypePrompt": "Welche Art von Option ist es?",
+                "optionTypePrompt": "Welche Art von Option fällt dir hier auf?",
                 "optionTypeTitle": "Optionstyp",
-                "optionCountOptions": [
-                  {
-                    "id": "one_clear",
-                    "label": "eine klare Option"
-                  },
-                  {
-                    "id": "multiple",
-                    "label": "mehrere Optionen"
-                  },
-                  {
-                    "id": "none",
-                    "label": "keine klare Option"
-                  },
-                  {
-                    "id": "unclear",
-                    "label": "Unklar"
-                  }
-                ],
-                "optionCountPrompt": "Wie viele Möglichkeiten erkennst du?",
-                "optionCountTitle": "Entscheidungsraum",
                 "patternOptions": [
                   {
                     "id": "position",

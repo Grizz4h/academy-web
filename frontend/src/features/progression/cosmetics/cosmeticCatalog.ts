@@ -5,6 +5,7 @@ import { profileTitleCatalog } from '../../../data/profile/profileTitleCatalog'
 import type { CosmeticDefinition } from '../types'
 import { canonicalCosmeticId } from './cosmeticAliases'
 import { PHASE2_COSMETICS } from './phase2Cosmetics'
+import { OPENING_FACEOFF_2627_COSMETICS } from './seasonOpeningFaceoff2627'
 import { PUCK_POC_COSMETICS } from './puckSkins'
 import { STICK_POC_COSMETICS } from './stickSkins'
 
@@ -301,6 +302,7 @@ export const COSMETIC_CATALOG: CosmeticDefinition[] = fixProgressionOrigins(
       return item
     }),
     ...PHASE2_COSMETICS,
+    ...OPENING_FACEOFF_2627_COSMETICS,
     ...PUCK_POC_COSMETICS,
     ...STICK_POC_COSMETICS,
   ]),

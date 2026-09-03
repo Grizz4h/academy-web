@@ -680,9 +680,16 @@ export default function SessionSetup() {
       alert('Bitte eine Wettbewerbsphase wählen.')
       return
     }
+    const effectiveCompetitionValue = competitionValue.trim()
+      || (matchedCatalogGame?.matchday != null ? String(matchedCatalogGame.matchday) : '')
     if (selectedCompetitionPhase) {
-      const numericValue = Number(competitionValue)
-      if (!competitionValue || !Number.isFinite(numericValue) || numericValue < selectedCompetitionPhase.unit.min || numericValue > selectedCompetitionPhase.unit.max) {
+      const numericValue = Number(effectiveCompetitionValue)
+      if (
+        !effectiveCompetitionValue
+        || !Number.isFinite(numericValue)
+        || numericValue < selectedCompetitionPhase.unit.min
+        || numericValue > selectedCompetitionPhase.unit.max
+      ) {
         alert('Bitte ' + selectedCompetitionPhase.unit.label + ' ' + selectedCompetitionPhase.unit.min + '-' + selectedCompetitionPhase.unit.max + ' eingeben.')
         return
       }
@@ -711,7 +718,7 @@ export default function SessionSetup() {
       gameInfo.date = `${matchedCatalogGame.date}T${matchedCatalogGame.time || '19:00'}:00`
     }
     if (selectedCompetitionPhase) {
-      const unitValue = competitionValue.trim()
+      const unitValue = effectiveCompetitionValue
       gameInfo.competition_phase = selectedCompetitionPhase.id
       gameInfo.competition_phase_label = selectedCompetitionPhase.label
       gameInfo.competition_unit_type = selectedCompetitionPhase.unit.type
@@ -1026,6 +1033,7 @@ export default function SessionSetup() {
                   currentId: selectedDrill || null,
                 },
               )}
+              onSelectNode={(node) => setSelectedDrill(node.id)}
             />
             <p style={{ marginTop: '0.6rem', color: 'rgba(255,255,255,0.8)' }}>
               Bereits {matchupPanelData.moduleSessionsCount} Sessions in diesem Modul.

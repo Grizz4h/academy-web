@@ -13,6 +13,7 @@ export const stickerCatalog: ProfileAsset[] = [
   { id: 'sticker_getting_warm', label: 'Getting Warm', src: '/profile/stickers/sticker_getting_warm.svg', category: 'sticker', tags: ['activity'], starter: false },
   { id: 'sticker_five_star', label: 'Five Star', src: '/profile/stickers/sticker_five_star.svg', category: 'sticker', tags: ['rating'], starter: false },
   { id: 'sticker_paint_it_black', label: 'Paint It Black', src: '/profile/stickers/sticker_paint_it_black.svg', category: 'sticker', tags: ['paint'], starter: false },
+  { id: 'sticker_opening_faceoff_2627', label: 'Opening Faceoff 26/27', src: '/profile/stickers/sticker_opening_faceoff_2627.svg', category: 'sticker', tags: ['season', 'opening-faceoff'], starter: false },
 ]
 
 export function getStickerAsset(id: string | null | undefined): ProfileAsset | undefined {

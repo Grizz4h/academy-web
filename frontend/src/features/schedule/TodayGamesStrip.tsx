@@ -38,7 +38,7 @@ function StripItem({
       title={`${homeFull} vs ${awayFull} · ${statusLabel}`}
     >
       <span className={styles.league}>{leagueStripLabel(game.league_id)}</span>
-      <span className={styles.time}>{formatGameTimeLabel(game.time, { omitSuffix: true }) || '–'}</span>
+      <span className={styles.time}>{formatGameTimeLabel(game.time, { omitSuffix: true, date: game.date }) || '–'}</span>
       <span className={styles.pairing}>{pairingStripLabel(game)}</span>
       <GameStripStatusIcon game={game} />
     </button>

@@ -52,8 +52,10 @@ function App() {
     <RewardProvider>
       <GameSetupLauncherProvider>
         <div className="app">
-          <TopNav />
-          <TodayGamesStripBar />
+          <div className="appChrome">
+            <TopNav />
+            <TodayGamesStripBar />
+          </div>
           <main className="container">
             <Routes>
             <Route path="/" element={<Dashboard />} />

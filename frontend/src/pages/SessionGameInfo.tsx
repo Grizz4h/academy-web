@@ -34,12 +34,14 @@ function TeamColumn({
   observed,
   crestSize,
   side,
+  showFacts,
 }: {
   name: string
   teamId?: string
   observed: boolean
   crestSize: 'md' | 'lg'
   side: 'home' | 'away'
+  showFacts?: boolean
 }) {
   return (
     <div
@@ -50,7 +52,7 @@ function TeamColumn({
       ].filter(Boolean).join(' ')}
     >
       <span className={styles.crestSlot}>
-        <TeamCrest name={name} teamId={teamId} size={crestSize} />
+        <TeamCrest name={name} teamId={teamId} size={crestSize} showFacts={showFacts} />
       </span>
       <p className={[styles.teamName, observed ? styles.teamNameObserved : ''].filter(Boolean).join(' ')}>
         {name}
@@ -165,6 +167,7 @@ export function SessionGameInfo({
                 observed={observed === home}
                 crestSize={crestSize}
                 side="home"
+                showFacts={game.league === 'CHL'}
               />
               <div className={arenaStyles.vsRail}>
                 <MatchupVs variant="board" />
@@ -175,6 +178,7 @@ export function SessionGameInfo({
                 observed={observed === away}
                 crestSize={crestSize}
                 side="away"
+                showFacts={game.league === 'CHL'}
               />
             </div>
             <SessionNote note={note} onNoteChange={onNoteChange} className={styles.noteAside} />

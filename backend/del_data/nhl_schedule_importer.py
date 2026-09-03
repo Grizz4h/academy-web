@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from urllib.request import Request, urlopen
 
 from .game_store import build_game_id, load_games_catalog, save_games_catalog
+from .schedule_time import utc_instant_to_app_local
 from .season_utils import season_to_display, season_to_file_key
 from .team_mapping import TeamCatalogMapper
 
@@ -223,19 +224,14 @@ def parse_nhl_game(
         matchday = home_game_number
 
     start = game.get("startTimeUTC") or ""
-    date_iso = (game.get("gameDate") or start[:10] or None)
+    feed_date = game.get("gameDate") or None
+    if feed_date and "T" in str(feed_date):
+        feed_date = str(feed_date)[:10]
+    date_iso, time_value = utc_instant_to_app_local(start, fallback_date=str(feed_date) if feed_date else None)
+    if not date_iso:
+        date_iso = str(feed_date) if feed_date else None
     if date_iso and "T" in str(date_iso):
         date_iso = str(date_iso)[:10]
-    time_value = None
-    if start:
-        try:
-            dt = datetime.fromisoformat(start.replace("Z", "+00:00")).astimezone(timezone.utc)
-            if not date_iso:
-                date_iso = dt.strftime("%Y-%m-%d")
-            time_value = dt.strftime("%H:%M")
-        except Exception:
-            if len(start) >= 16:
-                time_value = start[11:16]
 
     status, score = _parse_status(game)
     external_id = str(game.get("id") or "")

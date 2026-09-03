@@ -118,6 +118,14 @@ export const bannerCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
+  {
+    id: 'banner_opening_faceoff_2627',
+    label: 'Opening Faceoff 26/27',
+    src: '/profile/banners/banner_opening_faceoff_2627.svg',
+    category: 'rink',
+    tags: ['season', 'opening-faceoff'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_BANNER_ID = 'banner_neutral_01'

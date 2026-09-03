@@ -62,6 +62,7 @@ export type PlayerRelationDraft = {
   puckCarrierRole: string
   focalPosition: string
   relation: string
+  note: string
 }
 
 export type PlayerRelationObservation = {

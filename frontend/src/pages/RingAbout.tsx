@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, type KeyboardEvent } from 'react'
+import { useState, useMemo, useEffect, useRef, type KeyboardEvent, type RefObject } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { api, type SceneMarker, type SceneMarkerUpdate, type Session } from '../api'
@@ -31,8 +31,51 @@ import styles from './RingAbout.module.css'
 
 type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
+const SCENE_PAGE_SIZE = 20
+
 function unique<T>(arr: T[]): T[] {
   return Array.from(new Set(arr))
+}
+
+function useSceneListWindow(
+  resetKey: string,
+  total: number,
+  pageSize = SCENE_PAGE_SIZE,
+): {
+  visibleCount: number
+  hasMore: boolean
+  sentinelRef: RefObject<HTMLDivElement | null>
+  loadMore: () => void
+} {
+  const [visibleCount, setVisibleCount] = useState(pageSize)
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    setVisibleCount(pageSize)
+  }, [resetKey, pageSize])
+
+  const loadMore = () => {
+    setVisibleCount((count) => Math.min(count + pageSize, total))
+  }
+
+  const capped = Math.min(visibleCount, total)
+  const hasMore = capped < total
+
+  useEffect(() => {
+    const node = sentinelRef.current
+    if (!node || !hasMore) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        setVisibleCount((count) => Math.min(count + pageSize, total))
+      },
+      { root: null, rootMargin: '480px 0px' },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [hasMore, pageSize, total, capped])
+
+  return { visibleCount: capped, hasMore, sentinelRef, loadMore }
 }
 
 function isScenePublished(scene: SceneMarker): boolean {
@@ -530,7 +573,7 @@ export default function RingAbout() {
   const [filterLeague, setFilterLeague] = useState('')
   const [filterSeason, setFilterSeason] = useState('')
   const [filterTeam, setFilterTeam] = useState('')
-  const [filterStatus, setFilterStatus] = useState('PIPELINE')
+  const [filterStatus, setFilterStatus] = useState('NEW')
   const [filterMinRating, setFilterMinRating] = useState('')
   const [sortMode, setSortMode] = useState<'created' | 'rating_desc'>('created')
   const [filterTrack, setFilterTrack] = useState('')
@@ -648,13 +691,33 @@ export default function RingAbout() {
     return result
   }, [scenes, sessionFilter, filterSource, filterLeague, filterSeason, filterTeam, filterStatus, filterMinRating, filterTrack, filterDrill, filterCompetitionPhase, filterCompetitionUnitType, filterCompetitionUnitValue, filterEpisodeSeason, filterContextKey, sortMode])
 
-  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || (filterStatus && filterStatus !== 'PIPELINE') || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterContextKey
+  const listResetKey = [
+    sessionFilter,
+    filterSource,
+    filterLeague,
+    filterSeason,
+    filterTeam,
+    filterStatus,
+    filterMinRating,
+    sortMode,
+    filterTrack,
+    filterDrill,
+    filterCompetitionPhase,
+    filterCompetitionUnitType,
+    filterCompetitionUnitValue,
+    filterEpisodeSeason,
+    filterContextKey,
+  ].join('|')
+  const { visibleCount, hasMore, sentinelRef, loadMore } = useSceneListWindow(listResetKey, filtered.length)
+  const visibleScenes = filtered.slice(0, visibleCount)
+
+  const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || (filterStatus && filterStatus !== 'NEW') || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterContextKey
 
   const resetFilters = () => {
     setFilterLeague('')
     setFilterSeason('')
     setFilterTeam('')
-    setFilterStatus('PIPELINE')
+    setFilterStatus('NEW')
     setFilterMinRating('')
     setSortMode('created')
     setFilterTrack('')
@@ -1250,7 +1313,9 @@ export default function RingAbout() {
                 <div className={styles.resultsHead}>
                   <h2 className={styles.resultsTitle}>Szenen</h2>
                   <p className={styles.resultsMeta}>
-                    {filtered.length} von {scenes.length} Szene{scenes.length !== 1 ? 'n' : ''}
+                    {hasMore
+                      ? `${visibleScenes.length} von ${filtered.length} angezeigt`
+                      : `${filtered.length} von ${scenes.length} Szene${scenes.length !== 1 ? 'n' : ''}`}
                   </p>
                 </div>
                 <SelectionToolbar
@@ -1274,7 +1339,7 @@ export default function RingAbout() {
                 />
               </div>
               <div className={styles.sceneGrid}>
-                {filtered.map(scene => (
+                {visibleScenes.map(scene => (
                   <SceneCard
                     key={scene.id}
                     scene={scene}
@@ -1292,6 +1357,16 @@ export default function RingAbout() {
                   />
                 ))}
               </div>
+              {hasMore && (
+                <div ref={sentinelRef} className={styles.loadMoreSentinel}>
+                  <p className={styles.resultsMeta}>
+                    {visibleScenes.length} von {filtered.length} Szenen geladen
+                  </p>
+                  <button type="button" className={styles.filterReset} onClick={loadMore}>
+                    Weitere laden
+                  </button>
+                </div>
+              )}
             </>
           )}
 

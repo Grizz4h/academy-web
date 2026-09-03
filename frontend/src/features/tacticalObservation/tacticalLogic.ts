@@ -145,8 +145,67 @@ function isUnclear(id: string): boolean {
   return id === 'unclear' || id === 'unsure'
 }
 
+const CONCRETE_OPTION_IDS = new Set(['center', 'wing', 'defense'])
+const EXCLUSIVE_MULTI_IDS = new Set(['none', 'unclear', 'unsure'])
+
+export function decodeLayerValues(value: string): string[] {
+  const raw = asString(value)
+  if (!raw) return []
+  return raw.split(',').map((item) => item.trim()).filter(Boolean)
+}
+
+export function encodeLayerValues(ids: string[], options: LabeledOption[]): string {
+  const order = options.map((option) => option.id)
+  const unique = Array.from(new Set(ids.map((id) => asString(id)).filter(Boolean)))
+  return unique
+    .filter((id) => order.includes(id))
+    .sort((a, b) => order.indexOf(a) - order.indexOf(b))
+    .join(',')
+}
+
+export function toggleMultiSelectValue(
+  current: string[],
+  id: string,
+  options: LabeledOption[],
+): string[] {
+  const next = current.includes(id)
+    ? current.filter((item) => item !== id)
+    : EXCLUSIVE_MULTI_IDS.has(id)
+      ? [id]
+      : [...current.filter((item) => !EXCLUSIVE_MULTI_IDS.has(item)), id]
+  return decodeLayerValues(encodeLayerValues(next, options))
+}
+
+export function syncMultiSelectValues(
+  current: string[],
+  next: string[],
+  options: LabeledOption[],
+): string[] {
+  const added = next.find((id) => !current.includes(id))
+  const removed = current.find((id) => !next.includes(id))
+  const toggled = added || removed
+  return toggled ? toggleMultiSelectValue(current, toggled, options) : decodeLayerValues(encodeLayerValues(next, options))
+}
+
+export function deriveOptionCount(ids: string[]): string {
+  const selected = ids.map((id) => asString(id)).filter(Boolean)
+  if (selected.length === 1 && selected[0] === 'unclear') return 'unclear'
+  if (selected.length === 1 && selected[0] === 'none') return 'none'
+  const roles = selected.filter((id) => CONCRETE_OPTION_IDS.has(id))
+  if (roles.length >= 2) return 'multiple'
+  if (roles.length === 1) return 'one_clear'
+  return 'unclear'
+}
+
 function filterUnclear(options: LabeledOption[], supportsUnclear: boolean): LabeledOption[] {
   return supportsUnclear ? options : options.filter((option) => !isUnclear(option.id))
+}
+
+function readMultiSelectLayers(raw: Record<string, unknown>): Set<string> {
+  const listed = Array.isArray(raw.multiSelectLayers || raw.multi_select_layers)
+    ? (raw.multiSelectLayers || raw.multi_select_layers) as unknown[]
+    : []
+  return new Set(listed.map((item) => asString(item)).filter(Boolean))
 }
 
 function parseLayer(raw: unknown, supportsUnclear: boolean): TacticalObservationLayer | null {
@@ -166,6 +225,7 @@ function parseLayer(raw: unknown, supportsUnclear: boolean): TacticalObservation
     hint: asString(row.hint) || undefined,
     guideTitle: asString(row.guideTitle || row.guide_title) || undefined,
     showInGuide: row.showInGuide === true || row.show_in_guide === true,
+    multiSelect: row.multiSelect === true || row.multi_select === true,
   }
 }
 
@@ -266,7 +326,7 @@ const LAYER_BLUEPRINTS: LayerBlueprint[] = [
       },
       { id: 'unclear', label: 'Unklar' },
     ],
-    defaultPrompt: 'Welche Art von Option ist es?',
+    defaultPrompt: 'Welche Art von Option fällt dir hier auf?',
     defaultResultTitle: 'Optionstyp',
     defaultGuideTitle: 'Optionstypen',
   },
@@ -531,6 +591,8 @@ function blueprintLayer(
   )
   const promptSnake = blueprint.promptKey.replace(/([A-Z])/g, '_$1').toLowerCase()
   const titleSnake = blueprint.resultTitleKey.replace(/([A-Z])/g, '_$1').toLowerCase()
+  const multiKey = `${blueprint.fieldKey}MultiSelect`
+  const multiSnake = `${blueprint.fieldKey.replace(/([A-Z])/g, '_$1').toLowerCase()}_multi_select`
   return {
     id: blueprint.id,
     fieldKey: blueprint.fieldKey,
@@ -544,6 +606,7 @@ function blueprintLayer(
       ? asString(raw[blueprint.guideTitleKey] || raw[blueprint.guideTitleKey.replace(/([A-Z])/g, '_$1').toLowerCase()], blueprint.defaultGuideTitle)
       : undefined,
     showInGuide: blueprint.showInGuide,
+    multiSelect: readMultiSelectLayers(raw).has(blueprint.id) || asBool(raw[multiKey] ?? raw[multiSnake], false),
   }
 }
 
@@ -579,6 +642,7 @@ function resolveLayers(raw: Record<string, unknown>, supportsUnclear: boolean): 
 export function emptyTacticalDraft(cfg: Pick<TacticalObservationConfig, 'layers'>): TacticalObservationDraft {
   const draft: TacticalObservationDraft = {}
   for (const layer of cfg.layers) draft[layer.fieldKey] = ''
+  draft.note = ''
   return draft
 }
 
@@ -682,6 +746,17 @@ export function optionLabel(options: LabeledOption[], id: string): string {
   return options.find((option) => option.id === id)?.label || id
 }
 
+export function formatLayerValue(layer: TacticalObservationLayer, value: string): string {
+  const ids = layer.multiSelect ? decodeLayerValues(value) : (asString(value) ? [asString(value)] : [])
+  return ids.map((id) => optionLabel(layer.options, id)).join(' + ')
+}
+
+export function layerSelectedIds(layer: TacticalObservationLayer, value: string): string[] {
+  if (layer.multiSelect) return decodeLayerValues(value)
+  const id = asString(value)
+  return id ? [id] : []
+}
+
 export function getObservationValue(
   observation: TacticalObservation,
   fieldKey: string,
@@ -730,13 +805,27 @@ export function computeTacticalObservationResult(
     for (const option of layer.options) layerCounts[layer.fieldKey][option.id] = 0
   }
   let unclearCount = 0
+  const availableLayer = cfg.layers.find((layer) => layer.fieldKey === 'availableOption')
+  const hasOptionCountLayer = cfg.layers.some((layer) => layer.fieldKey === 'optionCount')
+  if (availableLayer?.multiSelect && !hasOptionCountLayer) {
+    layerCounts.optionCount = { one_clear: 0, multiple: 0, none: 0, unclear: 0 }
+  }
   for (const raw of observations) {
     const observation = normalizeObservation(raw)
     let observationUnclear = false
     for (const layer of cfg.layers) {
-      const key = asString(getObservationValue(observation, layer.fieldKey))
-      if (key) layerCounts[layer.fieldKey][key] = (layerCounts[layer.fieldKey][key] || 0) + 1
-      if (isUnclear(key)) observationUnclear = true
+      const ids = layerSelectedIds(layer, getObservationValue(observation, layer.fieldKey))
+      for (const key of ids) {
+        layerCounts[layer.fieldKey][key] = (layerCounts[layer.fieldKey][key] || 0) + 1
+        if (isUnclear(key)) observationUnclear = true
+      }
+    }
+    if (availableLayer?.multiSelect && !hasOptionCountLayer) {
+      const available = layerSelectedIds(availableLayer, getObservationValue(observation, 'availableOption'))
+      if (available.length) {
+        const derived = asString(observation.values?.optionCount) || deriveOptionCount(available)
+        layerCounts.optionCount[derived] = (layerCounts.optionCount[derived] || 0) + 1
+      }
     }
     if (observationUnclear) unclearCount += 1
   }
@@ -781,9 +870,13 @@ export function draftToObservation(
 ): TacticalObservation | null {
   const values: Record<string, string> = {}
   for (const layer of cfg.layers) {
-    const value = asString(draft[layer.fieldKey])
-    if (!value) return null
-    values[layer.fieldKey] = value
+    const ids = layerSelectedIds(layer, asString(draft[layer.fieldKey]))
+    if (!ids.length) return null
+    values[layer.fieldKey] = layer.multiSelect ? encodeLayerValues(ids, layer.options) : ids[0]
+  }
+  const availableLayer = cfg.layers.find((layer) => layer.fieldKey === 'availableOption')
+  if (availableLayer?.multiSelect && !cfg.layers.some((layer) => layer.fieldKey === 'optionCount')) {
+    values.optionCount = deriveOptionCount(layerSelectedIds(availableLayer, values.availableOption))
   }
   return {
     id: existing?.id || `tactical_obs_${Date.now()}_${index}`,
@@ -791,7 +884,7 @@ export function draftToObservation(
     values,
     period: existing?.period,
     gameClock: existing?.gameClock,
-    note: existing?.note,
+    note: asString(draft.note) || undefined,
     sceneId: existing?.sceneId,
   }
 }
@@ -805,6 +898,7 @@ export function observationToDraft(
   for (const layer of cfg.layers) {
     draft[layer.fieldKey] = getObservationValue(normalized, layer.fieldKey)
   }
+  draft.note = observation.note || ''
   return draft
 }
 
@@ -820,7 +914,7 @@ export function validateTacticalObservationAnswers(
   }
   const incomplete = observations.some((raw) => {
     const observation = normalizeObservation(raw)
-    return cfg.layers.some((layer) => !asString(getObservationValue(observation, layer.fieldKey)))
+    return cfg.layers.some((layer) => !layerSelectedIds(layer, getObservationValue(observation, layer.fieldKey)).length)
   })
   if (incomplete) return cfg.incompleteObservationMessage
   if (cfg.patternOptions.length && !asString(answers[cfg.patternKey])) {

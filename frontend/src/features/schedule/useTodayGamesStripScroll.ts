@@ -17,7 +17,7 @@ function pillFromTarget(target: EventTarget | null): HTMLButtonElement | null {
   return (target as HTMLElement | null)?.closest('button') ?? null
 }
 
-/** Transform-based marquee — reliable on iOS; pauses on hover (desktop), touch, drag, wheel. */
+/** Transform-based marquee — pauses on desktop hover, touch/drag/wheel; resumes after leave/interaction. */
 export function useTodayGamesStripScroll(
   scrollRef: RefObject<HTMLElement | null>,
   loopRef: RefObject<HTMLElement | null>,
@@ -34,6 +34,7 @@ export function useTodayGamesStripScroll(
     if (!scrollEl || !loopEl) return
 
     const touchEl = hoverRef?.current || scrollEl
+    const hoverEl = scrollEl
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
     const coarsePointer = window.matchMedia('(pointer: coarse)')
     const autoScrollEnabled = enabled && !prefersReducedMotion()
@@ -55,6 +56,7 @@ export function useTodayGamesStripScroll(
     let pageLocked = false
 
     const measure = () => {
+      // One loop segment = half of the duplicated track.
       loopWidth = loopEl.scrollWidth / 2
       normalizeOffset()
       applyOffset()
@@ -89,17 +91,26 @@ export function useTodayGamesStripScroll(
       return true
     }
 
-    const scheduleResume = () => {
+    const scheduleResume = (delayMs: number = resumeDelayMs) => {
       clearResume()
       if (!canResume()) return
       resumeTimer = window.setTimeout(() => {
         resumeTimer = null
         if (!canResume()) return
         paused = false
-      }, resumeDelayMs)
+      }, delayMs)
     }
 
-    const canAutoScroll = () => enabled && loopWidth > scrollEl.clientWidth + 1
+    /** Autoscroll when the duplicated track actually overflows the viewport. */
+    const canAutoScroll = () => {
+      if (!enabled || !autoScrollEnabled) return false
+      if (loopWidth <= 0) return false
+      return loopEl.scrollWidth > scrollEl.clientWidth + 1
+    }
+
+    const tryStart = () => {
+      if (autoScrollEnabled && canAutoScroll() && canResume()) paused = false
+    }
 
     const tick = () => {
       if (!paused && canAutoScroll()) {
@@ -142,6 +153,33 @@ export function useTodayGamesStripScroll(
       activePill = null
       delete touchEl.dataset.dragging
       unlockPageScroll()
+    }
+
+    /** Swallow clicks briefly (ghost click after drag / duplicate after synthetic tap). Always expires. */
+    let clickSuppressTimer: number | null = null
+    let clickSuppressHandler: ((event: MouseEvent) => void) | null = null
+
+    const clearClickSuppress = () => {
+      if (clickSuppressTimer != null) {
+        window.clearTimeout(clickSuppressTimer)
+        clickSuppressTimer = null
+      }
+      if (clickSuppressHandler) {
+        touchEl.removeEventListener('click', clickSuppressHandler, true)
+        clickSuppressHandler = null
+      }
+    }
+
+    const suppressClicksBriefly = (ms = 450) => {
+      clearClickSuppress()
+      clickSuppressHandler = (clickEvent: MouseEvent) => {
+        clickEvent.preventDefault()
+        clickEvent.stopImmediatePropagation()
+      }
+      touchEl.addEventListener('click', clickSuppressHandler, true)
+      clickSuppressTimer = window.setTimeout(() => {
+        clearClickSuppress()
+      }, ms)
     }
 
     const onPointerDown = (event: PointerEvent) => {
@@ -195,6 +233,7 @@ export function useTodayGamesStripScroll(
 
       const wasDragged = dragged
       const pill = activePill
+      const wasTouch = touchLike
 
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', finishPointer)
@@ -204,33 +243,17 @@ export function useTodayGamesStripScroll(
       scheduleResume()
 
       if (wasDragged) {
-        // Swallow the synthetic click that would otherwise fire after a drag.
-        const blockClick = (clickEvent: MouseEvent) => {
-          clickEvent.preventDefault()
-          clickEvent.stopImmediatePropagation()
-          touchEl.removeEventListener('click', blockClick, true)
-        }
-        touchEl.addEventListener('click', blockClick, true)
+        // After a scroll/drag: block only the imminent ghost click, then expire
+        // so the next real tap is never swallowed.
+        suppressClicksBriefly(450)
         return
       }
 
-      // Tap on a pill (touch): fire exactly one click, then swallow Safari's delayed ghost click.
-      if (pill && touchLike) {
-        let passNext = false
-        const guard = (clickEvent: MouseEvent) => {
-          if (passNext) {
-            passNext = false
-            return
-          }
-          clickEvent.preventDefault()
-          clickEvent.stopImmediatePropagation()
-        }
-        touchEl.addEventListener('click', guard, true)
-        passNext = true
+      // Touch tap: page-scroll lock can cancel the browser click — fire once, then
+      // briefly block Safari's delayed duplicate.
+      if (pill && wasTouch) {
         pill.click()
-        window.setTimeout(() => {
-          touchEl.removeEventListener('click', guard, true)
-        }, 450)
+        suppressClicksBriefly(450)
       }
     }
 
@@ -254,7 +277,8 @@ export function useTodayGamesStripScroll(
     const onMouseLeave = () => {
       if (!finePointer.matches) return
       hovering = false
-      scheduleResume()
+      // Leave hover → continue quickly (not the long post-drag delay).
+      scheduleResume(280)
     }
 
     const onVisibilityChange = () => {
@@ -270,13 +294,17 @@ export function useTodayGamesStripScroll(
     }
 
     measure()
-    if (autoScrollEnabled) paused = false
+    const measureFrame = window.requestAnimationFrame(() => {
+      measure()
+      tryStart()
+    })
+    tryStart()
     raf = window.requestAnimationFrame(tick)
 
     touchEl.addEventListener('pointerdown', onPointerDown)
     scrollEl.addEventListener('wheel', onWheel, { passive: true })
-    touchEl.addEventListener('mouseenter', onMouseEnter)
-    touchEl.addEventListener('mouseleave', onMouseLeave)
+    hoverEl.addEventListener('mouseenter', onMouseEnter)
+    hoverEl.addEventListener('mouseleave', onMouseLeave)
     document.addEventListener('visibilitychange', onVisibilityChange)
 
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
@@ -286,7 +314,9 @@ export function useTodayGamesStripScroll(
 
     return () => {
       window.cancelAnimationFrame(raf)
+      window.cancelAnimationFrame(measureFrame)
       clearResume()
+      clearClickSuppress()
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', finishPointer)
       window.removeEventListener('pointercancel', finishPointer)
@@ -296,8 +326,8 @@ export function useTodayGamesStripScroll(
       document.removeEventListener('visibilitychange', onVisibilityChange)
       touchEl.removeEventListener('pointerdown', onPointerDown)
       scrollEl.removeEventListener('wheel', onWheel)
-      touchEl.removeEventListener('mouseenter', onMouseEnter)
-      touchEl.removeEventListener('mouseleave', onMouseLeave)
+      hoverEl.removeEventListener('mouseenter', onMouseEnter)
+      hoverEl.removeEventListener('mouseleave', onMouseLeave)
       loopEl.style.transform = ''
       delete touchEl.dataset.dragging
       delete touchEl.dataset.touchLock

@@ -17,6 +17,11 @@ type TrackProgressMapProps = {
   compact?: boolean
   /** Optional content centered under each D-pill (e.g. MechanicGlyph). */
   renderBeneath?: (node: TrackProgressNode, index: number) => ReactNode
+  /**
+   * When set, tapping a non-locked pill selects that drill in the parent loop
+   * (Session Setup, Academy → Setup with ?drill=). Popover still explains status.
+   */
+  onSelectNode?: (node: TrackProgressNode) => void
 }
 
 const STATUS_LABEL: Record<TrackProgressNode['status'], string> = {
@@ -32,6 +37,7 @@ export function TrackProgressMap({
   className,
   compact = false,
   renderBeneath,
+  onSelectNode,
 }: TrackProgressMapProps) {
   const [openId, setOpenId] = useState<string | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -57,6 +63,7 @@ export function TrackProgressMap({
         const short = node.label || node.id
         const open = openId === node.id
         const beneath = renderBeneath?.(node, index) ?? null
+        const selectable = Boolean(onSelectNode) && node.status !== 'locked'
         return (
           <li
             key={node.id}
@@ -71,13 +78,14 @@ export function TrackProgressMap({
                 }}
                 type="button"
                 className={styles.node}
-                title={name}
-                aria-label={`${name}: Details anzeigen`}
+                title={selectable ? `${name} auswählen` : name}
+                aria-label={selectable ? `${name} auswählen` : `${name}: Details anzeigen`}
                 aria-expanded={open}
                 aria-controls={open ? panelId : undefined}
                 onClick={(event) => {
                   event.preventDefault()
                   event.stopPropagation()
+                  if (selectable) onSelectNode?.(node)
                   setOpenId((current) => {
                     const next = current === node.id ? null : node.id
                     if (next) claimExclusivePopover(exclusiveId)
@@ -107,7 +115,11 @@ export function TrackProgressMap({
                     <strong className={styles.popupTitle}>{name}</strong>
                   </div>
                   <p className={styles.popupSummary}>{STATUS_LABEL[node.status]}</p>
-                  {node.title && node.label && node.title !== node.label ? (
+                  {selectable ? (
+                    <p className={styles.popupDetail}>
+                      {node.status === 'current' ? 'Aktuell ausgewählt.' : 'Tippen wählt diesen Drill.'}
+                    </p>
+                  ) : node.title && node.label && node.title !== node.label ? (
                     <p className={styles.popupDetail}>Kurz: {short}</p>
                   ) : null}
                 </AnchoredPopover>

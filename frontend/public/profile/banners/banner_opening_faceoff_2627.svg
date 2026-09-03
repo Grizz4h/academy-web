@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img">
+  <defs>
+    <linearGradient id="ofBannerBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#08131D"/>
+      <stop offset="45%" stop-color="#102736"/>
+      <stop offset="100%" stop-color="#08131D"/>
+    </linearGradient>
+    <linearGradient id="ofBannerConeL" x1="0.3" y1="0" x2="0.45" y2="1">
+      <stop offset="0%" stop-color="#EAF7FA" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#EAF7FA" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ofBannerConeR" x1="0.7" y1="0" x2="0.55" y2="1">
+      <stop offset="0%" stop-color="#F2A65A" stop-opacity=".2"/>
+      <stop offset="100%" stop-color="#F2A65A" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="ofBannerIce" cx="50%" cy="70%" r="45%">
+      <stop offset="0%" stop-color="#1a3a4a"/>
+      <stop offset="100%" stop-color="#102736" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="960" height="240" fill="url(#ofBannerBg)"/>
+  <path d="M180 0 L320 0 L420 240 L100 240 Z" fill="url(#ofBannerConeL)"/>
+  <path d="M640 0 L780 0 L860 240 L540 240 Z" fill="url(#ofBannerConeR)"/>
+  <ellipse cx="480" cy="190" rx="280" ry="70" fill="url(#ofBannerIce)"/>
+  <path d="M80 168 Q240 148 400 160 Q560 172 720 152 Q820 140 900 158" fill="none" stroke="#5191A2" stroke-width="1.2" opacity=".35"/>
+  <path d="M120 188 Q300 176 480 184 Q660 192 840 178" fill="none" stroke="#5191A2" stroke-width="1" opacity=".25"/>
+  <circle cx="480" cy="132" r="58" fill="none" stroke="#EAF7FA" stroke-width="3"/>
+  <circle cx="480" cy="132" r="18" fill="none" stroke="#B84A52" stroke-width="3"/>
+  <path d="M200 132 H462 M498 132 H760" stroke="#B84A52" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="480" cy="148" rx="16" ry="5" fill="#08131D" opacity=".45"/>
+  <ellipse cx="480" cy="118" rx="15" ry="9" fill="#14181d" stroke="#5191A2" stroke-width="2"/>
+  <ellipse cx="480" cy="114" rx="9" ry="3" fill="#EAF7FA" opacity=".16"/>
+  <text x="72" y="48" fill="#F2A65A" font-size="22" font-family="system-ui,sans-serif" font-weight="700" letter-spacing="3">26·27</text>
+  <text x="888" y="48" text-anchor="end" fill="#5191A2" font-size="14" font-family="system-ui,sans-serif" font-weight="600" letter-spacing="2" opacity=".85">OPENING FACEOFF</text>
+</svg>

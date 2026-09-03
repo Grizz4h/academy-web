@@ -143,6 +143,14 @@ export const emblemCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
+  {
+    id: 'emblem_opening_faceoff_2627',
+    label: 'Opening Faceoff',
+    src: '/profile/emblems/emblem_opening_faceoff_2627.svg',
+    category: 'rink',
+    tags: ['season', 'opening-faceoff'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_EMBLEM_ID = 'emblem_puck_01'

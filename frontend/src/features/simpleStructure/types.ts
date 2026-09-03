@@ -70,6 +70,7 @@ export type SimpleStructureConfig = {
 
 export type SimpleStructureDraft = {
   structureType: string
+  note: string
 }
 
 export type SimpleStructureObservation = {

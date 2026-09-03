@@ -284,6 +284,9 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
                   {' · '}
                   {optionLabel(cfg.relationOptions, observation.relation)}
                 </p>
+                {observation.note ? (
+                  <p className={styles.fieldHelp} style={{ marginTop: '0.25rem' }}>{observation.note}</p>
+                ) : null}
                 <div className={styles.rowActions}>
                   <button
                     type="button"
@@ -355,6 +358,19 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
             />
             {cfg.relationHint && <p className={styles.fieldHelp}>{cfg.relationHint}</p>}
             {selectedRelation?.detail && <p className={styles.hint}>{selectedRelation.detail}</p>}
+          </div>
+          <div className={styles.fieldBlock}>
+            <div className={styles.fieldLabel}>Kurze Notiz (optional)</div>
+            <textarea
+              className={styles.textarea}
+              value={draft.note || ''}
+              onChange={(event) => patchAnswers(safeAnswers, setAnswers, {
+                [cfg.draftKey]: { ...draft, note: event.target.value },
+              })}
+              maxLength={500}
+              rows={2}
+              placeholder="Was hast du dir dabei gedacht?"
+            />
           </div>
           {showSketch && selectedPuck && selectedPosition && selectedRelation && (
             <div className={styles.sketch} aria-hidden="true">

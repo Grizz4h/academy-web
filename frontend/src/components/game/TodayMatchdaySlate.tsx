@@ -89,7 +89,7 @@ export default function TodayMatchdaySlate({
           const awayName = resolveCatalogTeamName(game.away_team_name || game.away_team_id, game.league_id, game.season_id)
           const home = resolveGameTeamShortCode(game.home_team_name || game.home_team_id, game.league_id, game.season_id)
           const away = resolveGameTeamShortCode(game.away_team_name || game.away_team_id, game.league_id, game.season_id)
-          const time = formatGameTimeLabel(game.time, { omitSuffix: true })
+          const time = formatGameTimeLabel(game.time, { omitSuffix: true, date: game.date })
           const leagueLabel = COMPETITION_CONFIGS[game.league_id]?.label || league.replace(/_/g, ' ')
           const status = formatGameStripStatusLabel(game)
           const statusClass = status === 'Live'

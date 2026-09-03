@@ -26,7 +26,6 @@ import {
 import { useRewards } from '../features/rewards'
 import { isStarterCosmetic } from '../features/progression/cosmetics/cosmeticCatalog'
 import Card from '../components/Card'
-import { Puck3DLab } from '../components/puck3d'
 import { CosmeticGlyph } from '../components/visuals/CosmeticGlyph'
 import { useDevNavEnabled } from '../config/featureFlags'
 import { UiActionRow, UiButton, UiButtonLink, UiChip, UiPill, UiProgress } from '../components/ui'
@@ -486,8 +485,6 @@ export default function LockerPage() {
 
       {tab === 'home' && (
         <div className={styles.stack}>
-          <Puck3DLab />
-
           <section>
             <h2 className="ui-section-title">Neue Unlocks</h2>
             {newItems.length === 0 ? (
@@ -541,9 +538,6 @@ export default function LockerPage() {
           <div className={styles.chipRow}>
             {LOCKER_TYPE_CHIPS.filter((chip) => {
               if (chip.id === 'all') return true
-              if (chip.id === 'stickModel' || chip.id === 'puckModel') {
-                return items.some((item) => item.definition.type === chip.id || item.definition.type === (chip.id === 'stickModel' ? 'stickSkin' : 'puckSkin'))
-              }
               return items.some((item) => item.definition.type === chip.id)
             }).map((chip) => (
               <UiChip key={chip.id} active={typeFilter === chip.id} onClick={() => setTypeFilter(chip.id)}>

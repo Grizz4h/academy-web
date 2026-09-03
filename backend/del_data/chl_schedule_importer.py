@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from urllib.request import Request, urlopen
 
 from .game_store import build_game_id
+from .schedule_time import utc_instant_to_app_local
 from .season_utils import season_to_display
 from .team_mapping import TeamCatalogMapper
 
@@ -215,14 +216,9 @@ def parse_chl_match(
         return None
 
     start = match.get("startDate") or ""
-    date_iso = start[:10] if len(start) >= 10 else None
-    time_value = None
-    if len(start) >= 16:
-        try:
-            dt = datetime.fromisoformat(start.replace("Z", "+00:00")).astimezone(timezone.utc)
-            time_value = dt.strftime("%H:%M")
-        except Exception:
-            time_value = start[11:16]
+    date_iso, time_value = utc_instant_to_app_local(start)
+    if not date_iso and len(start) >= 10:
+        date_iso = start[:10]
 
     phase_id, phase_label, matchday = _parse_phase(match.get("stage") or {})
     results = ((match.get("results") or {}).get("scores") or {})

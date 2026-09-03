@@ -1,7 +1,9 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react'
 import { resolveTeamLogo } from '../../data/teamLogos'
 import { resolveNationalTeamFlag } from '../../data/nationalTeamFlags'
 import { resolveTeamShortCode } from '../../data/teamShortCodes'
+import { getChlTeamFacts, getChlTeamFactsByName } from '../../data/chlTeamFacts'
+import { AnchoredPopover } from '../ui/AnchoredPopover'
 import styles from './TeamCrest.module.css'
 
 const CREST_HUES = [168, 186, 204, 18, 34, 262, 332, 142]
@@ -18,52 +20,197 @@ function crestLetters(name: string): string {
   return resolveTeamShortCode(name) || name.replace(/[^A-Za-zÄÖÜäöüß]/g, '').slice(0, 3).toUpperCase() || '?'
 }
 
+export function useFinePointer(): boolean {
+  const [fine, setFine] = useState(() => (
+    typeof window !== 'undefined'
+    && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  ))
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const sync = () => setFine(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+  return fine
+}
+
+type TeamCrestProps = {
+  name: string
+  teamId?: string
+  size?: 'sm' | 'md' | 'lg'
+  /** Enable club-facts popover (CHL). */
+  showFacts?: boolean
+  /**
+   * Touch only: first tap should select the parent tile.
+   * Pass true once that tile/team is already active — then the next tap opens facts.
+   * Desktop ignores this and keeps hover.
+   */
+  factsArmed?: boolean
+  /** Controlled open (e.g. second tap on the whole tile). */
+  factsOpen?: boolean
+  onFactsOpenChange?: (open: boolean) => void
+}
+
+function FactsPopover({ teamId, name }: { teamId?: string; name: string }) {
+  const facts = (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name)
+  if (!facts) return null
+  return (
+    <div style={{ minWidth: 220 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.55rem' }}>
+        <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{facts.countryFlag}</span>
+        <div>
+          <div style={{ fontWeight: 750, fontSize: '0.95rem', color: 'rgba(247,247,255,0.95)', lineHeight: 1.2 }}>
+            {facts.fullName}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(143,211,223,0.9)', marginTop: '0.1rem' }}>
+            {facts.country}{facts.city ? ` · ${facts.city}` : ''}
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.75rem', fontSize: '0.78rem', lineHeight: 1.4 }}>
+        {facts.founded ? (
+          <>
+            <span style={{ color: 'rgba(148,163,184,0.8)' }}>Gegründet</span>
+            <span style={{ color: 'rgba(226,232,240,0.9)', fontWeight: 600 }}>{facts.founded}</span>
+          </>
+        ) : null}
+        {facts.league ? (
+          <>
+            <span style={{ color: 'rgba(148,163,184,0.8)' }}>Liga</span>
+            <span style={{ color: 'rgba(226,232,240,0.9)', fontWeight: 600 }}>{facts.league}</span>
+          </>
+        ) : null}
+        {facts.arena ? (
+          <>
+            <span style={{ color: 'rgba(148,163,184,0.8)' }}>Arena</span>
+            <span style={{ color: 'rgba(226,232,240,0.9)', fontWeight: 600 }}>{facts.arena}</span>
+          </>
+        ) : null}
+        {facts.arenaCapacity ? (
+          <>
+            <span style={{ color: 'rgba(148,163,184,0.8)' }}>Kapazität</span>
+            <span style={{ color: 'rgba(226,232,240,0.9)', fontWeight: 600 }}>{facts.arenaCapacity.toLocaleString('de-DE')}</span>
+          </>
+        ) : null}
+      </div>
+      {facts.note ? (
+        <div style={{
+          marginTop: '0.55rem',
+          paddingTop: '0.45rem',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+          fontSize: '0.76rem',
+          color: 'rgba(167,243,208,0.9)',
+          fontStyle: 'italic',
+          lineHeight: 1.4,
+        }}>
+          {facts.note}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export function TeamCrest({
   name,
   teamId,
   size = 'md',
-}: {
-  name: string
-  teamId?: string
-  size?: 'sm' | 'md' | 'lg'
-}) {
+  showFacts = false,
+  factsArmed = true,
+  factsOpen,
+  onFactsOpenChange,
+}: TeamCrestProps) {
   const logo = resolveTeamLogo(teamId) || resolveTeamLogo(name)
   const flag = resolveNationalTeamFlag(teamId) || resolveNationalTeamFlag(name)
   const [logoFailed, setLogoFailed] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const leaveTimer = useRef<number | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | HTMLSpanElement | null>(null)
+  const finePointer = useFinePointer()
   const letters = crestLetters(name)
   const showLogo = Boolean(logo) && !logoFailed
 
-  if (flag) {
-    return (
-      <span
-        className={[styles.crest, styles.hasFlag, styles[size]].join(' ')}
-        role="img"
-        aria-label={name}
-      >
-        <span className={styles.flagEmoji} aria-hidden="true">{flag}</span>
-      </span>
-    )
+  const hasFacts = showFacts && Boolean(
+    (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name),
+  )
+  const controlled = typeof factsOpen === 'boolean'
+  const open = controlled ? factsOpen : internalOpen
+
+  const setOpen = (next: boolean) => {
+    if (!controlled) setInternalOpen(next)
+    onFactsOpenChange?.(next)
   }
 
-  if (showLogo && logo) {
-    return (
-      <span
-        className={[styles.crest, styles.hasLogo, styles[size]].join(' ')}
-        aria-hidden="true"
-      >
-        <span className={styles.crestGlow} />
-        <img className={styles.logo} src={logo} alt="" onError={() => setLogoFailed(true)} />
-      </span>
-    )
-  }
+  useEffect(() => () => {
+    if (leaveTimer.current != null) window.clearTimeout(leaveTimer.current)
+  }, [])
 
-  return (
+  const inner = flag ? (
+    <span
+      className={[styles.crest, styles.hasFlag, styles[size]].join(' ')}
+      role="img"
+      aria-label={name}
+    >
+      <span className={styles.flagEmoji} aria-hidden="true">{flag}</span>
+    </span>
+  ) : showLogo && logo ? (
+    <span
+      className={[styles.crest, styles.hasLogo, styles[size]].join(' ')}
+      aria-hidden="true"
+    >
+      <span className={styles.crestGlow} />
+      <img className={styles.logo} src={logo} alt="" onError={() => setLogoFailed(true)} />
+    </span>
+  ) : (
     <span
       className={[styles.crest, styles[size]].join(' ')}
       style={{ '--crest-hue': String(crestHue(letters || name)) } as CSSProperties}
       aria-hidden="true"
     >
       <span className={styles.letters}>{letters}</span>
+    </span>
+  )
+
+  if (!hasFacts) return inner
+
+  // Desktop: hover shows facts; clicks pass through so the parent tile can select.
+  // Touch (not armed): first tap hits the parent tile. Armed: parent handles second tap.
+  const interceptTouch = !finePointer && factsArmed
+
+  return (
+    <span
+      ref={(el) => { triggerRef.current = el }}
+      style={{ position: 'relative', display: 'inline-flex' }}
+      aria-label={finePointer ? `${name}: Fakten` : undefined}
+      onClick={interceptTouch ? (e) => {
+        e.stopPropagation()
+        setOpen(!open)
+      } : undefined}
+      onMouseEnter={() => {
+        if (!finePointer) return
+        if (leaveTimer.current != null) {
+          window.clearTimeout(leaveTimer.current)
+          leaveTimer.current = null
+        }
+        setOpen(true)
+      }}
+      onMouseLeave={() => {
+        if (!finePointer) return
+        leaveTimer.current = window.setTimeout(() => setOpen(false), 180)
+      }}
+    >
+      {inner}
+      {open && (
+        <AnchoredPopover
+          open={open}
+          anchorRef={triggerRef as RefObject<HTMLElement | null>}
+          ariaLabel={`${name} Fakten`}
+          preferredWidth={260}
+          onDismiss={() => setOpen(false)}
+        >
+          <FactsPopover teamId={teamId} name={name} />
+        </AnchoredPopover>
+      )}
     </span>
   )
 }

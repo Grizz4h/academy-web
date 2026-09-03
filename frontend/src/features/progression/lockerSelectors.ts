@@ -187,7 +187,7 @@ export function selectLockerItems(
           ? 'Geheimnis — weiter spielen'
           : formatUnlockHow(definition.origin),
     }
-  })
+  }).filter((item) => !isLockerDeferred3dType(item.definition.type))
 }
 
 export function filterLockerItems(
@@ -281,6 +281,18 @@ export function isEquipableCosmetic(def: CosmeticDefinition): boolean {
   return EQUIPABLE_COSMETIC_TYPES.includes(def.type)
 }
 
+/** Stick/Puck 3D — Spind ausgeblendet; Visual-QA nur unter `/dev/cosmetics`. */
+export const LOCKER_DEFERRED_3D_TYPES: CosmeticType[] = [
+  'stickModel',
+  'stickSkin',
+  'puckModel',
+  'puckSkin',
+]
+
+export function isLockerDeferred3dType(type: CosmeticType): boolean {
+  return LOCKER_DEFERRED_3D_TYPES.includes(type)
+}
+
 export const LOCKER_TYPE_CHIPS: Array<{ id: CosmeticType | 'all'; label: string }> = [
   { id: 'all', label: 'Alle' },
   { id: 'emblem', label: 'Embleme' },
@@ -291,8 +303,6 @@ export const LOCKER_TYPE_CHIPS: Array<{ id: CosmeticType | 'all'; label: string 
   { id: 'tagline', label: 'Taglines' },
   { id: 'sticker', label: 'Sticker' },
   { id: 'masteryCoin', label: 'Coins' },
-  { id: 'stickModel', label: 'Sticks' },
-  { id: 'puckModel', label: 'Pucks' },
 ]
 
 export { RARITY_LABELS }

@@ -17,6 +17,7 @@ export type TacticalObservationLayer = {
   hint?: string
   guideTitle?: string
   showInGuide?: boolean
+  multiSelect?: boolean
 }
 
 export type TacticalObservationConfig = {

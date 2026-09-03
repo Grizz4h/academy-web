@@ -18,6 +18,9 @@ Prüfe insbesondere:
 - Welche alternative plausible Lesart existiert?
 - Welche konkrete Beobachtung würde die Einschätzung beim nächsten Mal stärken oder widerlegen?
 
+Wenn einzelne Beobachtungen ein Feld "note" enthalten, sind das optionale Kurzkommentare des Nutzers zu seinem Denken in diesem Moment.
+Nutze sie als Prozesshinweise (Was hat die Person gesehen oder vermutet?), nicht als objektive Spielwahrheit.
+
 Sei konstruktiv, präzise und kompakt.
 Keine erfundenen Fakten über das reale Spiel.
 Keine Benotung.

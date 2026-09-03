@@ -1,8 +1,19 @@
 .bar {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 14, 28, 0.72);
+  background: rgba(8, 14, 28, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+@media (min-width: 769px) {
+  .bar {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(12, 18, 34, 0.96) 0%,
+        rgba(8, 12, 24, 0.94) 100%
+      );
+  }
 }
 
 @media (pointer: coarse) {

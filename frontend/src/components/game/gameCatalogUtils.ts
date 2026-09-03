@@ -1,4 +1,10 @@
 import type { CatalogGame } from '../../api'
+import {
+  CATALOG_TIME_ZONE,
+  formatClockInTimeZone,
+  resolveViewerTimeZone,
+  wallTimeInZoneToUtcMs,
+} from './gameTimeZone'
 
 export type CatalogSeasonStats = {
   total: number
@@ -515,11 +521,26 @@ export function uniqueMatchdaysForDate(games: CatalogGame[], date: string): numb
   return Array.from(days).sort((a, b) => a - b)
 }
 
-export function formatGameTimeLabel(time?: string, options?: { omitSuffix?: boolean }): string {
+export function formatGameTimeLabel(
+  time?: string,
+  options?: { omitSuffix?: boolean; date?: string; timeZone?: string },
+): string {
   if (!time) return ''
   const trimmed = time.trim()
   if (!trimmed) return ''
-  const clock = trimmed.replace(/ Uhr$/, '')
+  const clock = trimmed.replace(/ Uhr$/i, '')
+
+  // With date: interpret catalog clock as Europe/Berlin, show in viewer TZ.
+  if (options?.date) {
+    const utcMs = wallTimeInZoneToUtcMs(options.date, clock, CATALOG_TIME_ZONE)
+    if (utcMs != null) {
+      const zone = options.timeZone || resolveViewerTimeZone()
+      const localClock = formatClockInTimeZone(utcMs, zone)
+      if (options?.omitSuffix) return localClock
+      return `${localClock} Uhr`
+    }
+  }
+
   if (options?.omitSuffix) return clock
   return trimmed.endsWith(' Uhr') ? trimmed : `${clock} Uhr`
 }
@@ -554,17 +575,10 @@ export function formatGameStatusLabel(game: CatalogGame, hideSpoilers = false): 
   return game.status || 'Geplant'
 }
 
-/** Local kickoff ms from catalog date + HH:MM time, or null if unknown. */
+/** Absolute kickoff ms — catalog date+time interpreted as Europe/Berlin. */
 export function catalogGameKickoffMs(game: CatalogGame): number | null {
-  if (!game.date) return null
-  const raw = String(game.time || '').trim().replace(/\s*Uhr$/i, '')
-  const match = raw.match(/^(\d{1,2}):(\d{2})$/)
-  if (!match) return null
-  const hours = match[1].padStart(2, '0')
-  const minutes = match[2]
-  const kickoff = new Date(`${game.date}T${hours}:${minutes}:00`)
-  if (Number.isNaN(kickoff.getTime())) return null
-  return kickoff.getTime()
+  if (!game.date || !game.time) return null
+  return wallTimeInZoneToUtcMs(game.date, game.time, CATALOG_TIME_ZONE)
 }
 
 /**

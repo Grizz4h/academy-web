@@ -23,6 +23,7 @@ import {
 import { SessionReflectionPanel } from '../features/reflection/SessionReflectionPanel'
 import { RinQIcon } from './icons'
 import { useCreatorMode } from '../features/creator'
+import { SceneMarkerButton } from './SceneMarkerButton'
 
 interface SessionCardProps {
   session: Session
@@ -376,6 +377,17 @@ export default function SessionCard({
               <RinQIcon name="scene" size="sm" inline />
               Alle Szenen dieser Session öffnen
             </a>
+
+            {session.state === 'COMPLETED' && creatorMode ? (
+              <div style={{ margin: '0.65rem 0 0.85rem' }}>
+                <SceneMarkerButton
+                  session={session}
+                  currentPhase="P1"
+                  activeDrill={session.drill_id ? { id: session.drill_id, title: session.drill_id } as any : null}
+                  phaseEditable
+                />
+              </div>
+            ) : null}
 
             {sceneEntries.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>

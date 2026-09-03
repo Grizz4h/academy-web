@@ -301,7 +301,7 @@ A2   apply that reading to a concrete situation: structure → options → decis
     |
     |  should not re-teach: what is a Center, what is Support, what is an Option
     |  A2_D1 outgoing: read a situation as joint structure (initiator / support / structure)
-    |  A2_D2 outgoing: recognize available options (option / type / count)
+    |  A2_D2 outgoing: recognize available options (concrete roles, multi-select / option type)
     |  A2_D3 outgoing: recognize executed decision (used option / action / visibility)
     |  A2_D4 outgoing: recognize space/time conditions (space / time / influencing factor)
     |  A2_D5 outgoing: recognize structure development (support / option continuity / state)

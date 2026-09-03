@@ -114,7 +114,7 @@ function isUnclear(id: string): boolean {
 }
 
 export function emptyRelationDraft(): PlayerRelationDraft {
-  return { puckCarrierRole: '', focalPosition: '', relation: '' }
+  return { puckCarrierRole: '', focalPosition: '', relation: '', note: '' }
 }
 
 export function resolvePlayerRelationConfig(raw: Record<string, unknown> = {}): PlayerRelationConfig {
@@ -306,7 +306,7 @@ export function draftToObservation(
     relation: asString(draft.relation),
     period: existing?.period,
     gameClock: existing?.gameClock,
-    note: existing?.note,
+    note: asString(draft.note) || undefined,
     sceneId: existing?.sceneId,
   }
 }
@@ -316,6 +316,7 @@ export function observationToDraft(observation: PlayerRelationObservation): Play
     puckCarrierRole: observation.puckCarrierRole,
     focalPosition: observation.focalPosition,
     relation: observation.relation,
+    note: observation.note || '',
   }
 }
 

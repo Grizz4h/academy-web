@@ -95,6 +95,14 @@ export const avatarCatalog: ProfileAsset[] = [
     tags: ['cyberpunk', 'night-circuit'],
     starter: false,
   },
+  {
+    id: 'avatar_opening_faceoff_2627',
+    label: 'Faceoff Drop',
+    src: '/profile/avatars/avatar_opening_faceoff_2627.svg',
+    category: 'rink',
+    tags: ['season', 'opening-faceoff'],
+    starter: false,
+  },
 ]
 
 export const DEFAULT_AVATAR_ID = 'avatar_chalk_01'

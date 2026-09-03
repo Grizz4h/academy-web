@@ -144,7 +144,7 @@ function asTiers(value: unknown): ShiftGuidanceTier[] {
 }
 
 export function emptyShiftDraft(): ShiftObservationDraft {
-  return { position: '', trigger: '', roleFunction: '' }
+  return { position: '', trigger: '', roleFunction: '', note: '' }
 }
 
 export function resolveShiftTrackerConfig(raw: Record<string, unknown> = {}): ShiftTrackerConfig {
@@ -374,6 +374,7 @@ export function draftToObservation(
     position: asString(draft.position),
     trigger: asString(draft.trigger) || undefined,
     roleFunction: asString(draft.roleFunction) || undefined,
+    note: asString(draft.note) || undefined,
   }
 }
 
@@ -382,6 +383,7 @@ export function observationToDraft(observation: ShiftObservation): ShiftObservat
     position: observation.position,
     trigger: observation.trigger || '',
     roleFunction: observation.roleFunction || '',
+    note: observation.note || '',
   }
 }
 

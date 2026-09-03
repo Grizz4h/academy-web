@@ -447,6 +447,12 @@ export default function SessionPage() {
       if (lastObservation && (lastObservation as any)[key] !== undefined) {
         return (lastObservation as any)[key]
       }
+      const observationValues = lastObservation && typeof (lastObservation as any).values === 'object'
+        ? (lastObservation as any).values
+        : null
+      if (observationValues && observationValues[key] !== undefined) {
+        return observationValues[key]
+      }
       return undefined
     }
 
@@ -1818,26 +1824,34 @@ export default function SessionPage() {
               : 'Alle aktiven Phasen sind durch.'}
             {session?.module_id ? ` · ${session.module_id}` : ''}
           </p>
-          <UiButton
-            type="button"
-            variant="secondary"
-            onClick={async () => {
-              try {
-                const matchup = session.game_info?.team_home && session.game_info?.team_away
-                  ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
-                  : session.module_id
-                const result = await shareOrCopy({
-                  title: 'rInQ Tank Session',
-                  text: `Session abgeschlossen: ${matchup} · ${session.module_id}`,
-                })
-                setShareNote(result === 'shared' ? 'Geteilt.' : 'In Zwischenablage kopiert.')
-              } catch {
-                // user cancelled share
-              }
-            }}
-          >
-            Teilen
-          </UiButton>
+          <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <UiButton
+              type="button"
+              variant="secondary"
+              onClick={async () => {
+                try {
+                  const matchup = session.game_info?.team_home && session.game_info?.team_away
+                    ? `${session.game_info.team_home} vs ${session.game_info.team_away}`
+                    : session.module_id
+                  const result = await shareOrCopy({
+                    title: 'rInQ Tank Session',
+                    text: `Session abgeschlossen: ${matchup} · ${session.module_id}`,
+                  })
+                  setShareNote(result === 'shared' ? 'Geteilt.' : 'In Zwischenablage kopiert.')
+                } catch {
+                  // user cancelled share
+                }
+              }}
+            >
+              Teilen
+            </UiButton>
+            <SceneMarkerButton
+              session={session}
+              currentPhase="P1"
+              activeDrill={activeDrill}
+              phaseEditable
+            />
+          </div>
           {shareNote && <p style={{ marginTop: '0.55rem', color: '#99f6e4', fontSize: '0.85rem' }}>{shareNote}</p>}
         </Card>
         </div>

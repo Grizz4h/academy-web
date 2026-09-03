@@ -10,6 +10,16 @@
   z-index: 0;
 }
 
+/* Desktop: keep TopNav + today’s games strip visible while scrolling.
+   Mobile keeps only TopNav sticky so the strip frees vertical space. */
+@media (min-width: 769px) {
+  .appChrome {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
+
 
 
 

@@ -246,6 +246,7 @@ assert.deepEqual(observationToDraft(reloaded!), {
   position: 'middle',
   trigger: '',
   roleFunction: 'connecting',
+  note: '',
 })
 
 assert.equal(

@@ -311,6 +311,13 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
+.loadMoreSentinel {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding: 1.1rem 0 1.6rem;
+}
+
 .emptyCard {
   margin-bottom: 0 !important;
   text-align: center;

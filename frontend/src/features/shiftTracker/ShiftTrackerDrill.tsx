@@ -327,6 +327,9 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
                     ? ` · ${optionLabel(cfg.functionOptions, observation.roleFunction)}`
                     : ''}
                 </p>
+                {observation.note ? (
+                  <p className={styles.fieldHelp} style={{ marginTop: '0.25rem' }}>{observation.note}</p>
+                ) : null}
                 <div className={styles.rowActions}>
                   <button
                     type="button"
@@ -404,6 +407,19 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
               {selectedFunction?.detail && <p className={styles.hint}>{selectedFunction.detail}</p>}
             </div>
           )}
+          <div className={styles.fieldBlock}>
+            <div className={styles.fieldLabel}>Kurze Notiz (optional)</div>
+            <textarea
+              className={styles.textarea}
+              value={draft.note || ''}
+              onChange={(event) => patchAnswers(safeAnswers, setAnswers, {
+                [cfg.draftKey]: { ...draft, note: event.target.value },
+              })}
+              maxLength={500}
+              rows={2}
+              placeholder="Was hast du dir dabei gedacht?"
+            />
+          </div>
           <div className={styles.actions}>
             {isEditing && (
               <button

@@ -10,6 +10,14 @@
   border-bottom: 1px solid rgba(186, 230, 253, 0.1);
 }
 
+/* Desktop chrome (.appChrome) is sticky as a unit — avoid nested sticky. */
+@media (min-width: 769px) {
+  .navbar {
+    position: relative;
+    top: auto;
+  }
+}
+
 .glassBar {
   position: absolute;
   inset: 0;

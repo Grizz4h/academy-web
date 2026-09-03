@@ -1,5 +1,5 @@
 import type { CatalogGame } from '../../api'
-import { formatGameTimeLabel } from '../../components/game/gameCatalogUtils'
+import { catalogGameKickoffMs } from '../../components/game/gameCatalogUtils'
 import { formatGamePairingShortCodes } from '../../data/teamShortCodes'
 import { SCHEDULE_LEAGUES, type ScheduleLeague } from './scheduleLeagues'
 
@@ -23,9 +23,9 @@ export function flattenTodayGames(
   gamesByLeague: Partial<Record<ScheduleLeague, CatalogGame[]>>,
 ): CatalogGame[] {
   return SCHEDULE_LEAGUES.flatMap((league) => gamesByLeague[league] || []).sort((a, b) => {
-    const timeA = formatGameTimeLabel(a.time, { omitSuffix: true }) || '99:99'
-    const timeB = formatGameTimeLabel(b.time, { omitSuffix: true }) || '99:99'
-    if (timeA !== timeB) return timeA.localeCompare(timeB)
+    const kickA = catalogGameKickoffMs(a) ?? Number.MAX_SAFE_INTEGER
+    const kickB = catalogGameKickoffMs(b) ?? Number.MAX_SAFE_INTEGER
+    if (kickA !== kickB) return kickA - kickB
     return String(a.league_id).localeCompare(String(b.league_id))
   })
 }

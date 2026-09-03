@@ -9,6 +9,8 @@ import {
   canAddObservation,
   canEvaluateObservations,
   computeTacticalObservationResult,
+  decodeLayerValues,
+  deriveOptionCount,
   draftToObservation,
   emptyTacticalDraft,
   findCompletedTacticalAnswers,
@@ -16,6 +18,7 @@ import {
   observationToDraft,
   resolveTacticalObservationConfig,
   resultHasNumericScore,
+  syncMultiSelectValues,
   validateTacticalObservationAnswers,
 } from './tacticalLogic.ts'
 
@@ -63,7 +66,17 @@ assert.deepEqual(observationToDraft(saved!, cfg), {
   initiatorRole: 'defense',
   supportType: 'single_support',
   structureType: 'organized',
+  note: '',
 })
+assert.equal(
+  draftToObservation({
+    initiatorRole: 'defense',
+    supportType: 'single_support',
+    structureType: 'organized',
+    note: 'Struktur vor dem Exit',
+  }, cfg, 0)?.note,
+  'Struktur vor dem Exit',
+)
 
 const unclear = draftToObservation({
   initiatorRole: 'unclear',
@@ -177,18 +190,31 @@ assert.equal(a2d2.config.mechanic, 'tactical_observation')
 assert.equal(a2d2.title, 'Optionen erkennen')
 assert.equal(a2d2.config.observations_key, 'tactical_option_observations')
 assert.notEqual(a2d2.config.observations_key, a2d1.config.observations_key)
-assert.ok(a2d1.didactics.observation_guide.ignore.some((item: string) => item.includes('Transition')))
+assert.ok(a2d1.didactics.observation_guide.ignore.some((item: string) => /Transition|Umschalten/i.test(item)))
 assert.ok(a2d1.didactics.observation_guide.ignore.some((item: string) => item.includes('Qualität')))
-assert.ok(a2d2.didactics.observation_guide.ignore.some((item: string) => item.includes('Transition')))
+assert.ok(a2d2.didactics.observation_guide.ignore.some((item: string) => /Transition|Umschalten/i.test(item)))
 assert.ok(a2d2.didactics.observation_guide.ignore.some((item: string) => item.includes('beste')))
 assert.equal(a2d1.config.structureOptions.map((option: { id: string }) => option.id).join(','), 'organized,multiple_options,under_pressure,unclear')
 assert.equal(a2d1.config.structureOptions.some((option: { id: string }) => ['good', 'bad', 'quality'].includes(option.id)), false)
 assert.ok(a3.learningGoals.length > 0)
 
 const d2Cfg = resolveTacticalObservationConfig(a2d2.config)
-assert.equal(d2Cfg.layers.map((layer) => layer.id).join(','), 'available_option,option_type,option_count')
+assert.equal(d2Cfg.layers.map((layer) => layer.id).join(','), 'available_option,option_type')
+assert.equal(d2Cfg.layers[0].multiSelect, true)
+assert.equal(Boolean(d2Cfg.layers[1].multiSelect), false)
+assert.equal(d2Cfg.layers[0].options.map((option) => option.id).join(','), 'center,wing,defense,none,unclear')
 assert.equal(d2Cfg.layers[1].options.map((option) => option.id).join(','), 'direct_option,next_option,safety_option,unclear')
 assert.equal(d2Cfg.logsKey, 'tactical_option_observations')
+assert.ok(!a2d2.config.observationLayers.includes('option_count'))
+assert.ok(!a2d2.config.availableOptionOptions.some((option: { id: string }) => option.id === 'multiple'))
+assert.equal(a2d2.config.optionTypePrompt.includes('auffällt'), true)
+assert.equal(deriveOptionCount(['center', 'wing']), 'multiple')
+assert.equal(deriveOptionCount(['defense']), 'one_clear')
+assert.equal(deriveOptionCount(['none']), 'none')
+assert.equal(deriveOptionCount(['unclear']), 'unclear')
+assert.equal(syncMultiSelectValues(['center'], ['center', 'none'], d2Cfg.layers[0].options).join(','), 'none')
+assert.equal(syncMultiSelectValues(['none'], ['none', 'wing'], d2Cfg.layers[0].options).join(','), 'wing')
+assert.equal(decodeLayerValues('center,wing').join(','), 'center,wing')
 
 const d1Completed = {
   [a2d1.config.observations_key]: observations.slice(0, 3),
@@ -198,11 +224,13 @@ const d1Completed = {
 assert.equal(findCompletedTacticalAnswers(d2Cfg, d1Completed, { drafts: { P1: d1Completed }, checkins: [] }), null)
 
 const d2Observation = draftToObservation({
-  availableOption: 'center',
+  availableOption: 'center,wing',
   optionType: 'direct_option',
-  optionCount: 'one_clear',
 }, d2Cfg, 0)
 assert.ok(d2Observation)
+assert.equal(d2Observation?.values?.availableOption, 'center,wing')
+assert.equal(d2Observation?.values?.optionCount, 'multiple')
+assert.equal(d2Observation?.values?.optionType, 'direct_option')
 const d2Completed = {
   [d2Cfg.logsKey]: [d2Observation, d2Observation, d2Observation],
   [d2Cfg.patternKey]: 'position',
@@ -217,7 +245,7 @@ assert.equal(a2d3.title, 'Entscheidung erkennen')
 assert.equal(a2d3.config.observations_key, 'tactical_decision_observations')
 assert.notEqual(a2d3.config.observations_key, a2d1.config.observations_key)
 assert.notEqual(a2d3.config.observations_key, a2d2.config.observations_key)
-assert.ok(a2d3.didactics.observation_guide.ignore.some((item: string) => item.includes('Transition')))
+assert.ok(a2d3.didactics.observation_guide.ignore.some((item: string) => /Transition|Umschalten/i.test(item)))
 assert.ok(a2d3.didactics.observation_guide.ignore.some((item: string) => item.includes('beste')))
 assert.ok(a2d3.didactics.observation_guide.ignore.some((item: string) => item.includes('Raum')))
 
@@ -264,7 +292,7 @@ assert.equal(a2d4.config.observations_key, 'tactical_space_time_observations')
 assert.notEqual(a2d4.config.observations_key, a2d1.config.observations_key)
 assert.notEqual(a2d4.config.observations_key, a2d2.config.observations_key)
 assert.notEqual(a2d4.config.observations_key, a2d3.config.observations_key)
-assert.ok(a2d4.didactics.observation_guide.ignore.some((item: string) => item.includes('Transition')))
+assert.ok(a2d4.didactics.observation_guide.ignore.some((item: string) => /Transition|Umschalten/i.test(item)))
 assert.ok(a2d4.didactics.observation_guide.ignore.some((item: string) => item.includes('richtige')))
 assert.ok(a2d4.didactics.observation_guide.ignore.some((item: string) => item.includes('Stabilität')))
 
@@ -313,7 +341,7 @@ assert.notEqual(a2d5.config.observations_key, a2d1.config.observations_key)
 assert.notEqual(a2d5.config.observations_key, a2d2.config.observations_key)
 assert.notEqual(a2d5.config.observations_key, a2d3.config.observations_key)
 assert.notEqual(a2d5.config.observations_key, a2d4.config.observations_key)
-assert.ok(a2d5.didactics.observation_guide.ignore.some((item: string) => item.includes('Transition')))
+assert.ok(a2d5.didactics.observation_guide.ignore.some((item: string) => /Transition|Umschalten/i.test(item)))
 assert.ok(a2d5.didactics.observation_guide.ignore.some((item: string) => item.includes('gute')))
 assert.equal(JSON.stringify(a2d5).toLowerCase().includes('strukturqualität'), false)
 
@@ -357,14 +385,18 @@ assert.equal(findCompletedTacticalAnswers(d5Cfg, {}, { drafts: { P1: d4Completed
 assert.equal(d5Completed.space_feel, undefined)
 
 const d2Result = computeTacticalObservationResult([
-  { id: '1', order: 1, values: { availableOption: 'center', optionType: 'direct_option', optionCount: 'one_clear' } },
-  { id: '2', order: 2, values: { availableOption: 'wing', optionType: 'next_option', optionCount: 'multiple' } },
-  { id: '3', order: 3, values: { availableOption: 'defense', optionType: 'safety_option', optionCount: 'multiple' } },
-  { id: '4', order: 4, values: { availableOption: 'center', optionType: 'direct_option', optionCount: 'one_clear' } },
+  { id: '1', order: 1, values: { availableOption: 'center', optionType: 'direct_option' } },
+  { id: '2', order: 2, values: { availableOption: 'center,wing', optionType: 'next_option' } },
+  { id: '3', order: 3, values: { availableOption: 'defense', optionType: 'safety_option' } },
+  { id: '4', order: 4, values: { availableOption: 'center', optionType: 'direct_option' } },
 ], d2Cfg)
 assert.equal(d2Result.layerCounts.optionType.direct_option, 2)
 assert.equal(d2Result.layerCounts.optionType.next_option, 1)
 assert.equal(d2Result.layerCounts.optionType.safety_option, 1)
+assert.equal(d2Result.layerCounts.availableOption.center, 3)
+assert.equal(d2Result.layerCounts.availableOption.wing, 1)
+assert.equal(d2Result.layerCounts.optionCount.multiple, 1)
+assert.equal(d2Result.layerCounts.optionCount.one_clear, 3)
 assert.equal(resultHasNumericScore(d2Result), false)
 
 const d3Result = computeTacticalObservationResult([

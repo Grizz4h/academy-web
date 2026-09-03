@@ -142,7 +142,7 @@ function isUnclear(id: string): boolean {
 }
 
 export function emptyStructureDraft(): SimpleStructureDraft {
-  return { structureType: '' }
+  return { structureType: '', note: '' }
 }
 
 export function resolveSimpleStructureConfig(raw: Record<string, unknown> = {}): SimpleStructureConfig {
@@ -331,13 +331,13 @@ export function draftToObservation(
     focalRole: existing?.focalRole || focalRole,
     period: existing?.period,
     gameClock: existing?.gameClock,
-    note: existing?.note,
+    note: asString(draft.note) || undefined,
     sceneId: existing?.sceneId,
   }
 }
 
 export function observationToDraft(observation: SimpleStructureObservation): SimpleStructureDraft {
-  return { structureType: observation.structureType }
+  return { structureType: observation.structureType, note: observation.note || '' }
 }
 
 export function validateSimpleStructureAnswers(

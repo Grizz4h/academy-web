@@ -24,7 +24,7 @@ export default function PendingGameSetupSheet({
   const home = resolveGameTeamShortCode(prefill.teamHome, prefill.league, prefill.season)
   const away = resolveGameTeamShortCode(prefill.teamAway, prefill.league, prefill.season)
   const league = COMPETITION_CONFIGS[prefill.league]?.label || prefill.league.replace(/_/g, ' ')
-  const time = formatGameTimeLabel(prefill.time, { omitSuffix: true })
+  const time = formatGameTimeLabel(prefill.time, { omitSuffix: true, date: prefill.date })
   const matchday = prefill.competitionValue ? `Spieltag ${prefill.competitionValue}` : null
   const metaParts = [league, time || null, matchday, prefill.phaseLabel || null].filter(Boolean)
 

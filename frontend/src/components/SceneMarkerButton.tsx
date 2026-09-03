@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { api, type Session, type Drill } from '../api'
 import { buildSceneCreatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
@@ -19,14 +20,24 @@ interface SceneMarkerButtonProps {
   session: Session
   currentPhase: string
   activeDrill: Drill | null
+  /** Let the user pick P1/P2/P3 — for scenes added after the session ended. */
+  phaseEditable?: boolean
 }
 
-export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneMarkerButtonProps) {
+const PHASE_OPTIONS = [
+  { value: 'P1', label: '1. Drittel' },
+  { value: 'P2', label: '2. Drittel' },
+  { value: 'P3', label: '3. Drittel' },
+]
+
+export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEditable = false }: SceneMarkerButtonProps) {
   const creatorMode = useCreatorMode()
+  const queryClient = useQueryClient()
   const { ingestActivityEvents } = useRewards()
   const [showModal, setShowModal] = useState(false)
   const [gameTime, setGameTime] = useState('')
   const [note, setNote] = useState('')
+  const [phase, setPhase] = useState(currentPhase)
   const [extensionValues, setExtensionValues] = useState<Record<string, string>>({})
   const [isSaving, setIsSaving] = useState(false)
   const [savedMsg, setSavedMsg] = useState<string | null>(null)
@@ -57,6 +68,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
   const handleOpen = () => {
     setGameTime('')
     setNote('')
+    setPhase(currentPhase || 'P1')
     setExtensionValues({})
     setError(null)
     setShowModal(true)
@@ -107,7 +119,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
         observed_team: session.observed_team,
         observed_team_id: session.game_info?.observed_team_id || session.observed_team_id,
         observed_team_name: session.game_info?.observed_team_name || session.game_info?.observed_team || session.observed_team,
-        period: currentPhase,
+        period: phase,
         game_time: trimmed,
         note: note.trim() || undefined,
         extensions: Object.fromEntries(
@@ -120,6 +132,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
       setShowModal(false)
       setSavedMsg("🎬 " + (scene.scene_code || trimmed) + " gespeichert")
       setTimeout(() => setSavedMsg(null), 2500)
+      queryClient.invalidateQueries({ queryKey: ['scenes'] })
       if (!isDummySession(session)) {
         void ingestActivityEvents([
           buildSceneCreatedEvent({
@@ -149,10 +162,10 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
   }
 
   const phaseLabel =
-    currentPhase === 'P1' ? '1. Drittel'
-    : currentPhase === 'P2' ? '2. Drittel'
-    : currentPhase === 'P3' ? '3. Drittel'
-    : currentPhase
+    phase === 'P1' ? '1. Drittel'
+    : phase === 'P2' ? '2. Drittel'
+    : phase === 'P3' ? '3. Drittel'
+    : phase
 
   return (
     <>
@@ -219,6 +232,33 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill }: SceneM
             )}
           </div>
         )}
+
+        {phaseEditable ? (
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Drittel</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+              {PHASE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setPhase(option.value)}
+                  style={{
+                    padding: '0.4rem 0.7rem',
+                    borderRadius: '0.45rem',
+                    border: phase === option.value ? '1.5px solid rgba(125,211,252,0.7)' : '1px solid rgba(148,163,184,0.28)',
+                    background: phase === option.value ? 'rgba(14,165,233,0.2)' : 'rgba(15,23,42,0.65)',
+                    color: phase === option.value ? '#e0f2fe' : '#cbd5e1',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <label className={styles.fieldLabel}>
           Minute <span className={styles.required}>*</span>

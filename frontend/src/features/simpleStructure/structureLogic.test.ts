@@ -58,7 +58,7 @@ assert.equal(draftToObservation(emptyStructureDraft(), 0, 'center'), null)
 const saved = draftToObservation({ structureType: 'triangle' }, 0, 'center')
 assert.equal(saved?.structureType, 'triangle')
 assert.equal(saved?.focalRole, 'center')
-assert.deepEqual(observationToDraft(saved!), { structureType: 'triangle' })
+assert.deepEqual(observationToDraft(saved!), { structureType: 'triangle', note: '' })
 
 const unclear = draftToObservation({ structureType: 'unclear' }, 1, 'center')
 assert.equal(unclear?.structureType, 'unclear')

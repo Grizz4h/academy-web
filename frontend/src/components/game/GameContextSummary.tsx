@@ -2,6 +2,7 @@ import type { CatalogGame, GameInfo } from '../../api'
 import {
   catalogGameContextHint,
   formatGameScoreShort,
+  formatGameTimeLabel,
   isCatalogArchiveGame,
   isGamePastWithoutScore,
   pairingHeadToHeadSummary,
@@ -126,7 +127,7 @@ export default function GameContextSummary({
         {status === 'final' && !hideSpoilers && <span className={styles.badge}>Final</span>}
         {status === 'scheduled' && !staleResult && <span className={styles.badgeMuted}>Geplant</span>}
         {staleResult && !hideSpoilers && <span className={styles.badgeWarn}>Ergebnis fehlt</span>}
-        {game?.time && <span>{game.time.slice(0, 5)} Uhr</span>}
+        {game?.time && <span>{formatGameTimeLabel(game.time, { date: game.date })}</span>}
         {date && <span>{date}</span>}
         {season && <span>{gameInfo?.league || game?.league_id} · {season}</span>}
         {phase && <span>{phase}</span>}

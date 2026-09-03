@@ -1,25 +1,62 @@
 .widget {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.85rem;
+  position: relative;
 }
 
 .compact {
-  gap: 0.62rem;
+  gap: 0.75rem;
 }
 
-.title {
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.headerText {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.7rem;
+  min-width: 0;
+}
+
+.headerText :global(.ui-section-title) {
   margin: 0;
-  font-family: var(--font-body);
-  color: var(--text-accent);
-  font-size: var(--type-section);
+}
+
+.hero {
+  display: grid;
+  justify-items: end;
+  gap: 0.1rem;
+  flex: 0 0 auto;
+}
+
+.heroValue {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.7rem, 3vw, 2.1rem);
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.heroSlash {
+  margin-left: 0.05em;
+  font-size: 0.58em;
+  font-weight: 650;
+  color: rgba(198, 214, 232, 0.55);
+}
+
+.heroLabel {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   font-weight: 700;
-}
-
-.activeWeeks {
-  margin: 0;
-  color: rgba(247, 247, 255, 0.95);
-  font-weight: 600;
+  color: rgba(198, 214, 232, 0.55);
 }
 
 .emptyState {
@@ -31,37 +68,82 @@
 .emptyTitle {
   margin: 0;
   color: rgba(247, 247, 255, 0.95);
-  font-weight: 600;
+  font-weight: 650;
 }
 
 .emptyDescription {
   margin: 0;
-  color: rgba(216, 225, 255, 0.75);
+  color: rgba(216, 225, 255, 0.72);
   font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.chart {
+  position: relative;
+  isolation: isolate;
+  border-radius: 14px;
+  padding: 0.85rem 0.7rem 0.55rem;
+  background:
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.chartGlow {
+  position: absolute;
+  inset: auto -10% -40% 20%;
+  height: 70%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.status_stable_active .chartGlow {
+  background: radial-gradient(closest-side, rgba(94, 234, 212, 0.22), transparent 70%);
+}
+
+.status_reentry .chartGlow {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%);
+}
+
+.status_irregular .chartGlow {
+  background: radial-gradient(closest-side, rgba(251, 191, 36, 0.18), transparent 70%);
+}
+
+.status_quiet_phase .chartGlow,
+.status_low_data .chartGlow,
+.status_neutral .chartGlow {
+  opacity: 0.35;
 }
 
 .barsGrid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 0.42rem;
+  gap: 0.38rem;
   align-items: end;
   width: 100%;
 }
 
 .barButton {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0.3rem;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.15rem 0.1rem 0.35rem;
+  margin: 0;
   cursor: pointer;
-  min-height: 96px;
+  min-height: 108px;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  transition: border-color 0.16s ease, background 0.16s ease;
-}
-
-.barButton:hover {
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  border-radius: 10px;
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease;
 }
 
 .barButton:focus-visible {
@@ -71,53 +153,79 @@
 
 .barTrack {
   width: 100%;
-  height: 84px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  max-width: 28px;
+  height: 92px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: flex-end;
   overflow: hidden;
+  position: relative;
 }
 
 .barFill {
   display: block;
   width: 100%;
-  background-color: var(--accent);
-  border-radius: 6px 6px 0 0;
+  min-height: 6px;
+  border-radius: inherit;
+  transform-origin: bottom center;
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--accent) 65%, white 35%) 0%,
-    color-mix(in srgb, var(--accent) 92%, black 8%) 100%
+    color-mix(in srgb, var(--accent) 55%, white 45%) 0%,
+    color-mix(in srgb, var(--accent) 88%, #0f172a 12%) 100%
   );
-  transition: height 0.2s ease;
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition:
+    height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.16s ease,
+    opacity 0.16s ease;
 }
 
-.level0 { height: 6%; }
-.level1 { height: 14%; }
-.level2 { height: 22%; }
-.level3 { height: 31%; }
-.level4 { height: 40%; }
-.level5 { height: 49%; }
-.level6 { height: 58%; }
-.level7 { height: 67%; }
-.level8 { height: 76%; }
-.level9 { height: 85%; }
-.level10 { height: 94%; }
-
-.currentWeek {
-  border-color: color-mix(in srgb, var(--accent) 75%, white 25%);
+.emptyBar .barFill {
+  opacity: 0.35;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.18);
 }
 
-.selected {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+.selected .barTrack {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, white 20%),
+    0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.selected .barFill {
+  filter: saturate(1.1) brightness(1.05);
+}
+
+.currentWeek .barTrack {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.nowDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 80%, white 20%);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 .axisLabels {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0.5rem;
-  color: rgba(216, 225, 255, 0.72);
-  font-size: 0.8rem;
+  margin-top: 0.55rem;
+  color: rgba(198, 214, 232, 0.58);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .axisLabels span:nth-child(2) {
@@ -126,40 +234,106 @@
 
 .axisLabels span:last-child {
   text-align: right;
+  color: color-mix(in srgb, var(--accent) 55%, rgba(198, 214, 232, 0.75));
 }
 
-.weekDetail {
-  margin: 0;
-  color: rgba(216, 225, 255, 0.9);
-  font-size: 0.9rem;
+.detail {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.average {
-  margin: 0;
+.detailMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.detailKicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(198, 214, 232, 0.55);
+}
+
+.detailValue {
+  font-size: 1rem;
+  font-weight: 700;
   color: rgba(247, 247, 255, 0.96);
-  font-weight: 600;
+}
+
+.detailMeta {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: rgba(198, 214, 232, 0.72);
+  text-align: right;
+  white-space: nowrap;
 }
 
 .status {
   margin: 0;
-  color: rgba(216, 225, 255, 0.85);
+  color: rgba(198, 214, 232, 0.78);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .barButton:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .barButton:hover .barFill {
+    filter: brightness(1.08);
+  }
 }
 
 @media (max-width: 768px) {
+  .header {
+    align-items: center;
+  }
+
+  .hero {
+    justify-items: end;
+  }
+
+  .chart {
+    padding: 0.75rem 0.55rem 0.45rem;
+  }
+
   .barsGrid {
-    gap: 0.35rem;
+    gap: 0.28rem;
   }
 
   .barButton {
-    min-height: 88px;
-    padding: 0.25rem;
+    min-height: 96px;
+    padding: 0.1rem 0.05rem 0.3rem;
   }
 
   .barTrack {
-    height: 76px;
+    max-width: 22px;
+    height: 80px;
   }
 
   .axisLabels {
-    font-size: 0.74rem;
+    font-size: 0.7rem;
+  }
+
+  .detail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .detailMeta {
+    text-align: left;
+    white-space: normal;
   }
 }

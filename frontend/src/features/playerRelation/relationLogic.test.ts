@@ -60,7 +60,16 @@ assert.deepEqual(observationToDraft(saved!), {
   puckCarrierRole: 'defense',
   focalPosition: 'middle',
   relation: 'direct_option',
+  note: '',
 })
+assert.equal(
+  draftToObservation(
+    { puckCarrierRole: 'wing', focalPosition: 'high', relation: 'coverage', note: 'Support zu spät gesehen' },
+    0,
+    'center',
+  )?.note,
+  'Support zu spät gesehen',
+)
 
 const unclear = draftToObservation(
   { puckCarrierRole: 'defense', focalPosition: 'unclear', relation: 'unclear' },
@@ -205,6 +214,15 @@ assert.equal(a1d4.config.mechanic, 'player_relation')
 assert.equal(a1d4.config.minObservations, 3)
 assert.equal(a1d4.config.maxObservations, 5)
 assert.equal(a1d4.config.focalRole, 'center')
+assert.equal(
+  a1d4.config.puckCarrierOptions.some((option: { id: string }) => option.id === 'center'),
+  false,
+  'A1_D4: Center is the support role, not a puck-carrier option',
+)
+assert.deepEqual(
+  a1d4.config.puckCarrierOptions.map((option: { id: string }) => option.id),
+  ['defense', 'wing', 'other', 'unclear'],
+)
 
 const mechanicDir = dirname(fileURLToPath(import.meta.url))
 for (const file of ['relationLogic.ts', 'PlayerRelationDrill.tsx', 'PlayerRelationSummary.tsx', 'types.ts']) {

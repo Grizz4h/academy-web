@@ -8,15 +8,18 @@ import {
   computeTacticalObservationResult,
   draftToObservation,
   emptyTacticalDraft,
+  encodeLayerValues,
   findCompletedTacticalAnswers,
   findGuideLayer,
+  formatLayerValue,
   getObservationValue,
   isTacticalObservationComplete,
   observationToDraft,
-  optionLabel,
   readTacticalStage,
   resolveTacticalObservationConfig,
   toReflectionPayload,
+  syncMultiSelectValues,
+  decodeLayerValues,
 } from './tacticalLogic'
 import type { TacticalObservation, TacticalObservationDraft } from './types'
 import styles from './TacticalObservationDrill.module.css'
@@ -138,7 +141,7 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
   }
 
   const formatObservationSummary = (observation: TacticalObservation) => (
-    cfg.layers.map((layer) => optionLabel(layer.options, getObservationValue(observation, layer.fieldKey))).join(' · ')
+    cfg.layers.map((layer) => formatLayerValue(layer, getObservationValue(observation, layer.fieldKey))).join(' · ')
   )
 
   if (usingBorrowed && borrowedAnswers) {
@@ -266,6 +269,9 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
                 <p className={styles.observationMeta}>
                   {index + 1}. {formatObservationSummary(observation)}
                 </p>
+                {observation.note ? (
+                  <p className={styles.fieldHelp} style={{ marginTop: '0.25rem' }}>{observation.note}</p>
+                ) : null}
                 <div className={styles.rowActions}>
                   <button
                     type="button"
@@ -304,22 +310,48 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
             {cfg.minObservations} minimum / {cfg.recommendedObservations} empfohlen / {cfg.maxObservations} maximum
           </p>
           {cfg.layers.map((layer) => {
-            const selected = layer.options.find((option) => option.id === draft[layer.fieldKey])
+            const selectedIds = decodeLayerValues(draft[layer.fieldKey] || '')
+            const selected = layer.multiSelect
+              ? layer.options.find((option) => selectedIds.includes(option.id) && option.detail)
+              : layer.options.find((option) => option.id === draft[layer.fieldKey])
             return (
               <div key={layer.id} className={styles.fieldBlock}>
                 <div className={styles.fieldLabel}>{layer.prompt}</div>
                 <OptionChips
                   name={`tactical-${layer.id}`}
                   options={toChoices(layer.options, compactHints)}
-                  value={draft[layer.fieldKey] || ''}
-                  onChange={(next) => patchAnswers(safeAnswers, setAnswers, {
-                    [cfg.draftKey]: { ...draft, [layer.fieldKey]: String(next) },
-                  })}
+                  multi={Boolean(layer.multiSelect)}
+                  value={layer.multiSelect ? undefined : (draft[layer.fieldKey] || '')}
+                  selectedValues={layer.multiSelect ? selectedIds : undefined}
+                  onChange={(next) => {
+                    const encoded = layer.multiSelect
+                      ? encodeLayerValues(
+                          syncMultiSelectValues(selectedIds, Array.isArray(next) ? next : [String(next)], layer.options),
+                          layer.options,
+                        )
+                      : String(next)
+                    patchAnswers(safeAnswers, setAnswers, {
+                      [cfg.draftKey]: { ...draft, [layer.fieldKey]: encoded },
+                    })
+                  }}
                 />
                 {selected?.detail && <p className={styles.hint}>{selected.detail}</p>}
               </div>
             )
           })}
+          <div className={styles.fieldBlock}>
+            <div className={styles.fieldLabel}>Kurze Notiz (optional)</div>
+            <textarea
+              className={styles.textarea}
+              value={draft.note || ''}
+              onChange={(event) => patchAnswers(safeAnswers, setAnswers, {
+                [cfg.draftKey]: { ...draft, note: event.target.value },
+              })}
+              maxLength={500}
+              rows={2}
+              placeholder="Was hast du dir dabei gedacht?"
+            />
+          </div>
           <div className={styles.actions}>
             {isEditing && (
               <button

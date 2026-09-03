@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, Suspense, lazy } from 'react'
 import { Link } from 'react-router-dom'
 import Card from '../components/Card'
 import { AccountPillFrame } from '../components/profile/AccountPillFrame'
@@ -19,7 +19,115 @@ import {
   type CosmeticType,
   RARITY_LABELS,
 } from '../features/progression'
+import {
+  OPENING_FACEOFF_2627_COSMETICS,
+  OPENING_FACEOFF_COLLECTION_ID,
+} from '../features/progression/cosmetics/seasonOpeningFaceoff2627'
 import styles from './DevCosmetics.module.css'
+
+const Puck3DLab = lazy(() =>
+  import('../components/puck3d').then((mod) => ({ default: mod.Puck3DLab })),
+)
+
+const OPENING_FACEOFF_PALETTE = [
+  ['#08131D', 'Midnight'],
+  ['#102736', 'Deep Ice'],
+  ['#5191A2', 'rInQ Türkis'],
+  ['#EAF7FA', 'Ice White'],
+  ['#F2A65A', 'Arena Amber'],
+  ['#B84A52', 'Mittellinie'],
+] as const
+
+function OpeningFaceoffShowcase() {
+  const byId = Object.fromEntries(OPENING_FACEOFF_2627_COSMETICS.map((item) => [item.id, item]))
+  const sticker = getStickerAsset('sticker_opening_faceoff_2627')
+  const emblem = getEmblemAsset('emblem_opening_faceoff_2627')
+  const avatar = getAvatarAsset('avatar_opening_faceoff_2627')
+  const banner = getBannerAsset('banner_opening_faceoff_2627')
+  const title = byId.title_season_opener_2627
+  const tagline = byId.tagline_new_season_new_read_2627
+
+  return (
+    <Card surface="primary" className={styles.seasonCard}>
+      <h2 className="ui-section-title">OPENING FACEOFF 26/27</h2>
+      <p className={`ui-page-lead ${styles.seasonLead}`}>
+        Season-Preview · Collection <code>{OPENING_FACEOFF_COLLECTION_ID}</code> · alle sieben Cosmetics{' '}
+        <strong>previewOnly</strong>, noch ohne Grant-/Event-Rewire.
+      </p>
+      <div className={styles.paletteRow} aria-label="Palette">
+        {OPENING_FACEOFF_PALETTE.map(([color, label]) => (
+          <span
+            key={color}
+            className={styles.swatch}
+            style={{ background: color }}
+            title={`${label} ${color}`}
+          />
+        ))}
+      </div>
+      <div className={styles.seasonGrid}>
+        {banner && (
+          <figure className={`${styles.seasonTile} ${styles.seasonTileWide}`}>
+            <img src={banner.src} alt="" className={styles.artWide} />
+            <figcaption>
+              <code>banner_opening_faceoff_2627</code>
+              <span className={styles.meta}>Banner · {RARITY_LABELS[byId.banner_opening_faceoff_2627.rarity]}</span>
+            </figcaption>
+          </figure>
+        )}
+        {avatar && (
+          <figure className={styles.seasonTile}>
+            <img src={avatar.src} alt="" className={styles.art} />
+            <figcaption>
+              <code>avatar_opening_faceoff_2627</code>
+              <span className={styles.meta}>Avatar · {RARITY_LABELS[byId.avatar_opening_faceoff_2627.rarity]}</span>
+            </figcaption>
+          </figure>
+        )}
+        {emblem && (
+          <figure className={styles.seasonTile}>
+            <img src={emblem.src} alt="" className={styles.art} />
+            <figcaption>
+              <code>emblem_opening_faceoff_2627</code>
+              <span className={styles.meta}>Emblem · {RARITY_LABELS[byId.emblem_opening_faceoff_2627.rarity]}</span>
+            </figcaption>
+          </figure>
+        )}
+        {sticker && (
+          <figure className={styles.seasonTile}>
+            <img src={sticker.src} alt="" className={styles.art} />
+            <figcaption>
+              <code>sticker_opening_faceoff_2627</code>
+              <span className={styles.meta}>Sticker · {RARITY_LABELS[byId.sticker_opening_faceoff_2627.rarity]}</span>
+            </figcaption>
+          </figure>
+        )}
+        <figure className={styles.seasonTile}>
+          <div className={styles.framePreview}>
+            <AccountPillFrame frameId="frame_opening_faceoff_2627" preview previewSize="tile" />
+          </div>
+          <figcaption>
+            <code>frame_opening_faceoff_2627</code>
+            <span className={styles.meta}>Frame · {RARITY_LABELS[byId.frame_opening_faceoff_2627.rarity]}</span>
+          </figcaption>
+        </figure>
+        <figure className={styles.seasonTile}>
+          <div className={styles.poolTextPreview}>{title?.text}</div>
+          <figcaption>
+            <code>title_season_opener_2627</code>
+            <span className={styles.meta}>Title · {RARITY_LABELS[title.rarity]}</span>
+          </figcaption>
+        </figure>
+        <figure className={styles.seasonTile}>
+          <div className={styles.poolTextPreview}>„{tagline?.text}“</div>
+          <figcaption>
+            <code>tagline_new_season_new_read_2627</code>
+            <span className={styles.meta}>Tagline · {RARITY_LABELS[tagline.rarity]}</span>
+          </figcaption>
+        </figure>
+      </div>
+    </Card>
+  )
+}
 
 const FRAME_IDS = COSMETIC_CATALOG.filter((c) => c.type === 'frame').map((c) => c.id)
 const TEXT_TITLES = COSMETIC_CATALOG.filter((c) => c.type === 'title')
@@ -130,6 +238,8 @@ export default function DevCosmetics() {
           Doc: <code>docs/architecture/cosmetic-inventory-phase3.md</code>
         </p>
       </header>
+
+      <OpeningFaceoffShowcase />
 
       <Card surface="primary" className={styles.poolCard}>
         <h2 className="ui-section-title">Nicht zugewiesener Pool</h2>
@@ -314,9 +424,12 @@ export default function DevCosmetics() {
       <Card surface="section">
         <h2 className="ui-section-title">Puck / Stick — deferred_cluster_2</h2>
         <p className="ui-page-lead">
-          3D-Cosmetics: Besitz bleibt, aber <strong>kein</strong> aktueller Visual-QA / keine Early-Slot-Kandidaten.
-          Siehe Inventar-Doc Cluster 2.
+          3D-Cosmetics und Filter leben hier (nicht im Spind). Besitz bleibt, aber{' '}
+          <strong>kein</strong> Produkt-UI / keine Early-Slot-Kandidaten. Siehe Inventar-Doc Cluster 2.
         </p>
+        <Suspense fallback={<p className={styles.meta}>3D-Lab lädt …</p>}>
+          <Puck3DLab />
+        </Suspense>
         <ul className={styles.textList}>
           {POC_3D.map((c) => (
             <li key={c.id}>

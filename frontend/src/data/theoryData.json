@@ -321,7 +321,11 @@
         "content": [
           {
             "type": "paragraph",
-            "text": "Spieler erzeugen Optionen. Du fragst: Welche Möglichkeiten sind vor der Aktion sichtbar? Nicht: Welche hätte besser sein sollen."
+            "text": "Spieler erzeugen Optionen. Du fragst: Welche Möglichkeiten sind vor der Aktion sichtbar — Center, Wing, Defense, auch mehrere gleichzeitig? Nicht: Welche hätte besser sein sollen."
+          },
+          {
+            "type": "paragraph",
+            "text": "Die Art der Option (direkt, weiterführend, Sicherheit) ist die Funktion, die dir auffällt. Bei mehreren sichtbaren Optionen müssen sie nicht denselben Typ haben."
           },
           {
             "type": "paragraph",

@@ -11,7 +11,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-03",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "hc_pilsen",
       "away_team_id": "rogle_angelholm",
       "home_team_name": "HC Pilsen",
@@ -22,7 +22,7 @@
         "provider": "chl",
         "external_id": "2988",
         "entity_id": "0636729f7d82ee17686c2f79",
-        "imported_at": "2026-09-02T07:51:01.398161Z"
+        "imported_at": "2026-09-03T08:56:24.201067Z"
       }
     },
     {
@@ -33,7 +33,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-03",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "tappara_tampere",
       "away_team_id": "bili_tygri_liberec",
       "home_team_name": "Tappara Tampere",
@@ -44,7 +44,7 @@
         "provider": "chl",
         "external_id": "2989",
         "entity_id": "1ca43153cbb6795dbfffee89",
-        "imported_at": "2026-09-02T07:51:01.398277Z"
+        "imported_at": "2026-09-03T08:56:24.201144Z"
       }
     },
     {
@@ -55,7 +55,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-03",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "dynamo_pardubice",
       "away_team_id": "gks_tychy",
       "home_team_name": "Dynamo Pardubice",
@@ -66,7 +66,7 @@
         "provider": "chl",
         "external_id": "2990",
         "entity_id": "bd57e7f6797954ec07d38adb",
-        "imported_at": "2026-09-02T07:51:01.398348Z"
+        "imported_at": "2026-09-03T08:56:24.201193Z"
       }
     },
     {
@@ -77,7 +77,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-03",
-      "time": "16:30",
+      "time": "18:30",
       "home_team_id": "graz99ers",
       "away_team_id": "fribourg_gotteron",
       "home_team_name": "Graz99ers",
@@ -88,7 +88,7 @@
         "provider": "chl",
         "external_id": "2991",
         "entity_id": "5573f1f055fcd05cfd381e76",
-        "imported_at": "2026-09-02T07:51:01.398472Z"
+        "imported_at": "2026-09-03T08:56:24.201242Z"
       }
     },
     {
@@ -99,7 +99,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-03",
-      "time": "17:15",
+      "time": "19:15",
       "home_team_id": "kac_klagenfurt",
       "away_team_id": "bordeaux_boxers",
       "home_team_name": "KAC Klagenfurt",
@@ -110,7 +110,7 @@
         "provider": "chl",
         "external_id": "2992",
         "entity_id": "25bcdec697f21ec5d9c7018a",
-        "imported_at": "2026-09-02T07:51:01.398538Z"
+        "imported_at": "2026-09-03T08:56:24.201286Z"
       }
     },
     {
@@ -121,7 +121,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-03",
-      "time": "17:15",
+      "time": "19:15",
       "home_team_id": "red_bull_salzburg",
       "away_team_id": "kolner_haie",
       "home_team_name": "Red Bull Salzburg",
@@ -132,7 +132,7 @@
         "provider": "chl",
         "external_id": "2993",
         "entity_id": "ec28c920c178cfafaf650188",
-        "imported_at": "2026-09-02T07:51:01.398600Z"
+        "imported_at": "2026-09-03T08:56:24.201333Z"
       }
     },
     {
@@ -143,7 +143,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-04",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "herning_blue_fox",
       "away_team_id": "kookoo_kouvola",
       "home_team_name": "Herning Blue Fox",
@@ -154,7 +154,7 @@
         "provider": "chl",
         "external_id": "2994",
         "entity_id": "2ebf4473496e819370b1b0f9",
-        "imported_at": "2026-09-02T07:51:01.398676Z"
+        "imported_at": "2026-09-03T08:56:24.201374Z"
       }
     },
     {
@@ -165,7 +165,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-04",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "hk_nitra",
       "away_team_id": "skelleftea_aik",
       "home_team_name": "HK Nitra",
@@ -176,7 +176,7 @@
         "provider": "chl",
         "external_id": "2995",
         "entity_id": "2955e4b9c682514ca88e1d64",
-        "imported_at": "2026-09-02T07:51:01.398736Z"
+        "imported_at": "2026-09-03T08:56:24.201415Z"
       }
     },
     {
@@ -187,7 +187,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-04",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "frolunda_gothenburg",
       "away_team_id": "saipa_lappeenranta",
       "home_team_name": "Frölunda Gothenburg",
@@ -198,7 +198,7 @@
         "provider": "chl",
         "external_id": "2996",
         "entity_id": "40ca9ed4fb03b6149897494e",
-        "imported_at": "2026-09-02T07:51:01.398803Z"
+        "imported_at": "2026-09-03T08:56:24.201460Z"
       }
     },
     {
@@ -209,7 +209,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-04",
-      "time": "17:30",
+      "time": "19:30",
       "home_team_id": "adler_mannheim",
       "away_team_id": "vaxjo_lakers",
       "home_team_name": "Adler Mannheim",
@@ -220,7 +220,7 @@
         "provider": "chl",
         "external_id": "2997",
         "entity_id": "fc789da25ada1cd3b9953e45",
-        "imported_at": "2026-09-02T07:51:01.398840Z"
+        "imported_at": "2026-09-03T08:56:24.201502Z"
       }
     },
     {
@@ -231,7 +231,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-04",
-      "time": "17:45",
+      "time": "19:45",
       "home_team_id": "geneve_servette",
       "away_team_id": "eisbaren_berlin",
       "home_team_name": "Genève-Servette",
@@ -242,7 +242,7 @@
         "provider": "chl",
         "external_id": "2998",
         "entity_id": "ea484836aea509932671fbd3",
-        "imported_at": "2026-09-02T07:51:01.398901Z"
+        "imported_at": "2026-09-03T08:56:24.201550Z"
       }
     },
     {
@@ -253,7 +253,7 @@
       "phase_label": "Regular Season",
       "matchday": 1,
       "date": "2026-09-04",
-      "time": "17:45",
+      "time": "19:45",
       "home_team_id": "hc_davos",
       "away_team_id": "storhamar_hamar",
       "home_team_name": "HC Davos",
@@ -264,7 +264,7 @@
         "provider": "chl",
         "external_id": "2999",
         "entity_id": "a71da2a6be47b000304c0ec1",
-        "imported_at": "2026-09-02T07:51:01.398936Z"
+        "imported_at": "2026-09-03T08:56:24.201590Z"
       }
     },
     {
@@ -275,7 +275,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-05",
-      "time": "14:00",
+      "time": "16:00",
       "home_team_id": "tappara_tampere",
       "away_team_id": "kolner_haie",
       "home_team_name": "Tappara Tampere",
@@ -286,7 +286,7 @@
         "provider": "chl",
         "external_id": "3000",
         "entity_id": "8ed94128f8806f40a2957687",
-        "imported_at": "2026-09-02T07:51:01.398972Z"
+        "imported_at": "2026-09-03T08:56:24.201634Z"
       }
     },
     {
@@ -297,7 +297,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-05",
-      "time": "14:30",
+      "time": "16:30",
       "home_team_id": "hc_pilsen",
       "away_team_id": "gks_tychy",
       "home_team_name": "HC Pilsen",
@@ -308,7 +308,7 @@
         "provider": "chl",
         "external_id": "3001",
         "entity_id": "fea45d0d6a24116f23be0d0b",
-        "imported_at": "2026-09-02T07:51:01.399005Z"
+        "imported_at": "2026-09-03T08:56:24.201676Z"
       }
     },
     {
@@ -319,7 +319,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-05",
-      "time": "15:00",
+      "time": "17:00",
       "home_team_id": "dynamo_pardubice",
       "away_team_id": "rogle_angelholm",
       "home_team_name": "Dynamo Pardubice",
@@ -330,7 +330,7 @@
         "provider": "chl",
         "external_id": "3002",
         "entity_id": "012df9adeac78225a8be06ce",
-        "imported_at": "2026-09-02T07:51:01.399041Z"
+        "imported_at": "2026-09-03T08:56:24.201742Z"
       }
     },
     {
@@ -341,7 +341,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-05",
-      "time": "16:30",
+      "time": "18:30",
       "home_team_id": "graz99ers",
       "away_team_id": "bordeaux_boxers",
       "home_team_name": "Graz99ers",
@@ -352,7 +352,7 @@
         "provider": "chl",
         "external_id": "3003",
         "entity_id": "e32c051db83eb41344d9c09c",
-        "imported_at": "2026-09-02T07:51:01.399074Z"
+        "imported_at": "2026-09-03T08:56:24.201786Z"
       }
     },
     {
@@ -363,7 +363,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-05",
-      "time": "17:15",
+      "time": "19:15",
       "home_team_id": "red_bull_salzburg",
       "away_team_id": "bili_tygri_liberec",
       "home_team_name": "Red Bull Salzburg",
@@ -374,7 +374,7 @@
         "provider": "chl",
         "external_id": "3004",
         "entity_id": "c6e03b3ee538138d70e90b9f",
-        "imported_at": "2026-09-02T07:51:01.399147Z"
+        "imported_at": "2026-09-03T08:56:24.201836Z"
       }
     },
     {
@@ -385,7 +385,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-05",
-      "time": "17:15",
+      "time": "19:15",
       "home_team_id": "kac_klagenfurt",
       "away_team_id": "fribourg_gotteron",
       "home_team_name": "KAC Klagenfurt",
@@ -396,7 +396,7 @@
         "provider": "chl",
         "external_id": "3005",
         "entity_id": "edc4508d4e4e5ed9f5806e5b",
-        "imported_at": "2026-09-02T07:51:01.399244Z"
+        "imported_at": "2026-09-03T08:56:24.201914Z"
       }
     },
     {
@@ -407,7 +407,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-06",
-      "time": "12:00",
+      "time": "14:00",
       "home_team_id": "geneve_servette",
       "away_team_id": "storhamar_hamar",
       "home_team_name": "Genève-Servette",
@@ -418,7 +418,7 @@
         "provider": "chl",
         "external_id": "3006",
         "entity_id": "e8531f3ee32b013586d65a2f",
-        "imported_at": "2026-09-02T07:51:01.399308Z"
+        "imported_at": "2026-09-03T08:56:24.201962Z"
       }
     },
     {
@@ -429,7 +429,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-06",
-      "time": "13:00",
+      "time": "15:00",
       "home_team_id": "herning_blue_fox",
       "away_team_id": "saipa_lappeenranta",
       "home_team_name": "Herning Blue Fox",
@@ -440,7 +440,7 @@
         "provider": "chl",
         "external_id": "3007",
         "entity_id": "743ff780a5b4a40431da4341",
-        "imported_at": "2026-09-02T07:51:01.399417Z"
+        "imported_at": "2026-09-03T08:56:24.202009Z"
       }
     },
     {
@@ -451,7 +451,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-06",
-      "time": "13:00",
+      "time": "15:00",
       "home_team_id": "frolunda_gothenburg",
       "away_team_id": "kookoo_kouvola",
       "home_team_name": "Frölunda Gothenburg",
@@ -462,7 +462,7 @@
         "provider": "chl",
         "external_id": "3008",
         "entity_id": "d25d725c147cf4bc3cb4c5ff",
-        "imported_at": "2026-09-02T07:51:01.399463Z"
+        "imported_at": "2026-09-03T08:56:24.202052Z"
       }
     },
     {
@@ -473,7 +473,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-06",
-      "time": "13:45",
+      "time": "15:45",
       "home_team_id": "hc_davos",
       "away_team_id": "eisbaren_berlin",
       "home_team_name": "HC Davos",
@@ -484,7 +484,7 @@
         "provider": "chl",
         "external_id": "3009",
         "entity_id": "95af6ce5cc41a42404291947",
-        "imported_at": "2026-09-02T07:51:01.399502Z"
+        "imported_at": "2026-09-03T08:56:24.202094Z"
       }
     },
     {
@@ -495,7 +495,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-06",
-      "time": "15:00",
+      "time": "17:00",
       "home_team_id": "hk_nitra",
       "away_team_id": "vaxjo_lakers",
       "home_team_name": "HK Nitra",
@@ -506,7 +506,7 @@
         "provider": "chl",
         "external_id": "3010",
         "entity_id": "dc4e60f68de5f645205c8123",
-        "imported_at": "2026-09-02T07:51:01.399540Z"
+        "imported_at": "2026-09-03T08:56:24.202137Z"
       }
     },
     {
@@ -517,7 +517,7 @@
       "phase_label": "Regular Season",
       "matchday": 2,
       "date": "2026-09-06",
-      "time": "15:00",
+      "time": "17:00",
       "home_team_id": "adler_mannheim",
       "away_team_id": "skelleftea_aik",
       "home_team_name": "Adler Mannheim",
@@ -528,7 +528,7 @@
         "provider": "chl",
         "external_id": "3011",
         "entity_id": "8ea8d511f11e851e50fd4110",
-        "imported_at": "2026-09-02T07:51:01.399577Z"
+        "imported_at": "2026-09-03T08:56:24.202179Z"
       }
     },
     {
@@ -539,7 +539,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-10",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "kookoo_kouvola",
       "away_team_id": "hk_nitra",
       "home_team_name": "KooKoo Kouvola",
@@ -550,7 +550,7 @@
         "provider": "chl",
         "external_id": "3012",
         "entity_id": "4f36a358a795d91b2fbb0c9b",
-        "imported_at": "2026-09-02T07:51:01.399610Z"
+        "imported_at": "2026-09-03T08:56:24.202221Z"
       }
     },
     {
@@ -561,7 +561,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-10",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "saipa_lappeenranta",
       "away_team_id": "dynamo_pardubice",
       "home_team_name": "SaiPa Lappeenranta",
@@ -572,7 +572,7 @@
         "provider": "chl",
         "external_id": "3013",
         "entity_id": "aec9e611288630b2354b4bf1",
-        "imported_at": "2026-09-02T07:51:01.399645Z"
+        "imported_at": "2026-09-03T08:56:24.202262Z"
       }
     },
     {
@@ -583,7 +583,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-10",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "gks_tychy",
       "away_team_id": "hc_davos",
       "home_team_name": "GKS Tychy",
@@ -594,7 +594,7 @@
         "provider": "chl",
         "external_id": "3014",
         "entity_id": "3993ba8191ba8bdfa3e86027",
-        "imported_at": "2026-09-02T07:51:01.399693Z"
+        "imported_at": "2026-09-03T08:56:24.202303Z"
       }
     },
     {
@@ -605,7 +605,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-10",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "skelleftea_aik",
       "away_team_id": "geneve_servette",
       "home_team_name": "Skellefteå AIK",
@@ -616,7 +616,7 @@
         "provider": "chl",
         "external_id": "3015",
         "entity_id": "f53c78cf34039461d87b4a44",
-        "imported_at": "2026-09-02T07:51:01.399731Z"
+        "imported_at": "2026-09-03T08:56:24.202351Z"
       }
     },
     {
@@ -627,7 +627,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-10",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "storhamar_hamar",
       "away_team_id": "kac_klagenfurt",
       "home_team_name": "Storhamar Hamar",
@@ -638,7 +638,7 @@
         "provider": "chl",
         "external_id": "3016",
         "entity_id": "810fadd2bb09a0427e9db86f",
-        "imported_at": "2026-09-02T07:51:01.399765Z"
+        "imported_at": "2026-09-03T08:56:24.202399Z"
       }
     },
     {
@@ -649,7 +649,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-10",
-      "time": "17:30",
+      "time": "19:30",
       "home_team_id": "kolner_haie",
       "away_team_id": "frolunda_gothenburg",
       "home_team_name": "Kölner Haie",
@@ -660,7 +660,7 @@
         "provider": "chl",
         "external_id": "3017",
         "entity_id": "d90c226758cacdc373f4946e",
-        "imported_at": "2026-09-02T07:51:01.399802Z"
+        "imported_at": "2026-09-03T08:56:24.202443Z"
       }
     },
     {
@@ -671,7 +671,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-11",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "bili_tygri_liberec",
       "away_team_id": "herning_blue_fox",
       "home_team_name": "Bílí Tygři Liberec",
@@ -682,7 +682,7 @@
         "provider": "chl",
         "external_id": "3018",
         "entity_id": "282628c3708fc7d1ce2d537d",
-        "imported_at": "2026-09-02T07:51:01.399844Z"
+        "imported_at": "2026-09-03T08:56:24.202491Z"
       }
     },
     {
@@ -693,7 +693,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-11",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "rogle_angelholm",
       "away_team_id": "red_bull_salzburg",
       "home_team_name": "Rögle Ängelholm",
@@ -704,7 +704,7 @@
         "provider": "chl",
         "external_id": "3019",
         "entity_id": "af55c2a6d6e71079cf4c50a9",
-        "imported_at": "2026-09-02T07:51:01.399906Z"
+        "imported_at": "2026-09-03T08:56:24.202537Z"
       }
     },
     {
@@ -715,7 +715,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-11",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "vaxjo_lakers",
       "away_team_id": "tappara_tampere",
       "home_team_name": "Växjö Lakers",
@@ -726,7 +726,7 @@
         "provider": "chl",
         "external_id": "3020",
         "entity_id": "f888e7e0d5a34a770a4a0298",
-        "imported_at": "2026-09-02T07:51:01.399942Z"
+        "imported_at": "2026-09-03T08:56:24.202579Z"
       }
     },
     {
@@ -737,7 +737,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-11",
-      "time": "17:30",
+      "time": "19:30",
       "home_team_id": "eisbaren_berlin",
       "away_team_id": "graz99ers",
       "home_team_name": "Eisbären Berlin",
@@ -748,7 +748,7 @@
         "provider": "chl",
         "external_id": "3021",
         "entity_id": "055164bd9cdfac0aece2ec3c",
-        "imported_at": "2026-09-02T07:51:01.399978Z"
+        "imported_at": "2026-09-03T08:56:24.202621Z"
       }
     },
     {
@@ -759,7 +759,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-11",
-      "time": "17:45",
+      "time": "19:45",
       "home_team_id": "fribourg_gotteron",
       "away_team_id": "hc_pilsen",
       "home_team_name": "Fribourg-Gottéron",
@@ -770,7 +770,7 @@
         "provider": "chl",
         "external_id": "3022",
         "entity_id": "0b2b255e62d286531193722c",
-        "imported_at": "2026-09-02T07:51:01.400014Z"
+        "imported_at": "2026-09-03T08:56:24.202668Z"
       }
     },
     {
@@ -781,7 +781,7 @@
       "phase_label": "Regular Season",
       "matchday": 3,
       "date": "2026-09-11",
-      "time": "18:15",
+      "time": "20:15",
       "home_team_id": "bordeaux_boxers",
       "away_team_id": "adler_mannheim",
       "home_team_name": "Bordeaux Boxers",
@@ -792,7 +792,7 @@
         "provider": "chl",
         "external_id": "3023",
         "entity_id": "05be0be7d9296bc244f43f0d",
-        "imported_at": "2026-09-02T07:51:01.400048Z"
+        "imported_at": "2026-09-03T08:56:24.202749Z"
       }
     },
     {
@@ -803,7 +803,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-12",
-      "time": "12:30",
+      "time": "14:30",
       "home_team_id": "skelleftea_aik",
       "away_team_id": "hc_davos",
       "home_team_name": "Skellefteå AIK",
@@ -814,7 +814,7 @@
         "provider": "chl",
         "external_id": "3024",
         "entity_id": "2c97b18b6dcb99eed865e111",
-        "imported_at": "2026-09-02T07:51:01.400083Z"
+        "imported_at": "2026-09-03T08:56:24.202797Z"
       }
     },
     {
@@ -825,7 +825,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-12",
-      "time": "14:00",
+      "time": "16:00",
       "home_team_id": "kookoo_kouvola",
       "away_team_id": "dynamo_pardubice",
       "home_team_name": "KooKoo Kouvola",
@@ -836,7 +836,7 @@
         "provider": "chl",
         "external_id": "3025",
         "entity_id": "53e8968b596c13fabe0668bc",
-        "imported_at": "2026-09-02T07:51:01.400115Z"
+        "imported_at": "2026-09-03T08:56:24.202841Z"
       }
     },
     {
@@ -847,7 +847,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-12",
-      "time": "14:00",
+      "time": "16:00",
       "home_team_id": "saipa_lappeenranta",
       "away_team_id": "hk_nitra",
       "home_team_name": "SaiPa Lappeenranta",
@@ -858,7 +858,7 @@
         "provider": "chl",
         "external_id": "3026",
         "entity_id": "4ec764d9b9241aa35070463d",
-        "imported_at": "2026-09-02T07:51:01.400148Z"
+        "imported_at": "2026-09-03T08:56:24.202905Z"
       }
     },
     {
@@ -869,7 +869,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-12",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "gks_tychy",
       "away_team_id": "geneve_servette",
       "home_team_name": "GKS Tychy",
@@ -880,7 +880,7 @@
         "provider": "chl",
         "external_id": "3027",
         "entity_id": "508c765f16f5c45f7446c1d5",
-        "imported_at": "2026-09-02T07:51:01.400183Z"
+        "imported_at": "2026-09-03T08:56:24.202952Z"
       }
     },
     {
@@ -891,7 +891,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-12",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "storhamar_hamar",
       "away_team_id": "frolunda_gothenburg",
       "home_team_name": "Storhamar Hamar",
@@ -902,7 +902,7 @@
         "provider": "chl",
         "external_id": "3028",
         "entity_id": "4f8db89e115cb3e54ecfe6bb",
-        "imported_at": "2026-09-02T07:51:01.400218Z"
+        "imported_at": "2026-09-03T08:56:24.202997Z"
       }
     },
     {
@@ -913,7 +913,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-12",
-      "time": "15:00",
+      "time": "17:00",
       "home_team_id": "kolner_haie",
       "away_team_id": "kac_klagenfurt",
       "home_team_name": "Kölner Haie",
@@ -924,7 +924,7 @@
         "provider": "chl",
         "external_id": "3029",
         "entity_id": "a36c2ac20069ca066d69c16d",
-        "imported_at": "2026-09-02T07:51:01.400253Z"
+        "imported_at": "2026-09-03T08:56:24.203039Z"
       }
     },
     {
@@ -935,7 +935,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-13",
-      "time": "12:00",
+      "time": "14:00",
       "home_team_id": "fribourg_gotteron",
       "away_team_id": "adler_mannheim",
       "home_team_name": "Fribourg-Gottéron",
@@ -946,7 +946,7 @@
         "provider": "chl",
         "external_id": "3030",
         "entity_id": "9f0d43a32e2a32093c865142",
-        "imported_at": "2026-09-02T07:51:01.400288Z"
+        "imported_at": "2026-09-03T08:56:24.203085Z"
       }
     },
     {
@@ -957,7 +957,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-13",
-      "time": "13:00",
+      "time": "15:00",
       "home_team_id": "vaxjo_lakers",
       "away_team_id": "red_bull_salzburg",
       "home_team_name": "Växjö Lakers",
@@ -968,7 +968,7 @@
         "provider": "chl",
         "external_id": "3031",
         "entity_id": "30aee8ca370db58b96c324b5",
-        "imported_at": "2026-09-02T07:51:01.400322Z"
+        "imported_at": "2026-09-03T08:56:24.203129Z"
       }
     },
     {
@@ -979,7 +979,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-13",
-      "time": "13:00",
+      "time": "15:00",
       "home_team_id": "rogle_angelholm",
       "away_team_id": "tappara_tampere",
       "home_team_name": "Rögle Ängelholm",
@@ -990,7 +990,7 @@
         "provider": "chl",
         "external_id": "3032",
         "entity_id": "cb917b7dfc2899c9ea60ab27",
-        "imported_at": "2026-09-02T07:51:01.400357Z"
+        "imported_at": "2026-09-03T08:56:24.203173Z"
       }
     },
     {
@@ -1001,7 +1001,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-13",
-      "time": "14:00",
+      "time": "16:00",
       "home_team_id": "bili_tygri_liberec",
       "away_team_id": "graz99ers",
       "home_team_name": "Bílí Tygři Liberec",
@@ -1012,7 +1012,7 @@
         "provider": "chl",
         "external_id": "3033",
         "entity_id": "10446a848ab4085d872bb129",
-        "imported_at": "2026-09-02T07:51:01.400394Z"
+        "imported_at": "2026-09-03T08:56:24.203223Z"
       }
     },
     {
@@ -1023,7 +1023,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-13",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "eisbaren_berlin",
       "away_team_id": "herning_blue_fox",
       "home_team_name": "Eisbären Berlin",
@@ -1034,7 +1034,7 @@
         "provider": "chl",
         "external_id": "3034",
         "entity_id": "a7e48d28a8dbf9574aab9a86",
-        "imported_at": "2026-09-02T07:51:01.400429Z"
+        "imported_at": "2026-09-03T08:56:24.203269Z"
       }
     },
     {
@@ -1045,7 +1045,7 @@
       "phase_label": "Regular Season",
       "matchday": 4,
       "date": "2026-09-13",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "bordeaux_boxers",
       "away_team_id": "hc_pilsen",
       "home_team_name": "Bordeaux Boxers",
@@ -1056,7 +1056,7 @@
         "provider": "chl",
         "external_id": "3035",
         "entity_id": "c546889eba97ba5c8f3e5116",
-        "imported_at": "2026-09-02T07:51:01.400463Z"
+        "imported_at": "2026-09-03T08:56:24.203309Z"
       }
     },
     {
@@ -1067,7 +1067,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "hc_pilsen",
       "away_team_id": "skelleftea_aik",
       "home_team_name": "HC Pilsen",
@@ -1078,7 +1078,7 @@
         "provider": "chl",
         "external_id": "3036",
         "entity_id": "1a7ccbdac3737e2e2123f998",
-        "imported_at": "2026-09-02T07:51:01.400498Z"
+        "imported_at": "2026-09-03T08:56:24.203353Z"
       }
     },
     {
@@ -1089,7 +1089,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "bili_tygri_liberec",
       "away_team_id": "frolunda_gothenburg",
       "home_team_name": "Bílí Tygři Liberec",
@@ -1100,7 +1100,7 @@
         "provider": "chl",
         "external_id": "3037",
         "entity_id": "699e54a9eed83201d7cdeae4",
-        "imported_at": "2026-09-02T07:51:01.400538Z"
+        "imported_at": "2026-09-03T08:56:24.203402Z"
       }
     },
     {
@@ -1111,7 +1111,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "vaxjo_lakers",
       "away_team_id": "geneve_servette",
       "home_team_name": "Växjö Lakers",
@@ -1122,7 +1122,7 @@
         "provider": "chl",
         "external_id": "3038",
         "entity_id": "dbf6bf2cc4a956165eef7fc3",
-        "imported_at": "2026-09-02T07:51:01.400574Z"
+        "imported_at": "2026-09-03T08:56:24.203449Z"
       }
     },
     {
@@ -1133,7 +1133,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "rogle_angelholm",
       "away_team_id": "hc_davos",
       "home_team_name": "Rögle Ängelholm",
@@ -1144,7 +1144,7 @@
         "provider": "chl",
         "external_id": "3039",
         "entity_id": "377f3b9a9ec357ee3dc153b0",
-        "imported_at": "2026-09-02T07:51:01.400609Z"
+        "imported_at": "2026-09-03T08:56:24.203494Z"
       }
     },
     {
@@ -1155,7 +1155,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "17:15",
+      "time": "19:15",
       "home_team_id": "kac_klagenfurt",
       "away_team_id": "kookoo_kouvola",
       "home_team_name": "KAC Klagenfurt",
@@ -1166,7 +1166,7 @@
         "provider": "chl",
         "external_id": "3040",
         "entity_id": "d7aa32e2ec7131a0a30e21a6",
-        "imported_at": "2026-09-02T07:51:01.400646Z"
+        "imported_at": "2026-09-03T08:56:24.203540Z"
       }
     },
     {
@@ -1177,7 +1177,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "17:45",
+      "time": "19:45",
       "home_team_id": "fribourg_gotteron",
       "away_team_id": "hk_nitra",
       "home_team_name": "Fribourg-Gottéron",
@@ -1188,7 +1188,7 @@
         "provider": "chl",
         "external_id": "3041",
         "entity_id": "bd2515ce172bf496428a0a58",
-        "imported_at": "2026-09-02T07:51:01.400701Z"
+        "imported_at": "2026-09-03T08:56:24.203587Z"
       }
     },
     {
@@ -1199,7 +1199,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-06",
-      "time": "18:20",
+      "time": "20:20",
       "home_team_id": "graz99ers",
       "away_team_id": "saipa_lappeenranta",
       "home_team_name": "Graz99ers",
@@ -1210,7 +1210,7 @@
         "provider": "chl",
         "external_id": "3042",
         "entity_id": "3a6ab615c9faf2b08de2f7b1",
-        "imported_at": "2026-09-02T07:51:01.400736Z"
+        "imported_at": "2026-09-03T08:56:24.203632Z"
       }
     },
     {
@@ -1221,7 +1221,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-07",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "tappara_tampere",
       "away_team_id": "storhamar_hamar",
       "home_team_name": "Tappara Tampere",
@@ -1232,7 +1232,7 @@
         "provider": "chl",
         "external_id": "3043",
         "entity_id": "27f291d3bd65525d537f2420",
-        "imported_at": "2026-09-02T07:51:01.400768Z"
+        "imported_at": "2026-09-03T08:56:24.203677Z"
       }
     },
     {
@@ -1243,7 +1243,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-07",
-      "time": "17:30",
+      "time": "19:30",
       "home_team_id": "kolner_haie",
       "away_team_id": "herning_blue_fox",
       "home_team_name": "Kölner Haie",
@@ -1254,7 +1254,7 @@
         "provider": "chl",
         "external_id": "3044",
         "entity_id": "1304690b8a655c2c91cec3d8",
-        "imported_at": "2026-09-02T07:51:01.400803Z"
+        "imported_at": "2026-09-03T08:56:24.203744Z"
       }
     },
     {
@@ -1265,7 +1265,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-07",
-      "time": "17:30",
+      "time": "19:30",
       "home_team_id": "adler_mannheim",
       "away_team_id": "gks_tychy",
       "home_team_name": "Adler Mannheim",
@@ -1276,7 +1276,7 @@
         "provider": "chl",
         "external_id": "3045",
         "entity_id": "2f56470e13ade13611569e9e",
-        "imported_at": "2026-09-02T07:51:01.400837Z"
+        "imported_at": "2026-09-03T08:56:24.203790Z"
       }
     },
     {
@@ -1287,7 +1287,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-07",
-      "time": "18:15",
+      "time": "20:15",
       "home_team_id": "bordeaux_boxers",
       "away_team_id": "dynamo_pardubice",
       "home_team_name": "Bordeaux Boxers",
@@ -1298,7 +1298,7 @@
         "provider": "chl",
         "external_id": "3046",
         "entity_id": "06d8ab4a53b43b55dc3c445a",
-        "imported_at": "2026-09-02T07:51:01.400885Z"
+        "imported_at": "2026-09-03T08:56:24.203833Z"
       }
     },
     {
@@ -1309,7 +1309,7 @@
       "phase_label": "Regular Season",
       "matchday": 5,
       "date": "2026-10-07",
-      "time": "18:20",
+      "time": "20:20",
       "home_team_id": "red_bull_salzburg",
       "away_team_id": "eisbaren_berlin",
       "home_team_name": "Red Bull Salzburg",
@@ -1320,7 +1320,7 @@
         "provider": "chl",
         "external_id": "3047",
         "entity_id": "09d924986866b5d4c1293ae0",
-        "imported_at": "2026-09-02T07:51:01.400921Z"
+        "imported_at": "2026-09-03T08:56:24.203900Z"
       }
     },
     {
@@ -1331,7 +1331,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-13",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "kookoo_kouvola",
       "away_team_id": "adler_mannheim",
       "home_team_name": "KooKoo Kouvola",
@@ -1342,7 +1342,7 @@
         "provider": "chl",
         "external_id": "3048",
         "entity_id": "9088e91e3fff07921da44eda",
-        "imported_at": "2026-09-02T07:51:01.400953Z"
+        "imported_at": "2026-09-03T08:56:24.203944Z"
       }
     },
     {
@@ -1353,7 +1353,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-13",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "dynamo_pardubice",
       "away_team_id": "vaxjo_lakers",
       "home_team_name": "Dynamo Pardubice",
@@ -1364,7 +1364,7 @@
         "provider": "chl",
         "external_id": "3049",
         "entity_id": "ed07cafd997386b9f766d945",
-        "imported_at": "2026-09-02T07:51:01.400987Z"
+        "imported_at": "2026-09-03T08:56:24.203988Z"
       }
     },
     {
@@ -1375,7 +1375,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-13",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "gks_tychy",
       "away_team_id": "tappara_tampere",
       "home_team_name": "GKS Tychy",
@@ -1386,7 +1386,7 @@
         "provider": "chl",
         "external_id": "3050",
         "entity_id": "e86bd9af23f2b454e183f683",
-        "imported_at": "2026-09-02T07:51:01.401018Z"
+        "imported_at": "2026-09-03T08:56:24.204028Z"
       }
     },
     {
@@ -1397,7 +1397,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-13",
-      "time": "16:00",
+      "time": "18:00",
       "home_team_id": "hk_nitra",
       "away_team_id": "rogle_angelholm",
       "home_team_name": "HK Nitra",
@@ -1408,7 +1408,7 @@
         "provider": "chl",
         "external_id": "3051",
         "entity_id": "c152ad5172a4708274aabe7c",
-        "imported_at": "2026-09-02T07:51:01.401053Z"
+        "imported_at": "2026-09-03T08:56:24.204072Z"
       }
     },
     {
@@ -1419,7 +1419,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-13",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "frolunda_gothenburg",
       "away_team_id": "bordeaux_boxers",
       "home_team_name": "Frölunda Gothenburg",
@@ -1430,7 +1430,7 @@
         "provider": "chl",
         "external_id": "3052",
         "entity_id": "65eb2c0c7edabe7f5b229e87",
-        "imported_at": "2026-09-02T07:51:01.401087Z"
+        "imported_at": "2026-09-03T08:56:24.204112Z"
       }
     },
     {
@@ -1441,7 +1441,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-13",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "skelleftea_aik",
       "away_team_id": "red_bull_salzburg",
       "home_team_name": "Skellefteå AIK",
@@ -1452,7 +1452,7 @@
         "provider": "chl",
         "external_id": "3053",
         "entity_id": "94a430b5b1a8f81c4883aaa3",
-        "imported_at": "2026-09-02T07:51:01.401123Z"
+        "imported_at": "2026-09-03T08:56:24.204150Z"
       }
     },
     {
@@ -1463,7 +1463,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-14",
-      "time": "15:30",
+      "time": "17:30",
       "home_team_id": "saipa_lappeenranta",
       "away_team_id": "hc_pilsen",
       "home_team_name": "SaiPa Lappeenranta",
@@ -1474,7 +1474,7 @@
         "provider": "chl",
         "external_id": "3054",
         "entity_id": "c336c7d4add442a16df4339b",
-        "imported_at": "2026-09-02T07:51:01.401156Z"
+        "imported_at": "2026-09-03T08:56:24.204189Z"
       }
     },
     {
@@ -1485,7 +1485,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-14",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "herning_blue_fox",
       "away_team_id": "fribourg_gotteron",
       "home_team_name": "Herning Blue Fox",
@@ -1496,7 +1496,7 @@
         "provider": "chl",
         "external_id": "3055",
         "entity_id": "b7fbbd6dc824c2bafc1fe094",
-        "imported_at": "2026-09-02T07:51:01.401193Z"
+        "imported_at": "2026-09-03T08:56:24.204231Z"
       }
     },
     {
@@ -1507,7 +1507,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-14",
-      "time": "17:00",
+      "time": "19:00",
       "home_team_id": "storhamar_hamar",
       "away_team_id": "graz99ers",
       "home_team_name": "Storhamar Hamar",
@@ -1518,7 +1518,7 @@
         "provider": "chl",
         "external_id": "3056",
         "entity_id": "ea448218c25c364188e2ed1f",
-        "imported_at": "2026-09-02T07:51:01.401224Z"
+        "imported_at": "2026-09-03T08:56:24.204271Z"
       }
     },
     {
@@ -1529,7 +1529,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-14",
-      "time": "17:30",
+      "time": "19:30",
       "home_team_id": "eisbaren_berlin",
       "away_team_id": "kac_klagenfurt",
       "home_team_name": "Eisbären Berlin",
@@ -1540,7 +1540,7 @@
         "provider": "chl",
         "external_id": "3057",
         "entity_id": "ff32208ac0412c4aeb64a076",
-        "imported_at": "2026-09-02T07:51:01.401259Z"
+        "imported_at": "2026-09-03T08:56:24.204313Z"
       }
     },
     {
@@ -1551,7 +1551,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-14",
-      "time": "17:45",
+      "time": "19:45",
       "home_team_id": "hc_davos",
       "away_team_id": "bili_tygri_liberec",
       "home_team_name": "HC Davos",
@@ -1562,7 +1562,7 @@
         "provider": "chl",
         "external_id": "3058",
         "entity_id": "c61cc008e7a6f617b146c245",
-        "imported_at": "2026-09-02T07:51:01.401297Z"
+        "imported_at": "2026-09-03T08:56:24.204361Z"
       }
     },
     {
@@ -1573,7 +1573,7 @@
       "phase_label": "Regular Season",
       "matchday": 6,
       "date": "2026-10-14",
-      "time": "17:45",
+      "time": "19:45",
       "home_team_id": "geneve_servette",
       "away_team_id": "kolner_haie",
       "home_team_name": "Genève-Servette",
@@ -1584,9 +1584,9 @@
         "provider": "chl",
         "external_id": "3059",
         "entity_id": "5ed0449680b6681769378978",
-        "imported_at": "2026-09-02T07:51:01.401332Z"
+        "imported_at": "2026-09-03T08:56:24.204406Z"
       }
     }
   ],
-  "updated_at": "2026-09-02T07:51:01.406411Z"
+  "updated_at": "2026-09-03T08:56:24.207235Z"
 }

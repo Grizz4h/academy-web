@@ -68,7 +68,9 @@ Eigenständige Academy-App (React/HTML) als Subdomain, getrennt von MatchHub/Str
 **Prüfung:** Schaue die ersten 40 Zeilen von `backend/main.py` an. Wenn @app... vor `app = FastAPI()` steht, ist das der Fehler.
 
 ### Frontend starten: Immer build verwenden, nicht dev
-Für Produktion oder Tests: Immer `npm run build` im frontend-Ordner ausführen, dann `npm run preview` oder das gebaute dist/ über Server servieren. Dev-Modus (`npm run dev`) nur für Entwicklung.
+Für Produktion oder Tests: Im Frontend `npm run build` (Typecheck + Bundle) oder auf dem kleinen Host `npm run build:app`, dann `dist/` ausliefern. Dev-Modus (`npm run dev`) nur für Entwicklung.
+
+**Typecheck-Pflicht vor Deploy:** CI übernimmt das auf GitHub — siehe [`docs/ops/frontend-build-ci.md`](docs/ops/frontend-build-ci.md). Deploy nicht nur auf „Vite grün“ verlassen.
 
 ## Nächste Schritte (wenn du startest)
 - `npm create vite@latest` (oder `npx create-next-app`) im Frontend-Ordner anlegen

@@ -41,6 +41,8 @@ Cloudinary chl-prod/assets/teams/{externalId} → chl_logo_importer → frontend
 DEL-Overlap (Berlin, Ingolstadt, Mannheim, Haie, Bremerhaven) → reuse delTeamLogos
 ```
 
+Feed-Zeiten kommen als UTC (`…Z`). Importer speichert **Europe/Berlin** Wanduhr (`HH:MM`), analog DEL/DEL2. UI zeigt in der **Browser-Zeitzone** des Nutzers (Fallback Berlin).
+
 ## NHL
 
 Offizielle JSON-Feeds:
@@ -49,6 +51,12 @@ Offizielle JSON-Feeds:
 api-web.nhle.com/v1/schedule/{date} → NhlScheduleImporter → data/games/nhl_*.json → /api/games
 assets.nhle.com/logos/nhl/svg/{TRI}_light.svg → nhl_logo_importer → frontend/public/teams/nhl + nhlTeamLogos.json
 ```
+
+`startTimeUTC` → Europe/Berlin Wanduhr (wie CHL). UI zeigt die Uhrzeit in der Browser-Zeitzone des Nutzers (`Intl`), Fallback Berlin.
+
+## Spielzeiten (kanonisch)
+
+Alle Katalog-Zeiten (`date` + `HH:MM`) sind **Europe/Berlin**. Frontend: `gameTimeZone.ts` / `formatGameTimeLabel(..., { date })` → Anzeige in Viewer-TZ.
 
 ## U20 DNL
 

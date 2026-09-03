@@ -285,13 +285,16 @@ export function ManualSceneForm({
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
-        className="card"
         style={{
           width: 'min(560px, 100%)',
           margin: '0 auto',
           padding: '1.15rem 1.1rem 1.25rem',
           maxWidth: '100%',
           boxSizing: 'border-box',
+          background: 'linear-gradient(160deg, rgba(14,20,40,0.98) 0%, rgba(8,12,28,0.99) 100%)',
+          border: '1px solid rgba(81,145,162,0.28)',
+          borderRadius: '16px',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)',
         }}
       >
         <h3 style={{ margin: '0 0 0.35rem', fontSize: '1.2rem' }}>{title}</h3>
