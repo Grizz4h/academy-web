@@ -4,7 +4,7 @@
 
 | Absicherung | Status |
 |-------------|--------|
-| GitHub Actions Typecheck | ja — [`.github/workflows/frontend-ci.yml`](../../.github/workflows/frontend-ci.yml) |
+| GitHub Actions Typecheck | ja — [`.github/workflows/frontend-ci.yml`](../../.github/workflows/frontend-ci.yml) (Push/PR mit Frontend-Änderungen, jeder Branch) |
 | GitHub Actions Vite-Build | ja — nach erfolgreichem Typecheck |
 | Deploy auf dem Hetzner-Host | **manuell** (`npm run build` → `dist/` → Nginx) |
 | Automatischer Deploy aus CI | nein |
