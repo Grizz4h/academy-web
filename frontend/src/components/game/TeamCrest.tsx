@@ -3,8 +3,22 @@ import { resolveTeamLogo } from '../../data/teamLogos'
 import { resolveNationalTeamFlag } from '../../data/nationalTeamFlags'
 import { resolveTeamShortCode } from '../../data/teamShortCodes'
 import { getChlTeamFacts, getChlTeamFactsByName } from '../../data/chlTeamFacts'
+import { getDelTeamFacts, getDelTeamFactsByName } from '../../data/delTeamFacts'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
 import styles from './TeamCrest.module.css'
+
+/** Display shape for club-facts popover (CHL + DEL). */
+export type CrestTeamFacts = {
+  fullName: string
+  city?: string
+  founded?: number
+  arena?: string
+  arenaCapacity?: number
+  note?: string
+  country?: string
+  countryFlag?: string
+  league?: string
+}
 
 const CREST_HUES = [168, 186, 204, 18, 34, 262, 332, 142]
 
@@ -20,7 +34,7 @@ function crestLetters(name: string): string {
   return resolveTeamShortCode(name) || name.replace(/[^A-Za-zÄÖÜäöüß]/g, '').slice(0, 3).toUpperCase() || '?'
 }
 
-/** True for mouse / trackpad — CSS hover media. Not used to gate fact clicks. */
+/** True for mouse / trackpad — CSS hover media. Not used for club-facts gating. */
 export function useFinePointer(): boolean {
   const [fine, setFine] = useState(() => (
     typeof window !== 'undefined'
@@ -36,35 +50,73 @@ export function useFinePointer(): boolean {
   return fine
 }
 
-export function resolveTeamFacts(teamId: string | undefined, name: string) {
-  return (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name)
+export function leagueHasTeamFacts(league: string | null | undefined): league is 'CHL' | 'DEL' {
+  return league === 'CHL' || league === 'DEL'
+}
+
+/** Hard-separated catalogs: DEL never falls through to CHL (and vice versa). */
+export function resolveTeamFacts(
+  teamId: string | undefined,
+  name: string,
+  league?: string | null,
+): CrestTeamFacts | null {
+  if (league === 'DEL') {
+    return (teamId ? getDelTeamFacts(teamId) : null) || getDelTeamFactsByName(name)
+  }
+  if (league === 'CHL') {
+    return (teamId ? getChlTeamFacts(teamId) : null) || getChlTeamFactsByName(name)
+  }
+  return null
 }
 
 type TeamCrestProps = {
   name: string
   teamId?: string
   size?: 'sm' | 'md' | 'lg'
-  /** Enable club-facts popover (typically CHL). */
+  /** League catalog for facts (`CHL` / `DEL`). Required when showFacts is on. */
+  league?: string | null
+  /** Enable club-facts popover (CHL / DEL). */
   showFacts?: boolean
-  /** Controlled open from parent (second tap/click on tile). */
+  /**
+   * Controlled open from parent tile:
+   * 1st click = select · 2nd click on selected tile = open · again = close.
+   */
   factsOpen?: boolean
   onFactsOpenChange?: (open: boolean) => void
+  /**
+   * Element that owns the 1st/2nd click (the whole team tile).
+   * Used as popover anchor + outside-click safe area so tile clicks don't race-dismiss.
+   */
+  factsAnchorRef?: RefObject<HTMLElement | null>
 }
 
-function FactsPopover({ teamId, name }: { teamId?: string; name: string }) {
-  const facts = resolveTeamFacts(teamId, name)
+function FactsPopover({
+  teamId,
+  name,
+  league,
+}: {
+  teamId?: string
+  name: string
+  league?: string | null
+}) {
+  const facts = resolveTeamFacts(teamId, name, league)
   if (!facts) return null
+  const subtitle = [facts.country, facts.city].filter(Boolean).join(' · ')
   return (
-    <div style={{ minWidth: 220 }} data-popover-no-dismiss>
+    <div style={{ minWidth: 220 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.55rem' }}>
-        <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{facts.countryFlag}</span>
+        {facts.countryFlag ? (
+          <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{facts.countryFlag}</span>
+        ) : null}
         <div>
           <div style={{ fontWeight: 750, fontSize: '0.95rem', color: 'rgba(247,247,255,0.95)', lineHeight: 1.2 }}>
             {facts.fullName}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'rgba(143,211,223,0.9)', marginTop: '0.1rem' }}>
-            {facts.country}{facts.city ? ` · ${facts.city}` : ''}
-          </div>
+          {subtitle ? (
+            <div style={{ fontSize: '0.75rem', color: 'rgba(143,211,223,0.9)', marginTop: '0.1rem' }}>
+              {subtitle}
+            </div>
+          ) : null}
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.75rem', fontSize: '0.78rem', lineHeight: 1.4 }}>
@@ -114,47 +166,30 @@ export function TeamCrest({
   name,
   teamId,
   size = 'md',
+  league = null,
   showFacts = false,
   factsOpen,
   onFactsOpenChange,
+  factsAnchorRef,
 }: TeamCrestProps) {
   const logo = resolveTeamLogo(teamId) || resolveTeamLogo(name)
   const flag = resolveNationalTeamFlag(teamId) || resolveNationalTeamFlag(name)
   const [logoFailed, setLogoFailed] = useState(false)
   const [internalOpen, setInternalOpen] = useState(false)
-  const [hoverOpen, setHoverOpen] = useState(false)
-  const leaveTimer = useRef<number | null>(null)
-  const triggerRef = useRef<HTMLSpanElement | null>(null)
+  const fallbackAnchorRef = useRef<HTMLSpanElement | null>(null)
   const letters = crestLetters(name)
   const showLogo = Boolean(logo) && !logoFailed
-  const hasFacts = Boolean(resolveTeamFacts(teamId, name))
+  const hasFacts = Boolean(resolveTeamFacts(teamId, name, league))
   const factsEnabled = showFacts && hasFacts
 
   const controlled = typeof factsOpen === 'boolean'
-  const pinnedOpen = controlled ? Boolean(factsOpen) : internalOpen
-  const open = factsEnabled && (hoverOpen || pinnedOpen)
+  const open = factsEnabled && (controlled ? Boolean(factsOpen) : internalOpen)
+  const anchorRef = (factsAnchorRef || fallbackAnchorRef) as RefObject<HTMLElement | null>
 
-  const setPinnedOpen = (next: boolean) => {
+  const setOpen = (next: boolean) => {
     if (!controlled) setInternalOpen(next)
     onFactsOpenChange?.(next)
   }
-
-  const clearLeaveTimer = () => {
-    if (leaveTimer.current != null) {
-      window.clearTimeout(leaveTimer.current)
-      leaveTimer.current = null
-    }
-  }
-
-  const dismissAll = () => {
-    clearLeaveTimer()
-    setHoverOpen(false)
-    setPinnedOpen(false)
-  }
-
-  useEffect(() => () => {
-    clearLeaveTimer()
-  }, [])
 
   const inner = flag ? (
     <span
@@ -184,40 +219,29 @@ export function TeamCrest({
 
   if (!factsEnabled) return inner
 
-  // Clicks pass through to the parent tile (1st = select, 2nd = pin facts).
-  // Desktop also opens on hover over the crest.
+  // Parent tile owns 1st/2nd click. Crest only hosts the popover.
+  // Uncontrolled (e.g. SessionGameInfo): crest click toggles.
   return (
     <span
-      ref={triggerRef}
+      ref={factsAnchorRef ? undefined : fallbackAnchorRef}
       className={styles.factsHost}
       aria-label={`${name}: Club-Infos`}
-      onMouseEnter={() => {
-        clearLeaveTimer()
-        setHoverOpen(true)
-      }}
-      onMouseLeave={() => {
-        leaveTimer.current = window.setTimeout(() => setHoverOpen(false), 220)
+      onClick={controlled ? undefined : (event) => {
+        event.stopPropagation()
+        setOpen(!open)
       }}
     >
       {inner}
       {open ? (
         <AnchoredPopover
           open={open}
-          anchorRef={triggerRef as RefObject<HTMLElement | null>}
+          anchorRef={anchorRef}
           ariaLabel={`${name} Club-Infos`}
           preferredWidth={260}
-          dismissOnContentClick={false}
-          onDismiss={dismissAll}
+          dismissOnContentClick
+          onDismiss={() => setOpen(false)}
         >
-          <div
-            data-popover-no-dismiss
-            onMouseEnter={clearLeaveTimer}
-            onMouseLeave={() => {
-              leaveTimer.current = window.setTimeout(() => setHoverOpen(false), 220)
-            }}
-          >
-            <FactsPopover teamId={teamId} name={name} />
-          </div>
+          <FactsPopover teamId={teamId} name={name} league={league} />
         </AnchoredPopover>
       ) : null}
     </span>

@@ -383,7 +383,12 @@ export default function SessionCard({
                 <SceneMarkerButton
                   session={session}
                   currentPhase="P1"
-                  activeDrill={session.drill_id ? { id: session.drill_id, title: session.drill_id } as any : null}
+                  activeDrill={session.drill_id ? {
+                    id: session.drill_id,
+                    title: session.drills?.find((drill) => drill.id === session.drill_id)?.title
+                      || session.drills?.[0]?.title
+                      || session.drill_id,
+                  } as any : null}
                   phaseEditable
                 />
               </div>

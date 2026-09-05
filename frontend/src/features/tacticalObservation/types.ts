@@ -81,6 +81,7 @@ export type TacticalObservation = {
   supportContinuity?: string
   optionContinuity?: string
   structureState?: string
+  structureCues?: string
   period?: number | 'OT' | string
   gameClock?: string
   note?: string

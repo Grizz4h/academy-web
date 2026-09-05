@@ -242,7 +242,7 @@
     "badge": "TRACK A2",
     "title": "Struktur & Optionen lesen",
     "subtitle": "Spielsituation als Zusammenspiel: Struktur → Optionen → Entscheidung → Raum/Zeit → Entwicklung",
-    "overview": "<strong>A2</strong> wendet den A1-Blick auf konkrete Spielsituationen an: Du liest Struktur, vorhandene Optionen, die genutzte Aktion, dann Raum und Zeit als Bedingungen — und verfolgst, was mit der Struktur nach der Aktion passiert. Keine Breakout-Analyse, kein Umschalten, kein Qualitätsurteil.",
+    "overview": "<strong>A2</strong> wendet den A1-Blick auf konkrete Spielsituationen an: Du liest Struktur, vorhandene Optionen, die genutzte Aktion, dann Raum und Zeit als Bedingungen — und verfolgst in D5, wie sich die Struktur über einen erkennbaren Spielschritt hinweg entwickelt. Keine Breakout-Analyse, kein Umschalten, kein Qualitätsurteil.",
     "sections": [
       {
         "id": "wasIstA2",
@@ -378,17 +378,22 @@
       },
       {
         "id": "strukturentwicklung",
-        "title": "Strukturentwicklung über die Aktion hinweg",
+        "title": "Strukturentwicklung über einen Spielschritt hinweg",
         "content": [
           {
             "type": "paragraph",
-            "text": "Bleiben Beziehungen erhalten? Bleiben Optionen sichtbar? Entwickelt sich die Struktur weiter, verändert sie sich oder zerfällt sie?"
+            "text": "In A2_D5 meinst du mit <strong>Aktion</strong> einen klar erkennbaren Spielschritt. Vergleiche die Struktur unmittelbar davor und danach. Du musst die Aktion selbst noch nicht benennen oder bewerten — sie ist nur der zeitliche Bezugspunkt für Vorher ↔ Nachher."
+          },
+          {
+            "type": "paragraph",
+            "text": "Zwei Denkoperationen: <strong>Wie entwickelt sich die Struktur?</strong> (bleibt stabil / verändert sich / zerfällt / unklar) — und <strong>Woran erkennst du das?</strong> (sichtbare Hinweise wie Unterstützung, Optionen, Beziehungen, Abstände)."
           },
           {
             "type": "list",
             "items": [
               "Stabil / verändert / zerfällt sind Wahrnehmungen, keine Qualitätsnoten",
-              "Puckgewinn oder Puckverlust bewertest du hier nicht — du beobachtest nur Struktur"
+              "Die Hinweise sind keine zweite Bewertung derselben Situation",
+              "Puckgewinn oder Puckverlust bewertest du hier nicht — du beobachtest nur Strukturentwicklung"
             ]
           },
           {

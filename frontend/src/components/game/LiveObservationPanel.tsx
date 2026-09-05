@@ -27,7 +27,7 @@ import { UiButton, UiChip, UiSheet, UiSheetActions, UiSheetChoice, UiSheetChoice
 import GameContextSummary from './GameContextSummary'
 import GameStatsDevPanel from './GameStatsDevPanel'
 import { SpoilerProtectionToggle } from './SpoilerProtectionToggle'
-import { TeamCrest, resolveTeamFacts } from './TeamCrest'
+import { TeamCrest, resolveTeamFacts, leagueHasTeamFacts } from './TeamCrest'
 import setupStyles from '../../pages/SessionSetup.module.css'
 import styles from './LiveObservationPanel.module.css'
 import { MatchupVs } from './MatchupVs'
@@ -166,8 +166,10 @@ export function LiveObservationPanel({
   const [browseMatchday, setBrowseMatchday] = useState<number | 'other' | null>(null)
   const [hideSpoilers] = useSpoilerProtection()
   const [teamPicker, setTeamPicker] = useState<TeamPicker>(null)
-  /** Second tap/click on already-observed CHL tile pins club facts. */
+  /** Second click/tap on already-observed CHL tile opens club facts. */
   const [factsSide, setFactsSide] = useState<'home' | 'away' | null>(null)
+  const homeTileRef = useRef<HTMLDivElement | null>(null)
+  const awayTileRef = useRef<HTMLDivElement | null>(null)
   const matchdayRowRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -587,6 +589,7 @@ export function LiveObservationPanel({
         <div className={styles.arena} key={`${teamHome}-${teamAway}-${selectedGame?.id || 'open'}`}>
           <div className={styles.tileWrap}>
             <div
+              ref={homeTileRef}
               role="button"
               tabIndex={(!league || (catalog.useCatalogFlow && !teamHome)) ? -1 : 0}
               aria-disabled={!league || (catalog.useCatalogFlow && !teamHome) || undefined}
@@ -602,15 +605,14 @@ export function LiveObservationPanel({
                   return
                 }
                 if (!teamHome) return
-                // 1st interaction = select · 2nd on same team (with facts) = pin info popover
-                if (
-                  observedTeam === teamHome
-                  && league === 'CHL'
-                  && resolveTeamFacts(selectedGame?.home_team_id, teamHome)
-                ) {
+                const canFacts = leagueHasTeamFacts(league)
+                  && Boolean(resolveTeamFacts(selectedGame?.home_team_id, teamHome, league))
+                // Already selected + has facts → 2nd click toggles info (same on desktop & mobile)
+                if (observedTeam === teamHome && canFacts) {
                   setFactsSide((prev) => (prev === 'home' ? null : 'home'))
                   return
                 }
+                // Other tile / first select: close any open popup, then select
                 setFactsSide(null)
                 onChange({ observedTeam: teamHome })
               }}
@@ -626,9 +628,11 @@ export function LiveObservationPanel({
                   name={teamHome}
                   teamId={selectedGame?.home_team_id}
                   size="lg"
-                  showFacts={league === 'CHL'}
+                  league={league}
+                  showFacts={leagueHasTeamFacts(league)}
                   factsOpen={factsSide === 'home'}
                   onFactsOpenChange={(open) => setFactsSide(open ? 'home' : null)}
+                  factsAnchorRef={homeTileRef}
                 />
               ) : <span className={styles.crestGhost}>?</span>}
               <span className={styles.tileName}>
@@ -642,8 +646,8 @@ export function LiveObservationPanel({
               {teamHome ? (
                 <span className={styles.observeCue}>
                   {observedTeam === teamHome
-                    ? (league === 'CHL' && resolveTeamFacts(selectedGame?.home_team_id, teamHome)
-                      ? (factsSide === 'home' ? 'Infos · tippen schließt' : 'Beobachtest du · tippen: Infos')
+                    ? (leagueHasTeamFacts(league) && resolveTeamFacts(selectedGame?.home_team_id, teamHome, league)
+                      ? (factsSide === 'home' ? 'Infos offen · tippen schließt' : 'Beobachtest du · tippen: Infos')
                       : 'Beobachtest du')
                     : 'Tippen: beobachten'}
                 </span>
@@ -662,6 +666,7 @@ export function LiveObservationPanel({
 
           <div className={styles.tileWrap}>
             <div
+              ref={awayTileRef}
               role="button"
               tabIndex={(!league || (catalog.useCatalogFlow && !teamAway)) ? -1 : 0}
               aria-disabled={!league || (catalog.useCatalogFlow && !teamAway) || undefined}
@@ -677,11 +682,9 @@ export function LiveObservationPanel({
                   return
                 }
                 if (!teamAway) return
-                if (
-                  observedTeam === teamAway
-                  && league === 'CHL'
-                  && resolveTeamFacts(selectedGame?.away_team_id, teamAway)
-                ) {
+                const canFacts = leagueHasTeamFacts(league)
+                  && Boolean(resolveTeamFacts(selectedGame?.away_team_id, teamAway, league))
+                if (observedTeam === teamAway && canFacts) {
                   setFactsSide((prev) => (prev === 'away' ? null : 'away'))
                   return
                 }
@@ -700,9 +703,11 @@ export function LiveObservationPanel({
                   name={teamAway}
                   teamId={selectedGame?.away_team_id}
                   size="lg"
-                  showFacts={league === 'CHL'}
+                  league={league}
+                  showFacts={leagueHasTeamFacts(league)}
                   factsOpen={factsSide === 'away'}
                   onFactsOpenChange={(open) => setFactsSide(open ? 'away' : null)}
+                  factsAnchorRef={awayTileRef}
                 />
               ) : <span className={styles.crestGhost}>?</span>}
               <span className={styles.tileName}>
@@ -716,8 +721,8 @@ export function LiveObservationPanel({
               {teamAway ? (
                 <span className={styles.observeCue}>
                   {observedTeam === teamAway
-                    ? (league === 'CHL' && resolveTeamFacts(selectedGame?.away_team_id, teamAway)
-                      ? (factsSide === 'away' ? 'Infos · tippen schließt' : 'Beobachtest du · tippen: Infos')
+                    ? (leagueHasTeamFacts(league) && resolveTeamFacts(selectedGame?.away_team_id, teamAway, league)
+                      ? (factsSide === 'away' ? 'Infos offen · tippen schließt' : 'Beobachtest du · tippen: Infos')
                       : 'Beobachtest du')
                     : 'Tippen: beobachten'}
                 </span>

@@ -90,6 +90,7 @@ const LEGACY_FIELD_KEYS = [
   'supportContinuity',
   'optionContinuity',
   'structureState',
+  'structureCues',
 ] as const
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -554,9 +555,9 @@ const LAYER_BLUEPRINTS: LayerBlueprint[] = [
     defaultOptions: [
       {
         id: 'stable',
-        label: 'stabil',
-        summaryLabel: 'Stabil',
-        hint: 'Die Struktur bleibt über die Aktion hinweg lesbar erhalten.',
+        label: 'bleibt stabil',
+        summaryLabel: 'Bleibt stabil',
+        hint: 'Die Struktur bleibt über den Spielschritt hinweg lesbar erhalten.',
       },
       {
         id: 'changing',
@@ -575,7 +576,44 @@ const LAYER_BLUEPRINTS: LayerBlueprint[] = [
     defaultPrompt: 'Wie entwickelt sich die Struktur?',
     defaultResultTitle: 'Entwicklung',
     defaultGuideTitle: 'Strukturentwicklung',
-    defaultHint: 'Du verfolgst die Struktur über die Aktion hinweg — ohne sie als gut oder schlecht zu bewerten.',
+    defaultHint:
+      'Mit Aktion meinen wir hier einen klar erkennbaren Spielschritt. Vergleiche die Struktur unmittelbar davor und danach. Du musst die Aktion selbst noch nicht benennen oder bewerten.',
+  },
+  {
+    id: 'structure_cues',
+    fieldKey: 'structureCues',
+    optionsKey: 'structureCuesOptions',
+    promptKey: 'structureCuesPrompt',
+    resultTitleKey: 'structureCuesTitle',
+    defaultOptions: [
+      {
+        id: 'support_shift',
+        label: 'Unterstützung bleibt erhalten oder verändert sich',
+        summaryLabel: 'Unterstützung',
+        hint: 'Sichtbarer Hinweis: Wie sich Unterstützung über den Spielschritt hinweg liest.',
+      },
+      {
+        id: 'options_shift',
+        label: 'Optionen bleiben vorhanden oder werden weniger',
+        summaryLabel: 'Optionen',
+        hint: 'Sichtbarer Hinweis: Ob Handlungsmöglichkeiten lesbar bleiben oder abnehmen.',
+      },
+      {
+        id: 'relations_shift',
+        label: 'Beziehungen zwischen Spielern verändern sich',
+        summaryLabel: 'Beziehungen',
+        hint: 'Sichtbarer Hinweis: Verbindungen zwischen Spielern verschieben sich.',
+      },
+      {
+        id: 'spacing_shift',
+        label: 'Abstände verändern sich',
+        summaryLabel: 'Abstände',
+        hint: 'Sichtbarer Hinweis: Spacing wird enger, weiter oder unklarer.',
+      },
+      { id: 'unclear', label: 'Unklar' },
+    ],
+    defaultPrompt: 'Woran erkennst du das?',
+    defaultResultTitle: 'Hinweise',
   },
 ]
 

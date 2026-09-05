@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '../api'
-import { TeamCrest } from '../components/game/TeamCrest'
+import { TeamCrest, leagueHasTeamFacts } from '../components/game/TeamCrest'
 import { MatchupVs } from '../components/game/MatchupVs'
 import arenaStyles from '../components/game/MatchupArena.module.css'
 import { UiPill } from '../components/ui'
@@ -35,6 +35,7 @@ function TeamColumn({
   crestSize,
   side,
   showFacts,
+  league,
 }: {
   name: string
   teamId?: string
@@ -42,6 +43,7 @@ function TeamColumn({
   crestSize: 'md' | 'lg'
   side: 'home' | 'away'
   showFacts?: boolean
+  league?: string | null
 }) {
   return (
     <div
@@ -52,7 +54,7 @@ function TeamColumn({
       ].filter(Boolean).join(' ')}
     >
       <span className={styles.crestSlot}>
-        <TeamCrest name={name} teamId={teamId} size={crestSize} showFacts={showFacts} />
+        <TeamCrest name={name} teamId={teamId} size={crestSize} league={league} showFacts={showFacts} />
       </span>
       <p className={[styles.teamName, observed ? styles.teamNameObserved : ''].filter(Boolean).join(' ')}>
         {name}
@@ -167,7 +169,8 @@ export function SessionGameInfo({
                 observed={observed === home}
                 crestSize={crestSize}
                 side="home"
-                showFacts={game.league === 'CHL'}
+                league={game.league}
+                showFacts={leagueHasTeamFacts(game.league)}
               />
               <div className={arenaStyles.vsRail}>
                 <MatchupVs variant="board" />
@@ -178,7 +181,8 @@ export function SessionGameInfo({
                 observed={observed === away}
                 crestSize={crestSize}
                 side="away"
-                showFacts={game.league === 'CHL'}
+                league={game.league}
+                showFacts={leagueHasTeamFacts(game.league)}
               />
             </div>
             <SessionNote note={note} onNoteChange={onNoteChange} className={styles.noteAside} />

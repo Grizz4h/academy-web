@@ -126,8 +126,48 @@
 }
 
 .moduleCardPendingGame {
-  border-color: rgba(52, 211, 153, 0.45) !important;
-  box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.12), 0 10px 28px rgba(16, 185, 129, 0.08);
+  border-color: rgba(52, 211, 153, 0.78) !important;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(52, 211, 153, 0.18), transparent 62%),
+    rgba(8, 32, 28, 0.55) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(52, 211, 153, 0.28),
+    0 0 0 1px rgba(52, 211, 153, 0.22),
+    0 12px 32px rgba(16, 185, 129, 0.16) !important;
+  /* Glow on ::after — Card.quiet uses !important on border/shadow and kills
+     property animations on desktop; mobile flat cards still showed filter. */
+  isolation: isolate;
+}
+
+.moduleCardPendingGame::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  border: 2px solid rgba(110, 231, 183, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(52, 211, 153, 0.35),
+    0 0 22px rgba(52, 211, 153, 0.55),
+    0 0 40px rgba(16, 185, 129, 0.28);
+  animation: pendingGameAura 2s ease-in-out infinite;
+}
+
+@keyframes pendingGameAura {
+  0%, 100% {
+    opacity: 0.38;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moduleCardPendingGame::after {
+    animation: none;
+    opacity: 0.75;
+  }
 }
 
 .pendingGamePill {
@@ -144,6 +184,7 @@
   margin: 0;
   flex: 1 1 auto;
   min-width: 0;
+  padding-right: 0.15rem;
 }
 
 .moduleTop {
@@ -151,6 +192,18 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.moduleActions {
+  margin: 0;
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .moduleText {
@@ -190,16 +243,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.55);
-}
-
-.moduleActions {
-  margin: 0;
-  display: flex;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  flex: 0 0 auto;
-  justify-content: flex-end;
-  align-items: center;
 }
 
 @media (max-width: 768px) {

@@ -249,6 +249,20 @@ export default function RingAbout() {
     return map
   }, [curriculum])
 
+  const drillTitleById = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const track of curriculum?.tracks || []) {
+      for (const module of track.modules || []) {
+        for (const drill of module.drills || []) {
+          if (drill.id && drill.title) {
+            map.set(drill.id, drill.title)
+          }
+        }
+      }
+    }
+    return map
+  }, [curriculum])
+
   const sessionFilter = (searchParams.get('session_id') || '').trim()
 
   const { data: sessionsData } = useQuery({
@@ -1345,6 +1359,7 @@ export default function RingAbout() {
                     scene={scene}
                     observedTeam={getObservedTeamForScene(scene) || 'Beobachtetes Team nicht hinterlegt'}
                     drillSceneSlugById={drillSceneSlugById}
+                    drillTitleById={drillTitleById}
                     onDelete={handleDelete}
                     onEdit={handleEditOpen}
                     onEnrich={handleEnrichOpen}
@@ -1728,10 +1743,11 @@ function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onC
   )
 }
 
-function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false, selectionMode = false, selected = false, onToggleSelect }: {
+function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false, selectionMode = false, selected = false, onToggleSelect }: {
   scene: SceneMarker
   observedTeam: string
   drillSceneSlugById: Map<string, string>
+  drillTitleById: Map<string, string>
   onDelete: (id: string) => void
   onEdit: (scene: SceneMarker) => void
   onEnrich: (scene: SceneMarker) => void
@@ -1753,6 +1769,14 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
   const metadataStatus = getSceneMetadataStatus(scene)
   const drillId = source.drill_id || scene.drill_id || null
   const drillSceneSlug = drillId ? drillSceneSlugById.get(drillId) : undefined
+  const catalogDrillTitle = drillId ? drillTitleById.get(drillId) : undefined
+  const storedDrillTitle = scene.drill_title?.trim() || ''
+  // History-marker bug used to persist drill_id as title (e.g. "A1_D4").
+  const drillTitle = (
+    storedDrillTitle && storedDrillTitle !== drillId
+      ? storedDrillTitle
+      : catalogDrillTitle || storedDrillTitle || null
+  )
   const assetNameResult = generateSceneAssetNameFromScene(scene, {
     sceneSlug: drillSceneSlug || null,
   })
@@ -2149,11 +2173,11 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, onDelete, onEdit, 
               {drillSuffix}
             </span>
           )}
-          {scene.drill_title && (
+          {drillTitle ? (
             <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-              {scene.drill_title}
+              {drillTitle}
             </span>
-          )}
+          ) : null}
         </div>
       )}
 

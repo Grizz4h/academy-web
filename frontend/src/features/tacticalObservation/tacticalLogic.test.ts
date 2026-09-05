@@ -346,10 +346,16 @@ assert.ok(a2d5.didactics.observation_guide.ignore.some((item: string) => item.in
 assert.equal(JSON.stringify(a2d5).toLowerCase().includes('strukturqualität'), false)
 
 const d5Cfg = resolveTacticalObservationConfig(a2d5.config)
-assert.equal(d5Cfg.layers.map((layer) => layer.id).join(','), 'support_continuity,option_continuity,structure_state')
-assert.equal(d5Cfg.layers[0].options.map((option) => option.id).join(','), 'maintained,partial,lost,unclear')
-assert.equal(d5Cfg.layers[1].options.map((option) => option.id).join(','), 'multiple_remain,one_remains,few_options,unclear')
-assert.equal(d5Cfg.layers[2].options.map((option) => option.id).join(','), 'stable,changing,breaking_down,unclear')
+assert.equal(d5Cfg.layers.map((layer) => layer.id).join(','), 'structure_state,structure_cues')
+assert.equal(d5Cfg.layers[0].options.map((option) => option.id).join(','), 'stable,changing,breaking_down,unclear')
+assert.equal(d5Cfg.layers[1].multiSelect, true)
+assert.equal(
+  d5Cfg.layers[1].options.map((option) => option.id).join(','),
+  'support_shift,options_shift,relations_shift,spacing_shift,unclear',
+)
+assert.ok(/Spielschritt/i.test(a2d5.config.coreHint))
+assert.ok(/noch nicht benennen/i.test(a2d5.config.coreHint))
+assert.ok(!/support_continuity|option_continuity/.test(d5Cfg.layers.map((layer) => layer.id).join(',')))
 assert.equal(d5Cfg.logsKey, 'tactical_structure_dev_observations')
 assert.equal(canEvaluateObservations(2, d5Cfg.minObservations), false)
 assert.equal(canEvaluateObservations(3, d5Cfg.minObservations), true)
@@ -363,15 +369,13 @@ assert.equal(findCompletedTacticalAnswers(d5Cfg, d3Completed, { drafts: { P1: d3
 assert.equal(findCompletedTacticalAnswers(d5Cfg, d4Completed, { drafts: { P1: d4Completed }, checkins: [] }), null)
 
 const d5Unclear = draftToObservation({
-  supportContinuity: 'unclear',
-  optionContinuity: 'unclear',
   structureState: 'unclear',
+  structureCues: 'unclear',
 }, d5Cfg, 0)
 assert.ok(d5Unclear)
 const d5Observation = draftToObservation({
-  supportContinuity: 'maintained',
-  optionContinuity: 'multiple_remain',
   structureState: 'stable',
+  structureCues: 'support_shift,options_shift',
 }, d5Cfg, 0)
 assert.ok(d5Observation)
 const d5Completed = {

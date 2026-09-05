@@ -1896,31 +1896,34 @@
               "id": "A2_D5",
               "title": "Strukturentwicklung erkennen",
               "drill_type": "tactical_observation",
-              "description": "Erkenne, was mit einer Struktur nach der Aktion passiert. 3–6 kurze Situationen — ohne die Struktur zu bewerten.",
+              "description": "Erkenne, wie sich eine Struktur über einen erkennbaren Spielschritt hinweg entwickelt. 3–6 kurze Situationen — ohne die Struktur oder die Aktion zu bewerten.",
               "didactics": {
-                "explanation": "Du kannst aus A2_D1–D4 Struktur, Optionen, Entscheidungen und Bedingungen lesen. Jetzt verfolgst du die Struktur über die Aktion hinweg.\n\nBleiben Beziehungen erhalten? Bleiben Optionen sichtbar? Entwickelt sich die Struktur weiter, verändert sie sich oder zerfällt sie? Du beobachtest — ohne zu urteilen.",
+                "explanation": "Du kannst aus A2_D1–D4 Struktur, Optionen, Entscheidungen und Bedingungen lesen. Jetzt verfolgst du die Struktur über einen erkennbaren Spielschritt hinweg.\n\nMit Aktion meinen wir hier einen klar erkennbaren Spielschritt. Vergleiche die Struktur unmittelbar davor und danach. Du musst die Aktion selbst noch nicht benennen oder bewerten.\n\nDie Aktion ist nur der zeitliche Bezugspunkt für Vorher ↔ Nachher. Du benennst sie nicht als Pass, Carry, Dump oder Neuaufbau und bewertest sie nicht. Du beobachtest lediglich, wie sich die vorhandene Struktur über diesen Spielschritt hinweg entwickelt.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Bleibt die Unterstützung erhalten? (erhalten, teilweise, verliert sich, unklar)",
-                    "Bleiben Optionen vorhanden? (mehrere, eine, wenige, unklar)",
-                    "Wie entwickelt sich die Struktur: stabil, verändert sich, zerfällt, unklar?"
+                    "Wie entwickelt sich die Struktur: bleibt stabil, verändert sich, zerfällt, unklar?",
+                    "Woran erkennst du das? (Unterstützung, Optionen, Beziehungen, Abstände — Mehrfachauswahl möglich)"
                   ],
                   "how_to_decide": [
-                    "Vergleiche die Struktur vor und nach der Aktion",
-                    "Frage: Was passiert mit dieser Struktur? — nicht: War die Aktion richtig?",
+                    "Wähle einen klar erkennbaren Spielschritt als Bezugspunkt",
+                    "Vergleiche die Struktur unmittelbar davor und unmittelbar danach",
+                    "Zuerst die Entwicklung wählen — danach die sichtbaren Hinweise dafür",
+                    "Die Hinweise sind keine zweite Bewertung derselben Situation",
                     "Stabil / verändert / zerfällt sind Wahrnehmungen, keine Qualitätsnoten",
                     "Unklar ist eine vollwertige Antwort"
                   ],
                   "ignore": [
                     "gute oder schlechte Struktur",
                     "richtige oder falsche Entscheidung",
+                    "die Aktion benennen oder kategorisieren (Pass / Carry / Dump / Neuaufbau)",
                     "Coaching und Alternativen",
                     "Raumgefühl als Qualitätsurteil (offen/neutral/eng)",
                     "Umschalten, Tempo und Backchecking als eigene Analyse (das kommt in A3)",
-                    "Puckgewinn/Puckverlust bewerten — hier nur Strukturentwicklung beobachten"
+                    "Puckgewinn/Puckverlust bewerten — hier nur Strukturentwicklung beobachten",
+                    "Ursache-Wirkung oder „die Aktion erzeugt die Struktur“"
                   ]
                 },
-                "learning_hint": "Du erkennst jetzt, wie sich eine Struktur über eine Aktion hinweg entwickelt. Ein Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen. Als Nächstes beobachtest du in A3 Umschaltmomente: wann die Situation kippt und was die Spieler danach tun – noch ohne das Umschalten zu bewerten."
+                "learning_hint": "Du erkennst jetzt, wie sich eine Struktur über einen erkennbaren Spielschritt hinweg entwickelt. Ein Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen. Als Nächstes beobachtest du in A3 Umschaltmomente: wann die Situation kippt und was die Spieler danach tun – noch ohne das Umschalten zu bewerten."
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -1931,7 +1934,7 @@
                       "structureState": "stable"
                     },
                     "questions": [
-                      "Woran hast du erkannt, dass die Struktur über die Aktion hinweg lesbar blieb?"
+                      "Woran hast du erkannt, dass die Struktur über den Spielschritt hinweg lesbar blieb?"
                     ],
                     "hint": "Stabil heißt: die Struktur bleibt lesbar — nicht „gut“."
                   },
@@ -1955,12 +1958,12 @@
                   },
                   {
                     "when": {
-                      "supportContinuity": "maintained"
+                      "structureState": "unclear"
                     },
                     "questions": [
-                      "Welche Beziehungen oder Angebote blieben nach der Aktion anspielbar?"
+                      "Was hat die Entwicklung unscharf gemacht — Tempo, Nähe oder zu viele Bewegungen?"
                     ],
-                    "hint": "Unterstützung bleibt erhalten heißt: Beziehungen weiterverfolgen."
+                    "hint": "Unklar ist erlaubt. Lieber unklar als künstlich entscheiden."
                   }
                 ]
               },
@@ -1969,14 +1972,16 @@
                 "situationLabel": "Spielsituation",
                 "supportsUnclear": true,
                 "observationLayers": [
-                  "support_continuity",
-                  "option_continuity",
-                  "structure_state"
+                  "structure_state",
+                  "structure_cues"
                 ],
-                "whyThisDrill": "A2_D1–D4 haben Struktur, Optionen, Entscheidungen und Bedingungen gezeigt. Jetzt: was passiert mit dieser Struktur nach der Aktion?",
-                "decisionRule": "Erkenne Strukturentwicklung — nicht, ob die Struktur gut oder die Entscheidung richtig war.",
-                "coreHint": "Du verfolgst Beziehungen und Optionen über mehrere Momente. Du bewertest nicht und liest noch kein Umschalten.",
-                "handoffText": "Du erkennst jetzt, wie sich eine Struktur über eine Aktion hinweg entwickelt. Ein Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen. Als Nächstes beobachtest du in A3 Umschaltmomente: wann die Situation kippt und was die Spieler danach tun – noch ohne das Umschalten zu bewerten.",
+                "multiSelectLayers": [
+                  "structure_cues"
+                ],
+                "whyThisDrill": "A2_D1–D4 haben Struktur, Optionen, Entscheidungen und Bedingungen gezeigt. Jetzt: Wie entwickelt sich die Struktur über einen erkennbaren Spielschritt hinweg?",
+                "decisionRule": "Erkenne Strukturentwicklung — nicht, ob die Struktur gut oder die Aktion richtig war.",
+                "coreHint": "Mit Aktion meinen wir hier einen klar erkennbaren Spielschritt. Vergleiche die Struktur unmittelbar davor und danach. Du musst die Aktion selbst noch nicht benennen oder bewerten.",
+                "handoffText": "Du erkennst jetzt, wie sich eine Struktur über einen erkennbaren Spielschritt hinweg entwickelt. Ein Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen. Als Nächstes beobachtest du in A3 Umschaltmomente: wann die Situation kippt und was die Spieler danach tun – noch ohne das Umschalten zu bewerten.",
                 "collectEyebrow": "Strukturentwicklung erkennen",
                 "reflectEyebrow": "Struktur verfolgen",
                 "scanButtonLabel": "+ Situation",
@@ -1987,11 +1992,13 @@
                 "varietyLayerId": "structure_state",
                 "varietyFallback": "Dieselbe Situation kann strukturell stabil bleiben oder sich verändern.",
                 "guideLayerId": "structure_state",
-                "patternPrompt": "Woran hast du erkannt, dass die Struktur erhalten geblieben ist?",
-                "patternRequiredMessage": "Bitte beantworte, woran du erkannt hast, dass die Struktur erhalten geblieben ist.",
+                "structureStateHint": "Mit Aktion meinen wir hier einen klar erkennbaren Spielschritt. Vergleiche die Struktur unmittelbar davor und danach. Du musst die Aktion selbst noch nicht benennen oder bewerten.",
+                "structureStateGuideTitle": "Strukturentwicklung",
+                "patternPrompt": "Woran hast du die Strukturentwicklung am leichtesten erkannt?",
+                "patternRequiredMessage": "Bitte beantworte, woran du die Strukturentwicklung erkannt hast.",
                 "closingNoteLabel": "Notiz (optional)",
                 "closingNotePlaceholder": "Optional. Ohne zu bewerten, ob die Struktur gut oder schlecht war.",
-                "incompleteObservationMessage": "Bitte wähle für jede Situation Unterstützung, Optionen und Entwicklung.",
+                "incompleteObservationMessage": "Bitte wähle für jede Situation die Entwicklung und woran du das erkennst.",
                 "minObservations": 3,
                 "recommendedObservations": 5,
                 "maxObservations": 6,
@@ -2008,67 +2015,16 @@
                   "Prüfe, ob der Nutzer Veränderungen einer Struktur wahrnimmt.",
                   "Trenne Beobachtung von Bewertung.",
                   "Keine Aussage treffen, ob eine Struktur gut oder schlecht ist.",
-                  "Hilf dem Nutzer Beziehungen und Optionen über mehrere Momente zu verfolgen.",
+                  "Die Aktion ist nur Bezugspunkt — nicht benennen oder bewerten lassen.",
+                  "Hilf dem Nutzer, sichtbare Hinweise (Unterstützung, Optionen, Beziehungen, Abstände) von der Entwicklungsbeobachtung zu trennen.",
                   "Bereite den Übergang zu Umschalten und Dynamik in A3 vor."
                 ],
-                "supportContinuityOptions": [
-                  {
-                    "id": "maintained",
-                    "label": "bleibt erhalten",
-                    "summaryLabel": "Bleibt erhalten",
-                    "hint": "Beziehungen und Unterstützung bleiben nach der Aktion lesbar."
-                  },
-                  {
-                    "id": "partial",
-                    "label": "teilweise erhalten",
-                    "summaryLabel": "Teilweise erhalten",
-                    "hint": "Ein Teil der Unterstützung bleibt, ein Teil verändert sich."
-                  },
-                  {
-                    "id": "lost",
-                    "label": "verliert sich",
-                    "summaryLabel": "Verliert sich",
-                    "hint": "Die vorherige Unterstützung ist nach der Aktion nicht mehr klar lesbar."
-                  },
-                  {
-                    "id": "unclear",
-                    "label": "Unklar"
-                  }
-                ],
-                "supportContinuityPrompt": "Bleibt die Unterstützung erhalten?",
-                "supportContinuityTitle": "Unterstützung",
-                "optionContinuityOptions": [
-                  {
-                    "id": "multiple_remain",
-                    "label": "mehrere Optionen bleiben",
-                    "summaryLabel": "Mehrere bleiben",
-                    "hint": "Nach der Aktion bleiben mehrere Handlungsmöglichkeiten sichtbar."
-                  },
-                  {
-                    "id": "one_remains",
-                    "label": "eine Option bleibt",
-                    "summaryLabel": "Eine bleibt",
-                    "hint": "Nach der Aktion bleibt eine klare Möglichkeit."
-                  },
-                  {
-                    "id": "few_options",
-                    "label": "wenige Optionen",
-                    "summaryLabel": "Wenige Optionen",
-                    "hint": "Nach der Aktion sind kaum noch Möglichkeiten lesbar."
-                  },
-                  {
-                    "id": "unclear",
-                    "label": "Unklar"
-                  }
-                ],
-                "optionContinuityPrompt": "Bleiben Optionen vorhanden?",
-                "optionContinuityTitle": "Optionen",
                 "structureStateOptions": [
                   {
                     "id": "stable",
-                    "label": "stabil",
-                    "summaryLabel": "Stabil",
-                    "hint": "Die Struktur bleibt über die Aktion hinweg lesbar erhalten."
+                    "label": "bleibt stabil",
+                    "summaryLabel": "Bleibt stabil",
+                    "hint": "Die Struktur bleibt über den Spielschritt hinweg lesbar erhalten."
                   },
                   {
                     "id": "changing",
@@ -2089,22 +2045,56 @@
                 ],
                 "structureStatePrompt": "Wie entwickelt sich die Struktur?",
                 "structureStateTitle": "Entwicklung",
-                "patternOptions": [
+                "structureCuesOptions": [
                   {
-                    "id": "playable",
-                    "label": "Spieler bleiben anspielbar"
+                    "id": "support_shift",
+                    "label": "Unterstützung bleibt erhalten oder verändert sich",
+                    "summaryLabel": "Unterstützung",
+                    "hint": "Sichtbarer Hinweis: Wie sich Unterstützung über den Spielschritt hinweg liest."
                   },
                   {
-                    "id": "spacing",
-                    "label": "Abstände bleiben erhalten"
+                    "id": "options_shift",
+                    "label": "Optionen bleiben vorhanden oder werden weniger",
+                    "summaryLabel": "Optionen",
+                    "hint": "Sichtbarer Hinweis: Ob Handlungsmöglichkeiten lesbar bleiben oder abnehmen."
+                  },
+                  {
+                    "id": "relations_shift",
+                    "label": "Beziehungen zwischen Spielern verändern sich",
+                    "summaryLabel": "Beziehungen",
+                    "hint": "Sichtbarer Hinweis: Verbindungen zwischen Spielern verschieben sich."
+                  },
+                  {
+                    "id": "spacing_shift",
+                    "label": "Abstände verändern sich",
+                    "summaryLabel": "Abstände",
+                    "hint": "Sichtbarer Hinweis: Spacing wird enger, weiter oder unklarer."
+                  },
+                  {
+                    "id": "unclear",
+                    "label": "Unklar",
+                    "summaryLabel": "Unklar",
+                    "hint": "Kein klarer Hinweis — das ist erlaubt."
+                  }
+                ],
+                "structureCuesPrompt": "Woran erkennst du das?",
+                "structureCuesTitle": "Hinweise",
+                "patternOptions": [
+                  {
+                    "id": "support",
+                    "label": "Unterstützung"
                   },
                   {
                     "id": "options_open",
-                    "label": "mehrere Optionen bleiben offen"
+                    "label": "Optionen"
                   },
                   {
-                    "id": "support",
-                    "label": "Unterstützung bleibt vorhanden"
+                    "id": "relations",
+                    "label": "Beziehungen zwischen Spielern"
+                  },
+                  {
+                    "id": "spacing",
+                    "label": "Abstände"
                   },
                   {
                     "id": "unclear",
