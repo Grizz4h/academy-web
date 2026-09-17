@@ -64,6 +64,24 @@ Nicht:      Internet → SERVER_IP:8000
 
 **Bestehender Standard:** Bind `127.0.0.1:8000` in Startskripten / Service-Unit.
 
+### 2b. CORS (Browser / Desktop-WebView)
+
+CORS ist **keine** Authentifizierung. `allow_origins` ist eine explizite Liste (kein `*`, keine Port-Wildcards).
+
+```text
+rInQ Board Studio (Tauri WebView)
+  → CORS erlaubt den Request (Origin muss auf der Liste stehen)
+  → Authorization: Bearer <Access Token>
+  → FastAPI GET /api/scenes (get_current_user)
+  → Ownership-Filter auf scene.user == rinq_user_id
+```
+
+- Production-Tank-SPA: same-origin über Nginx — CORS nicht nötig
+- Vite-Dev: bestehende `localhost:5173/5174/5175`, `3000/3001`, LAN-Vite-Ports
+- Board Studio **Dev** (beobachtet): `http://localhost:1420`
+- Board Studio **Production-WebView-Origin:** `TAURI_PRODUCTION_ORIGIN_REQUIRES_VERIFICATION` — in diesem Repo keine Tauri-Config; nicht raten (`tauri://…` / `https://tauri.localhost`)
+- Ohne gültigen Bearer bleibt `GET /api/scenes` **401**
+
 ### 3. Authentication
 
 Aktueller Passwort-Login ist Übergangslösung (Legacy bleibt für Migration).

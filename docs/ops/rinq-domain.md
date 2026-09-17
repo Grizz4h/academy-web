@@ -118,7 +118,7 @@ Certbot version on server: `2.9.0` (`/usr/bin/certbot`).
 | Location | Action |
 |----------|--------|
 | `frontend/src/api.ts` `resolveApiBase()` → `${origin}/api` | **No change** — works for any host |
-| `backend/main.py` CORS | Dev localhost/IP only; **not required** for same-origin SPA via Nginx |
+| `backend/main.py` CORS | Explicit allow-list: Vite localhost/LAN + Board Studio `http://localhost:1420`. **Not required** for same-origin SPA via Nginx. Packaged Tauri origin: `TAURI_PRODUCTION_ORIGIN_REQUIRES_VERIFICATION` |
 | README / A1–A3 guides / comments | Docs only — optional later |
 | `docs/ops/*` academy URLs | Ops examples — fine |
 

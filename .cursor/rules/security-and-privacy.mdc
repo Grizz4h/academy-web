@@ -15,6 +15,7 @@ Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbez
 
 - Secrets nur serverseitig (`.env.local`); nie Service-Role in `VITE_*` / Frontend / Git; kein unsicherer Default
 - FastAPI nur hinter Nginx auf `127.0.0.1:8000`
+- CORS: explizite Origin-Liste (kein `*`); CORS ≠ Auth — `GET /api/scenes` bleibt Bearer + Ownership
 - Auth-Subject ≠ App-ID: JWT/`provider` subject → `auth_links` → `rinq_user_id` (Ownership nur über RinQ-UUID)
 - Managed Auth: Supabase + Google (`supabase_google`) + E-Mail OTP (`supabase_email`); JWKS-Verify serverseitig; kein E-Mail-Merge
 - Account-Linking Legacy↔Google nur verifiziert unter bestehender Session (`/api/me/auth/link/google`)

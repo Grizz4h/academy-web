@@ -394,19 +394,26 @@ def enforce_max_text_length(value: Any, path: str = "payload") -> None:
             enforce_max_text_length(nested_value, nested_path)
         return
 
-# CORS für Frontend
+# Explicit browser / desktop-WebView origins. CORS is not authentication.
+# Production Tank SPA is same-origin via Nginx (CORS not required there).
+# Board Studio Tauri *dev* origin (observed): http://localhost:1420
+# TAURI_PRODUCTION_ORIGIN_REQUIRES_VERIFICATION — packaged WebView origin
+# is not in this repo (no Tauri config); do not guess tauri:// or https://tauri.localhost.
+CORS_ALLOW_ORIGINS = [
+    "http://localhost:5174",
+    "http://localhost:5173",
+    "http://localhost:5175",
+    "http://localhost:1420",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://188.34.196.189:5173",
+    "http://188.34.196.189:5174",
+    "http://188.34.196.189:5175",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5174",
-        "http://localhost:5173",
-        "http://localhost:5175",
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://188.34.196.189:5173",
-        "http://188.34.196.189:5174",
-        "http://188.34.196.189:5175",
-    ],  # Frontend URLs
+    allow_origins=list(CORS_ALLOW_ORIGINS),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
