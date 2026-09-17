@@ -117,9 +117,15 @@ export default function AccountPage() {
 
   const { hasAcademyPremium, refetch: refetchEntitlements } = useEntitlements()
   const billingQuery = useBilling()
+
+  const { data: account, isLoading, error, refetch } = useQuery({
+    queryKey: ['me', user],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+  })
   const billingPresentation = useMemo(
-    () => describeAcademyBilling(hasAcademyPremium, billingQuery.data),
-    [hasAcademyPremium, billingQuery.data],
+    () => describeAcademyBilling(hasAcademyPremium, billingQuery.data, Boolean(account?.self_checkout)),
+    [hasAcademyPremium, billingQuery.data, account?.self_checkout],
   )
   const premiumStatusForProfile = useMemo(
     () => (hasAcademyPremium
@@ -130,12 +136,6 @@ export default function AccountPage() {
       : null),
     [hasAcademyPremium, billingPresentation],
   )
-
-  const { data: account, isLoading, error, refetch } = useQuery({
-    queryKey: ['me', user],
-    queryFn: () => api.getMe(),
-    enabled: Boolean(user),
-  })
 
   useEffect(() => {
     if (searchParams.get('google') === 'linked') {

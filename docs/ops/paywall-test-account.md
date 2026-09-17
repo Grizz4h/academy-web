@@ -45,6 +45,8 @@ Also cancel the test subscription in **Stripe Dashboard (Test mode)** if you wan
 
 **Do not** add `paywall-test` to `ACADEMY_ADMIN_USERNAMES` — that would bypass the paywall.
 
+While `ACADEMY_ALLOW_SELF_CHECKOUT=0`, `paywall-test` still sees Checkout (default `ACADEMY_CHECKOUT_USERNAMES`). Normal Google/E-Mail signups do not.
+
 ## DevLab access (without admin)
 
 `paywall-test` and **`paywall-widerruf`** are on the default **`ACADEMY_DEV_USERNAMES`** allowlist:

@@ -1,0 +1,98 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.ice {
+  fill: #07131f;
+}
+
+.boards {
+  fill: none;
+  stroke: rgba(186, 230, 253, 0.88);
+  stroke-width: 1.35;
+}
+
+.blueLine {
+  fill: none;
+  stroke: rgba(125, 176, 255, 0.92);
+  stroke-width: 1.7;
+}
+
+.centerLine,
+.goalLine {
+  fill: none;
+  stroke: rgba(248, 180, 186, 0.82);
+  stroke-width: 1.15;
+}
+
+.circle {
+  fill: none;
+  stroke: rgba(186, 230, 253, 0.55);
+  stroke-width: 0.9;
+}
+
+.goal {
+  fill: none;
+  stroke: rgba(248, 180, 186, 0.9);
+  stroke-width: 1.15;
+}
+
+.dot {
+  fill: rgba(226, 244, 255, 0.92);
+  stroke: none;
+}
+
+.dimLine,
+.dimTick {
+  fill: none;
+  stroke: rgba(143, 211, 223, 0.78);
+  stroke-width: 0.7;
+}
+
+.dimGuide,
+.radiusGuide {
+  fill: none;
+  stroke: rgba(143, 211, 223, 0.38);
+  stroke-width: 0.55;
+  stroke-dasharray: 2.5 2;
+}
+
+.arrowHead {
+  fill: rgba(143, 211, 223, 0.88);
+  stroke: none;
+}
+
+.dimLabel,
+.inkLabel {
+  fill: rgba(214, 236, 248, 0.88);
+  font-family: var(--font-body, "Figtree", ui-sans-serif, system-ui, sans-serif);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.inkLabel {
+  fill: rgba(186, 230, 253, 0.62);
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.layerOn,
+.layerOff {
+  transition: opacity 160ms var(--motion-ease, ease);
+}
+
+.layerOn {
+  opacity: 1;
+}
+
+.layerOff {
+  opacity: 0;
+  pointer-events: none;
+}

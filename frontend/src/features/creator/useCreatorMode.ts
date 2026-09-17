@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api'
 import { useUser } from '../../context/UserContext'
 
-/** Server-confirmed creator tools (Szenenpool, Szene erfassen). Never trust client profile fields. */
+/** Server-confirmed creator tools (Szenenpool, Szene erfassen, uncleared Club-Logos). Never trust client profile fields. */
 export function useCreatorMode(): boolean {
   const { user } = useUser()
   const { data: account } = useQuery({

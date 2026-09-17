@@ -2,7 +2,7 @@ import type { CurriculumModule } from '../api'
 import Card from '../components/Card'
 import { MechanicGlyph, TrackProgressMap, buildDrillProgressNodes } from '../components/visuals'
 import { UiActionRow, UiButton, UiPill } from '../components/ui'
-import { premiumLockMessage } from '../features/entitlements'
+import { premiumLockMessage, useSelfCheckout } from '../features/entitlements'
 import { TUTORIAL_TARGET } from '../features/tutorial'
 import styles from './Curriculum.module.css'
 
@@ -45,6 +45,7 @@ export function CurriculumModuleCard({
   onSelectDrill,
 }: CurriculumModuleCardProps) {
   const drills = module.drills || []
+  const selfCheckout = useSelfCheckout()
   const progressNodes = buildDrillProgressNodes(
     drills.map((drill) => ({ id: drill.id, title: drill.title })),
     { completedIds: completedDrillIds },
@@ -91,7 +92,7 @@ export function CurriculumModuleCard({
       </div>
       <p className={styles.moduleText}>{module.summary}</p>
       {premiumLocked ? (
-        <p className={styles.moduleMuted}>{premiumLockMessage(module.id)}</p>
+        <p className={styles.moduleMuted}>{premiumLockMessage(module.id, selfCheckout)}</p>
       ) : null}
       {showPremiumCheckout ? (
         <UiActionRow className={styles.moduleActions}>

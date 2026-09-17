@@ -37,6 +37,8 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/004_withdrawal_ref
 Upgrade UI → PremiumCheckoutSheet („Dein rInQ-Abo“) → Stripe Checkout → webhook → Premium
 ```
 
+**Invite preview:** `ACADEMY_ALLOW_SELF_CHECKOUT` defaults to off. Normal accounts do not see Checkout; `POST /api/billing/checkout` returns 403. Admin and `ACADEMY_CHECKOUT_USERNAMES` (paywall-test) still can. Set `ACADEMY_ALLOW_SELF_CHECKOUT=1` for public paid launch.
+
 ## Contract payment anchors (refund source of truth)
 
 On `checkout.session.completed` and `invoice.paid` / `invoice.payment_succeeded`, the backend stores on `subscriptions`:

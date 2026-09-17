@@ -15,6 +15,7 @@ os.environ["ACADEMY_JWT_SECRET"] = "test-jwt-secret-phase1-hardening-32chars-min
 os.environ["ACADEMY_SKIP_IDENTITY_MIGRATION"] = "1"
 os.environ["ACADEMY_ALLOW_LEGACY_SIGNUP"] = "0"
 os.environ["ACADEMY_ADMIN_USERNAMES"] = "adminuser"
+os.environ["STORAGE_BACKEND"] = "json"
 
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 if BACKEND_DIR not in sys.path:
@@ -25,7 +26,7 @@ from fastapi.testclient import TestClient
 from security_guards import reset_rate_limiter_for_tests
 
 import main as backend_main
-from security_guards import SlidingWindowRateLimiter, is_admin_auth, legacy_signup_allowed
+from security_guards import SlidingWindowRateLimiter, is_admin_auth, is_self_checkout_auth, legacy_signup_allowed
 from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER
 
 
@@ -70,6 +71,27 @@ class SecurityGuardUnitTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {"ACADEMY_ADMIN_USERNAMES": "adminuser"}):
             self.assertFalse(is_admin_auth(other))
             self.assertTrue(is_admin_auth(other, role_from_record="admin"))
+
+    def test_self_checkout_closed_by_default(self):
+        user = AuthContext(
+            rinq_user_id="u2",
+            auth_provider=LEGACY_PASSWORD_PROVIDER,
+            auth_subject="alice",
+            display_name="alice",
+            legacy_username="alice",
+        )
+        admin = AuthContext(
+            rinq_user_id="u1",
+            auth_provider=LEGACY_PASSWORD_PROVIDER,
+            auth_subject="adminuser",
+            display_name="Admin",
+            legacy_username="adminuser",
+        )
+        with mock.patch.dict(os.environ, {"ACADEMY_ALLOW_SELF_CHECKOUT": "0", "ACADEMY_ADMIN_USERNAMES": "adminuser"}):
+            self.assertFalse(is_self_checkout_auth(user))
+            self.assertTrue(is_self_checkout_auth(admin))
+        with mock.patch.dict(os.environ, {"ACADEMY_ALLOW_SELF_CHECKOUT": "1"}):
+            self.assertTrue(is_self_checkout_auth(user))
 
     def test_rate_limiter(self):
         limiter = SlidingWindowRateLimiter()
@@ -197,6 +219,32 @@ class HardeningApiTests(unittest.TestCase):
         me2 = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
         self.assertFalse(me2.json().get("creator_mode"))
 
+    def test_me_reports_self_checkout(self):
+        admin_me = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('adminuser')}"})
+        self.assertEqual(admin_me.status_code, 200)
+        self.assertTrue(admin_me.json().get("self_checkout"))
+        alice = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
+        self.assertEqual(alice.status_code, 200)
+        self.assertFalse(alice.json().get("self_checkout"))
+        with mock.patch.dict(os.environ, {"ACADEMY_ALLOW_SELF_CHECKOUT": "1"}):
+            alice_open = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
+            self.assertTrue(alice_open.json().get("self_checkout"))
+
+    def test_checkout_requires_self_checkout(self):
+        denied = self.client.post(
+            "/api/billing/checkout",
+            headers={"Authorization": f"Bearer {_token('alice')}"},
+            json={"age_confirmed": True},
+        )
+        self.assertEqual(denied.status_code, 403)
+        admin = self.client.post(
+            "/api/billing/checkout",
+            headers={"Authorization": f"Bearer {_token('adminuser')}"},
+            json={"age_confirmed": True},
+        )
+        self.assertNotEqual(admin.status_code, 403)
+        self.assertNotEqual(admin.status_code, 401)
+
     def test_create_scene_requires_creator_mode(self):
         res = self.client.post(
             "/api/scenes",
@@ -208,6 +256,106 @@ class HardeningApiTests(unittest.TestCase):
             },
         )
         self.assertEqual(res.status_code, 403)
+
+    def test_team_logo_requires_auth(self):
+        import team_logo_store
+
+        logos = Path(self._tmp.name) / "logos"
+        (logos / "del").mkdir(parents=True)
+        (logos / "del" / "straubing_tigers.svg").write_bytes(b"<svg/>")
+        clearance = Path(self._tmp.name) / "clearance.json"
+        clearance.write_text("{}", encoding="utf-8")
+        prev_dir = team_logo_store.TEAM_LOGOS_DIR
+        prev_clearance = team_logo_store.CLEARANCE_PATH
+        team_logo_store.TEAM_LOGOS_DIR = logos
+        team_logo_store.CLEARANCE_PATH = clearance
+        try:
+            anon = self.client.get("/api/team-logos/del", params={"file": "straubing_tigers.svg"})
+            self.assertEqual(anon.status_code, 401)
+
+            denied = self.client.get(
+                "/api/team-logos/del",
+                params={"file": "straubing_tigers.svg"},
+                headers={"Authorization": f"Bearer {_token('alice')}"},
+            )
+            self.assertEqual(denied.status_code, 403)
+
+            allowed = self.client.get(
+                "/api/team-logos/del",
+                params={"file": "straubing_tigers.svg"},
+                headers={"Authorization": f"Bearer {_token('adminuser')}"},
+            )
+            self.assertEqual(allowed.status_code, 200)
+            self.assertIn("private", (allowed.headers.get("cache-control") or "").lower())
+            self.assertIn("max-age=86400", (allowed.headers.get("cache-control") or "").lower())
+            self.assertNotIn("no-store", (allowed.headers.get("cache-control") or "").lower())
+            self.assertEqual(allowed.content, b"<svg/>")
+
+            traversal = self.client.get(
+                "/api/team-logos/del",
+                params={"file": "../straubing_tigers.svg"},
+                headers={"Authorization": f"Bearer {_token('adminuser')}"},
+            )
+            self.assertIn(traversal.status_code, (404, 422))
+        finally:
+            team_logo_store.TEAM_LOGOS_DIR = prev_dir
+            team_logo_store.CLEARANCE_PATH = prev_clearance
+
+    def test_team_logo_cleared_is_public(self):
+        import team_logo_store
+
+        logos = Path(self._tmp.name) / "logos-cleared"
+        (logos / "del").mkdir(parents=True)
+        (logos / "del" / "eisbaren_berlin.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+        (logos / "del" / "straubing_tigers.svg").write_bytes(b"<svg/>")
+        clearance = Path(self._tmp.name) / "clearance-public.json"
+        clearance.write_text(
+            json.dumps({"eisbaren_berlin": True, "straubing_tigers": False}),
+            encoding="utf-8",
+        )
+        prev_dir = team_logo_store.TEAM_LOGOS_DIR
+        prev_clearance = team_logo_store.CLEARANCE_PATH
+        team_logo_store.TEAM_LOGOS_DIR = logos
+        team_logo_store.CLEARANCE_PATH = clearance
+        try:
+            listed = self.client.get("/api/team-logo-clearance")
+            self.assertEqual(listed.status_code, 200)
+            self.assertEqual(listed.json().get("ids"), ["eisbaren_berlin"])
+
+            public = self.client.get("/api/team-logos/del", params={"file": "eisbaren_berlin.png"})
+            self.assertEqual(public.status_code, 200)
+            self.assertIn("max-age=86400", (public.headers.get("cache-control") or "").lower())
+            self.assertEqual(public.content, b"\x89PNG\r\n\x1a\n")
+
+            gated = self.client.get("/api/team-logos/del", params={"file": "straubing_tigers.svg"})
+            self.assertEqual(gated.status_code, 401)
+        finally:
+            team_logo_store.TEAM_LOGOS_DIR = prev_dir
+            team_logo_store.CLEARANCE_PATH = prev_clearance
+
+    def test_team_logo_creator_allowlist(self):
+        import team_logo_store
+
+        logos = Path(self._tmp.name) / "logos-creator"
+        (logos / "del").mkdir(parents=True)
+        (logos / "del" / "straubing_tigers.svg").write_bytes(b"<svg/>")
+        clearance = Path(self._tmp.name) / "clearance-creator.json"
+        clearance.write_text("{}", encoding="utf-8")
+        prev_dir = team_logo_store.TEAM_LOGOS_DIR
+        prev_clearance = team_logo_store.CLEARANCE_PATH
+        team_logo_store.TEAM_LOGOS_DIR = logos
+        team_logo_store.CLEARANCE_PATH = clearance
+        try:
+            with mock.patch.dict(os.environ, {"ACADEMY_CREATOR_USERNAMES": "alice"}):
+                res = self.client.get(
+                    "/api/team-logos/del",
+                    params={"file": "straubing_tigers.svg"},
+                    headers={"Authorization": f"Bearer {_token('alice')}"},
+                )
+                self.assertEqual(res.status_code, 200)
+        finally:
+            team_logo_store.TEAM_LOGOS_DIR = prev_dir
+            team_logo_store.CLEARANCE_PATH = prev_clearance
 
     def test_login_rate_limit(self):
         # Exhaust limiter for this test client IP

@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react'
+import { api } from '../../api'
+import { peekClubLogoObjectUrl } from '../../data/clubLogoCache'
 import { resolveTeamLogo } from '../../data/teamLogos'
+import { isClubLogoPublic } from '../../data/teamLogoClearance'
+import { useClubLogoClearance } from '../../data/useClubLogoClearance'
 import { resolveNationalTeamFlag } from '../../data/nationalTeamFlags'
 import { resolveTeamShortCode } from '../../data/teamShortCodes'
 import { getChlTeamFacts, getChlTeamFactsByName } from '../../data/chlTeamFacts'
 import { getDelTeamFacts, getDelTeamFactsByName } from '../../data/delTeamFacts'
+import { useCreatorMode } from '../../features/creator'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
 import styles from './TeamCrest.module.css'
 
@@ -32,6 +37,28 @@ function crestHue(key: string): number {
 
 function crestLetters(name: string): string {
   return resolveTeamShortCode(name) || name.replace(/[^A-Za-zÄÖÜäöüß]/g, '').slice(0, 3).toUpperCase() || '?'
+}
+
+function useProtectedClubLogo(logicalSrc: string | null, enabled: boolean): string | null {
+  const peeked = enabled && logicalSrc ? peekClubLogoObjectUrl(logicalSrc) : null
+  const [fetched, setFetched] = useState<{ src: string; url: string } | null>(null)
+
+  useEffect(() => {
+    if (!enabled || !logicalSrc) return
+    if (peekClubLogoObjectUrl(logicalSrc)) return
+    let cancelled = false
+    void api.fetchClubLogoObjectUrl(logicalSrc).then((url) => {
+      if (!cancelled) setFetched({ src: logicalSrc, url })
+    }).catch(() => {
+      if (!cancelled) setFetched((prev) => (prev?.src === logicalSrc ? null : prev))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [enabled, logicalSrc])
+
+  if (!enabled || !logicalSrc) return null
+  return peeked || (fetched?.src === logicalSrc ? fetched.url : null)
 }
 
 /** True for mouse / trackpad — CSS hover media. Not used for club-facts gating. */
@@ -172,9 +199,17 @@ export function TeamCrest({
   onFactsOpenChange,
   factsAnchorRef,
 }: TeamCrestProps) {
-  const logo = resolveTeamLogo(teamId) || resolveTeamLogo(name)
+  // Cleared clubs: everyone. Others: creator/admin only. Always blob fetch — never <img src="/teams/…">.
+  const creatorMode = useCreatorMode()
+  const clearedIds = useClubLogoClearance()
+  const logicalLogo = resolveTeamLogo(teamId) || resolveTeamLogo(name)
+  const canLoadLogo = creatorMode || isClubLogoPublic(clearedIds, { teamId, logicalSrc: logicalLogo })
+  const logo = useProtectedClubLogo(canLoadLogo ? logicalLogo : null, canLoadLogo)
   const flag = resolveNationalTeamFlag(teamId) || resolveNationalTeamFlag(name)
   const [logoFailed, setLogoFailed] = useState(false)
+  useEffect(() => {
+    setLogoFailed(false)
+  }, [logo])
   const [internalOpen, setInternalOpen] = useState(false)
   const fallbackAnchorRef = useRef<HTMLSpanElement | null>(null)
   const letters = crestLetters(name)

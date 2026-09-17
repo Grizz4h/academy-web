@@ -21,14 +21,15 @@ penny-del.org → PennyDelScheduleImporter → data/games/del_*.json → /api/ga
   Hauptrunde: /statistik/saison-…/hauptrunde/spielplan
   Playoffs:   /statistik/saison-…/playoffs/spielplan
     Erste Runde = Spiel 1–3 · Viertel/Halb/Finale = Spiel 1–7
-penny-del.org/teams/…/uebersicht → logo_importer → frontend/public/teams/del + delTeamLogos.json
+penny-del.org/teams/…/uebersicht → logo_importer → assets/team_logos/del + delTeamLogos.json
+  (Auslieferung `/api/team-logos`; öffentlich nur `club_logo_clearance.json` — nicht public/)
 ```
 
 ## DEL2
 
 ```text
 del-2.org Spielseiten → Del2ScheduleImporter → data/games/del2_*.json → /api/games
-del-2.org Clubs / esvk.de → del2_logo_importer → frontend/public/teams/del2 + del2TeamLogos.json
+del-2.org Clubs / esvk.de → del2_logo_importer → assets/team_logos/del2 + del2TeamLogos.json
 ```
 
 ## CHL
@@ -37,7 +38,7 @@ Offizielle JSON-Feeds (kein HTML-Scrape):
 
 ```text
 chl.hockey/api/s3?q=schedule-…json → ChlScheduleImporter → data/games/chl_*.json → /api/games
-Cloudinary chl-prod/assets/teams/{externalId} → chl_logo_importer → frontend/public/teams/chl + chlTeamLogos.json
+Cloudinary chl-prod/assets/teams/{externalId} → chl_logo_importer → assets/team_logos/chl + chlTeamLogos.json
 DEL-Overlap (Berlin, Ingolstadt, Mannheim, Haie, Bremerhaven) → reuse delTeamLogos
 ```
 
@@ -49,7 +50,7 @@ Offizielle JSON-Feeds:
 
 ```text
 api-web.nhle.com/v1/schedule/{date} → NhlScheduleImporter → data/games/nhl_*.json → /api/games
-assets.nhle.com/logos/nhl/svg/{TRI}_light.svg → nhl_logo_importer → frontend/public/teams/nhl + nhlTeamLogos.json
+assets.nhle.com/logos/nhl/svg/{TRI}_light.svg → nhl_logo_importer → assets/team_logos/nhl + nhlTeamLogos.json
 ```
 
 `startTimeUTC` → Europe/Berlin Wanduhr (wie CHL). UI zeigt die Uhrzeit in der Browser-Zeitzone des Nutzers (`Intl`), Fallback Berlin.
@@ -65,7 +66,7 @@ DEB LIVE über öffentliche hockeydata Schedule-API (Widget-Key nur zur Laufzeit
 ```text
 deb-online.live/liga/herren/u20-dnl/ → api.hockeydata.net/data/ebel/Schedule
   → DnlScheduleImporter → data/games/u20_dnl_*.json → /api/games
-Parent-Club-Crests (DEL/DEL2) + hockeydata team-logos → dnl_logo_importer → u20DnlTeamLogos.json
+Parent-Club-Crests (DEL/DEL2) + hockeydata team-logos → dnl_logo_importer → assets/team_logos/u20_dnl + u20DnlTeamLogos.json
 ```
 
 Saisonfluss (UI: Staffel-Unterfilter + Runde):

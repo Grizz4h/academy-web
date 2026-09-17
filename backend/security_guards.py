@@ -116,6 +116,44 @@ def is_creator_mode_auth(
     return False
 
 
+def self_checkout_open() -> bool:
+    """Public Stripe Checkout. Default off — preview accounts must not hit the test sandbox."""
+    return _env_flag("ACADEMY_ALLOW_SELF_CHECKOUT", default="0")
+
+
+def checkout_username_allowlist() -> Set[str]:
+    """When self-checkout is closed: extra usernames that may still start Checkout (paywall tests)."""
+    raw = (os.environ.get("ACADEMY_CHECKOUT_USERNAMES") or "paywall-test,paywall-widerruf").strip()
+    if not raw:
+        return set()
+    return {normalize_subject(part) for part in raw.split(",") if part.strip()}
+
+
+def checkout_rinq_user_allowlist() -> Set[str]:
+    raw = (os.environ.get("ACADEMY_CHECKOUT_RINQ_USER_IDS") or "").strip()
+    extra = {part.strip().lower() for part in raw.split(",") if part.strip()} if raw else set()
+    return extra
+
+
+def is_self_checkout_auth(
+    auth: AuthContext,
+    *,
+    role_from_record: Optional[str] = None,
+) -> bool:
+    """Who may start Stripe Checkout. Hidden UI is not enough — API must use this."""
+    if self_checkout_open():
+        return True
+    if is_admin_auth(auth, role_from_record=role_from_record):
+        return True
+    subject = normalize_subject(auth.legacy_username or auth.auth_subject)
+    if subject and subject in checkout_username_allowlist():
+        return True
+    rid = (auth.rinq_user_id or "").strip().lower()
+    if rid and rid in checkout_rinq_user_allowlist():
+        return True
+    return False
+
+
 class SlidingWindowRateLimiter:
     """Process-local sliding window. Good enough for single-process FastAPI MVP."""
 

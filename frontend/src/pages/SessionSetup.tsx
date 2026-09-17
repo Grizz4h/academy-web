@@ -236,6 +236,7 @@ export default function SessionSetup() {
     queryFn: () => api.getMe(),
     enabled: Boolean(user),
   })
+  const selfCheckout = Boolean(account?.self_checkout)
 
   const { data: teamsResp } = useQuery({
     queryKey: ['teams', league, season],
@@ -287,7 +288,7 @@ export default function SessionSetup() {
       const status = Number(error?.status || 0)
       const msg = String(error?.message || 'Unbekannter Fehler')
       if (status === 403) {
-        setCreateError(premiumLockMessage(moduleId))
+        setCreateError(premiumLockMessage(moduleId, selfCheckout))
         return
       }
       setCreateError(msg)
@@ -586,10 +587,10 @@ export default function SessionSetup() {
       <div className="ui-page-shell" style={{ maxWidth: '640px', margin: '0 auto' }}>
         <header className="ui-page-header">
           <h1 className="ui-page-title">{currentModule.title}</h1>
-          <p className="ui-page-lead">{premiumLockMessage(moduleId)}</p>
+          <p className="ui-page-lead">{premiumLockMessage(moduleId, selfCheckout)}</p>
         </header>
         <UiActionRow>
-          {user ? (
+          {user && selfCheckout ? (
             <UiButton
               type="button"
               variant="primary"
@@ -630,7 +631,7 @@ export default function SessionSetup() {
   const handleCreateSession = () => {
     if (creatingSessionRef.current || createSessionMutation.isPending) return
     if (premiumLocked && !account?.is_admin) {
-      setCreateError(premiumLockMessage(moduleId))
+      setCreateError(premiumLockMessage(moduleId, selfCheckout))
       return
     }
     if (!user?.trim()) {

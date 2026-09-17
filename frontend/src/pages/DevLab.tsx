@@ -548,6 +548,17 @@ export default function DevLab() {
         </p>
       </header>
 
+      <section className={styles.card}>
+        <h2 className="ui-section-title">Track 0 Blueprint Lab</h2>
+        <p className={styles.note}>
+          Prototype für interaktive technische Wissensgrafiken in Track 0.
+          Demo-Maße, nicht fachlich freigegeben — nur dieser Dev-Bereich.
+        </p>
+        <div className={styles.actions}>
+          <UiButtonLink to="/dev/track0-blueprint" size="sm">Blueprint Lab öffnen</UiButtonLink>
+        </div>
+      </section>
+
       <DevActionLogPanel entries={logEntries} onClear={clearLog} />
 
       {!user && (
@@ -854,6 +865,7 @@ export default function DevLab() {
           <UiButtonLink to="/dev/content" size="sm">Content</UiButtonLink>
           <UiButtonLink to="/dev/cosmetics" size="sm">Cosmetics</UiButtonLink>
           <UiButtonLink to="/dev/progression" size="sm">Progression</UiButtonLink>
+          <UiButtonLink to="/dev/track0-blueprint" size="sm">Track 0 Blueprint</UiButtonLink>
         </div>
       </section>
 

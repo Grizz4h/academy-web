@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api'
+import { useUser } from '../../context/UserContext'
 
 export function usePremiumCheckout() {
   const queryClient = useQueryClient()
@@ -17,6 +18,18 @@ export function usePremiumCheckout() {
   })
 }
 
-export function canOfferPremiumCheckout(user: string | null): boolean {
-  return Boolean(user)
+/** Server-confirmed Stripe Checkout. Fail closed until /api/me.self_checkout. */
+export function useSelfCheckout(): boolean {
+  const { user } = useUser()
+  const { data: account } = useQuery({
+    queryKey: ['me', user],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+    staleTime: 60_000,
+  })
+  return Boolean(account?.self_checkout)
+}
+
+export function canOfferPremiumCheckout(user: string | null, selfCheckout: boolean): boolean {
+  return Boolean(user) && selfCheckout
 }

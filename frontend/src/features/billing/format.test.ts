@@ -48,4 +48,10 @@ describe('billing format helpers', () => {
     expect(view.statusHeadline).toMatch(/^Verlängerung am /)
     expect(view.profileLine).toMatch(/^Aktiv · /)
   })
+
+  it('hides checkout for free accounts when self-checkout is closed', () => {
+    const view = describeAcademyBilling(false, undefined, false)
+    expect(view.showCheckout).toBe(false)
+    expect(view.statusDetail).toMatch(/Einladung/)
+  })
 })

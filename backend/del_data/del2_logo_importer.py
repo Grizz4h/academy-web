@@ -1,4 +1,4 @@
-"""Download DEL2 team logos from del-2.org club pages into the frontend public folder."""
+"""Download DEL2 team logos from del-2.org club pages into the protected assets folder."""
 
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def import_del2_team_logos(
 ) -> Dict[str, Any]:
     root = _repo_root()
     config_path = config_path or os.path.join(root, "data", "academy", "del2_import_teams.json")
-    output_dir = output_dir or os.path.join(root, "frontend", "public", "teams", "del2")
+    output_dir = output_dir or os.path.join(root, "assets", "team_logos", "del2")
     manifest_path = manifest_path or os.path.join(root, "frontend", "src", "data", "del2TeamLogos.json")
     del_manifest_path = del_manifest_path or os.path.join(root, "frontend", "src", "data", "delTeamLogos.json")
 

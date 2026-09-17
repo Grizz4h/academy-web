@@ -23,6 +23,7 @@ import DevUiKit from './pages/DevUiKit'
 import DevContent from './pages/DevContent'
 import DevCosmetics from './pages/DevCosmetics'
 import DevProgression from './pages/DevProgression'
+import DevTrack0BlueprintPage from './pages/DevTrack0Blueprint'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
 import SportCalendarPage from './pages/SportCalendar'
@@ -100,6 +101,7 @@ function App() {
             <Route path="/dev/content" element={<DevRouteGuard><DevContent /></DevRouteGuard>} />
             <Route path="/dev/cosmetics" element={<DevRouteGuard><DevCosmetics /></DevRouteGuard>} />
             <Route path="/dev/progression" element={<DevRouteGuard><DevProgression /></DevRouteGuard>} />
+            <Route path="/dev/track0-blueprint" element={<DevRouteGuard><DevTrack0BlueprintPage /></DevRouteGuard>} />
             <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

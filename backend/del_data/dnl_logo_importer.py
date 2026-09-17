@@ -73,7 +73,7 @@ def import_dnl_team_logos(
     manifest_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     root = _repo_root()
-    output_dir = output_dir or os.path.join(root, "frontend", "public", "teams", "u20_dnl")
+    output_dir = output_dir or os.path.join(root, "assets", "team_logos", "u20_dnl")
     manifest_path = manifest_path or os.path.join(root, "frontend", "src", "data", "u20DnlTeamLogos.json")
     hints_path = os.path.join(root, "data", "academy", "u20_dnl_logo_hints.json")
     os.makedirs(output_dir, exist_ok=True)

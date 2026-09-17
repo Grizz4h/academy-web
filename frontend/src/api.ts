@@ -61,6 +61,8 @@ import type { UserAccountPayload, UserProfileCustomization } from './data/profil
 import type { MyCompetenciesPayload } from './features/competency/types'
 import type { MyBillingPayload } from './features/billing/types'
 import type { MyEntitlementsPayload } from './features/entitlements/types'
+import { parseTeamLogoLogicalPath } from './data/teamLogoPath'
+import { getOrLoadClubLogo } from './data/clubLogoCache'
 
 
 // ==== Type Definitions ====
@@ -1925,6 +1927,29 @@ export const api = {
     })
     if (!res.ok) throw await readApiError(res, 'Avatar-Upload fehlgeschlagen')
     return res.json()
+  },
+
+  /** Written club-logo clearance. Public list — missing/false IDs stay creator-only. */
+  getTeamLogoClearance: async (): Promise<{ ids: string[] }> => {
+    const res = await fetch(buildUrl('/team-logo-clearance'))
+    if (!res.ok) return { ids: [] }
+    const data = await res.json().catch(() => null)
+    const ids = Array.isArray(data?.ids) ? data.ids : []
+    return { ids: ids.map((id: unknown) => String(id)) }
+  },
+
+  /** Club mark via API. Session + Cache Storage; do not revoke the blob URL. */
+  fetchClubLogoObjectUrl: async (logicalSrc: string): Promise<string> => {
+    const parsed = parseTeamLogoLogicalPath(logicalSrc)
+    if (!parsed) throw new Error('Ungültiger Logo-Pfad')
+    return getOrLoadClubLogo(logicalSrc, async () => {
+      const res = await fetch(
+        buildUrl(`/team-logos/${encodeURIComponent(parsed.league)}?file=${encodeURIComponent(parsed.filename)}`),
+        { headers: { ...authHeaders() } },
+      )
+      if (!res.ok) throw await readApiError(res, 'Logo nicht verfügbar')
+      return res.blob()
+    })
   },
 }
 

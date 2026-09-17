@@ -175,6 +175,8 @@ Noch offen (5D Ops): Stripe Dashboard Price + Webhook endpoint konfigurieren; En
 
 Phase **5D (implementiert):** Stripe Checkout (`POST /api/billing/checkout`), signierte Webhooks (`POST /api/webhooks/stripe`), Idempotenz via `processed_webhook_events` (**process-then-mark** — Markierung erst nach erfolgreichem Sync, damit Stripe-Retries nach Partial-Fail greifen), Sync → `subscriptions` + `entitlement_grants` (`source=subscription`). Keine Payment-Rohdaten in Git/Frontend.
 
+**Invite-Preview (Checkout geschlossen):** Self-Service-Stripe ist **nicht** öffentlich. `ACADEMY_ALLOW_SELF_CHECKOUT` default `0`. Normale Signups (Google/E-Mail) bekommen Free-Vorschau (Track 0 / A1), **kein** „Premium freischalten“. Checkout nur Admin **oder** `ACADEMY_CHECKOUT_USERNAMES` (Default: `paywall-test,paywall-widerruf`) **oder** `ACADEMY_CHECKOUT_RINQ_USER_IDS`. Versteckte UI ≠ Autorisierung: `POST /api/billing/checkout` und `GET /api/billing/offer` → 403. Zum Launch: `ACADEMY_ALLOW_SELF_CHECKOUT=1`. Eingeladene Tester ohne Stripe: manuelles Admin-Grant.
+
 ### 9. Premium Content
 
 Geplant:
@@ -212,6 +214,27 @@ Später prüfen:
 - erlaubte Dateitypen, Größenlimits, sichere Dateinamen
 - keine ausführbaren Uploads
 - keine Path-Traversal-Möglichkeiten
+
+### 12b. Club-Marken / Team-Logos
+
+Vereinswappen sind **keine** öffentlichen Static-Files. Default bleibt Creator/Admin.
+
+```text
+Nicht:  Nginx/Vite `frontend/public/teams` → jeder kann `/teams/del/….png` laden
+Sondern: `assets/team_logos/` (nicht im Dist)
+         → `GET /api/team-logos/{league}?file=….png`
+         → öffentlich nur bei schriftlicher Freigabe:
+            `data/academy/club_logo_clearance.json` (Catalog-ID → true)
+         → sonst `is_creator_mode_auth` (Creator-Allowlist **oder** Admin)
+         Frontend: `GET /api/team-logo-clearance` + blob:-URL, nie `<img src="/teams/…">`
+```
+
+- Schalter pro Team: `"eisbaren_berlin": true` — Datei wird **pro Request** gelesen (kein Rebuild/Restart)
+- CHL/U20, die dieselbe Datei wiederverwenden (`/teams/del/eisbaren_berlin.png`), folgen dem Datei-Stem
+- Nginx: `location ^~ /teams/ { return 404; }` — alte Public-URLs tot
+- Kein `StaticFiles`-Mount für Club-Logos
+- Response: cleared → `Cache-Control: public, max-age=86400`; Creator/Admin → `private, max-age=86400` (kein Shared-Cache). Frontend hält Blob-URLs in der Session und Cache Storage (`rinq-club-logos-v1`, Logout löscht)
+- Versteckte UI ≠ Autorisierung: ohne Clearance und ohne Creator/Admin-Session → 401/403, auch wenn der Dateiname bekannt ist
 
 ### 13. Logging
 

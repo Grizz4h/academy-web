@@ -81,7 +81,7 @@ def import_chl_team_logos(
     del_manifest_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     root = _repo_root()
-    output_dir = output_dir or os.path.join(root, "frontend", "public", "teams", "chl")
+    output_dir = output_dir or os.path.join(root, "assets", "team_logos", "chl")
     manifest_path = manifest_path or os.path.join(root, "frontend", "src", "data", "chlTeamLogos.json")
     del_manifest_path = del_manifest_path or os.path.join(root, "frontend", "src", "data", "delTeamLogos.json")
 

@@ -36,7 +36,7 @@ def import_nhl_team_logos(
     manifest_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     root = _repo_root()
-    output_dir = output_dir or os.path.join(root, "frontend", "public", "teams", "nhl")
+    output_dir = output_dir or os.path.join(root, "assets", "team_logos", "nhl")
     manifest_path = manifest_path or os.path.join(root, "frontend", "src", "data", "nhlTeamLogos.json")
     os.makedirs(output_dir, exist_ok=True)
 

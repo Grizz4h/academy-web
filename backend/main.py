@@ -88,6 +88,7 @@ from security_guards import (
     is_admin_auth,
     is_rinq_admin,
     is_creator_mode_auth,
+    is_self_checkout_auth,
     is_dev_access_auth,
     legacy_signup_allowed,
     rate_limit,
@@ -331,6 +332,23 @@ def require_dev_access(
     return current_user
 
 
+def require_creator_mode(
+    request: Request,
+    current_user: AuthContext = Depends(get_current_user),
+) -> AuthContext:
+    """Club logos + Szenenpool: admin allowlist or creator allowlist. Never client flags."""
+    rate_limit(request, "creator_api", limit=240, window_sec=60.0)
+    if not is_creator_mode_auth(current_user, role_from_record=_role_from_auth(current_user)):
+        logging.warning(
+            "[SEC] creator_denied subject=%s path=%s ip=%s",
+            current_user.auth_subject,
+            request.url.path,
+            client_ip(request),
+        )
+        raise HTTPException(status_code=403, detail="Creator access required")
+    return current_user
+
+
 # --- AUTH ENDPOINTS ---
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -405,6 +423,7 @@ app.add_middleware(
         "http://localhost:5174",
         "http://localhost:5173",
         "http://localhost:5175",
+        "http://localhost:1420",
         "http://localhost:3000",
         "http://localhost:3001",
         "http://188.34.196.189:5173",
@@ -4528,8 +4547,16 @@ async def billing_checkout(
     current_user: AuthContext = Depends(get_current_user),
 ):
     """Start Stripe Checkout for academy_premium — grant applied via verified webhook only."""
-    _require_postgres_billing()
     rate_limit(request, "billing_checkout", limit=10, window_sec=3600.0)
+    if not is_self_checkout_auth(current_user, role_from_record=_role_from_auth(current_user)):
+        logging.warning(
+            "[SEC] checkout_denied subject=%s path=%s ip=%s",
+            current_user.auth_subject,
+            request.url.path,
+            client_ip(request),
+        )
+        raise HTTPException(status_code=403, detail="Self-service checkout is not enabled for this account")
+    _require_postgres_billing()
     from billing import settings as billing_settings
     from billing.checkout import (
         ActiveSubscriptionError,
@@ -4567,8 +4594,10 @@ async def billing_offer(
     current_user: AuthContext = Depends(get_current_user),
 ):
     """Public price snapshot from Stripe Price API for pre-checkout disclosure."""
-    _require_postgres_billing()
     rate_limit(request, "billing_offer", limit=60, window_sec=60.0)
+    if not is_self_checkout_auth(current_user, role_from_record=_role_from_auth(current_user)):
+        raise HTTPException(status_code=403, detail="Self-service checkout is not enabled for this account")
+    _require_postgres_billing()
     from billing import settings as billing_settings
     from billing.offer import get_premium_offer
 
@@ -4829,6 +4858,62 @@ async def admin_withdrawal_retry(
     return {"ok": True, **public_response(row)}
 
 
+@app.get("/api/team-logo-clearance")
+async def get_team_logo_clearance(request: Request):
+    """Catalog IDs with written club clearance — public, read from JSON each request."""
+    from team_logo_store import load_cleared_catalog_ids
+
+    rate_limit(request, "team_logo_clearance", limit=120, window_sec=60.0)
+    return {"ids": sorted(load_cleared_catalog_ids())}
+
+
+@app.get("/api/team-logos/{league}")
+async def get_team_logo(
+    request: Request,
+    league: str,
+    file: str,
+    authorization: str | None = Header(None),
+):
+    """Club marks. Cleared IDs are public; others need creator/admin. Query `file=` so Nginx cannot steal /api/."""
+    from fastapi.responses import FileResponse
+    from team_logo_store import is_public_cleared_logo, media_type_for, resolve_protected_logo
+
+    if is_public_cleared_logo(file):
+        rate_limit(request, "team_logo_public", limit=240, window_sec=60.0)
+        path = resolve_protected_logo(league, file)
+        if path is None:
+            raise HTTPException(status_code=404, detail="Not found")
+        return FileResponse(
+            path,
+            media_type=media_type_for(path),
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+
+    rate_limit(request, "creator_api", limit=240, window_sec=60.0)
+    current_user = resolve_user_from_authorization(authorization)
+    if current_user is None:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not is_creator_mode_auth(current_user, role_from_record=_role_from_auth(current_user)):
+        logging.warning(
+            "[SEC] creator_denied subject=%s path=%s ip=%s",
+            current_user.auth_subject,
+            request.url.path,
+            client_ip(request),
+        )
+        raise HTTPException(status_code=403, detail="Creator access required")
+    path = resolve_protected_logo(league, file)
+    if path is None:
+        raise HTTPException(status_code=404, detail="Not found")
+    return FileResponse(
+        path,
+        media_type=media_type_for(path),
+        headers={
+            "Cache-Control": "private, max-age=86400",
+            "Vary": "Authorization",
+        },
+    )
+
+
 @app.get("/api/me")
 async def get_me(current_user: AuthContext = Depends(get_current_user)):
     record = _find_user_record(current_user)
@@ -4846,6 +4931,7 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "is_admin": is_admin_auth(current_user, role_from_record=role),
         "is_dev_access": is_dev_access_auth(current_user, role_from_record=role),
         "creator_mode": is_creator_mode_auth(current_user, role_from_record=role),
+        "self_checkout": is_self_checkout_auth(current_user, role_from_record=role),
         "profile": profile,
         "needs_display_name": _needs_display_name_setup(current_user),
         "auth_providers": _identity_repo().list_providers_for_user(current_user.rinq_user_id),

@@ -51,3 +51,5 @@ export function resolveTeamLogo(nameOrId: string | null | undefined): string | n
   if (short) return LOGOS_BY_SHORT.get(short) || null
   return null
 }
+
+export { parseTeamLogoLogicalPath } from './teamLogoPath'

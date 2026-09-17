@@ -8,7 +8,7 @@ import { getLastActivityTrackId } from '../utils/curriculumActivity'
 import { getRealSessions } from '../utils/sessionEligibility'
 import Card from '../components/Card'
 import { useUser } from '../context/UserContext'
-import { isModulePremiumLocked } from '../features/entitlements'
+import { isModulePremiumLocked, useSelfCheckout } from '../features/entitlements'
 import PremiumCheckoutSheet from '../components/billing/PremiumCheckoutSheet'
 import {
   getFoundationTrack,
@@ -24,6 +24,8 @@ import { clearGameSetupPrefill } from '../features/schedule/gameSetupPrefill'
 import { usePendingGameSetupFocus } from '../features/schedule/usePendingGameSetupFocus'
 import { CurriculumModuleCard } from './CurriculumModuleCard'
 import { CurriculumTrackPanel } from './CurriculumTrackPanel'
+import { TrackProgressMap } from '../components/visuals'
+import { UiActionRow, UiButtonLink, UiPill } from '../components/ui'
 import styles from './Curriculum.module.css'
 
 const CLUSTER2_CURRICULUM_TRACK_IDS = new Set(['M'])
@@ -82,6 +84,7 @@ export default function Curriculum() {
   const navigate = useNavigate()
   const { user, userId } = useUser()
   const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const selfCheckout = useSelfCheckout()
   const tutorial = useTutorialOptional()
   const devMode = useDevNavEnabled()
   const { data: curriculum, isLoading, error } = useQuery({
@@ -259,7 +262,7 @@ export default function Curriculum() {
         isEntryModule={module.id === entryModuleId}
         cluster={cluster}
         showTheory={module.id in theoryData}
-        showPremiumCheckout={premiumLocked && Boolean(user)}
+        showPremiumCheckout={premiumLocked && Boolean(user) && selfCheckout}
         completedDrillIds={completedDrillIds}
         onStart={() => navigate(`/setup/${module.id}`)}
         onTheory={() => navigate(`/theory/${module.id}`)}
@@ -311,6 +314,40 @@ export default function Curriculum() {
             <p className={styles.trackDescription}>{track.description}</p>
           ) : null}
           <div className={styles.moduleGrid}>
+            {foundation && devMode ? (
+              <Card surface="nested" elevation="quiet" className={styles.moduleCard}>
+                <div className={styles.moduleTop}>
+                  <h3 className={styles.moduleTitle}>
+                    Field Guide
+                    <UiPill tone="warn" className={styles.premiumPill}>DEV</UiPill>
+                  </h3>
+                  <UiActionRow className={styles.moduleActions}>
+                    <UiButtonLink to="/dev/track0-blueprint" size="sm">
+                      Rink öffnen
+                    </UiButtonLink>
+                  </UiActionRow>
+                </div>
+                <p className={styles.moduleText}>
+                  Hockey verstehen – vom Material bis zum Spielfeld.
+                </p>
+                <p className={styles.moduleMuted}>
+                  Prototype — Maße noch nicht fachlich freigegeben.
+                </p>
+                <div className={styles.moduleProgress}>
+                  <TrackProgressMap
+                    nodes={[
+                      { id: 'rink', label: 'Rink', title: 'Rink', status: 'current' },
+                      { id: 'stick', label: 'Stick', title: 'Stick (später)', status: 'locked' },
+                      { id: 'puck', label: 'Puck', title: 'Puck (später)', status: 'locked' },
+                    ]}
+                    compact
+                    onSelectNode={(node) => {
+                      if (node.id === 'rink') navigate('/dev/track0-blueprint')
+                    }}
+                  />
+                </div>
+              </Card>
+            ) : null}
             {activeModules.map((module: CurriculumModule) => renderModuleCard(module, foundation))}
           </div>
         </CurriculumTrackPanel>

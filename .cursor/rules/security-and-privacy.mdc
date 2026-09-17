@@ -24,7 +24,9 @@ Vor Implementierung oder Änderung an Auth, Autorisierung, Accounts, personenbez
 - Legacy-Signup steuerbar via `ACADEMY_ALLOW_LEGACY_SIGNUP` (Production: `0`)
 - Runtime-Userdaten nicht in Git
 - Keine Payment-Rohdaten; Entitlements nicht nur im Frontend
-- Versteckte UI ≠ Autorisierung (`/dev`, Admin, Import)
+- Versteckte UI ≠ Autorisierung (`/dev`, Admin, Import, Premium-Checkout)
+- Club-Logos nicht als Static-Files: `assets/team_logos` nur via `/api/team-logos`; öffentlich nur IDs in `data/academy/club_logo_clearance.json`; sonst Creator/Admin; Nginx `/teams/` → 404
+- Stripe Self-Checkout default aus (`ACADEMY_ALLOW_SELF_CHECKOUT=0`); API 403 außer Admin/Checkout-Allowlist
 - Client Rewards/XP/PUX nicht vertrauenswürdig für kritische Mutationen
 - HTTPS in Production; Datenminimierung; neue Provider im Manifest dokumentieren
 - JSON-Persistenz nur bis vor Payment/Webhooks erneut bewertbar — dann voraussichtlich transaktional ersetzen

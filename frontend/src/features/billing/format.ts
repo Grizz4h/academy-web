@@ -49,6 +49,7 @@ export function selectPrimarySubscription(
 export function describeAcademyBilling(
   hasAcademyPremium: boolean,
   billing: MyBillingPayload | undefined,
+  selfCheckoutEnabled = true,
 ): AcademyBillingPresentation {
   const subscription = selectPrimarySubscription(billing?.subscriptions)
   const customerId =
@@ -81,10 +82,12 @@ export function describeAcademyBilling(
       badgeLabel: 'Free',
       badgeTone: 'neutral',
       statusHeadline: null,
-      statusDetail: 'Track A2+ und weitere Premium-Inhalte sind gesperrt.',
+      statusDetail: selfCheckoutEnabled
+        ? 'Track A2+ und weitere Premium-Inhalte sind gesperrt.'
+        : 'Track A2+ ist Premium. Freischalten ist zur Zeit nur auf Einladung.',
       profileLine: null,
       canManage,
-      showCheckout: true,
+      showCheckout: selfCheckoutEnabled,
     }
   }
 
@@ -137,7 +140,7 @@ export function describeAcademyBilling(
       statusDetail: null,
       profileLine: endDate ? `Beendet · ${endDate}` : 'Beendet',
       canManage,
-      showCheckout: true,
+      showCheckout: selfCheckoutEnabled,
     }
   }
 

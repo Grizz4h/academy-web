@@ -127,5 +127,7 @@ export type UserAccountPayload = {
   is_dev_access?: boolean
   /** Server-confirmed creator tools (code/env allowlist). Not editable via profile. */
   creator_mode?: boolean
+  /** Server-confirmed Stripe Checkout. Off for normal self-signup until launch. */
+  self_checkout?: boolean
   profile: UserProfileCustomization
 }

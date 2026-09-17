@@ -1,4 +1,4 @@
-"""Download PENNY DEL team logos into the frontend public folder.
+"""Download PENNY DEL team logos into the protected assets folder.
 
 Uses the same team config as the roster importer. No second source.
 """
@@ -86,7 +86,7 @@ def import_team_logos(
 ) -> Dict[str, Any]:
     root = _repo_root()
     config_path = config_path or os.path.join(root, "data", "academy", "penny_del_import_teams.json")
-    output_dir = output_dir or os.path.join(root, "frontend", "public", "teams", "del")
+    output_dir = output_dir or os.path.join(root, "assets", "team_logos", "del")
     manifest_path = manifest_path or os.path.join(root, "frontend", "src", "data", "delTeamLogos.json")
 
     with open(config_path, "r", encoding="utf-8") as handle:

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { login as apiLogin, api } from '../api'
+import { clearClubLogoCache } from '../data/clubLogoCache'
 import { getSupabaseAccessToken, signOutSupabase } from '../lib/supabase'
 
 type LoginResult = {
@@ -32,6 +33,7 @@ function clearLocalAuth() {
   localStorage.removeItem('academy.userId')
   localStorage.removeItem('academy.token')
   localStorage.removeItem('academy.authMode')
+  void clearClubLogoCache()
 }
 
 export function UserProvider({ children }: { children: ReactNode }) {

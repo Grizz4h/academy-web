@@ -1,0 +1,5 @@
+{
+  "_comment": "Written club clearance. Catalog-ID → true zeigt das Logo für alle. false oder fehlt = nur Creator/Admin. Wird bei jedem Request gelesen — kein Backend-Restart nötig.",
+  "augsburger_panther": true,
+  "eisbaren_berlin": true
+}
