@@ -780,6 +780,9 @@ export interface SceneMarker {
   extension_labels?: Record<string, string>
   created_at: string
   updated_at?: string
+  /** Derived by Tank at read time. Never persisted on scene JSON. */
+  asset_name?: string | null
+  asset_name_missing?: string[]
 }
 
 export interface SceneMarkerCreate {

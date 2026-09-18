@@ -7,6 +7,7 @@ import {
   formatSceneAssetClock,
   formatSceneAssetPeriod,
   generateSceneAssetName,
+  generateSceneAssetNameFromScene,
   normalizeSceneSlug,
 } from './sceneAssetName'
 import { resolveTeamShortCode, formatMatchupShortCodes } from '../data/teamShortCodes'
@@ -22,7 +23,16 @@ function assertEqual(actual: unknown, expected: unknown, label: string) {
 assertEqual(resolveTeamShortCode('Straubing Tigers'), 'STR', 'DEL STR')
 assertEqual(resolveTeamShortCode('Augsburger Panther'), 'AEV', 'DEL AEV club/TV')
 assertEqual(resolveTeamShortCode('Eisbären Berlin'), 'EBB', 'DEL EBB TV')
+assertEqual(resolveTeamShortCode('Eisbären Berlin', { league: 'DEL' }), 'EBB', 'league-aware DEL EBB')
+assertEqual(resolveTeamShortCode('Eisbären Berlin', { league: 'CHL' }), 'BER', 'league-aware CHL BER')
 assertEqual(resolveTeamShortCode('Kölner Haie'), 'KEC', 'DEL KEC TV')
+assertEqual(resolveTeamShortCode('Kölner Haie', { league: 'DEL' }), 'KEC', 'league-aware DEL KEC')
+assertEqual(resolveTeamShortCode('Kölner Haie', { league: 'CHL', season: '2026/27' }), 'KOL', 'league-aware CHL KOL')
+assertEqual(
+  resolveTeamShortCode('Eisbären Berlin', { league: 'CHL', teamId: 'eisbaren_berlin' }),
+  'BER',
+  'catalog id preferred in CHL',
+)
 assertEqual(resolveTeamShortCode('Iserlohn Roosters'), 'IEC', 'DEL IEC TV')
 assertEqual(resolveTeamShortCode('Nürnberg Ice Tigers'), 'NIT', 'DEL NIT TV')
 assertEqual(resolveTeamShortCode('Schwenninger Wild Wings'), 'SEC', 'DEL SEC TV')
@@ -80,6 +90,29 @@ const tvCodes = generateSceneAssetName({
 })
 assertEqual(tvCodes, { ok: true, name: 'SC036_EBB-KEC_P1_T12-00_Manual' }, 'TV DEL codes in asset name')
 
+const delOverlap = generateSceneAssetName({
+  sceneCode: 'SC036',
+  teamHome: 'Eisbären Berlin',
+  teamAway: 'Kölner Haie',
+  league: 'DEL',
+  period: 'P1',
+  gameTime: '12:00',
+  sourceType: 'manual',
+})
+assertEqual(delOverlap, { ok: true, name: 'SC036_EBB-KEC_P1_T12-00_Manual' }, 'DEL overlap EBB-KEC')
+
+const chlOverlap = generateSceneAssetName({
+  sceneCode: 'SC036',
+  teamHome: 'Eisbären Berlin',
+  teamAway: 'Kölner Haie',
+  league: 'CHL',
+  season: '2026/27',
+  period: 'P1',
+  gameTime: '12:00',
+  sourceType: 'manual',
+})
+assertEqual(chlOverlap, { ok: true, name: 'SC036_BER-KOL_P1_T12-00_Manual' }, 'CHL overlap BER-KOL')
+
 const manual = generateSceneAssetName({
   sceneCode: 'SC041',
   teamHome: 'ERC Ingolstadt',
@@ -127,5 +160,62 @@ const nhl = generateSceneAssetName({
   sourceType: 'manual',
 })
 assertEqual(nhl, { ok: true, name: 'SC100_BOS-TOR_OT_T00-07_Manual' }, 'NHL + OT')
+
+const sc1000 = generateSceneAssetName({
+  sceneCode: 'SC1000',
+  teamHome: 'Boston Bruins',
+  teamAway: 'Toronto Maple Leafs',
+  league: 'NHL',
+  period: 'OT',
+  gameTime: '00:07',
+  sourceType: 'manual',
+})
+assertEqual(sc1000, { ok: true, name: 'SC1000_BOS-TOR_OT_T00-07_Manual' }, 'SC1000+ not limited to three digits')
+
+const fromApi = generateSceneAssetNameFromScene({
+  id: 'scene_file_id',
+  scene_code: 'SC041',
+  team_home: 'ERC Ingolstadt',
+  team_away: 'EHC Red Bull München',
+  league: 'DEL',
+  period: 'P3',
+  game_time: '4:28',
+  source: { type: 'manual' },
+  asset_name: 'SC041_ING-MUC_P3_T04-28_Manual',
+  asset_name_missing: [],
+})
+assertEqual(fromApi, { ok: true, name: 'SC041_ING-MUC_P3_T04-28_Manual' }, 'copy button prefers API asset_name')
+
+const neverUsesId = generateSceneAssetNameFromScene({
+  id: 'SC041',
+  scene_code: undefined,
+  team_home: 'ERC Ingolstadt',
+  team_away: 'EHC Red Bull München',
+  league: 'DEL',
+  period: 'P3',
+  game_time: '4:28',
+  source: { type: 'manual' },
+})
+assertEqual(neverUsesId.ok, false, 'scene.id is never used as scene_code')
+if (!neverUsesId.ok) {
+  assertEqual(neverUsesId.missing.includes('Szenen-ID'), true, 'reports Szenen-ID when scene_code missing')
+}
+
+const apiFailClosed = generateSceneAssetNameFromScene({
+  id: 'scene_file_id',
+  scene_code: 'SC099',
+  team_home: 'Unknown FC',
+  team_away: 'Augsburger Panther',
+  league: 'DEL',
+  period: 'P1',
+  game_time: '01:00',
+  source: { type: 'manual' },
+  asset_name: null,
+  asset_name_missing: ['Paarung'],
+})
+assertEqual(apiFailClosed.ok, false, 'API null asset_name stays fail-closed')
+if (!apiFailClosed.ok) {
+  assertEqual(apiFailClosed.missing.includes('Paarung'), true, 'uses API missing list')
+}
 
 console.log('sceneAssetName tests passed')

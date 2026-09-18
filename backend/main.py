@@ -22,6 +22,12 @@ from auth_utils import hash_password, verify_password
 from player_importer import PennyDelImporter
 from del_data.season_utils import season_to_display, season_to_file_key
 from del_data.team_mapping import TeamCatalogMapper
+from scene_asset_name import (
+    attach_scene_asset_name,
+    load_drill_scene_slugs,
+    load_team_catalogs,
+    strip_derived_scene_fields,
+)
 from del_data.roster_store import (
     get_team_roster_snapshot,
     upsert_team_roster_snapshot,
@@ -3873,6 +3879,7 @@ def _ensure_legacy_scene_codes() -> int:
             scene_code = f"{SCENE_CODE_PREFIX}{number:0{SCENE_CODE_WIDTH}d}"
             if scene.get("scene_code") != scene_code:
                 scene["scene_code"] = scene_code
+                strip_derived_scene_fields(scene)
                 save_json(path, scene)
             used_numbers.add(number)
         scenes_with_paths.append((path, scene))
@@ -3885,6 +3892,7 @@ def _ensure_legacy_scene_codes() -> int:
             legacy_candidate += 1
         scene_code = f"{SCENE_CODE_PREFIX}{legacy_candidate:0{SCENE_CODE_WIDTH}d}"
         scene["scene_code"] = scene_code
+        strip_derived_scene_fields(scene)
         save_json(path, scene)
         used_numbers.add(legacy_candidate)
         legacy_candidate += 1
@@ -4012,10 +4020,11 @@ async def create_scene(payload: SceneMarkerCreate, current_user: AuthContext = D
     }
     scene["metadata_status"] = _infer_metadata_status(scene, payload.metadata_status)
 
+    strip_derived_scene_fields(scene)
     scene_path = _build_scene_path(scene_id, now_iso)
     save_json(scene_path, scene)
     logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={owner_id} source={source.get('type')} game_time={scene['game_time']}")
-    return scene
+    return attach_scene_asset_name(scene)
 
 
 @app.get("/api/scenes")
@@ -4035,6 +4044,8 @@ async def get_scenes(
 ):
     scenes = []
     source_type_norm = (source_type or "").strip().lower() or None
+    team_catalogs = load_team_catalogs()
+    drill_slugs = load_drill_scene_slugs()
     with SCENE_CODE_LOCK:
         _ensure_legacy_scene_codes()
     for path in _iter_json_files(SCENES_DIR):
@@ -4081,7 +4092,7 @@ async def get_scenes(
         scene["episode_code"] = scene["episode_number"]
         if not scene.get("metadata_status"):
             scene["metadata_status"] = _infer_metadata_status(scene)
-        scenes.append(scene)
+        scenes.append(attach_scene_asset_name(scene, catalogs=team_catalogs, slugs=drill_slugs))
 
     scenes.sort(key=lambda s: s.get("created_at", ""), reverse=True)
     return {"scenes": scenes}
@@ -4233,9 +4244,10 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
             }
     
     scene["updated_at"] = datetime.now().isoformat()
+    strip_derived_scene_fields(scene)
     save_json(scene_path, scene)
     logging.info(f"[scene] updated scene_id={scene_id} user={current_user}")
-    return scene
+    return attach_scene_asset_name(scene)
 
 
 # Auth Endpoints nach finaler app-Definition (jetzt immer registriert)

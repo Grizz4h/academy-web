@@ -96,6 +96,32 @@ export function getCatalogTeamsForLeague(
   return first || []
 }
 
+/** Season-preferred, then remaining seasons of that league — for short-code lookup.
+ *  Never flatten every league into one map (DEL/CHL overlap would last-write-win).
+ */
+export function getCatalogTeamsForLeagueLookup(
+  league: string | null | undefined,
+  season?: string | null,
+): CatalogTeam[] {
+  const key = (league || '').trim()
+  const catalog = CATALOGS[key]
+  if (!catalog) return []
+  if (!catalog.seasons) {
+    const flat = Array.isArray(catalog.teams) ? catalog.teams : []
+    return flat
+  }
+  const preferred = resolveCatalogSeasonKey(key, season)
+  const out: CatalogTeam[] = []
+  if (preferred && catalog.seasons[preferred]) {
+    out.push(...catalog.seasons[preferred])
+  }
+  for (const [seasonKey, teams] of Object.entries(catalog.seasons)) {
+    if (seasonKey === preferred) continue
+    out.push(...teams)
+  }
+  return out
+}
+
 export function getTeamNamesForLeague(
   league: string | null | undefined,
   season?: string | null,

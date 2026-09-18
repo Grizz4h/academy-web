@@ -1777,6 +1777,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, on
       ? storedDrillTitle
       : catalogDrillTitle || storedDrillTitle || null
   )
+  // Prefer GET /api/scenes `asset_name` (Tank-owned). Local helper is fallback only.
   const assetNameResult = generateSceneAssetNameFromScene(scene, {
     sceneSlug: drillSceneSlug || null,
   })

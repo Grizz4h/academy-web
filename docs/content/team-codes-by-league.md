@@ -16,6 +16,8 @@ Frontend-Spiegel: `frontend/src/data/teams_*.json` (DEL: `teams_del.json` ← `d
 
 Kürzel gelten **immer nur innerhalb einer Liga**. Dieselbe Buchstabenfolge kann in einer anderen Liga ein anderes Team sein. Derselbe Club kann in DEL und CHL unterschiedliche Kürzel haben.
 
+Kanonische Dateinamen für Szenen (`asset_name`) berechnet **Tank** liga-aware aus diesen Katalogen — siehe [`docs/ops/scene-asset-naming.md`](../ops/scene-asset-naming.md). Clients dürfen die Naming-Regel nicht duplizieren.
+
 ## Gleicher Club, anderes Kürzel
 
 | Catalog-ID | Liga | Kürzel | Team | Saisons |

@@ -1,14 +1,15 @@
 /**
- * Central team short-code catalog for scene asset naming.
- * Built from the union of all season rosters — historical names stay resolvable.
+ * Central team short-code catalog.
+ * Naming lookups must be league-aware. Global last-write-wins maps are forbidden.
  */
 
-import { getAllCatalogTeams, getCatalogTeamsForLeague } from './teamCatalog'
-
-type TeamShortEntry = {
-  name: string
-  short: string
-}
+import {
+  getAllCatalogTeams,
+  getCatalogTeamsForLeague,
+  getCatalogTeamsForLeagueLookup,
+  TEAM_CATALOG_LEAGUES,
+} from './teamCatalog'
+import type { CatalogTeam } from './teamCatalog'
 
 /** Alternate display names that should resolve to an existing catalog short. */
 const NAME_ALIASES: Record<string, string> = {
@@ -40,6 +41,12 @@ const NAME_ALIASES: Record<string, string> = {
   'EV Füssen': 'EVF',
 }
 
+export type TeamShortResolveOptions = {
+  league?: string | null
+  season?: string | null
+  teamId?: string | null
+}
+
 function normalizeTeamKey(value: string): string {
   return value
     .normalize('NFD')
@@ -49,40 +56,74 @@ function normalizeTeamKey(value: string): string {
     .trim()
 }
 
-function collectEntries(): TeamShortEntry[] {
-  const entries: TeamShortEntry[] = []
-  for (const team of getAllCatalogTeams()) {
-    const name = String(team.name || '').trim()
-    const short = String(team.short || '').trim().toUpperCase()
-    if (!name || !short) continue
-    entries.push({ name, short })
-  }
-  for (const [name, short] of Object.entries(NAME_ALIASES)) {
-    entries.push({ name, short: short.toUpperCase() })
-  }
-  return entries
+function catalogIdKey(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
 }
 
-const TEAM_ENTRIES = collectEntries()
+function poolsForLookup(options?: TeamShortResolveOptions): CatalogTeam[][] {
+  const league = (options?.league || '').trim()
+  if (league) return [getCatalogTeamsForLeagueLookup(league, options?.season)]
+  return TEAM_CATALOG_LEAGUES.map((key) => getCatalogTeamsForLeagueLookup(key, options?.season))
+}
 
-const SHORT_BY_EXACT_NAME = new Map(
-  TEAM_ENTRIES.map((entry) => [entry.name, entry.short]),
-)
+function shortFromTeam(team: CatalogTeam | undefined): string | null {
+  const short = String(team?.short || '').trim().toUpperCase()
+  return short || null
+}
 
-const SHORT_BY_NORMALIZED_NAME = new Map(
-  TEAM_ENTRIES.map((entry) => [normalizeTeamKey(entry.name), entry.short]),
-)
+function findInPool(pool: CatalogTeam[], predicate: (team: CatalogTeam) => boolean): CatalogTeam | undefined {
+  return pool.find(predicate)
+}
 
-/** Resolve a stored display team name to its canonical short code. */
-export function resolveTeamShortCode(teamName: string | null | undefined): string | null {
+/** Resolve a stored display team name / catalog id to its canonical short code. */
+export function resolveTeamShortCode(
+  teamName: string | null | undefined,
+  options?: TeamShortResolveOptions,
+): string | null {
+  const pools = poolsForLookup(options)
+  const teamId = catalogIdKey(options?.teamId || '')
   const raw = String(teamName || '').trim()
+  const rawId = catalogIdKey(raw)
+
+  for (const pool of pools) {
+    if (teamId) {
+      const byOptionId = findInPool(pool, (team) => catalogIdKey(team.id) === teamId)
+      const fromId = shortFromTeam(byOptionId)
+      if (fromId) return fromId
+    }
+    if (rawId) {
+      const byValueId = findInPool(pool, (team) => catalogIdKey(team.id) === rawId)
+      const fromValueId = shortFromTeam(byValueId)
+      if (fromValueId) return fromValueId
+    }
+    if (raw) {
+      const exact = findInPool(pool, (team) => team.name === raw)
+      const fromExact = shortFromTeam(exact)
+      if (fromExact) return fromExact
+      const key = normalizeTeamKey(raw)
+      const normalized = findInPool(pool, (team) => normalizeTeamKey(team.name) === key)
+      const fromNormalized = shortFromTeam(normalized)
+      if (fromNormalized) return fromNormalized
+    }
+    if (leagueScopedAlias(raw, pool)) {
+      return leagueScopedAlias(raw, pool)
+    }
+    if ((options?.league || '').trim()) break
+  }
+  return null
+}
+
+const ALIAS_BY_NORMALIZED = new Map(
+  Object.entries(NAME_ALIASES).map(([name, short]) => [normalizeTeamKey(name), short.toUpperCase()]),
+)
+
+function leagueScopedAlias(raw: string, pool: CatalogTeam[]): string | null {
   if (!raw) return null
-
-  const exact = SHORT_BY_EXACT_NAME.get(raw)
-  if (exact) return exact
-
-  const normalized = SHORT_BY_NORMALIZED_NAME.get(normalizeTeamKey(raw))
-  return normalized || null
+  const aliasShort = NAME_ALIASES[raw] || ALIAS_BY_NORMALIZED.get(normalizeTeamKey(raw))
+  if (!aliasShort) return null
+  const wanted = aliasShort.toUpperCase()
+  const hit = findInPool(pool, (team) => String(team.short || '').toUpperCase() === wanted)
+  return shortFromTeam(hit)
 }
 
 /** Map PENNY-/Alias-Namen auf den Katalognamen der Liga. */
@@ -101,7 +142,7 @@ export function resolveCatalogTeamName(
   const exact = pool.find((team) => team.name === raw || team.id === raw)
   if (exact) return exact.name
 
-  const short = resolveTeamShortCode(raw)
+  const short = resolveTeamShortCode(raw, { league, season })
   if (short) {
     const byShort = pool.find((team) => String(team.short || '').toUpperCase() === short)
     if (byShort) return byShort.name
@@ -130,9 +171,23 @@ export function isListedTeam(
 export function formatMatchupShortCodes(
   teamHome: string | null | undefined,
   teamAway: string | null | undefined,
+  options?: {
+    league?: string | null
+    season?: string | null
+    homeTeamId?: string | null
+    awayTeamId?: string | null
+  },
 ): string | null {
-  const home = resolveTeamShortCode(teamHome)
-  const away = resolveTeamShortCode(teamAway)
+  const home = resolveTeamShortCode(teamHome, {
+    league: options?.league,
+    season: options?.season,
+    teamId: options?.homeTeamId,
+  })
+  const away = resolveTeamShortCode(teamAway, {
+    league: options?.league,
+    season: options?.season,
+    teamId: options?.awayTeamId,
+  })
   if (!home || !away) return null
   return `${home}-${away}`
 }
@@ -150,11 +205,11 @@ export function resolveGameTeamShortCode(
   const raw = String(nameOrId || '').trim()
   if (!raw) return '???'
 
-  const direct = resolveTeamShortCode(raw)
+  const direct = resolveTeamShortCode(raw, { league, season, teamId: raw })
   if (direct) return direct
 
   const catalogName = resolveCatalogTeamName(raw, league, season)
-  const fromCatalog = resolveTeamShortCode(catalogName)
+  const fromCatalog = resolveTeamShortCode(catalogName, { league, season })
   if (fromCatalog) return fromCatalog
 
   return fallbackShortCode(catalogName || raw)

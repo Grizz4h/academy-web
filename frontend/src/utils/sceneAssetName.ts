@@ -1,3 +1,14 @@
+/**
+ * Client helper for the Tank Scene Pool copy button.
+ *
+ * Canonical naming is owned by the backend (`backend/scene_asset_name.py`)
+ * and returned on GET /api/scenes as `asset_name`. This module must stay
+ * aligned with that rule and is only a fallback when the API field is absent
+ * (older payloads / local fixtures). Do not treat this as a second source of
+ * truth — Board Studio and other clients should consume `asset_name`.
+ *
+ * Schema: `{SCENE_CODE}_{HOME}-{AWAY}_{PERIOD}_{Tmm-ss}_{SLUG}`
+ */
 import { formatMatchupShortCodes } from '../data/teamShortCodes'
 import { getSceneSource } from './sceneHelpers'
 import type { SceneMarker } from '../api'
@@ -8,6 +19,10 @@ export type SceneAssetNameInput = {
   sceneCode?: string | null
   teamHome?: string | null
   teamAway?: string | null
+  homeTeamId?: string | null
+  awayTeamId?: string | null
+  league?: string | null
+  season?: string | null
   period?: string | null
   gameTime?: string | null
   sourceType?: 'drill' | 'manual' | null
@@ -84,7 +99,12 @@ export function generateSceneAssetName(input: SceneAssetNameInput): SceneAssetNa
   const sceneId = String(input.sceneCode || '').trim()
   if (!sceneId) missing.push('Szenen-ID')
 
-  const matchup = formatMatchupShortCodes(input.teamHome, input.teamAway)
+  const matchup = formatMatchupShortCodes(input.teamHome, input.teamAway, {
+    league: input.league,
+    season: input.season,
+    homeTeamId: input.homeTeamId,
+    awayTeamId: input.awayTeamId,
+  })
   if (!matchup) missing.push('Paarung')
 
   const period = formatSceneAssetPeriod(input.period)
@@ -117,19 +137,32 @@ export function generateSceneAssetNameFromScene(
     | 'id'
     | 'team_home'
     | 'team_away'
+    | 'league'
+    | 'season'
     | 'period'
     | 'game_time'
     | 'source'
     | 'session_id'
     | 'drill_id'
+    | 'asset_name'
+    | 'asset_name_missing'
   >,
   options?: { sceneSlug?: string | null },
 ): SceneAssetNameResult {
+  if (typeof scene.asset_name === 'string' && scene.asset_name.trim()) {
+    return { ok: true, name: scene.asset_name }
+  }
+  if (scene.asset_name === null) {
+    return { ok: false, missing: scene.asset_name_missing || [] }
+  }
   const source = getSceneSource(scene)
   return generateSceneAssetName({
+    // Never fall back to scene.id — that is the file/uuid identity, not SC###.
     sceneCode: scene.scene_code || scene.internal_scene_id || null,
     teamHome: scene.team_home,
     teamAway: scene.team_away,
+    league: scene.league,
+    season: scene.season,
     period: scene.period,
     gameTime: scene.game_time,
     sourceType: source.type,
