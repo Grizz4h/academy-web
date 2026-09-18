@@ -5,7 +5,10 @@
  *
  * Season focus: PENNY DEL 2026/27 (Krefeld up, Dresden out).
  * Reviewed: docs/content/del-team-facts-review.md (Übersichtstabelle).
+ * Colors: data/academy/del_team_colors.json via getDelTeamColors — attached in getters.
  */
+import { getDelTeamColors, type DelTeamColors } from './delTeamColors'
+
 export type DelTeamFacts = {
   fullName: string
   city: string
@@ -14,7 +17,7 @@ export type DelTeamFacts = {
   arenaCapacity?: number
   /** Short optional line under the facts grid */
   note?: string
-}
+} & Partial<DelTeamColors>
 
 /** Keyed by delTeamLogos / catalog team id (snake_case). */
 export const DEL_TEAM_FACTS: Record<string, DelTeamFacts> = {
@@ -119,18 +122,24 @@ export const DEL_TEAM_FACTS: Record<string, DelTeamFacts> = {
   },
 }
 
+function withColors(key: string, facts: DelTeamFacts): DelTeamFacts {
+  const colors = getDelTeamColors(key)
+  return colors ? { ...facts, ...colors } : facts
+}
+
 export function getDelTeamFacts(teamId: string | null | undefined): DelTeamFacts | null {
   if (!teamId) return null
   const key = teamId.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
-  return DEL_TEAM_FACTS[key] || null
+  const facts = DEL_TEAM_FACTS[key]
+  return facts ? withColors(key, facts) : null
 }
 
 export function getDelTeamFactsByName(name: string): DelTeamFacts | null {
   const norm = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
-  if (DEL_TEAM_FACTS[norm]) return DEL_TEAM_FACTS[norm]
+  if (DEL_TEAM_FACTS[norm]) return withColors(norm, DEL_TEAM_FACTS[norm])
   for (const [key, facts] of Object.entries(DEL_TEAM_FACTS)) {
-    if (facts.fullName.toLowerCase() === name.toLowerCase()) return facts
-    if (key.includes(norm) || norm.includes(key)) return facts
+    if (facts.fullName.toLowerCase() === name.toLowerCase()) return withColors(key, facts)
+    if (key.includes(norm) || norm.includes(key)) return withColors(key, facts)
   }
   return null
 }

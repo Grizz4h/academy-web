@@ -412,6 +412,8 @@ export interface Team {
   name: string
   city?: string
   short?: string
+  primaryColor?: string
+  secondaryColor?: string
 }
 
 export interface TeamsResponse {
@@ -913,6 +915,8 @@ export interface Team {
   name: string
   city?: string
   short?: string
+  primaryColor?: string
+  secondaryColor?: string
 }
 
 export interface TeamsResponse {

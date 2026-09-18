@@ -1,0 +1,63 @@
+{
+  "_comment": "DEL club identity colors keyed by catalog team id (same ids as teams.json / delTeamLogos). primaryColor = Heim-/Leitfarbe, secondaryColor = zweite Identitätsfarbe. Hex #RRGGBB. Source: data/academy/del_team_colors.json. Not a scraped brand guide — logo + Vereinsfarben.",
+  "adler_mannheim": {
+    "primaryColor": "#1B458F",
+    "secondaryColor": "#ED192D"
+  },
+  "augsburger_panther": {
+    "primaryColor": "#EB1C26",
+    "secondaryColor": "#FFFFFF"
+  },
+  "eisbaren_berlin": {
+    "primaryColor": "#003087",
+    "secondaryColor": "#CC0C24"
+  },
+  "erc_ingolstadt": {
+    "primaryColor": "#0C2454",
+    "secondaryColor": "#FFFFFF"
+  },
+  "fischtown_pinguins": {
+    "primaryColor": "#131B42",
+    "secondaryColor": "#FFF200"
+  },
+  "grizzlys_wolfsburg": {
+    "primaryColor": "#F25C19",
+    "secondaryColor": "#231F20"
+  },
+  "iserlohn_roosters": {
+    "primaryColor": "#102E5D",
+    "secondaryColor": "#FFFFFF"
+  },
+  "kolner_haie": {
+    "primaryColor": "#ED1C24",
+    "secondaryColor": "#FFFFFF"
+  },
+  "krefeld_pinguine": {
+    "primaryColor": "#111111",
+    "secondaryColor": "#FCCC0C"
+  },
+  "lowen_frankfurt": {
+    "primaryColor": "#F2522A",
+    "secondaryColor": "#FFFFFF"
+  },
+  "nurnberg_ice_tigers": {
+    "primaryColor": "#ED1C24",
+    "secondaryColor": "#231F20"
+  },
+  "red_bull_munchen": {
+    "primaryColor": "#0A1D3D",
+    "secondaryColor": "#E31449"
+  },
+  "schwenninger_wild_wings": {
+    "primaryColor": "#1E274A",
+    "secondaryColor": "#FFFFFF"
+  },
+  "straubing_tigers": {
+    "primaryColor": "#0A2345",
+    "secondaryColor": "#FFFFFF"
+  },
+  "eislowen_dresden": {
+    "primaryColor": "#001848",
+    "secondaryColor": "#009CE4"
+  }
+}

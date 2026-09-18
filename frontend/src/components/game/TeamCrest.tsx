@@ -23,6 +23,8 @@ export type CrestTeamFacts = {
   country?: string
   countryFlag?: string
   league?: string
+  primaryColor?: string
+  secondaryColor?: string
 }
 
 const CREST_HUES = [168, 186, 204, 18, 34, 262, 332, 142]
@@ -169,6 +171,37 @@ function FactsPopover({
           <>
             <span style={{ color: 'rgba(148,163,184,0.8)' }}>Kapazität</span>
             <span style={{ color: 'rgba(226,232,240,0.9)', fontWeight: 600 }}>{facts.arenaCapacity.toLocaleString('de-DE')}</span>
+          </>
+        ) : null}
+        {facts.primaryColor && facts.secondaryColor ? (
+          <>
+            <span style={{ color: 'rgba(148,163,184,0.8)' }}>Farben</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <span
+                title={facts.primaryColor}
+                aria-label={`Primär ${facts.primaryColor}`}
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: 4,
+                  background: facts.primaryColor,
+                  border: '1px solid rgba(255,255,255,0.28)',
+                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.25)',
+                }}
+              />
+              <span
+                title={facts.secondaryColor}
+                aria-label={`Sekundär ${facts.secondaryColor}`}
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: 4,
+                  background: facts.secondaryColor,
+                  border: '1px solid rgba(255,255,255,0.28)',
+                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.25)',
+                }}
+              />
+            </span>
           </>
         ) : null}
       </div>

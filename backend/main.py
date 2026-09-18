@@ -1463,6 +1463,50 @@ def _teams_payload_for_season(data: dict, season: Optional[str] = None) -> dict:
     }
 
 
+DEL_TEAM_COLORS_FILE = os.path.join(DATA_DIR, "del_team_colors.json")
+
+
+def _load_del_team_colors() -> dict:
+    try:
+        raw = load_json(DEL_TEAM_COLORS_FILE)
+    except FileNotFoundError:
+        return {}
+    if not isinstance(raw, dict):
+        return {}
+    out = {}
+    for key, value in raw.items():
+        if str(key).startswith("_") or not isinstance(value, dict):
+            continue
+        primary = value.get("primaryColor") or value.get("primary")
+        secondary = value.get("secondaryColor") or value.get("secondary")
+        if primary and secondary:
+            out[str(key)] = {
+                "primaryColor": str(primary).upper(),
+                "secondaryColor": str(secondary).upper(),
+            }
+    return out
+
+
+def _attach_del_team_colors(payload: dict) -> dict:
+    colors = _load_del_team_colors()
+    if not colors:
+        return payload
+    teams = []
+    for team in payload.get("teams") or []:
+        if not isinstance(team, dict):
+            teams.append(team)
+            continue
+        entry = dict(team)
+        palette = colors.get((entry.get("id") or "").strip())
+        if palette:
+            entry["primaryColor"] = palette["primaryColor"]
+            entry["secondaryColor"] = palette["secondaryColor"]
+        teams.append(entry)
+    attached = dict(payload)
+    attached["teams"] = teams
+    return attached
+
+
 @app.get("/api/teams")
 async def get_teams(league: Optional[str] = None, season: Optional[str] = None):
     """Teams laden basierend auf Liga und optional Saison."""
@@ -1484,7 +1528,10 @@ async def get_teams(league: Optional[str] = None, season: Optional[str] = None):
             data = load_json(os.path.join(DATA_DIR, "teams_testspiele.json"))
         else:
             raise HTTPException(status_code=400, detail=f"Unknown league: {league}")
-        return _teams_payload_for_season(data, season)
+        payload = _teams_payload_for_season(data, season)
+        if not league or league == "DEL":
+            payload = _attach_del_team_colors(payload)
+        return payload
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Teams not found")
 

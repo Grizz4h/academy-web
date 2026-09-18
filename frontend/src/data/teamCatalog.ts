@@ -11,6 +11,7 @@ import nhlTeams from './teams_nhl.json'
 import chlTeams from './teams_chl.json'
 import u20DnlTeams from './teams_u20_dnl.json'
 import { normalizeSeasonValue, SEASON_OPTIONS } from '../stats/seasonNormalization'
+import { getDelTeamColors } from './delTeamColors'
 
 export type CatalogTeam = {
   id: string
@@ -19,6 +20,8 @@ export type CatalogTeam = {
   city?: string
   country?: string
   division?: string
+  primaryColor?: string
+  secondaryColor?: string
 }
 
 export type SeasonTeamCatalog = {
@@ -28,6 +31,12 @@ export type SeasonTeamCatalog = {
   /** Legacy flat shape */
   season?: string
   teams?: CatalogTeam[]
+}
+
+function enrichCatalogTeam(league: string, team: CatalogTeam): CatalogTeam {
+  if (league !== 'DEL') return team
+  const colors = getDelTeamColors(team.id)
+  return colors ? { ...team, ...colors } : team
 }
 
 const CATALOGS: Record<string, SeasonTeamCatalog> = {
@@ -79,21 +88,22 @@ export function getCatalogTeamsForLeague(
 
   // Legacy flat catalogs
   if (!catalog.seasons) {
-    return Array.isArray(catalog.teams) ? catalog.teams : []
+    const flat = Array.isArray(catalog.teams) ? catalog.teams : []
+    return flat.map((team) => enrichCatalogTeam(key, team))
   }
 
   const seasonKey = resolveCatalogSeasonKey(key, season)
   if (seasonKey && catalog.seasons[seasonKey]) {
-    return catalog.seasons[seasonKey]
+    return catalog.seasons[seasonKey].map((team) => enrichCatalogTeam(key, team))
   }
 
   const fallback = catalog.default_season
   if (fallback && catalog.seasons[fallback]) {
-    return catalog.seasons[fallback]
+    return catalog.seasons[fallback].map((team) => enrichCatalogTeam(key, team))
   }
 
   const first = Object.values(catalog.seasons)[0]
-  return first || []
+  return (first || []).map((team) => enrichCatalogTeam(key, team))
 }
 
 /** Season-preferred, then remaining seasons of that league — for short-code lookup.
@@ -108,16 +118,16 @@ export function getCatalogTeamsForLeagueLookup(
   if (!catalog) return []
   if (!catalog.seasons) {
     const flat = Array.isArray(catalog.teams) ? catalog.teams : []
-    return flat
+    return flat.map((team) => enrichCatalogTeam(key, team))
   }
   const preferred = resolveCatalogSeasonKey(key, season)
   const out: CatalogTeam[] = []
   if (preferred && catalog.seasons[preferred]) {
-    out.push(...catalog.seasons[preferred])
+    out.push(...catalog.seasons[preferred].map((team) => enrichCatalogTeam(key, team)))
   }
   for (const [seasonKey, teams] of Object.entries(catalog.seasons)) {
     if (seasonKey === preferred) continue
-    out.push(...teams)
+    out.push(...teams.map((team) => enrichCatalogTeam(key, team)))
   }
   return out
 }
@@ -147,11 +157,13 @@ export function getAllTeamNamesForLeague(league: string | null | undefined): str
 /** Flatten every catalog/season for short-code resolution. */
 export function getAllCatalogTeams(): CatalogTeam[] {
   const out: CatalogTeam[] = []
-  for (const catalog of Object.values(CATALOGS)) {
+  for (const [league, catalog] of Object.entries(CATALOGS)) {
     if (catalog.seasons) {
-      for (const teams of Object.values(catalog.seasons)) out.push(...teams)
+      for (const teams of Object.values(catalog.seasons)) {
+        out.push(...teams.map((team) => enrichCatalogTeam(league, team)))
+      }
     } else if (catalog.teams) {
-      out.push(...catalog.teams)
+      out.push(...catalog.teams.map((team) => enrichCatalogTeam(league, team)))
     }
   }
   return out
