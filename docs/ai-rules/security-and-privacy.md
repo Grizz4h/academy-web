@@ -64,6 +64,8 @@ Nicht:      Internet → SERVER_IP:8000
 
 **Bestehender Standard:** Bind `127.0.0.1:8000` in Startskripten / Service-Unit.
 
+CORS ist eine explizite Origin-Allowlist in `backend/main.py` (kein `*`, `allow_credentials=True`). Enthalten: Vite-Dev-Origins und Board-Studio-Tauri (`tauri://localhost`, `https://tauri.localhost`, `http://tauri.localhost`). Neue Origins nur für echte First-Party-Clients.
+
 ### 3. Authentication
 
 Aktueller Passwort-Login ist Übergangslösung (Legacy bleibt für Migration).

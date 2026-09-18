@@ -21,8 +21,16 @@ import main as backend_main
 
 BOARD_STUDIO_DEV_ORIGIN = "http://localhost:1420"
 BOARD_STUDIO_TAURI_ORIGIN = "tauri://localhost"
+BOARD_STUDIO_TAURI_HTTPS_ORIGIN = "https://tauri.localhost"
+BOARD_STUDIO_TAURI_HTTP_ORIGIN = "http://tauri.localhost"
 EXISTING_VITE_ORIGIN = "http://localhost:5174"
 FOREIGN_ORIGIN = "http://evil.example:9999"
+BOARD_STUDIO_ORIGINS = (
+    BOARD_STUDIO_DEV_ORIGIN,
+    BOARD_STUDIO_TAURI_ORIGIN,
+    BOARD_STUDIO_TAURI_HTTPS_ORIGIN,
+    BOARD_STUDIO_TAURI_HTTP_ORIGIN,
+)
 
 PREFLIGHT_HEADERS = {
     "Access-Control-Request-Method": "GET",
@@ -53,11 +61,17 @@ class CorsBoundaryTests(unittest.TestCase):
         self.assertIn("GET", allow_methods)
 
     def test_preflight_tauri_localhost_allowed(self):
-        res = self._preflight(BOARD_STUDIO_TAURI_ORIGIN)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.headers.get("access-control-allow-origin"), BOARD_STUDIO_TAURI_ORIGIN)
-        allow_headers = (res.headers.get("access-control-allow-headers") or "").lower()
-        self.assertIn("authorization", allow_headers)
+        for origin in (
+            BOARD_STUDIO_TAURI_ORIGIN,
+            BOARD_STUDIO_TAURI_HTTPS_ORIGIN,
+            BOARD_STUDIO_TAURI_HTTP_ORIGIN,
+        ):
+            with self.subTest(origin=origin):
+                res = self._preflight(origin)
+                self.assertEqual(res.status_code, 200)
+                self.assertEqual(res.headers.get("access-control-allow-origin"), origin)
+                allow_headers = (res.headers.get("access-control-allow-headers") or "").lower()
+                self.assertIn("authorization", allow_headers)
 
     def test_preflight_existing_vite_origin_still_allowed(self):
         res = self._preflight(EXISTING_VITE_ORIGIN)
@@ -71,7 +85,7 @@ class CorsBoundaryTests(unittest.TestCase):
         self.assertNotEqual(res.headers.get("access-control-allow-origin"), FOREIGN_ORIGIN)
 
     def test_scenes_get_without_bearer_still_401_with_allow_origin(self):
-        for origin in (BOARD_STUDIO_DEV_ORIGIN, BOARD_STUDIO_TAURI_ORIGIN):
+        for origin in BOARD_STUDIO_ORIGINS:
             with self.subTest(origin=origin):
                 res = self.client.get("/api/scenes", headers={"Origin": origin})
                 self.assertEqual(res.status_code, 401)

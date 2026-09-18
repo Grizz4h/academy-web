@@ -431,6 +431,8 @@ app.add_middleware(
         "http://localhost:5175",
         "http://localhost:1420",
         "tauri://localhost",
+        "https://tauri.localhost",
+        "http://tauri.localhost",
         "http://localhost:3000",
         "http://localhost:3001",
         "http://188.34.196.189:5173",
