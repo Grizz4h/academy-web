@@ -1,3 +1,4 @@
+import { formatMissingCountMessage } from '../../utils/missingRequirementMessage'
 import type {
   LabeledOption,
   SimpleStructureConfig,
@@ -348,7 +349,11 @@ export function validateSimpleStructureAnswers(
     ? (answers[cfg.logsKey] as SimpleStructureObservation[])
     : []
   if (!canEvaluateObservations(observations.length, cfg.minObservations)) {
-    return `Bitte mache mindestens ${cfg.minObservations} ${cfg.countNoun}.`
+    return formatMissingCountMessage({
+      saved: observations.length,
+      required: cfg.minObservations,
+      noun: cfg.countNoun,
+    })
   }
   const incomplete = observations.some((observation) => !asString(observation.structureType))
   if (incomplete) return 'Bitte wähle für jede Situation eine einfache Struktur.'

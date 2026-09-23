@@ -178,6 +178,9 @@ export function RoleIdentificationDrill({ drill, answers, setAnswers, session }:
                     {' · '}
                     {optionLabel(cfg.hintOptions, observation.helpfulHint)}
                   </p>
+                  {observation.note ? (
+                    <p className={styles.fieldHelp} style={{ marginTop: '0.25rem' }}>{observation.note}</p>
+                  ) : null}
                   <div className={styles.rowActions}>
                     <button
                       type="button"
@@ -264,6 +267,9 @@ export function RoleIdentificationDrill({ drill, answers, setAnswers, session }:
                   {' · '}
                   {optionLabel(cfg.hintOptions, observation.helpfulHint)}
                 </p>
+                {observation.note ? (
+                  <p className={styles.fieldHelp} style={{ marginTop: '0.25rem' }}>{observation.note}</p>
+                ) : null}
                 <div className={styles.rowActions}>
                   <button
                     type="button"

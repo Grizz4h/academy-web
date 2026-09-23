@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
+import { UiActionRow } from '../ui/UiActionRow'
+import { UiButton } from '../ui/UiButton'
 import { claimExclusivePopover, subscribeExclusivePopover } from '../ui/useExclusivePopover'
 import styles from './TrackProgressMap.module.css'
 
@@ -18,10 +20,14 @@ type TrackProgressMapProps = {
   /** Optional content centered under each D-pill (e.g. MechanicGlyph). */
   renderBeneath?: (node: TrackProgressNode, index: number) => ReactNode
   /**
-   * When set, tapping a non-locked pill selects that drill in the parent loop
-   * (Session Setup, Academy → Setup with ?drill=). Popover still explains status.
+   * Fired from the Starten button inside the popover — the D-pill itself
+   * only opens the popup (Academy / Setup).
    */
   onSelectNode?: (node: TrackProgressNode) => void
+  /** Label for the popover action button. */
+  selectLabel?: string
+  /** Pulse the current pill (Academy next-drill preselection). */
+  emphasizeCurrent?: boolean
 }
 
 const STATUS_LABEL: Record<TrackProgressNode['status'], string> = {
@@ -38,6 +44,8 @@ export function TrackProgressMap({
   compact = false,
   renderBeneath,
   onSelectNode,
+  selectLabel = 'Starten',
+  emphasizeCurrent = false,
 }: TrackProgressMapProps) {
   const [openId, setOpenId] = useState<string | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -69,6 +77,7 @@ export function TrackProgressMap({
             key={node.id}
             className={[styles.item, index > 0 ? styles.itemWithConnector : ''].filter(Boolean).join(' ')}
             data-status={node.status}
+            data-emphasized={emphasizeCurrent && node.status === 'current' ? 'true' : undefined}
           >
             {index > 0 && <span className={styles.connector} aria-hidden="true" />}
             <span className={styles.wrap}>
@@ -78,14 +87,13 @@ export function TrackProgressMap({
                 }}
                 type="button"
                 className={styles.node}
-                title={selectable ? `${name} auswählen` : name}
-                aria-label={selectable ? `${name} auswählen` : `${name}: Details anzeigen`}
+                title={name}
+                aria-label={`${name}: Details anzeigen`}
                 aria-expanded={open}
                 aria-controls={open ? panelId : undefined}
                 onClick={(event) => {
                   event.preventDefault()
                   event.stopPropagation()
-                  if (selectable) onSelectNode?.(node)
                   setOpenId((current) => {
                     const next = current === node.id ? null : node.id
                     if (next) claimExclusivePopover(exclusiveId)
@@ -116,9 +124,18 @@ export function TrackProgressMap({
                   </div>
                   <p className={styles.popupSummary}>{STATUS_LABEL[node.status]}</p>
                   {selectable ? (
-                    <p className={styles.popupDetail}>
-                      {node.status === 'current' ? 'Aktuell ausgewählt.' : 'Tippen wählt diesen Drill.'}
-                    </p>
+                    <UiActionRow className={styles.popupActions}>
+                      <UiButton
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          onSelectNode?.(node)
+                          setOpenId(null)
+                        }}
+                      >
+                        {selectLabel}
+                      </UiButton>
+                    </UiActionRow>
                   ) : node.title && node.label && node.title !== node.label ? (
                     <p className={styles.popupDetail}>Kurz: {short}</p>
                   ) : null}
@@ -151,12 +168,12 @@ export function buildDrillProgressNodes(
 
   return drills.map((drill) => {
     const short = drill.id.includes('_') ? drill.id.split('_').slice(-1)[0] : drill.id
-    if (completed.has(drill.id)) {
-      return { id: drill.id, label: short, status: 'completed' as const, title: drill.title }
-    }
     if (currentId && drill.id === currentId) {
       sawIncomplete = true
       return { id: drill.id, label: short, status: 'current' as const, title: drill.title }
+    }
+    if (completed.has(drill.id)) {
+      return { id: drill.id, label: short, status: 'completed' as const, title: drill.title }
     }
     if (sequential && sawIncomplete) {
       return { id: drill.id, label: short, status: 'locked' as const, title: drill.title }

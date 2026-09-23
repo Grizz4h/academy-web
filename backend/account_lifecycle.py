@@ -221,6 +221,7 @@ def collect_export(
     obs_players_dir: str,
     avatars_dir: str,
     identity_store: Any,
+    watched_games_dir: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build a JSON-serializable export for the authenticated user only."""
     rid = user.rinq_user_id
@@ -246,6 +247,12 @@ def collect_export(
         legacy_reward = os.path.join(rewards_dir, f"{legacy}.json")
         if os.path.isfile(legacy_reward):
             rewards = _safe_load(legacy_reward)
+
+    watched_dir = watched_games_dir or os.path.join(os.path.dirname(rewards_dir), "watched_games")
+    watched_games = None
+    watched_path = os.path.join(watched_dir, f"{rid}.json")
+    if os.path.isfile(watched_path):
+        watched_games = _safe_load(watched_path)
 
     sessions: List[Any] = []
     for path in _iter_json_files(sessions_dir):
@@ -337,6 +344,7 @@ def collect_export(
         "auth_providers": auth_providers,
         "profile": profile,
         "rewards": rewards,
+        "watched_games": watched_games,
         "sessions": sessions,
         "scenes": scenes,
         "observations": observations,
@@ -389,6 +397,7 @@ def delete_account(
     avatars_dir: str,
     users_file: str,
     remove_legacy_user_row: Callable[[str], bool],
+    watched_games_dir: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Full account deletion cascade. Returns a summary (no secrets)."""
     rid = user.rinq_user_id
@@ -407,6 +416,7 @@ def delete_account(
     deleted: Dict[str, Any] = {
         "profiles": 0,
         "rewards": 0,
+        "watched_games": 0,
         "sessions": 0,
         "scenes": 0,
         "observation_runs": 0,
@@ -444,6 +454,11 @@ def delete_account(
     ):
         if path and _unlink(path):
             deleted["rewards"] += 1
+
+    watched_dir = watched_games_dir or os.path.join(os.path.dirname(rewards_dir), "watched_games")
+    watched_path = os.path.join(watched_dir, f"{rid}.json")
+    if _unlink(watched_path):
+        deleted["watched_games"] += 1
 
     for path in list(_iter_json_files(sessions_dir)):
         data = _safe_load(path)

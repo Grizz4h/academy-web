@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict'
 import {
+  defendingSideFromAttackDirection,
   flipAttackDirection,
   homeAttackDirectionForPeriod,
   inferAutoAttackDirection,
   inferPeriodNumber,
+  resolveLiveAttackDirection,
 } from './attackDirection.ts'
 
 assert.equal(flipAttackDirection('right'), 'left')
@@ -128,5 +130,64 @@ assert.equal(
   }),
   'left',
 )
+
+assert.equal(defendingSideFromAttackDirection('right'), 'left')
+assert.equal(defendingSideFromAttackDirection('left'), 'right')
+
+// Away Ingolstadt vs Iserlohn home, P1: away attacks left → own end right
+const iserlohnIngolstadt = {
+  game_info: {
+    team_home: 'Iserlohn Roosters',
+    team_away: 'ERC Ingolstadt',
+    home_team_id: 'iserlohn_roosters',
+    away_team_id: 'erc_ingolstadt',
+    observed_team: 'ERC Ingolstadt',
+    observed_team_id: 'erc_ingolstadt',
+  },
+  observed_team_id: 'erc_ingolstadt',
+}
+assert.equal(
+  inferAutoAttackDirection({
+    phase: 'P1',
+    homeAttackDirectionP1: 'right',
+    session: iserlohnIngolstadt,
+  }),
+  'left',
+)
+assert.equal(
+  defendingSideFromAttackDirection(
+    inferAutoAttackDirection({
+      phase: 'P1',
+      homeAttackDirectionP1: 'right',
+      session: iserlohnIngolstadt,
+    }),
+  ),
+  'right',
+)
+assert.equal(
+  inferAutoAttackDirection({
+    phase: 'P2',
+    homeAttackDirectionP1: 'right',
+    session: iserlohnIngolstadt,
+  }),
+  'right',
+)
+
+const liveP1Away = resolveLiveAttackDirection({
+  phase: 'P1',
+  homeAttackDirectionP1: 'right',
+  session: iserlohnIngolstadt,
+})
+assert.equal(liveP1Away.attackDirection, 'left')
+assert.equal(liveP1Away.isOverride, false)
+
+const liveManual = resolveLiveAttackDirection({
+  phase: 'P1',
+  homeAttackDirectionP1: 'right',
+  session: iserlohnIngolstadt,
+  manualOverride: 'right',
+})
+assert.equal(liveManual.attackDirection, 'right')
+assert.equal(liveManual.isOverride, true)
 
 console.log('attackDirection.test.ts: all assertions passed')

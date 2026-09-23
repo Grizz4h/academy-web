@@ -13,6 +13,7 @@
 .trackCard {
   margin-bottom: 0;
   padding: 0.35rem 0.85rem 0.85rem;
+  overflow: visible;
 }
 
 .trackCluster {
@@ -35,6 +36,8 @@
 
 .trackDetails {
   overflow: visible;
+  position: relative;
+  z-index: 2;
 }
 
 .trackSummary {

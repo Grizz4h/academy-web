@@ -1262,21 +1262,23 @@
                 "explanation": "Du kannst aus A2_D1 eine Struktur lesen. Jetzt schaust du darauf, welche Handlungsmöglichkeiten diese Struktur erzeugt.\n\nPositionen erzeugen Möglichkeiten. Mehrere Optionen können gleichzeitig existieren. Du erkennst, was möglich ist — nicht, was gewählt werden sollte.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welche Optionen sind vorhanden? (Center, Wing, Defense — mehrere gleichzeitig möglich; keine klare Option; unklar)",
-                    "Welche Art von Option fällt dir auf: direkt, weiterführend, Sicherheit, unklar?"
+                    "Welche Anspieloptionen erkennst du? (Center, Wing, Defense — mehrere gleichzeitig möglich; keine klare Option erkennbar; unklar)",
+                    "Was erkennst du bei jeder ausgewählten Rolle: direkt anspielbar, eröffnet eine Anschlussaktion, bietet Absicherung, unklar?"
                   ],
                   "how_to_decide": [
                     "Lies zuerst die vorhandene Struktur — du musst Rollen nicht neu erklären",
                     "Frage: Welche Möglichkeiten sind da? — nicht: Welche sollte gewählt werden?",
                     "Mehrere Optionen gleichzeitig sind normal — markiere die konkreten Rollen, die du siehst",
-                    "Bei mehreren Optionen nennst du die Funktion, die dir besonders auffällt — nicht, dass alle denselben Typ haben",
+                    "Ordne jeder markierten Rolle ihre Merkmale zu — mehrere Merkmale pro Rolle sind erlaubt",
+                    "„Keine klare Option erkennbar“ heißt: du siehst keine klare Option; nicht, dass gesichert keine existiert",
                     "Unklar ist eine vollwertige Antwort"
                   ],
                   "ignore": [
                     "beste oder richtige Option",
                     "Entscheidungsbewertung",
                     "Exit-Qualität oder Breakout-Fehler",
-                    "Umschalten, Tempo, Reaktion nach Puckverlust"
+                    "Umschalten, Tempo, Reaktion nach Puckverlust",
+                    "Anzahl einzelner Spieler derselben Rolle"
                   ]
                 },
                 "learning_hint": "Du erkennst jetzt, welche Möglichkeiten eine Struktur erzeugt. Als Nächstes beobachtest du, welche dieser Möglichkeiten tatsächlich genutzt wird."
@@ -1287,39 +1289,84 @@
                 "groups": [
                   {
                     "when": {
-                      "optionType": "direct_option"
+                      "optionTraits_center": "direct_option"
                     },
                     "questions": [
-                      "Woran hast du erkannt, dass der Spieler unmittelbar anspielbar ist?"
+                      "Woran hast du bei der Option Center erkannt, dass sie direkt anspielbar ist?"
                     ],
-                    "hint": "Direkte Option heißt: sofort anspielbar — nicht „besser“."
+                    "hint": "Direkt anspielbar heißt: sofort erreichbar — nicht „besser“."
                   },
                   {
                     "when": {
-                      "optionType": "next_option"
+                      "optionTraits_wing": "direct_option"
                     },
                     "questions": [
-                      "Welche nächste Aktion macht diese Option möglich?"
+                      "Woran hast du bei der Option Wing erkannt, dass sie direkt anspielbar ist?"
                     ],
-                    "hint": "Weiterführend heißt: die Option öffnet einen nächsten Schritt — z. B. Defense → Wing → Center."
+                    "hint": "Direkt anspielbar heißt: sofort erreichbar — nicht „besser“."
                   },
                   {
                     "when": {
-                      "optionType": "safety_option"
+                      "optionTraits_defense": "direct_option"
                     },
                     "questions": [
-                      "Wie hält diese Option die Aktion stabil oder ermöglicht einen Rückpass?"
+                      "Woran hast du bei der Option Defense erkannt, dass sie direkt anspielbar ist?"
                     ],
-                    "hint": "Sicherheitsoption heißt: Stabilität — keine Qualitätsnote."
+                    "hint": "Direkt anspielbar heißt: sofort erreichbar — nicht „besser“."
                   },
                   {
                     "when": {
-                      "optionCount": "multiple"
+                      "optionTraits_center": "next_option"
                     },
                     "questions": [
-                      "Welche verschiedenen Möglichkeiten hast du gleichzeitig gesehen?"
+                      "Welche Anschlussaktion eröffnet die Option Center?"
                     ],
-                    "hint": "Mehrere Optionen heißt Entscheidungsraum — nicht Linienzählung. Die Anzahl ergibt sich aus den markierten Rollen."
+                    "hint": "Anschlussaktion heißt: die Option öffnet einen nächsten Schritt — ohne Bewertung."
+                  },
+                  {
+                    "when": {
+                      "optionTraits_wing": "next_option"
+                    },
+                    "questions": [
+                      "Welche Anschlussaktion eröffnet die Option Wing?"
+                    ],
+                    "hint": "Anschlussaktion heißt: die Option öffnet einen nächsten Schritt — ohne Bewertung."
+                  },
+                  {
+                    "when": {
+                      "optionTraits_defense": "next_option"
+                    },
+                    "questions": [
+                      "Welche Anschlussaktion eröffnet die Option Defense?"
+                    ],
+                    "hint": "Anschlussaktion heißt: die Option öffnet einen nächsten Schritt — ohne Bewertung."
+                  },
+                  {
+                    "when": {
+                      "optionTraits_center": "safety_option"
+                    },
+                    "questions": [
+                      "Wie bietet die Option Center Absicherung?"
+                    ],
+                    "hint": "Absicherung heißt: Stabilität oder Rückpass — keine Qualitätsnote."
+                  },
+                  {
+                    "when": {
+                      "optionTraits_wing": "safety_option"
+                    },
+                    "questions": [
+                      "Wie bietet die Option Wing Absicherung?"
+                    ],
+                    "hint": "Absicherung heißt: Stabilität oder Rückpass — keine Qualitätsnote."
+                  },
+                  {
+                    "when": {
+                      "optionTraits_defense": "safety_option"
+                    },
+                    "questions": [
+                      "Wie bietet die Option Defense Absicherung?"
+                    ],
+                    "hint": "Absicherung heißt: Stabilität oder Rückpass — keine Qualitätsnote."
                   }
                 ]
               },
@@ -1328,12 +1375,54 @@
                 "situationLabel": "Spielsituation",
                 "supportsUnclear": true,
                 "observationLayers": [
-                  "available_option",
-                  "option_type"
+                  "available_option"
                 ],
                 "multiSelectLayers": [
                   "available_option"
                 ],
+                "dependentTraitLayer": {
+                  "id": "option_traits",
+                  "parentLayerId": "available_option",
+                  "activeParentIds": [
+                    "center",
+                    "wing",
+                    "defense"
+                  ],
+                  "fieldKeyPrefix": "optionTraits",
+                  "promptTemplate": "Was erkennst du bei der Option {label}?",
+                  "resultTitle": "Merkmale je Option",
+                  "guideTitle": "Merkmale einer Option",
+                  "multiSelect": true,
+                  "exclusiveOptionIds": [
+                    "unclear"
+                  ],
+                  "legacyFieldKey": "optionType",
+                  "legacyLabel": "Altantwort",
+                  "options": [
+                    {
+                      "id": "direct_option",
+                      "label": "Direkt anspielbar",
+                      "summaryLabel": "Direkt anspielbar",
+                      "hint": "Der Spieler kann unmittelbar angespielt werden."
+                    },
+                    {
+                      "id": "next_option",
+                      "label": "Eröffnet eine Anschlussaktion",
+                      "summaryLabel": "Anschlussaktion",
+                      "hint": "Die Option ermöglicht eine nächste Aktion."
+                    },
+                    {
+                      "id": "safety_option",
+                      "label": "Bietet Absicherung",
+                      "summaryLabel": "Absicherung",
+                      "hint": "Die Option hält die Aktion stabil oder ermöglicht einen Rückpass."
+                    },
+                    {
+                      "id": "unclear",
+                      "label": "Unklar"
+                    }
+                  ]
+                },
                 "whyThisDrill": "A2_D1 hat gezeigt, wie sich Spieler ordnen. Jetzt: welche Möglichkeiten entstehen aus dieser Struktur?",
                 "decisionRule": "Erkenne vorhandene Möglichkeiten — nicht, welche Option gewählt werden sollte.",
                 "coreHint": "Eine Struktur ist wertvoll, weil sie Handlungsmöglichkeiten erzeugt. Du zählst keine Passwege und bewertest keine Entscheidung.",
@@ -1345,14 +1434,14 @@
                 "countNoun": "Situationen",
                 "countNounSingular": "Situation",
                 "resultTitle": "Deine erkannten Optionen",
-                "varietyLayerId": "option_type",
+                "varietyLayerId": "available_option",
                 "varietyFallback": "Mehrere Optionen können gleichzeitig in einer Struktur existieren.",
-                "guideLayerId": "option_type",
+                "guideLayerId": "option_traits",
                 "patternPrompt": "Was hat dir geholfen, eine Option zu erkennen?",
                 "patternRequiredMessage": "Bitte beantworte, was dir geholfen hat, eine Option zu erkennen.",
                 "closingNoteLabel": "Notiz (optional)",
                 "closingNotePlaceholder": "Optional. Ohne zu bewerten, welche Option besser gewesen wäre.",
-                "incompleteObservationMessage": "Bitte wähle für jede Situation vorhandene Optionen und die Art, die dir auffällt.",
+                "incompleteObservationMessage": "Bitte wähle für jede Situation vorhandene Anspieloptionen und — bei Center, Wing oder Defense — mindestens ein Merkmal je Rolle.",
                 "minObservations": 3,
                 "recommendedObservations": 5,
                 "maxObservations": 6,
@@ -1370,6 +1459,7 @@
                   "Unterscheide Optionen erkennen von Entscheidungen bewerten.",
                   "Keine Empfehlung geben, welche Option gewählt werden sollte.",
                   "Hilf dem Nutzer zu verstehen, dass mehrere Optionen gleichzeitig existieren können.",
+                  "Merkmale gehören zur jeweiligen Rolle — nicht als globale Bewertung.",
                   "Bereite die Entscheidungsanalyse von A2_D3 vor."
                 ],
                 "availableOptionOptions": [
@@ -1387,41 +1477,15 @@
                   },
                   {
                     "id": "none",
-                    "label": "keine klare Option"
+                    "label": "Keine klare Option erkennbar"
                   },
                   {
                     "id": "unclear",
                     "label": "Unklar"
                   }
                 ],
-                "availableOptionPrompt": "Welche Optionen erkennst du?",
+                "availableOptionPrompt": "Welche Anspieloptionen erkennst du?",
                 "availableOptionTitle": "Erkannte Optionen",
-                "optionTypeOptions": [
-                  {
-                    "id": "direct_option",
-                    "label": "Direkte Option",
-                    "summaryLabel": "Direkte Optionen",
-                    "hint": "Der Spieler kann unmittelbar angespielt werden."
-                  },
-                  {
-                    "id": "next_option",
-                    "label": "Weiterführende Option",
-                    "summaryLabel": "Weiterführende Optionen",
-                    "hint": "Die Option ermöglicht eine nächste Aktion."
-                  },
-                  {
-                    "id": "safety_option",
-                    "label": "Sicherheitsoption",
-                    "summaryLabel": "Sicherheitsoptionen",
-                    "hint": "Die Option hält die Aktion stabil oder ermöglicht einen Rückpass."
-                  },
-                  {
-                    "id": "unclear",
-                    "label": "Unklar"
-                  }
-                ],
-                "optionTypePrompt": "Welche Art von Option fällt dir hier auf?",
-                "optionTypeTitle": "Optionstyp",
                 "patternOptions": [
                   {
                     "id": "position",
@@ -5374,6 +5438,7 @@
               "config": {
                 "mode": "zone_priority",
                 "rink_preset": "detailed",
+                "home_attack_direction_p1": "right",
                 "observation_count": 3,
                 "observations_key": "observations",
                 "observation_index_key": "observationIndex",
@@ -5404,8 +5469,7 @@
                   "crease": true,
                   "faceoffDots": true,
                   "labels": false,
-                  "defendingSide": "left",
-                  "showDefendingHint": true
+                  "showDefendingHint": false
                 },
                 "missions": [
                   {
@@ -5548,6 +5612,7 @@
               "config": {
                 "mode": "defensive_structure",
                 "rink_view": "defensive_half",
+                "home_attack_direction_p1": "right",
                 "observation_count": 3,
                 "observations_key": "defensive_structure_observations",
                 "player_positions_key": "playerPositions",
@@ -5730,6 +5795,7 @@
               },
               "config": {
                 "mode": "single_marker_observation",
+                "home_attack_direction_p1": "right",
                 "observation_count": 3,
                 "observations_key": "pressure_trigger_observations",
                 "location_key": "triggerLocation",
@@ -5972,6 +6038,7 @@
               "config": {
                 "mode": "formation_shift",
                 "rink_view": "defensive_half",
+                "home_attack_direction_p1": "right",
                 "observation_count": 3,
                 "observations_key": "formation_shift_observations",
                 "observation_index_key": "observationIndex",

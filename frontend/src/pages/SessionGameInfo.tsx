@@ -12,8 +12,6 @@ type SessionGameInfoProps = {
   session: Session
   isFoundationSession: boolean
   activeDrillTitle?: string | null
-  note: string
-  onNoteChange: (value: string) => void
 }
 
 function formatGameDate(value?: string): string | null {
@@ -68,38 +66,10 @@ function TeamColumn({
   )
 }
 
-function SessionNote({
-  note,
-  onNoteChange,
-  className,
-}: {
-  note: string
-  onNoteChange: (value: string) => void
-  className?: string
-}) {
-  return (
-    <div className={[styles.noteBlock, className].filter(Boolean).join(' ')}>
-      <label htmlFor="session-note" className={styles.noteLabel}>
-        Notiz
-      </label>
-      <textarea
-        id="session-note"
-        className={styles.noteField}
-        value={note}
-        onChange={(event) => onNoteChange(event.target.value)}
-        rows={2}
-        placeholder="Was hast du im Blick?"
-      />
-    </div>
-  )
-}
-
 export function SessionGameInfo({
   session,
   isFoundationSession,
   activeDrillTitle,
-  note,
-  onNoteChange,
 }: SessionGameInfoProps) {
   const [crestSize, setCrestSize] = useState<'md' | 'lg'>(() => (
     typeof window !== 'undefined' && window.matchMedia('(min-width: 769px)').matches ? 'lg' : 'md'
@@ -157,35 +127,31 @@ export function SessionGameInfo({
             {activeDrillTitle ? <UiPill tone="accent">{activeDrillTitle}</UiPill> : null}
           </div>
           <p className={styles.foundationHint}>Keine Live-Paarung nötig.</p>
-          <SessionNote note={note} onNoteChange={onNoteChange} />
         </>
       ) : game && home && away ? (
         <>
-          <div className={styles.desktopRow}>
-            <div className={arenaStyles.arenaBoard} aria-label={`${home} gegen ${away}`}>
-              <TeamColumn
-                name={home}
-                teamId={game.home_team_id}
-                observed={observed === home}
-                crestSize={crestSize}
-                side="home"
-                league={game.league}
-                showFacts={leagueHasTeamFacts(game.league)}
-              />
-              <div className={arenaStyles.vsRail}>
-                <MatchupVs variant="board" />
-              </div>
-              <TeamColumn
-                name={away}
-                teamId={game.away_team_id}
-                observed={observed === away}
-                crestSize={crestSize}
-                side="away"
-                league={game.league}
-                showFacts={leagueHasTeamFacts(game.league)}
-              />
+          <div className={arenaStyles.arenaBoard} aria-label={`${home} gegen ${away}`}>
+            <TeamColumn
+              name={home}
+              teamId={game.home_team_id}
+              observed={observed === home}
+              crestSize={crestSize}
+              side="home"
+              league={game.league}
+              showFacts={leagueHasTeamFacts(game.league)}
+            />
+            <div className={arenaStyles.vsRail}>
+              <MatchupVs variant="board" />
             </div>
-            <SessionNote note={note} onNoteChange={onNoteChange} className={styles.noteAside} />
+            <TeamColumn
+              name={away}
+              teamId={game.away_team_id}
+              observed={observed === away}
+              crestSize={crestSize}
+              side="away"
+              league={game.league}
+              showFacts={leagueHasTeamFacts(game.league)}
+            />
           </div>
           {meta}
         </>
@@ -198,7 +164,6 @@ export function SessionGameInfo({
             {session.state ? <UiPill>{session.state}</UiPill> : null}
             <UiPill>{scopeLabel}</UiPill>
           </div>
-          <SessionNote note={note} onNoteChange={onNoteChange} />
         </>
       )}
     </section>

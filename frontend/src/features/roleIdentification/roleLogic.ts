@@ -1,3 +1,4 @@
+import { formatMissingCountMessage } from '../../utils/missingRequirementMessage'
 import type {
   FoundStatus,
   GuidanceMode,
@@ -283,7 +284,12 @@ export function validateRoleIdentificationAnswers(
     ? (answers[cfg.logsKey] as RoleObservation[])
     : []
   if (!canEvaluateObservations(observations.length, cfg.minObservations)) {
-    return `Bitte beobachte den ${cfg.targetRoleLabel} in mindestens ${cfg.minObservations} Situationen.`
+    return formatMissingCountMessage({
+      saved: observations.length,
+      required: cfg.minObservations,
+      noun: 'Situationen',
+      ofWhat: `für den ${cfg.targetRoleLabel}`,
+    })
   }
   if (readRoleStage(answers, cfg.stageKey) !== 'complete') {
     return 'Bitte schließe die Rollenidentifikation vollständig ab.'

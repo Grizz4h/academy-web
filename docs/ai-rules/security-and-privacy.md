@@ -137,6 +137,7 @@ Dazu zählen insbesondere:
 
 - Accounts, Profile, Sessions, Rewards, Uploads, Observations
 - userbezogene Scene-Daten
+- manuell / aus Sessions abgeleitete gesehene Katalog-Spiele (`watched_games`)
 
 Statischer Curriculum-/Content-Code bleibt versioniert.
 
@@ -227,7 +228,8 @@ Sondern: `assets/team_logos/` (nicht im Dist)
          → `GET /api/team-logos/{league}?file=….png`
          → öffentlich nur bei schriftlicher Freigabe:
             `data/academy/club_logo_clearance.json` (Catalog-ID → true)
-         → sonst `is_creator_mode_auth` (Creator-Allowlist **oder** Admin)
+         → sonst Creator/Admin **oder** Club-Logo-Preview-Allowlist
+            (`is_creator_mode_auth` oder `can_view_uncleared_club_logos`)
          Frontend: `GET /api/team-logo-clearance` + blob:-URL, nie `<img src="/teams/…">`
 ```
 
@@ -235,8 +237,9 @@ Sondern: `assets/team_logos/` (nicht im Dist)
 - CHL/U20, die dieselbe Datei wiederverwenden (`/teams/del/eisbaren_berlin.png`), folgen dem Datei-Stem
 - Nginx: `location ^~ /teams/ { return 404; }` — alte Public-URLs tot
 - Kein `StaticFiles`-Mount für Club-Logos
-- Response: cleared → `Cache-Control: public, max-age=86400`; Creator/Admin → `private, max-age=86400` (kein Shared-Cache). Frontend hält Blob-URLs in der Session und Cache Storage (`rinq-club-logos-v1`, Logout löscht)
-- Versteckte UI ≠ Autorisierung: ohne Clearance und ohne Creator/Admin-Session → 401/403, auch wenn der Dateiname bekannt ist
+- Response: cleared → `Cache-Control: public, max-age=86400`; Creator/Admin/Preview → `private, max-age=86400` (kein Shared-Cache). Frontend hält Blob-URLs in der Session und Cache Storage (`rinq-club-logos-v1`, Logout löscht)
+- Versteckte UI ≠ Autorisierung: ohne Clearance und ohne Creator/Admin/Preview-Session → 401/403, auch wenn der Dateiname bekannt ist
+- Preview-Allowlist (Code + optional `ACADEMY_CLUB_LOGO_USERNAMES` / `ACADEMY_CLUB_LOGO_RINQ_USER_IDS`) gibt nur Logo-Dateien frei — nicht Szenenpool / Szene erfassen. Aktuell: Martin.
 
 ### 13. Logging
 
@@ -298,7 +301,7 @@ Für jeden neuen externen Anbieter prüfen:
 
 - Nutzer können eigene Daten **exportieren** (`GET /api/me/export`, JSON, nur `rinq_user_id`-Ownership). Unter `STORAGE_BACKEND=postgres` umfasst der Export Profil/Rewards/Sessions/Grants sowie redigiertes Billing + Widerrufe (keine Payment-Roh-IDs / kein `provider_subject`).
 - Nutzer können den Account **vollständig löschen** (`POST /api/me/delete`, Bestätigung `LÖSCHEN`).
-- Löschung umfasst app-interne Runtime-Daten (Profil, Sessions, Rewards, Observations, Scenes, Uploads), alle `auth_links`, Identity und — sofern konfiguriert — den Managed-Auth-User (Supabase Admin API via `SUPABASE_SERVICE_ROLE_KEY`, nur Backend).
+- Löschung umfasst app-interne Runtime-Daten (Profil, Sessions, Rewards, watched_games, Observations, Scenes, Uploads), alle `auth_links`, Identity und — sofern konfiguriert — den Managed-Auth-User (Supabase Admin API via `SUPABASE_SERVICE_ROLE_KEY`, nur Backend).
 - Vor dem Identity-CASCADE: Stripe-Subscriptions canceln + Stripe-Customer löschen (`billing/account_cleanup.py`), fail-closed bei Cleanup-Fehler.
 - Keine unnötige Aufbewahrung gelöschter Accounts in der Live-Runtime.
 - **Backups:** Gelöschte Daten können für eine begrenzte Zeit in bestehenden Server-Backups enthalten sein (inkl. nightly `pg_dump`); keine neuen Backup-Jobs nur wegen Account-Löschung. Retention der Ops-Backups separat dokumentieren.

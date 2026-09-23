@@ -26,7 +26,7 @@ from fastapi.testclient import TestClient
 from security_guards import reset_rate_limiter_for_tests
 
 import main as backend_main
-from security_guards import SlidingWindowRateLimiter, is_admin_auth, is_self_checkout_auth, legacy_signup_allowed
+from security_guards import SlidingWindowRateLimiter, is_admin_auth, is_self_checkout_auth, legacy_signup_allowed, can_view_uncleared_club_logos
 from identity.context import AuthContext, LEGACY_PASSWORD_PROVIDER
 
 
@@ -71,6 +71,26 @@ class SecurityGuardUnitTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {"ACADEMY_ADMIN_USERNAMES": "adminuser"}):
             self.assertFalse(is_admin_auth(other))
             self.assertTrue(is_admin_auth(other, role_from_record="admin"))
+
+    def test_club_logo_preview_allowlist_includes_martin_not_creator(self):
+        martin = AuthContext(
+            rinq_user_id="df3d36ed-8f70-422a-b82c-933baa307527",
+            auth_provider=LEGACY_PASSWORD_PROVIDER,
+            auth_subject="martin",
+            display_name="Martin",
+            legacy_username="martin",
+        )
+        alice = AuthContext(
+            rinq_user_id="u2",
+            auth_provider=LEGACY_PASSWORD_PROVIDER,
+            auth_subject="alice",
+            display_name="alice",
+            legacy_username="alice",
+        )
+        self.assertTrue(can_view_uncleared_club_logos(martin))
+        self.assertFalse(can_view_uncleared_club_logos(alice))
+        with mock.patch.dict(os.environ, {"ACADEMY_CLUB_LOGO_USERNAMES": "alice"}):
+            self.assertTrue(can_view_uncleared_club_logos(alice))
 
     def test_self_checkout_closed_by_default(self):
         user = AuthContext(
@@ -218,6 +238,14 @@ class HardeningApiTests(unittest.TestCase):
             self.assertTrue(me.json().get("creator_mode"))
         me2 = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
         self.assertFalse(me2.json().get("creator_mode"))
+        self.assertFalse(me2.json().get("club_logo_preview"))
+
+    def test_me_reports_club_logo_preview_without_creator(self):
+        with mock.patch.dict(os.environ, {"ACADEMY_CLUB_LOGO_USERNAMES": "alice"}):
+            me = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('alice')}"})
+            self.assertEqual(me.status_code, 200)
+            self.assertFalse(me.json().get("creator_mode"))
+            self.assertTrue(me.json().get("club_logo_preview"))
 
     def test_me_reports_self_checkout(self):
         admin_me = self.client.get("/api/me", headers={"Authorization": f"Bearer {_token('adminuser')}"})
@@ -353,6 +381,40 @@ class HardeningApiTests(unittest.TestCase):
                     headers={"Authorization": f"Bearer {_token('alice')}"},
                 )
                 self.assertEqual(res.status_code, 200)
+        finally:
+            team_logo_store.TEAM_LOGOS_DIR = prev_dir
+            team_logo_store.CLEARANCE_PATH = prev_clearance
+
+    def test_team_logo_preview_allowlist(self):
+        import team_logo_store
+
+        logos = Path(self._tmp.name) / "logos-preview"
+        (logos / "del").mkdir(parents=True)
+        (logos / "del" / "straubing_tigers.svg").write_bytes(b"<svg/>")
+        clearance = Path(self._tmp.name) / "clearance-preview.json"
+        clearance.write_text("{}", encoding="utf-8")
+        prev_dir = team_logo_store.TEAM_LOGOS_DIR
+        prev_clearance = team_logo_store.CLEARANCE_PATH
+        team_logo_store.TEAM_LOGOS_DIR = logos
+        team_logo_store.CLEARANCE_PATH = clearance
+        try:
+            with mock.patch.dict(os.environ, {"ACADEMY_CLUB_LOGO_USERNAMES": "alice"}):
+                res = self.client.get(
+                    "/api/team-logos/del",
+                    params={"file": "straubing_tigers.svg"},
+                    headers={"Authorization": f"Bearer {_token('alice')}"},
+                )
+                self.assertEqual(res.status_code, 200)
+                scene = self.client.post(
+                    "/api/scenes",
+                    headers={"Authorization": f"Bearer {_token('alice')}"},
+                    json={
+                        "game_time": "13:42",
+                        "source": {"type": "manual"},
+                        "period": "P1",
+                    },
+                )
+                self.assertEqual(scene.status_code, 403)
         finally:
             team_logo_store.TEAM_LOGOS_DIR = prev_dir
             team_logo_store.CLEARANCE_PATH = prev_clearance

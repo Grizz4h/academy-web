@@ -48,6 +48,20 @@
   max-width: 100%;
 }
 
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.row .item,
+.row .itemButton {
+  width: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .item,
 .itemButton {
   display: inline-flex;
@@ -89,6 +103,17 @@
 .itemButton:focus-visible {
   outline: 2px solid rgba(52, 211, 153, 0.55);
   outline-offset: 1px;
+}
+
+.itemWatched {
+  border-color: rgba(52, 211, 153, 0.55);
+  background:
+    radial-gradient(circle at 12% 40%, rgba(16, 185, 129, 0.22), transparent 48%),
+    rgba(8, 16, 30, 0.55);
+}
+
+.watchedChip {
+  flex: 0 0 auto;
 }
 
 .badge {
@@ -173,6 +198,14 @@
 
   .list > li {
     width: 100%;
+  }
+
+  .row {
+    width: 100%;
+  }
+
+  .watchedChip {
+    margin-left: auto;
   }
 
   .item,

@@ -36,6 +36,8 @@ data/academy/profiles/**
 !data/academy/profiles/.gitkeep
 data/academy/rewards/**
 !data/academy/rewards/.gitkeep
+data/academy/watched_games/**
+!data/academy/watched_games/.gitkeep
 data/academy/sessions/**
 !data/academy/sessions/.gitkeep
 data/academy/withdrawal_requests.json

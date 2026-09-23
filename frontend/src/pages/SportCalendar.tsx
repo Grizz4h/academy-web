@@ -8,6 +8,7 @@ import { useGameSetupLauncher } from '../features/schedule/GameSetupLauncherProv
 import { SCHEDULE_LEAGUES, type ScheduleLeague } from '../features/schedule/scheduleLeagues'
 import { useScheduleLeaguesGames } from '../features/schedule/useScheduleLeaguesGames'
 import { useSpoilerProtection } from '../features/schedule/useSpoilerProtection'
+import { useWatchedGames } from '../features/schedule/useWatchedGames'
 import { localTodayIsoDate } from '../components/game/gameCatalogUtils'
 import styles from './SportCalendar.module.css'
 
@@ -54,6 +55,7 @@ function gamesByDate(games: CatalogGame[]): Map<string, CatalogGame[]> {
 export default function SportCalendarPage() {
   const { requestGameSetup } = useGameSetupLauncher()
   const [hideSpoilers] = useSpoilerProtection()
+  const { watchedIds, toggleWatched } = useWatchedGames()
   const [viewMonth, setViewMonth] = useState(() => {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1)
@@ -92,6 +94,7 @@ export default function SportCalendarPage() {
         <h1 className="ui-page-title">Sport-Kalender</h1>
         <p className="ui-page-lead">
           Importierte Spielpläne für DEL, DEL2, CHL, U20 DNL und NHL — Creator-Ansicht.
+          Gesehene Paarungen kommen aus deinen Sessions und lassen sich hier abhaken.
         </p>
       </header>
 
@@ -114,9 +117,15 @@ export default function SportCalendarPage() {
 
         <div className={styles.grid} role="grid" aria-label={`Kalender ${monthLabel(viewMonth)}`}>
           {monthCells.map((cell) => {
-            const count = cell.inMonth ? (dateIndex.get(cell.iso)?.length ?? 0) : 0
+            const dayGames = cell.inMonth ? (dateIndex.get(cell.iso) || []) : []
+            const count = dayGames.length
+            const watchedCount = dayGames.filter((game) => watchedIds.has(game.id)).length
             const isSelected = cell.iso === selectedDate
             const isToday = cell.iso === today
+            const allWatched = count > 0 && watchedCount === count
+            const someWatched = watchedCount > 0 && !allWatched
+            const labelGames = count > 0 ? `${count} Spiele` : 'Keine Spiele'
+            const labelWatched = watchedCount > 0 ? `, ${watchedCount} gesehen` : ''
             return (
               <button
                 key={cell.iso}
@@ -126,16 +135,22 @@ export default function SportCalendarPage() {
                   styles.day,
                   !cell.inMonth ? styles.dayOutside : '',
                   count > 0 ? styles.dayHasGames : '',
+                  allWatched ? styles.dayAllWatched : '',
+                  someWatched ? styles.daySomeWatched : '',
                   isSelected ? styles.daySelected : '',
                   isToday ? styles.dayToday : '',
                 ].filter(Boolean).join(' ')}
                 disabled={!cell.inMonth}
                 onClick={() => setSelectedDate(cell.iso)}
                 aria-pressed={isSelected}
-                aria-label={`${cell.day}. ${count > 0 ? `${count} Spiele` : 'Keine Spiele'}`}
+                aria-label={`${cell.day}. ${labelGames}${labelWatched}`}
               >
                 <span className={styles.dayNumber}>{cell.day}</span>
-                {count > 0 ? <span className={styles.dayBadge}>{count}</span> : null}
+                {count > 0 ? (
+                  <span className={styles.dayBadge}>
+                    {allWatched ? '✓' : someWatched ? `${watchedCount}/${count}` : count}
+                  </span>
+                ) : null}
               </button>
             )
           })}
@@ -172,6 +187,8 @@ export default function SportCalendarPage() {
                     date={selectedDate}
                     onSelectGame={handleSelectGame}
                     showScores={!hideSpoilers}
+                    watchedGameIds={watchedIds}
+                    onToggleWatched={(game, seen) => toggleWatched(game.id, seen)}
                   />
                 </div>
               )

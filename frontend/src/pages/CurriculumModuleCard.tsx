@@ -19,6 +19,7 @@ type CurriculumModuleCardProps = {
   showTheory: boolean
   showPremiumCheckout: boolean
   completedDrillIds: Set<string>
+  nextDrillId?: string | null
   onStart: () => void
   onTheory: () => void
   onCheckout: () => void
@@ -39,6 +40,7 @@ export function CurriculumModuleCard({
   showTheory,
   showPremiumCheckout,
   completedDrillIds,
+  nextDrillId = null,
   onStart,
   onTheory,
   onCheckout,
@@ -48,7 +50,7 @@ export function CurriculumModuleCard({
   const selfCheckout = useSelfCheckout()
   const progressNodes = buildDrillProgressNodes(
     drills.map((drill) => ({ id: drill.id, title: drill.title })),
-    { completedIds: completedDrillIds },
+    { completedIds: completedDrillIds, currentId: nextDrillId },
   )
 
   return (
@@ -109,6 +111,8 @@ export function CurriculumModuleCard({
           <TrackProgressMap
             nodes={progressNodes}
             compact
+            emphasizeCurrent
+            selectLabel="Starten"
             onSelectNode={
               premiumLocked || !onSelectDrill
                 ? undefined

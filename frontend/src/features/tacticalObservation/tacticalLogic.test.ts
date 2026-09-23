@@ -10,15 +10,19 @@ import {
   canEvaluateObservations,
   computeTacticalObservationResult,
   decodeLayerValues,
-  deriveOptionCount,
   draftToObservation,
   emptyTacticalDraft,
   findCompletedTacticalAnswers,
+  formatObservationLine,
   getObservationValue,
+  isLegacyDependentTraitObservation,
   observationToDraft,
+  pruneDependentTraitDraft,
   resolveTacticalObservationConfig,
   resultHasNumericScore,
+  selectedOptionCategoryKind,
   syncMultiSelectValues,
+  traitFieldKey,
   validateTacticalObservationAnswers,
 } from './tacticalLogic.ts'
 
@@ -110,7 +114,7 @@ assert.equal(JSON.stringify(result).includes('guter'), false)
 assert.equal(JSON.stringify(result).includes('schlecht'), false)
 assert.equal(resultHasNumericScore(result), false)
 
-assert.equal(validateTacticalObservationAnswers(cfg, { [cfg.logsKey]: observations.slice(0, 2) }), 'Bitte mache mindestens 3 Situationen.')
+assert.equal(validateTacticalObservationAnswers(cfg, { [cfg.logsKey]: observations.slice(0, 2) }), '2 von 3 Situationen gespeichert. Speichere mindestens 3, dann kannst du weiter.')
 assert.equal(
   validateTacticalObservationAnswers(cfg, {
     [cfg.logsKey]: observations.slice(0, 3),
@@ -199,22 +203,35 @@ assert.equal(a2d1.config.structureOptions.some((option: { id: string }) => ['goo
 assert.ok(a3.learningGoals.length > 0)
 
 const d2Cfg = resolveTacticalObservationConfig(a2d2.config)
-assert.equal(d2Cfg.layers.map((layer) => layer.id).join(','), 'available_option,option_type')
+assert.equal(d2Cfg.layers.map((layer) => layer.id).join(','), 'available_option')
 assert.equal(d2Cfg.layers[0].multiSelect, true)
-assert.equal(Boolean(d2Cfg.layers[1].multiSelect), false)
 assert.equal(d2Cfg.layers[0].options.map((option) => option.id).join(','), 'center,wing,defense,none,unclear')
-assert.equal(d2Cfg.layers[1].options.map((option) => option.id).join(','), 'direct_option,next_option,safety_option,unclear')
+assert.ok(d2Cfg.dependentTraitLayer)
+assert.equal(d2Cfg.dependentTraitLayer?.id, 'option_traits')
+assert.equal(d2Cfg.dependentTraitLayer?.parentLayerId, 'available_option')
+assert.equal(d2Cfg.dependentTraitLayer?.options.map((option) => option.id).join(','), 'direct_option,next_option,safety_option,unclear')
+assert.equal(d2Cfg.guideLayerId, 'option_traits')
+assert.equal(d2Cfg.varietyLayerId, 'available_option')
 assert.equal(d2Cfg.logsKey, 'tactical_option_observations')
 assert.ok(!a2d2.config.observationLayers.includes('option_count'))
+assert.ok(!a2d2.config.observationLayers.includes('option_type'))
 assert.ok(!a2d2.config.availableOptionOptions.some((option: { id: string }) => option.id === 'multiple'))
-assert.equal(a2d2.config.optionTypePrompt.includes('auffällt'), true)
-assert.equal(deriveOptionCount(['center', 'wing']), 'multiple')
-assert.equal(deriveOptionCount(['defense']), 'one_clear')
-assert.equal(deriveOptionCount(['none']), 'none')
-assert.equal(deriveOptionCount(['unclear']), 'unclear')
+assert.equal(a2d2.config.availableOptionPrompt.includes('Anspieloptionen'), true)
+assert.equal(selectedOptionCategoryKind(['center', 'wing']), 'multiple_categories')
+assert.equal(selectedOptionCategoryKind(['defense']), 'one_category')
+assert.equal(selectedOptionCategoryKind(['none']), 'none')
+assert.equal(selectedOptionCategoryKind(['unclear']), 'unclear')
 assert.equal(syncMultiSelectValues(['center'], ['center', 'none'], d2Cfg.layers[0].options).join(','), 'none')
 assert.equal(syncMultiSelectValues(['none'], ['none', 'wing'], d2Cfg.layers[0].options).join(','), 'wing')
 assert.equal(decodeLayerValues('center,wing').join(','), 'center,wing')
+assert.equal(
+  syncMultiSelectValues(['direct_option'], ['direct_option', 'unclear'], d2Cfg.dependentTraitLayer!.options, d2Cfg.dependentTraitLayer!.exclusiveOptionIds).join(','),
+  'unclear',
+)
+assert.equal(
+  syncMultiSelectValues(['unclear'], ['unclear', 'next_option'], d2Cfg.dependentTraitLayer!.options, d2Cfg.dependentTraitLayer!.exclusiveOptionIds).join(','),
+  'next_option',
+)
 
 const d1Completed = {
   [a2d1.config.observations_key]: observations.slice(0, 3),
@@ -223,14 +240,60 @@ const d1Completed = {
 }
 assert.equal(findCompletedTacticalAnswers(d2Cfg, d1Completed, { drafts: { P1: d1Completed }, checkins: [] }), null)
 
+assert.equal(
+  draftToObservation({ availableOption: 'center,wing' }, d2Cfg, 0),
+  null,
+  'roles without traits cannot save',
+)
+assert.equal(
+  draftToObservation({ availableOption: 'none' }, d2Cfg, 0)?.values?.availableOption,
+  'none',
+)
+assert.equal(
+  draftToObservation({ availableOption: 'unclear' }, d2Cfg, 0)?.values?.availableOption,
+  'unclear',
+)
+
 const d2Observation = draftToObservation({
   availableOption: 'center,wing',
-  optionType: 'direct_option',
+  optionTraits_center: 'direct_option,next_option',
+  optionTraits_wing: 'direct_option',
 }, d2Cfg, 0)
 assert.ok(d2Observation)
 assert.equal(d2Observation?.values?.availableOption, 'center,wing')
-assert.equal(d2Observation?.values?.optionCount, 'multiple')
-assert.equal(d2Observation?.values?.optionType, 'direct_option')
+assert.equal(d2Observation?.values?.optionTraits_center, 'direct_option,next_option')
+assert.equal(d2Observation?.values?.optionTraits_wing, 'direct_option')
+assert.equal(d2Observation?.values?.optionCount, undefined)
+assert.equal(d2Observation?.values?.optionType, undefined)
+assert.equal(
+  formatObservationLine(d2Observation!, d2Cfg),
+  'Center: Direkt anspielbar, Eröffnet eine Anschlussaktion · Wing: Direkt anspielbar',
+)
+
+const pruned = pruneDependentTraitDraft({
+  availableOption: 'center',
+  optionTraits_center: 'direct_option',
+  optionTraits_wing: 'safety_option',
+  optionTraits_defense: 'next_option',
+  note: '',
+}, d2Cfg)
+assert.equal(pruned.optionTraits_center, 'direct_option')
+assert.equal(pruned.optionTraits_wing, '')
+assert.equal(pruned.optionTraits_defense, '')
+
+const legacyObs = {
+  id: 'legacy',
+  order: 1,
+  values: { availableOption: 'center,wing', optionType: 'direct_option', optionCount: 'multiple' },
+}
+assert.equal(isLegacyDependentTraitObservation(legacyObs, d2Cfg), true)
+assert.ok(formatObservationLine(legacyObs, d2Cfg).includes('Altantwort'))
+const legacyDraft = observationToDraft(legacyObs, d2Cfg)
+assert.equal(legacyDraft.availableOption, 'center,wing')
+assert.equal(legacyDraft.optionTraits_center, '')
+assert.equal(legacyDraft.optionTraits_wing, '')
+assert.equal(draftToObservation(legacyDraft, d2Cfg, 0), null, 'legacy edit requires fresh traits')
+
 const d2Completed = {
   [d2Cfg.logsKey]: [d2Observation, d2Observation, d2Observation],
   [d2Cfg.patternKey]: 'position',
@@ -238,6 +301,17 @@ const d2Completed = {
 }
 assert.equal(findCompletedTacticalAnswers(d2Cfg, d2Completed, { drafts: { P1: d2Completed }, checkins: [] })?.[d2Cfg.stageKey], 'complete')
 assert.equal(findCompletedTacticalAnswers(d2Cfg, {}, { drafts: { P1: d1Completed }, checkins: [] }), null)
+
+const legacyCompleted = {
+  [d2Cfg.logsKey]: [legacyObs, legacyObs, legacyObs],
+  [d2Cfg.patternKey]: 'position',
+  [d2Cfg.stageKey]: 'complete',
+}
+assert.equal(
+  validateTacticalObservationAnswers(d2Cfg, legacyCompleted),
+  null,
+  'legacy observations remain valid without inventing role traits',
+)
 
 assert.equal(a2d3.drill_type, 'tactical_observation')
 assert.equal(a2d3.config.mechanic, 'tactical_observation')
@@ -389,19 +463,22 @@ assert.equal(findCompletedTacticalAnswers(d5Cfg, {}, { drafts: { P1: d4Completed
 assert.equal(d5Completed.space_feel, undefined)
 
 const d2Result = computeTacticalObservationResult([
-  { id: '1', order: 1, values: { availableOption: 'center', optionType: 'direct_option' } },
-  { id: '2', order: 2, values: { availableOption: 'center,wing', optionType: 'next_option' } },
-  { id: '3', order: 3, values: { availableOption: 'defense', optionType: 'safety_option' } },
-  { id: '4', order: 4, values: { availableOption: 'center', optionType: 'direct_option' } },
+  { id: '1', order: 1, values: { availableOption: 'center', optionTraits_center: 'direct_option' } },
+  { id: '2', order: 2, values: { availableOption: 'center,wing', optionTraits_center: 'next_option', optionTraits_wing: 'direct_option' } },
+  { id: '3', order: 3, values: { availableOption: 'defense', optionTraits_defense: 'safety_option' } },
+  { id: '4', order: 4, values: { availableOption: 'center', optionTraits_center: 'direct_option,safety_option' } },
 ], d2Cfg)
-assert.equal(d2Result.layerCounts.optionType.direct_option, 2)
-assert.equal(d2Result.layerCounts.optionType.next_option, 1)
-assert.equal(d2Result.layerCounts.optionType.safety_option, 1)
 assert.equal(d2Result.layerCounts.availableOption.center, 3)
 assert.equal(d2Result.layerCounts.availableOption.wing, 1)
-assert.equal(d2Result.layerCounts.optionCount.multiple, 1)
-assert.equal(d2Result.layerCounts.optionCount.one_clear, 3)
+assert.equal(d2Result.layerCounts.optionTraits_center.direct_option, 2)
+assert.equal(d2Result.layerCounts.optionTraits_center.next_option, 1)
+assert.equal(d2Result.layerCounts.optionTraits_wing.direct_option, 1)
+assert.equal(d2Result.layerCounts.optionTraits_defense.safety_option, 1)
+assert.equal(d2Result.layerCounts.optionTraits.direct_option, 3)
+assert.equal(d2Result.layerCounts.optionCount, undefined)
 assert.equal(resultHasNumericScore(d2Result), false)
+assert.equal(traitFieldKey('optionTraits', 'center'), 'optionTraits_center')
+assert.equal(emptyTacticalDraft(d2Cfg).optionTraits_center, '')
 
 const d3Result = computeTacticalObservationResult([
   { id: '1', order: 1, values: { availableOption: 'wing', executedAction: 'pass', optionVisibility: 'clearly_visible' } },
@@ -432,14 +509,14 @@ assert.equal(JSON.stringify(d4Result).includes('gute'), false)
 assert.equal(JSON.stringify(d4Result).includes('falsche'), false)
 
 const d5Result = computeTacticalObservationResult([
-  { id: '1', order: 1, values: { supportContinuity: 'maintained', optionContinuity: 'multiple_remain', structureState: 'stable' } },
-  { id: '2', order: 2, values: { supportContinuity: 'partial', optionContinuity: 'one_remains', structureState: 'changing' } },
-  { id: '3', order: 3, values: { supportContinuity: 'lost', optionContinuity: 'few_options', structureState: 'breaking_down' } },
-  { id: '4', order: 4, values: { supportContinuity: 'unclear', optionContinuity: 'unclear', structureState: 'unclear' } },
+  { id: '1', order: 1, values: { structureState: 'stable', structureCues: 'support_shift,options_shift' } },
+  { id: '2', order: 2, values: { structureState: 'changing', structureCues: 'relations_shift' } },
+  { id: '3', order: 3, values: { structureState: 'breaking_down', structureCues: 'spacing_shift' } },
+  { id: '4', order: 4, values: { structureState: 'unclear', structureCues: 'unclear' } },
 ], d5Cfg)
-assert.equal(d5Result.layerCounts.supportContinuity.maintained, 1)
-assert.equal(d5Result.layerCounts.optionContinuity.multiple_remain, 1)
 assert.equal(d5Result.layerCounts.structureState.stable, 1)
+assert.equal(d5Result.layerCounts.structureCues.support_shift, 1)
+assert.equal(d5Result.layerCounts.structureCues.options_shift, 1)
 assert.equal(d5Result.unclearCount, 1)
 assert.equal(resultHasNumericScore(d5Result), false)
 assert.equal(JSON.stringify(d5Result).includes('gute'), false)

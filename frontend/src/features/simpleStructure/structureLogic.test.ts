@@ -85,7 +85,7 @@ const withUnclear = computeSimpleStructureResult(observations, cfg.structureOpti
 assert.equal(withUnclear.unclearCount, 1)
 assert.equal(withUnclear.structureCounts.unclear, 1)
 
-assert.equal(validateSimpleStructureAnswers(cfg, { [cfg.logsKey]: observations.slice(0, 2) }), 'Bitte mache mindestens 3 Situationen.')
+assert.equal(validateSimpleStructureAnswers(cfg, { [cfg.logsKey]: observations.slice(0, 2) }), '2 von 3 Situationen gespeichert. Speichere mindestens 3, dann kannst du weiter.')
 assert.equal(
   validateSimpleStructureAnswers(cfg, {
     [cfg.logsKey]: observations.slice(0, 3),

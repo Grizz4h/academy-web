@@ -71,7 +71,24 @@
   transition: border-color var(--motion-fast, 140ms) var(--motion-ease, ease), background var(--motion-fast, 140ms) var(--motion-ease, ease);
 }
 
-.node:hover,
+@media (hover: hover) and (pointer: fine) {
+  .node:hover {
+    border-color: rgba(110, 231, 183, 0.9);
+    background: rgba(8, 32, 28, 0.62);
+    color: #99f6e4;
+    box-shadow:
+      0 0 0 2px rgba(52, 211, 153, 0.4),
+      0 0 12px rgba(16, 185, 129, 0.32);
+  }
+
+  .item[data-status='current'][data-emphasized='true'] .node:hover {
+    border-color: rgba(167, 243, 208, 0.95);
+    box-shadow:
+      0 0 0 3px rgba(110, 231, 183, 0.55),
+      0 0 16px rgba(16, 185, 129, 0.45);
+  }
+}
+
 .node:focus-visible {
   border-color: rgba(125, 211, 252, 0.45);
   outline: none;
@@ -104,6 +121,40 @@
 .item[data-status='current'] .dot {
   background: var(--warn);
   box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
+}
+
+.item[data-status='current'][data-emphasized='true'] .node {
+  border-color: rgba(52, 211, 153, 0.78);
+  background: rgba(8, 32, 28, 0.55);
+  color: #99f6e4;
+  box-shadow:
+    0 0 0 1px rgba(52, 211, 153, 0.35),
+    0 0 14px rgba(16, 185, 129, 0.35);
+  animation: nextDrillPulse 2s ease-in-out infinite;
+}
+
+.item[data-status='current'][data-emphasized='true'] .dot {
+  background: rgb(52, 211, 153);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.22);
+}
+
+@keyframes nextDrillPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.28),
+      0 0 10px rgba(16, 185, 129, 0.22);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(110, 231, 183, 0.55),
+      0 0 18px rgba(16, 185, 129, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item[data-status='current'][data-emphasized='true'] .node {
+    animation: none;
+  }
 }
 
 .item[data-status='available'] .dot {
@@ -142,6 +193,10 @@
   align-items: center;
   gap: 0.4rem;
   margin-bottom: 0.35rem;
+}
+
+.popupActions {
+  margin-top: 0.55rem;
 }
 
 .popupBadge {

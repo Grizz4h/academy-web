@@ -13,3 +13,15 @@ export function useCreatorMode(): boolean {
   })
   return Boolean(account?.creator_mode)
 }
+
+/** Uncleared club marks: creator/admin or friends-and-family preview. Not Szenenpool. */
+export function useClubLogoAccess(): boolean {
+  const { user } = useUser()
+  const { data: account } = useQuery({
+    queryKey: ['me', user],
+    queryFn: () => api.getMe(),
+    enabled: Boolean(user),
+    staleTime: 60_000,
+  })
+  return Boolean(account?.creator_mode || account?.club_logo_preview)
+}

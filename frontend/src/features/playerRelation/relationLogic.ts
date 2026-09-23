@@ -1,3 +1,4 @@
+import { formatMissingCountMessage } from '../../utils/missingRequirementMessage'
 import type {
   LabeledOption,
   PlayerRelationConfig,
@@ -328,7 +329,11 @@ export function validatePlayerRelationAnswers(
     ? (answers[cfg.logsKey] as PlayerRelationObservation[])
     : []
   if (!canEvaluateObservations(observations.length, cfg.minObservations)) {
-    return `Bitte mache mindestens ${cfg.minObservations} ${cfg.countNoun}.`
+    return formatMissingCountMessage({
+      saved: observations.length,
+      required: cfg.minObservations,
+      noun: cfg.countNoun,
+    })
   }
   const incomplete = observations.some((observation) => (
     !asString(observation.puckCarrierRole)

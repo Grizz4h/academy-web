@@ -94,6 +94,7 @@ from security_guards import (
     is_admin_auth,
     is_rinq_admin,
     is_creator_mode_auth,
+    can_view_uncleared_club_logos,
     is_self_checkout_auth,
     is_dev_access_auth,
     legacy_signup_allowed,
@@ -342,7 +343,7 @@ def require_creator_mode(
     request: Request,
     current_user: AuthContext = Depends(get_current_user),
 ) -> AuthContext:
-    """Club logos + Szenenpool: admin allowlist or creator allowlist. Never client flags."""
+    """Szenenpool / Szene erfassen: admin or creator allowlist. Never client flags."""
     rate_limit(request, "creator_api", limit=240, window_sec=60.0)
     if not is_creator_mode_auth(current_user, role_from_record=_role_from_auth(current_user)):
         logging.warning(
@@ -457,6 +458,7 @@ async def health():
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "academy")
 SESSIONS_DIR = os.path.join(DATA_DIR, "sessions")
 REWARDS_DIR = os.path.join(DATA_DIR, "rewards")
+WATCHED_GAMES_DIR = os.path.join(DATA_DIR, "watched_games")
 PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
 ENTITLEMENTS_FILE = os.path.join(DATA_DIR, "entitlement_grants.json")
 ROOT_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
@@ -4523,6 +4525,51 @@ class EntitlementRevokePayload(BaseModel):
     feature_key: str
 
 
+class WatchedGameTogglePayload(BaseModel):
+    game_id: str
+    seen: bool
+
+
+def _watched_games_payload(current_user: AuthContext) -> dict:
+    from watched_games import build_payload
+
+    sessions = get_repos().sessions.list_sessions_for_user(current_user)
+    return build_payload(
+        current_user,
+        sessions=sessions,
+        games_dir=GAMES_DIR,
+        watched_dir=WATCHED_GAMES_DIR,
+    )
+
+
+@app.get("/api/me/watched-games")
+async def get_my_watched_games(current_user: AuthContext = Depends(get_current_user)):
+    """Catalog games the caller has watched — sessions plus manual calendar checks."""
+    return _watched_games_payload(current_user)
+
+
+@app.patch("/api/me/watched-games")
+async def patch_my_watched_games(
+    payload: WatchedGameTogglePayload,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Manually check or uncheck a catalog pairing for the authenticated user."""
+    from watched_games import toggle_watched
+
+    sessions = get_repos().sessions.list_sessions_for_user(current_user)
+    try:
+        return toggle_watched(
+            current_user,
+            game_id=payload.game_id,
+            seen=payload.seen,
+            sessions=sessions,
+            games_dir=GAMES_DIR,
+            watched_dir=WATCHED_GAMES_DIR,
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Ungültige Spiel-ID.")
+
+
 @app.get("/api/me/entitlements")
 async def get_my_entitlements(current_user: AuthContext = Depends(get_current_user)):
     """Active feature grants for the authenticated user (server source of truth)."""
@@ -4955,14 +5002,14 @@ async def get_team_logo(
     current_user = resolve_user_from_authorization(authorization)
     if current_user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    if not is_creator_mode_auth(current_user, role_from_record=_role_from_auth(current_user)):
+    if not can_view_uncleared_club_logos(current_user, role_from_record=_role_from_auth(current_user)):
         logging.warning(
-            "[SEC] creator_denied subject=%s path=%s ip=%s",
+            "[SEC] club_logo_denied subject=%s path=%s ip=%s",
             current_user.auth_subject,
             request.url.path,
             client_ip(request),
         )
-        raise HTTPException(status_code=403, detail="Creator access required")
+        raise HTTPException(status_code=403, detail="Club logo access required")
     path = resolve_protected_logo(league, file)
     if path is None:
         raise HTTPException(status_code=404, detail="Not found")
@@ -4993,6 +5040,7 @@ async def get_me(current_user: AuthContext = Depends(get_current_user)):
         "is_admin": is_admin_auth(current_user, role_from_record=role),
         "is_dev_access": is_dev_access_auth(current_user, role_from_record=role),
         "creator_mode": is_creator_mode_auth(current_user, role_from_record=role),
+        "club_logo_preview": can_view_uncleared_club_logos(current_user, role_from_record=role),
         "self_checkout": is_self_checkout_auth(current_user, role_from_record=role),
         "profile": profile,
         "needs_display_name": _needs_display_name_setup(current_user),
@@ -5137,6 +5185,7 @@ async def export_my_data(
         current_user,
         profiles_dir=PROFILES_DIR,
         rewards_dir=REWARDS_DIR,
+        watched_games_dir=WATCHED_GAMES_DIR,
         sessions_dir=SESSIONS_DIR,
         scenes_dir=SCENES_DIR,
         obs_runs_dir=OBS_RUNS_DIR,
@@ -5207,6 +5256,7 @@ async def delete_my_account(
             identity_store=_identity_repo(),
             profiles_dir=PROFILES_DIR,
             rewards_dir=REWARDS_DIR,
+            watched_games_dir=WATCHED_GAMES_DIR,
             sessions_dir=SESSIONS_DIR,
             scenes_dir=SCENES_DIR,
             obs_runs_dir=OBS_RUNS_DIR,

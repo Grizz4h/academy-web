@@ -1,1 +1,1 @@
-export { useCreatorMode } from './useCreatorMode'
+export { useCreatorMode, useClubLogoAccess } from './useCreatorMode'

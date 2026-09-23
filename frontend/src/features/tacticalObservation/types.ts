@@ -20,6 +20,27 @@ export type TacticalObservationLayer = {
   multiSelect?: boolean
 }
 
+/**
+ * Traits collected per selected parent option (e.g. role → option traits).
+ * Config-only — no drill-id branches. Exclusive parent ids skip traits.
+ */
+export type DependentTraitLayer = {
+  id: string
+  parentLayerId: string
+  /** Parent option ids that require their own trait answers. */
+  activeParentIds: string[]
+  fieldKeyPrefix: string
+  promptTemplate: string
+  resultTitle: string
+  guideTitle?: string
+  options: LabeledOption[]
+  multiSelect: boolean
+  /** Within one parent's traits, selecting these clears other traits. */
+  exclusiveOptionIds: string[]
+  legacyFieldKey?: string
+  legacyLabel?: string
+}
+
 export type TacticalObservationConfig = {
   mechanic: 'tactical_observation'
   required: boolean
@@ -29,6 +50,7 @@ export type TacticalObservationConfig = {
   maxObservations: number
   supportsUnclear: boolean
   layers: TacticalObservationLayer[]
+  dependentTraitLayer?: DependentTraitLayer
   guideLayerId?: string
   varietyLayerId?: string
   varietyFallback: string

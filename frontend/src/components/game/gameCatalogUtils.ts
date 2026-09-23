@@ -571,6 +571,14 @@ export function formatGameStatusLabel(game: CatalogGame, hideSpoilers = false): 
     return 'Endstand'
   }
   if (status === 'live') return 'Live'
+
+  const inferred = formatGameStripStatusLabel(game)
+  if (inferred === 'Live') return 'Live'
+  if (inferred === 'Beendet') {
+    if (hideSpoilers) return 'Gespielt'
+    if (game.score) return `${game.score.home}:${game.score.away}`
+    return 'Beendet'
+  }
   if (status === 'scheduled') return 'Geplant'
   return game.status || 'Geplant'
 }

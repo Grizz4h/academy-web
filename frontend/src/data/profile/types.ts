@@ -127,6 +127,8 @@ export type UserAccountPayload = {
   is_dev_access?: boolean
   /** Server-confirmed creator tools (code/env allowlist). Not editable via profile. */
   creator_mode?: boolean
+  /** Uncleared club marks (creator/admin or preview allowlist). Not Szenenpool. */
+  club_logo_preview?: boolean
   /** Server-confirmed Stripe Checkout. Off for normal self-signup until launch. */
   self_checkout?: boolean
   profile: UserProfileCustomization

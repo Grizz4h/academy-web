@@ -90,3 +90,31 @@ export function inferAutoAttackDirection(opts: {
 
   return homeDirection
 }
+
+/** Own/defending end is the opposite of attack direction. */
+export function defendingSideFromAttackDirection(attack: AttackDirection): AttackDirection {
+  return flipAttackDirection(attack)
+}
+
+export function resolveLiveAttackDirection(opts: {
+  phase?: unknown
+  session?: AttackDirectionSessionLike
+  homeAttackDirectionP1?: unknown
+  manualOverride?: unknown
+}): {
+  attackDirection: AttackDirection
+  autoAttackDirection: AttackDirection
+  isOverride: boolean
+} {
+  const autoAttackDirection = inferAutoAttackDirection({
+    phase: opts.phase,
+    session: opts.session,
+    homeAttackDirectionP1: opts.homeAttackDirectionP1,
+  })
+  const isOverride = opts.manualOverride === 'left' || opts.manualOverride === 'right'
+  return {
+    autoAttackDirection,
+    isOverride,
+    attackDirection: isOverride ? (opts.manualOverride as AttackDirection) : autoAttackDirection,
+  }
+}

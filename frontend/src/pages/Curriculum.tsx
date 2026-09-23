@@ -2,9 +2,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
-import type { CurriculumTrack, CurriculumModule, Session } from '../api'
+import type { CurriculumTrack, CurriculumModule } from '../api'
 import theoryData from '../data/theoryData.json'
-import { getLastActivityTrackId } from '../utils/curriculumActivity'
+import {
+  collectCompletedDrillIds,
+  getLastActivityTrackId,
+  getLastActivityDrillId,
+  getLastActivityModuleId,
+  getNextCurriculumFocus,
+} from '../utils/curriculumActivity'
 import { getRealSessions } from '../utils/sessionEligibility'
 import Card from '../components/Card'
 import { useUser } from '../context/UserContext'
@@ -64,22 +70,6 @@ function displayTrackTitle(title: string): string {
     .replace(/\s+&\s+/g, ' &\u00A0')
 }
 
-function collectCompletedDrillIds(sessions: Session[] | undefined): Set<string> {
-  const completed = new Set<string>()
-  for (const session of getRealSessions(sessions || [])) {
-    if (String(session.state || '').toUpperCase() !== 'COMPLETED') continue
-    for (const drill of session.drills || []) {
-      if (drill?.id) completed.add(drill.id)
-    }
-    if (session.drill_id) completed.add(session.drill_id)
-    // Fallback: module-level completion marks first drill when drills[] missing
-    if ((!session.drills || session.drills.length === 0) && session.module_id) {
-      completed.add(session.module_id)
-    }
-  }
-  return completed
-}
-
 export default function Curriculum() {
   const navigate = useNavigate()
   const { user, userId } = useUser()
@@ -135,6 +125,8 @@ export default function Curriculum() {
     hockeyExperience: account?.profile?.hockeyExperience,
     devMode,
     tutorialActive: Boolean(tutorial?.active),
+    skipTrackIds: CLUSTER2_CURRICULUM_TRACK_IDS,
+    academyLocked,
   })
   const [pairingConfirmed, setPairingConfirmed] = useState(false)
   const showPairingSheet = Boolean(prefill) && !pairingConfirmed
@@ -142,10 +134,28 @@ export default function Curriculum() {
     () => getLastActivityTrackId(sessions, curriculum),
     [sessions, curriculum],
   )
+  const lastActivityDrillId = useMemo(
+    () => getLastActivityDrillId(sessions),
+    [sessions],
+  )
+  const lastActivityModuleId = useMemo(
+    () => getLastActivityModuleId(sessions),
+    [sessions],
+  )
+  const nextFocus = useMemo(
+    () => getNextCurriculumFocus(curriculum, completedDrillIds, {
+      skipTrackIds: CLUSTER2_CURRICULUM_TRACK_IDS,
+      restrictToFoundation: academyLocked,
+      lastCompletedDrillId: lastActivityDrillId,
+      lastModuleId: lastActivityModuleId,
+    }),
+    [curriculum, completedDrillIds, academyLocked, lastActivityDrillId, lastActivityModuleId],
+  )
   const defaultOpenTrackId = useMemo(() => {
     if (prefill && pairingConfirmed && focus?.trackId) return focus.trackId
     if (!sessionsFetched) return null
     if (tutorial?.active && entryTrackId) return entryTrackId
+    if (nextFocus?.trackId) return nextFocus.trackId
     if (lastActivityTrackId) return lastActivityTrackId
     if (foundationTrack && !foundationDone) return foundationTrack.id
     return null
@@ -156,6 +166,7 @@ export default function Curriculum() {
     sessionsFetched,
     tutorial?.active,
     entryTrackId,
+    nextFocus?.trackId,
     lastActivityTrackId,
     foundationTrack,
     foundationDone,
@@ -248,7 +259,7 @@ export default function Curriculum() {
       : academyLocked && !trackFoundation
         ? 'Zuerst Track 0'
         : 'Starten'
-    const highlightPendingGame = Boolean(prefill && pairingConfirmed && focus?.moduleId === module.id)
+    const highlightPendingGame = Boolean(nextFocus?.moduleId === module.id)
     return (
       <CurriculumModuleCard
         key={module.id}
@@ -264,9 +275,15 @@ export default function Curriculum() {
         showTheory={module.id in theoryData}
         showPremiumCheckout={premiumLocked && Boolean(user) && selfCheckout}
         completedDrillIds={completedDrillIds}
+        nextDrillId={nextFocus?.moduleId === module.id ? nextFocus.drillId : null}
         onStart={() => navigate(`/setup/${module.id}`)}
         onTheory={() => navigate(`/theory/${module.id}`)}
         onCheckout={() => setCheckoutOpen(true)}
+        onSelectDrill={
+          startBlocked
+            ? undefined
+            : (drillId) => navigate(`/setup/${module.id}?drill=${encodeURIComponent(drillId)}`)
+        }
       />
     )
   }

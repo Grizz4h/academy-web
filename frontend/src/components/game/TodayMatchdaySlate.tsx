@@ -12,6 +12,7 @@ import {
   uniqueMatchdaysForDate,
 } from './gameCatalogUtils'
 import { COMPETITION_CONFIGS } from '../../data/competitionConfig'
+import { UiChip } from '../ui'
 import styles from './TodayMatchdaySlate.module.css'
 
 type TodayMatchdaySlateProps = {
@@ -25,6 +26,8 @@ type TodayMatchdaySlateProps = {
   hint?: string
   /** When true, append official score next to status (creator calendar). */
   showScores?: boolean
+  watchedGameIds?: Set<string>
+  onToggleWatched?: (game: CatalogGame, seen: boolean) => void
 }
 
 function formatTodayLabel(date: string): string {
@@ -48,6 +51,8 @@ export default function TodayMatchdaySlate({
   selectable = Boolean(onSelectGame),
   hint,
   showScores = false,
+  watchedGameIds,
+  onToggleWatched,
 }: TodayMatchdaySlateProps) {
   const todayGames = filterGamesForDate(games, date)
   if (todayGames.length === 0) return null
@@ -103,6 +108,7 @@ export default function TodayMatchdaySlate({
             game.phase_label || null,
             showScores && game.score ? `${game.score.home}:${game.score.away}` : null,
           ].filter(Boolean)
+          const watched = Boolean(watchedGameIds?.has(game.id))
 
           const content = (
             <span className={styles.badge}>
@@ -122,19 +128,38 @@ export default function TodayMatchdaySlate({
           )
 
           return (
-            <li key={game.id}>
-              {selectable && onSelectGame ? (
-                <button
-                  type="button"
-                  className={styles.itemButton}
-                  onClick={() => onSelectGame(game)}
-                  title={`${homeName} vs ${awayName} · ${status}`}
-                >
-                  {content}
-                </button>
-              ) : (
-                <div className={styles.item}>{content}</div>
-              )}
+            <li key={game.id} className={watched ? styles.rowWatched : undefined}>
+              <div className={styles.row}>
+                {selectable && onSelectGame ? (
+                  <button
+                    type="button"
+                    className={[styles.itemButton, watched ? styles.itemWatched : ''].filter(Boolean).join(' ')}
+                    onClick={() => onSelectGame(game)}
+                    title={`${homeName} vs ${awayName} · ${status}`}
+                  >
+                    {content}
+                  </button>
+                ) : (
+                  <div className={[styles.item, watched ? styles.itemWatched : ''].filter(Boolean).join(' ')}>
+                    {content}
+                  </div>
+                )}
+                {onToggleWatched ? (
+                  <UiChip
+                    size="sm"
+                    active={watched}
+                    className={styles.watchedChip}
+                    onClick={() => onToggleWatched(game, !watched)}
+                    aria-label={
+                      watched
+                        ? `${home} gegen ${away} als nicht gesehen markieren`
+                        : `${home} gegen ${away} als gesehen markieren`
+                    }
+                  >
+                    {watched ? 'Gesehen' : 'Gesehen?'}
+                  </UiChip>
+                ) : null}
+              </div>
             </li>
           )
         })}
@@ -142,7 +167,11 @@ export default function TodayMatchdaySlate({
 
       {hint ? <p className={styles.hint}>{hint}</p> : null}
       {selectable && onSelectGame ? (
-        <p className={styles.hint}>Tippe eine Paarung, um Teams und Spieltag zu übernehmen.</p>
+        <p className={styles.hint}>
+          {onToggleWatched
+            ? 'Paarung antippen startet das Setup. Mit „Gesehen“ hakst du ab, was du schon geschaut hast.'
+            : 'Tippe eine Paarung, um Teams und Spieltag zu übernehmen.'}
+        </p>
       ) : null}
     </section>
   )

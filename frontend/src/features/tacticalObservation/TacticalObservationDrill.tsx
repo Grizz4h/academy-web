@@ -11,15 +11,18 @@ import {
   encodeLayerValues,
   findCompletedTacticalAnswers,
   findGuideLayer,
-  formatLayerValue,
-  getObservationValue,
+  formatObservationLine,
+  formatTraitPrompt,
   isTacticalObservationComplete,
   observationToDraft,
+  optionLabel,
+  pruneDependentTraitDraft,
   readTacticalStage,
   resolveTacticalObservationConfig,
   toReflectionPayload,
   syncMultiSelectValues,
   decodeLayerValues,
+  traitFieldKey,
 } from './tacticalLogic'
 import type { TacticalObservation, TacticalObservationDraft } from './types'
 import styles from './TacticalObservationDrill.module.css'
@@ -141,8 +144,20 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
   }
 
   const formatObservationSummary = (observation: TacticalObservation) => (
-    cfg.layers.map((layer) => formatLayerValue(layer, getObservationValue(observation, layer.fieldKey))).join(' · ')
+    formatObservationLine(observation, cfg)
   )
+
+  const traits = cfg.dependentTraitLayer
+  const parentLayer = traits
+    ? cfg.layers.find((layer) => layer.id === traits.parentLayerId)
+    : undefined
+  const selectedParentIds = parentLayer
+    ? decodeLayerValues(draft[parentLayer.fieldKey] || '')
+    : []
+  const activeTraitParents = traits
+    ? selectedParentIds.filter((id) => traits.activeParentIds.includes(id))
+    : []
+  const showTraitQuestions = Boolean(traits && activeTraitParents.length > 0)
 
   if (usingBorrowed && borrowedAnswers) {
     const borrowedResult = computeTacticalObservationResult(
@@ -330,12 +345,51 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
                           layer.options,
                         )
                       : String(next)
+                    const nextDraft = pruneDependentTraitDraft(
+                      { ...draft, [layer.fieldKey]: encoded },
+                      cfg,
+                    )
                     patchAnswers(safeAnswers, setAnswers, {
-                      [cfg.draftKey]: { ...draft, [layer.fieldKey]: encoded },
+                      [cfg.draftKey]: nextDraft,
                     })
                   }}
                 />
                 {selected?.detail && <p className={styles.hint}>{selected.detail}</p>}
+              </div>
+            )
+          })}
+          {showTraitQuestions && traits && parentLayer && activeTraitParents.map((parentId) => {
+            const fieldKey = traitFieldKey(traits.fieldKeyPrefix, parentId)
+            const selectedIds = decodeLayerValues(draft[fieldKey] || '')
+            const roleLabel = optionLabel(parentLayer.options, parentId)
+            return (
+              <div key={fieldKey} className={styles.fieldBlock}>
+                <div className={styles.fieldLabel}>
+                  {formatTraitPrompt(traits.promptTemplate, roleLabel)}
+                </div>
+                <OptionChips
+                  name={`tactical-trait-${parentId}`}
+                  options={toChoices(traits.options, compactHints)}
+                  multi={Boolean(traits.multiSelect)}
+                  value={traits.multiSelect ? undefined : (draft[fieldKey] || '')}
+                  selectedValues={traits.multiSelect ? selectedIds : undefined}
+                  onChange={(next) => {
+                    const encoded = traits.multiSelect
+                      ? encodeLayerValues(
+                          syncMultiSelectValues(
+                            selectedIds,
+                            Array.isArray(next) ? next : [String(next)],
+                            traits.options,
+                            traits.exclusiveOptionIds,
+                          ),
+                          traits.options,
+                        )
+                      : String(next)
+                    patchAnswers(safeAnswers, setAnswers, {
+                      [cfg.draftKey]: { ...draft, [fieldKey]: encoded },
+                    })
+                  }}
+                />
               </div>
             )
           })}

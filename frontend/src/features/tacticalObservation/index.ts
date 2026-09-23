@@ -11,6 +11,7 @@ export {
 } from './tacticalLogic'
 export type {
   TacticalObservationConfig,
+  DependentTraitLayer,
   TacticalObservation as TacticalObservationRow,
   TacticalObservationResult,
 } from './types'

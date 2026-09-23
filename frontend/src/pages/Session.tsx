@@ -17,6 +17,7 @@ import { SceneMarkerButton } from '../components/SceneMarkerButton';
 import { SpecialTeamsSidequestButton } from '../components/SpecialTeamsSidequestButton';
 import SyncStatusChip, { type SyncStatus } from '../components/SyncStatusChip';
 import { shareOrCopy } from '../utils/share';
+import { formatMissingCountMessage } from '../utils/missingRequirementMessage'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { getActivePeriodsForScope, isLessonScope, getNextPhaseForScope, getPreviousPhaseForScope } from '../utils/observationScope'
 import { SessionGameInfo } from './SessionGameInfo'
@@ -109,8 +110,6 @@ type CheckinWithMicro = {
 };
 
 export default function SessionPage() {
-  // Notizfeld für Session-Info
-  const [sessionNote, setSessionNote] = useState<string>('')
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -236,14 +235,6 @@ export default function SessionPage() {
   useEffect(() => {
     hydratedPhaseKeysRef.current = new Set()
     firstLoadRef.current = true
-
-    const noteKey = id ? `academy.session.${id}.note` : null
-    if (noteKey) {
-      const savedNote = localStorage.getItem(noteKey)
-      setSessionNote(savedNote ?? '')
-    } else {
-      setSessionNote('')
-    }
   }, [id])
 
   useEffect(() => {
@@ -473,10 +464,20 @@ export default function SessionPage() {
       let match = true
       const when = group?.when && typeof group.when === 'object' ? group.when : {}
       for (const key in when) {
-        if (resolveWhenValue(key) !== when[key]) {
-          match = false
-          break
+        const actual = resolveWhenValue(key)
+        const expected = when[key]
+        if (actual === expected) continue
+        // Multi-select observation values are comma-joined; match if expected id is one of them.
+        if (
+          typeof actual === 'string'
+          && typeof expected === 'string'
+          && !expected.includes(',')
+          && actual.split(',').map((part: string) => part.trim()).includes(expected)
+        ) {
+          continue
         }
+        match = false
+        break
       }
       if (!match) continue
       const picked = pickFromGroup(group)
@@ -687,7 +688,11 @@ export default function SessionPage() {
       const observations = Array.isArray(answers?.[observationsKey]) ? answers[observationsKey] : []
 
       if (observations.length < requiredObservations) {
-        return 'Bitte erfasse alle ' + requiredObservations + ' Beobachtungen, bevor du weitergehst.'
+        return formatMissingCountMessage({
+          saved: observations.length,
+          required: requiredObservations,
+          noun: 'Beobachtungen',
+        })
       }
 
       const requiredObservationFields = Array.isArray(drill?.config?.required_observation_fields)
@@ -956,7 +961,11 @@ export default function SessionPage() {
       const logs = Array.isArray(answers?.[logsKey]) ? answers[logsKey] : []
 
       if (logs.length < requiredLogs) {
-        return 'Bitte erfasse alle ' + requiredLogs + ' Beobachtungen, bevor du weitergehst.'
+        return formatMissingCountMessage({
+          saved: logs.length,
+          required: requiredLogs,
+          noun: 'Beobachtungen',
+        })
       }
 
       if (completionReflectionKey && !answers?.[completionReflectionKey]) {
@@ -1115,9 +1124,6 @@ export default function SessionPage() {
         priorPhase !== phase && isRoleIdentificationComplete(cfg, answersByPhase[priorPhase] || {})
       ))
       if (completedEarlier) return null
-      if (answers?.[cfg.stageKey] !== 'complete') {
-        return 'Bitte schließe die Rollenidentifikation vollständig ab.'
-      }
       return validateRoleIdentificationAnswers(cfg, answers || {})
     }
 
@@ -1620,12 +1626,6 @@ export default function SessionPage() {
         session={session}
         isFoundationSession={isFoundationSession}
         activeDrillTitle={activeDrill ? (activeDrill.title || activeDrill.id) : null}
-        note={sessionNote}
-        onNoteChange={(value) => {
-          setSessionNote(value)
-          const noteKey = id ? `academy.session.${id}.note` : null
-          if (noteKey) localStorage.setItem(noteKey, value)
-        }}
       />
 
       {showDevRewardPreview ? (
@@ -1674,11 +1674,6 @@ export default function SessionPage() {
                 <p className="period-analysis-title" data-tutorial-id={TUTORIAL_TARGET.sessionDrill}>
                   Analysiere das letzte Drittel und gib Feedback.
                 </p>
-              )}
-              {advanceError && (
-                <div style={{ marginBottom: '0.8rem', padding: '0.6rem 0.8rem', background: 'rgba(220,53,69,0.12)', border: '1px solid rgba(220,53,69,0.4)', borderRadius: '0.45rem', color: '#ffb7bf', fontSize: '0.9rem' }}>
-                  {advanceError}
-                </div>
               )}
               {activeDrill ? (
                 <DrillRendererRouter
@@ -1905,6 +1900,26 @@ export default function SessionPage() {
           </UiButton>
         </Card>
       )}
+
+      {advanceError ? (
+        <UiSheet
+          open
+          onClose={() => setAdvanceError('')}
+          title="Noch nicht weiter"
+          label="Weiter blockiert"
+        >
+          <p className="ui-page-lead">
+            {advanceError}
+          </p>
+          <UiSheetActions
+            primary={(
+              <UiButton type="button" variant="primary" size="sm" onClick={() => setAdvanceError('')}>
+                Verstanden
+              </UiButton>
+            )}
+          />
+        </UiSheet>
+      ) : null}
 
       {microfeedbackContent ? (
         <UiSheet

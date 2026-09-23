@@ -1,3 +1,4 @@
+import { formatMissingCountMessage } from '../../utils/missingRequirementMessage'
 import type {
   LabeledOption,
   ReminderLevel,
@@ -395,7 +396,11 @@ export function validateShiftTrackerAnswers(
     ? (answers[cfg.logsKey] as ShiftObservation[])
     : []
   if (!canEvaluateObservations(observations.length, cfg.minObservations)) {
-    return `Bitte mache mindestens ${cfg.minObservations} ${cfg.countNoun}.`
+    return formatMissingCountMessage({
+      saved: observations.length,
+      required: cfg.minObservations,
+      noun: cfg.countNoun,
+    })
   }
   if (cfg.showFunctionField) {
     const missingFunction = observations.some((observation) => !asString(observation.roleFunction))

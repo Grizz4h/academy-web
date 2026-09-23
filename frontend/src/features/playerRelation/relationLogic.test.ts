@@ -102,7 +102,7 @@ assert.equal(JSON.stringify(result).includes('%'), false)
 const two = observations.slice(0, 2)
 assert.equal(
   validatePlayerRelationAnswers(cfg, { [cfg.logsKey]: two }),
-  'Bitte mache mindestens 3 Situationen.',
+  '2 von 3 Situationen gespeichert. Speichere mindestens 3, dann kannst du weiter.',
 )
 assert.equal(
   validatePlayerRelationAnswers(cfg, {

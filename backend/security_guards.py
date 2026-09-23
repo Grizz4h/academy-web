@@ -116,6 +116,42 @@ def is_creator_mode_auth(
     return False
 
 
+# Uncleared club marks for friends-and-family preview. Not creator tools.
+_CLUB_LOGO_PREVIEW_USERNAMES: frozenset[str] = frozenset({"martin"})
+_CLUB_LOGO_PREVIEW_RINQ_USER_IDS: frozenset[str] = frozenset({
+    "df3d36ed-8f70-422a-b82c-933baa307527",  # Martin (legacy)
+})
+
+
+def club_logo_preview_user_allowlist() -> Set[str]:
+    extra_raw = (os.environ.get("ACADEMY_CLUB_LOGO_USERNAMES") or "").strip()
+    extra = {normalize_subject(part) for part in extra_raw.split(",") if part.strip()} if extra_raw else set()
+    return set(_CLUB_LOGO_PREVIEW_USERNAMES) | extra
+
+
+def club_logo_preview_rinq_user_allowlist() -> Set[str]:
+    raw = (os.environ.get("ACADEMY_CLUB_LOGO_RINQ_USER_IDS") or "").strip()
+    extra = {part.strip().lower() for part in raw.split(",") if part.strip()} if raw else set()
+    return set(_CLUB_LOGO_PREVIEW_RINQ_USER_IDS) | extra
+
+
+def can_view_uncleared_club_logos(
+    auth: AuthContext,
+    *,
+    role_from_record: Optional[str] = None,
+) -> bool:
+    """Uncleared club marks: creator/admin or a small preview allowlist. Never client flags."""
+    if is_creator_mode_auth(auth, role_from_record=role_from_record):
+        return True
+    subject = normalize_subject(auth.legacy_username or auth.auth_subject)
+    if subject and subject in club_logo_preview_user_allowlist():
+        return True
+    rid = (auth.rinq_user_id or "").strip().lower()
+    if rid and rid in club_logo_preview_rinq_user_allowlist():
+        return True
+    return False
+
+
 def self_checkout_open() -> bool:
     """Public Stripe Checkout. Default off — preview accounts must not hit the test sandbox."""
     return _env_flag("ACADEMY_ALLOW_SELF_CHECKOUT", default="0")

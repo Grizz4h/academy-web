@@ -47,7 +47,11 @@ assert.deepEqual(
   ],
 )
 
-assert.equal(c1.drills[0].drill_type, 'paintable_rink_observation')
+assert.equal(c1.drills[0].config.home_attack_direction_p1, 'right')
+assert.equal(c1.drills[1].config.home_attack_direction_p1, 'right')
+assert.equal(c1.drills[2].config.home_attack_direction_p1, 'right')
+assert.equal(c1.drills[3].config.home_attack_direction_p1, 'right')
+assert.equal(c1.drills[0].config.rinkOverlays?.defendingSide, undefined)
 assert.equal(c1.drills[1].config.mode, 'defensive_structure')
 assert.equal(c1.drills[1].config.rink_view, 'defensive_half')
 assert.equal(c1.drills[2].config.mode, 'single_marker_observation')

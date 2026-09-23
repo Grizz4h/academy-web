@@ -232,7 +232,7 @@ assert.equal(
     [cfg.patternKey]: 'faster',
     [cfg.stageKey]: 'complete',
   }),
-  'Bitte mache mindestens 4 Scans.',
+  '3 von 4 Scans gespeichert. Speichere mindestens 4, dann kannst du weiter.',
 )
 
 const reloaded = draftToObservation(

@@ -1871,6 +1871,35 @@ export const api = {
     return res.json()
   },
 
+  getWatchedGames: async (): Promise<{
+    game_ids: string[]
+    from_session: string[]
+    manual: string[]
+  }> => {
+    const res = await fetch(buildUrl('/me/watched-games'), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Gesehene Spiele konnten nicht geladen werden')
+    return res.json()
+  },
+
+  setWatchedGame: async (gameId: string, seen: boolean): Promise<{
+    game_ids: string[]
+    from_session: string[]
+    manual: string[]
+  }> => {
+    const res = await fetch(buildUrl('/me/watched-games'), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ game_id: gameId, seen }),
+    })
+    if (!res.ok) throw await readApiError(res, 'Gesehen-Status konnte nicht gespeichert werden')
+    return res.json()
+  },
+
   exportMyData: async (): Promise<Blob> => {
     const res = await fetch(buildUrl('/me/export'), {
       headers: { ...authHeaders() },

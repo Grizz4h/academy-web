@@ -60,6 +60,59 @@ def is_dummy_game(game: Dict[str, Any]) -> bool:
     return game_id.startswith("dev:")
 
 
+def pairing_identity(game: Dict[str, Any]) -> Optional[tuple]:
+    date = str(game.get("date") or "").strip()
+    home = str(game.get("home_team_id") or "").strip()
+    away = str(game.get("away_team_id") or "").strip()
+    if not date or not home or not away:
+        return None
+    phase = str(game.get("phase_id") or "").strip()
+    return (date, home, away, phase)
+
+
+def _source_imported_at(game: Dict[str, Any]) -> str:
+    source = game.get("source") if isinstance(game.get("source"), dict) else {}
+    return str(source.get("imported_at") or "")
+
+
+def _is_canonical_schedule_id(game: Dict[str, Any]) -> bool:
+    """PENNY spieldetails slug, e.g. 17092026_eisbaeren-berlin_gg_straubing-tigers_4389."""
+    source = game.get("source") if isinstance(game.get("source"), dict) else {}
+    external = str(source.get("external_id") or game.get("id") or "")
+    return "_gg_" in external and bool(re.search(r"_\d+$", external))
+
+
+def _catalog_game_rank(game: Dict[str, Any]) -> tuple:
+    status = str(game.get("status") or "").lower()
+    has_result = 1 if game.get("score") or status in {"final", "live"} else 0
+    canonical = 1 if _is_canonical_schedule_id(game) else 0
+    has_stats = 1 if game.get("stats") else 0
+    return (has_result, canonical, has_stats, _source_imported_at(game), str(game.get("id") or ""))
+
+
+def prefer_catalog_game(left: Dict[str, Any], right: Dict[str, Any]) -> Dict[str, Any]:
+    winner, loser = (left, right) if _catalog_game_rank(left) >= _catalog_game_rank(right) else (right, left)
+    if loser.get("stats") and not winner.get("stats"):
+        return {**winner, "stats": loser.get("stats")}
+    return winner
+
+
+def collapse_pairing_duplicates(games: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """One row per date+home+away. Played penny-del IDs replace pre-season stubs."""
+    kept: Dict[tuple, Dict[str, Any]] = {}
+    passthrough: List[Dict[str, Any]] = []
+    for game in games:
+        if is_dummy_game(game):
+            continue
+        key = pairing_identity(game)
+        if key is None:
+            passthrough.append(game)
+            continue
+        existing = kept.get(key)
+        kept[key] = game if existing is None else prefer_catalog_game(existing, game)
+    return list(kept.values()) + passthrough
+
+
 def upsert_games(
     games_dir: str,
     *,
@@ -95,16 +148,24 @@ def upsert_games(
             existing_by_id[game_id] = game
             created += 1
 
-    catalog["games"] = sorted(
+    collapsed = collapse_pairing_duplicates(
         [
             game
             for game in existing_by_id.values()
             if not is_dummy_game(game) and game_date_in_season(game.get("date"), season)
-        ],
+        ]
+    )
+    catalog["games"] = sorted(
+        collapsed,
         key=lambda item: (item.get("date") or "", item.get("matchday") or 0),
     )
     save_games_catalog(games_dir, catalog)
-    return {"created": created, "updated": updated, "total": len(catalog["games"])}
+    return {
+        "created": created,
+        "updated": updated,
+        "removed_duplicates": max(0, len(existing_by_id) - len(catalog["games"])),
+        "total": len(catalog["games"]),
+    }
 
 
 def list_games(

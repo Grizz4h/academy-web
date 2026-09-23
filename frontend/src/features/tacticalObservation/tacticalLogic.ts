@@ -1,4 +1,6 @@
+import { formatMissingCountMessage } from '../../utils/missingRequirementMessage'
 import type {
+  DependentTraitLayer,
   LabeledOption,
   TacticalObservation,
   TacticalObservationConfig,
@@ -168,12 +170,14 @@ export function toggleMultiSelectValue(
   current: string[],
   id: string,
   options: LabeledOption[],
+  exclusiveIds: Iterable<string> = EXCLUSIVE_MULTI_IDS,
 ): string[] {
+  const exclusive = exclusiveIds instanceof Set ? exclusiveIds : new Set(exclusiveIds)
   const next = current.includes(id)
     ? current.filter((item) => item !== id)
-    : EXCLUSIVE_MULTI_IDS.has(id)
+    : exclusive.has(id)
       ? [id]
-      : [...current.filter((item) => !EXCLUSIVE_MULTI_IDS.has(item)), id]
+      : [...current.filter((item) => !exclusive.has(item)), id]
   return decodeLayerValues(encodeLayerValues(next, options))
 }
 
@@ -181,21 +185,127 @@ export function syncMultiSelectValues(
   current: string[],
   next: string[],
   options: LabeledOption[],
+  exclusiveIds: Iterable<string> = EXCLUSIVE_MULTI_IDS,
 ): string[] {
   const added = next.find((id) => !current.includes(id))
   const removed = current.find((id) => !next.includes(id))
   const toggled = added || removed
-  return toggled ? toggleMultiSelectValue(current, toggled, options) : decodeLayerValues(encodeLayerValues(next, options))
+  return toggled
+    ? toggleMultiSelectValue(current, toggled, options, exclusiveIds)
+    : decodeLayerValues(encodeLayerValues(next, options))
 }
 
+/** @deprecated Prefer selectedOptionCategoryCount naming in call sites; kept for older tests. */
 export function deriveOptionCount(ids: string[]): string {
+  return selectedOptionCategoryKind(ids)
+}
+
+/** Kind of selected option *categories* (roles), not a count of distinct players. */
+export function selectedOptionCategoryKind(ids: string[]): string {
   const selected = ids.map((id) => asString(id)).filter(Boolean)
   if (selected.length === 1 && selected[0] === 'unclear') return 'unclear'
   if (selected.length === 1 && selected[0] === 'none') return 'none'
   const roles = selected.filter((id) => CONCRETE_OPTION_IDS.has(id))
-  if (roles.length >= 2) return 'multiple'
-  if (roles.length === 1) return 'one_clear'
+  if (roles.length >= 2) return 'multiple_categories'
+  if (roles.length === 1) return 'one_category'
   return 'unclear'
+}
+
+export function traitFieldKey(prefix: string, parentId: string): string {
+  return `${prefix}_${parentId}`
+}
+
+export function parseDependentTraitLayer(
+  raw: Record<string, unknown>,
+  supportsUnclear: boolean,
+): DependentTraitLayer | undefined {
+  const row = asRecord(raw.dependentTraitLayer || raw.dependent_trait_layer)
+  if (!Object.keys(row).length) return undefined
+  const id = asString(row.id, 'option_traits')
+  const parentLayerId = asString(row.parentLayerId || row.parent_layer_id)
+  const fieldKeyPrefix = asString(row.fieldKeyPrefix || row.field_key_prefix, 'optionTraits')
+  const promptTemplate = asString(
+    row.promptTemplate || row.prompt_template,
+    'Was erkennst du bei der Option {label}?',
+  )
+  const resultTitle = asString(row.resultTitle || row.result_title, 'Merkmale je Option')
+  const options = filterUnclear(asOptions(row.options, []), supportsUnclear)
+  const activeParentIds = Array.isArray(row.activeParentIds || row.active_parent_ids)
+    ? ((row.activeParentIds || row.active_parent_ids) as unknown[])
+      .map((item) => asString(item))
+      .filter(Boolean)
+    : [...CONCRETE_OPTION_IDS]
+  const exclusiveOptionIds = Array.isArray(row.exclusiveOptionIds || row.exclusive_option_ids)
+    ? ((row.exclusiveOptionIds || row.exclusive_option_ids) as unknown[])
+      .map((item) => asString(item))
+      .filter(Boolean)
+    : ['unclear']
+  if (!parentLayerId || !options.length || !activeParentIds.length) return undefined
+  return {
+    id,
+    parentLayerId,
+    activeParentIds,
+    fieldKeyPrefix,
+    promptTemplate,
+    resultTitle,
+    guideTitle: asString(row.guideTitle || row.guide_title) || undefined,
+    options,
+    multiSelect: asBool(row.multiSelect ?? row.multi_select, true),
+    exclusiveOptionIds,
+    legacyFieldKey: asString(row.legacyFieldKey || row.legacy_field_key, 'optionType') || undefined,
+    legacyLabel: asString(row.legacyLabel || row.legacy_label, 'Altantwort') || undefined,
+  }
+}
+
+export function formatTraitPrompt(template: string, label: string): string {
+  return template.replace(/\{label\}/g, label)
+}
+
+export function activeParentIdsForObservation(
+  observation: TacticalObservation,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
+): string[] {
+  const traits = cfg.dependentTraitLayer
+  if (!traits) return []
+  const parent = cfg.layers.find((layer) => layer.id === traits.parentLayerId)
+  if (!parent) return []
+  const selected = layerSelectedIds(parent, getObservationValue(observation, parent.fieldKey))
+  return selected.filter((id) => traits.activeParentIds.includes(id))
+}
+
+export function isLegacyDependentTraitObservation(
+  observation: TacticalObservation,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
+): boolean {
+  const traits = cfg.dependentTraitLayer
+  if (!traits?.legacyFieldKey) return false
+  const legacy = getObservationValue(observation, traits.legacyFieldKey)
+  if (!legacy) return false
+  const roles = activeParentIdsForObservation(observation, cfg)
+  if (!roles.length) return false
+  return roles.every((roleId) => !asString(getObservationValue(observation, traitFieldKey(traits.fieldKeyPrefix, roleId))))
+}
+
+export function observationHasRequiredTraits(
+  observation: TacticalObservation,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
+): boolean {
+  const traits = cfg.dependentTraitLayer
+  if (!traits) return true
+  const parent = cfg.layers.find((layer) => layer.id === traits.parentLayerId)
+  if (!parent) return true
+  const selected = layerSelectedIds(parent, getObservationValue(observation, parent.fieldKey))
+  if (!selected.length) return false
+  const roles = selected.filter((id) => traits.activeParentIds.includes(id))
+  if (!roles.length) {
+    // Exclusive answers (none / unclear) — no traits required.
+    return true
+  }
+  if (isLegacyDependentTraitObservation(observation, cfg)) return true
+  return roles.every((roleId) => {
+    const value = getObservationValue(observation, traitFieldKey(traits.fieldKeyPrefix, roleId))
+    return decodeLayerValues(value).length > 0
+  })
 }
 
 function filterUnclear(options: LabeledOption[], supportsUnclear: boolean): LabeledOption[] {
@@ -677,9 +787,14 @@ function resolveLayers(raw: Record<string, unknown>, supportsUnclear: boolean): 
   ]
 }
 
-export function emptyTacticalDraft(cfg: Pick<TacticalObservationConfig, 'layers'>): TacticalObservationDraft {
+export function emptyTacticalDraft(cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>): TacticalObservationDraft {
   const draft: TacticalObservationDraft = {}
   for (const layer of cfg.layers) draft[layer.fieldKey] = ''
+  if (cfg.dependentTraitLayer) {
+    for (const parentId of cfg.dependentTraitLayer.activeParentIds) {
+      draft[traitFieldKey(cfg.dependentTraitLayer.fieldKeyPrefix, parentId)] = ''
+    }
+  }
   draft.note = ''
   return draft
 }
@@ -700,6 +815,7 @@ export function resolveTacticalObservationConfig(raw: Record<string, unknown> = 
   const countNoun = asString(raw.countNoun || raw.count_noun, 'Situationen')
   const situationLabel = asString(raw.situationLabel || raw.situation_label, 'Situation')
   const layers = resolveLayers(raw, supportsUnclear)
+  const dependentTraitLayer = parseDependentTraitLayer(raw, supportsUnclear)
 
   return {
     mechanic: 'tactical_observation',
@@ -710,6 +826,7 @@ export function resolveTacticalObservationConfig(raw: Record<string, unknown> = 
     maxObservations,
     supportsUnclear,
     layers,
+    dependentTraitLayer,
     guideLayerId: asString(raw.guideLayerId || raw.guide_layer_id) || undefined,
     varietyLayerId: asString(raw.varietyLayerId || raw.variety_layer_id) || undefined,
     varietyFallback: asString(
@@ -789,6 +906,63 @@ export function formatLayerValue(layer: TacticalObservationLayer, value: string)
   return ids.map((id) => optionLabel(layer.options, id)).join(' + ')
 }
 
+export function formatDependentTraitObservation(
+  observation: TacticalObservation,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
+): string {
+  const traits = cfg.dependentTraitLayer
+  if (!traits) return ''
+  const parent = cfg.layers.find((layer) => layer.id === traits.parentLayerId)
+  if (!parent) return ''
+  const selected = layerSelectedIds(parent, getObservationValue(observation, parent.fieldKey))
+  if (!selected.length) return ''
+
+  if (isLegacyDependentTraitObservation(observation, cfg)) {
+    const legacy = getObservationValue(observation, traits.legacyFieldKey || 'optionType')
+    const legacyLabel = optionLabel(
+      // reuse option_type labels if present in trait options (same ids)
+      traits.options,
+      legacy,
+    ) || legacy
+    const roles = formatLayerValue(parent, encodeLayerValues(selected, parent.options))
+    return `${roles} · ${legacyLabel} (${traits.legacyLabel || 'Altantwort'})`
+  }
+
+  const exclusive = selected.filter((id) => !traits.activeParentIds.includes(id))
+  if (exclusive.length && !selected.some((id) => traits.activeParentIds.includes(id))) {
+    return formatLayerValue(parent, encodeLayerValues(exclusive, parent.options))
+  }
+
+  const parts: string[] = []
+  for (const roleId of traits.activeParentIds) {
+    if (!selected.includes(roleId)) continue
+    const traitIds = decodeLayerValues(
+      getObservationValue(observation, traitFieldKey(traits.fieldKeyPrefix, roleId)),
+    )
+    const roleLabel = optionLabel(parent.options, roleId)
+    const traitLabels = traitIds.map((id) => optionLabel(traits.options, id)).filter(Boolean)
+    if (!traitLabels.length) {
+      parts.push(roleLabel)
+      continue
+    }
+    parts.push(`${roleLabel}: ${traitLabels.join(', ')}`)
+  }
+  return parts.join(' · ')
+}
+
+export function formatObservationLine(
+  observation: TacticalObservation,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
+): string {
+  if (cfg.dependentTraitLayer) {
+    return formatDependentTraitObservation(observation, cfg)
+  }
+  return cfg.layers
+    .map((layer) => formatLayerValue(layer, getObservationValue(observation, layer.fieldKey)))
+    .filter(Boolean)
+    .join(' · ')
+}
+
 export function layerSelectedIds(layer: TacticalObservationLayer, value: string): string[] {
   if (layer.multiSelect) return decodeLayerValues(value)
   const id = asString(value)
@@ -835,19 +1009,25 @@ export function describeStructureVariety(structureCounts: Record<string, number>
 
 export function computeTacticalObservationResult(
   observations: TacticalObservation[],
-  cfg: Pick<TacticalObservationConfig, 'layers' | 'varietyLayerId' | 'varietyFallback'>,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'varietyLayerId' | 'varietyFallback' | 'dependentTraitLayer'>,
 ): TacticalObservationResult {
   const layerCounts: Record<string, Record<string, number>> = {}
   for (const layer of cfg.layers) {
     layerCounts[layer.fieldKey] = {}
     for (const option of layer.options) layerCounts[layer.fieldKey][option.id] = 0
   }
-  let unclearCount = 0
-  const availableLayer = cfg.layers.find((layer) => layer.fieldKey === 'availableOption')
-  const hasOptionCountLayer = cfg.layers.some((layer) => layer.fieldKey === 'optionCount')
-  if (availableLayer?.multiSelect && !hasOptionCountLayer) {
-    layerCounts.optionCount = { one_clear: 0, multiple: 0, none: 0, unclear: 0 }
+  const traits = cfg.dependentTraitLayer
+  if (traits) {
+    for (const parentId of traits.activeParentIds) {
+      const key = traitFieldKey(traits.fieldKeyPrefix, parentId)
+      layerCounts[key] = {}
+      for (const option of traits.options) layerCounts[key][option.id] = 0
+    }
+    // Aggregated trait counts across roles (for variety / overview).
+    layerCounts[traits.fieldKeyPrefix] = {}
+    for (const option of traits.options) layerCounts[traits.fieldKeyPrefix][option.id] = 0
   }
+  let unclearCount = 0
   for (const raw of observations) {
     const observation = normalizeObservation(raw)
     let observationUnclear = false
@@ -858,11 +1038,15 @@ export function computeTacticalObservationResult(
         if (isUnclear(key)) observationUnclear = true
       }
     }
-    if (availableLayer?.multiSelect && !hasOptionCountLayer) {
-      const available = layerSelectedIds(availableLayer, getObservationValue(observation, 'availableOption'))
-      if (available.length) {
-        const derived = asString(observation.values?.optionCount) || deriveOptionCount(available)
-        layerCounts.optionCount[derived] = (layerCounts.optionCount[derived] || 0) + 1
+    if (traits && !isLegacyDependentTraitObservation(observation, cfg)) {
+      for (const parentId of activeParentIdsForObservation(observation, cfg)) {
+        const key = traitFieldKey(traits.fieldKeyPrefix, parentId)
+        const ids = decodeLayerValues(getObservationValue(observation, key))
+        for (const traitId of ids) {
+          layerCounts[key][traitId] = (layerCounts[key][traitId] || 0) + 1
+          layerCounts[traits.fieldKeyPrefix][traitId] = (layerCounts[traits.fieldKeyPrefix][traitId] || 0) + 1
+          if (isUnclear(traitId)) observationUnclear = true
+        }
       }
     }
     if (observationUnclear) unclearCount += 1
@@ -871,7 +1055,11 @@ export function computeTacticalObservationResult(
     || cfg.layers.find((layer) => layer.id === 'structure_type')
     || cfg.layers.find((layer) => layer.id === 'option_type')
     || cfg.layers[cfg.layers.length - 1]
-  const varietyCounts = varietyLayer ? layerCounts[varietyLayer.fieldKey] || {} : {}
+  const varietyCounts = traits && cfg.varietyLayerId === traits.id
+    ? layerCounts[traits.fieldKeyPrefix] || {}
+    : varietyLayer
+      ? layerCounts[varietyLayer.fieldKey] || {}
+      : {}
   return {
     observationCount: observations.length,
     layerCounts,
@@ -902,7 +1090,7 @@ export function toReflectionPayload(
 
 export function draftToObservation(
   draft: TacticalObservationDraft,
-  cfg: Pick<TacticalObservationConfig, 'layers'>,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
   index: number,
   existing?: TacticalObservation,
 ): TacticalObservation | null {
@@ -912,10 +1100,29 @@ export function draftToObservation(
     if (!ids.length) return null
     values[layer.fieldKey] = layer.multiSelect ? encodeLayerValues(ids, layer.options) : ids[0]
   }
-  const availableLayer = cfg.layers.find((layer) => layer.fieldKey === 'availableOption')
-  if (availableLayer?.multiSelect && !cfg.layers.some((layer) => layer.fieldKey === 'optionCount')) {
-    values.optionCount = deriveOptionCount(layerSelectedIds(availableLayer, values.availableOption))
+
+  const traits = cfg.dependentTraitLayer
+  if (traits) {
+    const parent = cfg.layers.find((layer) => layer.id === traits.parentLayerId)
+    if (!parent) return null
+    const selected = layerSelectedIds(parent, values[parent.fieldKey] || '')
+    const roles = selected.filter((id) => traits.activeParentIds.includes(id))
+    // Drop traits for deselected / exclusive answers.
+    for (const parentId of traits.activeParentIds) {
+      const key = traitFieldKey(traits.fieldKeyPrefix, parentId)
+      if (!roles.includes(parentId)) continue
+      const traitIds = traits.multiSelect
+        ? decodeLayerValues(asString(draft[key]))
+        : (asString(draft[key]) ? [asString(draft[key])] : [])
+      const encoded = traits.multiSelect
+        ? encodeLayerValues(traitIds, traits.options)
+        : traitIds[0] || ''
+      if (!encoded) return null
+      values[key] = encoded
+    }
+    // Never persist legacy global optionType / derived optionCount on new saves.
   }
+
   return {
     id: existing?.id || `tactical_obs_${Date.now()}_${index}`,
     order: index + 1,
@@ -929,13 +1136,21 @@ export function draftToObservation(
 
 export function observationToDraft(
   observation: TacticalObservation,
-  cfg: Pick<TacticalObservationConfig, 'layers'>,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
 ): TacticalObservationDraft {
   const normalized = normalizeObservation(observation)
-  const draft: TacticalObservationDraft = {}
+  const draft: TacticalObservationDraft = emptyTacticalDraft(cfg)
   for (const layer of cfg.layers) {
     draft[layer.fieldKey] = getObservationValue(normalized, layer.fieldKey)
   }
+  const traits = cfg.dependentTraitLayer
+  if (traits && !isLegacyDependentTraitObservation(normalized, cfg)) {
+    for (const parentId of traits.activeParentIds) {
+      const key = traitFieldKey(traits.fieldKeyPrefix, parentId)
+      draft[key] = getObservationValue(normalized, key)
+    }
+  }
+  // Legacy optionType is intentionally not mapped onto role traits.
   draft.note = observation.note || ''
   return draft
 }
@@ -948,11 +1163,19 @@ export function validateTacticalObservationAnswers(
     ? (answers[cfg.logsKey] as TacticalObservation[])
     : []
   if (!canEvaluateObservations(observations.length, cfg.minObservations)) {
-    return `Bitte mache mindestens ${cfg.minObservations} ${cfg.countNoun}.`
+    return formatMissingCountMessage({
+      saved: observations.length,
+      required: cfg.minObservations,
+      noun: cfg.countNoun,
+    })
   }
   const incomplete = observations.some((raw) => {
     const observation = normalizeObservation(raw)
-    return cfg.layers.some((layer) => !layerSelectedIds(layer, getObservationValue(observation, layer.fieldKey)).length)
+    const missingLayer = cfg.layers.some(
+      (layer) => !layerSelectedIds(layer, getObservationValue(observation, layer.fieldKey)).length,
+    )
+    if (missingLayer) return true
+    return !observationHasRequiredTraits(observation, cfg)
   })
   if (incomplete) return cfg.incompleteObservationMessage
   if (cfg.patternOptions.length && !asString(answers[cfg.patternKey])) {
@@ -995,8 +1218,39 @@ export function findCompletedTacticalAnswers(
 }
 
 export function findGuideLayer(cfg: TacticalObservationConfig): TacticalObservationLayer | undefined {
+  if (cfg.dependentTraitLayer && cfg.guideLayerId === cfg.dependentTraitLayer.id) {
+    const traits = cfg.dependentTraitLayer
+    return {
+      id: traits.id,
+      fieldKey: traits.fieldKeyPrefix,
+      prompt: traits.promptTemplate,
+      resultTitle: traits.resultTitle,
+      options: traits.options,
+      guideTitle: traits.guideTitle || traits.resultTitle,
+      showInGuide: true,
+      multiSelect: traits.multiSelect,
+    }
+  }
   if (cfg.guideLayerId) {
     return cfg.layers.find((layer) => layer.id === cfg.guideLayerId)
   }
   return cfg.layers.find((layer) => layer.showInGuide)
+}
+
+/** Drop trait draft keys when parent roles are deselected. */
+export function pruneDependentTraitDraft(
+  draft: TacticalObservationDraft,
+  cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
+): TacticalObservationDraft {
+  const traits = cfg.dependentTraitLayer
+  if (!traits) return draft
+  const parent = cfg.layers.find((layer) => layer.id === traits.parentLayerId)
+  if (!parent) return draft
+  const selected = layerSelectedIds(parent, asString(draft[parent.fieldKey]))
+  const next = { ...draft }
+  for (const parentId of traits.activeParentIds) {
+    const key = traitFieldKey(traits.fieldKeyPrefix, parentId)
+    if (!selected.includes(parentId)) next[key] = ''
+  }
+  return next
 }

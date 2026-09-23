@@ -1,6 +1,6 @@
 // Product drill renderer (V2). New mechanics live in feature modules + curriculum config.
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { Drill } from "../../api";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 import { PatternLogDrill, PatternConditionDrill, PatternInvariantDrill, PatternAttributionDrill, TendencyProfileDrill } from "../../features/patternLog";
@@ -27,7 +27,10 @@ import { resolveSimpleStructureConfig } from "../../features/simpleStructure/str
 import { TacticalObservationDrill } from "../../features/tacticalObservation/TacticalObservationDrill";
 import { resolveTacticalObservationConfig } from "../../features/tacticalObservation/tacticalLogic";
 import FoundationLessonDrill from "../../features/foundation/FoundationLessonDrill";
-import { inferAutoAttackDirection as inferAutoAttackDirectionFromSession } from "../../utils/attackDirection";
+import {
+	defendingSideFromAttackDirection,
+	resolveLiveAttackDirection,
+} from "../../utils/attackDirection";
 
 interface DrillRendererV2Props {
   drill: Drill;
@@ -359,12 +362,12 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 		case "rink_zone_priority_observation":
 			return <RinkZonePriorityObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "paintable_rink_observation":
-			return <PaintableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			return <PaintableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "system_observation": {
 			const layers = drill?.config?.observationLayers || []
 			const primary = String(layers[0] || "")
 			if (primary === "space_priority") {
-				return <PaintableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+				return <PaintableRinkObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
 			}
 			if (primary === "entry_route_control" || primary === "space_distribution") {
 				return <RinkSegmentedZoneObservationDrill drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
@@ -551,6 +554,7 @@ type RinkOverlays = {
 	labels: boolean;
 	defendingSide: "left" | "right";
 	showDefendingHint: boolean;
+	attackDirection?: "left" | "right";
 };
 
 const DEFAULT_PAINT_LAYERS: Record<string, PaintLayer[]> = {
@@ -738,8 +742,70 @@ function normalizeRinkOverlays(mode: string, config: any): RinkOverlays {
 		faceoffDots: source?.faceoffDots ?? source?.faceoff_dots ?? source?.faceoffCircles ?? source?.faceoff_circles ?? defaults.faceoffDots ?? false,
 		labels: source?.labels ?? source?.zoneLabels ?? source?.zone_labels ?? defaults.labels ?? false,
 		defendingSide,
+		attackDirection: defendingSide === "left" ? "right" : "left",
 		showDefendingHint: source?.showDefendingHint ?? source?.show_defending_hint ?? defaults.showDefendingHint ?? false,
 	};
+}
+
+function rinkDirectionChipStyle(selected: boolean): CSSProperties {
+	return {
+		padding: "0.18rem 0.48rem",
+		borderRadius: "999px",
+		border: selected ? "1px solid rgba(148,163,184,0.55)" : "1px solid transparent",
+		background: selected ? "rgba(148,163,184,0.14)" : "transparent",
+		color: selected ? "rgba(226,232,240,0.82)" : "rgba(148,163,184,0.72)",
+		fontSize: "0.72rem",
+		fontWeight: 600,
+		cursor: "pointer",
+	};
+}
+
+/** Quiet override only — play direction itself lives on the ice. */
+function RinkPlayDirectionBar({
+	attackDirection,
+	autoAttackDirection,
+	isOverride,
+	showButtons = true,
+	onSelect,
+}: {
+	attackDirection: "left" | "right";
+	autoAttackDirection: "left" | "right";
+	isOverride: boolean;
+	showButtons?: boolean;
+	onSelect?: (next: "auto" | "left" | "right") => void;
+}) {
+	if (!showButtons || !onSelect) return null;
+	return (
+		<div
+			title={isOverride ? "Spielrichtung manuell" : "Spielrichtung aus Drittel und Heim/Auswärts"}
+			style={{ marginBottom: "0.4rem", display: "flex", flexWrap: "wrap", gap: "0.28rem", alignItems: "center" }}
+		>
+			{[
+				{ value: "auto" as const, label: "Auto" },
+				{ value: "right" as const, label: "→" },
+				{ value: "left" as const, label: "←" },
+			].map((option) => {
+				const selected = option.value === "auto" ? !isOverride : attackDirection === option.value && isOverride;
+				return (
+					<button
+						key={option.value}
+						type="button"
+						onClick={() => onSelect(option.value)}
+						aria-label={
+							option.value === "auto"
+								? `Automatische Spielrichtung (${autoAttackDirection === "left" ? "nach links" : "nach rechts"})`
+								: option.value === "right"
+									? "Spielrichtung nach rechts"
+									: "Spielrichtung nach links"
+						}
+						style={rinkDirectionChipStyle(selected)}
+					>
+						{option.label}
+					</button>
+				);
+			})}
+		</div>
+	);
 }
 
 function buildSvgPath(points: PaintPoint[], width: number, height: number): string {
@@ -1025,7 +1091,7 @@ function DirectionalPathConnection({
 	);
 }
 
-function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
+function PaintableRinkObservationDrill({ drill, answers, setAnswers, session, phase }: any) {
 	const safeAnswers = answers || {};
 	const config = drill?.config || {};
 	const mode = String(config?.mode || "free_annotation");
@@ -1038,9 +1104,24 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 	const observationIndexKey = config?.observation_index_key || "observationIndex";
 	const selectedLayerKey = config?.selected_layer_key || "selectedLayerId";
 	const minimumLayers = Number(config?.minimumLayers ?? config?.minimum_layers ?? 1);
+	const attackDirectionKey = config?.attack_direction_key || "attackDirection";
+	const attackDirectionOverrideKey = config?.attack_direction_override_key || attackDirectionKey;
+	const homeAttackDirectionP1 = config?.home_attack_direction_p1 === "left" ? "left" : "right";
+	const manualAttackDirection = safeAnswers[attackDirectionOverrideKey] || "";
+	const { attackDirection, autoAttackDirection, isOverride: isDirectionOverrideActive } = resolveLiveAttackDirection({
+		phase,
+		session,
+		homeAttackDirectionP1,
+		manualOverride: manualAttackDirection,
+	});
 
 	const layers = normalizePaintLayers(mode, config);
-	const overlays = normalizeRinkOverlays(mode, config);
+	const overlays = {
+		...normalizeRinkOverlays(mode, config),
+		defendingSide: defendingSideFromAttackDirection(attackDirection),
+		attackDirection,
+		showDefendingHint: false,
+	};
 	const missions = Array.isArray(config?.missions) ? config.missions : [];
 	const observations = Array.isArray(safeAnswers[observationsKey]) ? safeAnswers[observationsKey] : [];
 	const isComplete = observations.length >= observationCount;
@@ -1223,6 +1304,7 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 			[observationIndexKey]: observations.length + 1,
 			[annotationsKey]: cleanedAnnotations,
 			[noteKey]: draftNote?.trim() ? draftNote.trim() : undefined,
+			[attackDirectionKey]: attackDirection,
 			[createdAtKey]: new Date().toISOString(),
 		};
 
@@ -1301,11 +1383,20 @@ function PaintableRinkObservationDrill({ drill, answers, setAnswers }: any) {
 						</div>
 					</div>
 
-					{overlays.showDefendingHint && (
-						<p style={{ marginTop: "-0.1rem", marginBottom: "0.55rem", color: "rgba(186,230,253,0.9)", fontSize: "0.82rem" }}>
-							Eigenes Tor: <strong>{overlays.defendingSide === "left" ? "links" : "rechts"}</strong>
-						</p>
-					)}
+					<RinkPlayDirectionBar
+						attackDirection={attackDirection}
+						autoAttackDirection={autoAttackDirection}
+						isOverride={isDirectionOverrideActive}
+						onSelect={(next) => {
+							if (next === "auto") {
+								const updated = { ...safeAnswers };
+								delete updated[attackDirectionOverrideKey];
+								setAnswers(updated);
+								return;
+							}
+							setAnswers({ ...safeAnswers, [attackDirectionOverrideKey]: next });
+						}}
+					/>
 
 					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.5rem" }}>
 						{layers.map((layer) => {
@@ -1841,6 +1932,124 @@ function getDetailedRinkMetrics() {
 	};
 }
 
+function iceAdChevronPath(scale = 1): string {
+	const w = 22 * scale;
+	const h = 14 * scale;
+	return `M ${-w * 0.42} ${-h / 2} L ${w * 0.4} 0 L ${-w * 0.42} ${h / 2} L ${-w * 0.2} ${h / 2} L ${w * 0.24} 0 L ${-w * 0.2} ${-h / 2} Z`;
+}
+
+function IceAdChevronBand({
+	startX,
+	endX,
+	y,
+	direction,
+	count,
+	scale = 1,
+	opacity = 0.4,
+}: {
+	startX: number;
+	endX: number;
+	y: number;
+	direction: "left" | "right";
+	count: number;
+	scale?: number;
+	opacity?: number;
+}) {
+	const span = endX - startX;
+	if (span <= 0 || count < 1) return null;
+	const step = span / (count + 1);
+	return (
+		<g
+			opacity={opacity}
+			fill="rgba(226, 232, 240, 0.82)"
+			stroke="rgba(203, 213, 225, 0.55)"
+			strokeWidth={1.15 * scale}
+			strokeLinejoin="round"
+		>
+			{Array.from({ length: count }, (_, index) => {
+				const x = startX + step * (index + 1);
+				const transform = direction === "right"
+					? `translate(${x} ${y})`
+					: `translate(${x} ${y}) scale(-1 1)`;
+				return <path key={`${y}-${index}`} d={iceAdChevronPath(scale)} transform={transform} />;
+			})}
+		</g>
+	);
+}
+
+/** In-ice advertising vibe: desaturated chevrons, readable but not UI-loud. */
+function PlayDirectionIceAds({
+	metrics,
+	attackDirection,
+}: {
+	metrics: ReturnType<typeof getDetailedRinkMetrics>;
+	attackDirection: "left" | "right";
+}) {
+	const boardInset = metrics.rinkHeight * 0.078;
+	const topY = metrics.rinkY + boardInset;
+	const bottomY = metrics.rinkY + metrics.rinkHeight - boardInset;
+	const nzPad = metrics.rinkWidth * 0.018;
+	const zonePad = metrics.rinkWidth * 0.03;
+	return (
+		<g aria-hidden="true">
+			<IceAdChevronBand
+				startX={metrics.leftBlueLineX + nzPad}
+				endX={metrics.rightBlueLineX - nzPad}
+				y={topY}
+				direction={attackDirection}
+				count={5}
+				scale={1.35}
+				opacity={0.42}
+			/>
+			<IceAdChevronBand
+				startX={metrics.leftBlueLineX + nzPad}
+				endX={metrics.rightBlueLineX - nzPad}
+				y={bottomY}
+				direction={attackDirection}
+				count={5}
+				scale={1.35}
+				opacity={0.42}
+			/>
+			<IceAdChevronBand
+				startX={metrics.leftGoalLineX + zonePad}
+				endX={metrics.leftBlueLineX - nzPad}
+				y={topY}
+				direction={attackDirection}
+				count={3}
+				scale={1.12}
+				opacity={0.32}
+			/>
+			<IceAdChevronBand
+				startX={metrics.leftGoalLineX + zonePad}
+				endX={metrics.leftBlueLineX - nzPad}
+				y={bottomY}
+				direction={attackDirection}
+				count={3}
+				scale={1.12}
+				opacity={0.32}
+			/>
+			<IceAdChevronBand
+				startX={metrics.rightBlueLineX + nzPad}
+				endX={metrics.rightGoalLineX - zonePad}
+				y={topY}
+				direction={attackDirection}
+				count={3}
+				scale={1.12}
+				opacity={0.32}
+			/>
+			<IceAdChevronBand
+				startX={metrics.rightBlueLineX + nzPad}
+				endX={metrics.rightGoalLineX - zonePad}
+				y={bottomY}
+				direction={attackDirection}
+				count={3}
+				scale={1.12}
+				opacity={0.32}
+			/>
+		</g>
+	);
+}
+
 /** Shared detailed rink markings (900×620). Interaction layers stay outside this base. */
 function DetailedHockeyRinkLayers({
 	overlays,
@@ -1852,6 +2061,8 @@ function DetailedHockeyRinkLayers({
 	offensiveLabel?: string;
 }) {
 	const m = getDetailedRinkMetrics();
+	const attackDirection = overlays.attackDirection
+		|| (overlays.defendingSide === "left" ? "right" : "left");
 	return (
 		<>
 			<rect x={m.rinkX} y={m.rinkY} width={m.rinkWidth} height={m.rinkHeight} rx="110" ry="110" fill="rgba(240,248,255,0.08)" stroke="rgba(255,255,255,0.38)" strokeWidth="4" />
@@ -1906,6 +2117,8 @@ function DetailedHockeyRinkLayers({
 				</>
 			)}
 
+			<PlayDirectionIceAds metrics={m} attackDirection={attackDirection} />
+
 			{overlays.labels && overlays.zones && (
 				<>
 					<text x={m.rinkX + m.rinkWidth * 0.08} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{defensiveLabel}</text>
@@ -1942,7 +2155,7 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 	const safeAnswers = answers || {};
 	const config = drill?.config || {};
 	const mode = String(config?.mode || "segmented_zone_selection");
-	const overlays = normalizeRinkOverlays(mode, config);
+	const overlaysBase = normalizeRinkOverlays(mode, config);
 
 	const observationCount = Number(config?.observation_count ?? config?.observationCount ?? 3);
 	const observationsKey = config?.observations_key || "observations";
@@ -1969,14 +2182,17 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 			: "occupiedZones");
 	const summaryLayoutStacked = String(config?.summary_layout || "").toLowerCase() === "stacked";
 
-	const autoAttackDirection = inferAutoAttackDirectionFromSession({
+	const { attackDirection, autoAttackDirection, isOverride: isDirectionOverrideActive } = resolveLiveAttackDirection({
 		phase,
 		session,
 		homeAttackDirectionP1,
+		manualOverride: manualAttackDirection,
 	});
-	const attackDirection: "left" | "right" = manualAttackDirection === "left" || manualAttackDirection === "right"
-		? manualAttackDirection
-		: autoAttackDirection;
+	const overlays = {
+		...overlaysBase,
+		defendingSide: defendingSideFromAttackDirection(attackDirection),
+		attackDirection,
+	};
 
 	const zoneDefinitionsRaw: ConfigurableSegmentZone[] = Array.isArray(config?.zones) ? config.zones : [];
 	const zoneDefinitions = mirrorZonesWithAttackDirection
@@ -2285,47 +2501,21 @@ function RinkSegmentedZoneObservationDrill({ drill, answers, setAnswers, session
 						</div>
 					</div>
 
-					{showAttackDirectionControl && (
-						<div style={{ marginBottom: "0.55rem", display: "flex", flexWrap: "wrap", gap: "0.4rem", alignItems: "center" }}>
-							<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.72)" }}>Angriffsrichtung:</span>
-							{[
-								{ value: "auto", label: `Auto (${autoAttackDirection === "left" ? "links" : "rechts"})` },
-								{ value: "right", label: "Rechts" },
-								{ value: "left", label: "Links" },
-							].map((option) => {
-								const selected = option.value === "auto"
-									? !(manualAttackDirection === "left" || manualAttackDirection === "right")
-									: manualAttackDirection === option.value;
-								return (
-									<button
-										key={option.value}
-										type="button"
-										onClick={() => {
-											if (option.value === "auto") {
-												const next = { ...safeAnswers };
-												delete next[attackDirectionOverrideKey];
-												setAnswers(next);
-												return;
-											}
-											setAnswers({ ...safeAnswers, [attackDirectionOverrideKey]: option.value });
-										}}
-										style={{
-											padding: "0.28rem 0.65rem",
-											borderRadius: "6px",
-											border: selected ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
-											background: selected ? "rgba(20,184,166,0.24)" : "rgba(255,255,255,0.04)",
-											color: "#f7f7ff",
-											fontSize: "0.82rem",
-											fontWeight: 600,
-											cursor: "pointer",
-										}}
-									>
-										{option.label}
-									</button>
-								);
-							})}
-						</div>
-					)}
+					<RinkPlayDirectionBar
+						attackDirection={attackDirection}
+						autoAttackDirection={autoAttackDirection}
+						isOverride={isDirectionOverrideActive}
+						showButtons={showAttackDirectionControl}
+						onSelect={(next) => {
+							if (next === "auto") {
+								const updated = { ...safeAnswers };
+								delete updated[attackDirectionOverrideKey];
+								setAnswers(updated);
+								return;
+							}
+							setAnswers({ ...safeAnswers, [attackDirectionOverrideKey]: next });
+						}}
+					/>
 
 					{selectionGroups.length > 1 && (
 						<div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.55rem", flexWrap: "wrap" }}>
@@ -3175,7 +3365,7 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 	const rinkViewMode = String(config?.rink_view || "").trim().toLowerCase();
 	const isMobileViewport = useIsMobileViewport();
 	const wantsDefensiveHalfView = rinkViewMode === "defensive_half" && usesDetailedRink && isMobileViewport;
-	const rinkOverlays = normalizeRinkOverlays(usesDetailedRink ? "detailed" : rinkMode, config);
+	const rinkOverlaysBase = normalizeRinkOverlays(usesDetailedRink ? "detailed" : rinkMode, config);
 
 	const observationCount = Number(config?.observation_count || 3);
 	const observationsKey = config?.observations_key || "observations";
@@ -3445,15 +3635,17 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 		setLocalFormationStates(normalizeStateMap(draft[formationStatesKey] || {}));
 	}, [isFormationShiftMode, serializedDraftFormationStates]);
 
-	const autoAttackDirection = inferAutoAttackDirectionFromSession({
+	const { attackDirection, autoAttackDirection, isOverride: isDirectionOverrideActive } = resolveLiveAttackDirection({
 		phase,
 		session,
 		homeAttackDirectionP1,
+		manualOverride: manualAttackDirection,
 	});
-	const attackDirection: "left" | "right" = manualAttackDirection === "left" || manualAttackDirection === "right"
-		? manualAttackDirection
-		: autoAttackDirection;
-	const isDirectionOverrideActive = manualAttackDirection === "left" || manualAttackDirection === "right";
+	const rinkOverlays = {
+		...rinkOverlaysBase,
+		defendingSide: defendingSideFromAttackDirection(attackDirection),
+		attackDirection,
+	};
 	const defensiveHalfCrop = wantsDefensiveHalfView ? getDefensiveHalfCrop(attackDirection) : null;
 	const rinkCropViewBox = defensiveHalfCrop
 		? {
@@ -4189,75 +4381,18 @@ function DraggableRinkObservationDrill({ drill, answers, setAnswers, session, ph
 
 					<p style={{ marginTop: 0, marginBottom: "0.5rem", color: "rgba(255,255,255,0.72)", fontSize: "0.86rem" }}>{observeHint}</p>
 
-					{(showAttackDirectionControl || !(isDefensiveStructureMode || isFormationShiftMode || isSingleMarkerMode || isDirectionalPathMode)) && (
-					<div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem", alignItems: "center", marginBottom: "0.45rem" }}>
-						<span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.76)" }}>
-							Angriffsrichtung: <strong>{attackDirection === "right" ? "nach rechts" : "nach links"}</strong> {isDirectionOverrideActive ? "(manuell)" : "(auto aus Session)"}
-						</span>
-						<button
-							type="button"
-							onClick={() => setAttackDirection("right")}
-							style={{
-								padding: "0.2rem 0.55rem",
-								borderRadius: "999px",
-								border: attackDirection === "right" ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
-								background: attackDirection === "right" ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
-								color: "#f7f7ff",
-								fontSize: "0.8rem",
-								cursor: "pointer",
-							}}
-						>
-							nach rechts
-						</button>
-						<button
-							type="button"
-							onClick={() => setAttackDirection("left")}
-							style={{
-								padding: "0.2rem 0.55rem",
-								borderRadius: "999px",
-								border: attackDirection === "left" ? "2px solid #8ff0dd" : "1px solid rgba(255,255,255,0.3)",
-								background: attackDirection === "left" ? "rgba(20,184,166,0.88)" : "rgba(255,255,255,0.04)",
-								color: "#f7f7ff",
-								fontSize: "0.8rem",
-								cursor: "pointer",
-							}}
-						>
-							nach links
-						</button>
-						<button
-							type="button"
-							onClick={() => setAttackDirection(attackDirection === "right" ? "left" : "right")}
-							style={{
-								padding: "0.2rem 0.55rem",
-								borderRadius: "999px",
-								border: "1px solid rgba(255,255,255,0.3)",
-								background: "rgba(255,255,255,0.04)",
-								color: "#f7f7ff",
-								fontSize: "0.8rem",
-								cursor: "pointer",
-							}}
-						>
-							Angriffsrichtung wechseln ↔
-						</button>
-						{isDirectionOverrideActive && (
-							<button
-								type="button"
-								onClick={resetAttackDirectionOverride}
-								style={{
-									padding: "0.2rem 0.55rem",
-									borderRadius: "999px",
-									border: "1px solid rgba(255,255,255,0.3)",
-									background: "rgba(255,255,255,0.04)",
-									color: "#f7f7ff",
-									fontSize: "0.8rem",
-									cursor: "pointer",
-								}}
-							>
-								Auto wiederherstellen
-							</button>
-						)}
-					</div>
-					)}
+					<RinkPlayDirectionBar
+						attackDirection={attackDirection}
+						autoAttackDirection={autoAttackDirection}
+						isOverride={isDirectionOverrideActive}
+						onSelect={(next) => {
+							if (next === "auto") {
+								resetAttackDirectionOverride();
+								return;
+							}
+							setAttackDirection(next);
+						}}
+					/>
 
 					{isFormationShiftMode && (
 						<div style={{ marginBottom: "0.5rem" }}>

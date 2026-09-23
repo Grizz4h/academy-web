@@ -8,7 +8,7 @@ import { resolveNationalTeamFlag } from '../../data/nationalTeamFlags'
 import { resolveTeamShortCode } from '../../data/teamShortCodes'
 import { getChlTeamFacts, getChlTeamFactsByName } from '../../data/chlTeamFacts'
 import { getDelTeamFacts, getDelTeamFactsByName } from '../../data/delTeamFacts'
-import { useCreatorMode } from '../../features/creator'
+import { useClubLogoAccess } from '../../features/creator'
 import { AnchoredPopover } from '../ui/AnchoredPopover'
 import styles from './TeamCrest.module.css'
 
@@ -232,11 +232,11 @@ export function TeamCrest({
   onFactsOpenChange,
   factsAnchorRef,
 }: TeamCrestProps) {
-  // Cleared clubs: everyone. Others: creator/admin only. Always blob fetch — never <img src="/teams/…">.
-  const creatorMode = useCreatorMode()
+  // Cleared clubs: everyone. Others: creator/admin or logo-preview allowlist.
+  const canViewUnclearedLogos = useClubLogoAccess()
   const clearedIds = useClubLogoClearance()
   const logicalLogo = resolveTeamLogo(teamId) || resolveTeamLogo(name)
-  const canLoadLogo = creatorMode || isClubLogoPublic(clearedIds, { teamId, logicalSrc: logicalLogo })
+  const canLoadLogo = canViewUnclearedLogos || isClubLogoPublic(clearedIds, { teamId, logicalSrc: logicalLogo })
   const logo = useProtectedClubLogo(canLoadLogo ? logicalLogo : null, canLoadLogo)
   const flag = resolveNationalTeamFlag(teamId) || resolveNationalTeamFlag(name)
   const [logoFailed, setLogoFailed] = useState(false)

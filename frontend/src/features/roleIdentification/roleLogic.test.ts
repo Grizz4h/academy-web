@@ -64,6 +64,12 @@ assert.equal(incomplete, null)
 const saved = draftToObservation({ found: 'with_help', helpfulHint: 'support', note: '' }, 0, undefined, 'help')
 assert.equal(saved?.found, 'with_help')
 assert.equal(saved?.stepId, 'help')
+assert.equal(saved?.note, undefined)
+const savedWithNote = draftToObservation(
+  { found: 'yes', helpfulHint: 'lineup', note: 'Nummer 19 zwischen den Stürmern' },
+  0,
+)
+assert.equal(savedWithNote?.note, 'Nummer 19 zwischen den Stürmern')
 
 const result = computeRoleIdentificationResult([
   { id: 'a', order: 1, found: 'yes', helpfulHint: 'support' },
@@ -82,7 +88,11 @@ assert.equal('accuracy' in result, false)
 
 assert.equal(
   validateRoleIdentificationAnswers(cfg, { [cfg.logsKey]: [saved] }),
-  'Bitte beobachte den Center in mindestens 2 Situationen.',
+  '1 von 2 Situationen für den Center gespeichert. Speichere mindestens 2, dann kannst du weiter.',
+)
+assert.equal(
+  validateRoleIdentificationAnswers(cfg, {}),
+  'Noch keine Situationen für den Center gespeichert. Speichere mindestens 2, dann kannst du weiter.',
 )
 assert.equal(
   validateRoleIdentificationAnswers(cfg, {
