@@ -33,6 +33,7 @@ import TopNav from './components/TopNav'
 import AppFooter from './components/AppFooter'
 import { DevRouteGuard } from './components/DevRouteGuard'
 import { DisplayNameSetupSheet } from './components/DisplayNameSetupSheet'
+import { AuthExpiredRedirect } from './components/AuthExpiredRedirect'
 import { RewardDevTools, RewardHost, RewardProvider } from './features/rewards'
 import { TutorialHost } from './features/tutorial'
 import { GameSetupLauncherProvider } from './features/schedule/GameSetupLauncherProvider'
@@ -58,6 +59,7 @@ function App() {
             <TodayGamesStripBar />
           </div>
           <main className="container">
+            <AuthExpiredRedirect />
             <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />

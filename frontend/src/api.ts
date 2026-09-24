@@ -4,7 +4,7 @@ export async function signup(
   password: string,
   options?: { ageConfirmed?: boolean },
 ): Promise<{ ok: boolean }> {
-  const res = await fetch(buildUrl('/auth/signup'), {
+  const res = await apiFetch(buildUrl('/auth/signup'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -25,7 +25,7 @@ export async function signup(
 }
 
 export async function getRegistrationStatus(): Promise<{ allow_legacy_signup: boolean }> {
-  const res = await fetch(buildUrl('/auth/registration'))
+  const res = await apiFetch(buildUrl('/auth/registration'))
   if (!res.ok) return { allow_legacy_signup: false }
   return res.json()
 }
@@ -40,7 +40,7 @@ export async function login(
   username: string,
   password: string,
 ): Promise<{ token: string; username: string; rinq_user_id?: string; user_id?: string }> {
-  const res = await fetch(buildUrl('/auth/login'), {
+  const res = await apiFetch(buildUrl('/auth/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password })
@@ -63,6 +63,7 @@ import type { MyBillingPayload } from './features/billing/types'
 import type { MyEntitlementsPayload } from './features/entitlements/types'
 import { parseTeamLogoLogicalPath } from './data/teamLogoPath'
 import { getOrLoadClubLogo } from './data/clubLogoCache'
+import { isAuthEndpointUrl, notifyAuthExpired } from './lib/authSession'
 
 
 // ==== Type Definitions ====
@@ -885,6 +886,23 @@ const API_BASE = resolveApiBase()
 
 const buildUrl = (path: string) => `${API_BASE}${path}`
 
+/**
+ * fetch wrapper: on 401 with a stored token, broadcast session expiry
+ * (except login/signup — those 401s are credential errors).
+ */
+async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
+  const res = await fetch(input, init)
+  if (
+    res.status === 401
+    && !isAuthEndpointUrl(input)
+    && typeof localStorage !== 'undefined'
+    && localStorage.getItem('academy.token')
+  ) {
+    notifyAuthExpired()
+  }
+  return res
+}
+
 async function readApiError(res: Response, fallback: string): Promise<Error> {
   let detail = ''
   try {
@@ -939,7 +957,7 @@ export const api = {
       'X-Trace-Action': 'submitMicrofeedback',
       'X-Client-Action': 'submitMicrofeedback',
     };
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/microfeedback`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}/microfeedback`), {
       method: 'POST',
       headers,
       body: JSON.stringify({ phase, text }),
@@ -952,7 +970,7 @@ export const api = {
     const primaryUrl = buildUrl('/curriculum')
     const headers = authHeaders()
     try {
-      const res = await fetch(primaryUrl, {
+      const res = await apiFetch(primaryUrl, {
         headers: Object.keys(headers).length ? headers : undefined,
       })
       if (!res.ok) throw new Error(`Failed to fetch curriculum (${res.status})`)
@@ -982,7 +1000,7 @@ export const api = {
 
   getLabContent: async (): Promise<LabContent> => {
     try {
-      const res = await fetch(buildUrl('/lab/content'))
+      const res = await apiFetch(buildUrl('/lab/content'))
       if (res.ok) return res.json()
       throw new Error(`Failed to fetch lab content (${res.status})`)
     } catch (err) {
@@ -999,7 +1017,7 @@ export const api = {
     const params = new URLSearchParams()
     if (user) params.append('user', user)
     if (state) params.append('state', state)
-    const res = await fetch(buildUrl(`/sessions?${params}`), {
+    const res = await apiFetch(buildUrl(`/sessions?${params}`), {
       headers: {
         ...authHeaders()
       }
@@ -1009,7 +1027,7 @@ export const api = {
   },
 
   createSession: async (data: { user: string; module_id: string; goal: string; confidence: number; focus?: string; session_method?: string; drill_id?: string; game_info?: GameInfo; game_id?: string; observation_scope?: string; observed_team?: string; observed_team_id?: string; observed_team_name?: string; learning_area?: LearningArea; lab_mode?: LabMode; lab_template_id?: string; is_dummy?: boolean; isDummy?: boolean; dev_seed_version?: number; location_verification?: import('./data/venues/types').SessionLocationVerification }): Promise<Session> => {
-    const res = await fetch(buildUrl('/sessions'), {
+    const res = await apiFetch(buildUrl('/sessions'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data)
@@ -1021,7 +1039,7 @@ export const api = {
   },
 
   getSession: async (id: string): Promise<Session> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
       headers: {
         ...authHeaders()
       }
@@ -1039,7 +1057,7 @@ export const api = {
       'X-Trace-Action': 'saveCheckin',
       'X-Client-Action': 'saveCheckin'
     };
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/checkins`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}/checkins`), {
       method: 'POST',
       headers: { ...headers, ...authHeaders() },
       body: JSON.stringify(data)
@@ -1049,7 +1067,7 @@ export const api = {
   },
 
   updateSession: async (id: string, updates: Partial<Session>): Promise<Session> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(updates)
@@ -1059,7 +1077,7 @@ export const api = {
   },
 
   completeSession: async (id: string, data: { summary: string; unclear?: string; next_module?: string; helpfulness: number }): Promise<Session> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/post`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}/post`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data)
@@ -1071,7 +1089,7 @@ export const api = {
   createSessionReflection: async (
     sessionId: string,
   ): Promise<{ reflection: NonNullable<Session['ai_reflection']>; cached: boolean }> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/reflection`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/reflection`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
     })
@@ -1089,7 +1107,7 @@ export const api = {
   },
 
   abortSession: async (id: string, data: { reason: string; note?: string }): Promise<Session> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}/abort`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}/abort`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data)
@@ -1099,7 +1117,7 @@ export const api = {
   },
 
   deleteSession: async (id: string): Promise<{ status: string; id: string }> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(id)}`), {
       method: 'DELETE',
       headers: { ...authHeaders() }
     })
@@ -1108,7 +1126,7 @@ export const api = {
   },
 
   deleteCheckin: async (sessionId: string, checkinIndex: number): Promise<Session> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/checkins/${checkinIndex}`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/checkins/${checkinIndex}`), {
       method: 'DELETE',
       headers: { ...authHeaders() }
     })
@@ -1125,7 +1143,7 @@ export const api = {
 
   // Drafts for session continuation
   saveDrafts: async (sessionId: string, drafts: Record<string, any>): Promise<{status: string}> => {
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/drafts`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/drafts`), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(drafts)
@@ -1143,7 +1161,7 @@ export const api = {
       'X-Trace-Action': 'updateSessionPhase',
       'X-Client-Action': 'updateSessionPhase'
     };
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/phase`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/phase`), {
       method: 'PUT',
       headers: { ...headers, ...authHeaders() },
       body: JSON.stringify(phaseData)
@@ -1155,7 +1173,7 @@ export const api = {
   // Download session as JSON
   downloadSession: async (sessionId: string, phase?: string): Promise<Blob> => {
     const query = phase ? `?phase=${encodeURIComponent(phase)}` : ''
-    const res = await fetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/download${query}`), {
+    const res = await apiFetch(buildUrl(`/sessions/${encodeURIComponent(sessionId)}/download${query}`), {
       method: 'GET',
       headers: { ...authHeaders() }
     })
@@ -1169,7 +1187,7 @@ export const api = {
     if (league) params.set('league', league)
     if (season) params.set('season', season)
     const query = params.toString() ? `?${params.toString()}` : ''
-    const res = await fetch(buildUrl(`/teams${query}`), {
+    const res = await apiFetch(buildUrl(`/teams${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch teams')
@@ -1177,7 +1195,7 @@ export const api = {
   },
 
   getRosters: async (): Promise<{ rosters: RosterIndexItem[] }> => {
-    const res = await fetch(buildUrl('/rosters'), {
+    const res = await apiFetch(buildUrl('/rosters'), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch roster index')
@@ -1185,7 +1203,7 @@ export const api = {
   },
 
   getRoster: async (league: string, season: string): Promise<RosterCatalog> => {
-    const res = await fetch(buildUrl(`/rosters/${encodeURIComponent(league)}/${encodeURIComponent(season)}`), {
+    const res = await apiFetch(buildUrl(`/rosters/${encodeURIComponent(league)}/${encodeURIComponent(season)}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch roster')
@@ -1208,7 +1226,7 @@ export const api = {
     source?: ObservationSource
     notes?: string
   }): Promise<ObservationRun> => {
-    const res = await fetch(buildUrl('/observation-runs'), {
+    const res = await apiFetch(buildUrl('/observation-runs'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload)
@@ -1218,7 +1236,7 @@ export const api = {
   },
 
   getObservationRun: async (runId: string): Promise<ObservationRun> => {
-    const res = await fetch(buildUrl(`/observation-runs/${encodeURIComponent(runId)}`), {
+    const res = await apiFetch(buildUrl(`/observation-runs/${encodeURIComponent(runId)}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch observation run')
@@ -1231,7 +1249,7 @@ export const api = {
     source?: ObservationSource
     note?: string
   }): Promise<ObservationEntry> => {
-    const res = await fetch(buildUrl('/observations'), {
+    const res = await apiFetch(buildUrl('/observations'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload)
@@ -1255,7 +1273,7 @@ export const api = {
     if (params?.player_id) qs.append('player_id', params.player_id)
     const query = qs.toString() ? `?${qs.toString()}` : ''
 
-    const res = await fetch(buildUrl(`/observations${query}`), {
+    const res = await apiFetch(buildUrl(`/observations${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch observation entries')
@@ -1275,7 +1293,7 @@ export const api = {
     if (params?.player_id) qs.append('player_id', params.player_id)
     const query = qs.toString() ? `?${qs.toString()}` : ''
 
-    const res = await fetch(buildUrl(`/observation-stats${query}`), {
+    const res = await apiFetch(buildUrl(`/observation-stats${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch observation stats')
@@ -1293,7 +1311,7 @@ export const api = {
     if (params?.team_id) qs.append('team_id', params.team_id)
     const query = qs.toString() ? `?${qs.toString()}` : ''
 
-    const res = await fetch(buildUrl(`/observation-stats/player/${encodeURIComponent(playerId)}${query}`), {
+    const res = await apiFetch(buildUrl(`/observation-stats/player/${encodeURIComponent(playerId)}${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch player observation stats')
@@ -1313,7 +1331,7 @@ export const api = {
     if (params?.player_id) qs.append('player_id', params.player_id)
     const query = qs.toString() ? `?${qs.toString()}` : ''
 
-    const res = await fetch(buildUrl(`/observation-profiles${query}`), {
+    const res = await apiFetch(buildUrl(`/observation-profiles${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch observation profiles')
@@ -1325,7 +1343,7 @@ export const api = {
     if (params?.league) qs.append('league', params.league)
     const query = qs.toString() ? `?${qs.toString()}` : ''
 
-    const res = await fetch(buildUrl(`/observation-profiles/${encodeURIComponent(playerId)}${query}`), {
+    const res = await apiFetch(buildUrl(`/observation-profiles/${encodeURIComponent(playerId)}${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch observation profile')
@@ -1346,7 +1364,7 @@ export const api = {
     if (params?.league) qs.append('league', params.league)
     const query = qs.toString() ? `?${qs.toString()}` : ''
 
-    const res = await fetch(buildUrl(`/observation-profiles/${encodeURIComponent(playerId)}${query}`), {
+    const res = await apiFetch(buildUrl(`/observation-profiles/${encodeURIComponent(playerId)}${query}`), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload)
@@ -1356,7 +1374,7 @@ export const api = {
   },
 
   getRewardState: async (): Promise<RewardServerState> => {
-    const res = await fetch(buildUrl('/rewards/state'), {
+    const res = await apiFetch(buildUrl('/rewards/state'), {
       headers: {
         ...authHeaders(),
       },
@@ -1367,7 +1385,7 @@ export const api = {
   },
 
   applyRewardResult: async (data: RewardApplyRequest): Promise<RewardApplyResponse> => {
-    const res = await fetch(buildUrl('/rewards/apply'), {
+    const res = await apiFetch(buildUrl('/rewards/apply'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1382,7 +1400,7 @@ export const api = {
 
   // RingAbout Scene Markers
   createScene: async (payload: SceneMarkerCreate): Promise<SceneMarker> => {
-    const res = await fetch(buildUrl('/scenes'), {
+    const res = await apiFetch(buildUrl('/scenes'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload),
@@ -1417,7 +1435,7 @@ export const api = {
     if (params?.episode_season) qs.append('episode_season', params.episode_season)
     if (params?.source_type) qs.append('source_type', params.source_type)
     const query = qs.toString() ? `?${qs.toString()}` : ''
-    const res = await fetch(buildUrl(`/scenes${query}`), {
+    const res = await apiFetch(buildUrl(`/scenes${query}`), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw new Error('Failed to fetch scenes')
@@ -1425,7 +1443,7 @@ export const api = {
   },
 
   deleteScene: async (sceneId: string): Promise<{ status: string; id: string }> => {
-    const res = await fetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
+    const res = await apiFetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
       method: 'DELETE',
       headers: { ...authHeaders() },
     })
@@ -1434,7 +1452,7 @@ export const api = {
   },
 
   updateScene: async (sceneId: string, payload: SceneMarkerUpdate): Promise<SceneMarker> => {
-    const res = await fetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
+    const res = await apiFetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload),
@@ -1455,7 +1473,7 @@ export const api = {
     if (options?.league) qs.append('league', options.league)
     if (options?.allowFallback) qs.append('allow_fallback', 'true')
     const query = qs.toString() ? `?${qs.toString()}` : ''
-    const res = await fetch(buildUrl(`/players/team/${encodeURIComponent(teamId)}${query}`), {
+    const res = await apiFetch(buildUrl(`/players/team/${encodeURIComponent(teamId)}${query}`), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) {
@@ -1480,7 +1498,7 @@ export const api = {
     if (params.team_id) qs.append('team_id', params.team_id)
     if (params.phase_id) qs.append('phase_id', params.phase_id)
     if (params.status) qs.append('status', params.status)
-    const res = await fetch(buildUrl(`/games?${qs.toString()}`), {
+    const res = await apiFetch(buildUrl(`/games?${qs.toString()}`), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw new Error('Failed to fetch games')
@@ -1488,7 +1506,7 @@ export const api = {
   },
 
   getGame: async (gameId: string): Promise<CatalogGame> => {
-    const res = await fetch(buildUrl(`/games/${encodeURIComponent(gameId)}`), {
+    const res = await apiFetch(buildUrl(`/games/${encodeURIComponent(gameId)}`), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw new Error('Failed to fetch game')
@@ -1497,7 +1515,7 @@ export const api = {
 
   getDelDataStatus: async (season: string, league: string = 'DEL'): Promise<DelDataStatus> => {
     const qs = new URLSearchParams({ season, league })
-    const res = await fetch(buildUrl(`/del-data/status?${qs.toString()}`), {
+    const res = await apiFetch(buildUrl(`/del-data/status?${qs.toString()}`), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw new Error('Failed to fetch DEL data status')
@@ -1506,7 +1524,7 @@ export const api = {
 
   importDelSchedule: async (season: string, league: string = 'DEL') => {
     const qs = new URLSearchParams({ season, league })
-    const res = await fetch(buildUrl(`/del-data/import-schedule?${qs.toString()}`), {
+    const res = await apiFetch(buildUrl(`/del-data/import-schedule?${qs.toString()}`), {
       method: 'POST',
       headers: { ...authHeaders() },
     })
@@ -1527,7 +1545,7 @@ export const api = {
 
   migrateDelRosters: async (season: string, league: string = 'DEL') => {
     const qs = new URLSearchParams({ season, league })
-    const res = await fetch(buildUrl(`/del-data/migrate-rosters?${qs.toString()}`), {
+    const res = await apiFetch(buildUrl(`/del-data/migrate-rosters?${qs.toString()}`), {
       method: 'POST',
       headers: { ...authHeaders() },
     })
@@ -1537,7 +1555,7 @@ export const api = {
 
   importDelGameStats: async (gameId: string) => {
     const qs = new URLSearchParams({ game_id: gameId })
-    const res = await fetch(buildUrl(`/del-data/import-game-stats?${qs.toString()}`), {
+    const res = await apiFetch(buildUrl(`/del-data/import-game-stats?${qs.toString()}`), {
       method: 'POST',
       headers: { ...authHeaders() },
     })
@@ -1568,7 +1586,7 @@ export const api = {
       limit: String(params.limit ?? 5),
       skip_existing: String(params.skipExisting ?? true),
     })
-    const res = await fetch(buildUrl(`/del-data/import-game-stats-batch?${qs.toString()}`), {
+    const res = await apiFetch(buildUrl(`/del-data/import-game-stats-batch?${qs.toString()}`), {
       method: 'POST',
       headers: { ...authHeaders() },
     })
@@ -1593,7 +1611,7 @@ export const api = {
     if (season) qs.append('season', season)
     if (league) qs.append('league', league)
     const query = qs.toString() ? `?${qs.toString()}` : ''
-    const res = await fetch(buildUrl(`/players/import${query}`), {
+    const res = await apiFetch(buildUrl(`/players/import${query}`), {
       method: 'POST',
       headers: { ...authHeaders() }
     })
@@ -1614,7 +1632,7 @@ export const api = {
     if (season) qs.append('season', season)
     if (league) qs.append('league', league)
     const query = qs.toString() ? `?${qs.toString()}` : ''
-    const res = await fetch(buildUrl(`/players/import-all${query}`), {
+    const res = await apiFetch(buildUrl(`/players/import-all${query}`), {
       method: 'POST',
       headers: { ...authHeaders() }
     })
@@ -1631,7 +1649,7 @@ export const api = {
   },
 
   getImportableTeams: async (): Promise<TeamsListResponse> => {
-    const res = await fetch(buildUrl('/players/importable-teams'), {
+    const res = await apiFetch(buildUrl('/players/importable-teams'), {
       headers: { ...authHeaders() }
     })
     if (!res.ok) throw new Error('Failed to fetch importable teams')
@@ -1639,7 +1657,7 @@ export const api = {
   },
 
   getMe: async (): Promise<UserAccountPayload> => {
-    const res = await fetch(buildUrl('/me'), {
+    const res = await apiFetch(buildUrl('/me'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Profil konnte nicht geladen werden')
@@ -1664,7 +1682,7 @@ export const api = {
       unlockedCosmetics: Record<string, unknown>
     }
   }> => {
-    const res = await fetch(buildUrl('/dev/progression/preview-grants'), {
+    const res = await apiFetch(buildUrl('/dev/progression/preview-grants'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload),
@@ -1687,7 +1705,7 @@ export const api = {
     }>
     summary: { total_xp: number; total_pux: number; level: number; units: number; xp_to_level_5: number }
   }> => {
-    const res = await fetch(buildUrl('/dev/progression/run-journey'), {
+    const res = await apiFetch(buildUrl('/dev/progression/run-journey'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({}),
@@ -1709,7 +1727,7 @@ export const api = {
     deleted_events: number
     deleted_states: number
   }> => {
-    const res = await fetch(buildUrl('/dev/competency/reset'), {
+    const res = await apiFetch(buildUrl('/dev/competency/reset'), {
       method: 'POST',
       headers: { ...authHeaders() },
     })
@@ -1718,7 +1736,7 @@ export const api = {
   },
 
   getMyEntitlements: async (): Promise<MyEntitlementsPayload> => {
-    const res = await fetch(buildUrl('/me/entitlements'), {
+    const res = await apiFetch(buildUrl('/me/entitlements'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Entitlements konnten nicht geladen werden')
@@ -1726,7 +1744,7 @@ export const api = {
   },
 
   getMyCompetencies: async (): Promise<MyCompetenciesPayload> => {
-    const res = await fetch(buildUrl('/me/competencies'), {
+    const res = await apiFetch(buildUrl('/me/competencies'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Kompetenzprofil konnte nicht geladen werden')
@@ -1734,7 +1752,7 @@ export const api = {
   },
 
   recomputeMyCompetencies: async (): Promise<MyCompetenciesPayload> => {
-    const res = await fetch(buildUrl('/me/competencies/recompute'), {
+    const res = await apiFetch(buildUrl('/me/competencies/recompute'), {
       method: 'POST',
       headers: { ...authHeaders() },
     })
@@ -1745,7 +1763,7 @@ export const api = {
   createBillingCheckout: async (payload?: {
     ageConfirmed?: boolean
   }): Promise<{ ok: boolean; checkout_url: string; session_id: string }> => {
-    const res = await fetch(buildUrl('/billing/checkout'), {
+    const res = await apiFetch(buildUrl('/billing/checkout'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ age_confirmed: Boolean(payload?.ageConfirmed) }),
@@ -1769,7 +1787,7 @@ export const api = {
       notes: string[]
     }
   }> => {
-    const res = await fetch(buildUrl('/billing/offer'), {
+    const res = await apiFetch(buildUrl('/billing/offer'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Angebotsdaten konnten nicht geladen werden')
@@ -1794,7 +1812,7 @@ export const api = {
     display_name?: string | null
     contract_ref?: string
   }> => {
-    const res = await fetch(buildUrl('/billing/withdrawal-request'), {
+    const res = await apiFetch(buildUrl('/billing/withdrawal-request'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(payload),
@@ -1814,7 +1832,7 @@ export const api = {
     contact_email?: string | null
     contract_ref?: string
   }> => {
-    const res = await fetch(buildUrl('/billing/withdrawal-confirm'), {
+    const res = await apiFetch(buildUrl('/billing/withdrawal-confirm'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token }),
@@ -1824,7 +1842,7 @@ export const api = {
   },
 
   createBillingPortal: async (): Promise<{ ok: boolean; portal_url: string }> => {
-    const res = await fetch(buildUrl('/billing/portal'), {
+    const res = await apiFetch(buildUrl('/billing/portal'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
     })
@@ -1833,7 +1851,7 @@ export const api = {
   },
 
   getMyBilling: async (): Promise<MyBillingPayload> => {
-    const res = await fetch(buildUrl('/me/billing'), {
+    const res = await apiFetch(buildUrl('/me/billing'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Billing-Status konnte nicht geladen werden')
@@ -1846,7 +1864,7 @@ export const api = {
     google_linked: boolean
     auth_providers: string[]
   }> => {
-    const res = await fetch(buildUrl('/me/auth/link/google'), {
+    const res = await apiFetch(buildUrl('/me/auth/link/google'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1863,7 +1881,7 @@ export const api = {
     auth_providers: string[]
     google_linked: boolean
   }> => {
-    const res = await fetch(buildUrl(`/me/auth/links/${encodeURIComponent(provider)}`), {
+    const res = await apiFetch(buildUrl(`/me/auth/links/${encodeURIComponent(provider)}`), {
       method: 'DELETE',
       headers: { ...authHeaders() },
     })
@@ -1876,7 +1894,7 @@ export const api = {
     from_session: string[]
     manual: string[]
   }> => {
-    const res = await fetch(buildUrl('/me/watched-games'), {
+    const res = await apiFetch(buildUrl('/me/watched-games'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Gesehene Spiele konnten nicht geladen werden')
@@ -1888,7 +1906,7 @@ export const api = {
     from_session: string[]
     manual: string[]
   }> => {
-    const res = await fetch(buildUrl('/me/watched-games'), {
+    const res = await apiFetch(buildUrl('/me/watched-games'), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -1901,7 +1919,7 @@ export const api = {
   },
 
   exportMyData: async (): Promise<Blob> => {
-    const res = await fetch(buildUrl('/me/export'), {
+    const res = await apiFetch(buildUrl('/me/export'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Export fehlgeschlagen')
@@ -1909,7 +1927,7 @@ export const api = {
   },
 
   deleteMyAccount: async (payload: { confirm: string; password?: string }): Promise<{ ok: boolean }> => {
-    const res = await fetch(buildUrl('/me/delete'), {
+    const res = await apiFetch(buildUrl('/me/delete'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1922,13 +1940,13 @@ export const api = {
   },
 
   createSupportCode: async (): Promise<{ code: string; expires_at: string; valid_for_minutes: number }> => {
-    const res = await fetch(buildUrl('/me/support-code'), { method: 'POST', headers: { ...authHeaders() } })
+    const res = await apiFetch(buildUrl('/me/support-code'), { method: 'POST', headers: { ...authHeaders() } })
     if (!res.ok) throw await readApiError(res, 'Support-Code konnte nicht erstellt werden')
     return res.json()
   },
 
   getMyProfile: async (): Promise<UserProfileCustomization> => {
-    const res = await fetch(buildUrl('/me/profile'), {
+    const res = await apiFetch(buildUrl('/me/profile'), {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw await readApiError(res, 'Profil konnte nicht geladen werden')
@@ -1936,7 +1954,7 @@ export const api = {
   },
 
   updateMyProfile: async (patch: Partial<UserProfileCustomization>): Promise<UserProfileCustomization> => {
-    const res = await fetch(buildUrl('/me/profile'), {
+    const res = await apiFetch(buildUrl('/me/profile'), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(patch),
@@ -1952,7 +1970,7 @@ export const api = {
       reader.onerror = () => reject(new Error('Datei konnte nicht gelesen werden'))
       reader.readAsDataURL(file)
     })
-    const res = await fetch(buildUrl('/me/avatar'), {
+    const res = await apiFetch(buildUrl('/me/avatar'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({
@@ -1967,7 +1985,7 @@ export const api = {
 
   /** Written club-logo clearance. Public list — missing/false IDs stay creator-only. */
   getTeamLogoClearance: async (): Promise<{ ids: string[] }> => {
-    const res = await fetch(buildUrl('/team-logo-clearance'))
+    const res = await apiFetch(buildUrl('/team-logo-clearance'))
     if (!res.ok) return { ids: [] }
     const data = await res.json().catch(() => null)
     const ids = Array.isArray(data?.ids) ? data.ids : []
@@ -1979,7 +1997,7 @@ export const api = {
     const parsed = parseTeamLogoLogicalPath(logicalSrc)
     if (!parsed) throw new Error('Ungültiger Logo-Pfad')
     return getOrLoadClubLogo(logicalSrc, async () => {
-      const res = await fetch(
+      const res = await apiFetch(
         buildUrl(`/team-logos/${encodeURIComponent(parsed.league)}?file=${encodeURIComponent(parsed.filename)}`),
         { headers: { ...authHeaders() } },
       )

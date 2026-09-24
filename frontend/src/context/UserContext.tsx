@@ -2,6 +2,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { login as apiLogin, api } from '../api'
 import { clearClubLogoCache } from '../data/clubLogoCache'
 import { getSupabaseAccessToken, signOutSupabase } from '../lib/supabase'
+import {
+  AUTH_EXPIRED_DEFAULT_REASON,
+  AUTH_EXPIRED_EVENT,
+  type AuthExpiredDetail,
+} from '../lib/authSession'
 
 type LoginResult = {
   ok: boolean
@@ -18,6 +23,9 @@ type UserContextValue = {
   authMode: AuthMode
   /** Managed-auth user must pick a profile name (first Google login). */
   needsDisplayName: boolean
+  /** Set when the JWT/session expired while the UI still looked logged in. */
+  authExpiredMessage: string | null
+  clearAuthExpiredMessage: () => void
   setUser: (username: string | null, password?: string) => Promise<LoginResult>
   /** After Supabase OAuth callback — store token and load /api/me. */
   completeSupabaseSession: (accessToken: string) => Promise<LoginResult>
@@ -41,6 +49,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [userId, setUserIdState] = useState<string | null>(null)
   const [authMode, setAuthMode] = useState<AuthMode>(null)
   const [needsDisplayName, setNeedsDisplayName] = useState(false)
+  const [authExpiredMessage, setAuthExpiredMessage] = useState<string | null>(null)
+
+  const clearAuthExpiredMessage = useCallback(() => setAuthExpiredMessage(null), [])
+
+  const forceSessionExpired = useCallback((reason: string = AUTH_EXPIRED_DEFAULT_REASON) => {
+    setUserState(null)
+    setUserIdState(null)
+    setAuthMode(null)
+    setNeedsDisplayName(false)
+    clearLocalAuth()
+    void signOutSupabase()
+    setAuthExpiredMessage(reason)
+  }, [])
 
   const applyMe = useCallback(async (token: string, mode: AuthMode) => {
     localStorage.setItem('academy.token', token)
@@ -52,6 +73,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserIdState(rid)
     setAuthMode(mode)
     setNeedsDisplayName(Boolean(me.needs_display_name))
+    setAuthExpiredMessage(null)
     localStorage.setItem('academy.user', display)
     if (rid) localStorage.setItem('academy.userId', rid)
     else localStorage.removeItem('academy.userId')
@@ -67,31 +89,72 @@ export function UserProvider({ children }: { children: ReactNode }) {
         try {
           await applyMe(supabaseToken, 'supabase')
           return
-        } catch {
-          await signOutSupabase()
-          clearLocalAuth()
-          setNeedsDisplayName(false)
+        } catch (e: any) {
+          if (cancelled) return
+          if (e?.status === 401) {
+            await signOutSupabase()
+            forceSessionExpired(AUTH_EXPIRED_DEFAULT_REASON)
+            return
+          }
+          // Transient network — keep trying with stored display if any
+          const storedUser = localStorage.getItem('academy.user')
+          const storedId = localStorage.getItem('academy.userId')
+          if (storedUser) {
+            setUserState(storedUser)
+            if (storedId) setUserIdState(storedId)
+            setAuthMode('supabase')
+          }
+          return
         }
       }
       const storedToken = localStorage.getItem('academy.token')
       const storedMode = (localStorage.getItem('academy.authMode') as AuthMode) || 'legacy'
-      const storedUser = localStorage.getItem('academy.user')
-      const storedId = localStorage.getItem('academy.userId')
-      if (storedToken && storedUser) {
-        setUserState(storedUser)
-        if (storedId) setUserIdState(storedId)
-        setAuthMode(storedMode)
+      if (storedToken) {
         try {
           await applyMe(storedToken, storedMode)
-        } catch {
-          // keep optimistic local state; next API call may 401
+        } catch (e: any) {
+          if (cancelled) return
+          if (e?.status === 401) {
+            forceSessionExpired(AUTH_EXPIRED_DEFAULT_REASON)
+            return
+          }
+          const storedUser = localStorage.getItem('academy.user')
+          const storedId = localStorage.getItem('academy.userId')
+          if (storedUser) {
+            setUserState(storedUser)
+            if (storedId) setUserIdState(storedId)
+            setAuthMode(storedMode)
+          }
         }
       }
     })()
     return () => {
       cancelled = true
     }
-  }, [applyMe])
+  }, [applyMe, forceSessionExpired])
+
+  useEffect(() => {
+    const onExpired = (event: Event) => {
+      const detail = (event as CustomEvent<AuthExpiredDetail>).detail
+      forceSessionExpired(detail?.reason || AUTH_EXPIRED_DEFAULT_REASON)
+    }
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired)
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired)
+  }, [forceSessionExpired])
+
+  // When the tab becomes visible again, re-check the token before the user hits a dead end.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return
+      const token = localStorage.getItem('academy.token')
+      if (!token) return
+      void api.getMe().catch(() => {
+        // 401 path notifies via apiFetch → forceSessionExpired
+      })
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [])
 
   const setUser = useCallback(
     async (username: string | null, password?: string): Promise<LoginResult> => {
@@ -107,8 +170,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
       try {
         await signOutSupabase()
         const res = await apiLogin(username, password)
-        // Resolve display name via /api/me (same as Supabase) — avoid flashing
-        // the lowercase login subject before profile.displayName loads.
         localStorage.setItem('academy.token', res.token)
         await applyMe(res.token, 'legacy')
         return { ok: true }
@@ -155,6 +216,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserIdState(null)
     setAuthMode(null)
     setNeedsDisplayName(false)
+    setAuthExpiredMessage(null)
     clearLocalAuth()
   }
 
@@ -164,12 +226,24 @@ export function UserProvider({ children }: { children: ReactNode }) {
       userId,
       authMode,
       needsDisplayName,
+      authExpiredMessage,
+      clearAuthExpiredMessage,
       setUser,
       completeSupabaseSession,
       applyDisplayName,
       logout,
     }),
-    [user, userId, authMode, needsDisplayName, setUser, completeSupabaseSession, applyDisplayName],
+    [
+      user,
+      userId,
+      authMode,
+      needsDisplayName,
+      authExpiredMessage,
+      clearAuthExpiredMessage,
+      setUser,
+      completeSupabaseSession,
+      applyDisplayName,
+    ],
   )
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>

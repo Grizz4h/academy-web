@@ -623,6 +623,17 @@ a.rewardListItem:hover {
   color: var(--danger);
 }
 
+.authExpiredCard {
+  margin-bottom: 0.85rem;
+}
+
+.authExpiredMsg {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: rgba(253, 230, 138, 0.95);
+}
+
 .successMsg {
   font-size: 0.92rem;
   color: var(--ok);

@@ -52,6 +52,7 @@ RinQ Tank soll möglichst wenig personenbezogene Daten selbst besitzen und mögl
 
 - `ACADEMY_JWT_SECRET` liegt ausschließlich serverseitig in `.env.local` (gitignored).
 - Startup ohne gültiges Secret (≥32 Zeichen, nicht `dev-secret`) ist nicht erlaubt.
+- Legacy-JWT: Ablauf nach `JWT_EXP_DAYS` (aktuell 7 Tage) — bewusster Sicherheitsmechanismus. Frontend darf bei abgelaufenem Token nicht „eingeloggt“ vortäuschen; 401 → klare Re-Login-Aufforderung.
 
 ### 2. Backend Exposure
 

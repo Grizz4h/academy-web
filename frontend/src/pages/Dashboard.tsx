@@ -43,7 +43,7 @@ const formatSessionState = (state: string): string => {
 };
 
 export default function Dashboard() {
-  const { user, setUser, needsDisplayName } = useUser();
+  const { user, setUser, needsDisplayName, authExpiredMessage } = useUser();
   const { rewardState } = useRewards();
   const tutorial = useTutorialOptional();
   const queryClient = useQueryClient();
@@ -513,6 +513,13 @@ export default function Dashboard() {
           <h1 className="ui-page-title">Übersicht</h1>
           <p className="ui-page-lead">Melde dich an, um deinen Lernstand und die nächste Session zu sehen.</p>
         </header>
+        {authExpiredMessage ? (
+          <Card surface="section" className={styles.authExpiredCard}>
+            <p className={styles.authExpiredMsg} role="status">
+              {authExpiredMessage}
+            </p>
+          </Card>
+        ) : null}
         <Card>
           <h2 className="ui-section-title">{signupMode ? "Account erstellen" : "Anmelden"}</h2>
           {!signupMode ? (
