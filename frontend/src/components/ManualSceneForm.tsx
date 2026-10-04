@@ -15,8 +15,10 @@ import {
 } from '../stats/seasonNormalization'
 import {
   formatGameTimeInput,
+  hasExplicitScenePeriod,
   isValidGameTime,
   SCENE_PERIOD_OPTIONS,
+  SCENE_PERIOD_REQUIRED_MESSAGE,
 } from '../utils/sceneHelpers'
 import { buildSceneCreatedEvent, buildSceneRatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
@@ -48,8 +50,10 @@ export function ManualSceneForm({
 }: ManualSceneFormProps) {
   const { ingestActivityEvents } = useRewards()
   const gameTimeRef = useRef<HTMLInputElement>(null)
+  const periodFieldRef = useRef<HTMLDivElement>(null)
   const [gameTime, setGameTime] = useState(initialScene?.game_time || '')
-  const [period, setPeriod] = useState(initialScene?.period || 'P1')
+  // Create: no implicit P1 — period must be chosen explicitly. Edit/enrich keep stored value.
+  const [period, setPeriod] = useState(mode === 'create' ? '' : (initialScene?.period || ''))
   const [league, setLeague] = useState(initialScene?.league || '')
   const [teamHome, setTeamHome] = useState(initialScene?.team_home || '')
   const [teamAway, setTeamAway] = useState(initialScene?.team_away || '')
@@ -66,6 +70,7 @@ export function ManualSceneForm({
   const [postQuickSaveScene, setPostQuickSaveScene] = useState<SceneMarker | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [periodError, setPeriodError] = useState(false)
 
   const competitionConfig = useMemo(() => getCompetitionConfig(league), [league])
   const selectedCompetitionPhase = useMemo(
@@ -108,6 +113,15 @@ export function ManualSceneForm({
     }
   }, [league, season, availableTeams, teamHome, teamAway, observedTeam])
 
+  const focusPeriodField = () => {
+    setPeriodError(true)
+    window.requestAnimationFrame(() => {
+      periodFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const firstChip = periodFieldRef.current?.querySelector('button')
+      if (firstChip instanceof HTMLElement) firstChip.focus({ preventScroll: true })
+    })
+  }
+
   const validateCore = (): string | null => {
     const trimmedTime = gameTime.trim()
     if (!trimmedTime) return 'Bitte Spielzeit eingeben (z. B. 12:43).'
@@ -116,7 +130,10 @@ export function ManualSceneForm({
       const seconds = Number(trimmedTime.split(':')[1] || '')
       if (!Number.isFinite(seconds) || seconds > 59) return 'Sekunden müssen zwischen 00 und 59 liegen.'
     }
-    if (!period) return 'Bitte ein Drittel auswählen.'
+    if (!hasExplicitScenePeriod(period)) {
+      focusPeriodField()
+      return SCENE_PERIOD_REQUIRED_MESSAGE
+    }
     if (!teamHome || !teamAway) return 'Bitte Heim- und Auswärtsteam auswählen.'
     if (teamHome === teamAway) return 'Heim- und Auswärtsteam müssen unterschiedlich sein.'
     if (!note.trim()) return 'Bitte kurz beschreiben, was in der Szene passiert.'
@@ -169,7 +186,8 @@ export function ManualSceneForm({
   const saveCreate = async (metadataStatus: 'incomplete' | 'complete', continueEditing: boolean) => {
     const validationError = validateCore()
     if (validationError) {
-      setError(validationError)
+      // Period error is inline under the field — no top-level banner noise.
+      setError(validationError === SCENE_PERIOD_REQUIRED_MESSAGE ? null : validationError)
       return
     }
     if (metadataStatus === 'complete' && !observedTeam) {
@@ -220,7 +238,7 @@ export function ManualSceneForm({
 
     const validationError = validateCore()
     if (validationError) {
-      setError(validationError)
+      setError(validationError === SCENE_PERIOD_REQUIRED_MESSAGE ? null : validationError)
       return
     }
 
@@ -320,18 +338,39 @@ export function ManualSceneForm({
         />
 
         {fieldLabel('Drittel', true)}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.95rem' }}>
+        <div
+          ref={periodFieldRef}
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.4rem',
+            marginBottom: periodError ? '0.35rem' : '0.95rem',
+            padding: periodError ? '0.45rem' : 0,
+            borderRadius: '0.55rem',
+            border: periodError ? '1.5px solid rgba(248,113,113,0.7)' : '1.5px solid transparent',
+            background: periodError ? 'rgba(248,113,113,0.08)' : 'transparent',
+          }}
+        >
           {SCENE_PERIOD_OPTIONS.map((option) => (
             <button
               key={option.value}
               type="button"
-              onClick={() => setPeriod(option.value)}
+              onClick={() => {
+                setPeriod(option.value)
+                setPeriodError(false)
+                if (error === SCENE_PERIOD_REQUIRED_MESSAGE) setError(null)
+              }}
               style={chipStyle(period === option.value)}
             >
               {option.label}
             </button>
           ))}
         </div>
+        {periodError ? (
+          <p style={{ margin: '0 0 0.95rem', color: '#ffb7bf', fontSize: '0.86rem' }}>
+            {SCENE_PERIOD_REQUIRED_MESSAGE}
+          </p>
+        ) : null}
 
         {fieldLabel('Teams', true)}
         <label style={{ display: 'block', marginBottom: '0.45rem', fontSize: '0.82rem', color: '#94a3b8' }}>

@@ -17,6 +17,12 @@ import {
   toReflectionPayload,
 } from './relationLogic'
 import type { PlayerRelationDraft, PlayerRelationObservation } from './types'
+import {
+  formatContinueObservationLabel,
+  formatObservationProgressCount,
+  formatObservationQuotaChoice,
+  formatObservationQuotaStatus,
+} from '../../utils/observationQuota'
 import styles from './PlayerRelationDrill.module.css'
 
 type Props = {
@@ -80,12 +86,21 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
   const relationChoices = toChoices(cfg.relationOptions, compactHints)
   const patternChoices = toChoices(cfg.patternOptions, false)
   const hardestChoices = toChoices(cfg.hardestOptions, false)
-  const progressGoal = count >= cfg.recommendedObservations ? cfg.maxObservations : cfg.recommendedObservations
   const selectedRelation = cfg.relationOptions.find((option) => option.id === draft.relation)
   const selectedPuck = cfg.puckCarrierOptions.find((option) => option.id === draft.puckCarrierRole)
   const selectedPosition = cfg.positionOptions.find((option) => option.id === draft.focalPosition)
   const canComplete = cfg.patternOptions.length === 0 || Boolean(String(safeAnswers[cfg.patternKey] || ''))
   const showSketch = cfg.showSketch && Boolean(selectedPuck && selectedPosition && selectedRelation)
+  const quota = {
+    count,
+    min: cfg.minObservations,
+    recommended: cfg.recommendedObservations,
+    max: cfg.maxObservations,
+    nounPlural: cfg.countNoun,
+    nounSingular: cfg.countNounSingular,
+  }
+  const quotaChoice = formatObservationQuotaChoice(quota)
+  const continueLabel = formatContinueObservationLabel(quota, cfg.scanButtonLabel)
 
   const persistObservations = (next: PlayerRelationObservation[], extra: Record<string, unknown> = {}) => {
     const nextResult = computePlayerRelationResult(next, cfg)
@@ -225,10 +240,11 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
             />
           </div>
         </section>
+        {quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
         <div className={styles.actions}>
           {!atMax && (
             <button type="button" className={styles.secondaryBtn} onClick={startNext}>
-              {cfg.scanButtonLabel}
+              {continueLabel}
             </button>
           )}
           <button
@@ -237,7 +253,7 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
             disabled={!canComplete}
             onClick={completeDrill}
           >
-            Abschluss ansehen
+            Jetzt abschließen
           </button>
         </div>
       </div>
@@ -322,7 +338,7 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
           <p className={styles.progress}>
             {cfg.countNounSingular} {currentIndex + 1}
             {' · '}
-            {cfg.minObservations} minimum / {cfg.recommendedObservations} empfohlen / {cfg.maxObservations} maximum
+            {formatObservationQuotaStatus(quota)}
           </p>
           <div className={styles.fieldBlock}>
             <div className={styles.fieldLabel}>{cfg.puckCarrierPrompt}</div>
@@ -394,26 +410,55 @@ export function PlayerRelationDrill({ drill, answers, setAnswers, session }: Pro
                 Abbrechen
               </button>
             )}
+            {atMin && (
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={() => patchAnswers(safeAnswers, setAnswers, {
+                  [cfg.editIndexKey]: null,
+                  [cfg.draftKey]: emptyRelationDraft(),
+                  [cfg.addingMoreKey]: false,
+                  [cfg.stageKey]: 'reflect',
+                })}
+              >
+                Zum Abschluss
+              </button>
+            )}
             <button type="button" className={styles.primaryBtn} disabled={!canSave} onClick={saveObservation}>
               {cfg.saveButtonLabel}
             </button>
           </div>
         </section>
       ) : (
-        <div className={styles.actions}>
-          {!atMax && (
-            <button type="button" className={styles.primaryBtn} onClick={startNext}>
-              {cfg.scanButtonLabel}
-            </button>
-          )}
-          {atMin && (
-            <button type="button" className={styles.secondaryBtn} onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}>
-              Zur Reflexion
-            </button>
-          )}
-        </div>
+        <>
+          {atMin && quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
+          <div className={styles.actions}>
+            {atMin ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}
+                >
+                  Zum Abschluss
+                </button>
+                {!atMax && (
+                  <button type="button" className={styles.secondaryBtn} onClick={startNext}>
+                    {continueLabel}
+                  </button>
+                )}
+              </>
+            ) : (
+              !atMax && (
+                <button type="button" className={styles.primaryBtn} onClick={startNext}>
+                  {cfg.scanButtonLabel}
+                </button>
+              )
+            )}
+          </div>
+        </>
       )}
-      <p className={styles.progress}>{count} / {progressGoal} {cfg.countNoun}</p>
+      <p className={styles.progress}>{formatObservationProgressCount(quota)}</p>
     </div>
   )
 }

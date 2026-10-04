@@ -20,6 +20,12 @@ import {
   toReflectionPayload,
 } from './roleLogic'
 import type { FoundStatus, RoleObservation, RoleObservationDraft } from './types'
+import {
+  formatContinueObservationLabel,
+  formatObservationProgressCount,
+  formatObservationQuotaChoice,
+  formatObservationQuotaStatus,
+} from '../../utils/observationQuota'
 import styles from './RoleIdentificationDrill.module.css'
 
 type Props = {
@@ -69,7 +75,16 @@ export function RoleIdentificationDrill({ drill, answers, setAnswers, session }:
   const guide = drill?.didactics?.observation_guide
   const foundOptions = cfg.foundOptions.map((option) => ({ value: option.id, label: option.label }))
   const hintOptions = cfg.hintOptions.map((option) => ({ value: option.id, label: option.label }))
-  const progressGoal = count >= cfg.recommendedObservations ? cfg.maxObservations : cfg.recommendedObservations
+  const quota = {
+    count,
+    min: cfg.minObservations,
+    recommended: cfg.recommendedObservations,
+    max: cfg.maxObservations,
+    nounPlural: 'Situationen',
+    nounSingular: 'Situation',
+  }
+  const quotaChoice = formatObservationQuotaChoice(quota)
+  const continueLabel = formatContinueObservationLabel(quota, 'Noch eine Situation')
 
   const updateDraft = (patch: Partial<RoleObservationDraft>) => {
     patchAnswers(safeAnswers, setAnswers, {
@@ -215,14 +230,15 @@ export function RoleIdentificationDrill({ drill, answers, setAnswers, session }:
             <p className={styles.fieldHelp}>Optional. Ein Satz reicht.</p>
           </div>
         </section>
+        {quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
         <div className={styles.actions}>
           {!atMax && (
             <button type="button" className={styles.secondaryBtn} onClick={startNextObservation}>
-              Noch eine Situation
+              {continueLabel}
             </button>
           )}
           <button type="button" className={styles.primaryBtn} onClick={completeDrill}>
-            Abschluss ansehen
+            Jetzt abschließen
           </button>
         </div>
       </div>
@@ -305,7 +321,7 @@ export function RoleIdentificationDrill({ drill, answers, setAnswers, session }:
           <p className={styles.progress}>
             Beobachtung {currentIndex + 1}
             {' · '}
-            {cfg.minObservations} minimum / {cfg.recommendedObservations} empfohlen / {cfg.maxObservations} maximum
+            {formatObservationQuotaStatus(quota)}
           </p>
           {step && (
             <div className={styles.fieldBlock}>
@@ -355,27 +371,56 @@ export function RoleIdentificationDrill({ drill, answers, setAnswers, session }:
                 Abbrechen
               </button>
             )}
+            {atMin && (
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={() => patchAnswers(safeAnswers, setAnswers, {
+                  [cfg.editIndexKey]: null,
+                  [cfg.draftKey]: emptyRoleDraft(),
+                  [cfg.addingMoreKey]: false,
+                  [cfg.stageKey]: 'reflect',
+                })}
+              >
+                Zum Abschluss
+              </button>
+            )}
             <button type="button" className={styles.primaryBtn} disabled={!canSave} onClick={saveObservation}>
               Beobachtung speichern
             </button>
           </div>
         </section>
       ) : (
-        <div className={styles.actions}>
-          {atMin && (
-            <button type="button" className={styles.primaryBtn} onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}>
-              Zur Reflexion
-            </button>
-          )}
-          {!atMax && (
-            <button type="button" className={styles.secondaryBtn} onClick={startNextObservation}>
-              Noch eine Situation
-            </button>
-          )}
-        </div>
+        <>
+          {atMin && quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
+          <div className={styles.actions}>
+            {atMin ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}
+                >
+                  Zum Abschluss
+                </button>
+                {!atMax && (
+                  <button type="button" className={styles.secondaryBtn} onClick={startNextObservation}>
+                    {continueLabel}
+                  </button>
+                )}
+              </>
+            ) : (
+              !atMax && (
+                <button type="button" className={styles.secondaryBtn} onClick={startNextObservation}>
+                  Noch eine Situation
+                </button>
+              )
+            )}
+          </div>
+        </>
       )}
       <p className={styles.progress}>
-        {count} / {progressGoal} Situationen
+        {formatObservationProgressCount(quota)}
       </p>
     </div>
   )

@@ -29,8 +29,15 @@ assert.deepEqual(
 assert.ok(a3.learningGoals.some((goal: string) => goal.includes('Umschaltmoment')))
 assert.ok(a3.title.includes('Umschalten'))
 assert.ok(a2d5.config.handoffText.includes('zentraler Auslöser'))
-assert.ok(/häufig ein zentraler Auslöser/i.test(a3.drills[0].didactics.explanation))
+assert.ok(/Puckgewinne? des beobachteten Teams/i.test(a3.drills[0].didactics.explanation))
 assert.ok(/Nicht jede Strukturveränderung/i.test(a3.drills[0].didactics.explanation))
+assert.ok(/beobachteten Teams/i.test(a3.drills[0].description))
+assert.ok(/Puckgewinne des beobachteten Teams/i.test(a3.drills[0].description))
+assert.ok(/gegnerische Defense/i.test(a3.drills[1].description + a3.drills[1].didactics.explanation))
+assert.ok(/beobachteten Teams/i.test(a3.drills[2].didactics.explanation))
+assert.ok(/Puckverlust des beobachteten Teams/i.test(a3.drills[3].didactics.explanation))
+assert.ok(/Winkelmessung/i.test(a3.drills[3].didactics.explanation))
+assert.ok(/zwischen Gegner und gefährlichen Raum/i.test(a3.drills[3].didactics.explanation))
 assert.ok(!/War der Puckbesitzwechsel klar der Trigger/i.test(JSON.stringify(a3.drills[0].miniFeedback)))
 
 assert.deepEqual(

@@ -1,11 +1,25 @@
 import { useState, useRef, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { api, type Session, type Drill } from '../api'
-import { buildSceneCreatedEvent } from '../features/progression'
+import {
+  buildSceneCreatedEvent,
+  buildSceneRatedEvent,
+  type RinkActivityEvent,
+} from '../features/progression'
 import { useRewards } from '../features/rewards'
 import { useCreatorMode } from '../features/creator'
 import { isDummySession } from '../utils/sessionEligibility'
-import { formatGameTimeInput } from '../utils/sceneHelpers'
+import {
+  formatGameTimeInput,
+  hasExplicitScenePeriod,
+  SCENE_PERIOD_OPTIONS,
+  SCENE_PERIOD_REQUIRED_MESSAGE,
+} from '../utils/sceneHelpers'
+import {
+  readActiveObservationDraft,
+  withActiveObservationDraft,
+} from '../features/sceneCapture/activeObservation'
+import { SceneStarRating, type SceneRatingValue } from '../features/sceneCapture/SceneStarRating'
 import { UiButton, UiSheet, UiSheetActions } from './ui'
 import styles from './SceneMarkerButton.module.css'
 
@@ -20,29 +34,42 @@ interface SceneMarkerButtonProps {
   session: Session
   currentPhase: string
   activeDrill: Drill | null
-  /** Let the user pick P1/P2/P3 — for scenes added after the session ended. */
+  /**
+   * Legacy flag: period is always an explicit required choice now.
+   * Kept so call sites (post-session) do not need a churn pass.
+   */
   phaseEditable?: boolean
+  phaseAnswers?: Record<string, any>
+  onPhaseAnswersChange?: (next: Record<string, any>) => void
 }
 
-const PHASE_OPTIONS = [
-  { value: 'P1', label: '1. Drittel' },
-  { value: 'P2', label: '2. Drittel' },
-  { value: 'P3', label: '3. Drittel' },
-]
+const PERIOD_OPTIONS = SCENE_PERIOD_OPTIONS.filter((option) =>
+  option.value === 'P1' || option.value === 'P2' || option.value === 'P3',
+)
 
-export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEditable = false }: SceneMarkerButtonProps) {
+export function SceneMarkerButton({
+  session,
+  currentPhase,
+  activeDrill,
+  phaseAnswers,
+  onPhaseAnswersChange,
+}: SceneMarkerButtonProps) {
   const creatorMode = useCreatorMode()
   const queryClient = useQueryClient()
   const { ingestActivityEvents } = useRewards()
   const [showModal, setShowModal] = useState(false)
   const [gameTime, setGameTime] = useState('')
   const [note, setNote] = useState('')
-  const [phase, setPhase] = useState(currentPhase)
+  const [phase, setPhase] = useState('')
   const [extensionValues, setExtensionValues] = useState<Record<string, string>>({})
+  const [rating, setRating] = useState<SceneRatingValue | null>(null)
+  const [linkToObservation, setLinkToObservation] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [savedMsg, setSavedMsg] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [periodError, setPeriodError] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const periodFieldRef = useRef<HTMLDivElement>(null)
   const sceneMarkerExtensions: SceneMarkerExtension[] = Array.isArray(activeDrill?.config?.sceneMarkerExtensions)
     ? activeDrill.config.sceneMarkerExtensions.filter((extension: any) =>
         extension?.type === 'select' &&
@@ -52,6 +79,14 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
         extension.options.length > 0
       )
     : []
+
+  const activeObservation = readActiveObservationDraft(phaseAnswers)
+  const canLinkObservation = Boolean(
+    activeObservation
+    && activeObservation.sessionId === session.id
+    && activeObservation.phase === currentPhase
+    && (!activeDrill?.id || activeObservation.drillId === activeDrill.id),
+  )
 
   useEffect(() => {
     if (!showModal) return
@@ -65,21 +100,40 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
     return null
   }
 
+  const focusPeriodField = () => {
+    setPeriodError(true)
+    window.requestAnimationFrame(() => {
+      periodFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const firstChip = periodFieldRef.current?.querySelector('button')
+      if (firstChip instanceof HTMLElement) firstChip.focus({ preventScroll: true })
+    })
+  }
+
   const handleOpen = () => {
     setGameTime('')
     setNote('')
-    setPhase(currentPhase || 'P1')
+    setPhase('')
     setExtensionValues({})
+    setRating(null)
+    setLinkToObservation(true)
     setError(null)
+    setPeriodError(false)
     setShowModal(true)
   }
 
   const handleClose = () => {
     setShowModal(false)
     setError(null)
+    setPeriodError(false)
   }
 
   const handleSave = async () => {
+    if (!hasExplicitScenePeriod(phase)) {
+      focusPeriodField()
+      setError(null)
+      return
+    }
+
     const trimmed = gameTime.trim()
     if (!trimmed) {
       setError('Bitte Spielzeit eingeben (z. B. 13:42)')
@@ -92,6 +146,9 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
 
     setIsSaving(true)
     setError(null)
+    setPeriodError(false)
+
+    const linkNow = canLinkObservation && linkToObservation && activeObservation
 
     try {
       const scene = await api.createScene({
@@ -104,6 +161,8 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
           type: 'drill',
           session_id: session.id,
           drill_id: activeDrill?.id || null,
+          observation_id: linkNow ? activeObservation.id : null,
+          observation_label: linkNow ? activeObservation.label : null,
         },
         metadata_status: 'complete',
         league: session.game_info?.league,
@@ -122,6 +181,7 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
         period: phase,
         game_time: trimmed,
         note: note.trim() || undefined,
+        rating: rating ?? null,
         extensions: Object.fromEntries(
           Object.entries(extensionValues).filter(([, value]) => value.trim().length > 0)
         ),
@@ -129,20 +189,61 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
           sceneMarkerExtensions.map((extension) => [extension.key, extension.label])
         ),
       })
+
+      let backlinkWarning: string | null = null
+      if (linkNow && activeObservation) {
+        if (onPhaseAnswersChange) {
+          onPhaseAnswersChange(withActiveObservationDraft(phaseAnswers || {}, {
+            ...activeObservation,
+            sceneId: scene.id,
+            sceneCode: scene.scene_code || null,
+          }))
+        }
+        // Confirm / repair durable bidirectional link server-side (Tank-S2).
+        // Scene already has source.observation_id; this backfills sample/draft.sceneId when present.
+        try {
+          const linked = await api.linkSceneObservation(scene.id, {
+            observation_id: activeObservation.id,
+            session_id: session.id,
+            allow_pending_sample: true,
+          })
+          if (linked.observation_link?.status === 'backlink_failed') {
+            backlinkWarning = 'Szene gespeichert, Beobachtungs-Verknüpfung unvollständig.'
+          }
+        } catch {
+          backlinkWarning = 'Szene gespeichert, Beobachtungs-Verknüpfung unvollständig.'
+        }
+      }
+
       setShowModal(false)
-      setSavedMsg("🎬 " + (scene.scene_code || trimmed) + " gespeichert")
+      const ratingSuffix = rating ? ` · ${rating}★` : ''
+      if (backlinkWarning) {
+        setError(backlinkWarning)
+        setSavedMsg(`🎬 ${(scene.scene_code || trimmed)} gespeichert`)
+      } else {
+        setSavedMsg(`🎬 ${(scene.scene_code || trimmed)} gespeichert${ratingSuffix}`)
+      }
       setTimeout(() => setSavedMsg(null), 2500)
       queryClient.invalidateQueries({ queryKey: ['scenes'] })
+      queryClient.invalidateQueries({ queryKey: ['session', session.id] })
       if (!isDummySession(session)) {
-        void ingestActivityEvents([
+        const events: RinkActivityEvent[] = [
           buildSceneCreatedEvent({
             sceneId: scene.id,
             occurredAt: scene.created_at,
             sessionId: session.id,
             drillId: activeDrill?.id,
-          gameId: session.game_id || session.game_info?.game_id,
+            gameId: session.game_id || session.game_info?.game_id,
           }),
-        ], { showToasts: false })
+        ]
+        if (rating) {
+          events.push(buildSceneRatedEvent({
+            sceneId: scene.id,
+            rating,
+            occurredAt: scene.updated_at || scene.created_at,
+          }))
+        }
+        void ingestActivityEvents(events, { showToasts: false })
       }
     } catch {
       setError('Fehler beim Speichern. Bitte nochmal versuchen.')
@@ -161,15 +262,10 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
     }
   }
 
-  const phaseLabel =
-    phase === 'P1' ? '1. Drittel'
-    : phase === 'P2' ? '2. Drittel'
-    : phase === 'P3' ? '3. Drittel'
-    : phase
+  const phaseLabel = PERIOD_OPTIONS.find((option) => option.value === phase)?.label || 'Drittel wählen'
 
   return (
     <>
-      {/* The main button */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
         <button
           type="button"
@@ -233,32 +329,46 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
           </div>
         )}
 
-        {phaseEditable ? (
-          <div className={styles.field}>
-            <label className={styles.fieldLabel}>Drittel</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-              {PHASE_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setPhase(option.value)}
-                  style={{
-                    padding: '0.4rem 0.7rem',
-                    borderRadius: '0.45rem',
-                    border: phase === option.value ? '1.5px solid rgba(125,211,252,0.7)' : '1px solid rgba(148,163,184,0.28)',
-                    background: phase === option.value ? 'rgba(14,165,233,0.2)' : 'rgba(15,23,42,0.65)',
-                    color: phase === option.value ? '#e0f2fe' : '#cbd5e1',
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+        <div className={styles.field} ref={periodFieldRef}>
+          <label className={styles.fieldLabel}>
+            Drittel <span className={styles.required}>*</span>
+          </label>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.4rem',
+              padding: periodError ? '0.45rem' : 0,
+              borderRadius: '0.55rem',
+              border: periodError ? '1.5px solid rgba(248,113,113,0.7)' : '1.5px solid transparent',
+              background: periodError ? 'rgba(248,113,113,0.08)' : 'transparent',
+            }}
+          >
+            {PERIOD_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  setPhase(option.value)
+                  setPeriodError(false)
+                }}
+                style={{
+                  padding: '0.4rem 0.7rem',
+                  borderRadius: '0.45rem',
+                  border: phase === option.value ? '1.5px solid rgba(125,211,252,0.7)' : '1px solid rgba(148,163,184,0.28)',
+                  background: phase === option.value ? 'rgba(14,165,233,0.2)' : 'rgba(15,23,42,0.65)',
+                  color: phase === option.value ? '#e0f2fe' : '#cbd5e1',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
-        ) : null}
+          {periodError ? <p className={styles.error}>{SCENE_PERIOD_REQUIRED_MESSAGE}</p> : null}
+        </div>
 
         <label className={styles.fieldLabel}>
           Minute <span className={styles.required}>*</span>
@@ -276,6 +386,48 @@ export function SceneMarkerButton({ session, currentPhase, activeDrill, phaseEdi
           className={`${styles.input} ${error ? styles.inputError : ''}`}
         />
         {error && <p className={styles.error}>{error}</p>}
+
+        {canLinkObservation && activeObservation && (
+          <label
+            className={styles.field}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.55rem',
+              padding: '0.55rem 0.65rem',
+              borderRadius: '8px',
+              border: '1px solid rgba(81,145,162,0.35)',
+              background: 'rgba(81,145,162,0.08)',
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={linkToObservation}
+              onChange={(e) => setLinkToObservation(e.target.checked)}
+              style={{ marginTop: '0.2rem' }}
+            />
+            <span>
+              <span style={{ display: 'block', fontWeight: 650, color: '#e2e8f0', fontSize: '0.9rem' }}>
+                Mit aktuellem {activeObservation.label} verknüpfen
+              </span>
+              <span style={{ display: 'block', marginTop: '0.15rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.62)' }}>
+                Optional · {activeObservation.drillTitle || activeObservation.drillId}
+              </span>
+            </span>
+          </label>
+        )}
+
+        <div className={styles.field}>
+          <label className={styles.fieldLabel}>
+            Bewertung <span className={styles.optional}>(optional)</span>
+          </label>
+          <SceneStarRating
+            size="sm"
+            rating={rating}
+            onChange={(next) => setRating(rating === next ? null : next)}
+          />
+        </div>
 
         {sceneMarkerExtensions.map((extension) => (
           <div key={extension.key} className={styles.field}>

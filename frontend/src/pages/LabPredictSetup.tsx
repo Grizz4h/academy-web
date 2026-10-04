@@ -7,7 +7,7 @@ import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { defaultDelSetupSeason, isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../stats/seasonNormalization'
-import { DEFAULT_OBSERVATION_SCOPE } from '../utils/observationScope'
+import { DEFAULT_OBSERVATION_SCOPE, hasExplicitObservationScope } from '../utils/observationScope'
 import type { PredictionTemplate } from '../features/lab/types'
 import { PredictionTemplatePicker } from '../features/lab/PredictComponents'
 import { LiveObservationPanel, type LiveObservationFields } from '../components/game/LiveObservationPanel'
@@ -133,7 +133,8 @@ export default function LabPredictSetup() {
       && fields.teamHome
       && fields.teamAway
       && fields.observedTeam
-      && fields.teamHome !== fields.teamAway,
+      && fields.teamHome !== fields.teamAway
+      && hasExplicitObservationScope(fields.observationScope),
   )
 
   const handleCreate = () => {
@@ -151,6 +152,10 @@ export default function LabPredictSetup() {
     }
     if (!fields.observedTeam) {
       alert('Bitte das ausgewählte Team festlegen.')
+      return
+    }
+    if (!hasExplicitObservationScope(fields.observationScope)) {
+      alert('Bitte wähle den Beobachtungsumfang (Drittel / gesamtes Spiel).')
       return
     }
     if (competitionConfig && !selectedCompetitionPhase) {

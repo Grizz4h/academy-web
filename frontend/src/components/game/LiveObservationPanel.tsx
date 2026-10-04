@@ -14,7 +14,7 @@ import {
 import { LEAGUES } from '../../data/teamsByLeague'
 import { getCompetitionConfig, getCompetitionStageGroup, phasesForStageGroup } from '../../data/competitionConfig'
 import { isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../../stats/seasonNormalization'
-import { OBSERVATION_SCOPE_OPTIONS, type ObservationScope } from '../../utils/observationScope'
+import { OBSERVATION_SCOPE_OPTIONS, type ObservationScopeSelection } from '../../utils/observationScope'
 import { useDevNavEnabled } from '../../config/featureFlags'
 import {
   fieldsFromCatalogGame,
@@ -40,7 +40,7 @@ export type LiveObservationFields = {
   teamHome: string
   teamAway: string
   observedTeam: string
-  observationScope: ObservationScope
+  observationScope: ObservationScopeSelection
   selectedGameId?: string
 }
 

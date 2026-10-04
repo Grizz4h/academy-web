@@ -16,6 +16,7 @@ import {
   formatObservationLine,
   getObservationValue,
   isLegacyDependentTraitObservation,
+  layerAnswerMode,
   observationToDraft,
   pruneDependentTraitDraft,
   resolveTacticalObservationConfig,
@@ -324,9 +325,14 @@ assert.ok(a2d3.didactics.observation_guide.ignore.some((item: string) => item.in
 assert.ok(a2d3.didactics.observation_guide.ignore.some((item: string) => item.includes('Raum')))
 
 const d3Cfg = resolveTacticalObservationConfig(a2d3.config)
-assert.equal(d3Cfg.layers.map((layer) => layer.id).join(','), 'available_option,executed_action,option_visibility')
-assert.equal(d3Cfg.layers[1].options.map((option) => option.id).join(','), 'pass,carry,dump,reset,unclear')
+assert.equal(d3Cfg.layers.map((layer) => layer.id).join(','), 'executed_action,available_option,option_visibility')
+assert.equal(d3Cfg.layers[0].options.map((option) => option.id).join(','), 'pass,carry,dump,reset,unclear')
+assert.equal(d3Cfg.layers[1].options.map((option) => option.id).join(','), 'center,wing,defense,unclear')
+assert.equal(d3Cfg.layers[1].dependsOnLayerId, 'executed_action')
+assert.deepEqual(d3Cfg.layers[1].requiredForParentIds, ['pass'])
+assert.deepEqual(d3Cfg.layers[1].optionalForParentIds, ['reset'])
 assert.equal(d3Cfg.layers[2].options.map((option) => option.id).join(','), 'clearly_visible,partially_visible,surprising,unclear')
+assert.equal(d3Cfg.layers[2].prompt, 'War diese Aktion vorher in der Struktur erkennbar?')
 assert.equal(d3Cfg.logsKey, 'tactical_decision_observations')
 assert.equal(canEvaluateObservations(2, d3Cfg.minObservations), false)
 assert.equal(canEvaluateObservations(3, d3Cfg.minObservations), true)
@@ -337,17 +343,81 @@ assert.equal(findCompletedTacticalAnswers(d3Cfg, d1Completed, { drafts: { P1: d1
 assert.equal(findCompletedTacticalAnswers(d3Cfg, d2Completed, { drafts: { P1: d2Completed }, checkins: [] }), null)
 
 const d3Unclear = draftToObservation({
-  availableOption: 'unclear',
   executedAction: 'unclear',
   optionVisibility: 'unclear',
 }, d3Cfg, 0)
 assert.ok(d3Unclear)
-const d3Observation = draftToObservation({
-  availableOption: 'wing',
+assert.equal(d3Unclear.values?.availableOption, undefined)
+assert.equal(d3Unclear.values?.executedAction, 'unclear')
+assert.equal(d3Unclear.values?.optionVisibility, 'unclear')
+
+const d3PassCenter = draftToObservation({
   executedAction: 'pass',
+  availableOption: 'center',
   optionVisibility: 'clearly_visible',
 }, d3Cfg, 0)
-assert.ok(d3Observation)
+assert.ok(d3PassCenter)
+assert.equal(d3PassCenter.values?.executedAction, 'pass')
+assert.equal(d3PassCenter.values?.availableOption, 'center')
+assert.equal(d3PassCenter.values?.optionVisibility, 'clearly_visible')
+
+const d3PassWingSurprising = draftToObservation({
+  executedAction: 'pass',
+  availableOption: 'wing',
+  optionVisibility: 'surprising',
+}, d3Cfg, 0)
+assert.ok(d3PassWingSurprising)
+assert.equal(d3PassWingSurprising.values?.availableOption, 'wing')
+assert.equal(d3PassWingSurprising.values?.optionVisibility, 'surprising')
+
+const d3Carry = draftToObservation({
+  executedAction: 'carry',
+  availableOption: 'unclear',
+  optionVisibility: 'clearly_visible',
+}, d3Cfg, 0)
+assert.ok(d3Carry)
+assert.equal(d3Carry.values?.executedAction, 'carry')
+assert.equal(d3Carry.values?.optionVisibility, 'clearly_visible')
+assert.equal(d3Carry.values?.availableOption, undefined)
+assert.ok(!('availableOption' in (d3Carry.values || {})))
+
+const d3Dump = draftToObservation({
+  executedAction: 'dump',
+  optionVisibility: 'partially_visible',
+}, d3Cfg, 0)
+assert.ok(d3Dump)
+assert.equal(d3Dump.values?.executedAction, 'dump')
+assert.equal(d3Dump.values?.optionVisibility, 'partially_visible')
+assert.ok(!('availableOption' in (d3Dump.values || {})))
+
+const d3ResetWithOption = draftToObservation({
+  executedAction: 'reset',
+  availableOption: 'defense',
+  optionVisibility: 'clearly_visible',
+}, d3Cfg, 0)
+assert.ok(d3ResetWithOption)
+assert.equal(d3ResetWithOption.values?.availableOption, 'defense')
+
+const d3ResetWithoutOption = draftToObservation({
+  executedAction: 'reset',
+  optionVisibility: 'clearly_visible',
+}, d3Cfg, 0)
+assert.ok(d3ResetWithoutOption)
+assert.ok(!('availableOption' in (d3ResetWithoutOption.values || {})))
+
+assert.equal(draftToObservation({
+  executedAction: 'pass',
+  optionVisibility: 'clearly_visible',
+}, d3Cfg, 0), null, 'Pass requires a used player option')
+
+assert.equal(layerAnswerMode(d3Cfg.layers[1], { executedAction: 'pass' }, d3Cfg.layers), 'required')
+assert.equal(layerAnswerMode(d3Cfg.layers[1], { executedAction: 'carry' }, d3Cfg.layers), 'omitted')
+assert.equal(layerAnswerMode(d3Cfg.layers[1], { executedAction: 'dump' }, d3Cfg.layers), 'omitted')
+assert.equal(layerAnswerMode(d3Cfg.layers[1], { executedAction: 'reset' }, d3Cfg.layers), 'optional')
+assert.equal(layerAnswerMode(d3Cfg.layers[1], { executedAction: 'unclear' }, d3Cfg.layers), 'omitted')
+assert.equal(layerAnswerMode(d3Cfg.layers[1], {}, d3Cfg.layers), 'omitted')
+
+const d3Observation = d3PassCenter
 const d3Completed = {
   [d3Cfg.logsKey]: [d3Observation, d3Observation, d3Observation],
   [d3Cfg.patternKey]: 'positioning',
@@ -356,6 +426,40 @@ const d3Completed = {
 assert.equal(findCompletedTacticalAnswers(d3Cfg, d3Completed, { drafts: { P1: d3Completed }, checkins: [] })?.[d3Cfg.stageKey], 'complete')
 assert.equal(findCompletedTacticalAnswers(d3Cfg, {}, { drafts: { P1: d1Completed }, checkins: [] }), null)
 assert.equal(findCompletedTacticalAnswers(d3Cfg, {}, { drafts: { P1: d2Completed }, checkins: [] }), null)
+
+const d3CarryCompleted = {
+  [d3Cfg.logsKey]: [d3Carry, d3Dump, d3ResetWithoutOption],
+  [d3Cfg.patternKey]: 'spacing',
+  [d3Cfg.stageKey]: 'complete',
+}
+assert.equal(validateTacticalObservationAnswers(d3Cfg, d3CarryCompleted), null)
+
+const d3LegacyObservation = {
+  id: 'legacy',
+  order: 1,
+  values: { availableOption: 'wing', executedAction: 'pass', optionVisibility: 'clearly_visible' },
+}
+const d3LegacyCarry = {
+  id: 'legacy-carry',
+  order: 2,
+  values: { availableOption: 'center', executedAction: 'carry', optionVisibility: 'partially_visible' },
+}
+const d3LegacyCompleted = {
+  [d3Cfg.logsKey]: [d3LegacyObservation, d3LegacyCarry, {
+    id: 'legacy-3',
+    order: 3,
+    values: { availableOption: 'defense', executedAction: 'reset', optionVisibility: 'surprising' },
+  }],
+  [d3Cfg.patternKey]: 'space',
+  [d3Cfg.stageKey]: 'complete',
+}
+assert.equal(validateTacticalObservationAnswers(d3Cfg, d3LegacyCompleted), null, 'legacy A2_D3 sessions remain readable')
+assert.ok(formatObservationLine(d3LegacyObservation, d3Cfg).includes('Wing'))
+const d3CarryLine = formatObservationLine(d3Carry, d3Cfg)
+assert.ok(d3CarryLine.includes('Puck führen'))
+assert.ok(d3CarryLine.includes('Klar sichtbar') || d3CarryLine.includes('klar sichtbar'))
+assert.ok(!d3CarryLine.includes('Unklar'), 'carry must not invent an unclear player option')
+assert.ok(!d3CarryLine.includes('Center') && !d3CarryLine.includes('Wing') && !d3CarryLine.includes('Defense'))
 
 const a2d4 = a2.drills.find((drill: { id: string }) => drill.id === 'A2_D4')
 const a2d5 = a2.drills.find((drill: { id: string }) => drill.id === 'A2_D5')

@@ -4,11 +4,15 @@ import {
   getActivePeriodsForScope,
   getNextPhaseForScope,
   getPreviousPhaseForScope,
+  hasExplicitObservationScope,
 } from './observationScope.ts'
 
 assert.deepEqual(getActivePeriodsForScope('P1'), ['P1'])
 assert.deepEqual(getActivePeriodsForScope('FULL_GAME'), ['P1', 'P2', 'P3'])
-assert.equal(DEFAULT_OBSERVATION_SCOPE, 'P1')
+assert.equal(DEFAULT_OBSERVATION_SCOPE, '')
+assert.equal(hasExplicitObservationScope(''), false)
+assert.equal(hasExplicitObservationScope('P1'), true)
+assert.equal(hasExplicitObservationScope('FULL_GAME'), true)
 
 assert.equal(getNextPhaseForScope('P1', 'P1'), 'POST')
 assert.equal(getNextPhaseForScope('P1', 'FULL_GAME'), 'P2')

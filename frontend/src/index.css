@@ -259,11 +259,82 @@ main {
 
 @media (max-width: 768px) {
   .appSelect {
-    height: 42px;
-    padding: 0 40px 0 12px;
+    height: auto;
+    min-height: 42px;
+    padding: 0.55rem 40px 0.55rem 12px;
     font-size: 0.95rem;
+    line-height: 1.3;
     background-position: right 12px center;
+    white-space: normal;
   }
+}
+
+/* Event-log field stack — full-width selects/inputs, no side-by-side clip on mobile */
+.event-log-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.event-log-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.event-log-field__label {
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: rgba(247, 247, 255, 0.78);
+  line-height: 1.35;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.event-log-field .appSelect,
+.event-log-field input[type='text'] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.event-log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.event-log-quota {
+  margin: 0 0 0.55rem;
+  font-size: 0.86rem;
+  color: rgba(247, 247, 255, 0.72);
+  line-height: 1.4;
+}
+
+.event-log-list-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.event-log-list-row__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 /* ---- Visual Polish utilities (low-risk, opt-in) ---- */
@@ -477,6 +548,8 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.02);
   cursor: pointer;
+  overflow-wrap: break-word;
+  word-break: normal;
   transition:
     border-color var(--motion-fast) var(--motion-ease),
     background var(--motion-fast) var(--motion-ease),

@@ -22,7 +22,9 @@ Observed team and rating are metadata only. They are **not** part of the name.
 
 ## Derived, not persisted
 
-`GET /api/scenes` (authenticated, owner-filtered) attaches:
+`GET /api/scenes` and `GET /api/scenes/{scene_id}` (authenticated, owner-filtered) attach the same derived fields. Single-scene addressability and identity rules: [`docs/architecture/scene-pool-api.md`](../architecture/scene-pool-api.md).
+
+Derived fields:
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -60,7 +62,8 @@ The Scene Pool copy button prefers `scene.asset_name` from `GET /api/scenes`. `f
 ## Clients (Board Studio)
 
 ```text
-Supabase Auth → Bearer access token → GET /api/scenes → scene.asset_name
+Supabase Auth → Bearer access token → GET /api/scenes/{scene.id} → scene.asset_name
+(or GET /api/scenes for lists)
 ```
 
-Auth, ownership, existing scene fields, and `scene_code` are unchanged. Additive read only.
+Board Studio should resolve a known Tank document via `Scene.id` (`poolDocumentId`), not by downloading the full list. Auth, ownership, existing scene fields, and `scene_code` are unchanged. Additive read only.

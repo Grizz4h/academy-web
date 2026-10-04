@@ -10,7 +10,11 @@ import { getTeamNamesForLeague } from '../data/teamsByLeague'
 import { resolveCatalogTeamName } from '../data/teamShortCodes'
 import { getCompetitionConfig, formatCompetitionContext } from '../data/competitionConfig'
 import { computeObservedTeamStats, resolveDrillId } from '../stats/exposureStats'
-import { DEFAULT_OBSERVATION_SCOPE, type ObservationScope } from '../utils/observationScope'
+import {
+  DEFAULT_OBSERVATION_SCOPE,
+  hasExplicitObservationScope,
+  type ObservationScopeSelection,
+} from '../utils/observationScope'
 import {
   defaultDelSetupSeason,
   isSplitSeasonLeague,
@@ -102,7 +106,7 @@ export default function SessionSetup() {
   const [season, setSeason] = useState<string>(() => defaultDelSetupSeason())
   const [competitionPhase, setCompetitionPhase] = useState<string>('')
   const [competitionValue, setCompetitionValue] = useState<string>('')
-  const [observationScope, setObservationScope] = useState<ObservationScope>(DEFAULT_OBSERVATION_SCOPE)
+  const [observationScope, setObservationScope] = useState<ObservationScopeSelection>(DEFAULT_OBSERVATION_SCOPE)
   const [selectedGameId, setSelectedGameId] = useState<string>('')
   const [devMode, setDevMode] = useState(() => isDevNavEnabled())
   const [dummyError, setDummyError] = useState('')
@@ -118,6 +122,7 @@ export default function SessionSetup() {
     if (!teamHome || !teamAway) return 'Paarung wählen'
     if (teamHome === teamAway) return 'Teams müssen unterschiedlich sein'
     if (!observedTeam) return 'Beobachtetes Team wählen'
+    if (!hasExplicitObservationScope(observationScope)) return 'Beobachtungsumfang wählen'
     if (competitionConfig && !selectedCompetitionPhase) return 'Wettbewerbsphase wählen'
     if (selectedCompetitionPhase) {
       const numericValue = Number(competitionValue)
@@ -137,6 +142,7 @@ export default function SessionSetup() {
     teamHome,
     teamAway,
     observedTeam,
+    observationScope,
     competitionConfig,
     selectedCompetitionPhase,
     competitionValue,
@@ -675,6 +681,10 @@ export default function SessionSetup() {
     }
     if (!observedTeam) {
       alert('Bitte wähle das beobachtete Team aus (Pflichtfeld).')
+      return
+    }
+    if (!hasExplicitObservationScope(observationScope)) {
+      alert('Bitte wähle den Beobachtungsumfang (Drittel / gesamtes Spiel).')
       return
     }
     if (competitionConfig && !selectedCompetitionPhase) {
@@ -1388,7 +1398,7 @@ export default function SessionSetup() {
 
       <ScrollActionDock
         enabled
-        resetKey={`${league}-${teamHome}-${teamAway}-${observedTeam}-${selectedDrill}-${competitionPhase}-${competitionValue}`}
+        resetKey={`${league}-${teamHome}-${teamAway}-${observedTeam}-${observationScope}-${selectedDrill}-${competitionPhase}-${competitionValue}`}
         onDockedChange={setSetupDocked}
         hint={setupDockHint}
         htmlAttrs={{ 'data-session-sticky': 'true' }}
@@ -1402,7 +1412,7 @@ export default function SessionSetup() {
           size="sm"
           data-tutorial-id={TUTORIAL_TARGET.setupStart}
           onClick={handleCreateSession}
-          disabled={createSessionMutation.isPending || !user}
+          disabled={createSessionMutation.isPending || !user || !hasExplicitObservationScope(observationScope)}
         >
           {createSessionMutation.isPending ? 'Erstelle Session…' : 'Session starten'}
         </UiButton>

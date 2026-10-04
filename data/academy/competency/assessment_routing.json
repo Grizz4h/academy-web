@@ -305,7 +305,104 @@
       "costLatencyClass": "low",
       "evidenceLevel": 2,
       "maxStrength": 0.7,
-      "notes": "Required sample note (≥150) on logged moments; states/factors remain structured base."
+      "notes": "Required sample note (≥25) as short scene anchor; states/factors remain structured base."
+    },
+    {
+      "drillId": "B1W_D1",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "B1W sample_log D1: puck relation + primary winger function + short note (≥25)."
+    },
+    {
+      "drillId": "B1W_D2",
+      "assessmentSource": "structured",
+      "readiness": "READY",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.8,
+      "notes": "B1W rink D2: marker location + spatial function (width/depth/second layer); optional short note."
+    },
+    {
+      "drillId": "B1W_D3",
+      "assessmentSource": "structured",
+      "readiness": "READY",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": false,
+        "freeTextOptional": true
+      },
+      "aiNeededFor": [],
+      "costLatencyClass": null,
+      "evidenceLevel": 2,
+      "maxStrength": 0.8,
+      "notes": "B1W sample_log D3: coupled near_side + far_side in one sample; optional short note; one scene per two-sided observation."
+    },
+    {
+      "drillId": "B1W_D4",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "B1W sample_log D4: board-moment behavior (single) + outside-available multi; note ≥25; one scene per sample."
+    },
+    {
+      "drillId": "B1W_D5",
+      "assessmentSource": "structured_plus_ai_review",
+      "readiness": "READY",
+      "scope": "single_observation",
+      "existingInputs": {
+        "structured": true,
+        "freeText": true,
+        "freeTextRequired": true,
+        "freeTextOptional": false
+      },
+      "aiNeededFor": [
+        "relational_reasoning",
+        "specificity",
+        "unsupported_claims"
+      ],
+      "costLatencyClass": "low",
+      "evidenceLevel": 2,
+      "maxStrength": 0.7,
+      "notes": "B1W sample_log D5: movement (single) + visible_change (multi, exclusive no_clear/unclear); note ≥25; correlation not causation; one scene per sample."
     },
     {
       "drillId": "B1_D2",

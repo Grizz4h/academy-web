@@ -1,7 +1,7 @@
 // Product drill renderer (V2). New mechanics live in feature modules + curriculum config.
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import type { Drill } from "../../api";
+import { api, type Drill } from "../../api";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 import { PatternLogDrill, PatternConditionDrill, PatternInvariantDrill, PatternAttributionDrill, TendencyProfileDrill } from "../../features/patternLog";
 import { BeforeAfterCompareDrill } from "../../features/beforeAfterCompare/BeforeAfterCompareDrill";
@@ -31,6 +31,11 @@ import {
 	defendingSideFromAttackDirection,
 	resolveLiveAttackDirection,
 } from "../../utils/attackDirection";
+import {
+	createObservationId,
+	readActiveObservationDraft,
+	withActiveObservationDraft,
+} from "../../features/sceneCapture/activeObservation";
 
 interface DrillRendererV2Props {
   drill: Drill;
@@ -176,6 +181,35 @@ function ObservationGuide({ drill }: { drill: Drill }) {
 									<li key={i}>{rwg(item)}</li>
 								))}
 							</ul>
+						</div>
+					)}
+
+					{Array.isArray(observationGuide.when_to_observe) && observationGuide.when_to_observe.length > 0 && (
+						<div style={{ marginBottom: "1rem" }}>
+							<strong>Wann beobachten?</strong>
+							<ul style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
+								{observationGuide.when_to_observe.map((item: string, i: number) => (
+									<li key={i}>{rwg(item)}</li>
+								))}
+							</ul>
+						</div>
+					)}
+
+					{observationGuide.scan_help && (observationGuide.scan_help.title || observationGuide.scan_help.motto || (Array.isArray(observationGuide.scan_help.steps) && observationGuide.scan_help.steps.length > 0)) && (
+						<div style={{ marginBottom: "1rem" }}>
+							<strong>{observationGuide.scan_help.title || "So findest du den Einstieg"}</strong>
+							{Array.isArray(observationGuide.scan_help.steps) && observationGuide.scan_help.steps.length > 0 && (
+								<ol style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
+									{observationGuide.scan_help.steps.map((item: string, i: number) => (
+										<li key={i}>{rwg(item)}</li>
+									))}
+								</ol>
+							)}
+							{observationGuide.scan_help.motto && (
+								<p style={{ marginTop: "0.5rem", fontSize: "0.9rem", fontStyle: "italic", color: "rgba(255,255,255,0.8)" }}>
+									{rwg(observationGuide.scan_help.motto)}
+								</p>
+							)}
 						</div>
 					)}
 
@@ -493,7 +527,7 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 			return <PeriodCheckin drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		}
 		case "sample_log":
-			return <SampleLog drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			return <SampleLog drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
 		case "micro_quiz":
 			return <MicroQuiz drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		case "foundation_lesson":
@@ -536,7 +570,7 @@ export default function DrillRendererV2({ drill, answers, setAnswers, session, p
 			return <RoleIdentification drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
 		}
 		case "event_log":
-			return <EventLog drill={drill} answers={safeAnswers} setAnswers={setAnswers} />;
+			return <EventLog drill={drill} answers={safeAnswers} setAnswers={setAnswers} session={session} phase={phase} />;
 		default:
 			return <div>Unbekannter Drill-Typ: {drillType || drill.drill_type || "(leer)"}</div>;
 	}
@@ -6939,7 +6973,7 @@ export function PeriodCheckin({ drill, answers, setAnswers }: any) {
 
 
 // -------------------------------- SAMPLE LOG --------------------------------
-function SampleLog({ drill, answers, setAnswers }: any) {
+function SampleLog({ drill, answers, setAnswers, session, phase }: any) {
 	const safeAnswers = answers || {};
 	const sampleKey: string = drill?.config?.sample_key || "samples";
 	const sampleLabel: string = drill?.config?.sample_label || "Sample";
@@ -6955,65 +6989,240 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 	const noteRequired: boolean = drill?.config?.note_required === true;
 	const noteMinChars: number = Number(drill?.config?.note_min_chars || 0);
 	const noteLabel: string = drill?.config?.note_label || (noteRequired ? "Notiz" : "Notiz (optional)");
+	const noteHelp: string = String(drill?.config?.note_help || drill?.config?.note_hint || drill?.config?.helper_text || "").trim();
+	const notePlaceholder: string = String(
+		drill?.config?.note_placeholder
+		|| (noteRequired
+			? `Mind. ${Math.max(1, noteMinChars)} Zeichen — sichtbare Anker, keine Bewertung`
+			: "Sehr kurz"),
+	);
 	const noteMaxChars: number = drill?.config?.note_max_chars || 120;
 	const stateOptions: string[] = Array.isArray(drill?.config?.state_options) ? drill.config.state_options : [];
 	const factorsByState: Record<string, string[]> = drill?.config?.factors_by_state || {};
+	const observationSections: any[] = (Array.isArray(drill?.config?.observation_sections) ? drill.config.observation_sections : [])
+		.filter((section: any) => section && typeof section.key === "string" && String(section.key).trim())
+		.map((section: any) => {
+			const mode = String(section.selection_mode || section.selectionMode || section.type || "single").toLowerCase();
+			const isMulti = mode === "multi" || mode === "multiple" || mode === "multi_select";
+			const exclusiveSource = section.exclusive_values || section.exclusiveValues;
+			const exclusiveValues = Array.isArray(exclusiveSource)
+				? exclusiveSource.map(String)
+				: (isMulti ? ["unclear"] : []);
+			return {
+				...section,
+				key: String(section.key).trim(),
+				title: String(section.title || "").trim(),
+				lead: String(section.lead || section.step_lead || "").trim(),
+				label: String(section.label || section.field_label || section.title || section.key).trim(),
+				options: Array.isArray(section.options) ? section.options : [],
+				required: section.required !== false,
+				isMulti,
+				exclusiveValues,
+			};
+		})
+		.filter((section: any) => section.options.length > 0);
+	const useSections = observationSections.length > 0;
+	const sectionsProgressive = drill?.config?.observation_sections_progressive === true
+		|| drill?.config?.observationSectionsProgressive === true;
 
-	const samples: Record<string, string>[] = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
+	const samples: Array<Record<string, any>> = Array.isArray(safeAnswers[sampleKey]) ? safeAnswers[sampleKey] : [];
 	const selectedSampleIndex = Number.isInteger(safeAnswers.selected_sample_index)
 		? safeAnswers.selected_sample_index
 		: Math.max(0, samples.length - 1);
 
-	const [showForm, setShowForm] = useState(false);
-	const [form, setForm] = useState<Record<string, string>>({
-		[stateKey]: "",
-		[factorKey]: "",
-		...(qualityKey ? { [qualityKey]: "" } : {}),
-		[noteKey]: "",
-	});
+	const activeDraft = readActiveObservationDraft(safeAnswers);
+	const draftBelongsHere = Boolean(
+		activeDraft
+		&& activeDraft.drillId === drill?.id
+		&& activeDraft.collectionKey === sampleKey
+		&& (!session?.id || activeDraft.sessionId === session.id)
+		&& (!phase || activeDraft.phase === phase),
+	);
 
-	const currentState = form[stateKey] || "";
-	const factorOptions = factorsByState[currentState] || [];
-	const observationMirror = buildObservationMirror(samples, stateKey);
-	const isObservationMode = samples.length >= targetSamples;
-	const canAddMore = true;
-
-	const resetForm = () => {
-		setForm({
+	const emptyForm = (id = "") => {
+		if (useSections) {
+			const sectionDefaults = Object.fromEntries(observationSections.map((section: any) => [
+				section.key,
+				section.isMulti ? [] : "",
+			]));
+			return { id, ...sectionDefaults, [noteKey]: "" };
+		}
+		return {
+			id,
 			[stateKey]: "",
 			[factorKey]: "",
 			...(qualityKey ? { [qualityKey]: "" } : {}),
 			[noteKey]: "",
-		});
+		};
+	};
+
+	const sectionValueFilled = (section: any, bag: Record<string, any>) => {
+		const raw = bag?.[section.key];
+		if (section.isMulti) {
+			return Array.isArray(raw) ? raw.some((v) => String(v || "").trim()) : Boolean(String(raw || "").trim());
+		}
+		return Boolean(String(raw || "").trim());
+	};
+
+	const [showForm, setShowForm] = useState(() => draftBelongsHere);
+	const [form, setForm] = useState<Record<string, any>>(() =>
+		emptyForm(draftBelongsHere && activeDraft ? activeDraft.id : ""),
+	);
+
+	useEffect(() => {
+		if (draftBelongsHere && activeDraft) {
+			setShowForm(true);
+			setForm((prev) => (prev.id === activeDraft.id ? prev : emptyForm(activeDraft.id)));
+			return;
+		}
+		setShowForm(false);
+		setForm(emptyForm());
+	}, [draftBelongsHere, activeDraft?.id, phase, drill?.id, session?.id]);
+
+	const currentState = form[stateKey] || "";
+	const factorOptions = factorsByState[currentState] || [];
+	const inlineExplanations: Record<string, { meaning?: string }> =
+		drill?.didactics?.inline_explanations && typeof drill.didactics.inline_explanations === "object"
+			? drill.didactics.inline_explanations
+			: {};
+	const useFactorRadios = Boolean(
+		drill?.config?.factor_display === "radio"
+		|| factorOptions.some((opt: string) => Boolean(inlineExplanations[opt]?.meaning)),
+	);
+	const observationMirror = buildObservationMirror(samples, useSections ? observationSections[0]?.key : stateKey);
+	const isObservationMode = samples.length >= targetSamples;
+	const canAddMore = true;
+	const linkedSceneLabel = draftBelongsHere && activeDraft?.sceneId
+		? (activeDraft.sceneCode || "Szene verknüpft")
+		: null;
+
+	const sectionOptionValue = (opt: any, fallbackIdx: number) =>
+		typeof opt === "string" ? opt : String(opt?.value || opt?.label || `opt_${fallbackIdx}`);
+	const sectionOptionLabel = (opt: any, fallbackIdx: number) =>
+		typeof opt === "string" ? opt : String(opt?.label || opt?.value || `Option ${fallbackIdx + 1}`);
+	const sectionOptionDescription = (opt: any) => {
+		if (typeof opt === "string") {
+			return String(inlineExplanations[opt]?.meaning || "").trim();
+		}
+		const fromOpt = String(opt?.description || opt?.meaning || "").trim();
+		if (fromOpt) return fromOpt;
+		const value = String(opt?.value || opt?.label || "");
+		return String(inlineExplanations[value]?.meaning || inlineExplanations[String(opt?.label || "")]?.meaning || "").trim();
+	};
+
+	const sectionsFilled = observationSections.every((section: any) => {
+		if (!section.required) return true;
+		return sectionValueFilled(section, form);
+	});
+	const classicFilled = Boolean(
+		form[stateKey]
+		&& form[factorKey]
+		&& !(qualityKey && qualityOptions.length > 0 && !form[qualityKey]),
+	);
+	const noteFilled = !noteRequired || (form[noteKey] || "").trim().length >= Math.max(1, noteMinChars);
+	const canSaveSample = (useSections ? sectionsFilled : classicFilled) && noteFilled;
+
+	const resetForm = (id = "") => {
+		setForm(emptyForm(id));
+	};
+
+	const clearLinkedScene = async (sceneId: string | null | undefined) => {
+		if (!sceneId) return;
+		try {
+			await api.updateScene(sceneId, { clear_observation_link: true });
+		} catch {
+			// best-effort: draft discard must not block UI
+		}
+	};
+
+	const openForm = () => {
+		const id = createObservationId("sample");
+		const draft = {
+			id,
+			sessionId: String(session?.id || ""),
+			phase: String(phase || ""),
+			drillId: String(drill?.id || ""),
+			drillTitle: String(drill?.title || ""),
+			collectionKey: sampleKey,
+			label: sampleLabel,
+			sceneId: null,
+			sceneCode: null,
+		};
+		resetForm(id);
+		setShowForm(true);
+		if (draft.sessionId && draft.phase && draft.drillId) {
+			setAnswers(withActiveObservationDraft(safeAnswers, draft));
+		}
+	};
+
+	const discardForm = async () => {
+		const linkedSceneId = draftBelongsHere ? activeDraft?.sceneId : null;
+		setShowForm(false);
+		resetForm();
+		setAnswers(withActiveObservationDraft(safeAnswers, null));
+		await clearLinkedScene(linkedSceneId);
 	};
 
 	const addSample = () => {
-		if (!form[stateKey] || !form[factorKey]) return;
-		if (qualityKey && qualityOptions.length > 0 && !form[qualityKey]) return;
+		if (!canSaveSample) return;
 		const noteValue = (form[noteKey] || "").trim();
-		if (noteRequired && noteValue.length < Math.max(1, noteMinChars)) return;
+		const observationId = String(form.id || "").trim() || createObservationId("sample");
+		const sceneId = draftBelongsHere && activeDraft?.id === observationId
+			? (activeDraft.sceneId || undefined)
+			: undefined;
+		const sceneCode = draftBelongsHere && activeDraft?.id === observationId
+			? (activeDraft.sceneCode || undefined)
+			: undefined;
 
-		const nextSamples = [
-			...samples,
-			{
-				[stateKey]: form[stateKey],
-				[factorKey]: form[factorKey],
-				...(qualityKey ? { [qualityKey]: form[qualityKey] || "" } : {}),
-				[noteKey]: noteValue,
-			},
-		];
+		const payload: Record<string, any> = {
+			id: observationId,
+			[noteKey]: noteValue,
+			...(sceneId ? { sceneId } : {}),
+			...(sceneCode ? { sceneCode } : {}),
+		};
+		if (useSections) {
+			for (const section of observationSections) {
+				if (section.isMulti) {
+					const values = Array.isArray(form[section.key])
+						? form[section.key].map((v: any) => String(v || "").trim()).filter(Boolean)
+						: [];
+					payload[section.key] = values;
+				} else {
+					payload[section.key] = form[section.key] || "";
+				}
+			}
+		} else {
+			payload[stateKey] = form[stateKey];
+			payload[factorKey] = form[factorKey];
+			if (qualityKey) payload[qualityKey] = form[qualityKey] || "";
+		}
 
-		setAnswers({
+		const nextSamples = [...samples, payload];
+		setAnswers(withActiveObservationDraft({
 			...safeAnswers,
 			[sampleKey]: nextSamples,
 			selected_sample_index: nextSamples.length - 1,
-		});
+		}, null));
 		resetForm();
 		setShowForm(false);
+
+		// Best-effort: once Session drafts sync includes this sample, repair server backlink.
+		// Do not call saveDrafts here — Session owns the full drafts document.
+		if (sceneId && observationId && session?.id) {
+			window.setTimeout(() => {
+				void api.linkSceneObservation(sceneId, {
+					observation_id: observationId,
+					session_id: session.id,
+					allow_pending_sample: true,
+				}).catch(() => {
+					// Scene.source.observation_id remains; POST …/observation-link can repair later.
+				});
+			}, 700);
+		}
 	};
 
 	const deleteSample = (idx: number) => {
-		const nextSamples = samples.filter((_: Record<string, string>, i: number) => i !== idx);
+		const nextSamples = samples.filter((_: Record<string, any>, i: number) => i !== idx);
 		const nextSelected = nextSamples.length === 0 ? undefined : Math.min(selectedSampleIndex, nextSamples.length - 1);
 		const nextAnswers: any = { ...safeAnswers, [sampleKey]: nextSamples };
 		if (nextSelected === undefined) {
@@ -7025,14 +7234,51 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 	};
 
 	const updateFormField = (key: string, value: string) => {
-		if (key === stateKey) {
+		if (!useSections && key === stateKey) {
 			setForm(prev => ({ ...prev, [stateKey]: value, [factorKey]: "" }));
 			return;
 		}
 		setForm(prev => ({ ...prev, [key]: value }));
 	};
 
+	const toggleSectionMultiValue = (section: any, value: string, nextChecked: boolean) => {
+		setForm((prev) => {
+			const current = Array.isArray(prev[section.key]) ? prev[section.key].map(String) : [];
+			let nextValues: string[];
+			if (nextChecked) {
+				if (section.exclusiveValues.includes(value)) {
+					nextValues = [value];
+				} else {
+					nextValues = [...current.filter((entry: string) => !section.exclusiveValues.includes(entry)), value];
+				}
+			} else {
+				nextValues = current.filter((entry: string) => entry !== value);
+			}
+			return { ...prev, [section.key]: nextValues };
+		});
+	};
+
 	const selectedSummary = samples[selectedSampleIndex];
+	const formatSampleSummary = (sample: Record<string, any>) => {
+		if (useSections) {
+			return observationSections
+				.map((section: any) => {
+					const raw = sample[section.key];
+					const values = section.isMulti
+						? (Array.isArray(raw) ? raw.map(String) : (raw ? [String(raw)] : []))
+						: (raw ? [String(raw)] : []);
+					if (values.length === 0) return null;
+					const labels = values.map((value: string) => {
+						const opt = section.options.find((item: any, idx: number) => sectionOptionValue(item, idx) === value);
+						return opt ? sectionOptionLabel(opt, 0) : value;
+					});
+					return `${section.title || section.label}: ${labels.join(", ")}`;
+				})
+				.filter(Boolean)
+				.join(" · ");
+		}
+		return `${sample[stateKey]} · ${sample[factorKey]}${qualityKey && sample[qualityKey] ? ` · ${sample[qualityKey]}` : ""}`;
+	};
 
 	return (
 		<div className="card">
@@ -7045,8 +7291,10 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 			<div style={{ marginBottom: "0.85rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
 				<button
 					type="button"
-					onClick={() => setShowForm(prev => !prev)}
-					disabled={!canAddMore}
+					onClick={() => {
+						if (!showForm) openForm();
+					}}
+					disabled={!canAddMore || showForm}
 					style={{
 						padding: "0.55rem 0.95rem",
 						background: "rgba(81,145,162,0.25)",
@@ -7054,7 +7302,7 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 						borderRadius: "4px",
 						color: "#f7f7ff",
 						fontWeight: 600,
-						cursor: canAddMore ? "pointer" : "not-allowed",
+						cursor: canAddMore && !showForm ? "pointer" : "not-allowed",
 					}}
 				>
 					+ {sampleLabel}
@@ -7068,77 +7316,212 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 				<ObservationModeCard
 					count={samples.length}
 					target={targetSamples}
-					focus={drill?.config?.observation_focus || stateLabel}
+					focus={drill?.config?.observation_focus || (useSections ? sampleLabel : stateLabel)}
 					mirror={observationMirror}
 				/>
 			)}
 
 			{showForm && canAddMore && (
 				<div style={{ marginBottom: "1rem", padding: "0.85rem", border: "1px solid rgba(81,145,162,0.45)", borderRadius: "6px", background: "rgba(81,145,162,0.08)" }}>
-					<div style={{ marginBottom: "0.75rem" }}>
-						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{stateLabel}</label>
-						<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-							{stateOptions.map((opt: string) => (
-								<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-									<input
-										type="radio"
-										name={`${drill.id}_${stateKey}`}
-										value={opt}
-										checked={form[stateKey] === opt}
-										onChange={e => updateFormField(stateKey, e.target.value)}
-									/>
-									<span>{opt}</span>
-								</label>
-							))}
-						</div>
-					</div>
-
-					<div style={{ marginBottom: "0.75rem" }}>
-						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{factorLabel}</label>
-						<select
-							className="appSelect"
-							value={form[factorKey]}
-							onChange={e => updateFormField(factorKey, e.target.value)}
-							disabled={!currentState}
-							style={{ width: "100%" }}
-						>
-							<option value="">{currentState ? `${factorLabel} wählen` : `Zuerst ${stateLabel} wählen`}</option>
-							{factorOptions.map((opt: string) => (
-								<option key={opt} value={opt}>{opt}</option>
-							))}
-						</select>
-					</div>
-
-					{qualityKey && qualityOptions.length > 0 && (
-						<div style={{ marginBottom: "0.75rem" }}>
-							<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{qualityLabel}</label>
-							<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-								{qualityOptions.map((opt: string) => (
-									<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-										<input
-											type="radio"
-											name={`${drill.id}_${qualityKey}`}
-											value={opt}
-											checked={form[qualityKey] === opt}
-											onChange={e => updateFormField(qualityKey, e.target.value)}
-										/>
-										<span>{opt}</span>
-									</label>
-								))}
-							</div>
+					{linkedSceneLabel && (
+						<div style={{
+							marginBottom: "0.75rem",
+							padding: "0.4rem 0.55rem",
+							borderRadius: "4px",
+							border: "1px solid rgba(125,211,252,0.35)",
+							background: "rgba(14,165,233,0.12)",
+							color: "#bae6fd",
+							fontSize: "0.84rem",
+							fontWeight: 650,
+						}}>
+							🎬 Szene verknüpft{activeDraft?.sceneCode ? ` · ${activeDraft.sceneCode}` : ""}
 						</div>
 					)}
 
-					<div style={{ marginBottom: "0.75rem" }}>
+					{useSections ? (
+						<div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+							{observationSections.map((section: any, sectionIdx: number) => {
+								if (sectionsProgressive && sectionIdx > 0) {
+									const prev = observationSections[sectionIdx - 1];
+									if (!sectionValueFilled(prev, form)) return null;
+								}
+								const stepTone = sectionIdx === 0
+									? { border: "rgba(81,145,162,0.35)", bg: "rgba(81,145,162,0.08)" }
+									: { border: "rgba(251,191,36,0.35)", bg: "rgba(251,191,36,0.08)" };
+								const selectedMulti = Array.isArray(form[section.key]) ? form[section.key].map(String) : [];
+								return (
+									<div
+										key={section.key}
+										style={{
+											padding: "0.7rem 0.75rem",
+											borderRadius: "6px",
+											border: `1px solid ${stepTone.border}`,
+											background: stepTone.bg,
+										}}
+									>
+										{section.title && (
+											<div style={{
+												fontSize: "0.78rem",
+												fontWeight: 750,
+												letterSpacing: "0.04em",
+												textTransform: "uppercase",
+												color: sectionIdx === 0 ? "#99f6e4" : "#fde68a",
+												marginBottom: "0.25rem",
+											}}>
+												{section.title}
+											</div>
+										)}
+										{section.lead && (
+											<p style={{ margin: "0 0 0.45rem", fontSize: "0.86rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.4 }}>
+												{section.lead}
+											</p>
+										)}
+										<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{section.label}</label>
+										{section.isMulti && (
+											<p style={{ margin: "0 0 0.4rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.55)" }}>
+												Mehrfachauswahl möglich
+											</p>
+										)}
+										<div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+											{section.options.map((opt: any, optIdx: number) => {
+												const value = sectionOptionValue(opt, optIdx);
+												const label = sectionOptionLabel(opt, optIdx);
+												const description = sectionOptionDescription(opt);
+												const checked = section.isMulti
+													? selectedMulti.includes(value)
+													: form[section.key] === value;
+												return (
+													<label key={value} style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
+														<span style={{ display: "flex", alignItems: "flex-start", gap: "0.45rem" }}>
+															<input
+																type={section.isMulti ? "checkbox" : "radio"}
+																name={`${drill.id}_${section.key}`}
+																value={value}
+																checked={checked}
+																onChange={(e) => {
+																	if (section.isMulti) {
+																		toggleSectionMultiValue(section, value, e.target.checked);
+																		return;
+																	}
+																	updateFormField(section.key, e.target.value);
+																}}
+																style={section.isMulti ? { marginTop: "0.2rem" } : undefined}
+															/>
+															<span>{label}</span>
+														</span>
+														{description ? (
+															<span style={{ marginLeft: "1.45rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.4 }}>
+																{description}
+															</span>
+														) : null}
+													</label>
+												);
+											})}
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					) : (
+						<>
+							<div style={{ marginBottom: "0.75rem" }}>
+								<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{stateLabel}</label>
+								<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+									{stateOptions.map((opt: string) => (
+										<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+											<input
+												type="radio"
+												name={`${drill.id}_${stateKey}`}
+												value={opt}
+												checked={form[stateKey] === opt}
+												onChange={e => updateFormField(stateKey, e.target.value)}
+											/>
+											<span>{opt}</span>
+										</label>
+									))}
+								</div>
+							</div>
+
+							<div style={{ marginBottom: "0.75rem" }}>
+								<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{factorLabel}</label>
+								{!currentState ? (
+									<p style={{ margin: 0, fontSize: "0.84rem", color: "rgba(255,255,255,0.55)" }}>
+										Zuerst {stateLabel} wählen
+									</p>
+								) : useFactorRadios ? (
+									<div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+										{factorOptions.map((opt: string) => (
+											<label key={opt} style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+												<span style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+													<input
+														type="radio"
+														name={`${drill.id}_${factorKey}`}
+														value={opt}
+														checked={form[factorKey] === opt}
+														onChange={e => updateFormField(factorKey, e.target.value)}
+													/>
+													<span>{opt}</span>
+												</span>
+												{inlineExplanations[opt]?.meaning ? (
+													<span style={{ marginLeft: "1.45rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.4 }}>
+														{inlineExplanations[opt].meaning}
+													</span>
+												) : null}
+											</label>
+										))}
+									</div>
+								) : (
+									<select
+										className="appSelect"
+										value={form[factorKey]}
+										onChange={e => updateFormField(factorKey, e.target.value)}
+										style={{ width: "100%" }}
+									>
+										<option value="">{`${factorLabel} wählen`}</option>
+										{factorOptions.map((opt: string) => (
+											<option key={opt} value={opt}>{opt}</option>
+										))}
+									</select>
+								)}
+							</div>
+
+							{qualityKey && qualityOptions.length > 0 && (
+								<div style={{ marginBottom: "0.75rem" }}>
+									<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>{qualityLabel}</label>
+									<div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+										{qualityOptions.map((opt: string) => (
+											<label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+												<input
+													type="radio"
+													name={`${drill.id}_${qualityKey}`}
+													value={opt}
+													checked={form[qualityKey] === opt}
+													onChange={e => updateFormField(qualityKey, e.target.value)}
+												/>
+												<span>{opt}</span>
+											</label>
+										))}
+									</div>
+								</div>
+							)}
+						</>
+					)}
+
+					<div style={{ marginTop: useSections ? "0.75rem" : 0, marginBottom: "0.75rem" }}>
 						<label style={{ display: "block", marginBottom: "0.35rem", fontWeight: 600 }}>
 							{noteLabel}
 						</label>
+						{noteHelp && (
+							<p style={{ marginTop: 0, marginBottom: "0.35rem", fontSize: "0.82rem", color: "rgba(255,255,255,0.62)", lineHeight: 1.4 }}>
+								{noteHelp}
+							</p>
+						)}
 						<textarea
 							value={form[noteKey]}
 							onChange={e => updateFormField(noteKey, e.target.value)}
 							maxLength={noteMaxChars}
 							rows={noteMaxChars > 120 ? 3 : 2}
-							placeholder={noteRequired ? `Mind. ${Math.max(1, noteMinChars)} Zeichen — sichtbare Anker, keine Bewertung` : "Sehr kurz"}
+							placeholder={notePlaceholder}
 							style={{
 								width: "100%",
 								padding: "0.45rem 0.55rem",
@@ -7158,18 +7541,13 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 					</div>
 
 					<div style={{ display: "flex", gap: "0.45rem", justifyContent: "flex-end" }}>
-						<button type="button" onClick={() => { setShowForm(false); resetForm(); }} style={{ padding: "0.35rem 0.65rem" }}>
+						<button type="button" onClick={() => { void discardForm(); }} style={{ padding: "0.35rem 0.65rem" }}>
 							Abbrechen
 						</button>
 						<button
 							type="button"
 							onClick={addSample}
-							disabled={
-								!form[stateKey]
-								|| !form[factorKey]
-								|| !!(qualityKey && qualityOptions.length > 0 && !form[qualityKey])
-								|| (noteRequired && (form[noteKey] || "").trim().length < Math.max(1, noteMinChars))
-							}
+							disabled={!canSaveSample}
 							style={{ padding: "0.35rem 0.7rem", fontWeight: 600 }}
 						>
 							Speichern
@@ -7184,11 +7562,12 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 						Gespeicherte {sampleLabel}-Momente
 					</div>
 					<div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-						{samples.map((sample: Record<string, string>, idx: number) => {
+						{samples.map((sample: Record<string, any>, idx: number) => {
 							const isSelected = idx === selectedSampleIndex;
+							const sampleKeyId = sample.id || `sample-${idx}`;
 							return (
 								<div
-									key={idx}
+									key={sampleKeyId}
 									style={{
 										display: "flex",
 										alignItems: "center",
@@ -7202,12 +7581,16 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 								>
 									<div style={{ flex: 1, minWidth: 0 }}>
 										<div style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.9rem" }}>
-											<strong>{sample[stateKey]}</strong> · {sample[factorKey]}
-											{qualityKey && sample[qualityKey] ? ` · ${sample[qualityKey]}` : ""}
+											<strong>{formatSampleSummary(sample)}</strong>
 										</div>
 										{sample[noteKey] && (
 											<div style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.84rem", marginTop: "0.1rem" }}>
 												{sample[noteKey]}
+											</div>
+										)}
+										{sample.sceneId && (
+											<div style={{ color: "#7dd3fc", fontSize: "0.78rem", marginTop: "0.15rem", fontWeight: 650 }}>
+												🎬 Szene verknüpft{sample.sceneCode ? ` · ${sample.sceneCode}` : ""}
 											</div>
 										)}
 									</div>
@@ -7250,7 +7633,7 @@ function SampleLog({ drill, answers, setAnswers }: any) {
 
 			{selectedSummary && (
 				<p style={{ marginTop: "0.9rem", marginBottom: 0, fontSize: "0.82rem", color: "rgba(255,255,255,0.56)" }}>
-					Microfeedback bezieht sich auf den aktiven Moment: {selectedSummary[stateKey]} · {selectedSummary[factorKey]}{qualityKey && selectedSummary[qualityKey] ? ` · ${selectedSummary[qualityKey]}` : ""}.
+					Microfeedback bezieht sich auf den aktiven Moment: {formatSampleSummary(selectedSummary)}.
 				</p>
 			)}
 		</div>
@@ -7528,21 +7911,86 @@ function RoleIdentification({ drill, answers, setAnswers }: any) {
 }
 
 // -------------------------------- EVENT LOG --------------------------------
-function EventLog({ drill, answers, setAnswers }: any) {
+function EventLog({ drill, answers, setAnswers, session, phase }: any) {
 	const eventKey: string = drill?.config?.event_key || "events";
 	const eventLabel: string = drill?.config?.event_label || "Event";
 	const fields: any[] = drill?.config?.fields || [];
+	const minEvents = Math.max(0, Number(drill?.config?.minObservations ?? drill?.config?.min_events ?? 0));
+	const recommendedEvents = Math.max(
+		minEvents,
+		Number(drill?.config?.recommendedObservations ?? drill?.config?.recommended_events ?? 0),
+	);
+	const maxEvents = Math.max(
+		recommendedEvents,
+		Number(drill?.config?.maxObservations ?? drill?.config?.max_events ?? 0),
+	);
+	const hasQuota = minEvents > 0 || recommendedEvents > 0 || maxEvents > 0;
 
-	const emptyForm = () => fields.reduce((acc: any, f: any) => ({ ...acc, [f.key]: "" }), {});
+	const emptyForm = (id = "") => fields.reduce((acc: any, f: any) => ({ ...acc, [f.key]: "" }), { id });
 
-	const [form, setForm] = useState<Record<string, string>>(emptyForm);
+	const activeDraft = readActiveObservationDraft(answers);
+	const draftBelongsHere = Boolean(
+		activeDraft
+		&& activeDraft.drillId === drill?.id
+		&& activeDraft.collectionKey === eventKey
+		&& (!session?.id || activeDraft.sessionId === session.id)
+		&& (!phase || activeDraft.phase === phase),
+	);
+
+	const [form, setForm] = useState<Record<string, string>>(() =>
+		emptyForm(draftBelongsHere && activeDraft ? activeDraft.id : ""),
+	);
 	const [editIndex, setEditIndex] = useState<number | null>(null);
+	const [composing, setComposing] = useState(() => draftBelongsHere);
+
+	useEffect(() => {
+		if (draftBelongsHere && activeDraft) {
+			if (editIndex === null) {
+				setComposing(true);
+				setForm((prev) => (prev.id === activeDraft.id ? prev : emptyForm(activeDraft.id)));
+			}
+			return;
+		}
+		if (editIndex === null) {
+			setComposing(false);
+			setForm(emptyForm());
+		}
+	}, [draftBelongsHere, activeDraft?.id, phase, drill?.id, session?.id]);
 
 	const legacyFallbackEvents: Record<string, string>[] =
 		eventKey === "puck_win_events" && Array.isArray(answers?.turnover_events)
 			? answers.turnover_events
 			: [];
 	const events: Record<string, string>[] = answers[eventKey] || legacyFallbackEvents;
+
+	const linkedSceneLabel = draftBelongsHere && activeDraft?.sceneId
+		? (activeDraft.sceneCode || "Szene verknüpft")
+		: null;
+	const showForm = composing || editIndex !== null;
+
+	const clearLinkedScene = async (sceneId: string | null | undefined) => {
+		if (!sceneId) return;
+		try {
+			await api.updateScene(sceneId, { clear_observation_link: true });
+		} catch {
+			// best-effort
+		}
+	};
+
+	const registerDraft = (id: string) => {
+		if (!session?.id || !phase || !drill?.id) return;
+		setAnswers(withActiveObservationDraft(answers || {}, {
+			id,
+			sessionId: String(session.id),
+			phase: String(phase),
+			drillId: String(drill.id),
+			drillTitle: String(drill.title || ""),
+			collectionKey: eventKey,
+			label: eventLabel,
+			sceneId: null,
+			sceneCode: null,
+		}));
+	};
 
 	const getOptionsForField = (field: any, currentForm: Record<string, string>) => {
 		if (Array.isArray(field.options)) return field.options;
@@ -7575,42 +8023,90 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		});
 	};
 
+	const openNewDraft = () => {
+		if (maxEvents > 0 && events.length >= maxEvents) return;
+		const id = createObservationId("event");
+		setEditIndex(null);
+		setForm(emptyForm(id));
+		setComposing(true);
+		registerDraft(id);
+	};
+
+	const discardDraft = async () => {
+		const linkedSceneId = draftBelongsHere ? activeDraft?.sceneId : null;
+		setComposing(false);
+		setEditIndex(null);
+		setForm(emptyForm());
+		setAnswers(withActiveObservationDraft(answers || {}, null));
+		await clearLinkedScene(linkedSceneId);
+	};
+
 	const handleSave = () => {
-		// alle non-optional select-Felder müssen ausgefüllt sein
 		const missing = fields.filter((f: any) => f.type === "select" && !f.optional && !form[f.key]);
 		if (missing.length > 0) return;
+		if (editIndex === null && maxEvents > 0 && events.length >= maxEvents) return;
+
+		const observationId = String(form.id || "").trim() || createObservationId("event");
+		const sceneId = draftBelongsHere && activeDraft?.id === observationId
+			? (activeDraft.sceneId || undefined)
+			: (form.sceneId || undefined);
+		const sceneCode = draftBelongsHere && activeDraft?.id === observationId
+			? (activeDraft.sceneCode || undefined)
+			: (form.sceneCode || undefined);
+
+		const payload = {
+			...form,
+			id: observationId,
+			...(sceneId ? { sceneId } : {}),
+			...(sceneCode ? { sceneCode } : {}),
+		};
 
 		const newEvents = [...events];
 		if (editIndex !== null) {
-			newEvents[editIndex] = { ...form };
+			newEvents[editIndex] = payload;
 			setEditIndex(null);
 		} else {
-			newEvents.push({ ...form });
+			newEvents.push(payload);
 		}
-		setAnswers({ ...answers, [eventKey]: newEvents });
+		setAnswers(withActiveObservationDraft({ ...answers, [eventKey]: newEvents }, null));
 		setForm(emptyForm());
+		setComposing(false);
 	};
 
 	const handleEdit = (idx: number) => {
-		setForm(sanitizeDependentSelects({ ...events[idx] }));
+		const existing = events[idx] || {};
+		const id = String(existing.id || "").trim() || createObservationId("event");
+		const nextForm = sanitizeDependentSelects({ ...emptyForm(id), ...existing, id });
+		setForm(nextForm);
 		setEditIndex(idx);
+		setComposing(false);
+		if (session?.id && phase && drill?.id) {
+			setAnswers(withActiveObservationDraft(answers || {}, {
+				id,
+				sessionId: String(session.id),
+				phase: String(phase),
+				drillId: String(drill.id),
+				drillTitle: String(drill.title || ""),
+				collectionKey: eventKey,
+				label: eventLabel,
+				sceneId: existing.sceneId || null,
+				sceneCode: existing.sceneCode || null,
+			}));
+		}
 	};
 
 	const handleDelete = (idx: number) => {
 		const newEvents = events.filter((_: any, i: number) => i !== idx);
-		setAnswers({ ...answers, [eventKey]: newEvents });
+		let nextAnswers: any = { ...answers, [eventKey]: newEvents };
 		if (editIndex === idx) {
 			setEditIndex(null);
 			setForm(emptyForm());
+			setComposing(false);
+			nextAnswers = withActiveObservationDraft(nextAnswers, null);
 		}
+		setAnswers(nextAnswers);
 	};
 
-	const handleCancelEdit = () => {
-		setEditIndex(null);
-		setForm(emptyForm());
-	};
-
-	// Format option: convert snake_case to readable text
 	const shortLabel = (ev: Record<string, string>) => {
 		const selectParts = fields
 			.filter((f: any) => f.type === "select")
@@ -7621,29 +8117,15 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		return selectParts + note;
 	};
 
-	const selectStyle: React.CSSProperties = {
-		padding: "0.4rem 0.5rem",
-		backgroundColor: "#050712",
-		color: "#f7f7ff",
-		border: "1px solid rgba(81,145,162,0.5)",
-		borderRadius: "4px",
-		fontSize: "1rem",
-		minWidth: 0,
-		flex: "1 1 80px",
-	};
+	const quotaParts: string[] = [];
+	if (minEvents > 0) quotaParts.push(`mind. ${minEvents}`);
+	if (recommendedEvents > 0 && recommendedEvents !== minEvents) quotaParts.push(`empfohlen ${recommendedEvents}`);
+	if (maxEvents > 0) quotaParts.push(`max. ${maxEvents}`);
+	const quotaText = hasQuota
+		? `${events.length}${maxEvents > 0 ? ` / ${maxEvents}` : ""} ${events.length === 1 ? eventLabel : `${eventLabel}s`} · ${quotaParts.join(" · ")}`
+		: null;
 
-	const textStyle: React.CSSProperties = {
-		padding: "0.4rem 0.5rem",
-		backgroundColor: "#050712",
-		color: "#f7f7ff",
-		border: "1px solid rgba(81,145,162,0.5)",
-		borderRadius: "4px",
-		fontSize: "1rem",
-		flex: "2 1 120px",
-		minWidth: 0,
-	};
-
-	const btnPrimary: React.CSSProperties = {
+	const btnPrimary: CSSProperties = {
 		padding: "0.45rem 0.9rem",
 		background: "rgba(81,145,162,0.25)",
 		border: "1px solid rgba(81,145,162,0.6)",
@@ -7652,10 +8134,9 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		fontWeight: 600,
 		cursor: "pointer",
 		fontSize: "0.95rem",
-		whiteSpace: "nowrap",
 	};
 
-	const btnSmall: React.CSSProperties = {
+	const btnSmall: CSSProperties = {
 		padding: "0.2rem 0.5rem",
 		background: "transparent",
 		border: "1px solid rgba(255,255,255,0.15)",
@@ -7665,6 +8146,8 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		fontSize: "0.85rem",
 		lineHeight: "1.4",
 	};
+
+	const atMax = maxEvents > 0 && events.length >= maxEvents && editIndex === null;
 
 	return (
 		<div className="card">
@@ -7692,56 +8175,96 @@ function EventLog({ drill, answers, setAnswers }: any) {
 			)}
 			<ObservationGuide drill={drill} />
 
-			{/* Inline-Form */}
+			{quotaText && <p className="event-log-quota">{quotaText}</p>}
+
+			{!showForm && (
+				<div style={{ marginBottom: "0.75rem" }}>
+					<button type="button" onClick={openNewDraft} style={btnPrimary} disabled={atMax}>
+						+ {eventLabel}
+					</button>
+				</div>
+			)}
+
+			{showForm && (
 			<div style={{ marginBottom: "0.75rem" }}>
-				<div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", alignItems: "center" }}>
+				{linkedSceneLabel && (
+					<div style={{
+						marginBottom: "0.65rem",
+						padding: "0.4rem 0.55rem",
+						borderRadius: "4px",
+						border: "1px solid rgba(125,211,252,0.35)",
+						background: "rgba(14,165,233,0.12)",
+						color: "#bae6fd",
+						fontSize: "0.84rem",
+						fontWeight: 650,
+					}}>
+						🎬 Szene verknüpft{activeDraft?.sceneCode ? ` · ${activeDraft.sceneCode}` : ""}
+					</div>
+				)}
+				<div className="event-log-fields">
 					{fields.map((f: any) => (
 						f.type === "select" ? (
 							(() => {
 								const options = getOptionsForField(f, form);
 								const disabled = options.length === 0;
 								return (
-							<select
-								key={f.key}
-								value={form[f.key]}
-								onChange={e => handleFieldChange(f.key, e.target.value)}
-								className="appSelect"
-								style={selectStyle}
-								aria-label={f.label}
-								disabled={disabled}
-							>
-								<option value="">{f.label}…</option>
-								{options.map((opt: string) => (
-									<option key={opt} value={opt}>{formatOptionText(opt)}</option>
-								))}
-							</select>
+							<div key={f.key} className="event-log-field">
+								<label className="event-log-field__label" htmlFor={`event-log-${drill.id}-${f.key}`}>{f.label}</label>
+								<select
+									id={`event-log-${drill.id}-${f.key}`}
+									value={form[f.key]}
+									onChange={e => handleFieldChange(f.key, e.target.value)}
+									className="appSelect"
+									aria-label={f.label}
+									disabled={disabled}
+								>
+									<option value="">Bitte auswählen…</option>
+									{options.map((opt: string) => (
+										<option key={opt} value={opt}>{formatOptionText(opt)}</option>
+									))}
+								</select>
+							</div>
 								);
 							})()
 						) : (
-							<input
-								key={f.key}
-								type="text"
-								value={form[f.key]}
-								onChange={e => handleFieldChange(f.key, e.target.value)}
-								placeholder={f.label + (f.optional ? " (optional)" : "")}
-								maxLength={f.max_chars || 150}
-								style={textStyle}
-								aria-label={f.label}
-							/>
+							<div key={f.key} className="event-log-field">
+								<label className="event-log-field__label" htmlFor={`event-log-${drill.id}-${f.key}`}>
+									{f.label}{f.optional ? " (optional)" : ""}
+								</label>
+								<input
+									id={`event-log-${drill.id}-${f.key}`}
+									type="text"
+									value={form[f.key]}
+									onChange={e => handleFieldChange(f.key, e.target.value)}
+									placeholder={f.label + (f.optional ? " (optional)" : "")}
+									maxLength={f.max_chars || 150}
+									aria-label={f.label}
+									style={{
+										padding: "0.55rem 0.75rem",
+										backgroundColor: "#050712",
+										color: "#f7f7ff",
+										border: "1px solid rgba(81,145,162,0.5)",
+										borderRadius: "14px",
+										fontSize: "1rem",
+										width: "100%",
+										boxSizing: "border-box",
+									}}
+								/>
+							</div>
 						)
 					))}
-					<button type="button" onClick={handleSave} style={btnPrimary}>
-						{editIndex !== null ? "✓ Speichern" : `+ ${eventLabel}`}
-					</button>
-					{editIndex !== null && (
-						<button type="button" onClick={handleCancelEdit} style={btnSmall}>
+					<div className="event-log-actions">
+						<button type="button" onClick={handleSave} style={btnPrimary}>
+							{editIndex !== null ? "✓ Speichern" : `Speichern`}
+						</button>
+						<button type="button" onClick={() => { void discardDraft(); }} style={btnSmall}>
 							Abbrechen
 						</button>
-					)}
+					</div>
 				</div>
 			</div>
+			)}
 
-			{/* Event-Liste */}
 			{events.length > 0 && (
 				<div>
 					<div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
@@ -7750,11 +8273,9 @@ function EventLog({ drill, answers, setAnswers }: any) {
 					<div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
 						{events.map((ev: Record<string, string>, idx: number) => (
 							<div
-								key={idx}
+								key={ev.id || `event-${idx}`}
+								className="event-log-list-row"
 								style={{
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "space-between",
 									padding: "0.4rem 0.6rem",
 									background: editIndex === idx
 										? "rgba(81,145,162,0.18)"
@@ -7764,11 +8285,15 @@ function EventLog({ drill, answers, setAnswers }: any) {
 										: "1px solid rgba(255,255,255,0.07)",
 									borderRadius: "4px",
 									fontSize: "0.9rem",
-									gap: "0.5rem",
 								}}
 							>
-								<span style={{ flex: 1, color: "rgba(255,255,255,0.85)" }}>
+								<span className="event-log-list-row__label" style={{ color: "rgba(255,255,255,0.85)" }}>
 									{shortLabel(ev)}
+									{ev.sceneId ? (
+										<span style={{ display: "block", marginTop: "0.15rem", color: "#7dd3fc", fontSize: "0.78rem", fontWeight: 650 }}>
+											🎬 Szene verknüpft{ev.sceneCode ? ` · ${ev.sceneCode}` : ""}
+										</span>
+									) : null}
 								</span>
 								<div style={{ display: "flex", gap: "0.3rem", flexShrink: 0 }}>
 									<button type="button" onClick={() => handleEdit(idx)} style={btnSmall} title="Bearbeiten">✏</button>
@@ -7789,20 +8314,4 @@ function EventLog({ drill, answers, setAnswers }: any) {
 		</div>
 	);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

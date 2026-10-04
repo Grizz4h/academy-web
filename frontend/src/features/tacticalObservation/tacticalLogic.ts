@@ -2,6 +2,7 @@ import { formatMissingCountMessage } from '../../utils/missingRequirementMessage
 import type {
   DependentTraitLayer,
   LabeledOption,
+  LayerAnswerMode,
   TacticalObservation,
   TacticalObservationConfig,
   TacticalObservationDraft,
@@ -142,6 +143,11 @@ function asOptions(value: unknown, fallback: LabeledOption[]): LabeledOption[] {
     })
   }
   return next.length ? next : fallback
+}
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value.map((item) => asString(item)).filter(Boolean)
 }
 
 function isUnclear(id: string): boolean {
@@ -327,6 +333,9 @@ function parseLayer(raw: unknown, supportsUnclear: boolean): TacticalObservation
   const resultTitle = asString(row.resultTitle || row.result_title)
   const options = filterUnclear(asOptions(row.options, []), supportsUnclear)
   if (!id || !fieldKey || !prompt || !resultTitle || !options.length) return null
+  const dependsOnLayerId = asString(row.dependsOnLayerId || row.depends_on_layer_id) || undefined
+  const requiredForParentIds = asStringArray(row.requiredForParentIds || row.required_for_parent_ids)
+  const optionalForParentIds = asStringArray(row.optionalForParentIds || row.optional_for_parent_ids)
   return {
     id,
     fieldKey,
@@ -337,7 +346,44 @@ function parseLayer(raw: unknown, supportsUnclear: boolean): TacticalObservation
     guideTitle: asString(row.guideTitle || row.guide_title) || undefined,
     showInGuide: row.showInGuide === true || row.show_in_guide === true,
     multiSelect: row.multiSelect === true || row.multi_select === true,
+    dependsOnLayerId,
+    requiredForParentIds: requiredForParentIds.length ? requiredForParentIds : undefined,
+    optionalForParentIds: optionalForParentIds.length ? optionalForParentIds : undefined,
   }
+}
+
+function applyLayerVisibility(
+  layers: TacticalObservationLayer[],
+  raw: Record<string, unknown>,
+): TacticalObservationLayer[] {
+  const visibility = asRecord(raw.layerVisibility || raw.layer_visibility)
+  return layers.map((layer) => {
+    const fromMap = asRecord(visibility[layer.id])
+    const dependsOnLayerId = asString(
+      fromMap.dependsOnLayerId
+      || fromMap.depends_on_layer_id
+      || layer.dependsOnLayerId,
+    ) || undefined
+    const requiredForParentIds = asStringArray(
+      fromMap.requiredForParentIds
+      || fromMap.required_for_parent_ids
+      || layer.requiredForParentIds,
+    )
+    const optionalForParentIds = asStringArray(
+      fromMap.optionalForParentIds
+      || fromMap.optional_for_parent_ids
+      || layer.optionalForParentIds,
+    )
+    if (!dependsOnLayerId && !requiredForParentIds.length && !optionalForParentIds.length) {
+      return layer
+    }
+    return {
+      ...layer,
+      dependsOnLayerId,
+      requiredForParentIds: requiredForParentIds.length ? requiredForParentIds : undefined,
+      optionalForParentIds: optionalForParentIds.length ? optionalForParentIds : undefined,
+    }
+  })
 }
 
 type LayerBlueprint = {
@@ -763,7 +809,7 @@ function resolveLayers(raw: Record<string, unknown>, supportsUnclear: boolean): 
     const parsed = raw.layers
       .map((layer) => parseLayer(layer, supportsUnclear))
       .filter((layer): layer is TacticalObservationLayer => Boolean(layer))
-    if (parsed.length) return parsed
+    if (parsed.length) return applyLayerVisibility(parsed, raw)
   }
 
   const requestedIds = Array.isArray(raw.observationLayers || raw.observation_layers)
@@ -777,14 +823,52 @@ function resolveLayers(raw: Record<string, unknown>, supportsUnclear: boolean): 
       const blueprint = LAYER_BLUEPRINTS.find((entry) => entry.id === id)
       if (blueprint) parsed.push(blueprintLayer(blueprint, raw, supportsUnclear))
     }
-    if (parsed.length) return parsed
+    if (parsed.length) return applyLayerVisibility(parsed, raw)
   }
 
-  return [
+  return applyLayerVisibility([
     blueprintLayer(LAYER_BLUEPRINTS[0], raw, supportsUnclear),
     blueprintLayer(LAYER_BLUEPRINTS[1], raw, supportsUnclear),
     blueprintLayer(LAYER_BLUEPRINTS[2], raw, supportsUnclear),
-  ]
+  ], raw)
+}
+
+/**
+ * Resolve whether a layer must / may / must not be answered for the current parent selection.
+ * `omitted` means not applicable — do not store `unclear` as a substitute.
+ */
+export function layerAnswerMode(
+  layer: TacticalObservationLayer,
+  answers: Record<string, string>,
+  layers: TacticalObservationLayer[],
+): LayerAnswerMode {
+  if (!layer.dependsOnLayerId) return 'required'
+  const parent = layers.find((entry) => entry.id === layer.dependsOnLayerId)
+  if (!parent) return 'required'
+  const parentIds = layerSelectedIds(parent, asString(answers[parent.fieldKey]))
+  if (!parentIds.length) return 'omitted'
+  if (parentIds.some((id) => (layer.requiredForParentIds || []).includes(id))) return 'required'
+  if (parentIds.some((id) => (layer.optionalForParentIds || []).includes(id))) return 'optional'
+  return 'omitted'
+}
+
+function answersFromDraft(draft: TacticalObservationDraft): Record<string, string> {
+  const answers: Record<string, string> = {}
+  for (const [key, value] of Object.entries(draft)) {
+    answers[key] = asString(value)
+  }
+  return answers
+}
+
+function answersFromObservation(
+  observation: TacticalObservation,
+  layers: TacticalObservationLayer[],
+): Record<string, string> {
+  const answers: Record<string, string> = {}
+  for (const layer of layers) {
+    answers[layer.fieldKey] = getObservationValue(observation, layer.fieldKey)
+  }
+  return answers
 }
 
 export function emptyTacticalDraft(cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>): TacticalObservationDraft {
@@ -1094,10 +1178,16 @@ export function draftToObservation(
   index: number,
   existing?: TacticalObservation,
 ): TacticalObservation | null {
+  const answers = answersFromDraft(draft)
   const values: Record<string, string> = {}
   for (const layer of cfg.layers) {
+    const mode = layerAnswerMode(layer, answers, cfg.layers)
+    if (mode === 'omitted') continue
     const ids = layerSelectedIds(layer, asString(draft[layer.fieldKey]))
-    if (!ids.length) return null
+    if (!ids.length) {
+      if (mode === 'optional') continue
+      return null
+    }
     values[layer.fieldKey] = layer.multiSelect ? encodeLayerValues(ids, layer.options) : ids[0]
   }
 
@@ -1171,9 +1261,12 @@ export function validateTacticalObservationAnswers(
   }
   const incomplete = observations.some((raw) => {
     const observation = normalizeObservation(raw)
-    const missingLayer = cfg.layers.some(
-      (layer) => !layerSelectedIds(layer, getObservationValue(observation, layer.fieldKey)).length,
-    )
+    const layerAnswers = answersFromObservation(observation, cfg.layers)
+    const missingLayer = cfg.layers.some((layer) => {
+      const mode = layerAnswerMode(layer, layerAnswers, cfg.layers)
+      if (mode === 'omitted' || mode === 'optional') return false
+      return !layerSelectedIds(layer, getObservationValue(observation, layer.fieldKey)).length
+    })
     if (missingLayer) return true
     return !observationHasRequiredTraits(observation, cfg)
   })
@@ -1237,17 +1330,23 @@ export function findGuideLayer(cfg: TacticalObservationConfig): TacticalObservat
   return cfg.layers.find((layer) => layer.showInGuide)
 }
 
-/** Drop trait draft keys when parent roles are deselected. */
+/** Drop trait draft keys when parent roles are deselected; clear omitted conditional layers. */
 export function pruneDependentTraitDraft(
   draft: TacticalObservationDraft,
   cfg: Pick<TacticalObservationConfig, 'layers' | 'dependentTraitLayer'>,
 ): TacticalObservationDraft {
+  let next = { ...draft }
+  for (const layer of cfg.layers) {
+    if (!layer.dependsOnLayerId) continue
+    if (layerAnswerMode(layer, answersFromDraft(next), cfg.layers) === 'omitted') {
+      next[layer.fieldKey] = ''
+    }
+  }
   const traits = cfg.dependentTraitLayer
-  if (!traits) return draft
+  if (!traits) return next
   const parent = cfg.layers.find((layer) => layer.id === traits.parentLayerId)
-  if (!parent) return draft
-  const selected = layerSelectedIds(parent, asString(draft[parent.fieldKey]))
-  const next = { ...draft }
+  if (!parent) return next
+  const selected = layerSelectedIds(parent, asString(next[parent.fieldKey]))
   for (const parentId of traits.activeParentIds) {
     const key = traitFieldKey(traits.fieldKeyPrefix, parentId)
     if (!selected.includes(parentId)) next[key] = ''

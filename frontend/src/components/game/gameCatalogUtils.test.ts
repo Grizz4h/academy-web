@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { formatGameStatusLabel } from './gameCatalogUtils.ts'
+import { formatGameStatusLabel, inferCurrentMatchday } from './gameCatalogUtils.ts'
 import type { CatalogGame } from '../../api'
 
 const pastScheduled: CatalogGame = {
@@ -26,5 +26,17 @@ const withScore: CatalogGame = {
 }
 assert.equal(formatGameStatusLabel(withScore, false), '4:2')
 assert.equal(formatGameStatusLabel(withScore, true), 'Gespielt')
+
+// TEMPORARY DEL 2026/27: vorgezogener Spieltag 31 darf Current-Matchday nicht kapern.
+const delGames: CatalogGame[] = [
+  { ...pastScheduled, id: 'md5', matchday: 5, date: '2026-10-02' },
+  { ...pastScheduled, id: 'md6', matchday: 6, date: '2026-10-04' },
+  { ...pastScheduled, id: 'md31-early', matchday: 31, date: '2026-09-22' },
+]
+assert.equal(inferCurrentMatchday(delGames, { today: '2026-10-03' }), 5)
+assert.equal(inferCurrentMatchday(delGames, { today: '2026-10-05' }), 6)
+
+const otherSeason: CatalogGame[] = delGames.map((game) => ({ ...game, season_id: '2025/26' }))
+assert.equal(inferCurrentMatchday(otherSeason, { today: '2026-10-03' }), 31)
 
 console.log('gameCatalogUtils status label tests OK')

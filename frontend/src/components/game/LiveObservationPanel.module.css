@@ -100,6 +100,10 @@
   -ms-overflow-style: none;
 }
 
+.chipRow > * {
+  flex: 0 0 auto;
+}
+
 .chipRow::-webkit-scrollbar {
   display: none;
   width: 0;

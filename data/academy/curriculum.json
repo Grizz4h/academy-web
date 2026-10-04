@@ -1057,6 +1057,18 @@
               "didactics": {
                 "explanation": "Eine Spielsituation als Zusammenspiel mehrerer Spieler lesen.\n\nDu weißt aus A1, wie Rollen, Beziehungen und einfache Strukturen aussehen. Jetzt schaust du auf eine konkrete Situation: Wer startet den nächsten Spielschritt? Welche Unterstützung ist da? Welche Grundstruktur erkennst du?\n\nMit Aktion meinen wir den nächsten klar erkennbaren Spielschritt. Du schaust hier auf die Anordnung der Spieler unmittelbar davor – noch ohne zu bewerten, was danach passiert. Die Struktur ist schon da; die Aktion kommt danach.\n\nNicht: Breakout analysieren. Nicht: gut oder schlecht. Nicht: welche Art von Spielschritt folgt. Nur: die bereits vorhandene Struktur unmittelbar vor dem nächsten Spielschritt erkennen.",
                 "observation_guide": {
+                  "scan_help": {
+                    "title": "So findest du die Struktur",
+                    "steps": [
+                      "Warte auf einen klar erkennbaren nächsten Spielschritt — z. B. einen Pass oder ein deutliches Puckführen in einen neuen Raum. Diese Beispiele dienen nur dazu, den Beobachtungsmoment zu finden — nicht, die Aktion zu bewerten.",
+                      "Schau auf den Moment unmittelbar vor dieser Aktion.",
+                      "Beginne beim Puckführer.",
+                      "Vom Puckführer aus: Welche Mitspieler sind als Unterstützung oder Verbindung sichtbar?",
+                      "Erweitere den Blick auf mehrere Spieler gleichzeitig.",
+                      "Erst dann entscheide, welche Grundstruktur du erkennst."
+                    ],
+                    "motto": "Erst den klaren Spielschritt erkennen, dann einen Moment zurückschauen — beginne beim Puckführer: Wie waren die Spieler unmittelbar davor miteinander verbunden?"
+                  },
                   "what_to_watch": [
                     "Wer startet den nächsten Spielschritt? (Defense, Center, Wing, anderer, unklar)",
                     "Welche Unterstützung ist vorhanden?",
@@ -1520,15 +1532,16 @@
                 "explanation": "Du kannst aus A2_D1 eine Struktur und aus A2_D2 vorhandene Optionen lesen. Jetzt schaust du darauf, welche Möglichkeit tatsächlich genutzt wird.\n\nSpieler erzeugen Optionen. Aus Optionen entstehen Entscheidungen. Du erkennst, was gemacht wurde — nicht, ob es gut war.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Welche Option wurde genutzt? (Center, Wing, Defense, mehrere, unklar)",
                     "Welche Aktion wurde ausgeführt: Pass, Puck führen, Tief spielen, Neuaufbau, unklar?",
-                    "War diese Möglichkeit vorher sichtbar: klar, teilweise, überraschend, unklar?"
+                    "Bei Pass (und optional bei Neuaufbau): Welche Spieleroption wurde genutzt? (Center, Wing, Defense, unklar)",
+                    "War diese Aktion vorher in der Struktur erkennbar: klar, teilweise, überraschend, unklar?"
                   ],
                   "how_to_decide": [
                     "Verbinde Struktur → Möglichkeit → Entscheidung",
-                    "Frage: Welche Option wurde genutzt? — nicht: War sie gut?",
-                    "Sichtbarkeit verbindet Option und Aktion, ohne zu bewerten",
-                    "Unklar ist eine vollwertige Antwort",
+                    "Zuerst die ausgeführte Aktion erkennen — nicht bewerten, ob sie gut war",
+                    "Spieleroption nur erfassen, wenn die Aktion einen konkreten Empfänger nutzt (Pass; optional bei Neuaufbau)",
+                    "Sichtbarkeit verbindet vorher lesbare Struktur mit der ausgeführten Aktion — ohne zu bewerten",
+                    "Unklar ist eine vollwertige Antwort; nicht als Ersatz für „nicht anwendbar“ nutzen",
                     "Kann eine Aktion sowohl als Pass als auch als Neuaufbau beschrieben werden, wähle Neuaufbau, wenn das bewusste Zurücknehmen und Neuordnen die auffälligste Funktion der Aktion ist. Nicht jeder Rückpass ist automatisch ein Neuaufbau. Gibt es einen klar vorgesehenen Passempfänger in den tiefen Raum, wähle Pass; wird der Puck ohne unmittelbar kontrollierten Empfänger bewusst tief oder in freien Raum gebracht, wähle Tief spielen."
                   ],
                   "ignore": [
@@ -1559,7 +1572,7 @@
                       "executedAction": "carry"
                     },
                     "questions": [
-                      "Welche Option hat der Puck führen genutzt oder ersetzt?"
+                      "War das Puck führen vorher aus der Struktur erkennbar?"
                     ],
                     "hint": "Puck führen heißt: der Spieler führt selbst kontrolliert weiter — nicht „mutig“ oder „falsch“."
                   },
@@ -1568,9 +1581,9 @@
                       "optionVisibility": "clearly_visible"
                     },
                     "questions": [
-                      "Woran war die genutzte Möglichkeit vor der Aktion klar erkennbar?"
+                      "Woran war die Aktion vor der Ausführung klar in der Struktur erkennbar?"
                     ],
-                    "hint": "Klar sichtbar heißt: Option und Aktion lassen sich verbinden."
+                    "hint": "Klar sichtbar heißt: die Aktion ließ sich aus der Struktur vorbereiten — kein Qualitätsurteil."
                   },
                   {
                     "when": {
@@ -1579,7 +1592,7 @@
                     "questions": [
                       "Was an der Aktion war aus der sichtbaren Struktur nicht vorbereitet?"
                     ],
-                    "hint": "Überraschend heißt: die Verbindung war schwer lesbar — kein Fehlerurteil."
+                    "hint": "Überraschend heißt: die Aktion war schwer vorab lesbar — kein Fehlerurteil."
                   }
                 ]
               },
@@ -1588,12 +1601,23 @@
                 "situationLabel": "Spielsituation",
                 "supportsUnclear": true,
                 "observationLayers": [
-                  "available_option",
                   "executed_action",
+                  "available_option",
                   "option_visibility"
                 ],
+                "layerVisibility": {
+                  "available_option": {
+                    "dependsOnLayerId": "executed_action",
+                    "requiredForParentIds": [
+                      "pass"
+                    ],
+                    "optionalForParentIds": [
+                      "reset"
+                    ]
+                  }
+                },
                 "whyThisDrill": "A2_D2 hat gezeigt, welche Möglichkeiten eine Struktur erzeugt. Jetzt: welche Möglichkeit wird tatsächlich genutzt?",
-                "decisionRule": "Erkenne die genutzte Option und die ausgeführte Aktion — nicht, ob die Entscheidung gut war.",
+                "decisionRule": "Erkenne die ausgeführte Aktion und — wenn anwendbar — die genutzte Spieleroption. Nicht, ob die Entscheidung gut war.",
                 "coreHint": "Entscheidungen entstehen aus sichtbaren Strukturen. Du bewertest sie nicht und liest noch kein Tempo oder Umschalten.",
                 "handoffText": "Du erkennst jetzt, welche Möglichkeit genutzt wurde. Als Nächstes schaust du darauf, warum diese Entscheidung möglich war — über Raum und Zeit.",
                 "collectEyebrow": "Entscheidung erkennen",
@@ -1610,7 +1634,7 @@
                 "patternRequiredMessage": "Bitte beantworte, was dir geholfen hat zu erkennen, warum diese Aktion möglich war.",
                 "closingNoteLabel": "Notiz (optional)",
                 "closingNotePlaceholder": "Optional. Ohne zu bewerten, ob die Entscheidung gut oder schlecht war.",
-                "incompleteObservationMessage": "Bitte wähle für jede Situation Option, Aktion und Sichtbarkeit.",
+                "incompleteObservationMessage": "Bitte wähle Aktion und Sichtbarkeit — und bei Pass die genutzte Spieleroption.",
                 "minObservations": 3,
                 "recommendedObservations": 5,
                 "maxObservations": 6,
@@ -1642,10 +1666,6 @@
                   {
                     "id": "defense",
                     "label": "Defense"
-                  },
-                  {
-                    "id": "multiple",
-                    "label": "mehrere Optionen"
                   },
                   {
                     "id": "unclear",
@@ -1685,28 +1705,28 @@
                 "optionVisibilityOptions": [
                   {
                     "id": "clearly_visible",
-                    "label": "Ja, klar sichtbar",
+                    "label": "klar sichtbar",
                     "summaryLabel": "Klar sichtbar",
-                    "hint": "Die genutzte Möglichkeit war vor der Aktion erkennbar."
+                    "hint": "Die Aktion war vor der Ausführung aus der Struktur erkennbar."
                   },
                   {
                     "id": "partially_visible",
-                    "label": "Teilweise sichtbar",
+                    "label": "teilweise sichtbar",
                     "summaryLabel": "Teilweise sichtbar",
-                    "hint": "Die Möglichkeit war angedeutet, aber nicht eindeutig."
+                    "hint": "Die Aktion war angedeutet, aber nicht eindeutig vorbereitet."
                   },
                   {
                     "id": "surprising",
-                    "label": "Überraschende Aktion",
+                    "label": "überraschende Aktion",
                     "summaryLabel": "Überraschend",
                     "hint": "Die Aktion war aus der sichtbaren Struktur nicht klar vorbereitet."
                   },
                   {
                     "id": "unclear",
-                    "label": "Unklar"
+                    "label": "unklar"
                   }
                 ],
-                "optionVisibilityPrompt": "War diese Möglichkeit vorher sichtbar?",
+                "optionVisibilityPrompt": "War diese Aktion vorher in der Struktur erkennbar?",
                 "optionVisibilityTitle": "Sichtbarkeit",
                 "patternOptions": [
                   {
@@ -2189,21 +2209,21 @@
               "id": "A3_D1",
               "title": "Umschaltmoment erkennen",
               "drill_type": "event_log",
-              "description": "Erkenne, wann sich eine Spielsituation verändert. Ein Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen — noch ohne das Umschalten zu bewerten.",
+              "description": "Erkenne Puckgewinne des beobachteten Teams und damit den Umschaltmoment in eigenen Puckbesitz. Noch ohne das Umschalten zu bewerten.",
               "didactics": {
-                "goal": "Erkennen, wann sich die Spielsituation verändert und warum ein Puckbesitzwechsel häufig ein zentraler Auslöser ist.",
-                "why_it_matters": "Aus A2 weißt du, wie Strukturen entstehen und sich verändern. Ein Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen. Hier trainierst du den Umschaltmoment zu sehen — nicht, ob das Umschalten gut war.",
-                "explanation": "Leitfrage: Wann verändert sich die Spielsituation?\n\nEin Wechsel des Puckbesitzes ist häufig ein zentraler Auslöser für strukturelle Veränderungen.\n\nNicht jede Strukturveränderung entsteht durch einen Puckbesitzwechsel. Auch andere klar erkennbare Wechsel der Spielsituation dürfen als Umschaltmoment erfasst werden.\n\nHeute: den Umschaltmoment erkennen. Zone und Art des Wechsels helfen dir beim Sehen. Die erste Folge notierst du als Beobachtung — ohne Qualitätsurteil.",
+                "goal": "Erkennen, wann das beobachtete Team den Puck gewinnt und die Spielsituation in eigenen Besitz kippt.",
+                "why_it_matters": "Aus A2 weißt du, wie Strukturen entstehen und sich verändern. Ein Puckgewinn des beobachteten Teams ist häufig ein zentraler Auslöser für den Umschaltmoment in eigenen Puckbesitz. Hier trainierst du diesen Moment zu sehen — nicht, ob das Umschalten gut war.",
+                "explanation": "Leitfrage: Wann gewinnt das beobachtete Team den Puck — und kippt die Situation in eigenen Besitz?\n\nDu suchst Puckgewinne des beobachteten Teams. Mit dem Gewinn beginnt der Umschaltmoment in eigenen Puckbesitz.\n\nNicht jede Strukturveränderung entsteht durch einen Puckbesitzwechsel. Auch andere klar erkennbare Wechsel der Spielsituation dürfen als Umschaltmoment erfasst werden — klar zuordnen, welches Team den Puck hat.\n\nHeute: den Umschaltmoment erkennen. Zone und Art des Wechsels helfen dir beim Sehen. Die erste Folge notierst du als Beobachtung — ohne Qualitätsurteil.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Wann kippt die Situation — oft durch Puckgewinn oder Puckverlust?",
+                    "Wann gewinnt das beobachtete Team den Puck — und beginnt damit der Umschaltmoment in eigenen Besitz?",
                     "In welcher Zone passiert der Wechsel?",
                     "Wie kommt der Besitzwechsel zustande?",
                     "Was ist die erste sichtbare Folge (ohne sie zu bewerten)?"
                   ],
                   "how_to_decide": [
-                    "Du suchst den Moment der Veränderung, nicht die beste Umschaltung",
-                    "Puckbesitzwechsel ist häufig ein zentraler Auslöser — andere klar erkennbare Wechsel darfst du ebenfalls erfassen",
+                    "Du suchst den Moment der Veränderung beim beobachteten Team, nicht die beste Umschaltung",
+                    "Puckgewinn des beobachteten Teams ist häufig ein zentraler Auslöser — andere klar erkennbare Wechsel darfst du ebenfalls erfassen",
                     "Unklar ist eine gültige Antwort"
                   ],
                   "ignore": [
@@ -2300,10 +2320,10 @@
               "id": "A3_D2",
               "title": "Erste Reaktion erkennen",
               "drill_type": "period_checkin",
-              "description": "Schau auf die ersten Sekunden nach dem Wechsel: Wie verändern Spieler ihr Verhalten? Puckführer, Mitspieler ohne Puck, defensive Reaktion — ohne zu bewerten.",
+              "description": "Schau auf die ersten Sekunden nach dem Puckgewinn des beobachteten Teams: Wie verändern eigene Spieler (Puckführer, Mitspieler ohne Puck) ihr Verhalten — und wie reagiert die gegnerische Defense? Ohne zu bewerten.",
               "didactics": {
-                "explanation": "Nach dem Umschaltmoment geht es um Verhalten — nicht um Qualität.\n\nLeitfrage: Wie verändern Spieler ihr Verhalten nach dem Wechsel?\n\nBeobachte parallel: den Puckführer, Spieler ohne Puck und die defensive Reaktion. Entscheidend ist das wiederkehrende Muster über mehrere Szenen — nicht eine einzelne „beste“ Szene.",
-                "focus_text": "Fokussiere die ersten 2–3 Sekunden nach dem Wechsel.\nWer führt den Puck? Wer bietet sich an? Wer läuft in die Tiefe? Wer sichert ab? Wie reagiert die Verteidigung?",
+                "explanation": "Nach dem Umschaltmoment (Puckgewinn des beobachteten Teams) geht es um Verhalten — nicht um Qualität.\n\nLeitfrage: Wie verändern Spieler ihr Verhalten nach dem Wechsel?\n\nBeobachte parallel:\n- eigene Spieler des beobachteten Teams: Puckführer und Mitspieler ohne Puck\n- gegnerische Defense: wie sortiert, drückt oder arbeitet sie zurück?\n\nEntscheidend ist das wiederkehrende Muster über mehrere Szenen — nicht eine einzelne „beste“ Szene.",
+                "focus_text": "Fokussiere die ersten 2–3 Sekunden nach dem Puckgewinn des beobachteten Teams.\nWer führt den Puck? Wer bietet sich an? Wer läuft in die Tiefe? Wer sichert ab?\nWie reagiert die gegnerische Verteidigung?",
                 "concept": {
                   "title": "Erste Reaktion nach dem Wechsel",
                   "description": "Ein Puckbesitzwechsel verändert oft die Struktur aus A2.\n\nHier liest du die erste Reaktion der Beteiligten — bevor du bewertest, ob fortgesetzt oder kontrolliert wird (A3_D3)."
@@ -2331,17 +2351,17 @@
                   "hint": "Das sind situative Funktionen nach dem Puckgewinn, keine festen Spielerpositionen. Ein Spieler kann innerhalb weniger Sekunden zwischen diesen Funktionen wechseln und mehrere Funktionen nacheinander erfüllen. Entscheidend ist: Sind die Reaktionen mehrerer Spieler erkennbar aufeinander bezogen?"
                 },
                 "guiding_questions": [
-                  "Welche Reaktion siehst du am häufigsten direkt nach dem Wechsel?",
-                  "Wie verändert sich das Verhalten des Puckführers?",
-                  "Wie reagieren Mitspieler ohne Puck?",
-                  "Wie reagiert die Defense?"
+                  "Welche Reaktion siehst du am häufigsten direkt nach dem Puckgewinn des beobachteten Teams?",
+                  "Wie verändert sich das Verhalten des eigenen Puckführers?",
+                  "Wie reagieren eigene Mitspieler ohne Puck?",
+                  "Wie reagiert die gegnerische Defense?"
                 ],
                 "observation_guide": {
                   "what_to_watch": [
-                    "Verhalten des Puckführers nach dem Wechsel",
-                    "Erste Passoption, Tiefenläufer und Absicherung als situative Funktionen",
-                    "defensive Reaktion: sortieren, Druck, Rückwärtsarbeit",
-                    "Wirkt die Reaktion eher kollektiv oder individuell?",
+                    "Verhalten des eigenen Puckführers nach dem Puckgewinn des beobachteten Teams",
+                    "Erste Passoption, Tiefenläufer und Absicherung als situative Funktionen der eigenen Spieler",
+                    "gegnerische Defense: sortieren, Druck, Rückwärtsarbeit",
+                    "Wirkt die Reaktion des beobachteten Teams eher kollektiv oder individuell?",
                     "Gemeinsames Timing in den ersten Sekunden"
                   ],
                   "how_to_decide": [
@@ -2506,17 +2526,17 @@
               "id": "A3_D3",
               "title": "Umschalten fortsetzen oder kontrollieren",
               "drill_type": "event_log",
-              "description": "Wird die neue Situation sofort fortgesetzt oder kontrolliert neu aufgebaut? Hauptrichtung und Absicherung getrennt beobachten — ohne richtig/falsch.",
+              "description": "Wird die neue Situation des beobachteten Teams sofort fortgesetzt oder kontrolliert neu aufgebaut? Hauptrichtung und Absicherung getrennt beobachten — ohne richtig/falsch.",
               "didactics": {
                 "goal": "Erkennen, ob nach dem Wechsel eher sofort fortgesetzt oder kontrolliert neu aufgebaut wird — und ob Absicherung parallel sichtbar ist.",
                 "why_it_matters": "Dasselbe Umschalten kann Tempo erzeugen oder erst neu aufbauen. Absicherung ist eine begleitende Funktion und keine Alternative zur Hauptrichtung. Du trainierst zu sehen, was sichtbar wird — nicht, was „richtig“ ist.",
-                "explanation": "Leitfrage: Wird die neue Situation sofort fortgesetzt oder kontrolliert neu aufgebaut?\n\nFeld 1 – Sichtbare Hauptrichtung:\n- Sofort fortsetzen: Das Team nutzt die neue Situation unmittelbar und bewegt oder passt den Puck erkennbar nach vorne.\n- Kontrolliert neu aufbauen: Das Team nimmt Tempo aus der unmittelbaren Vorwärtsbewegung, hält den Puck und stellt neue Struktur oder Optionen her.\n- Unklar\n\nFeld 2 – Absicherung sichtbar: Ja / Nein / Unklar.\nAbsicherung: Hinter oder neben dem ersten Impuls bleibt eine sichere weitere Verbindung erkennbar.\n\nKeine dieser Beobachtungen ist automatisch eine gute oder schlechte Entscheidung.",
+                "explanation": "Leitfrage: Wird die neue Situation des beobachteten Teams sofort fortgesetzt oder kontrolliert neu aufgebaut?\n\nFeld 1 – Sichtbare Hauptrichtung:\n- Sofort fortsetzen: Das beobachtete Team nutzt die neue Situation unmittelbar und bewegt oder passt den Puck erkennbar nach vorne.\n- Kontrolliert neu aufbauen: Das beobachtete Team nimmt Tempo aus der unmittelbaren Vorwärtsbewegung, hält den Puck und stellt neue Struktur oder Optionen her.\n- Unklar\n\nFeld 2 – Absicherung sichtbar: Ja / Nein / Unklar.\nAbsicherung: Hinter oder neben dem ersten Impuls bleibt eine sichere weitere Verbindung des beobachteten Teams erkennbar.\n\nBlick auf die Verteidigung meint hier die gegnerische Defense unter Druck oder geordnet — getrennt von der eigenen Hauptrichtung.\n\nKeine dieser Beobachtungen ist automatisch eine gute oder schlechte Entscheidung.",
                 "observation_guide": {
                   "what_to_watch": [
-                    "Geht das Team sofort nach vorne (Sofort fortsetzen)?",
+                    "Geht das beobachtete Team sofort nach vorne (Sofort fortsetzen)?",
                     "Wird Tempo genommen und neu aufgebaut (Kontrolliert neu aufbauen)?",
-                    "Bleibt hinter oder neben dem ersten Impuls Absicherung sichtbar?",
-                    "Blick auch auf die Verteidigung: unter Druck oder geordnet?"
+                    "Bleibt hinter oder neben dem ersten Impuls Absicherung des beobachteten Teams sichtbar?",
+                    "Blick auf die gegnerische Verteidigung: unter Druck oder geordnet?"
                   ],
                   "how_to_decide": [
                     "Zuerst die Hauptrichtung wählen — Absicherung getrennt erfassen",
@@ -2550,7 +2570,7 @@
                     "meaning": "Hauptrichtung in dieser Szene nicht eindeutig lesbar."
                   }
                 },
-                "learning_hint": "Du entscheidest nicht, ob gepusht werden sollte. Du erkennst die sichtbare Hauptrichtung und ob Absicherung parallel lesbar ist. Als Nächstes: Wie begrenzt die Verteidigung die neue Gefahr?"
+                "learning_hint": "Du entscheidest nicht, ob gepusht werden sollte. Du erkennst die sichtbare Hauptrichtung des beobachteten Teams und ob Absicherung parallel lesbar ist. Als Nächstes: Wie begrenzt die eigene defensive Rückreaktion die neue Gefahr nach Puckverlust?"
               },
               "miniFeedback": {
                 "trigger": "onNext",
@@ -2653,16 +2673,17 @@
               "id": "A3_D4",
               "title": "Defensive Rückreaktion lesen",
               "drill_type": "event_log",
-              "description": "Wie versuchen Spieler, die neue Gefahr zu begrenzen? Rückweg, Druck auf den Puck, Raum schließen — Backchecking als Beobachtung, nicht als Taktikseminar.",
+              "description": "Ausgangspunkt ist der Puckverlust des beobachteten Teams. Direkt danach liest du, wie die eigenen Spieler in die Defensive zurückarbeiten: Rückweg, Druck auf den Puck, Raum schließen — Wirkung erkennen, nicht Einsatz bewerten.",
               "didactics": {
-                "explanation": "Leitfrage: Wie versuchen Spieler, die neue Gefahr zu begrenzen?\n\nBackchecking bleibt der Fachinhalt — aber du bewertest nicht Einsatz oder Tempo.\n\nBeobachtung:\n- Rückweg\n- Druck auf den Puck\n- Raum schließen\n\nFrage: Verändern sich die Optionen des Gegners — ja oder nein? Ohne Coaching.",
+                "explanation": "Leitfrage: Nach dem Puckverlust des beobachteten Teams — wie versuchen die eigenen Spieler, die neue Gefahr zu begrenzen?\n\nAusgangspunkt ist der Puckverlust. Direkt danach schaust du auf die defensive Rückreaktion der Spieler des beobachteten Teams.\n\nNicht nur schauen, ob jemand zurückfährt. Schau auf seinen Rückweg: Kommt er zwischen Gegner und gefährlichen Raum oder läuft er nur hinterher?\n\n„Winkel“ meint hier keine Winkelmessung zum Tor. Gemeint ist, ob der Rückweg den Spieler in eine Position bringt, aus der er den Gegner tatsächlich beeinflussen kann: Innenbahn erreichen, Pass- oder Laufweg schließen, Raum verkleinern bzw. den Gegner zu einer Anpassung zwingen.\n\nBeobachtung:\n- Rückweg und Einflussposition (Winkel)\n- Druck auf den Puck\n- Raum schließen\n\nFrage: Verändern sich die Optionen des Gegners — ja oder nein? Ohne Coaching und ohne Einsatzbewertung.",
                 "observation_guide": {
                   "when_to_observe": [
-                    "Gegner gewinnt den Puck oder startet das Umschalten",
-                    "Spieler kommen von vorne/seitlich in die Rückwärtsarbeit"
+                    "Das beobachtete Team verliert den Puck",
+                    "Direkt danach: eigene Spieler kommen von vorne/seitlich in die Rückwärtsarbeit"
                   ],
                   "what_to_watch": [
-                    "Rückweg und Winkel",
+                    "Rückweg: Kommt der Spieler zwischen Gegner und gefährlichen Raum — oder nur hinterher?",
+                    "Winkel/Einflussposition: Kann er Pass- oder Laufweg schließen, Raum verkleinern oder den Gegner zur Anpassung zwingen?",
                     "Druck auf den Puckträger",
                     "Wird Raum geschlossen oder nur hinterhergelaufen?",
                     "Muss der Gegner etwas anpassen?"
@@ -2670,7 +2691,8 @@
                   "how_to_decide": [
                     "Verändern sich die Optionen des Gegners? → Begrenzung sichtbar",
                     "Gegner macht ungehindert weiter? → keine klare Begrenzung",
-                    "Nähe allein reicht nicht — du suchst eine sichtbare Wirkung"
+                    "Nähe allein reicht nicht — du suchst eine sichtbare Wirkung",
+                    "Bewerte nicht den Einsatz, sondern die erkennbare Wirkung der Rückreaktion"
                   ],
                   "ignore": [
                     "komplette Defensivtaktik erklären",
@@ -2684,7 +2706,7 @@
                     "meaning": "Der Backchecker verengt den verfügbaren Raum für den Puckträger – der Gegner hat weniger Platz zum Arbeiten."
                   },
                   "Passoption genommen": {
-                    "meaning": "Durch die Position oder den Winkel des Backcheckers wird eine Passroute des Gegners blockiert oder unattraktiv."
+                    "meaning": "Durch die Position bzw. den Einflusswinkel des Backcheckers wird eine Passroute des Gegners blockiert oder unattraktiv — nicht weil der Winkel zum Tor gemessen wurde, sondern weil der Rückweg den Passweg schließt."
                   },
                   "nach außen gedrängt": {
                     "meaning": "Der Gegner wird durch die Backchecking-Bewegung in einen weniger gefährlichen Bereich gelenkt (Außen, Bande)."
@@ -2699,7 +2721,7 @@
                     "meaning": "Die Rückwärtsarbeit kommt zu spät – der Gegner hat seine Entscheidung bereits getroffen, bevor der Backchecker Einfluss nehmen konnte."
                   },
                   "falsche Linie": {
-                    "meaning": "Der Backchecker läuft auf der falschen Route zurück – er deckt nicht den relevanten Passweg oder Raum."
+                    "meaning": "Der Backchecker läuft auf einer Route zurück, die ihn nicht zwischen Gegner und gefährlichen Raum bringt — er deckt nicht den relevanten Passweg oder Raum."
                   },
                   "nur hinterhergelaufen": {
                     "meaning": "Der Spieler läuft hinterher, aber es ändert sich nichts an den Optionen des Gegners. Der Gegner macht trotzdem das, was er geplant hatte."
@@ -2980,7 +3002,6 @@
                 "state_key": "support_state",
                 "factor_key": "main_factor",
                 "note_key": "note",
-                "note_max_chars": 250,
                 "state_options": [
                   "klar spielbar",
                   "eingeschränkt",
@@ -3007,8 +3028,11 @@
                   ]
                 },
                 "note_required": true,
-                "note_min_chars": 150,
-                "note_label": "Woran war die Support-Relation sichtbar? (wer/wo, Passbahn, Abstand, Timing)"
+                "note_min_chars": 25,
+                "note_max_chars": 250,
+                "note_label": "Was hast du konkret gesehen?",
+                "note_help": "Ein kurzer Szenenbeleg reicht.",
+                "note_placeholder": "Center löst sich innen und öffnet eine direkte Passbahn."
               },
               "sceneSlug": "Center-Reads"
             },
@@ -3551,6 +3575,740 @@
                 "note_min_chars": 150
               },
               "sceneSlug": "Support-Timing"
+            }
+          ]
+        },
+        {
+          "id": "B1W",
+          "title": "B1W – Winger im Spiel lesen",
+          "summary": "Transfer von der Center-Perspektive: Winger ohne Puck verfolgen und ihre sichtbare Grundfunktion relativ zum Puck und zu Mitspielern erkennen",
+          "description": "Nach B1 (Centerrolle) folgt kein Neustart bei Positionsidentifikation. B1W trainiert den kurzen Transfer: einen Winger ohne Puck verfolgen und die am deutlichsten sichtbare Funktion lesen — noch ohne Qualitätsurteil, Forecheck/Backcheck, feste LW/RW-Seiten oder Systemanalyse.",
+          "learningGoals": [
+            "Einen Winger ohne Puck über eine kurze Situation verfolgen",
+            "Bezug zum Puck grob einordnen (nah / fern / wechselnd)",
+            "Eine primäre sichtbare Winger-Funktion priorisieren",
+            "Kurzen Szenenbeleg statt Bewertung formulieren",
+            "Räumliche Winger-Funktionen unterscheiden: Breite, Tiefe, zweite Ebene",
+            "In derselben Angriffssituation pucknahe und puckferne Winger-Arbeit vergleichen",
+            "Am Bandenmoment Puckraum und Funktion des Wingers darin bzw. darum herum lesen",
+            "Sichtbare Veränderung nach einer Off-Puck-Bewegung des Wingers erkennen — ohne Absicht zu spekulieren"
+          ],
+          "difficulty": 2,
+          "duration": 90,
+          "drills": [
+            {
+              "id": "B1W_D1",
+              "title": "Winger im Spiel lesen",
+              "drill_type": "sample_log",
+              "description": "Verfolge einen Winger ohne Puck. Beobachte nicht nur, wo er steht, sondern welche grundlegende Funktion seine Position oder Bewegung gerade für die Spielsituation erfüllt.",
+              "didactics": {
+                "explanation": "Ein Winger ist nicht einfach „der Spieler außen“. Im laufenden Spiel können Winger ihre Position verändern, nach innen kommen, Breite herstellen, Raum attackieren oder sich näher an die Puckaktion bewegen.\n\nIn diesem Drill geht es deshalb nicht darum, eine feste Position auf dem Eis auswendig zu lernen.\n\nSuche einen Winger, verfolge ihn für eine kurze Situation und frage:\n\nWas macht seine Rolle in diesem Moment sichtbar?\n\nNoch nicht bewerten, ob seine Aktion gut oder schlecht ist.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Wo befindet sich der Winger relativ zum Puck?",
+                    "Bewegt er sich zum Puck oder bewusst davon weg?",
+                    "Macht er sich als Unterstützung verfügbar?",
+                    "Hält oder öffnet er Raum?",
+                    "Attackiert er freien Raum vor sich?"
+                  ],
+                  "how_to_decide": [
+                    "Beobachte zunächst einen Winger ohne Puck über eine kurze zusammenhängende Situation",
+                    "Ordne anschließend nur die am deutlichsten sichtbare Funktion ein",
+                    "Merksatz: Nicht fragen: Wo muss ein Winger stehen? Frage: Was ermöglicht seine Position oder Bewegung gerade?"
+                  ],
+                  "ignore": [
+                    "wie der Angriff endet",
+                    "ob ein Pass tatsächlich gespielt wird",
+                    "ob die Aktion erfolgreich ist",
+                    "genaue Systemzuordnung",
+                    "defensive Aufgaben",
+                    "ob der Spieler dauerhaft links oder rechts steht"
+                  ]
+                },
+                "inline_explanations": {
+                  "bietet Unterstützung": {
+                    "meaning": "Der Winger bewegt oder positioniert sich so, dass er für den Puckführer eine erreichbare Anschlussmöglichkeit werden kann."
+                  },
+                  "hält oder öffnet Raum": {
+                    "meaning": "Der Winger bleibt oder bewegt sich bewusst weg vom unmittelbaren Puckraum und erhält dadurch Breite oder freien Raum."
+                  },
+                  "attackiert freien Raum": {
+                    "meaning": "Der Winger bewegt sich aktiv in verfügbaren Raum vor ihm, statt nur als statische Option zu bleiben."
+                  },
+                  "bewegt sich in die Puckaktion": {
+                    "meaning": "Der Winger verringert bewusst seine Distanz zum unmittelbaren Puckgeschehen und bindet sich dort in die Aktion ein."
+                  },
+                  "unklar": {
+                    "meaning": "Die Szene reicht nicht aus, um eine Funktion zuverlässig zu erkennen."
+                  }
+                },
+                "learning_hint": "Du hast jetzt Winger nicht nur über ihre nominelle Position gesucht, sondern über ihre sichtbare Funktion. Im nächsten Drill löst du den Blick noch stärker vom Spieler selbst: Du beobachtest, wie Winger durch Breite, Tiefe und unterschiedliche Angriffsebenen Raum strukturieren."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Welche Winger-Funktion hast du in diesem Abschnitt am schnellsten erkannt – und welches sichtbare Merkmal hat dir dabei geholfen?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "sample_key": "winger_function_samples",
+                "sample_label": "Winger-Moment",
+                "max_samples_per_phase": 3,
+                "required_samples": 3,
+                "state_key": "puck_relation",
+                "state_label": "Wo ist der Winger relativ zum Puck?",
+                "factor_key": "visible_function",
+                "factor_label": "Was ist am deutlichsten sichtbar?",
+                "factor_display": "radio",
+                "note_key": "note",
+                "state_options": [
+                  "pucknah",
+                  "puckfern",
+                  "wechselt den Bezug",
+                  "unklar"
+                ],
+                "factors_by_state": {
+                  "pucknah": [
+                    "bietet Unterstützung",
+                    "hält oder öffnet Raum",
+                    "attackiert freien Raum",
+                    "bewegt sich in die Puckaktion",
+                    "unklar"
+                  ],
+                  "puckfern": [
+                    "bietet Unterstützung",
+                    "hält oder öffnet Raum",
+                    "attackiert freien Raum",
+                    "bewegt sich in die Puckaktion",
+                    "unklar"
+                  ],
+                  "wechselt den Bezug": [
+                    "bietet Unterstützung",
+                    "hält oder öffnet Raum",
+                    "attackiert freien Raum",
+                    "bewegt sich in die Puckaktion",
+                    "unklar"
+                  ],
+                  "unklar": [
+                    "bietet Unterstützung",
+                    "hält oder öffnet Raum",
+                    "attackiert freien Raum",
+                    "bewegt sich in die Puckaktion",
+                    "unklar"
+                  ]
+                },
+                "note_required": true,
+                "note_min_chars": 25,
+                "note_max_chars": 250,
+                "note_label": "Was hast du konkret gesehen?",
+                "note_help": "Ein kurzer Szenenbeleg reicht.",
+                "note_placeholder": "Winger löst sich nach außen und bleibt als Passoption verfügbar."
+              },
+              "sceneSlug": "Winger-Reads"
+            },
+            {
+              "id": "B1W_D2",
+              "title": "Breite und Tiefe erkennen",
+              "drill_type": "draggable_rink_observation",
+              "description": "Beobachte einen Winger ohne Puck und markiere, wo er sich in der Angriffssituation positioniert. Entscheide anschließend, welche räumliche Funktion am deutlichsten sichtbar ist.",
+              "didactics": {
+                "explanation": "Ein Winger muss nicht einfach außen stehen. Seine Position kann dem Angriff unterschiedliche räumliche Möglichkeiten geben.\n\nBreite bedeutet: Er hält oder öffnet Raum seitlich und zieht die Angriffsstruktur auseinander.\n\nTiefe bedeutet: Er besetzt oder attackiert Raum weiter Richtung gegnerisches Tor und zwingt die Defensive, auch diesen Raum zu beachten.\n\nZweite Ebene bedeutet: Er steht weder auf derselben Höhe wie der Puckführer noch einfach maximal breit oder tief, sondern bietet sich räumlich versetzt als weitere Anschlussmöglichkeit an.\n\nEntscheidend ist nicht die exakte Position auf dem Eis, sondern welche räumliche Funktion du in der konkreten Situation erkennst.\n\nFokus: eigener Puckbesitz / Angriffssituation. Defensive Winger-Arbeit bleibt bewusst außen vor.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Abstand des Wingers zur unmittelbaren Puckaktion",
+                    "seitliche Staffelung",
+                    "Bewegung Richtung gegnerisches Tor",
+                    "unterschiedliche Höhen der Angreifer",
+                    "freien Raum, den der Winger besetzt oder bewusst offen hält"
+                  ],
+                  "how_to_decide": [
+                    "Eine klare Angriffssituation mit eigenem Puckbesitz finden",
+                    "Einen Winger ohne Puck beobachten und seine Position auf dem Rink markieren",
+                    "Danach die sichtbarste räumliche Funktion wählen — nicht aus der Koordinate ableiten",
+                    "Merksatz: Nicht: Wo steht der Winger? Sondern: Welchen Raum besetzt oder öffnet er?"
+                  ],
+                  "ignore": [
+                    "ob der Winger anschließend den Puck bekommt",
+                    "Erfolg des Angriffs",
+                    "Abschluss/Tor",
+                    "Qualität der Entscheidung",
+                    "defensive Folge",
+                    "Strongside/Weakside als Systembegriff",
+                    "Forecheck, Backcheck oder defensive Aufgaben",
+                    "feste LW-/RW-Seiten"
+                  ]
+                },
+                "learning_hint": "Du kannst jetzt lesen, welchen Raum ein Winger besetzt oder öffnet. Als Nächstes löst du deinen Blick gezielt vom Puck: Du vergleichst die pucknahe mit der puckfernen Seite derselben Situation."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Welche räumliche Funktion konntest du am schnellsten erkennen – und woran?"
+                    ]
+                  }
+                ]
+              },
+              "config": {
+                "mode": "single_marker_observation",
+                "observation_count": 3,
+                "observations_key": "winger_space_observations",
+                "rink_preset": "detailed",
+                "rinkOverlays": {
+                  "zones": true,
+                  "goals": true,
+                  "crease": true,
+                  "faceoffDots": true,
+                  "labels": false,
+                  "defendingSide": "left",
+                  "showDefendingHint": false
+                },
+                "attack_direction_key": "attackDirection",
+                "attack_direction_override_key": "attackDirection",
+                "attack_direction_default": "right",
+                "home_attack_direction_p1": "right",
+                "mirror_bubbles_with_attack_direction": true,
+                "show_attack_direction_control": true,
+                "location_key": "wingerLocation",
+                "observation_index_key": "observationIndex",
+                "created_at_key": "createdAt",
+                "marker_count": 1,
+                "allow_reposition": true,
+                "coordinate_system": "normalized",
+                "marker": {
+                  "id": "winger_space",
+                  "label": "Winger",
+                  "required": true
+                },
+                "markers": [
+                  {
+                    "id": "winger_space",
+                    "label": "Winger",
+                    "required": true
+                  }
+                ],
+                "selection_label": "1. Wo positioniert sich der Winger ohne Puck?",
+                "location_label": "Markiere die beobachtete Winger-Position in einer Angriffssituation mit eigenem Puckbesitz. Die Markierung ist die Beobachtung — die räumliche Funktion wählst du danach selbst.",
+                "marker_heading": "1. Wo positioniert sich der Winger ohne Puck?",
+                "marker_hint": "Tippe auf den Rink, um die Winger-Position zu markieren. Nicht aus der Koordinate eine Funktion ableiten.",
+                "observe_hint": "Finde eine klare Angriffssituation mit eigenem Puckbesitz und beobachte einen Winger ohne Puck.",
+                "save_button_label": "Beobachtung speichern",
+                "saved_feedback_template": "Beobachtung {index} gespeichert",
+                "observation_fields": [
+                  {
+                    "key": "spatialFunction",
+                    "label": "2. Welche räumliche Funktion siehst du?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "width",
+                        "label": "Breite",
+                        "description": "Der Winger hält oder öffnet seitlichen Raum und macht die Angriffsstruktur breiter."
+                      },
+                      {
+                        "value": "depth",
+                        "label": "Tiefe",
+                        "description": "Der Winger besetzt oder attackiert Raum weiter Richtung gegnerisches Tor."
+                      },
+                      {
+                        "value": "second_layer",
+                        "label": "Zweite Ebene",
+                        "description": "Der Winger positioniert sich versetzt zur unmittelbaren Puckaktion und bildet dadurch eine weitere räumliche Anschlussmöglichkeit."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "Unklar",
+                        "description": "Die Situation reicht nicht aus, um eine dominante räumliche Funktion sicher zu erkennen."
+                      }
+                    ]
+                  }
+                ],
+                "observation_note": {
+                  "key": "observationNote",
+                  "label": "Woran hast du die räumliche Funktion erkannt?",
+                  "placeholder": "Optional: kurzer Szenenbeleg — keine Qualitätsbewertung",
+                  "max_chars": 220
+                },
+                "required_observation_fields": [
+                  "wingerLocation",
+                  "spatialFunction"
+                ],
+                "reflection_enabled": false,
+                "missions": [
+                  {
+                    "title": "Mission 1 von 3",
+                    "prompt": "Finde eine Angriffssituation und markiere die Position eines Wingers ohne Puck.",
+                    "hint": "Wähle danach die sichtbarste räumliche Funktion: Breite, Tiefe, zweite Ebene oder unklar."
+                  },
+                  {
+                    "title": "Mission 2 von 3",
+                    "prompt": "Erfasse eine zweite Situation — achte besonders auf seitliche Staffelung oder Raum Richtung Tor.",
+                    "hint": "Die Funktion kommt nicht aus der Koordinate, sondern aus dem, was du in der Szene erkennst."
+                  },
+                  {
+                    "title": "Mission 3 von 3",
+                    "prompt": "Dritte Beobachtung: Gibt es eine versetzte zweite Ebene oder bleibt die Funktion unklar?",
+                    "hint": "Ignoriere Erfolg, Passempfang und Abschluss."
+                  }
+                ],
+                "active_focus_title": "Aktiver Fokus",
+                "active_focus_text": "Beobachte weiter Winger ohne Puck bei eigenem Puckbesitz: Welchen Raum besetzen oder öffnen sie — Breite, Tiefe oder eine versetzte zweite Ebene?",
+                "mechanic": "rink_observation",
+                "observationLayers": [
+                  "winger_space_function"
+                ]
+              },
+              "sceneSlug": "Winger-Space"
+            },
+            {
+              "id": "B1W_D3",
+              "title": "Pucknah und puckfern lesen",
+              "drill_type": "sample_log",
+              "description": "Beobachte eine Angriffssituation mit eigenem Puckbesitz. Schau zuerst auf die Puckseite und löse deinen Blick danach bewusst vom Puck: Was macht der Winger auf der anderen Seite?",
+              "didactics": {
+                "explanation": "Der Puck zieht automatisch deine Aufmerksamkeit an. Dadurch übersieht man leicht Spieler, die weiter von der unmittelbaren Aktion entfernt sind.\n\nIn diesem Drill beobachtest du deshalb bewusst beide Seiten derselben Situation.\n\nPucknah bedeutet hier: der Winger auf bzw. nahe der Seite der unmittelbaren Puckaktion.\n\nPuckfern bedeutet: der Winger auf der gegenüberliegenden bzw. deutlich vom unmittelbaren Puckgeschehen entfernten Seite.\n\nDie Begriffe beschreiben die aktuelle Spielsituation, keine festen LW-/RW-Rollen. Wenn der Puck die Seite wechselt, können sich auch pucknah und puckfern ändern.\n\nWichtig: Beide Antworten beziehen sich auf dieselbe Angriffssituation. Wenn die beiden Winger nicht zuverlässig identifiziert werden können, wähle unklar — definiere Spieler nicht nur geometrisch um.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Zuerst den pucknahen Winger in der unmittelbaren Puckaktion",
+                    "Danach bewusst den Blick auf die puckferne Seite lösen",
+                    "Ob der entfernte Winger Breite hält, Tiefe attackiert, zur Mitte rückt oder als Anschlussoption bleibt"
+                  ],
+                  "how_to_decide": [
+                    "Eine gemeinsame Beobachtung = eine Situation, zwei Seiten",
+                    "Merksatz: Erst den Puck finden – dann bewusst auf die andere Seite schauen",
+                    "Unklar wählen, wenn ein Winger nicht zuverlässig erkennbar ist — nicht erzwingen"
+                  ],
+                  "ignore": [
+                    "Qualität der Winger-Arbeit",
+                    "was der Winger hätte machen müssen",
+                    "Bandenentscheidungen",
+                    "Ursache/Wirkung der Bewegung",
+                    "Forecheck, Backcheck oder defensive Winger-Arbeit",
+                    "feste Systeme",
+                    "zwei unabhängige Situationen als ein Log vermischen"
+                  ]
+                },
+                "learning_hint": "Du kannst jetzt gleichzeitig lesen, was nahe am Puck und abseits davon passiert. Als Nächstes konzentrierst du dich auf einen besonders dichten Moment: Was macht ein Winger, wenn der Puck an der Bande unter Druck gerät?"
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Was hast du auf der puckfernen Seite gesehen, das dir beim normalen Blick auf den Puck wahrscheinlich entgangen wäre?"
+                    ],
+                    "hint": "Kurze freie Antwort reicht — kein Qualitätsurteil."
+                  }
+                ]
+              },
+              "config": {
+                "sample_key": "winger_side_compare_samples",
+                "sample_label": "Winger-Moment",
+                "required_samples": 2,
+                "max_samples_per_phase": 3,
+                "observation_focus": "dieselbe Situation · pucknah und puckfern",
+                "observation_sections_progressive": true,
+                "observation_sections": [
+                  {
+                    "key": "near_side",
+                    "title": "A · Pucknah",
+                    "lead": "Zuerst die Seite der unmittelbaren Puckaktion.",
+                    "label": "Was macht der pucknahe Winger?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "supports_puck_action",
+                        "label": "unterstützt die Puckaktion",
+                        "description": "Er bewegt sich unmittelbar in den Raum der aktuellen Puckaktion oder unterstützt dort einen Mitspieler."
+                      },
+                      {
+                        "value": "offers_outlet",
+                        "label": "bietet sich als Anschlussoption an",
+                        "description": "Er positioniert sich so, dass der Puck aus der unmittelbaren Aktion zu ihm weitergespielt werden kann."
+                      },
+                      {
+                        "value": "moves_into_space",
+                        "label": "bewegt sich in freien Raum",
+                        "description": "Er löst sich in verfügbaren Raum, statt direkt an der Puckaktion zu bleiben."
+                      },
+                      {
+                        "value": "holds_distance",
+                        "label": "hält Abstand zur unmittelbaren Aktion",
+                        "description": "Er bleibt bewusst außerhalb des unmittelbaren Puckraums."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "unklar",
+                        "description": "Der pucknahe Winger ist in dieser Situation nicht zuverlässig erkennbar."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "far_side",
+                    "title": "B · Puckfern",
+                    "lead": "Jetzt weg vom Puck: Was macht der puckferne Winger?",
+                    "label": "Was macht der puckferne Winger?",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "holds_width",
+                        "label": "hält Breite",
+                        "description": "Er bleibt seitlich vom unmittelbaren Puckgeschehen entfernt und erhält Raum auf der anderen Seite."
+                      },
+                      {
+                        "value": "attacks_depth",
+                        "label": "attackiert Tiefe",
+                        "description": "Er bewegt sich weiter Richtung gegnerisches Tor und besetzt Raum hinter bzw. vor der Defensive."
+                      },
+                      {
+                        "value": "cuts_middle",
+                        "label": "rückt zur Mitte",
+                        "description": "Er verlässt die äußere Bahn und bewegt sich in zentraleren Raum."
+                      },
+                      {
+                        "value": "remote_outlet",
+                        "label": "bleibt als entfernte Anschlussoption verfügbar",
+                        "description": "Er bleibt außerhalb der unmittelbaren Aktion so positioniert, dass ein Seitenwechsel oder eine spätere Verbindung möglich bleibt."
+                      },
+                      {
+                        "value": "moves_toward_puck_side",
+                        "label": "bewegt sich Richtung Puckseite",
+                        "description": "Er verringert die Distanz zur unmittelbaren Puckaktion und bewegt sich auf deren Seite zu."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "unklar",
+                        "description": "Der puckferne Winger ist in dieser Situation nicht zuverlässig erkennbar."
+                      }
+                    ]
+                  }
+                ],
+                "note_key": "note",
+                "note_required": false,
+                "note_min_chars": 0,
+                "note_max_chars": 180,
+                "note_label": "Kurzer Szenenbeleg (optional)",
+                "note_help": "Nur wenn hilfreich — beide Seiten gehören zur selben Situation.",
+                "note_placeholder": "Optional: z. B. Puck links, entfernter Winger hält Breite rechts."
+              },
+              "sceneSlug": "Winger-Sides"
+            },
+            {
+              "id": "B1W_D4",
+              "title": "Winger am Bandenmoment lesen",
+              "drill_type": "sample_log",
+              "description": "Finde Situationen, in denen der Puck an der Bande unter Druck gerät oder umkämpft wird. Beobachte einen Winger: Geht er in den unmittelbaren Puckraum – oder erhält er außerhalb davon eine andere Funktion?",
+              "didactics": {
+                "explanation": "An der Bande zieht der Puck besonders viel Aufmerksamkeit auf sich. Mehrere Spieler können auf engem Raum zusammenkommen.\n\nBeobachte deshalb nicht nur den Puckkampf selbst.\n\nFrage zuerst:\n\nWas macht der Winger relativ zum unmittelbaren Puckraum?\n\nSchau anschließend kurz über den Puck hinaus:\n\nWas bleibt durch seine Position außerhalb dieses Raums erhalten?\n\nEs geht noch nicht darum, ob seine Entscheidung optimal war.\n\nMerksatz: Erst den Puckraum sehen – dann schauen, was der Winger darin oder darum herum übernimmt.\n\nEin Bandenmoment meint hier nicht nur, dass der Puck irgendwo nahe der Bande liegt. Gemeint ist eine Situation, in der der Puck dort unter erkennbarem Gegnerdruck steht, festgemacht wird, umkämpft ist oder auf engem Raum verarbeitet werden muss.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Trigger: Puck an der Bande unter erkennbarem Gegnerdruck, festgemacht, umkämpft oder auf engem Raum verarbeitet — nicht nur „nahe der Bande“",
+                    "Wer arbeitet unmittelbar am Puck?",
+                    "Wie viele Spieler verdichten den Puckraum?",
+                    "Bewegt sich der Winger hinein, bleibt er daneben oder löst er sich?",
+                    "Was ist außerhalb dieser Verdichtung noch vorhanden?"
+                  ],
+                  "how_to_decide": [
+                    "Puckraum erkennen → Verhalten des Wingers → verbleibende Struktur außerhalb wahrnehmen",
+                    "„Unterstützt unmittelbar“ = nah am Puckraum, aber nicht primär am Puck",
+                    "„Bleibt außerhalb als Anschlussoption“ = klarer Abstand zum unmittelbaren Puckraum, verfügbar für Fortsetzung",
+                    "Keine allgemeine Regel wie „immer zum Puck“ oder „immer draußen bleiben“"
+                  ],
+                  "ignore": [
+                    "richtig/falsch der Winger-Entscheidung",
+                    "wer den Zweikampf gewinnt",
+                    "ob anschließend ein Tor entsteht",
+                    "ob du die Entscheidung gut findest",
+                    "detaillierte Ursache-Wirkung",
+                    "Forecheck-Systeme",
+                    "defensive Coverage oder defensive Winger-Arbeit",
+                    "Systemnamen",
+                    "Absicherung / Risiko-Bewertung"
+                  ]
+                },
+                "learning_hint": "Bis jetzt hast du beschrieben, welche Funktion ein Winger übernimmt. Im letzten Drill gehst du einen Schritt weiter: Du beobachtest, wie seine Bewegung die Möglichkeiten der gesamten Situation verändert."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Was hat dir am schnellsten gezeigt, ob der Winger Teil des unmittelbaren Puckraums war oder außerhalb davon eine Funktion erhalten hat?"
+                    ],
+                    "hint": "Kurze freie Antwort — keine Bewertung."
+                  }
+                ]
+              },
+              "config": {
+                "sample_key": "board_battle_samples",
+                "sample_label": "Bandenmoment",
+                "required_samples": 3,
+                "max_samples_per_phase": 3,
+                "observation_focus": "Bandenmoment · Puckraum und Umgebung",
+                "observation_sections_progressive": true,
+                "observation_sections": [
+                  {
+                    "key": "winger_behavior",
+                    "title": "1 · Verhalten",
+                    "lead": "Zuerst: Was macht der Winger relativ zum unmittelbaren Puckraum?",
+                    "label": "Was macht der Winger?",
+                    "selection_mode": "single",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "works_on_puck",
+                        "label": "arbeitet direkt am Puck",
+                        "description": "Der Winger ist selbst unmittelbar am Puck bzw. im direkten Kampf um ihn beteiligt."
+                      },
+                      {
+                        "value": "supports_immediately",
+                        "label": "unterstützt unmittelbar",
+                        "description": "Der Winger ist nicht der primäre Spieler am Puck, positioniert sich aber direkt am Puckraum, um die Aktion zu unterstützen."
+                      },
+                      {
+                        "value": "stays_outside_outlet",
+                        "label": "bleibt außerhalb als Anschlussoption",
+                        "description": "Der Winger hält Abstand zum unmittelbaren Puckraum und bleibt für eine mögliche Spielfortsetzung verfügbar."
+                      },
+                      {
+                        "value": "exits_puck_space",
+                        "label": "löst sich aus dem Puckraum",
+                        "description": "Der Winger entfernt sich bewusst aus der Verdichtung und bewegt sich in einen anderen Raum."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "unklar",
+                        "description": "Die Situation ist zu kurz oder zu unübersichtlich, um die Funktion zuverlässig zu erkennen."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "outside_available",
+                    "title": "2 · Außerhalb des Puckraums",
+                    "lead": "Jetzt kurz über den Puck hinaus: Was bleibt außerhalb des unmittelbaren Puckraums sichtbar verfügbar?",
+                    "label": "Was bleibt außerhalb des unmittelbaren Puckraums sichtbar verfügbar?",
+                    "selection_mode": "multi",
+                    "exclusive_values": [
+                      "nothing_clear",
+                      "unclear"
+                    ],
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "pass_option",
+                        "label": "Passoption",
+                        "description": "Außerhalb der Verdichtung ist ein Mitspieler als Anspielstation erkennbar."
+                      },
+                      {
+                        "value": "open_space",
+                        "label": "freier Raum",
+                        "description": "Außerhalb des unmittelbaren Puckraums bleibt nutzbarer Raum sichtbar."
+                      },
+                      {
+                        "value": "offensive_layering",
+                        "label": "weitere offensive Staffelung",
+                        "description": "Weitere offensive Positionierung oder Staffelung bleibt außerhalb der Verdichtung erkennbar."
+                      },
+                      {
+                        "value": "nothing_clear",
+                        "label": "nichts klar erkennbar",
+                        "description": "Außerhalb des unmittelbaren Puckraums ist keine konkrete Option klar sichtbar."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "unklar",
+                        "description": "Die Situation ist zu unübersichtlich, um zu entscheiden, was außerhalb verfügbar bleibt."
+                      }
+                    ]
+                  }
+                ],
+                "note_key": "note",
+                "note_required": true,
+                "note_min_chars": 25,
+                "note_max_chars": 160,
+                "note_label": "Was hast du konkret gesehen?",
+                "note_help": "Ein kurzer Hinweis reicht.",
+                "note_placeholder": "z. B. Zwei Spieler kämpfen an der Bande, der Winger bleibt etwas höher als freie Option."
+              },
+              "sceneSlug": "Winger-Board"
+            },
+            {
+              "id": "B1W_D5",
+              "title": "Wirkung der Winger-Bewegung erkennen",
+              "drill_type": "sample_log",
+              "description": "Finde einen Moment, in dem sich ein Winger ohne Puck deutlich bewegt. Beobachte zuerst seine Bewegung und dann, was sich dadurch sichtbar in der Situation verändert.",
+              "didactics": {
+                "explanation": "Gute Off-Puck-Beobachtung endet nicht bei der Frage, wo ein Spieler steht.\n\nIn diesem Drill vergleichst du zwei Momente:\n\nVor der Bewegung: Wie ist die Situation angeordnet?\n\nNach der Bewegung: Welche Möglichkeit oder welcher Raum ist jetzt sichtbar anders?\n\nWichtig: Du musst nicht wissen, warum der Spieler die Bewegung gemacht hat. Erfasse nur eine Veränderung, die du tatsächlich beobachten kannst.\n\nMerksatz: Bewegung sehen → Veränderung sehen. Absicht nicht erraten.\n\nDu hast Winger zunächst als einzelne Rolle verfolgt, dann ihre räumliche Funktion, die puckferne Seite und ihr Verhalten rund um enge Puckräume gelesen. Zum Abschluss hast du beobachtet, wie ihre Bewegung mit Veränderungen der Spielsituation zusammenhängt.",
+                "observation_guide": {
+                  "what_to_watch": [
+                    "Trigger: klare Off-Puck-Bewegung eines Wingers bei eigenem Puckbesitz",
+                    "1. Bewegung des Wingers identifizieren",
+                    "2. Kurz die Situation davor merken",
+                    "3. Direkt danach auf Raum, Passbahnen, Mitspieler und gegnerische Reaktionen schauen",
+                    "neu geöffnete oder geschlossene Räume",
+                    "neue Passlinien",
+                    "Veränderung der Staffelung",
+                    "sichtbare Reaktion eines Gegenspielers",
+                    "neue Anschlussmöglichkeiten"
+                  ],
+                  "how_to_decide": [
+                    "Frage: Was hat sich danach sichtbar verändert? — nicht: Was hat der Winger verursacht?",
+                    "Korrelation nicht als Kausalität verkaufen",
+                    "„Defensive musste ihre Position anpassen“ nur bei sichtbarer Gegnerreaktion",
+                    "Keine klare Veränderung sichtbar ist eine vollwertige Antwort",
+                    "Absicht des Spielers nicht erraten"
+                  ],
+                  "ignore": [
+                    "Was hätte er besser machen müssen?",
+                    "allgemeine Bewertung guter/schlechter Winger",
+                    "komplexe Systemanalyse",
+                    "defensive Winger-Arbeit",
+                    "vermutete taktische Absicht",
+                    "wie der Angriff später endet",
+                    "Tor/Abschluss",
+                    "technische Ausführung eines späteren Passes"
+                  ]
+                },
+                "learning_hint": "Du hast Winger zunächst als einzelne Rolle verfolgt, dann ihre räumliche Funktion, die puckferne Seite und ihr Verhalten rund um enge Puckräume gelesen. Zum Abschluss hast du beobachtet, wie ihre Bewegung mit Veränderungen der Spielsituation zusammenhängt."
+              },
+              "miniFeedback": {
+                "trigger": "onNext",
+                "oncePerSection": true,
+                "groups": [
+                  {
+                    "when": {},
+                    "questions": [
+                      "Welche sichtbare Veränderung hat dir am deutlichsten gezeigt, dass die Winger-Bewegung für die Situation relevant war?"
+                    ],
+                    "hint": "Keine Bewertung und keine optimale Bewegung nennen — nur die klarste sichtbare Veränderung."
+                  }
+                ]
+              },
+              "config": {
+                "sample_key": "winger_effect_samples",
+                "sample_label": "Bewegungs-Moment",
+                "required_samples": 3,
+                "max_samples_per_phase": 3,
+                "observation_focus": "Bewegung → sichtbare Veränderung",
+                "observation_sections_progressive": true,
+                "observation_sections": [
+                  {
+                    "key": "movement",
+                    "title": "A · Bewegung",
+                    "lead": "Zuerst die Off-Puck-Bewegung des Wingers.",
+                    "label": "Was macht der Winger?",
+                    "selection_mode": "single",
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "opens_outward",
+                        "label": "öffnet nach außen",
+                        "description": "Der Winger bewegt sich seitlich vom unmittelbaren Puckraum weg und vergrößert die Breite."
+                      },
+                      {
+                        "value": "attacks_depth",
+                        "label": "attackiert Tiefe",
+                        "description": "Der Winger bewegt sich deutlich Richtung gegnerisches Tor bzw. in Raum hinter oder zwischen Verteidigern."
+                      },
+                      {
+                        "value": "cuts_inside",
+                        "label": "rückt nach innen",
+                        "description": "Der Winger verlässt äußeren Raum und bewegt sich in eine zentralere Bahn."
+                      },
+                      {
+                        "value": "separates_from_pressure",
+                        "label": "löst sich vom Druck",
+                        "description": "Der Winger entfernt sich aus einem engen oder unter Druck stehenden Raum und macht sich andernorts verfügbar."
+                      },
+                      {
+                        "value": "changes_attack_layer",
+                        "label": "wechselt die Angriffsebene",
+                        "description": "Der Winger verändert seine Höhe relativ zu Puckführer und Mitspielern und bildet dadurch eine andere Staffelung."
+                      },
+                      {
+                        "value": "other_clear_movement",
+                        "label": "andere klare Bewegung",
+                        "description": "Eine deutliche Off-Puck-Bewegung ist sichtbar, passt aber nicht sinnvoll zu den angebotenen Kategorien."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "unklar",
+                        "description": "Die Bewegung ist zu kurz oder zu unübersichtlich, um sie zuverlässig einzuordnen."
+                      }
+                    ]
+                  },
+                  {
+                    "key": "visible_change",
+                    "title": "B · Sichtbare Veränderung",
+                    "lead": "Was hat sich danach sichtbar verändert?",
+                    "label": "Was hat sich danach sichtbar verändert?",
+                    "selection_mode": "multi",
+                    "exclusive_values": [
+                      "no_clear_change",
+                      "unclear"
+                    ],
+                    "required": true,
+                    "options": [
+                      {
+                        "value": "new_passing_lane",
+                        "label": "neue Passbahn entstanden",
+                        "description": "Nach der Bewegung ist eine Passlinie sichtbar offen, die zuvor so nicht nutzbar wirkte."
+                      },
+                      {
+                        "value": "more_space_for_puck_carrier",
+                        "label": "mehr Raum für den Puckführer",
+                        "description": "Der Puckführer hat nach der Bewegung sichtbar mehr nutzbaren Raum."
+                      },
+                      {
+                        "value": "other_attack_space_occupied",
+                        "label": "anderer Angriffsraum wurde besetzt",
+                        "description": "Durch die Bewegung wird ein anderer Angriffsraum besetzt als zuvor."
+                      },
+                      {
+                        "value": "defense_adjusted",
+                        "label": "Defensive musste ihre Position anpassen",
+                        "description": "Nur wählen, wenn ein Gegenspieler seine Position sichtbar anpasst — nicht ableiten, dass er vermutlich reagieren musste."
+                      },
+                      {
+                        "value": "extra_outlet",
+                        "label": "zusätzliche Anschlussoption entstanden",
+                        "description": "Nach der Bewegung ist eine weitere Anspiel- oder Anschlussmöglichkeit sichtbar."
+                      },
+                      {
+                        "value": "no_clear_change",
+                        "label": "keine klare Veränderung sichtbar",
+                        "description": "Die Bewegung ist klar, aber keine unmittelbare Situationsänderung ist zuverlässig erkennbar."
+                      },
+                      {
+                        "value": "unclear",
+                        "label": "unklar",
+                        "description": "Es ist nicht zuverlässig erkennbar, was sich danach verändert hat."
+                      }
+                    ]
+                  }
+                ],
+                "note_key": "note",
+                "note_required": true,
+                "note_min_chars": 25,
+                "note_max_chars": 160,
+                "note_label": "Woran hast du die Veränderung erkannt?",
+                "note_help": "Beschreibe nur, was vor und nach der Bewegung sichtbar anders war.",
+                "note_placeholder": "Winger öffnet nach außen; Verteidiger folgt und innen wird eine Passbahn frei."
+              },
+              "sceneSlug": "Winger-Effect"
             }
           ]
         },

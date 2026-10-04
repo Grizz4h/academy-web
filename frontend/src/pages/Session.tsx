@@ -1211,6 +1211,32 @@ export default function SessionPage() {
       if (samples.length < targetSamples) {
         return `Bitte erfasse mindestens ${targetSamples} Momente, bevor du weitergehst.`
       }
+      const observationSections = (Array.isArray(cfg.observation_sections) ? cfg.observation_sections : [])
+        .filter((section: any) => section && typeof section.key === 'string' && String(section.key).trim())
+      if (observationSections.length > 0) {
+        const sectionFilled = (section: any, sample: any) => {
+          const key = String(section.key).trim()
+          const raw = sample[key]
+          const mode = String(section.selection_mode || section.selectionMode || section.type || 'single').toLowerCase()
+          const isMulti = mode === 'multi' || mode === 'multiple' || mode === 'multi_select'
+          if (isMulti) {
+            return Array.isArray(raw)
+              ? raw.some((value) => String(value || '').trim() !== '')
+              : String(raw || '').trim() !== ''
+          }
+          return String(raw || '').trim() !== ''
+        }
+        const sectionsComplete = samples.every((sample: any) => {
+          if (!sample || typeof sample !== 'object') return false
+          return observationSections.every((section: any) => {
+            if (section.required === false) return true
+            return sectionFilled(section, sample)
+          })
+        })
+        if (!sectionsComplete) {
+          return 'Bitte vervollständige jede Beobachtung (alle Seiten derselben Situation).'
+        }
+      }
       if (cfg.note_required === true) {
         const noteMin = Number(cfg.note_min_chars || 0)
         const last = samples[samples.length - 1]
@@ -1693,6 +1719,8 @@ export default function SessionPage() {
                   session={session}
                   currentPhase={currentPhase}
                   activeDrill={activeDrill}
+                  phaseAnswers={answersByPhase[currentPhase]}
+                  onPhaseAnswersChange={handleDraftChange}
                 />
                 <SpecialTeamsSidequestButton
                   session={session}
@@ -1845,6 +1873,10 @@ export default function SessionPage() {
               currentPhase="P1"
               activeDrill={activeDrill}
               phaseEditable
+              phaseAnswers={answersByPhase.P1}
+              onPhaseAnswersChange={(next) => {
+                setAnswersByPhase((prev) => ({ ...prev, P1: next }))
+              }}
             />
           </div>
           {shareNote && <p style={{ marginTop: '0.55rem', color: '#99f6e4', fontSize: '0.85rem' }}>{shareNote}</p>}

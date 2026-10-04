@@ -18,7 +18,19 @@ export type TacticalObservationLayer = {
   guideTitle?: string
   showInGuide?: boolean
   multiSelect?: boolean
+  /**
+   * When set, this layer is shown only for selected values of another layer.
+   * Omitted answers mean “not applicable” — never store `unclear` as a stand-in.
+   */
+  dependsOnLayerId?: string
+  /** Parent option ids for which an answer is required. */
+  requiredForParentIds?: string[]
+  /** Parent option ids for which the question is shown but optional. */
+  optionalForParentIds?: string[]
 }
+
+/** How a layer participates in draft/save given current parent answers. */
+export type LayerAnswerMode = 'required' | 'optional' | 'omitted'
 
 /**
  * Traits collected per selected parent option (e.g. role → option traits).

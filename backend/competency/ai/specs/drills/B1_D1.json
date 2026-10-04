@@ -44,6 +44,6 @@
   "fairnessNote": "One well-anchored support relation can score excellent. Pattern synthesis across many samples is out of scope for quality.",
   "freeTextReadiness": "READY",
   "evidenceSourceRecommendation": "structured_plus_ai_review",
-  "minimalInputChange": "Required sample note ≥150 chars (max 250) on logged moments; states/factors remain structured.",
+  "minimalInputChange": "Required sample note ≥25 chars (max 250) as a short scene anchor; states/factors remain structured.",
   "validationOnly": false
 }

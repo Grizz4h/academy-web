@@ -174,17 +174,22 @@
   align-items: center;
   gap: 0.35rem;
   box-sizing: border-box;
+  flex: 0 0 auto;
+  flex-shrink: 0;
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
   color: var(--chip-text);
   border-radius: var(--radius-pill);
   padding: 0.4rem 0.75rem;
   min-height: 34px;
+  min-width: min-content;
   font: inherit;
   font-size: 0.86rem;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -241,29 +246,26 @@
   display: none;
 }
 
-@media (max-width: 768px) {
-  .ui-tablist {
-    flex-wrap: nowrap;
-    overscroll-behavior-x: contain;
-  }
-}
-
 .ui-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+  flex-shrink: 0;
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
   color: var(--chip-text);
   border-radius: var(--radius-pill);
   padding: 0.42rem 0.85rem;
   min-height: 36px;
+  min-width: min-content;
   font: inherit;
   font-size: 0.86rem;
   font-weight: 650;
   cursor: pointer;
   white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
   transition:
     border-color var(--motion-fast) var(--motion-ease),
     background var(--motion-fast) var(--motion-ease),
@@ -277,6 +279,30 @@
   background: var(--selected-bg);
   box-shadow: var(--selected-glow);
   color: #99f6e4;
+}
+
+@media (max-width: 768px) {
+  /* Prefer horizontal scroll over squeezing chips/tabs into the viewport. */
+  .ui-tablist {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+
+/**
+ * Optional: long chip/tab labels may wrap at word/hyphen boundaries only.
+ * Short tokens (DEL, CHL, NHL) stay single-line via the default nowrap rules.
+ */
+.ui-chip--wrap,
+.ui-tab--wrap {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: manual;
+  line-height: 1.25;
+  height: auto;
+  max-width: min(100%, 16rem);
 }
 
 /* ---- Status / label pills (non-interactive by default) ---- */

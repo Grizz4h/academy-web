@@ -131,6 +131,42 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
   },
 }
 
+/**
+ * TEMPORARY seasonal overrides for current-matchday inference only.
+ *
+ * DEL 2026/27: one Spieltag-31 game was brought forward early in the season.
+ * Without this exclusion, `inferCurrentMatchday` jumps to 31 while the regular
+ * sequence is still around Spieltag 5/6. Matchday 31 stays fully selectable
+ * in the UI — only the automatic default/current inference ignores it.
+ *
+ * Remove this entry after the DEL 2026/27 season ends.
+ */
+export const MATCHDAY_INFERENCE_EXCLUSIONS: ReadonlyArray<{
+  league: string
+  season: string
+  excludeMatchdays: readonly number[]
+}> = [
+  {
+    league: 'DEL',
+    season: '2026/27',
+    excludeMatchdays: [31],
+  },
+]
+
+export function isMatchdayExcludedFromInference(
+  league: string | undefined,
+  season: string | undefined,
+  matchday: number | null | undefined,
+): boolean {
+  if (!league || !season || matchday == null) return false
+  return MATCHDAY_INFERENCE_EXCLUSIONS.some(
+    (row) =>
+      row.league === league
+      && row.season === season
+      && row.excludeMatchdays.includes(matchday),
+  )
+}
+
 export function getCompetitionConfig(league?: string): CompetitionConfig | undefined {
   return league ? COMPETITION_CONFIGS[league] : undefined
 }

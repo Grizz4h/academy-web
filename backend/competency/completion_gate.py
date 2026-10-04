@@ -56,7 +56,9 @@ def is_submission_complete_for_evidence(
             config.get("required_samples") or config.get("max_samples_per_phase"),
             3,
         )
-        note_min = max(MIN_FREE_TEXT_CHARS, _positive_int(config.get("note_min_chars"), 150))
+        # Curriculum-authoritative: B1_D1 uses a short live-watch note (25);
+        # other B1 drills keep their higher curriculum thresholds.
+        note_min = _positive_int(config.get("note_min_chars"), 150)
         samples = answers.get(sample_key)
         if not isinstance(samples, list) or len(samples) < min_samples:
             return False

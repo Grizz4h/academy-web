@@ -18,6 +18,12 @@ import {
   toReflectionPayload,
 } from './structureLogic'
 import type { SimpleStructureDraft, SimpleStructureObservation } from './types'
+import {
+  formatContinueObservationLabel,
+  formatObservationProgressCount,
+  formatObservationQuotaChoice,
+  formatObservationQuotaStatus,
+} from '../../utils/observationQuota'
 import styles from './SimpleStructureDrill.module.css'
 
 type Props = {
@@ -143,9 +149,18 @@ export function SimpleStructureDrill({ drill, answers, setAnswers, session, phas
   }))
   const patternChoices = cfg.patternOptions.map((option) => ({ value: option.id, label: option.label }))
   const nextFocusChoices = cfg.nextFocusOptions.map((option) => ({ value: option.id, label: option.label }))
-  const progressGoal = count >= cfg.recommendedObservations ? cfg.maxObservations : cfg.recommendedObservations
   const selected = cfg.structureOptions.find((option) => option.id === draft.structureType)
   const canComplete = cfg.patternOptions.length === 0 || Boolean(String(safeAnswers[cfg.patternKey] || ''))
+  const quota = {
+    count,
+    min: cfg.minObservations,
+    recommended: cfg.recommendedObservations,
+    max: cfg.maxObservations,
+    nounPlural: cfg.countNoun,
+    nounSingular: cfg.countNounSingular,
+  }
+  const quotaChoice = formatObservationQuotaChoice(quota)
+  const continueLabel = formatContinueObservationLabel(quota, cfg.scanButtonLabel)
 
   const persistObservations = (next: SimpleStructureObservation[], extra: Record<string, unknown> = {}) => {
     const nextResult = computeSimpleStructureResult(next, cfg.structureOptions)
@@ -286,10 +301,11 @@ export function SimpleStructureDrill({ drill, answers, setAnswers, session, phas
             />
           </div>
         </section>
+        {quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
         <div className={styles.actions}>
           {!atMax && (
             <button type="button" className={styles.secondaryBtn} onClick={startNext}>
-              {cfg.scanButtonLabel}
+              {continueLabel}
             </button>
           )}
           <button
@@ -298,7 +314,7 @@ export function SimpleStructureDrill({ drill, answers, setAnswers, session, phas
             disabled={!canComplete}
             onClick={completeDrill}
           >
-            Abschluss ansehen
+            Jetzt abschließen
           </button>
         </div>
       </div>
@@ -379,7 +395,7 @@ export function SimpleStructureDrill({ drill, answers, setAnswers, session, phas
           <p className={styles.progress}>
             {cfg.countNounSingular} {currentIndex + 1}
             {' · '}
-            {cfg.minObservations} minimum / {cfg.recommendedObservations} empfohlen / {cfg.maxObservations} maximum
+            {formatObservationQuotaStatus(quota)}
           </p>
           {guidance && <p className={styles.lead}>{guidance.guidance}</p>}
           <div className={styles.fieldBlock}>
@@ -424,26 +440,55 @@ export function SimpleStructureDrill({ drill, answers, setAnswers, session, phas
                 Abbrechen
               </button>
             )}
+            {atMin && (
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={() => patchAnswers(safeAnswers, setAnswers, {
+                  [cfg.editIndexKey]: null,
+                  [cfg.draftKey]: emptyStructureDraft(),
+                  [cfg.addingMoreKey]: false,
+                  [cfg.stageKey]: 'reflect',
+                })}
+              >
+                Zum Abschluss
+              </button>
+            )}
             <button type="button" className={styles.primaryBtn} disabled={!canSave} onClick={saveObservation}>
               {cfg.saveButtonLabel}
             </button>
           </div>
         </section>
       ) : (
-        <div className={styles.actions}>
-          {!atMax && (
-            <button type="button" className={styles.primaryBtn} onClick={startNext}>
-              {cfg.scanButtonLabel}
-            </button>
-          )}
-          {atMin && (
-            <button type="button" className={styles.secondaryBtn} onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}>
-              Zur Reflexion
-            </button>
-          )}
-        </div>
+        <>
+          {atMin && quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
+          <div className={styles.actions}>
+            {atMin ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}
+                >
+                  Zum Abschluss
+                </button>
+                {!atMax && (
+                  <button type="button" className={styles.secondaryBtn} onClick={startNext}>
+                    {continueLabel}
+                  </button>
+                )}
+              </>
+            ) : (
+              !atMax && (
+                <button type="button" className={styles.primaryBtn} onClick={startNext}>
+                  {cfg.scanButtonLabel}
+                </button>
+              )
+            )}
+          </div>
+        </>
       )}
-      <p className={styles.progress}>{count} / {progressGoal} {cfg.countNoun}</p>
+      <p className={styles.progress}>{formatObservationProgressCount(quota)}</p>
     </div>
   )
 }

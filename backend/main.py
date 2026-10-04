@@ -28,6 +28,15 @@ from scene_asset_name import (
     load_team_catalogs,
     strip_derived_scene_fields,
 )
+from scene_observation_link import (
+    ObservationLinkConflict,
+    apply_observation_scene_link,
+    clear_sample_scene_backlinks,
+    find_observation_sample,
+    preflight_observation_scene_link,
+)
+from scene_analysis_context import build_scene_analysis_context
+from curriculum_content_hash import curriculum_hash_metadata
 from del_data.roster_store import (
     get_team_roster_snapshot,
     upsert_team_roster_snapshot,
@@ -630,6 +639,7 @@ class SceneSourcePayload(BaseModel):
     session_id: Optional[str] = None
     drill_id: Optional[str] = None
     observation_id: Optional[str] = None
+    observation_label: Optional[str] = None
 
 
 class SceneMarkerCreate(BaseModel):
@@ -696,6 +706,17 @@ class SceneMarkerUpdate(BaseModel):
     rating: Optional[int] = None
     extensions: Optional[dict] = None
     extension_labels: Optional[dict] = None
+    clear_observation_link: Optional[bool] = None
+
+
+class SceneObservationLinkRequest(BaseModel):
+    """Idempotent Scene ↔ sample link / repair.
+
+    Defaults to Scene.source.observation_id + Scene.session_id when omitted.
+    """
+    observation_id: Optional[str] = None
+    session_id: Optional[str] = None
+    allow_pending_sample: bool = True
 
 
 class ObservationRunCreate(BaseModel):
@@ -848,6 +869,24 @@ def _require_session_owner(session_id: str, current_user) -> tuple:
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
     return session_path, session
+
+
+def _try_load_owned_session(session_id: str, current_user) -> tuple:
+    """Soft session load for analysis-context (no HTTP raise).
+
+    Returns ``(session|None, error|None)``. Missing / non-owned both map to
+    ``not_found`` (opaque; same as session GET ownership).
+    """
+    sid = (session_id or "").strip()
+    if not sid:
+        return None, None
+    try:
+        session = get_repos().sessions.get_session_for_user(sid, current_user)
+        return session, None
+    except NotFoundError:
+        return None, "not_found"
+    except Exception:
+        return None, "unavailable"
 
 
 def _persist_session(session: dict) -> dict:
@@ -1406,15 +1445,25 @@ def _merge_foundation_tracks(curriculum: dict) -> dict:
     return {**curriculum, "tracks": foundation_tracks + tracks}
 
 
+def _load_merged_curriculum_for_analysis() -> dict:
+    """Merged Curriculum used by analysis-context (unfiltered; hash source of truth)."""
+    return _merge_foundation_tracks(load_json(os.path.join(DATA_DIR, "curriculum.json")))
+
+
 @app.get("/api/curriculum")
 async def get_curriculum(authorization: str | None = Header(None)):
     """Curriculum laden — premium drill configs filtered server-side by entitlement."""
     try:
         curriculum = load_json(os.path.join(DATA_DIR, "curriculum.json"))
         merged = _merge_foundation_tracks(curriculum)
+        # Content identity is over the merged payload before entitlement filtering.
+        hash_meta = curriculum_hash_metadata(merged)
         user = resolve_user_from_authorization(authorization)
         role = _role_from_auth(user) if user else None
-        return filter_curriculum_for_user(merged, user, role_from_record=role)
+        filtered = filter_curriculum_for_user(merged, user, role_from_record=role)
+        if isinstance(filtered, dict):
+            return {**filtered, **hash_meta}
+        return filtered
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Curriculum not found")
 
@@ -3730,6 +3779,8 @@ def _build_scene_source(payload: SceneMarkerCreate) -> dict:
     drill_id = str(drill_id).strip() if drill_id else None
     observation_id = raw.get("observation_id")
     observation_id = str(observation_id).strip() if observation_id else None
+    observation_label = raw.get("observation_label")
+    observation_label = str(observation_label).strip() if observation_label else None
 
     if source_type not in ("manual", "drill"):
         source_type = "drill" if session_id else "manual"
@@ -3740,6 +3791,7 @@ def _build_scene_source(payload: SceneMarkerCreate) -> dict:
             "session_id": None,
             "drill_id": None,
             "observation_id": observation_id,
+            "observation_label": observation_label,
         }
 
     return {
@@ -3747,6 +3799,7 @@ def _build_scene_source(payload: SceneMarkerCreate) -> dict:
         "session_id": session_id,
         "drill_id": drill_id,
         "observation_id": observation_id,
+        "observation_label": observation_label,
     }
 
 
@@ -3777,12 +3830,14 @@ def _ensure_scene_source(scene: dict) -> dict:
     existing = scene.get("source")
     if isinstance(existing, dict) and str(existing.get("type") or "").strip().lower() in ("manual", "drill"):
         source_type = str(existing.get("type")).strip().lower()
+        observation_label = existing.get("observation_label") or None
         if source_type == "manual":
             scene["source"] = {
                 "type": "manual",
                 "session_id": None,
                 "drill_id": None,
                 "observation_id": existing.get("observation_id") or None,
+                "observation_label": observation_label,
             }
         else:
             scene["source"] = {
@@ -3790,6 +3845,7 @@ def _ensure_scene_source(scene: dict) -> dict:
                 "session_id": existing.get("session_id") or scene.get("session_id") or None,
                 "drill_id": existing.get("drill_id") or scene.get("drill_id") or None,
                 "observation_id": existing.get("observation_id") or None,
+                "observation_label": observation_label,
             }
         return scene
 
@@ -3799,6 +3855,7 @@ def _ensure_scene_source(scene: dict) -> dict:
             "session_id": scene.get("session_id"),
             "drill_id": scene.get("drill_id"),
             "observation_id": None,
+            "observation_label": None,
         }
     else:
         scene["source"] = {
@@ -3806,6 +3863,7 @@ def _ensure_scene_source(scene: dict) -> dict:
             "session_id": None,
             "drill_id": None,
             "observation_id": None,
+            "observation_label": None,
         }
     return scene
 
@@ -3982,6 +4040,78 @@ def _find_scene_path_by_identifier(identifier: str) -> Optional[str]:
     return None
 
 
+def _enrich_scene_for_response(
+    scene: dict,
+    *,
+    catalogs: Optional[dict] = None,
+    slugs: Optional[dict] = None,
+) -> dict:
+    """Normalize in-memory scene fields and attach derived read-time fields.
+
+    Shared by GET /api/scenes and GET /api/scenes/{scene_id} so list and single
+    reads share one Scene DTO. Does not persist; callers must not save the result.
+    """
+    _ensure_scene_source(scene)
+    scene["status"] = _normalize_scene_status(scene.get("status"))
+    scene["scene_code"] = _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id"))
+    scene["episode_season"] = _scene_episode_season(scene)
+    scene["episode_number"] = _scene_episode_number(scene)
+    scene["season_code"] = scene["episode_season"]
+    scene["episode_code"] = scene["episode_number"]
+    if not scene.get("metadata_status"):
+        scene["metadata_status"] = _infer_metadata_status(scene)
+    return attach_scene_asset_name(scene, catalogs=catalogs, slugs=slugs)
+
+
+def _load_owner_scenes(current_user: AuthContext) -> List[dict]:
+    scenes: List[dict] = []
+    for path in _iter_json_files(SCENES_DIR):
+        try:
+            scene = load_json(path)
+        except Exception:
+            continue
+        if _owners_match(scene.get("user", ""), current_user):
+            scenes.append(scene)
+    return scenes
+
+
+def _link_result_payload(result) -> dict:
+    return {
+        "status": result.status,
+        "observation_id": result.observation_id,
+        "scene_id": result.scene_id,
+        "sample_found": result.sample_found,
+        "draft_found": result.draft_found,
+        "repaired_sample": result.repaired_sample,
+        "repaired_scene": result.repaired_scene,
+        "repaired_draft": result.repaired_draft,
+    }
+
+
+def _apply_scene_observation_link(
+    *,
+    scene: dict,
+    session: dict,
+    observation_id: str,
+    current_user: AuthContext,
+    allow_pending_sample: bool = True,
+) -> dict:
+    try:
+        result = apply_observation_scene_link(
+            scene=scene,
+            session=session,
+            observation_id=observation_id,
+            other_scenes=_load_owner_scenes(current_user),
+            allow_pending_sample=allow_pending_sample,
+        )
+    except ObservationLinkConflict as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": exc.code, "message": exc.detail},
+        ) from exc
+    return _link_result_payload(result)
+
+
 @app.post("/api/scenes")
 async def create_scene(payload: SceneMarkerCreate, current_user: AuthContext = Depends(get_current_user)):
     if not is_creator_mode_auth(current_user, role_from_record=_role_from_auth(current_user)):
@@ -4071,11 +4201,84 @@ async def create_scene(payload: SceneMarkerCreate, current_user: AuthContext = D
     }
     scene["metadata_status"] = _infer_metadata_status(scene, payload.metadata_status)
 
+    # Durable Scene ↔ sample link (optional).
+    # Sequence: preflight conflicts → persist Scene → backlink sample/draft on session.
+    # If backlink persistence fails, Scene remains with source.observation_id (recoverable).
+    link_meta = None
+    session_doc = None
+    observation_id = (source.get("observation_id") or "").strip() or None
+    if observation_id:
+        if not session_id:
+            raise HTTPException(
+                status_code=400,
+                detail="session_id is required when source.observation_id is set",
+            )
+        _session_path, session_doc = _require_session_owner(session_id, current_user)
+        try:
+            preflight_observation_scene_link(
+                scene=scene,
+                session=session_doc,
+                observation_id=observation_id,
+                other_scenes=_load_owner_scenes(current_user),
+            )
+        except ObservationLinkConflict as exc:
+            raise HTTPException(
+                status_code=409,
+                detail={"code": exc.code, "message": exc.detail},
+            ) from exc
+
     strip_derived_scene_fields(scene)
     scene_path = _build_scene_path(scene_id, now_iso)
     save_json(scene_path, scene)
-    logging.info(f"[scene] created scene_id={scene_id} scene_code={scene_code} user={owner_id} source={source.get('type')} game_time={scene['game_time']}")
-    return attach_scene_asset_name(scene)
+
+    if observation_id and session_doc is not None:
+        try:
+            link_meta = _apply_scene_observation_link(
+                scene=scene,
+                session=session_doc,
+                observation_id=observation_id,
+                current_user=current_user,
+                allow_pending_sample=True,
+            )
+            if link_meta.get("repaired_sample") or link_meta.get("repaired_draft"):
+                _persist_session(session_doc)
+            # Persist any scene.source normalization from linker (usually no-op).
+            strip_derived_scene_fields(scene)
+            save_json(scene_path, scene)
+        except HTTPException as exc:
+            link_meta = {
+                "status": "backlink_failed",
+                "observation_id": observation_id,
+                "scene_id": scene_id,
+                "sample_found": False,
+                "draft_found": False,
+                "repaired_sample": False,
+                "repaired_scene": False,
+                "repaired_draft": False,
+                "error": exc.detail,
+            }
+        except Exception as exc:
+            logging.exception("[scene] observation backlink failed scene_id=%s", scene_id)
+            link_meta = {
+                "status": "backlink_failed",
+                "observation_id": observation_id,
+                "scene_id": scene_id,
+                "sample_found": False,
+                "draft_found": False,
+                "repaired_sample": False,
+                "repaired_scene": False,
+                "repaired_draft": False,
+                "error": str(exc),
+            }
+
+    logging.info(
+        f"[scene] created scene_id={scene_id} scene_code={scene_code} user={owner_id} "
+        f"source={source.get('type')} observation_id={observation_id} game_time={scene['game_time']}"
+    )
+    response = attach_scene_asset_name(scene)
+    if link_meta is not None:
+        response["observation_link"] = link_meta
+    return response
 
 
 @app.get("/api/scenes")
@@ -4132,21 +4335,157 @@ async def get_scenes(
             continue
         if episode_season and _scene_episode_season(scene) != _normalize_episode_season(episode_season):
             continue
+        # Normalize source early so source_type filter sees the same shape as the response.
         _ensure_scene_source(scene)
         if source_type_norm and scene.get("source", {}).get("type") != source_type_norm:
             continue
-        scene["status"] = scene_status
-        scene["scene_code"] = _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id"))
-        scene["episode_season"] = _scene_episode_season(scene)
-        scene["episode_number"] = _scene_episode_number(scene)
-        scene["season_code"] = scene["episode_season"]
-        scene["episode_code"] = scene["episode_number"]
-        if not scene.get("metadata_status"):
-            scene["metadata_status"] = _infer_metadata_status(scene)
-        scenes.append(attach_scene_asset_name(scene, catalogs=team_catalogs, slugs=drill_slugs))
+        scenes.append(_enrich_scene_for_response(scene, catalogs=team_catalogs, slugs=drill_slugs))
 
     scenes.sort(key=lambda s: s.get("created_at", ""), reverse=True)
     return {"scenes": scenes}
+
+
+@app.get("/api/scenes/{scene_id}")
+async def get_scene(scene_id: str, current_user: AuthContext = Depends(get_current_user)):
+    """Return exactly one Scene Pool document.
+
+    Primary identifier for Board Studio is Scene.id (durable document key /
+    poolDocumentId). The same resolver as PUT/DELETE also accepts scene_code
+    (SCxxx) for convenience — do not treat scene_code as the primary ID.
+
+    Ownership matches other scene routes: missing → 404, other owner → 403.
+    Response enrichment matches GET /api/scenes (including derived asset_name).
+    No session/curriculum/observation join.
+    """
+    scene_path = _find_scene_path_by_identifier(scene_id)
+    if not scene_path:
+        raise HTTPException(status_code=404, detail="Scene not found")
+    scene = load_json(scene_path)
+    if not _owners_match(scene.get("user", ""), current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return _enrich_scene_for_response(
+        scene,
+        catalogs=load_team_catalogs(),
+        slugs=load_drill_scene_slugs(),
+    )
+
+
+@app.get("/api/scenes/{scene_id}/analysis-context")
+async def get_scene_analysis_context(
+    scene_id: str,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Tank-S3: authoritative read join for Board Studio analysis context.
+
+    Lookup identity is Scene.id (poolDocumentId). The shared Scene resolver also
+    accepts scene_code for convenience; contract documentation treats Scene.id
+    as the Board Studio FK.
+
+    Side-effect free: does not mutate Scene/Session or repair observation links.
+    Partial context (manual Scene, missing observation, missing curriculum drill)
+    returns 200 with explicit linkStatus / nullable blocks — not 404/500.
+    """
+    scene_path = _find_scene_path_by_identifier(scene_id)
+    if not scene_path:
+        raise HTTPException(status_code=404, detail="Scene not found")
+    scene = load_json(scene_path)
+    if not _owners_match(scene.get("user", ""), current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    enriched = _enrich_scene_for_response(
+        scene,
+        catalogs=load_team_catalogs(),
+        slugs=load_drill_scene_slugs(),
+    )
+
+    resolved_via = "id"
+    if (scene_id or "").strip() != str(enriched.get("id") or "").strip():
+        resolved_via = "scene_code"
+
+    source = enriched.get("source") if isinstance(enriched.get("source"), dict) else {}
+    session_id = (enriched.get("session_id") or source.get("session_id") or "").strip()
+    session_doc, session_error = _try_load_owned_session(session_id, current_user)
+
+    curriculum = None
+    curriculum_error = None
+    try:
+        curriculum = _load_merged_curriculum_for_analysis()
+    except FileNotFoundError:
+        curriculum_error = "curriculum_not_found"
+    except Exception:
+        curriculum_error = "curriculum_malformed"
+
+    return build_scene_analysis_context(
+        scene=enriched,
+        curriculum=curriculum,
+        curriculum_error=curriculum_error,
+        session=session_doc,
+        session_error=session_error,
+        resolved_via=resolved_via,
+    )
+
+
+@app.post("/api/scenes/{scene_id}/observation-link")
+async def link_scene_observation(
+    scene_id: str,
+    payload: SceneObservationLinkRequest,
+    current_user: AuthContext = Depends(get_current_user),
+):
+    """Idempotent Scene ↔ sample link / repair (Tank-S2).
+
+    Uses Scene.source.observation_id ↔ sample.id and sample.sceneId ↔ Scene.id.
+    Does not create a new observation entity. Manual scenes without observation
+    remain valid and are not forced to link.
+    """
+    scene_path = _find_scene_path_by_identifier(scene_id)
+    if not scene_path:
+        raise HTTPException(status_code=404, detail="Scene not found")
+    scene = load_json(scene_path)
+    if not _owners_match(scene.get("user", ""), current_user):
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    _ensure_scene_source(scene)
+    source = scene.get("source") if isinstance(scene.get("source"), dict) else {}
+    observation_id = (payload.observation_id or source.get("observation_id") or "").strip() or None
+    session_id = (
+        (payload.session_id or scene.get("session_id") or source.get("session_id") or "")
+        .strip()
+        or None
+    )
+    if not observation_id:
+        raise HTTPException(
+            status_code=400,
+            detail="observation_id is required (body or Scene.source.observation_id)",
+        )
+    if not session_id:
+        raise HTTPException(
+            status_code=400,
+            detail="session_id is required (body or Scene.session_id)",
+        )
+
+    _session_path, session_doc = _require_session_owner(session_id, current_user)
+    link_meta = _apply_scene_observation_link(
+        scene=scene,
+        session=session_doc,
+        observation_id=observation_id,
+        current_user=current_user,
+        allow_pending_sample=payload.allow_pending_sample,
+    )
+    strip_derived_scene_fields(scene)
+    save_json(scene_path, scene)
+    if link_meta.get("repaired_sample") or link_meta.get("repaired_draft"):
+        _persist_session(session_doc)
+
+    found = find_observation_sample(session_doc, observation_id)
+    return {
+        "scene": _enrich_scene_for_response(
+            scene,
+            catalogs=load_team_catalogs(),
+            slugs=load_drill_scene_slugs(),
+        ),
+        "sample": found.sample if found else None,
+        "observation_link": link_meta,
+    }
 
 
 @app.delete("/api/scenes/{scene_id}")
@@ -4262,6 +4601,33 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
     
     if "rating" in payload_fields:
         scene["rating"] = _normalize_scene_rating(payload.rating)
+
+    if payload.clear_observation_link:
+        existing_source = scene.get("source") if isinstance(scene.get("source"), dict) else {}
+        previous_observation_id = (existing_source.get("observation_id") or "").strip() or None
+        scene["source"] = {
+            **existing_source,
+            "observation_id": None,
+            "observation_label": None,
+        }
+        # Best-effort: clear sample/draft backlinks pointing at this scene.
+        session_id_for_clear = (
+            (scene.get("session_id") or existing_source.get("session_id") or "")
+            .strip()
+            or None
+        )
+        if session_id_for_clear:
+            try:
+                _spath, session_doc = _require_session_owner(session_id_for_clear, current_user)
+                cleared = clear_sample_scene_backlinks(
+                    session_doc,
+                    scene_id=str(scene.get("id") or scene_id),
+                    observation_id=previous_observation_id,
+                )
+                if cleared:
+                    _persist_session(session_doc)
+            except HTTPException:
+                pass
     
     # Update extensions if provided
     if payload.extensions is not None:

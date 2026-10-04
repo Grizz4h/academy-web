@@ -1,4 +1,5 @@
 import type { CatalogGame } from '../../api'
+import { isMatchdayExcludedFromInference } from '../../data/competitionConfig'
 import {
   CATALOG_TIME_ZONE,
   formatClockInTimeZone,
@@ -142,11 +143,17 @@ export function inferCurrentMatchday(
   const starts = new Map<number, string>()
   for (const game of games) {
     if (game.matchday == null || !game.date) continue
+    // Seasonal hotfix only (see MATCHDAY_INFERENCE_EXCLUSIONS) — does not hide the matchday in UI.
+    if (isMatchdayExcludedFromInference(game.league_id, game.season_id, game.matchday)) continue
     const existing = starts.get(game.matchday)
     if (!existing || game.date < existing) starts.set(game.matchday, game.date)
   }
   if (starts.size === 0) {
-    return uniqueMatchdays(games)[0] ?? null
+    const sample = games.find((game) => game.matchday != null)
+    const fallback = uniqueMatchdays(games).filter(
+      (matchday) => !isMatchdayExcludedFromInference(sample?.league_id, sample?.season_id, matchday),
+    )
+    return fallback[0] ?? uniqueMatchdays(games)[0] ?? null
   }
 
   let current: number | null = null

@@ -1,4 +1,6 @@
 export type ObservationScope = 'FULL_GAME' | 'P1' | 'P2' | 'P3' | 'LESSON'
+/** Setup selection before the user picks a scope — must not imply P1. */
+export type ObservationScopeSelection = ObservationScope | ''
 export type PeriodPhase = 'P1' | 'P2' | 'P3'
 
 export const ACTIVE_PERIODS_BY_SCOPE: Record<ObservationScope, PeriodPhase[]> = {
@@ -10,8 +12,18 @@ export const ACTIVE_PERIODS_BY_SCOPE: Record<ObservationScope, PeriodPhase[]> = 
   LESSON: ['P1'],
 }
 
-/** Session-Setup startet auf einem Drittel, nicht auf dem ganzen Spiel. */
-export const DEFAULT_OBSERVATION_SCOPE: ObservationScope = 'P1'
+/**
+ * New session/lab setup: no Drittel/Umfang preselected.
+ * P1 must only appear after an explicit user choice (or foundation → LESSON).
+ */
+export const DEFAULT_OBSERVATION_SCOPE: ObservationScopeSelection = ''
+
+export function hasExplicitObservationScope(
+  scope?: string | null,
+): scope is ObservationScope {
+  const value = String(scope || '').trim().toUpperCase()
+  return value === 'FULL_GAME' || value === 'P1' || value === 'P2' || value === 'P3' || value === 'LESSON'
+}
 
 export const OBSERVATION_SCOPE_OPTIONS: Array<{ value: ObservationScope; label: string }> = [
   { value: 'FULL_GAME', label: 'Gesamtes Spiel' },

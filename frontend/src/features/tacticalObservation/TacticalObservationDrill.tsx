@@ -14,6 +14,7 @@ import {
   formatObservationLine,
   formatTraitPrompt,
   isTacticalObservationComplete,
+  layerAnswerMode,
   observationToDraft,
   optionLabel,
   pruneDependentTraitDraft,
@@ -25,6 +26,12 @@ import {
   traitFieldKey,
 } from './tacticalLogic'
 import type { TacticalObservation, TacticalObservationDraft } from './types'
+import {
+  formatContinueObservationLabel,
+  formatObservationProgressCount,
+  formatObservationQuotaChoice,
+  formatObservationQuotaStatus,
+} from '../../utils/observationQuota'
 import styles from './TacticalObservationDrill.module.css'
 
 type Props = {
@@ -85,9 +92,18 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
   const guide = drill?.didactics?.observation_guide
   const compactHints = count >= 2
   const patternChoices = toChoices(cfg.patternOptions, false)
-  const progressGoal = count >= cfg.recommendedObservations ? cfg.maxObservations : cfg.recommendedObservations
   const guideLayer = findGuideLayer(cfg)
   const canComplete = cfg.patternOptions.length === 0 || Boolean(String(safeAnswers[cfg.patternKey] || ''))
+  const quota = {
+    count,
+    min: cfg.minObservations,
+    recommended: cfg.recommendedObservations,
+    max: cfg.maxObservations,
+    nounPlural: cfg.countNoun,
+    nounSingular: cfg.countNounSingular,
+  }
+  const quotaChoice = formatObservationQuotaChoice(quota)
+  const continueLabel = formatContinueObservationLabel(quota, cfg.scanButtonLabel)
 
   const persistObservations = (next: TacticalObservation[], extra: Record<string, unknown> = {}) => {
     const nextResult = computeTacticalObservationResult(next, cfg)
@@ -230,10 +246,11 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
             />
           </div>
         </section>
+        {quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
         <div className={styles.actions}>
           {!atMax && (
             <button type="button" className={styles.secondaryBtn} onClick={startNext}>
-              {cfg.scanButtonLabel}
+              {continueLabel}
             </button>
           )}
           <button
@@ -242,7 +259,7 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
             disabled={!canComplete}
             onClick={completeDrill}
           >
-            Abschluss ansehen
+            Jetzt abschließen
           </button>
         </div>
       </div>
@@ -258,6 +275,8 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
       {cfg.decisionRule && <p className={styles.rule}>{cfg.decisionRule}</p>}
       {cfg.coreHint && <p className={styles.hint}>{cfg.coreHint}</p>}
 
+      {guide && <DrillGuideCard guide={guide} />}
+
       {!collecting && guideLayer && (
         <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
           <h3 className={styles.panelTitle}>{guideLayer.guideTitle || guideLayer.resultTitle}</h3>
@@ -272,8 +291,6 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
           </ul>
         </section>
       )}
-
-      {guide && <DrillGuideCard guide={guide} />}
 
       {observations.length > 0 && (
         <section className={`${styles.panel} ui-flat-mobile mobile-flatten-card`}>
@@ -322,16 +339,21 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
           <p className={styles.progress}>
             {cfg.countNounSingular} {currentIndex + 1}
             {' · '}
-            {cfg.minObservations} minimum / {cfg.recommendedObservations} empfohlen / {cfg.maxObservations} maximum
+            {formatObservationQuotaStatus(quota)}
           </p>
           {cfg.layers.map((layer) => {
+            const answerMode = layerAnswerMode(layer, draft, cfg.layers)
+            if (answerMode === 'omitted') return null
             const selectedIds = decodeLayerValues(draft[layer.fieldKey] || '')
             const selected = layer.multiSelect
               ? layer.options.find((option) => selectedIds.includes(option.id) && option.detail)
               : layer.options.find((option) => option.id === draft[layer.fieldKey])
             return (
               <div key={layer.id} className={styles.fieldBlock}>
-                <div className={styles.fieldLabel}>{layer.prompt}</div>
+                <div className={styles.fieldLabel}>
+                  {layer.prompt}
+                  {answerMode === 'optional' ? ' (optional)' : ''}
+                </div>
                 <OptionChips
                   name={`tactical-${layer.id}`}
                   options={toChoices(layer.options, compactHints)}
@@ -420,26 +442,55 @@ export function TacticalObservationDrill({ drill, answers, setAnswers, session, 
                 Abbrechen
               </button>
             )}
+            {atMin && (
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={() => patchAnswers(safeAnswers, setAnswers, {
+                  [cfg.editIndexKey]: null,
+                  [cfg.draftKey]: emptyTacticalDraft(cfg),
+                  [cfg.addingMoreKey]: false,
+                  [cfg.stageKey]: 'reflect',
+                })}
+              >
+                Zum Abschluss
+              </button>
+            )}
             <button type="button" className={styles.primaryBtn} disabled={!canSave} onClick={saveObservation}>
               {cfg.saveButtonLabel}
             </button>
           </div>
         </section>
       ) : (
-        <div className={styles.actions}>
-          {!atMax && (
-            <button type="button" className={styles.primaryBtn} onClick={startNext}>
-              {cfg.scanButtonLabel}
-            </button>
-          )}
-          {atMin && (
-            <button type="button" className={styles.secondaryBtn} onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}>
-              Zur Reflexion
-            </button>
-          )}
-        </div>
+        <>
+          {atMin && quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
+          <div className={styles.actions}>
+            {atMin ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}
+                >
+                  Zum Abschluss
+                </button>
+                {!atMax && (
+                  <button type="button" className={styles.secondaryBtn} onClick={startNext}>
+                    {continueLabel}
+                  </button>
+                )}
+              </>
+            ) : (
+              !atMax && (
+                <button type="button" className={styles.primaryBtn} onClick={startNext}>
+                  {cfg.scanButtonLabel}
+                </button>
+              )
+            )}
+          </div>
+        </>
       )}
-      <p className={styles.progress}>{count} / {progressGoal} {cfg.countNoun}</p>
+      <p className={styles.progress}>{formatObservationProgressCount(quota)}</p>
     </div>
   )
 }

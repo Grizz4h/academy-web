@@ -63,7 +63,17 @@ assert.deepEqual(
 assert.ok(b1.drills.every((drill: { drill_type: string }) => drill.drill_type === 'sample_log'))
 assert.ok(b1.drills.every((drill: { config?: { mechanic?: string } }) => !drill.config?.mechanic))
 assert.ok(b1.drills.every((drill: { config?: { note_required?: boolean } }) => drill.config?.note_required === true))
-assert.ok(b1.drills.every((drill: { config?: { note_min_chars?: number } }) => Number(drill.config?.note_min_chars) >= 150))
+const b1d1 = b1.drills.find((drill: { id: string }) => drill.id === 'B1_D1')
+assert.equal(b1d1.config.note_min_chars, 25)
+assert.equal(b1d1.config.note_max_chars, 250)
+assert.equal(b1d1.config.note_label, 'Was hast du konkret gesehen?')
+assert.equal(b1d1.config.note_help, 'Ein kurzer Szenenbeleg reicht.')
+assert.ok(String(b1d1.config.note_placeholder || '').includes('Passbahn'))
+assert.ok(
+  b1.drills
+    .filter((drill: { id: string }) => drill.id !== 'B1_D1')
+    .every((drill: { config?: { note_min_chars?: number } }) => Number(drill.config?.note_min_chars) >= 150),
+)
 assert.ok(b1.drills.every((drill: { config?: { note_max_chars?: number } }) => Number(drill.config?.note_max_chars) >= 250))
 assert.deepEqual(
   b1.drills[2].config.state_options,

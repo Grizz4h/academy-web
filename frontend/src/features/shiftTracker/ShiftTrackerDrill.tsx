@@ -18,6 +18,12 @@ import {
   toReflectionPayload,
 } from './shiftLogic'
 import type { ShiftObservation, ShiftObservationDraft } from './types'
+import {
+  formatContinueObservationLabel,
+  formatObservationProgressCount,
+  formatObservationQuotaChoice,
+  formatObservationQuotaStatus,
+} from '../../utils/observationQuota'
 import styles from './ShiftTrackerDrill.module.css'
 
 type Props = {
@@ -90,11 +96,20 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
   const triggerChoices = cfg.triggerOptions.map((option) => ({ value: option.id, label: option.label }))
   const patternChoices = cfg.patternOptions.map((option) => ({ value: option.id, label: option.label }))
   const hardestChoices = cfg.hardestOptions.map((option) => ({ value: option.id, label: option.label }))
-  const progressGoal = count >= cfg.recommendedObservations ? cfg.maxObservations : cfg.recommendedObservations
   const showFullReminders = guidance?.reminderLevel === 'full'
   const showCompactReminders = guidance?.reminderLevel === 'compact'
   const selectedFunction = cfg.functionOptions.find((option) => option.id === draft.roleFunction)
   const canComplete = cfg.patternOptions.length === 0 || Boolean(String(safeAnswers[cfg.patternKey] || ''))
+  const quota = {
+    count,
+    min: cfg.minObservations,
+    recommended: cfg.recommendedObservations,
+    max: cfg.maxObservations,
+    nounPlural: cfg.countNoun,
+    nounSingular: cfg.countNounSingular,
+  }
+  const quotaChoice = formatObservationQuotaChoice(quota)
+  const continueLabel = formatContinueObservationLabel(quota, cfg.scanButtonLabel)
 
   const persistObservations = (next: ShiftObservation[], extra: Record<string, unknown> = {}) => {
     const nextResult = computeShiftTrackerResult(next, cfg.positionOptions, cfg.functionOptions)
@@ -235,10 +250,11 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
             />
           </div>
         </section>
+        {quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
         <div className={styles.actions}>
           {!atMax && (
             <button type="button" className={styles.secondaryBtn} onClick={startNextScan}>
-              {cfg.scanButtonLabel}
+              {continueLabel}
             </button>
           )}
           <button
@@ -247,7 +263,7 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
             disabled={!canComplete}
             onClick={completeDrill}
           >
-            Abschluss ansehen
+            Jetzt abschließen
           </button>
         </div>
       </div>
@@ -365,7 +381,7 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
           <p className={styles.progress}>
             {cfg.countNounSingular} {currentIndex + 1}
             {' · '}
-            {cfg.minObservations} minimum / {cfg.recommendedObservations} empfohlen / {cfg.maxObservations} maximum
+            {formatObservationQuotaStatus(quota)}
           </p>
           {guidance && <p className={styles.lead}>{guidance.guidance}</p>}
           {cfg.showTriggerField && (
@@ -434,26 +450,55 @@ export function ShiftTrackerDrill({ drill, answers, setAnswers, session }: Props
                 Abbrechen
               </button>
             )}
+            {atMin && (
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={() => patchAnswers(safeAnswers, setAnswers, {
+                  [cfg.editIndexKey]: null,
+                  [cfg.draftKey]: emptyShiftDraft(),
+                  [cfg.addingMoreKey]: false,
+                  [cfg.stageKey]: 'reflect',
+                })}
+              >
+                Zum Abschluss
+              </button>
+            )}
             <button type="button" className={styles.primaryBtn} disabled={!canSave} onClick={saveObservation}>
               {cfg.saveButtonLabel}
             </button>
           </div>
         </section>
       ) : (
-        <div className={styles.actions}>
-          {!atMax && (
-            <button type="button" className={styles.primaryBtn} onClick={startNextScan}>
-              {cfg.scanButtonLabel}
-            </button>
-          )}
-          {atMin && (
-            <button type="button" className={styles.secondaryBtn} onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}>
-              Zur Reflexion
-            </button>
-          )}
-        </div>
+        <>
+          {atMin && quotaChoice && <p className={styles.lead}>{quotaChoice}</p>}
+          <div className={styles.actions}>
+            {atMin ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => patchAnswers(safeAnswers, setAnswers, { [cfg.stageKey]: 'reflect' })}
+                >
+                  Zum Abschluss
+                </button>
+                {!atMax && (
+                  <button type="button" className={styles.secondaryBtn} onClick={startNextScan}>
+                    {continueLabel}
+                  </button>
+                )}
+              </>
+            ) : (
+              !atMax && (
+                <button type="button" className={styles.primaryBtn} onClick={startNextScan}>
+                  {cfg.scanButtonLabel}
+                </button>
+              )
+            )}
+          </div>
+        </>
       )}
-      <p className={styles.progress}>{count} / {progressGoal} {cfg.countNoun}</p>
+      <p className={styles.progress}>{formatObservationProgressCount(quota)}</p>
     </div>
   )
 }

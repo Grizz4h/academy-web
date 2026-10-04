@@ -26,10 +26,11 @@
 
 
 .container {
-  max-width: 1200px;
+  max-width: min(1200px, 100%);
   margin: 0 auto;
   padding: var(--page-pad-y, 2rem) var(--page-pad-x, 1rem);
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
 }
 

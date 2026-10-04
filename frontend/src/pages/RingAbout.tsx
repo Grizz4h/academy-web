@@ -2179,6 +2179,21 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, on
               {drillTitle}
             </span>
           ) : null}
+          {source.observation_label ? (
+            <span style={{
+              background: 'rgba(14,165,233,0.14)',
+              color: '#7dd3fc',
+              border: '1px solid rgba(125,211,252,0.28)',
+              borderRadius: '0.3rem',
+              padding: '0.1rem 0.45rem',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+            }}>
+              {[scene.module_id, drillSuffix].filter(Boolean).join(' ') || drillId || 'Drill'}
+              {' · '}
+              {source.observation_label}
+            </span>
+          ) : null}
         </div>
       )}
 

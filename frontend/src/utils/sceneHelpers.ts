@@ -23,6 +23,13 @@ export function scenePeriodLabel(period?: string | null): string {
   return SCENE_PERIOD_LABELS[period] ?? period
 }
 
+/** True when a scene/observation period was explicitly chosen (not unset / not implicit P1). */
+export function hasExplicitScenePeriod(period?: string | null): boolean {
+  return Boolean(period && String(period).trim())
+}
+
+export const SCENE_PERIOD_REQUIRED_MESSAGE = 'Bitte wähle ein Drittel aus.'
+
 /** Format hockey clock input: "1243" → "12:43", "807" → "8:07". Leading zero not forced. */
 export function formatGameTimeInput(raw: string): string {
   // Always work from digits so a premature colon (after 3 digits → "1:24")
@@ -45,6 +52,7 @@ export function getSceneSource(scene: Pick<SceneMarker, 'source' | 'session_id' 
       session_id: null,
       drill_id: null,
       observation_id: existing.observation_id ?? null,
+      observation_label: existing.observation_label ?? null,
     }
   }
   if (existing?.type === 'drill') {
@@ -53,6 +61,7 @@ export function getSceneSource(scene: Pick<SceneMarker, 'source' | 'session_id' 
       session_id: existing.session_id ?? scene.session_id ?? null,
       drill_id: existing.drill_id ?? scene.drill_id ?? null,
       observation_id: existing.observation_id ?? null,
+      observation_label: existing.observation_label ?? null,
     }
   }
   if (scene.session_id) {
@@ -61,6 +70,7 @@ export function getSceneSource(scene: Pick<SceneMarker, 'source' | 'session_id' 
       session_id: scene.session_id,
       drill_id: scene.drill_id ?? null,
       observation_id: null,
+      observation_label: null,
     }
   }
   return {
@@ -68,6 +78,7 @@ export function getSceneSource(scene: Pick<SceneMarker, 'source' | 'session_id' 
     session_id: null,
     drill_id: null,
     observation_id: null,
+    observation_label: null,
   }
 }
 

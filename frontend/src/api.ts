@@ -69,6 +69,10 @@ import { isAuthEndpointUrl, notifyAuthExpired } from './lib/authSession'
 // ==== Type Definitions ====
 export interface Curriculum {
   tracks: Track[]
+  /** Deterministic merged-curriculum content marker (Tank-S3). */
+  contentHash?: string
+  contentHashAlgorithm?: string
+  contentHashScope?: string
 }
 
 export interface Track {
@@ -127,6 +131,11 @@ export interface Drill {
       what_to_watch?: string[]
       how_to_decide?: string[]
       ignore?: string[]
+      scan_help?: {
+        title?: string
+        steps?: string[]
+        motto?: string
+      }
     }
     glossary?: {
       [term: string]: string
@@ -739,6 +748,8 @@ export interface SceneSource {
   session_id?: string | null
   drill_id?: string | null
   observation_id?: string | null
+  /** Human label of the linked observation, e.g. "Unterstützungsmoment" */
+  observation_label?: string | null
 }
 
 export type SceneMetadataStatus = 'incomplete' | 'complete'
@@ -824,6 +835,82 @@ export interface SceneMarkerCreate {
   extension_labels?: Record<string, string>
 }
 
+/** Curated Drill fields inside Scene analysis-context (session snapshot or current Curriculum). */
+export interface SceneAnalysisDrillFields {
+  id?: string | null
+  title?: string | null
+  description?: string | null
+  drill_type?: string | null
+  didactics?: {
+    explanation?: string | null
+    observation_guide?: {
+      what_to_watch?: unknown
+      how_to_decide?: unknown
+      ignore?: unknown
+    }
+    learning_hint?: string | null
+    inline_explanations?: Record<string, unknown>
+  }
+  config?: Record<string, unknown>
+  miniFeedback?: unknown
+  sceneSlug?: string | null
+}
+
+export type SceneAnalysisLinkStatusCode =
+  | 'unlinked'
+  | 'linked'
+  | 'pending_or_broken'
+  | 'inconsistent'
+
+/** Tank-S3: GET /api/scenes/{id}/analysis-context */
+export interface SceneAnalysisContext {
+  scene: Partial<SceneMarker> & { id: string }
+  observation: {
+    id?: string | null
+    sceneId?: string | null
+    sceneCode?: string | null
+    answers?: Record<string, unknown>
+    location?: string | null
+    phase?: string | null
+    collectionKey?: string | null
+    label?: string | null
+    samplePresent?: boolean
+    draftPresent?: boolean
+  } | null
+  drill: {
+    id?: string | null
+    sessionSnapshot: SceneAnalysisDrillFields | null
+    currentCurriculum: SceneAnalysisDrillFields | null
+  } | null
+  curriculum: {
+    contentHash?: string | null
+    contentHashAlgorithm?: string
+    contentHashScope?: string
+    error?: string
+    errorDetail?: string
+  }
+  linkStatus: {
+    code: SceneAnalysisLinkStatusCode | string
+    observationId?: string | null
+    sessionId?: string | null
+    reasons?: string[]
+  }
+  provenance: {
+    lookupIdentity: string
+    sceneId?: string | null
+    resolvedVia?: string
+    sessionFound?: boolean
+    sessionError?: string | null
+    curriculumError?: string | null
+    observationResolved?: boolean
+    samplePresent?: boolean
+    draftPresent?: boolean
+    drillId?: string | null
+    hasSessionDrillSnapshot?: boolean
+    hasCurrentCurriculumDrill?: boolean
+  }
+}
+
 export interface SceneMarkerUpdate {
   game_time?: string
   note?: string
@@ -852,6 +939,8 @@ export interface SceneMarkerUpdate {
   overwrite_episode?: boolean
   extensions?: Record<string, string>
   extension_labels?: Record<string, string>
+  /** Clear source.observation_id / observation_label (e.g. draft discarded after link). */
+  clear_observation_link?: boolean
 }
 
 export interface LabModuleContent {
@@ -1439,6 +1528,63 @@ export const api = {
       headers: { ...authHeaders() },
     })
     if (!res.ok) throw new Error('Failed to fetch scenes')
+    return res.json()
+  },
+
+  /** Single Scene Pool document. Prefer Scene.id (Board Studio poolDocumentId). */
+  getScene: async (sceneId: string): Promise<SceneMarker> => {
+    const res = await apiFetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}`), {
+      headers: { ...authHeaders() },
+    })
+    if (!res.ok) throw await readApiError(res, 'Failed to fetch scene')
+    return res.json()
+  },
+
+  /**
+   * Tank-S3 analysis-context read join.
+   * Prefer Scene.id (Board Studio poolDocumentId). Side-effect free.
+   */
+  getSceneAnalysisContext: async (sceneId: string): Promise<SceneAnalysisContext> => {
+    const res = await apiFetch(
+      buildUrl(`/scenes/${encodeURIComponent(sceneId)}/analysis-context`),
+      { headers: { ...authHeaders() } },
+    )
+    if (!res.ok) throw await readApiError(res, 'Failed to fetch scene analysis context')
+    return res.json()
+  },
+
+  /**
+   * Idempotent Scene ↔ check-in sample link / repair.
+   * Canonical: Scene.source.observation_id ↔ sample.id ; sample.sceneId ↔ Scene.id
+   */
+  linkSceneObservation: async (
+    sceneId: string,
+    payload?: {
+      observation_id?: string | null
+      session_id?: string | null
+      allow_pending_sample?: boolean
+    },
+  ): Promise<{
+    scene: SceneMarker
+    sample: Record<string, unknown> | null
+    observation_link: {
+      status: string
+      observation_id: string
+      scene_id: string
+      sample_found: boolean
+      draft_found: boolean
+      repaired_sample: boolean
+      repaired_scene: boolean
+      repaired_draft: boolean
+      error?: unknown
+    }
+  }> => {
+    const res = await apiFetch(buildUrl(`/scenes/${encodeURIComponent(sceneId)}/observation-link`), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(payload || {}),
+    })
+    if (!res.ok) throw await readApiError(res, 'Failed to link scene observation')
     return res.json()
   },
 
