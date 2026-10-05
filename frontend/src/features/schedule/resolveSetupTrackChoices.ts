@@ -11,7 +11,15 @@ import {
 } from '../foundation/recommendations'
 import { selectTutorialEntryRecommendation } from '../tutorial/resolveEntry'
 import { getRealSessions } from '../../utils/sessionEligibility'
-import { selectRecommendedNextDrills } from '../../utils/recommendedDrills'
+import {
+  collectCompletedDrillIds,
+  getLastActivityDrillId,
+  getLastActivityModuleId,
+  getNextCurriculumFocus,
+  type CurriculumNextFocus,
+} from '../../utils/curriculumActivity'
+
+const SKIP_CURRICULUM_TRACK_IDS = new Set(['M'])
 
 export type SetupTrackChoice = {
   id: string
@@ -28,18 +36,6 @@ export type SetupTrackChoicesResult = {
   recommendedChoiceId: string | null
   choices: SetupTrackChoice[]
   nextStepLead: string
-}
-
-function completedDrillIds(sessions: Session[] | null | undefined): Set<string> {
-  const completed = new Set<string>()
-  for (const session of getRealSessions(sessions || [])) {
-    if (String(session.state || '').toUpperCase() !== 'COMPLETED') continue
-    for (const drill of session.drills || []) {
-      if (drill?.id) completed.add(drill.id)
-    }
-    if (session.drill_id) completed.add(session.drill_id)
-  }
-  return completed
 }
 
 function buildDrillCounts(
@@ -110,11 +106,11 @@ function moduleMeta(
 
 function recommendationLead(
   recommendation: NextStepRecommendation | null | undefined,
-  nextDrill: DrillWithCount | undefined,
+  sequenceFocus: CurriculumNextFocus | null | undefined,
   continueSubtitle?: string | null,
 ): string {
-  if (nextDrill?.moduleId) {
-    return continueSubtitle || `${nextDrill.moduleId} · ${nextDrill.title}`
+  if (sequenceFocus?.moduleId) {
+    return continueSubtitle || `${sequenceFocus.moduleId} · ${sequenceFocus.drillTitle}`
   }
   if (recommendation?.kind === 'foundation_entry') {
     return recommendation.subtitle
@@ -133,12 +129,13 @@ export function resolveSetupTrackChoices(args: {
   tutorialActive?: boolean
 }): SetupTrackChoicesResult {
   const { curriculum, sessions, hockeyExperience, devMode = false, tutorialActive = false } = args
-  const completedIds = completedDrillIds(sessions)
+  const completedIds = collectCompletedDrillIds(sessions)
   const countsArray = buildDrillCounts(curriculum, sessions)
-  const recommendedNext = selectRecommendedNextDrills(countsArray, curriculum, 5, {
-    allDrills: countsArray,
+  const sequenceFocus = getNextCurriculumFocus(curriculum, completedIds, {
+    skipTrackIds: SKIP_CURRICULUM_TRACK_IDS,
+    lastCompletedDrillId: getLastActivityDrillId(sessions),
+    lastModuleId: getLastActivityModuleId(sessions),
   })
-  const nextDrill = recommendedNext[0]
 
   const foundationRecommendation = tutorialActive
     ? selectTutorialEntryRecommendation({
@@ -170,6 +167,14 @@ export function resolveSetupTrackChoices(args: {
     completedModuleIds,
     hockeyExperience,
   })
+  const lockedSequenceFocus = academyLocked
+    ? getNextCurriculumFocus(curriculum, completedIds, {
+        skipTrackIds: SKIP_CURRICULUM_TRACK_IDS,
+        restrictToFoundation: true,
+        lastCompletedDrillId: getLastActivityDrillId(sessions),
+        lastModuleId: getLastActivityModuleId(sessions),
+      })
+    : sequenceFocus
 
   const showFoundationEntry = foundationRecommendation?.kind === 'foundation_entry'
   const showBasicsStep = Boolean(
@@ -186,22 +191,22 @@ export function resolveSetupTrackChoices(args: {
   const showContinueCta = Boolean(
     !showBasicsStep
     && !showAcademyEntryCta
-    && nextDrill?.moduleId
+    && lockedSequenceFocus?.moduleId
     && !academyLocked,
   )
 
   let recommended: SetupTrackChoice | null = null
 
-  if (showContinueCta && nextDrill?.moduleId) {
-    const meta = moduleMeta(curriculum, nextDrill.moduleId)
+  if (showContinueCta && lockedSequenceFocus?.moduleId) {
+    const meta = moduleMeta(curriculum, lockedSequenceFocus.moduleId)
     recommended = {
-      id: choiceId(nextDrill.moduleId, nextDrill.id),
-      moduleId: nextDrill.moduleId,
-      drillId: nextDrill.id,
-      trackId: meta?.trackId || nextDrill.moduleId.charAt(0),
-      trackLabel: meta?.trackLabel || nextDrill.moduleId.charAt(0),
-      title: meta?.title || `${nextDrill.moduleId} · ${nextDrill.title}`,
-      hint: meta?.hint || nextDrill.title,
+      id: choiceId(lockedSequenceFocus.moduleId, lockedSequenceFocus.drillId),
+      moduleId: lockedSequenceFocus.moduleId,
+      drillId: lockedSequenceFocus.drillId,
+      trackId: lockedSequenceFocus.trackId || meta?.trackId || lockedSequenceFocus.moduleId.charAt(0),
+      trackLabel: meta?.trackLabel || lockedSequenceFocus.trackId,
+      title: meta?.title || `${lockedSequenceFocus.moduleId} · ${lockedSequenceFocus.drillTitle}`,
+      hint: meta?.hint || lockedSequenceFocus.drillTitle,
       recommended: true,
     }
   } else if (showAcademyEntryCta && academyEntry) {
@@ -225,16 +230,16 @@ export function resolveSetupTrackChoices(args: {
       hint: foundationRecommendation.subtitle,
       recommended: true,
     }
-  } else if (nextDrill?.moduleId && !academyLocked) {
-    const meta = moduleMeta(curriculum, nextDrill.moduleId)
+  } else if (lockedSequenceFocus?.moduleId && !academyLocked) {
+    const meta = moduleMeta(curriculum, lockedSequenceFocus.moduleId)
     recommended = {
-      id: choiceId(nextDrill.moduleId, nextDrill.id),
-      moduleId: nextDrill.moduleId,
-      drillId: nextDrill.id,
-      trackId: meta?.trackId || nextDrill.moduleId.charAt(0),
-      trackLabel: meta?.trackLabel || nextDrill.moduleId.charAt(0),
-      title: meta?.title || `${nextDrill.moduleId} · ${nextDrill.title}`,
-      hint: meta?.hint || nextDrill.title,
+      id: choiceId(lockedSequenceFocus.moduleId, lockedSequenceFocus.drillId),
+      moduleId: lockedSequenceFocus.moduleId,
+      drillId: lockedSequenceFocus.drillId,
+      trackId: lockedSequenceFocus.trackId || meta?.trackId || lockedSequenceFocus.moduleId.charAt(0),
+      trackLabel: meta?.trackLabel || lockedSequenceFocus.trackId,
+      title: meta?.title || `${lockedSequenceFocus.moduleId} · ${lockedSequenceFocus.drillTitle}`,
+      hint: meta?.hint || lockedSequenceFocus.drillTitle,
       recommended: true,
     }
   } else if (academyEntry && !academyLocked) {
@@ -336,6 +341,6 @@ export function resolveSetupTrackChoices(args: {
   return {
     recommendedChoiceId,
     choices: marked,
-    nextStepLead: recommendationLead(foundationRecommendation, nextDrill, continueSubtitle),
+    nextStepLead: recommendationLead(foundationRecommendation, lockedSequenceFocus, continueSubtitle),
   }
 }

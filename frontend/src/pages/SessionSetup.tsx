@@ -185,6 +185,8 @@ export default function SessionSetup() {
       if (parsed.competitionPhase) setCompetitionPhase(parsed.competitionPhase)
       if (parsed.competitionValue) setCompetitionValue(parsed.competitionValue)
       if (!parsed.competitionValue && parsed.matchday) setCompetitionValue(parsed.matchday)
+      // Do not restore observationScope from draft: older drafts still carry the
+      // former P1 default and would silently preselect the wrong period.
       // URL ?drill= wins over draft when deep-linking from Home / Drills
       const queryDrill = (searchParams.get('drill') || '').trim()
       if (parsed.selectedDrill && !queryDrill) setSelectedDrill(parsed.selectedDrill)

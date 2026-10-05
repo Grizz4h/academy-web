@@ -23,6 +23,12 @@ import { buildWeeklyActivity } from '../stats/learningRhythm';
 import { sessionExpectsPeriodMicrofeedback, missingPeriodMicrofeedbackLabels } from '../utils/sessionMicrofeedback';
 import { getSessionRoute } from '../features/lab/sessionRouting';
 import { getRealSessions } from '../utils/sessionEligibility';
+import {
+  collectCompletedDrillIds,
+  getLastActivityDrillId,
+  getLastActivityModuleId,
+  getNextCurriculumFocus,
+} from '../utils/curriculumActivity';
 import { UiActionRow, UiButton, UiButtonLink, UiProgress } from '../components/ui';
 import { KpiRevealCard } from '../components/dashboard/KpiRevealCard';
 import { useTodayGamesSchedule } from '../features/schedule/useTodayGamesSchedule';
@@ -33,6 +39,9 @@ import { selectTutorialEntryRecommendation } from '../features/tutorial/resolveE
 import { TUTORIAL_TARGET, useTutorialOptional } from '../features/tutorial';
 import { useDevNavEnabled } from '../config/featureFlags';
 import styles from './Dashboard.module.css';
+
+/** Hidden cluster tracks — same skip set as Curriculum / calendar preselection. */
+const SKIP_CURRICULUM_TRACK_IDS = new Set(['M'])
 
 const formatSessionState = (state: string): string => {
   const normalized = String(state || '').toUpperCase();
@@ -724,21 +733,10 @@ export default function Dashboard() {
     }
     return days.size;
   })();
-  const nextDrill = derived.recommendedNext[0] as DrillWithCount | undefined;
   const showFoundationEntry =
     !resumeSession
     && foundationRecommendation?.kind === 'foundation_entry';
-  const completedDrillIds = (() => {
-    const completed = new Set<string>()
-    for (const s of getRealSessions(sessions || [])) {
-      if (String(s.state || '').toUpperCase() !== 'COMPLETED') continue
-      for (const d of s.drills || []) {
-        if (d?.id) completed.add(d.id)
-      }
-      if (s.drill_id) completed.add(s.drill_id)
-    }
-    return completed
-  })()
+  const completedDrillIds = collectCompletedDrillIds(sessions)
   const foundationModule = getFoundationModule(curriculum)
   const academyEntry = getAcademyEntryModule(curriculum)
   const completedModuleIds = getRealSessions(sessions || [])
@@ -757,6 +755,13 @@ export default function Dashboard() {
     completedModuleIds,
     hockeyExperience: account?.profile?.hockeyExperience,
   })
+  // Same sequence as calendar / Akademie preselection: last Verlauf +1, cross-module/track.
+  const sequenceFocus = getNextCurriculumFocus(curriculum, completedDrillIds, {
+    skipTrackIds: SKIP_CURRICULUM_TRACK_IDS,
+    restrictToFoundation: academyLocked,
+    lastCompletedDrillId: getLastActivityDrillId(sessions),
+    lastModuleId: getLastActivityModuleId(sessions),
+  })
   const showBasicsStep = Boolean(
     !resumeSession
     && !track0Done
@@ -765,9 +770,9 @@ export default function Dashboard() {
   )
   const canSkipBasics = showBasicsStep
   const continueModuleMeta = (() => {
-    if (!curriculum || !nextDrill?.moduleId) return null
+    if (!curriculum || !sequenceFocus?.moduleId) return null
     for (const track of curriculum.tracks) {
-      const mod = track.modules.find((m) => m.id === nextDrill.moduleId && m.active !== false)
+      const mod = track.modules.find((m) => m.id === sequenceFocus.moduleId && m.active !== false)
       if (!mod) continue
       return {
         trackId: track.id,
@@ -779,7 +784,7 @@ export default function Dashboard() {
     return null
   })()
   // Fresh academy start only when the learner has not trained A1+ yet.
-  // Otherwise continue from the scoped next drill (e.g. B3), not A1.
+  // Otherwise continue from last Verlauf +1 (e.g. A1_D5 → A2_D1).
   const showAcademyEntryCta = Boolean(
     !showBasicsStep
     && !hasUsedAcademy
@@ -789,7 +794,7 @@ export default function Dashboard() {
   const showContinueCta = Boolean(
     !showBasicsStep
     && !showAcademyEntryCta
-    && nextDrill?.moduleId
+    && sequenceFocus?.moduleId
     && !academyLocked,
   )
   const foundationSetupHref = foundationRecommendation?.kind === 'foundation_entry'
@@ -800,8 +805,8 @@ export default function Dashboard() {
   const academySetupHref = academyEntry
     ? `/setup/${academyEntry.moduleId}`
     : '/curriculum'
-  const continueSetupHref = nextDrill?.moduleId
-    ? `/setup/${nextDrill.moduleId}?drill=${encodeURIComponent(nextDrill.id)}`
+  const continueSetupHref = sequenceFocus?.moduleId
+    ? `/setup/${sequenceFocus.moduleId}?drill=${encodeURIComponent(sequenceFocus.drillId)}`
     : '/curriculum'
   const nextStepTitle = resumeSession ? 'Weiter geht’s' : 'Nächster Schritt'
   const nextStepLead = resumeSession
@@ -812,12 +817,12 @@ export default function Dashboard() {
           ? (foundationRecommendation.subtitle || 'Hockey Basics — Spielfeld, Regeln, Rollen und Begriffe.')
           : 'Zuerst Track 0 — oder Basics überspringen, wenn du Hockey schon kennst.'
       )
-      : showContinueCta && continueModuleMeta
-        ? (continueModuleMeta.subtitle || `${continueModuleMeta.moduleId} · ${nextDrill?.title || 'Weiter trainieren.'}`)
+      : showContinueCta && sequenceFocus
+        ? (continueModuleMeta?.subtitle || `${sequenceFocus.moduleId} · ${sequenceFocus.drillTitle}`)
         : showAcademyEntryCta && academyEntry
           ? (academyEntry.subtitle || 'Weiter in der Akademie beobachten und trainieren.')
-          : nextDrill
-            ? `${nextDrill.moduleId} · ${nextDrill.title}`
+          : sequenceFocus
+            ? `${sequenceFocus.moduleId} · ${sequenceFocus.drillTitle}`
             : 'Wähle in der Akademie den nächsten Track.'
   const nextStepFocus = resumeSession
     ? null
@@ -827,12 +832,12 @@ export default function Dashboard() {
           ? foundationRecommendation.title
           : (foundationModule?.title || 'Hockey Basics')
       )
-      : showContinueCta && continueModuleMeta
-        ? `${continueModuleMeta.moduleId} · ${nextDrill?.title || continueModuleMeta.title}`
+      : showContinueCta && sequenceFocus
+        ? `${sequenceFocus.moduleId} · ${sequenceFocus.drillTitle}`
         : showAcademyEntryCta && academyEntry
           ? academyEntry.title
-          : nextDrill
-            ? nextDrill.title
+          : sequenceFocus
+            ? sequenceFocus.drillTitle
             : null
   const drillProgressPct = derived.totalDrills
     ? Math.round((derived.completedDrills / derived.totalDrills) * 100)
@@ -913,13 +918,13 @@ export default function Dashboard() {
             </UiActionRow>
           ) : (
             <UiActionRow>
-              {showContinueCta && nextDrill?.moduleId ? (
+              {showContinueCta && sequenceFocus?.moduleId ? (
                 <UiButtonLink
                   to={continueSetupHref}
                   data-tutorial-id={TUTORIAL_TARGET.homeStartA1}
                 >
-                  {continueModuleMeta?.moduleId
-                    ? `${continueModuleMeta.moduleId} starten`
+                  {sequenceFocus.moduleId
+                    ? `${sequenceFocus.moduleId} starten`
                     : 'Session starten'}
                 </UiButtonLink>
               ) : showAcademyEntryCta && academyEntry ? (
@@ -931,7 +936,7 @@ export default function Dashboard() {
                     ? 'Track A1 starten'
                     : `${academyEntry.moduleId} starten`}
                 </UiButtonLink>
-              ) : nextDrill?.moduleId ? (
+              ) : sequenceFocus?.moduleId ? (
                 <UiButtonLink to={continueSetupHref}>
                   Session starten
                 </UiButtonLink>

@@ -52,6 +52,9 @@ function isModuleComplete(moduleDrills: DrillWithCount[]): boolean {
 /**
  * Next drills in curriculum order: finish the earliest module with gaps, then advance
  * to the first drill of the next module when the current one is fully trained.
+ *
+ * When `scopeModuleId` is set (Dashboard Bereich filter), stay inside that module only —
+ * never spill into a sibling like B1 → B1W.
  */
 export function selectRecommendedNextDrills(
   drills: DrillWithCount[],
@@ -73,18 +76,26 @@ export function selectRecommendedNextDrills(
   const globalById = new Map((options?.allDrills ?? drills).map((drill) => [drill.id, drill]))
   const result: DrillWithCount[] = []
   const seen = new Set<string>()
+  const scopeModuleId = String(options?.scopeModuleId || '').trim() || null
 
   const pushDrill = (drill: DrillWithCount | undefined) => {
     if (!drill || seen.has(drill.id) || result.length >= limit) return
+    // Scoped Bereich: only accept drills that belong to the filtered set.
+    if (scopeModuleId && !scopedById.has(drill.id)) return
     seen.add(drill.id)
     result.push(drill)
   }
 
-  const startIndex = options?.scopeModuleId
-    ? Math.max(0, moduleOrder.findIndex((item) => item.moduleId === options.scopeModuleId))
+  const startIndex = scopeModuleId
+    ? moduleOrder.findIndex((item) => item.moduleId === scopeModuleId)
     : 0
+  if (scopeModuleId && startIndex < 0) {
+    return [...drills].sort(compareByCountThenOrder).slice(0, limit)
+  }
 
-  for (let index = startIndex; index < moduleOrder.length; index += 1) {
+  const endIndex = scopeModuleId ? startIndex + 1 : moduleOrder.length
+
+  for (let index = Math.max(0, startIndex); index < endIndex; index += 1) {
     const slice = moduleOrder[index]
     const moduleDrills = drillsForModule(slice.drillIds, globalById)
     if (!moduleDrills.length) continue
@@ -99,7 +110,7 @@ export function selectRecommendedNextDrills(
     }
 
     if (!isModuleComplete(moduleDrills)) continue
-    // Module fully trained — keep scanning for the next module with gaps.
+    // Module fully trained — in global scope keep scanning; scoped stays put.
   }
 
   if (result.length >= limit) return result

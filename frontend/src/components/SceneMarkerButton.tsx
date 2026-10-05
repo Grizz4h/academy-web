@@ -35,8 +35,9 @@ interface SceneMarkerButtonProps {
   currentPhase: string
   activeDrill: Drill | null
   /**
-   * Legacy flag: period is always an explicit required choice now.
-   * Kept so call sites (post-session) do not need a churn pass.
+   * Post-session / after-the-fact capture: user must pick the period.
+   * During a live session the period comes from Session Setup / currentPhase —
+   * do not ask again.
    */
   phaseEditable?: boolean
   phaseAnswers?: Record<string, any>
@@ -47,10 +48,17 @@ const PERIOD_OPTIONS = SCENE_PERIOD_OPTIONS.filter((option) =>
   option.value === 'P1' || option.value === 'P2' || option.value === 'P3',
 )
 
+function sessionPhaseOrEmpty(phase: string): string {
+  const normalized = String(phase || '').trim().toUpperCase()
+  if (normalized === 'P1' || normalized === 'P2' || normalized === 'P3') return normalized
+  return ''
+}
+
 export function SceneMarkerButton({
   session,
   currentPhase,
   activeDrill,
+  phaseEditable = false,
   phaseAnswers,
   onPhaseAnswersChange,
 }: SceneMarkerButtonProps) {
@@ -60,7 +68,7 @@ export function SceneMarkerButton({
   const [showModal, setShowModal] = useState(false)
   const [gameTime, setGameTime] = useState('')
   const [note, setNote] = useState('')
-  const [phase, setPhase] = useState('')
+  const [phase, setPhase] = useState(() => (phaseEditable ? '' : sessionPhaseOrEmpty(currentPhase)))
   const [extensionValues, setExtensionValues] = useState<Record<string, string>>({})
   const [rating, setRating] = useState<SceneRatingValue | null>(null)
   const [linkToObservation, setLinkToObservation] = useState(true)
@@ -112,7 +120,9 @@ export function SceneMarkerButton({
   const handleOpen = () => {
     setGameTime('')
     setNote('')
-    setPhase('')
+    // Live session: period already fixed by Session Setup / current phase.
+    // Post-session (phaseEditable): start empty so the user chooses actively.
+    setPhase(phaseEditable ? '' : sessionPhaseOrEmpty(currentPhase))
     setExtensionValues({})
     setRating(null)
     setLinkToObservation(true)
@@ -128,9 +138,14 @@ export function SceneMarkerButton({
   }
 
   const handleSave = async () => {
-    if (!hasExplicitScenePeriod(phase)) {
+    const resolvedPeriod = phaseEditable ? phase : sessionPhaseOrEmpty(currentPhase) || phase
+    if (phaseEditable && !hasExplicitScenePeriod(resolvedPeriod)) {
       focusPeriodField()
       setError(null)
+      return
+    }
+    if (!hasExplicitScenePeriod(resolvedPeriod)) {
+      setError('Kein Drittel in der Session gesetzt. Bitte Session-Setup prüfen.')
       return
     }
 
@@ -178,7 +193,7 @@ export function SceneMarkerButton({
         observed_team: session.observed_team,
         observed_team_id: session.game_info?.observed_team_id || session.observed_team_id,
         observed_team_name: session.game_info?.observed_team_name || session.game_info?.observed_team || session.observed_team,
-        period: phase,
+        period: resolvedPeriod,
         game_time: trimmed,
         note: note.trim() || undefined,
         rating: rating ?? null,
@@ -262,7 +277,9 @@ export function SceneMarkerButton({
     }
   }
 
-  const phaseLabel = PERIOD_OPTIONS.find((option) => option.value === phase)?.label || 'Drittel wählen'
+  const displayPeriod = phaseEditable ? phase : sessionPhaseOrEmpty(currentPhase) || phase
+  const phaseLabel = PERIOD_OPTIONS.find((option) => option.value === displayPeriod)?.label
+    || (phaseEditable ? 'Drittel wählen' : 'Drittel')
 
   return (
     <>
@@ -329,46 +346,48 @@ export function SceneMarkerButton({
           </div>
         )}
 
-        <div className={styles.field} ref={periodFieldRef}>
-          <label className={styles.fieldLabel}>
-            Drittel <span className={styles.required}>*</span>
-          </label>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.4rem',
-              padding: periodError ? '0.45rem' : 0,
-              borderRadius: '0.55rem',
-              border: periodError ? '1.5px solid rgba(248,113,113,0.7)' : '1.5px solid transparent',
-              background: periodError ? 'rgba(248,113,113,0.08)' : 'transparent',
-            }}
-          >
-            {PERIOD_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => {
-                  setPhase(option.value)
-                  setPeriodError(false)
-                }}
-                style={{
-                  padding: '0.4rem 0.7rem',
-                  borderRadius: '0.45rem',
-                  border: phase === option.value ? '1.5px solid rgba(125,211,252,0.7)' : '1px solid rgba(148,163,184,0.28)',
-                  background: phase === option.value ? 'rgba(14,165,233,0.2)' : 'rgba(15,23,42,0.65)',
-                  color: phase === option.value ? '#e0f2fe' : '#cbd5e1',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                }}
-              >
-                {option.label}
-              </button>
-            ))}
+        {phaseEditable ? (
+          <div className={styles.field} ref={periodFieldRef}>
+            <label className={styles.fieldLabel}>
+              Drittel <span className={styles.required}>*</span>
+            </label>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '0.4rem',
+                padding: periodError ? '0.45rem' : 0,
+                borderRadius: '0.55rem',
+                border: periodError ? '1.5px solid rgba(248,113,113,0.7)' : '1.5px solid transparent',
+                background: periodError ? 'rgba(248,113,113,0.08)' : 'transparent',
+              }}
+            >
+              {PERIOD_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => {
+                    setPhase(option.value)
+                    setPeriodError(false)
+                  }}
+                  style={{
+                    padding: '0.4rem 0.7rem',
+                    borderRadius: '0.45rem',
+                    border: phase === option.value ? '1.5px solid rgba(125,211,252,0.7)' : '1px solid rgba(148,163,184,0.28)',
+                    background: phase === option.value ? 'rgba(14,165,233,0.2)' : 'rgba(15,23,42,0.65)',
+                    color: phase === option.value ? '#e0f2fe' : '#cbd5e1',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            {periodError ? <p className={styles.error}>{SCENE_PERIOD_REQUIRED_MESSAGE}</p> : null}
           </div>
-          {periodError ? <p className={styles.error}>{SCENE_PERIOD_REQUIRED_MESSAGE}</p> : null}
-        </div>
+        ) : null}
 
         <label className={styles.fieldLabel}>
           Minute <span className={styles.required}>*</span>

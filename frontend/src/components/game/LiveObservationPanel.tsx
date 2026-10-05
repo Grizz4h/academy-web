@@ -216,6 +216,8 @@ export function LiveObservationPanel({
       competitionValue: next.competitionValue || competitionValue,
       competitionPhase: next.competitionPhase || competitionPhase,
       observedTeam: '',
+      // New pairing → force an active Drittel/Umfang choice (no sticky P1 default).
+      observationScope: '',
     })
   }
 
@@ -237,6 +239,7 @@ export function LiveObservationPanel({
       selectedGameId: '',
       competitionValue: String(selectedCompetitionPhase?.unit.min ?? 1),
       observedTeam: '',
+      observationScope: '',
     })
   }
 
@@ -265,6 +268,7 @@ export function LiveObservationPanel({
       competitionPhase: '',
       competitionValue: '',
       selectedGameId: '',
+      observationScope: '',
     })
   }
 
@@ -283,12 +287,14 @@ export function LiveObservationPanel({
         teamHome: team,
         observedTeam: observedTeam === teamHome ? '' : observedTeam,
         selectedGameId: '',
+        observationScope: '',
       })
     } else {
       onChange({
         teamAway: team,
         observedTeam: observedTeam === teamAway ? '' : observedTeam,
         selectedGameId: '',
+        observationScope: '',
       })
     }
     setTeamPicker(null)

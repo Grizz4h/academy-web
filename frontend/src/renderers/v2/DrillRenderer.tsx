@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { api, type Drill } from "../../api";
+import { UiButton } from "../../components/ui";
 import { renderWithGlossary, makeGlossaryRenderer, highlightGlossaryTerms } from "../../components/GlossaryTerm";
 import { PatternLogDrill, PatternConditionDrill, PatternInvariantDrill, PatternAttributionDrill, TendencyProfileDrill } from "../../features/patternLog";
 import { BeforeAfterCompareDrill } from "../../features/beforeAfterCompare/BeforeAfterCompareDrill";
@@ -7540,18 +7541,13 @@ function SampleLog({ drill, answers, setAnswers, session, phase }: any) {
 						)}
 					</div>
 
-					<div style={{ display: "flex", gap: "0.45rem", justifyContent: "flex-end" }}>
-						<button type="button" onClick={() => { void discardForm(); }} style={{ padding: "0.35rem 0.65rem" }}>
+					<div style={{ display: "flex", gap: "0.45rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
+						<UiButton variant="secondary" size="sm" onClick={() => { void discardForm(); }}>
 							Abbrechen
-						</button>
-						<button
-							type="button"
-							onClick={addSample}
-							disabled={!canSaveSample}
-							style={{ padding: "0.35rem 0.7rem", fontWeight: 600 }}
-						>
+						</UiButton>
+						<UiButton variant="primary" size="sm" onClick={addSample} disabled={!canSaveSample}>
 							Speichern
-						</button>
+						</UiButton>
 					</div>
 				</div>
 			)}
@@ -8125,18 +8121,7 @@ function EventLog({ drill, answers, setAnswers, session, phase }: any) {
 		? `${events.length}${maxEvents > 0 ? ` / ${maxEvents}` : ""} ${events.length === 1 ? eventLabel : `${eventLabel}s`} · ${quotaParts.join(" · ")}`
 		: null;
 
-	const btnPrimary: CSSProperties = {
-		padding: "0.45rem 0.9rem",
-		background: "rgba(81,145,162,0.25)",
-		border: "1px solid rgba(81,145,162,0.6)",
-		borderRadius: "4px",
-		color: "#f7f7ff",
-		fontWeight: 600,
-		cursor: "pointer",
-		fontSize: "0.95rem",
-	};
-
-	const btnSmall: CSSProperties = {
+	const btnIcon: CSSProperties = {
 		padding: "0.2rem 0.5rem",
 		background: "transparent",
 		border: "1px solid rgba(255,255,255,0.15)",
@@ -8179,9 +8164,9 @@ function EventLog({ drill, answers, setAnswers, session, phase }: any) {
 
 			{!showForm && (
 				<div style={{ marginBottom: "0.75rem" }}>
-					<button type="button" onClick={openNewDraft} style={btnPrimary} disabled={atMax}>
+					<UiButton variant="primary" size="sm" onClick={openNewDraft} disabled={atMax}>
 						+ {eventLabel}
-					</button>
+					</UiButton>
 				</div>
 			)}
 
@@ -8253,13 +8238,13 @@ function EventLog({ drill, answers, setAnswers, session, phase }: any) {
 							</div>
 						)
 					))}
-					<div className="event-log-actions">
-						<button type="button" onClick={handleSave} style={btnPrimary}>
-							{editIndex !== null ? "✓ Speichern" : `Speichern`}
-						</button>
-						<button type="button" onClick={() => { void discardDraft(); }} style={btnSmall}>
+					<div className="event-log-actions" style={{ display: "flex", gap: "0.45rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
+						<UiButton variant="secondary" size="sm" onClick={() => { void discardDraft(); }}>
 							Abbrechen
-						</button>
+						</UiButton>
+						<UiButton variant="primary" size="sm" onClick={handleSave}>
+							{editIndex !== null ? "✓ Speichern" : "Speichern"}
+						</UiButton>
 					</div>
 				</div>
 			</div>
@@ -8296,8 +8281,8 @@ function EventLog({ drill, answers, setAnswers, session, phase }: any) {
 									) : null}
 								</span>
 								<div style={{ display: "flex", gap: "0.3rem", flexShrink: 0 }}>
-									<button type="button" onClick={() => handleEdit(idx)} style={btnSmall} title="Bearbeiten">✏</button>
-									<button type="button" onClick={() => handleDelete(idx)} style={{ ...btnSmall, color: "rgba(255,100,100,0.7)" }} title="Löschen">×</button>
+									<button type="button" onClick={() => handleEdit(idx)} style={btnIcon} title="Bearbeiten">✏</button>
+									<button type="button" onClick={() => handleDelete(idx)} style={{ ...btnIcon, color: "rgba(255,100,100,0.7)" }} title="Löschen">×</button>
 								</div>
 							</div>
 						))}
