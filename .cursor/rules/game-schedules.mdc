@@ -59,7 +59,10 @@ assets.nhle.com/logos/nhl/svg/{TRI}_light.svg → nhl_logo_importer → assets/t
 
 Alle Katalog-Zeiten (`date` + `HH:MM`) sind **Europe/Berlin**. Frontend: `gameTimeZone.ts` / `formatGameTimeLabel(..., { date })` → Anzeige in Viewer-TZ.
 
-## U20 DNL
+## DNL
+
+Competition: **DNL** (U20 is age/team context, not the league id).
+Internal catalog files stay `u20_dnl_*` / `teams_u20_dnl.json`.
 
 DEB LIVE über öffentliche hockeydata Schedule-API (Widget-Key nur zur Laufzeit aus der Seite, nicht im Repo):
 

@@ -178,6 +178,16 @@ class SceneAssetNameUnitTests(unittest.TestCase):
         self.assertEqual(del_name["name"], "SC036_EBB-KEC_P1_T12-00_Manual")
         self.assertEqual(chl_name["name"], "SC036_BER-KOL_P1_T12-00_Manual")
 
+    def test_dnl_catalog_short_codes(self):
+        self.assertEqual(
+            resolve_team_short("ERC Ingolstadt U20", league="DNL", season="2026/27"),
+            "ERC",
+        )
+        self.assertEqual(
+            resolve_team_short("ERC Ingolstadt U20", league="U20_DNL", season="2026/27"),
+            "ERC",
+        )
+
     def test_catalog_id_preferred_over_display_name(self):
         result = generate_scene_asset_name(
             scene_code="SC200",

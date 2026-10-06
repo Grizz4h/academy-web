@@ -53,3 +53,9 @@ GET /api/scenes/{scene_id}/analysis-context
 - Context Package / Board Studio S327b consumption
 - Source-video / clip provenance
 - Cross-user / coach read access
+
+## League / competition
+
+Canonical external value is **`DNL`** (not `U20_DNL`). List/detail/analysis-context
+normalize legacy stored `U20_DNL` on read. Scene identity is unchanged. Details:
+[`league-identity.md`](./league-identity.md).

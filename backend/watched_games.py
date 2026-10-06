@@ -134,12 +134,9 @@ def _game_matches_pairing(game: Dict[str, Any], info: Dict[str, Any]) -> bool:
     session_league = str(info.get("league") or info.get("league_id") or "").strip().upper().replace(" ", "_")
     game_league = str(game.get("league_id") or game.get("league") or "").strip().upper().replace(" ", "_")
     if session_league and game_league:
-        def _league_bucket(value: str) -> str:
-            if value in {"U20_DNL", "DNL", "U20"}:
-                return "U20_DNL"
-            return value
+        from league_identity import leagues_equivalent
 
-        if _league_bucket(session_league) != _league_bucket(game_league):
+        if not leagues_equivalent(session_league, game_league):
             return False
 
     home_id = str(info.get("home_team_id") or "").strip()

@@ -11,7 +11,7 @@ import {
   localTodayIsoDate,
   uniqueMatchdaysForDate,
 } from './gameCatalogUtils'
-import { COMPETITION_CONFIGS } from '../../data/competitionConfig'
+import { getCompetitionConfig } from '../../data/competitionConfig'
 import { UiChip } from '../ui'
 import styles from './TodayMatchdaySlate.module.css'
 
@@ -95,7 +95,7 @@ export default function TodayMatchdaySlate({
           const home = resolveGameTeamShortCode(game.home_team_name || game.home_team_id, game.league_id, game.season_id)
           const away = resolveGameTeamShortCode(game.away_team_name || game.away_team_id, game.league_id, game.season_id)
           const time = formatGameTimeLabel(game.time, { omitSuffix: true, date: game.date })
-          const leagueLabel = COMPETITION_CONFIGS[game.league_id]?.label || league.replace(/_/g, ' ')
+          const leagueLabel = getCompetitionConfig(game.league_id)?.label || league.replace(/_/g, ' ')
           const status = formatGameStripStatusLabel(game)
           const statusClass = status === 'Live'
             ? styles.statusLive

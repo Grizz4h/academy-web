@@ -3,7 +3,7 @@ import type { CatalogGame } from '../api'
 import Card from '../components/Card'
 import TodayMatchdaySlate from '../components/game/TodayMatchdaySlate'
 import { SpoilerProtectionToggle } from '../components/game/SpoilerProtectionToggle'
-import { COMPETITION_CONFIGS } from '../data/competitionConfig'
+import { getCompetitionConfig } from '../data/competitionConfig'
 import { useGameSetupLauncher } from '../features/schedule/GameSetupLauncherProvider'
 import { SCHEDULE_LEAGUES, type ScheduleLeague } from '../features/schedule/scheduleLeagues'
 import { useScheduleLeaguesGames } from '../features/schedule/useScheduleLeaguesGames'
@@ -13,7 +13,7 @@ import { localTodayIsoDate } from '../components/game/gameCatalogUtils'
 import styles from './SportCalendar.module.css'
 
 function leagueLabel(league: ScheduleLeague): string {
-  return COMPETITION_CONFIGS[league]?.label || league.replace(/_/g, ' ')
+  return getCompetitionConfig(league)?.label || league.replace(/_/g, ' ')
 }
 
 function monthLabel(date: Date): string {

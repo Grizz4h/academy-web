@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 from typing import Optional, Set
 
+from league_identity import logo_folder_league
+
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
 TEAM_LOGOS_DIR = _REPO_ROOT / "assets" / "team_logos"
@@ -75,7 +77,7 @@ def resolve_protected_logo(
     root: Optional[Path] = None,
 ) -> Optional[Path]:
     """Return an existing file under the logos root, or None. Rejects traversal."""
-    league_key = (league or "").strip().lower()
+    league_key = logo_folder_league(league)
     name = (filename or "").strip()
     if league_key not in ALLOWED_LEAGUES:
         return None

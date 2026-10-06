@@ -12,6 +12,7 @@ import chlTeams from './teams_chl.json'
 import u20DnlTeams from './teams_u20_dnl.json'
 import { normalizeSeasonValue, SEASON_OPTIONS } from '../stats/seasonNormalization'
 import { getDelTeamColors } from './delTeamColors'
+import { domainLeague } from './leagueIdentity'
 
 export type CatalogTeam = {
   id: string
@@ -45,7 +46,7 @@ const CATALOGS: Record<string, SeasonTeamCatalog> = {
   DEL2: del2Teams as SeasonTeamCatalog,
   NHL: nhlTeams as SeasonTeamCatalog,
   CHL: chlTeams as SeasonTeamCatalog,
-  U20_DNL: u20DnlTeams as SeasonTeamCatalog,
+  DNL: u20DnlTeams as SeasonTeamCatalog,
   Nationalmannschaften: nationalTeams as SeasonTeamCatalog,
 }
 
@@ -54,17 +55,22 @@ export const TEAM_CATALOG_LEAGUES = [
   'DEL',
   'DEL2',
   'CHL',
-  'U20_DNL',
+  'DNL',
   'NHL',
   'Nationalmannschaften',
   'Testspiele',
 ]
 
+function catalogRecord(league: string | null | undefined): SeasonTeamCatalog | undefined {
+  const key = domainLeague(league) || (league || '').trim()
+  return CATALOGS[key]
+}
+
 export function resolveCatalogSeasonKey(
   league: string | null | undefined,
   season: string | null | undefined,
 ): string | null {
-  const catalog = CATALOGS[(league || '').trim()]
+  const catalog = catalogRecord(league)
   if (!catalog) return null
 
   const normalized = normalizeSeasonValue(season || undefined, league || undefined)
@@ -82,8 +88,8 @@ export function getCatalogTeamsForLeague(
   league: string | null | undefined,
   season?: string | null,
 ): CatalogTeam[] {
-  const key = (league || '').trim()
-  const catalog = CATALOGS[key]
+  const key = domainLeague(league) || (league || '').trim()
+  const catalog = catalogRecord(league)
   if (!catalog) return []
 
   // Legacy flat catalogs
@@ -92,7 +98,7 @@ export function getCatalogTeamsForLeague(
     return flat.map((team) => enrichCatalogTeam(key, team))
   }
 
-  const seasonKey = resolveCatalogSeasonKey(key, season)
+  const seasonKey = resolveCatalogSeasonKey(league, season)
   if (seasonKey && catalog.seasons[seasonKey]) {
     return catalog.seasons[seasonKey].map((team) => enrichCatalogTeam(key, team))
   }
@@ -113,14 +119,14 @@ export function getCatalogTeamsForLeagueLookup(
   league: string | null | undefined,
   season?: string | null,
 ): CatalogTeam[] {
-  const key = (league || '').trim()
-  const catalog = CATALOGS[key]
+  const key = domainLeague(league) || (league || '').trim()
+  const catalog = catalogRecord(league)
   if (!catalog) return []
   if (!catalog.seasons) {
     const flat = Array.isArray(catalog.teams) ? catalog.teams : []
     return flat.map((team) => enrichCatalogTeam(key, team))
   }
-  const preferred = resolveCatalogSeasonKey(key, season)
+  const preferred = resolveCatalogSeasonKey(league, season)
   const out: CatalogTeam[] = []
   if (preferred && catalog.seasons[preferred]) {
     out.push(...catalog.seasons[preferred].map((team) => enrichCatalogTeam(key, team)))
@@ -141,8 +147,7 @@ export function getTeamNamesForLeague(
 
 /** Union of all season rosters for a league (useful for Progress / history). */
 export function getAllTeamNamesForLeague(league: string | null | undefined): string[] {
-  const key = (league || '').trim()
-  const catalog = CATALOGS[key]
+  const catalog = catalogRecord(league)
   if (!catalog) return []
   if (!catalog.seasons) {
     return (catalog.teams || []).map((team) => team.name)
@@ -170,7 +175,7 @@ export function getAllCatalogTeams(): CatalogTeam[] {
 }
 
 export function getDefaultSeasonForLeague(league?: string | null): string {
-  const catalog = CATALOGS[(league || '').trim()]
+  const catalog = catalogRecord(league)
   if (catalog?.default_season) return catalog.default_season
   return SEASON_OPTIONS[0] || '2025/26'
 }

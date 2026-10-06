@@ -9,10 +9,11 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from .season_utils import season_to_display, season_to_file_key, game_date_in_season
+from league_identity import catalog_league
 
 
 def games_catalog_path(games_dir: str, league: str, season: str) -> str:
-    league_key = (league or "del").strip().lower()
+    league_key = catalog_league(league or "del").strip().lower()
     season_key = season_to_file_key(season)
     return os.path.join(games_dir, f"{league_key}_{season_key}.json")
 

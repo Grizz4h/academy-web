@@ -95,6 +95,15 @@ class UpsertGamesTests(unittest.TestCase):
             self.assertEqual(games[0]["status"], "final")
             self.assertNotIn("_vs_", games[0]["id"])
 
+    def test_dnl_query_maps_to_u20_dnl_catalog_file(self):
+        from del_data.game_store import games_catalog_path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = games_catalog_path(tmp, "DNL", "2026/27")
+            self.assertTrue(path.endswith("u20_dnl_2026_2027.json"))
+            alias = games_catalog_path(tmp, "U20_DNL", "2026/27")
+            self.assertEqual(path, alias)
+
 
 if __name__ == "__main__":
     unittest.main()

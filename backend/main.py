@@ -37,6 +37,14 @@ from scene_observation_link import (
 )
 from scene_analysis_context import build_scene_analysis_context
 from curriculum_content_hash import curriculum_hash_metadata
+from league_identity import (
+    catalog_league,
+    domain_league,
+    is_dnl_league,
+    persist_league,
+    apply_domain_league_fields,
+    leagues_equivalent,
+)
 from del_data.roster_store import (
     get_team_roster_snapshot,
     upsert_team_roster_snapshot,
@@ -1292,14 +1300,14 @@ def _dnl_team_catalog_mapper() -> TeamCatalogMapper:
 
 def _schedule_team_mapper(league: str) -> TeamCatalogMapper:
     key = (league or "DEL").strip().upper()
+    if is_dnl_league(league):
+        return _dnl_team_catalog_mapper()
     if key == "DEL2":
         return _del2_team_catalog_mapper()
     if key == "CHL":
         return _chl_team_catalog_mapper()
     if key == "NHL":
         return _nhl_team_catalog_mapper()
-    if key in {"U20_DNL", "U20"}:
-        return _dnl_team_catalog_mapper()
     return _team_catalog_mapper()
 
 
@@ -1575,7 +1583,7 @@ async def get_teams(league: Optional[str] = None, season: Optional[str] = None):
             data = load_json(os.path.join(DATA_DIR, "teams_del2.json"))
         elif league == "CHL":
             data = load_json(os.path.join(DATA_DIR, "teams_chl.json"))
-        elif league == "U20_DNL":
+        elif is_dnl_league(league):
             data = load_json(os.path.join(DATA_DIR, "teams_u20_dnl.json"))
         elif league == "Testspiele":
             data = load_json(os.path.join(DATA_DIR, "teams_testspiele.json"))
@@ -1584,6 +1592,8 @@ async def get_teams(league: Optional[str] = None, season: Optional[str] = None):
         payload = _teams_payload_for_season(data, season)
         if not league or league == "DEL":
             payload = _attach_del_team_colors(payload)
+        if is_dnl_league(league) or is_dnl_league(payload.get("league")):
+            payload["league"] = domain_league(league or payload.get("league"))
         return payload
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Teams not found")
@@ -1632,7 +1642,7 @@ async def create_observation_run(payload: ObservationRunCreate, current_user: Au
     run = {
         "run_id": run_id,
         "user": owner_id,
-        "league": payload.league,
+        "league": persist_league(payload.league) or payload.league,
         "season": payload.season,
         "team_id": payload.team_id,
         "team_name": payload.team_name,
@@ -2130,17 +2140,25 @@ async def get_games(
 ):
     games = list_games(
         GAMES_DIR,
-        league=league,
+        league=catalog_league(league),
         season=season,
         team_id=_resolve_catalog_team_id(team_id) if team_id else None,
         phase_id=phase_id,
         status=status,
     )
     mapper = _schedule_team_mapper(league)
+    emitted = []
     for game in games:
-        game["home_team_name"] = game.get("home_team_name") or mapper.team_name(game.get("home_team_id") or "")
-        game["away_team_name"] = game.get("away_team_name") or mapper.team_name(game.get("away_team_id") or "")
-    return {"games": games, "total": len(games), "season": season_to_display(season), "league": league}
+        row = apply_domain_league_fields(game)
+        row["home_team_name"] = row.get("home_team_name") or mapper.team_name(row.get("home_team_id") or "")
+        row["away_team_name"] = row.get("away_team_name") or mapper.team_name(row.get("away_team_id") or "")
+        emitted.append(row)
+    return {
+        "games": emitted,
+        "total": len(emitted),
+        "season": season_to_display(season),
+        "league": domain_league(league) or league,
+    }
 
 
 @app.get("/api/games/{game_id:path}")
@@ -2151,7 +2169,7 @@ async def get_game_by_id(game_id: str, current_user: AuthContext = Depends(get_c
     mapper = _schedule_team_mapper(str(game.get("league_id") or game_id.split(":", 1)[0]))
     game["home_team_name"] = game.get("home_team_name") or mapper.team_name(game.get("home_team_id") or "")
     game["away_team_name"] = game.get("away_team_name") or mapper.team_name(game.get("away_team_id") or "")
-    return game
+    return apply_domain_league_fields(game)
 
 
 @app.post("/api/del-data/import-schedule")
@@ -2160,7 +2178,7 @@ async def import_del_schedule(
     league: str = Query(default="DEL"),
     current_user: AuthContext = Depends(require_admin),
 ):
-    league_key = (league or "DEL").strip().upper()
+    league_key = catalog_league(league or "DEL")
     if league_key == "DEL2":
         mapper = _del2_team_catalog_mapper()
         importer = Del2ScheduleImporter(mapper, data_dir=DATA_DIR)
@@ -2170,7 +2188,7 @@ async def import_del_schedule(
     elif league_key == "NHL":
         mapper = _nhl_team_catalog_mapper()
         importer = NhlScheduleImporter(mapper)
-    elif league_key in {"U20_DNL", "U20"}:
+    elif is_dnl_league(league_key):
         mapper = _dnl_team_catalog_mapper()
         importer = DnlScheduleImporter(mapper)
     else:
@@ -2187,7 +2205,7 @@ async def import_del_schedule(
         )
     upsert_result = upsert_games(
         GAMES_DIR,
-        league=league,
+        league=catalog_league(league),
         season=season,
         games=result["games"],
     )
@@ -2222,12 +2240,12 @@ async def get_del_data_status(
     current_user: AuthContext = Depends(get_current_user),
 ):
     roster_status = roster_status_summary(ROSTERS_DIR, league, season)
-    games_status = games_status_summary(GAMES_DIR, league, season)
+    games_status = games_status_summary(GAMES_DIR, catalog_league(league), season)
     importable = PennyDelImporter(PLAYERS_DIR, PENNY_DEL_IMPORT_CONFIG_FILE).list_teams(enabled_only=True)
     expected_teams = len(importable)
     return {
         "season": season_to_display(season),
-        "league": league,
+        "league": domain_league(league) or league,
         "rosters": roster_status,
         "games": games_status,
         "expected_teams": expected_teams,
@@ -2314,9 +2332,9 @@ async def import_del_game_stats_batch(
     skip_existing: bool = Query(default=True),
     current_user: AuthContext = Depends(require_admin),
 ):
-    games = list_games(GAMES_DIR, league=league, season=season, status="final")
+    games = list_games(GAMES_DIR, league=catalog_league(league), season=season, status="final")
     if not games:
-        games = [game for game in list_games(GAMES_DIR, league=league, season=season) if game.get("score")]
+        games = [game for game in list_games(GAMES_DIR, league=catalog_league(league), season=season) if game.get("score")]
 
     mapper = _team_catalog_mapper()
     importer = PennyDelSpieldetailsImporter(mapper)
@@ -2363,7 +2381,7 @@ async def import_del_game_stats_batch(
         "results": enriched_results,
         "saved": saved,
         "season": season_to_display(season),
-        "league": league,
+        "league": domain_league(league) or league,
         "candidates": len(games),
     }
 
@@ -4051,9 +4069,12 @@ def _enrich_scene_for_response(
     Shared by GET /api/scenes and GET /api/scenes/{scene_id} so list and single
     reads share one Scene DTO. Does not persist; callers must not save the result.
     """
+    scene = dict(scene)
     _ensure_scene_source(scene)
     scene["status"] = _normalize_scene_status(scene.get("status"))
     scene["scene_code"] = _normalize_scene_code(scene.get("scene_code") or scene.get("internal_scene_id"))
+    if scene.get("league"):
+        scene["league"] = persist_league(scene.get("league")) or scene.get("league")
     scene["episode_season"] = _scene_episode_season(scene)
     scene["episode_number"] = _scene_episode_number(scene)
     scene["season_code"] = scene["episode_season"]
@@ -4173,7 +4194,7 @@ async def create_scene(payload: SceneMarkerCreate, current_user: AuthContext = D
             episode_season=episode_season,
             episode_number=episode_number,
         ),
-        "league": payload.league,
+        "league": persist_league(payload.league) or payload.league,
         "season": payload.season,
         "competition_phase": payload.competition_phase,
         "competition_phase_label": payload.competition_phase_label,
@@ -4309,7 +4330,7 @@ async def get_scenes(
             continue
         if not _owners_match(scene.get("user", ""), current_user):
             continue
-        if league and scene.get("league") != league:
+        if league and not leagues_equivalent(scene.get("league"), league) and scene.get("league") != league:
             continue
         if season and scene.get("season") != season:
             continue
@@ -4551,7 +4572,10 @@ async def update_scene(scene_id: str, payload: SceneMarkerUpdate, current_user: 
                 scene[field_name] = None
             else:
                 cleaned = str(value).strip()
-                scene[field_name] = cleaned or None
+                if field_name == "league":
+                    scene[field_name] = persist_league(cleaned) or None
+                else:
+                    scene[field_name] = cleaned or None
 
     if "observed_team" in payload_fields or "observed_team_name" in payload_fields:
         observed_name = scene.get("observed_team_name") or scene.get("observed_team")

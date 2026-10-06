@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { CatalogGame } from '../../api'
-import { COMPETITION_CONFIGS } from '../../data/competitionConfig'
+import { getCompetitionConfig } from '../../data/competitionConfig'
 import { UiChip, UiPill } from '../../components/ui'
 import TodayMatchdaySlate from '../../components/game/TodayMatchdaySlate'
 import { localTodayIsoDate } from '../../components/game/gameCatalogUtils'
@@ -19,7 +19,7 @@ type TodayGamesBannerProps = {
 }
 
 function leagueLabel(league: ScheduleLeague): string {
-  return COMPETITION_CONFIGS[league]?.label || league.replace(/_/g, ' ')
+  return getCompetitionConfig(league)?.label || league.replace(/_/g, ' ')
 }
 
 export default function TodayGamesBanner({

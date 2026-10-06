@@ -20,6 +20,8 @@ class ResolveProtectedLogoTests(unittest.TestCase):
         self.root = Path(self._tmp.name)
         (self.root / "del").mkdir()
         (self.root / "del" / "eisbaren_berlin.png").write_bytes(b"png")
+        (self.root / "u20_dnl").mkdir()
+        (self.root / "u20_dnl" / "erc_ingolstadt.png").write_bytes(b"png")
 
     def tearDown(self):
         self._tmp.cleanup()
@@ -31,6 +33,13 @@ class ResolveProtectedLogoTests(unittest.TestCase):
 
     def test_unknown_league(self):
         self.assertIsNone(resolve_protected_logo("nhl", "eisbaren_berlin.png", root=self.root))
+
+    def test_dnl_maps_to_u20_dnl_folder(self):
+        path = resolve_protected_logo("DNL", "erc_ingolstadt.png", root=self.root)
+        self.assertIsNotNone(path)
+        self.assertEqual(path.name, "erc_ingolstadt.png")
+        alias = resolve_protected_logo("U20_DNL", "erc_ingolstadt.png", root=self.root)
+        self.assertEqual(path, alias)
 
     def test_missing_file(self):
         self.assertIsNone(resolve_protected_logo("del", "missing.png", root=self.root))

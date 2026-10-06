@@ -228,7 +228,7 @@ export function buildDevTodayShowcaseByLeague(date: string): Record<ScheduleLeag
       { time: '18:30', status: 'scheduled' },
       { time: '20:00', status: 'scheduled' },
     ],
-    U20_DNL: [
+    DNL: [
       { time: '16:00', status: 'final', score: { home: 4, away: 1 } },
       { time: '18:00', status: 'scheduled' },
       { time: '19:30', status: 'scheduled' },
@@ -264,8 +264,8 @@ export function buildDevTodayShowcaseByLeague(date: string): Record<ScheduleLeag
         away,
         status: slot.status,
         score: slot.score,
-        phaseId: league === 'U20_DNL' ? 'finding_a_g1' : 'hauptrunde',
-        phaseLabel: league === 'U20_DNL' ? 'Findung A · Gruppe 1' : 'Hauptrunde',
+        phaseId: league === 'DNL' ? 'finding_a_g1' : 'hauptrunde',
+        phaseLabel: league === 'DNL' ? 'Findung A · Gruppe 1' : 'Hauptrunde',
       })
     })
   })

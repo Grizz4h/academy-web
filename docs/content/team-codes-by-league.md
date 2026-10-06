@@ -7,7 +7,7 @@ Nachschlage-Datei. **Quelle der Wahrheit** bleibt der jeweilige Katalog:
 | DEL | `data/academy/teams.json` |
 | DEL2 | `data/academy/teams_del2.json` |
 | CHL | `data/academy/teams_chl.json` |
-| U20_DNL | `data/academy/teams_u20_dnl.json` |
+| DNL | `data/academy/teams_u20_dnl.json` (internal key `U20_DNL`) |
 | NHL | `data/academy/teams_nhl.json` |
 | Nationalmannschaften | `data/academy/teams_national.json` |
 | Testspiele | `data/academy/teams_testspiele.json` |
@@ -26,13 +26,13 @@ Kanonische Dateinamen für Szenen (`asset_name`) berechnet **Tank** liga-aware a
 | `eisbaren_berlin` | CHL | **BER** | Eisbären Berlin | 2025/26, 2026/27 |
 | `erc_ingolstadt` | DEL | **ING** | ERC Ingolstadt | 2025/26, 2026/27 |
 | `erc_ingolstadt` | CHL | **ING** | ERC Ingolstadt | 2025/26 |
-| `erc_ingolstadt` | U20_DNL | **ERC** | ERC Ingolstadt U20 | 2025/26, 2026/27 |
+| `erc_ingolstadt` | DNL | **ERC** | ERC Ingolstadt U20 | 2025/26, 2026/27 |
 | `esv_kaufbeuren` | DEL2 | **KAU** | ESV Kaufbeuren | 2025/26, 2026/27 |
-| `esv_kaufbeuren` | U20_DNL | **ESV** | ESV Kaufbeuren U20 | 2025/26, 2026/27 |
+| `esv_kaufbeuren` | DNL | **ESV** | ESV Kaufbeuren U20 | 2025/26, 2026/27 |
 | `kolner_haie` | DEL | **KEC** | Kölner Haie | 2025/26, 2026/27 |
 | `kolner_haie` | CHL | **KOL** | Kölner Haie | 2026/27 |
 | `starbulls_rosenheim` | DEL2 | **ROS** | Starbulls Rosenheim | 2025/26, 2026/27 |
-| `starbulls_rosenheim` | U20_DNL | **SBR** | Starbulls Rosenheim U20 | 2025/26, 2026/27 |
+| `starbulls_rosenheim` | DNL | **SBR** | Starbulls Rosenheim U20 | 2025/26, 2026/27 |
 
 Beispiel: Kölner Haie sind in der DEL **KEC**, in der CHL (ab 2026/27) **KOL**. Eisbären Berlin sind in der DEL **EBB**, in der CHL **BER**.
 
@@ -45,11 +45,11 @@ Nur die Fälle, in denen dasselbe Kürzel **nicht** denselben Club meint:
 | **NIT** | DEL | Nürnberg Ice Tigers |
 | **NIT** | CHL | HK Nitra |
 | **SCB** | CHL | SC Bern |
-| **SCB** | U20_DNL | SC Bietigheim-Bissingen U20 |
+| **SCB** | DNL | SC Bietigheim-Bissingen U20 |
 | **FRA** | DEL | Löwen Frankfurt |
 | **FRA** | Nationalmannschaften | Frankreich |
 | **KEC** | DEL | Kölner Haie |
-| **KEC** | U20_DNL | Kölner Junghaie |
+| **KEC** | DNL | Kölner Junghaie |
 
 U20-Nachwuchs mit gleichem Kürzel wie der Herren-Club (AEV, DRE, IEC, KEV, RAV, WOB, …) ist Absicht. Bremerhaven heißt in DEL und CHL **BRE**, aber die Catalog-ID ist unterschiedlich (`fischtown_pinguins` vs. `pinguins_bremerhaven`).
 
@@ -146,7 +146,10 @@ Saisons im Katalog: 2025/26, 2026/27 (Default: 2025/26)
 | VLH | Växjö Lakers | `vaxjo_lakers` | 2026/27 |
 | ZSC | ZSC Lions Zurich | `zsc_lions_zurich` | 2025/26 |
 
-## U20_DNL
+## DNL
+
+Kanonische Competition: **DNL**. Interner Katalog / Dateiname bleibt `teams_u20_dnl.json` (`U20_DNL`).
+U20 ist Alters-/Teamkontext in den Namen, nicht Teil des Liga-Strings.
 
 Saisons im Katalog: 2025/26, 2026/27 (Default: 2025/26)
 

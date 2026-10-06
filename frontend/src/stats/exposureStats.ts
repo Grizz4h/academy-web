@@ -1,6 +1,7 @@
 import type { Session } from '../api'
 import { getRealSessions } from '../utils/sessionEligibility'
 import { normalizeSeasonValue } from './seasonNormalization'
+import { isDnlLeague } from '../data/leagueIdentity'
 
 export type SessionLikeGameInfo = {
   game_info?: {
@@ -63,7 +64,7 @@ const YOUTH_NAME_RE = /\b(u\s*-?\s*20|u\s*-?\s*18|juniors?|jung|nachwuchs)/i
 /**
  * Ensure youth-league teams are not conflated with identically named senior clubs.
  * Catalog names should already carry "U20" / Juniors / Jung-; this is a safety net
- * for legacy stored sessions that still use the bare club name under U20_DNL.
+ * for legacy stored sessions that still use the bare club name under DNL.
  */
 export function canonicalTeamDisplayName(
   name?: string | null,
@@ -72,8 +73,8 @@ export function canonicalTeamDisplayName(
   const trimmed = String(name || '').trim()
   if (!trimmed) return trimmed
 
-  const leagueKey = String(league || '').trim().toUpperCase()
-  if (leagueKey === 'U20_DNL' || leagueKey === 'U20') {
+  const leagueKey = String(league || '').trim()
+  if (isDnlLeague(leagueKey)) {
     if (YOUTH_NAME_RE.test(trimmed)) return trimmed
     return `${trimmed} U20`
   }

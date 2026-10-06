@@ -7,7 +7,7 @@ const LEAGUE_SHORT: Record<ScheduleLeague, string> = {
   DEL: 'DEL',
   DEL2: 'DEL2',
   CHL: 'CHL',
-  U20_DNL: 'U20',
+  DNL: 'DNL',
   NHL: 'NHL',
 }
 

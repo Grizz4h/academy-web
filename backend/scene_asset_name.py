@@ -34,7 +34,7 @@ LEAGUE_CATALOG_FILES = {
     "DEL2": "teams_del2.json",
     "NHL": "teams_nhl.json",
     "CHL": "teams_chl.json",
-    "U20_DNL": "teams_u20_dnl.json",
+    "DNL": "teams_u20_dnl.json",
     "NATIONALMANNCHAFTEN": "teams_national.json",
     "TESTSPIELE": "teams_testspiele.json",
 }
@@ -66,7 +66,7 @@ LEAGUE_PREFERENCE = [
     "DEL2",
     "NHL",
     "CHL",
-    "U20_DNL",
+    "DNL",
     "NATIONALMANNCHAFTEN",
     "TESTSPIELE",
 ]
@@ -83,10 +83,10 @@ def normalize_league_key(value: Optional[str]) -> str:
     text = "".join(ch for ch in text if unicodedata.category(ch) != "Mn")
     underscored = re.sub(r"[^A-Z0-9]+", "_", text.upper()).strip("_")
     compact = underscored.replace("_", "")
+    if compact in {"DNL", "U20DNL", "U20"}:
+        return "DNL"
     if underscored in LEAGUE_CATALOG_FILES:
         return underscored
-    if compact == "U20DNL":
-        return "U20_DNL"
     if compact == "NATIONALMANNSCHAFTEN":
         return "NATIONALMANNCHAFTEN"
     return underscored

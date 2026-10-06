@@ -1,6 +1,6 @@
 import { TeamCrest } from '../../components/game/TeamCrest'
 import { formatGameTimeLabel } from '../../components/game/gameCatalogUtils'
-import { COMPETITION_CONFIGS } from '../../data/competitionConfig'
+import { getCompetitionConfig } from '../../data/competitionConfig'
 import { resolveGameTeamShortCode } from '../../data/teamShortCodes'
 import { UiButton, UiSheet, UiSheetActions } from '../../components/ui'
 import type { GameSetupPrefill } from './gameSetupPrefill'
@@ -23,7 +23,7 @@ export default function PendingGameSetupSheet({
 }: PendingGameSetupSheetProps) {
   const home = resolveGameTeamShortCode(prefill.teamHome, prefill.league, prefill.season)
   const away = resolveGameTeamShortCode(prefill.teamAway, prefill.league, prefill.season)
-  const league = COMPETITION_CONFIGS[prefill.league]?.label || prefill.league.replace(/_/g, ' ')
+  const league = getCompetitionConfig(prefill.league)?.label || prefill.league.replace(/_/g, ' ')
   const time = formatGameTimeLabel(prefill.time, { omitSuffix: true, date: prefill.date })
   const matchday = prefill.competitionValue ? `Spieltag ${prefill.competitionValue}` : null
   const metaParts = [league, time || null, matchday, prefill.phaseLabel || null].filter(Boolean)

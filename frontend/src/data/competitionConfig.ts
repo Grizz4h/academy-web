@@ -1,3 +1,5 @@
+import { domainLeague } from './leagueIdentity'
+
 export type CompetitionUnitType = 'matchday' | 'game_number' | 'series_game'
 
 export interface CompetitionPhaseConfig {
@@ -80,9 +82,9 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
       { id: 'stanley_cup_final', label: 'Stanley Cup Final', unit: { type: 'series_game', label: 'Game', min: 1, max: 7 } },
     ],
   },
-  U20_DNL: {
-    league: 'U20_DNL',
-    label: 'U20 DNL',
+  DNL: {
+    league: 'DNL',
+    label: 'DNL',
     // Real flow: Findung A sorts Div 1 → Top / Quali 1; Div 2 + Div 3 run in parallel; then playoffs/playdowns.
     stageGroups: [
       {
@@ -168,7 +170,8 @@ export function isMatchdayExcludedFromInference(
 }
 
 export function getCompetitionConfig(league?: string): CompetitionConfig | undefined {
-  return league ? COMPETITION_CONFIGS[league] : undefined
+  if (!league) return undefined
+  return COMPETITION_CONFIGS[domainLeague(league)] || COMPETITION_CONFIGS[league]
 }
 
 export function getCompetitionPhase(league?: string, phaseId?: string): CompetitionPhaseConfig | undefined {
@@ -218,7 +221,7 @@ export function formatCompetitionContext(input: {
   const unitLabel = input.competition_unit_label || phase?.unit.label
   const unitValue = input.competition_unit_value || input.matchday
   const parts = [
-    input.league,
+    input.league ? domainLeague(input.league) || input.league : null,
     input.season,
     stage && stage.label !== phaseLabel ? stage.label : null,
     phaseLabel,

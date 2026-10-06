@@ -28,16 +28,20 @@ function session(partial: Partial<Session> & { id: string }): Session {
     'DEL keeps senior name',
   )
   assert(
-    canonicalTeamDisplayName('ERC Ingolstadt', 'U20_DNL') === 'ERC Ingolstadt U20',
-    'U20 qualifies bare name',
+    canonicalTeamDisplayName('ERC Ingolstadt', 'DNL') === 'ERC Ingolstadt U20',
+    'DNL qualifies bare name',
   )
   assert(
-    canonicalTeamDisplayName('ERC Ingolstadt U20', 'U20_DNL') === 'ERC Ingolstadt U20',
+    canonicalTeamDisplayName('ERC Ingolstadt U20', 'DNL') === 'ERC Ingolstadt U20',
     'no double U20',
   )
   assert(
-    canonicalTeamDisplayName('Jungadler Mannheim', 'U20_DNL') === 'Jungadler Mannheim',
+    canonicalTeamDisplayName('Jungadler Mannheim', 'DNL') === 'Jungadler Mannheim',
     'youth brand stays',
+  )
+  assert(
+    canonicalTeamDisplayName('ERC Ingolstadt', 'U20_DNL') === 'ERC Ingolstadt U20',
+    'legacy U20_DNL alias still qualifies',
   )
   console.log('ok canonicalTeamDisplayName')
 }
