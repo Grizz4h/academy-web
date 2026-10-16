@@ -14,6 +14,7 @@ import {
   readGeolocationPermission,
   readPendingVenuePresence,
   setDevLocationScenario,
+  shouldDisableArenaLocationCheck,
   simulateFixForGame,
   writePendingVenuePresence,
   type DevLocationScenario,
@@ -133,6 +134,11 @@ export default function ArenaCheckPanel({ game, compact = false }: ArenaCheckPan
         <p className={styles.copy}>
           Standortprüfung ist im Matchday-Zeitfenster verfügbar (3 Stunden vor dem Spiel bis 3 Stunden nach dem erwarteten Ende).
         </p>
+      ) : permission === 'denied' && !result ? (
+        <p className={styles.copy}>
+          Standortfreigabe ist derzeit blockiert. Tippe „Standort prüfen“, um es erneut zu versuchen —
+          oder erlaube Standort für rInQ Tank in den Browser-/Systemeinstellungen.
+        </p>
       ) : permission === 'unknown' && !result ? (
         <p className={styles.copy}>
           rInQ Tank kann einmalig deinen Standort prüfen, um festzustellen, ob du dieses Spiel tatsächlich vor Ort begleitest.
@@ -178,7 +184,12 @@ export default function ArenaCheckPanel({ game, compact = false }: ArenaCheckPan
       ) : null}
 
       {usable && (inWindow || reason === 'insufficient_accuracy' || devMode) ? (
-        <UiButton type="button" size="sm" onClick={() => void runCheck()} disabled={busy || (permission === 'denied' && !devMode)}>
+        <UiButton
+          type="button"
+          size="sm"
+          onClick={() => void runCheck()}
+          disabled={shouldDisableArenaLocationCheck({ busy })}
+        >
           {busy ? 'Prüfe…' : result ? 'Erneut prüfen' : 'Standort prüfen'}
         </UiButton>
       ) : null}

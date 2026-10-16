@@ -1,5 +1,10 @@
 export { haversineDistanceMeters, isInsideGeofence, coarseDistanceMeters } from './geofence'
-export { getCurrentPositionOnce, readGeolocationPermission, LOCATION_ACCURACY } from './geolocation'
+export {
+  getCurrentPositionOnce,
+  readGeolocationPermission,
+  shouldDisableArenaLocationCheck,
+  LOCATION_ACCURACY,
+} from './geolocation'
 export { isWithinArenaMatchdayWindow, ARENA_MATCHDAY_WINDOW, arenaWindowBounds } from './matchdayWindow'
 export { resolveHomeAwayRole } from './homeAway'
 export { evaluateVenuePresence, isQualifyingVenueVerification } from './verification'

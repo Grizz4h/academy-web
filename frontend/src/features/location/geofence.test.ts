@@ -13,7 +13,7 @@ import { sanitizeLocationVerification } from './privacy'
 import { applyVenuePresenceToEvents } from './visits'
 import { VENUE_CATALOG } from '../../data/venues'
 import { isGeofenceUsable } from '../../data/venues/resolveVenue'
-import { LOCATION_ACCURACY } from './geolocation'
+import { LOCATION_ACCURACY, shouldDisableArenaLocationCheck } from './geolocation'
 import { buildSessionCompletedEvent } from '../progression/activityEvents'
 import type { CatalogGame } from '../../api'
 
@@ -161,6 +161,12 @@ const game: CatalogGame = {
   assert(!source.includes('watchPosition('), 'no watchPosition')
   assert(!source.includes('setInterval'), 'no location polling loop')
   assert(source.includes('getCurrentPosition'), 'one-shot getCurrentPosition')
+}
+
+{
+  // RT-S-012: Permissions API "denied" must not pre-disable the Android control.
+  assert(shouldDisableArenaLocationCheck({ busy: false }) === false, 'idle check stays enabled')
+  assert(shouldDisableArenaLocationCheck({ busy: true }) === true, 'busy check disables')
 }
 
 console.log('geofence.test.ts: all assertions passed')
