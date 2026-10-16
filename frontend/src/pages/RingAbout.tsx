@@ -1,7 +1,13 @@
 import { useState, useMemo, useEffect, useRef, type KeyboardEvent, type RefObject } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { api, type SceneMarker, type SceneMarkerUpdate, type Session } from '../api'
+import {
+  readSceneFocusId,
+  SCENE_FOCUS_HIGHLIGHT_MS,
+  sceneDomId,
+  waitForElementById,
+} from '../features/scenePool/focusSceneTile'
 import Card from '../components/Card'
 import FilterSheet, { FilterSheetSection, FilterSheetStack } from '../components/FilterSheet'
 import { ManualSceneForm, type ManualSceneFormMode } from '../components/ManualSceneForm'
@@ -46,6 +52,7 @@ function useSceneListWindow(
   hasMore: boolean
   sentinelRef: RefObject<HTMLDivElement | null>
   loadMore: () => void
+  revealUpTo: (index: number) => void
 } {
   const [visibleCount, setVisibleCount] = useState(pageSize)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -56,6 +63,11 @@ function useSceneListWindow(
 
   const loadMore = () => {
     setVisibleCount((count) => Math.min(count + pageSize, total))
+  }
+
+  const revealUpTo = (index: number) => {
+    if (!Number.isFinite(index) || index < 0) return
+    setVisibleCount((count) => Math.max(count, Math.min(index + 1, total)))
   }
 
   const capped = Math.min(visibleCount, total)
@@ -75,7 +87,7 @@ function useSceneListWindow(
     return () => observer.disconnect()
   }, [hasMore, pageSize, total, capped])
 
-  return { visibleCount: capped, hasMore, sentinelRef, loadMore }
+  return { visibleCount: capped, hasMore, sentinelRef, loadMore, revealUpTo }
 }
 
 function isScenePublished(scene: SceneMarker): boolean {
@@ -225,10 +237,14 @@ export default function RingAbout() {
   const queryClient = useQueryClient()
   const { ingestActivityEvents } = useRewards()
   const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
   const { data, isLoading, error } = useQuery({
     queryKey: ['scenes'],
     queryFn: () => api.getScenes(),
   })
+  const [highlightedSceneId, setHighlightedSceneId] = useState<string | null>(null)
+  const [focusError, setFocusError] = useState<string | null>(null)
+  const focusPreparedForRef = useRef<string | null>(null)
 
   const { data: curriculum } = useQuery({
     queryKey: ['curriculum'],
@@ -264,6 +280,10 @@ export default function RingAbout() {
   }, [curriculum])
 
   const sessionFilter = (searchParams.get('session_id') || '').trim()
+  const focusSceneId = useMemo(
+    () => readSceneFocusId(searchParams, location.hash),
+    [searchParams, location.hash],
+  )
 
   const { data: sessionsData } = useQuery({
     queryKey: ['sessions-for-scene-insights'],
@@ -722,7 +742,7 @@ export default function RingAbout() {
     filterEpisodeSeason,
     filterContextKey,
   ].join('|')
-  const { visibleCount, hasMore, sentinelRef, loadMore } = useSceneListWindow(listResetKey, filtered.length)
+  const { visibleCount, hasMore, sentinelRef, loadMore, revealUpTo } = useSceneListWindow(listResetKey, filtered.length)
   const visibleScenes = filtered.slice(0, visibleCount)
 
   const hasActiveFilter = sessionFilter || filterSource || filterLeague || filterSeason || filterTeam || (filterStatus && filterStatus !== 'NEW') || filterMinRating || sortMode !== 'created' || filterTrack || filterDrill || filterCompetitionPhase || filterCompetitionUnitValue || filterEpisodeSeason || filterContextKey
@@ -765,6 +785,86 @@ export default function RingAbout() {
       setInsightsLeagueFilter('DEL')
     }
   }, [activeTab])
+
+  // Deep-link: clear filters / switch to pool so the target Scene.id tile can render.
+  useEffect(() => {
+    if (!focusSceneId || isLoading) return
+    if (scenes.length === 0) {
+      setFocusError(`Szene „${focusSceneId}“ wurde im Szenenpool nicht gefunden.`)
+      return
+    }
+
+    const scene = scenes.find(
+      (entry) => entry.id === focusSceneId || entry.scene_code === focusSceneId || entry.internal_scene_id === focusSceneId,
+    )
+    if (!scene) {
+      setFocusError(`Szene „${focusSceneId}“ wurde im Szenenpool nicht gefunden.`)
+      return
+    }
+    setFocusError(null)
+
+    if (activeTab !== 'pool') {
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.delete('tab')
+      nextParams.set('scene', scene.id)
+      if (scene.session_id) nextParams.set('session_id', scene.session_id)
+      setSearchParams(nextParams, { replace: true })
+      return
+    }
+
+    if (focusPreparedForRef.current !== scene.id) {
+      focusPreparedForRef.current = scene.id
+      setFilterStatus('')
+      setFilterLeague('')
+      setFilterSeason('')
+      setFilterTeam('')
+      setFilterMinRating('')
+      setFilterTrack('')
+      setFilterDrill('')
+      setFilterSource('')
+      setFilterCompetitionPhase('')
+      setFilterCompetitionUnitType('')
+      setFilterCompetitionUnitValue('')
+      setFilterEpisodeSeason('')
+      setFilterContextKey('')
+      setSortMode('created')
+
+      const nextParams = new URLSearchParams()
+      if (scene.session_id) nextParams.set('session_id', scene.session_id)
+      nextParams.set('scene', scene.id)
+      if (searchParams.toString() !== nextParams.toString()) {
+        setSearchParams(nextParams, { replace: true })
+      }
+    }
+  }, [focusSceneId, isLoading, scenes, activeTab, searchParams, setSearchParams])
+
+  // Deep-link: expand list window, scroll to tile, brief highlight.
+  useEffect(() => {
+    if (!focusSceneId || isLoading || focusError) return
+    const scene = scenes.find(
+      (entry) => entry.id === focusSceneId || entry.scene_code === focusSceneId || entry.internal_scene_id === focusSceneId,
+    )
+    if (!scene) return
+
+    const index = filtered.findIndex((entry) => entry.id === scene.id)
+    if (index < 0) return
+    revealUpTo(index)
+
+    const ac = new AbortController()
+    void waitForElementById(sceneDomId(scene.id), { signal: ac.signal }).then((element) => {
+      if (!element) {
+        setFocusError('Szene gefunden, aber die Kachel konnte nicht angezeigt werden. Bitte Filter prüfen.')
+        return
+      }
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setHighlightedSceneId(scene.id)
+      window.setTimeout(() => {
+        setHighlightedSceneId((current) => (current === scene.id ? null : current))
+      }, SCENE_FOCUS_HIGHLIGHT_MS)
+    })
+
+    return () => ac.abort()
+  }, [focusSceneId, isLoading, focusError, scenes, filtered, revealUpTo])
 
   const insightsScenes = useMemo(() => {
     if (!insightsLeagueFilter) return scenes
@@ -1281,6 +1381,12 @@ export default function RingAbout() {
             )}
           </Card>
 
+          {focusError ? (
+            <Card surface="section">
+              <p style={{ margin: 0, color: '#fecaca', fontSize: '0.92rem' }}>{focusError}</p>
+            </Card>
+          ) : null}
+
           {isLoading && <PageSkeleton />}
           {error && <Card><span style={{ color: '#f87171' }}>Fehler beim Laden der Szenen.</span></Card>}
 
@@ -1366,6 +1472,7 @@ export default function RingAbout() {
                     onRatingChange={handleRatingChange}
                     onPipelineToggle={handlePipelineToggle}
                     celebrate={celebratedSceneId === scene.id}
+                    focused={highlightedSceneId === scene.id}
                     selectionMode={selection.active}
                     selected={selection.isSelected(scene.id)}
                     onToggleSelect={selection.toggle}
@@ -1743,7 +1850,7 @@ function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onC
   )
 }
 
-function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false, selectionMode = false, selected = false, onToggleSelect }: {
+function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false, focused = false, selectionMode = false, selected = false, onToggleSelect }: {
   scene: SceneMarker
   observedTeam: string
   drillSceneSlugById: Map<string, string>
@@ -1754,6 +1861,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, on
   onRatingChange: (scene: SceneMarker, rating: SceneRatingValue) => void
   onPipelineToggle: (scene: SceneMarker) => void
   celebrate?: boolean
+  focused?: boolean
   selectionMode?: boolean
   selected?: boolean
   onToggleSelect?: (id: string) => void
@@ -1808,6 +1916,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, on
   const shellClass = [
     'card',
     selectStyles.shell,
+    focused ? styles.sceneFocusHighlight : '',
     selectionMode ? selectStyles.shellSelecting : '',
     selectionMode && !selected ? selectStyles.shellDimmed : '',
     selectionMode && selected ? selectStyles.shellSelected : '',
@@ -1817,7 +1926,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, on
 
   return (
     <div
-      id={`scene-${scene.id}`}
+      id={sceneDomId(scene.id)}
       className={shellClass}
       role={selectionMode ? 'button' : undefined}
       aria-pressed={selectionMode ? selected : undefined}

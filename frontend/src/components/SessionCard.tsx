@@ -24,6 +24,7 @@ import { SessionReflectionPanel } from '../features/reflection/SessionReflection
 import { RinQIcon } from './icons'
 import { useCreatorMode } from '../features/creator'
 import { SceneMarkerButton } from './SceneMarkerButton'
+import { buildScenePoolFocusHref } from '../features/scenePool/focusSceneTile'
 
 interface SessionCardProps {
   session: Session
@@ -399,7 +400,10 @@ export default function SessionCard({
                 {sceneEntries.map((entry) => (
                   <a
                     key={entry.id}
-                    href={`/ringabout?session_id=${encodeURIComponent(session.id)}#scene-${entry.id}`}
+                    href={buildScenePoolFocusHref({
+                      sceneId: entry.id,
+                      sessionId: session.id,
+                    })}
                     style={{
                       padding: '0.25rem 0.5rem',
                       borderRadius: '9999px',
