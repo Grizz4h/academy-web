@@ -16,6 +16,11 @@ import {
   type ObservationScopeSelection,
 } from '../utils/observationScope'
 import {
+  getFirstMissingSessionSetupRequiredField,
+  scrollToSessionSetupField,
+  type SessionSetupRequiredField,
+} from '../utils/sessionSetupValidation'
+import {
   defaultDelSetupSeason,
   isSplitSeasonLeague,
   normalizeSeasonValue,
@@ -110,6 +115,7 @@ export default function SessionSetup() {
   const [selectedGameId, setSelectedGameId] = useState<string>('')
   const [devMode, setDevMode] = useState(() => isDevNavEnabled())
   const [dummyError, setDummyError] = useState('')
+  const [requiredFieldError, setRequiredFieldError] = useState<SessionSetupRequiredField | null>(null)
   const draftKey = user ? `academy.sessionDraft.${user}.${moduleId}` : null
   const useSplitSeason = isSplitSeasonLeague(league)
   const seasonOptions = useSplitSeason ? SEASON_OPTIONS : TOURNAMENT_YEAR_OPTIONS
@@ -681,14 +687,17 @@ export default function SessionSetup() {
       alert('Home- und Auswärtsteam müssen unterschiedlich sein.')
       return
     }
-    if (!observedTeam) {
-      alert('Bitte wähle das beobachtete Team aus (Pflichtfeld).')
+    const requiredIssue = getFirstMissingSessionSetupRequiredField({
+      observedTeam,
+      observationScope,
+    })
+    if (requiredIssue) {
+      setRequiredFieldError(requiredIssue.field)
+      alert(requiredIssue.message)
+      scrollToSessionSetupField(requiredIssue.fieldId)
       return
     }
-    if (!hasExplicitObservationScope(observationScope)) {
-      alert('Bitte wähle den Beobachtungsumfang (Drittel / gesamtes Spiel).')
-      return
-    }
+    setRequiredFieldError(null)
     if (competitionConfig && !selectedCompetitionPhase) {
       alert('Bitte eine Wettbewerbsphase wählen.')
       return
@@ -935,12 +944,23 @@ export default function SessionSetup() {
             if (patch.competitionValue !== undefined) setCompetitionValue(patch.competitionValue)
             if (patch.teamHome !== undefined) setTeamHome(patch.teamHome)
             if (patch.teamAway !== undefined) setTeamAway(patch.teamAway)
-            if (patch.observedTeam !== undefined) setObservedTeam(patch.observedTeam)
-            if (patch.observationScope !== undefined) setObservationScope(patch.observationScope)
+            if (patch.observedTeam !== undefined) {
+              setObservedTeam(patch.observedTeam)
+              if (patch.observedTeam) {
+                setRequiredFieldError((current) => (current === 'observedTeam' ? null : current))
+              }
+            }
+            if (patch.observationScope !== undefined) {
+              setObservationScope(patch.observationScope)
+              if (hasExplicitObservationScope(patch.observationScope)) {
+                setRequiredFieldError((current) => (current === 'observationScope' ? null : current))
+              }
+            }
             if (patch.selectedGameId !== undefined) setSelectedGameId(patch.selectedGameId)
           }}
           availableTeams={availableTeams}
           catalog={catalog}
+          requiredFieldError={requiredFieldError}
         />
 
         {league === 'NHL' && teamHome && teamAway && (
@@ -1414,7 +1434,7 @@ export default function SessionSetup() {
           size="sm"
           data-tutorial-id={TUTORIAL_TARGET.setupStart}
           onClick={handleCreateSession}
-          disabled={createSessionMutation.isPending || !user || !hasExplicitObservationScope(observationScope)}
+          disabled={createSessionMutation.isPending || !user}
         >
           {createSessionMutation.isPending ? 'Erstelle Session…' : 'Session starten'}
         </UiButton>

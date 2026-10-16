@@ -14,7 +14,12 @@ import {
 import { LEAGUES } from '../../data/teamsByLeague'
 import { getCompetitionConfig, getCompetitionStageGroup, phasesForStageGroup } from '../../data/competitionConfig'
 import { isSplitSeasonLeague, SEASON_OPTIONS, TOURNAMENT_YEAR_OPTIONS } from '../../stats/seasonNormalization'
-import { OBSERVATION_SCOPE_OPTIONS, type ObservationScopeSelection } from '../../utils/observationScope'
+import {
+  OBSERVATION_SCOPE_OPTIONS,
+  hasExplicitObservationScope,
+  type ObservationScopeSelection,
+} from '../../utils/observationScope'
+import { SESSION_SETUP_FIELD_IDS } from '../../utils/sessionSetupValidation'
 import { useDevNavEnabled } from '../../config/featureFlags'
 import {
   fieldsFromCatalogGame,
@@ -66,6 +71,8 @@ type Props = {
   catalog: CatalogSlice
   showObservationScope?: boolean
   intro?: string
+  /** Which required field to highlight after a failed start attempt. */
+  requiredFieldError?: 'observedTeam' | 'observationScope' | null
 }
 
 type TeamPicker = 'home' | 'away' | null
@@ -97,6 +104,7 @@ export function LiveObservationPanel({
   catalog,
   showObservationScope = true,
   intro,
+  requiredFieldError = null,
 }: Props) {
   const {
     league,
@@ -592,7 +600,14 @@ export function LiveObservationPanel({
           </div>
         ) : null}
 
-        <div className={styles.arena} key={`${teamHome}-${teamAway}-${selectedGame?.id || 'open'}`}>
+        <div
+          id={SESSION_SETUP_FIELD_IDS.observedTeam}
+          className={[
+            styles.arena,
+            requiredFieldError === 'observedTeam' ? styles.fieldInvalid : '',
+          ].filter(Boolean).join(' ')}
+          key={`${teamHome}-${teamAway}-${selectedGame?.id || 'open'}`}
+        >
           <div className={styles.tileWrap}>
             <div
               ref={homeTileRef}
@@ -743,11 +758,19 @@ export function LiveObservationPanel({
         </div>
 
         {teamHome && teamAway && !observedTeam ? (
-          <p className={styles.hint}>Tippe das Team, das du beobachtest — Pflicht für die Session.</p>
+          <p className={styles.hint} role={requiredFieldError === 'observedTeam' ? 'alert' : undefined}>
+            Tippe das Team, das du beobachtest — Pflicht für die Session.
+          </p>
         ) : null}
 
         {showObservationScope ? (
-          <div className={styles.block}>
+          <div
+            id={SESSION_SETUP_FIELD_IDS.observationScope}
+            className={[
+              styles.block,
+              requiredFieldError === 'observationScope' ? styles.fieldInvalid : '',
+            ].filter(Boolean).join(' ')}
+          >
             <span className={styles.kicker}>Umfang</span>
             <div className={styles.chipRow}>
               {OBSERVATION_SCOPE_OPTIONS.map((option) => (
@@ -761,6 +784,11 @@ export function LiveObservationPanel({
                 </UiChip>
               ))}
             </div>
+            {teamHome && teamAway && observedTeam && !hasExplicitObservationScope(observationScope) ? (
+              <p className={styles.hint} role={requiredFieldError === 'observationScope' ? 'alert' : undefined}>
+                Wähle das Beobachtungsdrittel oder das gesamte Spiel — Pflicht für die Session.
+              </p>
+            ) : null}
           </div>
         ) : null}
       </section>
