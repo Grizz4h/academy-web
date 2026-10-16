@@ -420,6 +420,20 @@
   color: rgba(167, 243, 208, 0.9);
 }
 
+/* Sticky TopNav clearance when scrolling to a required field from Start. */
+.arena,
+.block {
+  scroll-margin-top: 5.5rem;
+  scroll-margin-bottom: 6.5rem;
+}
+
+.fieldInvalid {
+  outline: 1px solid rgba(251, 191, 36, 0.55);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.2), 0 0 18px rgba(251, 191, 36, 0.12);
+  border-radius: 16px;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .gameCard:hover,
   .tile:hover:not(.tileObserved),
