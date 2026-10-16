@@ -40,8 +40,23 @@ export async function readGeolocationPermission(): Promise<GeolocationPermission
     if (status.state === 'denied') return 'denied'
     return 'unknown'
   } catch {
+    // iOS Safari and some WebViews throw or omit geolocation from Permissions API.
     return 'unknown'
   }
+}
+
+/**
+ * Whether the Arena "Standort prüfen" control should be disabled.
+ *
+ * Important: do **not** pre-disable from Permissions API `denied`.
+ * Android Chrome often reports `denied` before/without a usable prompt path,
+ * while iOS typically falls back to `unknown` and stays clickable. The real
+ * permission outcome comes from `getCurrentPosition` on user gesture.
+ */
+export function shouldDisableArenaLocationCheck(options: {
+  busy: boolean
+}): boolean {
+  return Boolean(options.busy)
 }
 
 export function getCurrentPositionOnce(options?: PositionOptions): Promise<GeolocationResult> {
