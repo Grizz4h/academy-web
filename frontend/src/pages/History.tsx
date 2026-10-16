@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api'
 import type { Session } from '../api'
 import { useUser } from '../context/UserContext'
-import SessionCard from '../components/SessionCard'
 import Card from '../components/Card'
 import FilterSheet, { FilterSheetRow, FilterSheetSection, FilterSheetStack } from '../components/FilterSheet'
 import { PageSkeleton } from '../components/Skeleton'
@@ -15,6 +14,12 @@ import { computeSessionOverview } from '../stats/sessionOverview'
 import { SessionOverviewKpis } from '../components/dashboard/SessionOverviewKpis'
 import { UiButton, UiButtonLink } from '../components/ui'
 import { TUTORIAL_TARGET } from '../features/tutorial'
+import {
+  JournalSessionDetail,
+  JournalSessionTile,
+  type JournalSceneEntry,
+} from '../features/sessionJournal'
+import journalStyles from '../features/sessionJournal/sessionJournal.module.css'
 import styles from './History.module.css'
 
 export default function History() {
@@ -86,6 +91,8 @@ export default function History() {
   const [filterYear, setFilterYear] = useState<string>('')
   const [filterMonth, setFilterMonth] = useState<string>('')
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
+  const [mobileShowDetail, setMobileShowDetail] = useState(false)
 
   const sessionList = sessions || []
   const dummyCount = countDummySessions(sessionList)
@@ -138,10 +145,38 @@ export default function History() {
 
   // Nach Datum absteigend sortieren (neueste oben)
   const sortedSessions = [...filteredSessions].sort((a, b) => {
-    const dateA = new Date(a.created_at).getTime();
-    const dateB = new Date(b.created_at).getTime();
-    return dateB - dateA;
-  });
+    const dateA = new Date(a.created_at).getTime()
+    const dateB = new Date(b.created_at).getTime()
+    return dateB - dateA
+  })
+
+  useEffect(() => {
+    if (selection.active) {
+      setMobileShowDetail(false)
+      return
+    }
+    if (!sortedSessions.length) {
+      setSelectedSessionId(null)
+      setMobileShowDetail(false)
+      return
+    }
+    if (!selectedSessionId || !sortedSessions.some((session) => session.id === selectedSessionId)) {
+      setSelectedSessionId(sortedSessions[0].id)
+    }
+  }, [sortedSessions, selectedSessionId, selection.active])
+
+  const selectedSession = useMemo(() => {
+    if (!selectedSessionId) return null
+    return sortedSessions.find((session) => session.id === selectedSessionId) || null
+  }, [sortedSessions, selectedSessionId])
+
+  const enrichSession = (session: Session): Session => ({
+    ...session,
+    observed_team: session.game_info?.observed_team || session.observed_team,
+    lab_template_id: session.lab_template_id && labTemplateTitleById.get(session.lab_template_id)
+      ? `${session.lab_template_id} · ${labTemplateTitleById.get(session.lab_template_id)}`
+      : session.lab_template_id,
+  })
 
   const uniqueModules = [...new Set(sessionList.map(s => s.module_id) || [])]
   const uniqueCreators = useMemo(() => {
@@ -158,15 +193,20 @@ export default function History() {
   const creatorFilterLabel = uniqueCreators.find((c) => c.id === filterCreator)?.label || filterCreator
 
   const scenesBySession = useMemo(() => {
-    const map = new Map<string, Array<{ id: string; game_time: string; period?: string; created_at: string }>>()
+    const map = new Map<string, JournalSceneEntry[]>()
     for (const scene of scenesData?.scenes || []) {
       if (!scene.session_id) continue
       if (!map.has(scene.session_id)) map.set(scene.session_id, [])
+      const source = scene.source && typeof scene.source === 'object' ? scene.source : null
       map.get(scene.session_id)?.push({
         id: scene.id,
         game_time: scene.game_time,
         period: scene.period,
         created_at: scene.created_at,
+        scene_code: scene.scene_code || null,
+        note: scene.note || null,
+        observation_id: source?.observation_id || null,
+        observation_label: source?.observation_label || null,
       })
     }
     for (const [, entries] of map) {
@@ -291,9 +331,9 @@ export default function History() {
   return (
     <div className={`${styles.page} ui-page-shell`}>
       <header className="ui-page-header" data-tutorial-id={TUTORIAL_TARGET.historyList}>
-        <h1 className="ui-page-title">Session-Verlauf</h1>
+        <h1 className="ui-page-title">Game Journal</h1>
         <p className="ui-page-lead">
-          Alle Sessions im Überblick — filtern, öffnen und bei Bedarf Details nachschauen.
+          Deine Sessions als Hockey Game Journal — Begegnungen, Beobachtungen und Szenen wiederlesen.
         </p>
       </header>
 
@@ -587,49 +627,77 @@ export default function History() {
         />
       </div>
 
-      <div className={styles.sessionList}>
-        {sortedSessions.length === 0 ? (
-          <Card surface="section" className={styles.emptyCard}>
-            <h3 className={styles.emptyTitle}>Keine Sessions gefunden</h3>
-            <p className={styles.emptyText}>
-              {overview.total === 0
-                ? 'Noch keine Sessions vorhanden. Starte in der Akademie mit dem ersten Modul.'
-                : 'Mit den aktuellen Filtern gibt es keine Treffer. Setze die Filter zurück oder wähle einen anderen Zeitraum.'}
-            </p>
-            <div className={styles.emptyActions}>
-              {overview.total > 0 ? (
-                <UiButton type="button" variant="secondary" onClick={resetFilters}>
-                  Filter zurücksetzen
-                </UiButton>
-              ) : null}
-              <UiButtonLink to="/curriculum">Zur Akademie</UiButtonLink>
-            </div>
-          </Card>
-        ) : (
-          sortedSessions.map((session: Session) => (
-            <SessionCard
-              key={session.id}
-              session={{
-                ...session,
-                observed_team: session.game_info?.observed_team,
-                lab_template_id: session.lab_template_id && labTemplateTitleById.get(session.lab_template_id)
-                  ? `${session.lab_template_id} · ${labTemplateTitleById.get(session.lab_template_id)}`
-                  : session.lab_template_id
-              }}
-              sceneEntries={scenesBySession.get(session.id) || []}
-              onDelete={selection.active ? undefined : (id) => deleteMutation.mutate(id)}
-              isDeletingId={
-                deleteMutation.isPending
-                  ? deleteMutation.variables
-                  : undefined
-              }
-              selectionMode={selection.active}
-              selected={selection.isSelected(session.id)}
-              onToggleSelect={selection.toggle}
-            />
-          ))
-        )}
-      </div>
+      {sortedSessions.length === 0 ? (
+        <Card surface="section" className={styles.emptyCard}>
+          <h3 className={styles.emptyTitle}>Keine Sessions gefunden</h3>
+          <p className={styles.emptyText}>
+            {overview.total === 0
+              ? 'Noch keine Sessions vorhanden. Starte in der Akademie mit dem ersten Modul.'
+              : 'Mit den aktuellen Filtern gibt es keine Treffer. Setze die Filter zurück oder wähle einen anderen Zeitraum.'}
+          </p>
+          <div className={styles.emptyActions}>
+            {overview.total > 0 ? (
+              <UiButton type="button" variant="secondary" onClick={resetFilters}>
+                Filter zurücksetzen
+              </UiButton>
+            ) : null}
+            <UiButtonLink to="/curriculum">Zur Akademie</UiButtonLink>
+          </div>
+        </Card>
+      ) : (
+        <div
+          className={[
+            journalStyles.shell,
+            journalStyles.masterDetail,
+            mobileShowDetail && !selection.active ? journalStyles.masterDetailShowDetail : '',
+            !mobileShowDetail || selection.active ? journalStyles.masterDetailShowList : '',
+          ].filter(Boolean).join(' ')}
+        >
+          <div className={journalStyles.tileList}>
+            {sortedSessions.map((session: Session) => {
+              const enriched = enrichSession(session)
+              return (
+                <JournalSessionTile
+                  key={session.id}
+                  session={enriched}
+                  sceneEntries={scenesBySession.get(session.id) || []}
+                  active={!selection.active && selectedSessionId === session.id}
+                  selectionMode={selection.active}
+                  selected={selection.isSelected(session.id)}
+                  onToggleSelect={selection.toggle}
+                  onSelect={() => {
+                    setSelectedSessionId(session.id)
+                    setMobileShowDetail(true)
+                  }}
+                />
+              )
+            })}
+          </div>
+
+          <div className={journalStyles.detailPane}>
+            {selection.active ? (
+              <div className={journalStyles.detailEmpty}>
+                Mehrfachauswahl aktiv — wähle Sessions zum Löschen.
+              </div>
+            ) : selectedSession ? (
+              <JournalSessionDetail
+                session={enrichSession(selectedSession)}
+                sceneEntries={scenesBySession.get(selectedSession.id) || []}
+                onDelete={(id) => {
+                  deleteMutation.mutate(id)
+                  setMobileShowDetail(false)
+                }}
+                isDeleting={deleteMutation.isPending && deleteMutation.variables === selectedSession.id}
+                onBack={() => setMobileShowDetail(false)}
+              />
+            ) : (
+              <div className={journalStyles.detailEmpty}>
+                Wähle eine Session, um das Journal zu öffnen.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
