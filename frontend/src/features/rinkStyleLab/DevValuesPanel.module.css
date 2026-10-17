@@ -1,0 +1,65 @@
+.wrap {
+  margin-top: 0.25rem;
+}
+
+.body {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.meta {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: rgba(148, 163, 184, 0.92);
+}
+
+.meta code {
+  font-size: 0.68rem;
+  word-break: break-all;
+}
+
+.list {
+  margin: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 38%) 1fr;
+  gap: 0.35rem;
+  align-items: baseline;
+  font-size: 0.8rem;
+}
+
+.key {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: rgba(167, 243, 208, 0.88);
+}
+
+.value {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: rgba(248, 250, 252, 0.95);
+  word-break: break-all;
+}
+
+.missing {
+  margin: 0;
+  font-style: italic;
+  color: rgba(251, 191, 36, 0.9);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.status {
+  font-size: 0.78rem;
+  color: rgba(167, 243, 208, 0.95);
+}
