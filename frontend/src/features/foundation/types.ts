@@ -25,6 +25,8 @@ export type FoundationRinkRegionId =
   | 'puck_carrier'
   | 'support_player'
   | 'weak_side'
+  /** Opposite half of weak_side — wrong answer for weak-side identify steps only */
+  | 'puck_side'
 
 export type FoundationAttackDirection = 'left' | 'right'
 

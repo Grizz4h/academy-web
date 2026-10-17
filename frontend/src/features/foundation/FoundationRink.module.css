@@ -47,11 +47,20 @@
 
 .weakSide {
   fill: rgba(251, 191, 36, 0.16);
+  pointer-events: none;
 }
 
 .weakSide.selected,
 .weakSide.highlighted {
   fill: rgba(251, 191, 36, 0.28);
+}
+
+/* Transparent half-ice targets — must use a real fill (not fill:none) for pointer events */
+.halfHitbox {
+  fill: rgba(0, 0, 0, 0);
+  stroke: none;
+  cursor: pointer;
+  pointer-events: all;
 }
 
 .blueLine {

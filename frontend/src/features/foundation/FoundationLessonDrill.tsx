@@ -3,6 +3,7 @@ import type { Drill } from '../../api'
 import { getHockeyTermDefinition } from './hockeyTerms'
 import FoundationRink from './FoundationRink'
 import { resolveStableOptionOrder } from './optionOrder'
+import { buildIdentifyInteractiveRegions } from './weakSideInteraction'
 import type {
   FoundationLessonConfig,
   FoundationLessonStep,
@@ -182,11 +183,11 @@ export default function FoundationLessonDrill({ drill, answers, setAnswers }: Pr
 
   const interactiveRegions: FoundationRinkRegionId[] =
     step.type === 'identify_region'
-      ? Array.from(new Set([
-          ...(step.correctRegions || []),
-          ...(step.showMarkers || []),
-          ...LEARNING_TAP_REGIONS,
-        ]))
+      ? buildIdentifyInteractiveRegions(
+          step.correctRegions,
+          step.showMarkers,
+          LEARNING_TAP_REGIONS,
+        )
       : []
 
   const canAdvance = isStepComplete(step, currentState)

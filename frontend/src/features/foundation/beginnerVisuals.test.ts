@@ -16,6 +16,8 @@ assert.ok(rinkSource.includes('gelber Punkt = Puck') || rinkSource.includes('leg
 assert.ok(!rinkSource.includes("label: 'Puckführer'"), 'do not spoil puck carrier with role label on the marker')
 assert.ok(rinkSource.includes('playerBlue') || rinkSource.includes('playerRed'))
 assert.ok(rinkSource.includes('weakSideBand'))
+assert.ok(rinkSource.includes('shouldRenderWeakSideHitboxes'))
+assert.ok(rinkSource.includes('shouldShowWeakSideOverlay'))
 assert.ok(rinkSource.includes('Defensivzone'))
 assert.ok(rinkSource.includes('Neutralzone'))
 assert.ok(rinkSource.includes('Offensivzone'))

@@ -4,6 +4,12 @@ import type {
   FoundationMarkerTeam,
   FoundationRinkRegionId,
 } from './types'
+import {
+  regionForIceHalf,
+  shouldRenderWeakSideHitboxes,
+  shouldShowWeakSideOverlay,
+  type IceHalf,
+} from './weakSideInteraction'
 import styles from './FoundationRink.module.css'
 
 type MarkerSpec = {
@@ -90,12 +96,21 @@ export default function FoundationRink({
     onSelectRegion(id)
   }
 
-  // Only reveal weak-side overlay after selection / correct feedback — never while merely tappable
-  const weakSideActive =
-    selectedRegion === 'weak_side'
-    || highlightRegions.includes('weak_side')
+  const handleHalf = (half: IceHalf) => {
+    const region = regionForIceHalf(half, weakSideBand)
+    handle(region)
+  }
+
+  // Overlay fill only after selection / correct highlight — never as a pre-answer spoiler.
+  // Hitboxes are independent and render whenever weak_side is an interactive target.
+  const weakSideOverlay = shouldShowWeakSideOverlay(selectedRegion, highlightRegions)
+  const weakSideHitboxes = shouldRenderWeakSideHitboxes(interactiveRegions, {
+    disabled,
+    hasHandler: Boolean(onSelectRegion),
+  })
 
   const weakY = weakSideBand === 'bottom' ? ZONE_Y + ZONE_H / 2 : ZONE_Y
+  const halfH = ZONE_H / 2
   const showDirectionArrow = !hideAttackArrow && showMarkers.length === 0
 
   const resolvedMarkers = showMarkers.map((id) => {
@@ -222,14 +237,39 @@ export default function FoundationRink({
           <circle className={styles.dot} cx="315" cy="170" r="8" />
           <circle className={styles.dot} cx="200" cy="120" r="10" />
 
-          {weakSideActive && (
+          {weakSideHitboxes && (
+            <>
+              <rect
+                className={styles.halfHitbox}
+                data-ice-half="top"
+                data-testid="weak-side-hitbox-top"
+                x={ICE_LEFT}
+                y={ZONE_Y}
+                width={ICE_RIGHT - ICE_LEFT}
+                height={halfH}
+                onClick={() => handleHalf('top')}
+              />
+              <rect
+                className={styles.halfHitbox}
+                data-ice-half="bottom"
+                data-testid="weak-side-hitbox-bottom"
+                x={ICE_LEFT}
+                y={ZONE_Y + halfH}
+                width={ICE_RIGHT - ICE_LEFT}
+                height={halfH}
+                onClick={() => handleHalf('bottom')}
+              />
+            </>
+          )}
+
+          {weakSideOverlay && (
             <rect
               className={`${regionClass('weak_side')} ${styles.weakSide}`}
+              data-testid="weak-side-overlay"
               x={ICE_LEFT}
               y={weakY}
               width={ICE_RIGHT - ICE_LEFT}
-              height={ZONE_H / 2}
-              onClick={() => handle('weak_side')}
+              height={halfH}
             />
           )}
 
