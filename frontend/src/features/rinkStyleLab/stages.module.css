@@ -1,18 +1,33 @@
+.stageFrame {
+  width: 100%;
+  min-width: 0;
+}
+
 .stageSvg {
   width: 100%;
   height: auto;
   display: block;
-  max-height: 520px;
+  max-height: min(520px, 70vh);
   background: rgba(8, 16, 32, 0.55);
   border-radius: 12px;
   border: 1px solid rgba(148, 163, 184, 0.25);
+  touch-action: manipulation;
 }
 
 .foundationWrap {
   width: 100%;
+  min-width: 0;
 }
 
 .foundationWrap :global(svg) {
   max-width: none;
-  max-height: 520px;
+  max-height: min(520px, 70vh);
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .stageSvg,
+  .foundationWrap :global(svg) {
+    max-height: min(300px, 55vh);
+  }
 }

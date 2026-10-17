@@ -3,15 +3,13 @@ import FoundationRink from '../foundation/FoundationRink'
 import { UiChip } from '../../components/ui'
 import { DetailedStage } from './DetailedStage'
 import { SceneMarkers } from './SceneMarkers'
+import { FOUNDATION_SCENES } from './foundationScenesCatalog'
 import { halfForBand, type IceHalf } from './labGeometry'
 import {
   applyMarkerStyleVariant,
   DEFAULT_LEARNING,
   DEFAULT_MARKINGS,
-  SCENE_PRESETS,
   type MarkerStyleVariant,
-  type ScenePresetId,
-  type StyleLabBase,
   type StyleLabLearning,
   type StyleLabMarkings,
   type StyleLabMode,
@@ -43,42 +41,65 @@ function Toggle({
   )
 }
 
-export function RinkStyleLab() {
-  const [mode, setMode] = useState<StyleLabMode>('compare')
-  const [base, setBase] = useState<StyleLabBase>('detailed')
-  const [markings, setMarkings] = useState<StyleLabMarkings>(DEFAULT_MARKINGS)
-  const [learning, setLearning] = useState<StyleLabLearning>(DEFAULT_LEARNING)
-  const [presetId, setPresetId] = useState<ScenePresetId>('empty')
-  const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
+const DEFAULT_SCENE_ID = FOUNDATION_SCENES.find((s) => s.id === 'd4_weak_side')?.id
+  || FOUNDATION_SCENES[0]?.id
+  || ''
 
-  const preset = SCENE_PRESETS.find((p) => p.id === presetId) || SCENE_PRESETS[0]
-  const markerOverrides = useMemo(
-    () => applyMarkerStyleVariant(preset.markerOverrides, preset.showMarkers, markerVariant),
-    [preset, markerVariant],
+export function RinkStyleLab() {
+  const [mode, setMode] = useState<StyleLabMode>('design')
+  const [sceneId, setSceneId] = useState(DEFAULT_SCENE_ID)
+  const [markings, setMarkings] = useState<StyleLabMarkings>(DEFAULT_MARKINGS)
+  const [learning, setLearning] = useState<StyleLabLearning>(() => {
+    const scene = FOUNDATION_SCENES.find((s) => s.id === DEFAULT_SCENE_ID)
+    return { ...DEFAULT_LEARNING, ...(scene?.learning || {}) }
+  })
+  const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
+  const [markingIntensity, setMarkingIntensity] = useState(1)
+  const [attackArrowOverride, setAttackArrowOverride] = useState<'scene' | 'on' | 'off'>('scene')
+
+  const scene = useMemo(
+    () => FOUNDATION_SCENES.find((s) => s.id === sceneId) || FOUNDATION_SCENES[0],
+    [sceneId],
   )
 
-  const applyPreset = (id: ScenePresetId) => {
-    const next = SCENE_PRESETS.find((p) => p.id === id) || SCENE_PRESETS[0]
-    setPresetId(id)
-    if (next.learning) {
+  const markerOverrides = useMemo(
+    () => (scene
+      ? applyMarkerStyleVariant(scene.markerOverrides, scene.showMarkers, markerVariant)
+      : {}),
+    [scene, markerVariant],
+  )
+
+  const showAttackArrow = attackArrowOverride === 'scene'
+    ? Boolean(scene?.showAttackArrow)
+    : attackArrowOverride === 'on'
+
+  const applyScene = (id: string) => {
+    const next = FOUNDATION_SCENES.find((s) => s.id === id)
+    setSceneId(id)
+    setAttackArrowOverride('scene')
+    if (next?.learning) {
       setLearning({ ...DEFAULT_LEARNING, ...next.learning })
-    } else if (id !== 'weak_strong') {
-      setLearning((prev) => ({
-        ...prev,
+    } else {
+      setLearning({
+        ...DEFAULT_LEARNING,
         showWeakStrong: false,
         showHitboxes: false,
         showFeedback: false,
         feedbackSide: null,
-      }))
+      })
     }
   }
 
   const onSelectHalf = (half: IceHalf) => {
-    const side = halfForBand(half, learning.weakSideBand)
+    const band = learning.weakSideBand || scene?.weakSideBand || 'top'
+    const side = halfForBand(half, band)
     setLearning((prev) => ({
       ...prev,
+      showWeakStrong: true,
+      showHitboxes: true,
       showFeedback: true,
       feedbackSide: side,
+      weakSideBand: band,
     }))
   }
 
@@ -89,159 +110,115 @@ export function RinkStyleLab() {
   const foundationLearningSelected =
     learning.showFeedback && learning.feedbackSide === 'weak' ? 'weak_side' : null
 
+  const activeLearning: StyleLabLearning = {
+    ...learning,
+    weakSideBand: learning.weakSideBand || scene?.weakSideBand || 'top',
+  }
+
   return (
     <div className={styles.lab}>
       <p className={styles.banner} role="status">
-        Dev-only · Keine Curriculum-Exports · Geometrie noch nicht kanonisch —
-        Compare zeigt vorhandene Renderer; Design ändert nur Darstellungsparameter.
+        Phase 2 · Detailed-Geometrie als Produktbasis · Foundation-Szenen nur gemappt ·
+        Keine Curriculum-Änderung · Blueprint unverändert
       </p>
 
       <div className={styles.modeRow} role="group" aria-label="Lab-Modus">
+        <UiChip active={mode === 'design'} onClick={() => setMode('design')}>
+          Design (Detailed)
+        </UiChip>
         <UiChip active={mode === 'compare'} onClick={() => setMode('compare')}>
           Compare
         </UiChip>
-        <UiChip active={mode === 'design'} onClick={() => setMode('design')}>
-          Design
-        </UiChip>
       </div>
 
-      {mode === 'compare' && (
-        <div className={styles.compareGrid}>
-          <section className={styles.panel}>
-            <header className={styles.panelHead}>
-              <h2 className={styles.panelTitle}>FoundationRink</h2>
-              <p className={styles.panelMeta}>400×240 · Track 0</p>
-            </header>
-            <div className={stageStyles.foundationWrap}>
-              <FoundationRink
-                attackDirection="right"
-                showMarkers={preset.showMarkers}
-                markerOverrides={markerOverrides}
-                hideAttackArrow={preset.showMarkers.length > 0}
-                weakSideBand={learning.weakSideBand}
-                highlightRegions={
-                  learning.showFeedback && learning.feedbackSide === 'weak' ? ['weak_side'] : []
-                }
-                selectedRegion={foundationLearningSelected}
-              />
-            </div>
-          </section>
-          <section className={styles.panel}>
-            <header className={styles.panelHead}>
-              <h2 className={styles.panelTitle}>DetailedHockeyRink</h2>
-              <p className={styles.panelMeta}>
-                900×620 · BLUE_LINE_FROM_END=
-                {0.38}
-                {' '}
-                (Produkt-Metrics, noch nicht freigegeben)
-              </p>
-            </header>
-            <DetailedStage markings={DEFAULT_MARKINGS} learning={DEFAULT_LEARNING}>
-              <SceneMarkers
-                space="detailed"
-                showMarkers={preset.showMarkers}
-                markerOverrides={markerOverrides}
-              />
-            </DetailedStage>
-          </section>
-        </div>
-      )}
+      <div className={styles.sceneBar}>
+        <label className={styles.sceneSelectLabel}>
+          Track-0-Szene
+          <select
+            className={`appSelect ${styles.sceneSelect}`}
+            value={scene?.id || ''}
+            onChange={(e) => applyScene(e.target.value)}
+          >
+            {FOUNDATION_SCENES.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        {scene && (
+          <p className={styles.scenePrompt}>{scene.prompt}</p>
+        )}
+      </div>
 
       {mode === 'design' && (
         <div className={styles.designLayout}>
           <aside className={styles.controls} aria-label="Design-Steuerung">
-            <h2 className={styles.controlsTitle}>Basis</h2>
-            <div className={styles.chipRow}>
-              <UiChip active={base === 'detailed'} onClick={() => setBase('detailed')}>
-                Detailed
-              </UiChip>
-              <UiChip active={base === 'foundation'} onClick={() => setBase('foundation')}>
-                Foundation
-              </UiChip>
+            <h2 className={styles.controlsTitle}>Markierungsintensität</h2>
+            <label className={styles.sliderRow}>
+              <span>{Math.round(markingIntensity * 100)}%</span>
+              <input
+                type="range"
+                min={25}
+                max={100}
+                step={5}
+                value={Math.round(markingIntensity * 100)}
+                onChange={(e) => setMarkingIntensity(Number(e.target.value) / 100)}
+              />
+            </label>
+
+            <h2 className={styles.controlsTitle}>Markierungen</h2>
+            <div className={styles.toggleGrid}>
+              <Toggle label="Blue Lines" checked={markings.blueLines} onChange={(v) => setMarking('blueLines', v)} />
+              <Toggle label="Center Line" checked={markings.centerLine} onChange={(v) => setMarking('centerLine', v)} />
+              <Toggle label="Center Faceoff Circle" checked={markings.centerFaceoffCircle} onChange={(v) => setMarking('centerFaceoffCircle', v)} />
+              <Toggle label="Faceoff Dots / Kreise" checked={markings.faceoffDots} onChange={(v) => setMarking('faceoffDots', v)} />
+              <Toggle label="Goal Lines" checked={markings.goalLines} onChange={(v) => setMarking('goalLines', v)} />
+              <Toggle label="Tore" checked={markings.goals} onChange={(v) => setMarking('goals', v)} />
+              <Toggle label="Crease" checked={markings.crease} onChange={(v) => setMarking('crease', v)} />
+              <Toggle label="Zonen-Labels" checked={markings.labels} onChange={(v) => setMarking('labels', v)} />
+              <Toggle label="Ice-Ads" checked={markings.iceAds} onChange={(v) => setMarking('iceAds', v)} />
             </div>
 
-            <h2 className={styles.controlsTitle}>Szene</h2>
+            <h2 className={styles.controlsTitle}>Angriffspfeil</h2>
             <div className={styles.chipRow}>
-              {SCENE_PRESETS.map((p) => (
-                <UiChip key={p.id} active={presetId === p.id} onClick={() => applyPreset(p.id)}>
-                  {p.label}
-                </UiChip>
-              ))}
+              <UiChip active={attackArrowOverride === 'scene'} onClick={() => setAttackArrowOverride('scene')}>
+                Szene
+              </UiChip>
+              <UiChip active={attackArrowOverride === 'on'} onClick={() => setAttackArrowOverride('on')}>
+                An
+              </UiChip>
+              <UiChip active={attackArrowOverride === 'off'} onClick={() => setAttackArrowOverride('off')}>
+                Aus
+              </UiChip>
             </div>
 
             <h2 className={styles.controlsTitle}>Marker-Stil</h2>
             <div className={styles.chipRow}>
-              <UiChip active={markerVariant === 'team'} onClick={() => setMarkerVariant('team')}>
-                Team (Blau/Rot)
-              </UiChip>
-              <UiChip active={markerVariant === 'role'} onClick={() => setMarkerVariant('role')}>
-                Rolle
-              </UiChip>
-              <UiChip active={markerVariant === 'neutral'} onClick={() => setMarkerVariant('neutral')}>
-                Neutral
-              </UiChip>
+              <UiChip active={markerVariant === 'team'} onClick={() => setMarkerVariant('team')}>Team</UiChip>
+              <UiChip active={markerVariant === 'role'} onClick={() => setMarkerVariant('role')}>Rolle</UiChip>
+              <UiChip active={markerVariant === 'neutral'} onClick={() => setMarkerVariant('neutral')}>Neutral</UiChip>
             </div>
 
-            <h2 className={styles.controlsTitle}>Markierungen</h2>
-            {base === 'foundation' && (
-              <p className={styles.hint}>
-                Foundation malt Markierungen fest. Für einzelne Toggles Detailed wählen.
-              </p>
-            )}
+            <h2 className={styles.controlsTitle}>Learning</h2>
             <div className={styles.toggleGrid}>
               <Toggle
-                label="Faceoff-Dots / Kreise"
-                checked={markings.faceoffDots}
-                onChange={(v) => setMarking('faceoffDots', v)}
-                disabled={base === 'foundation'}
-              />
-              <Toggle
-                label="Goal Lines"
-                checked={markings.goalLines}
-                onChange={(v) => setMarking('goalLines', v)}
-                disabled={base === 'foundation'}
-              />
-              <Toggle
-                label="Tore"
-                checked={markings.goals}
-                onChange={(v) => setMarking('goals', v)}
-                disabled={base === 'foundation'}
-              />
-              <Toggle
-                label="Crease"
-                checked={markings.crease}
-                onChange={(v) => setMarking('crease', v)}
-                disabled={base === 'foundation'}
-              />
-              <Toggle
-                label="Zonen-Labels"
-                checked={markings.labels}
-                onChange={(v) => setMarking('labels', v)}
-                disabled={base === 'foundation'}
-              />
-              <Toggle
-                label="Ice-Ads"
-                checked={markings.iceAds}
-                onChange={(v) => setMarking('iceAds', v)}
-                disabled={base === 'foundation'}
-              />
-            </div>
-
-            <h2 className={styles.controlsTitle}>Learning (Weak / Strong)</h2>
-            <div className={styles.toggleGrid}>
-              <Toggle
-                label="Hälften aktiv"
-                checked={learning.showWeakStrong}
-                onChange={(v) => setLearning((p) => ({ ...p, showWeakStrong: v, showHitboxes: v || p.showHitboxes }))}
+                label="Weak/Strong Hälften"
+                checked={activeLearning.showWeakStrong}
+                onChange={(v) => setLearning((p) => ({
+                  ...p,
+                  showWeakStrong: v,
+                  showHitboxes: v || p.showHitboxes,
+                }))}
               />
               <Toggle
                 label="Hitboxes sichtbar"
-                checked={learning.showHitboxes}
+                checked={activeLearning.showHitboxes}
                 onChange={(v) => setLearning((p) => ({ ...p, showHitboxes: v }))}
               />
               <Toggle
-                label="Feedback anzeigen"
-                checked={learning.showFeedback}
+                label="Feedback"
+                checked={activeLearning.showFeedback}
                 onChange={(v) => setLearning((p) => ({
                   ...p,
                   showFeedback: v,
@@ -251,86 +228,100 @@ export function RinkStyleLab() {
             </div>
             <div className={styles.chipRow}>
               <UiChip
-                active={learning.weakSideBand === 'top'}
+                active={activeLearning.weakSideBand === 'top'}
                 onClick={() => setLearning((p) => ({ ...p, weakSideBand: 'top' }))}
               >
                 Weak = oben
               </UiChip>
               <UiChip
-                active={learning.weakSideBand === 'bottom'}
+                active={activeLearning.weakSideBand === 'bottom'}
                 onClick={() => setLearning((p) => ({ ...p, weakSideBand: 'bottom' }))}
               >
                 Weak = unten
               </UiChip>
             </div>
-            {learning.feedbackSide && (
+            {activeLearning.feedbackSide && (
               <p className={styles.hint}>
-                Feedback-Seite:
+                Letzte Auswahl:
                 {' '}
-                {learning.feedbackSide === 'weak' ? 'Weak Side' : 'Strong Side'}
-                {' '}
-                (Tipp auf eine Hälfte im Stage)
+                {activeLearning.feedbackSide === 'weak' ? 'Weak Side' : 'Strong Side'}
               </p>
             )}
           </aside>
 
           <section className={styles.panel}>
             <header className={styles.panelHead}>
-              <h2 className={styles.panelTitle}>
-                Design ·
+              <h2 className={styles.panelTitle}>Detailed · Foundation-Szene</h2>
+              <p className={styles.panelMeta}>
+                Layer: Base · Scene · Learning · Intensity
                 {' '}
-                {base === 'detailed' ? 'Detailed' : 'Foundation'}
-              </h2>
-              <p className={styles.panelMeta}>Nur Darstellungsparameter — keine neue Geometrie</p>
+                {Math.round(markingIntensity * 100)}
+                %
+              </p>
             </header>
-            {base === 'detailed' ? (
-              <DetailedStage
-                markings={markings}
-                learning={learning}
-                onSelectHalf={onSelectHalf}
-              >
+            <DetailedStage
+              markings={markings}
+              learning={activeLearning}
+              markingIntensity={markingIntensity}
+              showAttackArrow={showAttackArrow}
+              attackDirection={scene?.attackDirection || 'right'}
+              onSelectHalf={onSelectHalf}
+            >
+              {scene && (
                 <SceneMarkers
                   space="detailed"
-                  showMarkers={preset.showMarkers}
+                  showMarkers={scene.showMarkers}
                   markerOverrides={markerOverrides}
                 />
-              </DetailedStage>
-            ) : (
-              <div className={stageStyles.foundationWrap}>
-                <FoundationRink
-                  attackDirection="right"
-                  showMarkers={preset.showMarkers}
-                  markerOverrides={markerOverrides}
-                  hideAttackArrow={preset.showMarkers.length > 0}
-                  weakSideBand={learning.weakSideBand}
-                  highlightRegions={
-                    learning.showFeedback && learning.feedbackSide === 'weak' ? ['weak_side'] : []
-                  }
-                  selectedRegion={foundationLearningSelected}
-                />
-                {(learning.showHitboxes || learning.showWeakStrong) && (
-                  <p className={styles.hint}>
-                    Weak/Strong-Hitboxes und Tipp-Feedback sind im Design-Modus auf der
-                    Detailed-Basis verfügbar (Learning Layer). Foundation dient hier der
-                    Marker-/Overlay-Vorschau.
-                  </p>
-                )}
-              </div>
-            )}
+              )}
+            </DetailedStage>
           </section>
         </div>
       )}
 
-      {mode === 'compare' && (
-        <div className={styles.comparePresets}>
-          <span className={styles.controlsTitle}>Szenen-Preset (beide Seiten)</span>
-          <div className={styles.chipRow}>
-            {SCENE_PRESETS.map((p) => (
-              <UiChip key={p.id} active={presetId === p.id} onClick={() => applyPreset(p.id)}>
-                {p.label}
-              </UiChip>
-            ))}
-          </div>
+      {mode === 'compare' && scene && (
+        <div className={styles.compareGrid}>
+          <section className={styles.panel}>
+            <header className={styles.panelHead}>
+              <h2 className={styles.panelTitle}>FoundationRink</h2>
+              <p className={styles.panelMeta}>Original 400×240</p>
+            </header>
+            <div className={stageStyles.foundationWrap}>
+              <FoundationRink
+                attackDirection={scene.attackDirection}
+                showMarkers={scene.showMarkers}
+                markerOverrides={markerOverrides}
+                hideAttackArrow={!showAttackArrow}
+                weakSideBand={activeLearning.weakSideBand}
+                highlightRegions={
+                  activeLearning.showFeedback && activeLearning.feedbackSide === 'weak'
+                    ? ['weak_side']
+                    : []
+                }
+                selectedRegion={foundationLearningSelected}
+              />
+            </div>
+          </section>
+          <section className={styles.panel}>
+            <header className={styles.panelHead}>
+              <h2 className={styles.panelTitle}>Detailed (mapped)</h2>
+              <p className={styles.panelMeta}>Dieselbe Szene · Adapter</p>
+            </header>
+            <DetailedStage
+              markings={markings}
+              learning={activeLearning}
+              markingIntensity={markingIntensity}
+              showAttackArrow={showAttackArrow}
+              attackDirection={scene.attackDirection}
+              onSelectHalf={onSelectHalf}
+            >
+              <SceneMarkers
+                space="detailed"
+                showMarkers={scene.showMarkers}
+                markerOverrides={markerOverrides}
+              />
+            </DetailedStage>
+          </section>
         </div>
       )}
     </div>

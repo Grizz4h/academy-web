@@ -34,3 +34,9 @@
   stroke: rgba(8, 16, 32, 0.85);
   stroke-width: 2.5px;
 }
+
+@media (max-width: 480px) {
+  .caption {
+    font-size: 13px;
+  }
+}

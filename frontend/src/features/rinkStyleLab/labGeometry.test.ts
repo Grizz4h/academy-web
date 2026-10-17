@@ -19,5 +19,6 @@ assert.equal(DETAILED_VIEWBOX.width, DETAILED_RINK_VIEWBOX.width)
 assert.equal(halfForBand('top', 'top'), 'weak')
 assert.equal(halfForBand('bottom', 'top'), 'strong')
 assert.equal(halfForBand('bottom', 'bottom'), 'weak')
+assert.equal(halfForBand('top', 'top'), 'weak')
 
 console.log('labGeometry.test.ts: all assertions passed')

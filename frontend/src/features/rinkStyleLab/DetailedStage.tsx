@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { DetailedHockeyRinkLayers, DETAILED_RINK_VIEWBOX } from '../rinkGeometry'
 import type { RinkOverlays } from '../rinkGeometry'
+import type { FoundationAttackDirection } from '../foundation/types'
+import { AttackArrow } from './AttackArrow'
 import { DETAILED_ICE } from './labGeometry'
 import { LearningHalfOverlay } from './LearningHalfOverlay'
 import type { StyleLabLearning, StyleLabMarkings } from './presets'
@@ -10,12 +12,23 @@ import styles from './stages.module.css'
 type Props = {
   markings: StyleLabMarkings
   learning: StyleLabLearning
+  markingIntensity?: number
+  showAttackArrow?: boolean
+  attackDirection?: FoundationAttackDirection
   onSelectHalf?: (half: IceHalf) => void
-  /** Optional scene markers as SVG children (lab-drawn, not Foundation markers). */
+  /** Scene layer children (markers). */
   children?: ReactNode
 }
 
-export function DetailedStage({ markings, learning, onSelectHalf, children }: Props) {
+export function DetailedStage({
+  markings,
+  learning,
+  markingIntensity = 1,
+  showAttackArrow = false,
+  attackDirection = 'right',
+  onSelectHalf,
+  children,
+}: Props) {
   const overlays: RinkOverlays = {
     zones: markings.goalLines,
     goals: markings.goals,
@@ -24,35 +37,44 @@ export function DetailedStage({ markings, learning, onSelectHalf, children }: Pr
     labels: markings.labels,
     defendingSide: 'left',
     showDefendingHint: false,
-    attackDirection: 'right',
+    attackDirection,
     iceAds: markings.iceAds,
+    blueLines: markings.blueLines,
+    centerLine: markings.centerLine,
+    centerFaceoffCircle: markings.centerFaceoffCircle,
+    markingIntensity,
   }
 
   return (
-    <svg
-      className={styles.stageSvg}
-      viewBox={`0 0 ${DETAILED_RINK_VIEWBOX.width} ${DETAILED_RINK_VIEWBOX.height}`}
-      role="img"
-      aria-label="Detailed rink (product metrics)"
-    >
-      {/* Base layer — existing DetailedHockeyRinkLayers */}
-      <g id="rink-base">
-        <DetailedHockeyRinkLayers overlays={overlays} />
-        {/* Center / blue lines are always painted by the base component today.
-            Toggles for centerLine/blueLines are noted in the lab UI as limited
-            until base supports finer marking flags. */}
-      </g>
-      <g id="scene-layer">{children}</g>
-      {(learning.showWeakStrong || learning.showHitboxes || learning.showFeedback) && (
-        <LearningHalfOverlay
-          ice={DETAILED_ICE}
-          weakSideBand={learning.weakSideBand}
-          showHitboxes={learning.showHitboxes || learning.showWeakStrong}
-          showFeedback={learning.showFeedback}
-          feedbackSide={learning.feedbackSide}
-          onSelectHalf={onSelectHalf}
-        />
-      )}
-    </svg>
+    <div className={styles.stageFrame}>
+      <svg
+        className={styles.stageSvg}
+        viewBox={`0 0 ${DETAILED_RINK_VIEWBOX.width} ${DETAILED_RINK_VIEWBOX.height}`}
+        role="img"
+        aria-label="Detailed rink with Foundation scene"
+      >
+        <g id="rink-base">
+          <DetailedHockeyRinkLayers overlays={overlays} />
+        </g>
+        <g id="scene-layer">
+          {showAttackArrow && (
+            <AttackArrow space="detailed" attackDirection={attackDirection} />
+          )}
+          {children}
+        </g>
+        <g id="learning-layer">
+          {(learning.showWeakStrong || learning.showHitboxes || learning.showFeedback) && (
+            <LearningHalfOverlay
+              ice={DETAILED_ICE}
+              weakSideBand={learning.weakSideBand}
+              showHitboxes={learning.showHitboxes || learning.showWeakStrong}
+              showFeedback={learning.showFeedback}
+              feedbackSide={learning.feedbackSide}
+              onSelectHalf={onSelectHalf}
+            />
+          )}
+        </g>
+      </svg>
+    </div>
   )
 }

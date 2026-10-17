@@ -1,5 +1,5 @@
 import type { FoundationMarkerOverride, FoundationRinkRegionId } from '../foundation/types'
-import { DETAILED_ICE, FOUNDATION_ICE, FOUNDATION_VIEWBOX } from './labGeometry'
+import { resolveSceneMarkers } from './foundationCoordAdapter'
 import styles from './SceneMarkers.module.css'
 
 type Props = {
@@ -8,58 +8,31 @@ type Props = {
   markerOverrides: Partial<Record<FoundationRinkRegionId, FoundationMarkerOverride>>
 }
 
-/** Map Foundation marker coords into Detailed ice space (same relative placement). */
-function mapToDetailed(cx: number, cy: number): { x: number; y: number } {
-  const nx = (cx - FOUNDATION_ICE.x) / FOUNDATION_ICE.w
-  const ny = (cy - FOUNDATION_ICE.y) / FOUNDATION_ICE.h
-  return {
-    x: DETAILED_ICE.x + nx * DETAILED_ICE.w,
-    y: DETAILED_ICE.y + ny * DETAILED_ICE.h,
-  }
-}
-
-const DEFAULTS: Record<string, { cx: number; cy: number; label: string; team?: string; hasPuck?: boolean }> = {
-  puck_carrier: { cx: 250, cy: 120, label: 'Spieler', team: 'blue', hasPuck: true },
-  support_player: { cx: 220, cy: 75, label: 'Mitspieler', team: 'blue' },
-  wing_left: { cx: 240, cy: 55, label: 'Flügel', team: 'blue' },
-  wing_right: { cx: 240, cy: 185, label: 'Flügel', team: 'blue' },
-  defense_left: { cx: 110, cy: 85, label: 'Verteidiger', team: 'red' },
-  goalie_spot: { cx: 48, cy: 120, label: 'Torwart', team: 'blue' },
-}
-
 /**
- * Lab scene layer for Detailed stage — reuses Foundation marker positions,
- * does not define a new rink geometry.
+ * Scene layer: players / puck. Positions come from Foundation coords via adapter
+ * when space === 'detailed'.
  */
 export function SceneMarkers({ space, showMarkers, markerOverrides }: Props) {
-  const scale = space === 'detailed' ? DETAILED_ICE.w / FOUNDATION_ICE.w : 1
-  const r = space === 'detailed' ? 14 * (DETAILED_ICE.h / FOUNDATION_ICE.h) : 12
+  const markers = resolveSceneMarkers(showMarkers, markerOverrides, space)
 
   return (
     <g className={styles.scene} aria-label="Scene markers">
-      {showMarkers.map((id) => {
-        const def = DEFAULTS[id] || { cx: FOUNDATION_VIEWBOX.width / 2, cy: FOUNDATION_VIEWBOX.height / 2, label: id }
-        const ov = markerOverrides[id] || {}
-        const cx = ov.cx ?? def.cx
-        const cy = ov.cy ?? def.cy
-        const label = ov.label ?? def.label
-        const team = ov.team ?? def.team ?? 'blue'
-        const hasPuck = ov.hasPuck ?? def.hasPuck ?? false
-        const pos = space === 'detailed' ? mapToDetailed(cx, cy) : { x: cx, y: cy }
-        const teamClass = team === 'red' ? styles.red : team === 'neutral' ? styles.neutral : styles.blue
+      {markers.map((m) => {
+        const teamClass = m.team === 'red' ? styles.red : m.team === 'neutral' ? styles.neutral : styles.blue
+        const lonePuck = m.kind === 'puck'
         return (
-          <g key={id} transform={`translate(${pos.x}, ${pos.y})`}>
-            <circle r={r} className={teamClass} />
-            {hasPuck && (
+          <g key={m.id} transform={`translate(${m.x}, ${m.y})`}>
+            {!lonePuck && <circle r={m.radius} className={teamClass} />}
+            {(m.hasPuck || lonePuck) && (
               <circle
                 className={styles.puck}
-                r={space === 'detailed' ? 7 : 5}
-                cx={r * 0.75}
-                cy={r * 0.55}
+                r={lonePuck ? m.radius : Math.max(4, m.radius * 0.42)}
+                cx={lonePuck ? 0 : m.radius * 0.72}
+                cy={lonePuck ? 0 : m.radius * 0.55}
               />
             )}
-            <text y={r + 14 * scale} textAnchor="middle" className={styles.caption}>
-              {label}
+            <text y={m.radius + (space === 'detailed' ? 16 : 14)} textAnchor="middle" className={styles.caption}>
+              {m.label}
             </text>
           </g>
         )
