@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import {
   resolveDisplayedStarRating,
+  resolveEffectiveHoverRating,
   resolveStarAppearance,
 } from './SceneStarRating.tsx'
 
@@ -24,5 +25,39 @@ assert.equal(resolveDisplayedStarRating(1, null), 1)
 assert.equal(resolveDisplayedStarRating(5, null), 5)
 assert.equal(resolveDisplayedStarRating(1, 5), 5)
 assert.equal(resolveDisplayedStarRating(5, 2), 2)
+
+// RT-S-013: after click, suppress preview for the rest of the pointer stay
+{
+  let hover: number | null = 4
+  let suppressed = false
+
+  // 1) Hover star 4 → outline preview
+  assert.equal(resolveEffectiveHoverRating(hover, suppressed), 4)
+  assert.equal(resolveStarAppearance(4, 1, resolveEffectiveHoverRating(hover, suppressed)), 'outline')
+
+  // 2) Click star 4 → suppress + clear hover → filled saved rating
+  hover = null
+  suppressed = true
+  const afterClick = resolveEffectiveHoverRating(hover, suppressed)
+  assert.equal(afterClick, null)
+  assert.equal(resolveStarAppearance(1, 4, afterClick), 'filled')
+  assert.equal(resolveStarAppearance(4, 4, afterClick), 'filled')
+  assert.equal(resolveStarAppearance(5, 4, afterClick), 'empty')
+
+  // 3) Pointer still over star 4 with stale hover intent → still filled (suppressed)
+  hover = 4
+  assert.equal(resolveEffectiveHoverRating(hover, suppressed), null)
+  assert.equal(resolveStarAppearance(4, 4, resolveEffectiveHoverRating(hover, suppressed)), 'filled')
+
+  // 4) Leave → unsuppress; saved rating remains filled
+  hover = null
+  suppressed = false
+  assert.equal(resolveStarAppearance(4, 4, null), 'filled')
+
+  // 5) Re-enter hover → outline preview active again
+  hover = 4
+  assert.equal(resolveEffectiveHoverRating(hover, suppressed), 4)
+  assert.equal(resolveStarAppearance(4, 4, resolveEffectiveHoverRating(hover, suppressed)), 'outline')
+}
 
 console.log('SceneStarRating.test.ts OK')
