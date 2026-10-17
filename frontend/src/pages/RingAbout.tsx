@@ -27,6 +27,7 @@ import {
 } from '../utils/sceneAssetName'
 import { buildSceneRatedEvent } from '../features/progression'
 import { useRewards } from '../features/rewards'
+import { SceneStarRating, type SceneRatingValue } from '../features/sceneCapture/SceneStarRating'
 import { computeScenePoolOverview } from '../stats/sceneOverview'
 import { ScenePoolOverviewKpis } from '../components/dashboard/ScenePoolOverviewKpis'
 import { SceneInsightsOverviewKpis } from '../components/dashboard/SceneInsightsOverviewKpis'
@@ -34,8 +35,6 @@ import { UiButton } from '../components/ui'
 import { SelectionToolbar, useMultiSelect } from '../components/selection'
 import selectStyles from '../components/selection/selectableTile.module.css'
 import styles from './RingAbout.module.css'
-
-type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
 const SCENE_PAGE_SIZE = 20
 
@@ -1812,44 +1811,6 @@ export default function RingAbout() {
   )
 }
 
-function SceneRating({ rating, onChange }: { rating?: SceneMarker["rating"]; onChange: (rating: SceneRatingValue) => void }) {
-  const currentRating = rating || 0
-
-  return (
-    <div
-      aria-label={currentRating ? String(currentRating) + " von 5 Sterne" : "Keine Bewertung"}
-      style={{ display: "inline-flex", alignItems: "center", gap: "0.06rem" }}
-    >
-      {[1, 2, 3, 4, 5].map((value) => {
-        const star = value as SceneRatingValue
-        const active = star <= currentRating
-        return (
-          <button
-            key={star}
-            type="button"
-            onClick={() => onChange(star)}
-            title={currentRating === star ? "Bewertung entfernen" : String(star) + " Sterne setzen"}
-            aria-label={currentRating === star ? "Bewertung entfernen" : String(star) + " Sterne setzen"}
-            style={{
-              width: "1.15rem",
-              height: "1.15rem",
-              border: "none",
-              background: "transparent",
-              color: active ? "#fbbf24" : "#475569",
-              cursor: "pointer",
-              fontSize: "1rem",
-              lineHeight: 1,
-              padding: 0,
-            }}
-          >
-            {active ? "★" : "☆"}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
 function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, onDelete, onEdit, onEnrich, onRatingChange, onPipelineToggle, celebrate = false, focused = false, selectionMode = false, selected = false, onToggleSelect }: {
   scene: SceneMarker
   observedTeam: string
@@ -2229,7 +2190,7 @@ function SceneCard({ scene, observedTeam, drillSceneSlugById, drillTitleById, on
             border: "1px solid rgba(251,191,36,0.18)",
           }}
         >
-          <SceneRating rating={scene.rating} onChange={(rating) => onRatingChange(scene, rating)} />
+          <SceneStarRating rating={scene.rating} onChange={(rating) => onRatingChange(scene, rating)} />
         </span>
       </div>
 
