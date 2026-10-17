@@ -559,6 +559,17 @@ export default function DevLab() {
         </div>
       </section>
 
+      <section className={styles.card}>
+        <h2 className="ui-section-title">Rink Style Lab</h2>
+        <p className={styles.note}>
+          Foundation- und Detailed-Rink vergleichen, Markierungen und Weak/Strong-Feedback
+          ausprobieren. Keine produktiven Drill-Änderungen — Geometrie noch nicht kanonisch.
+        </p>
+        <div className={styles.actions}>
+          <UiButtonLink to="/dev/rink-style" size="sm">Rink Style Lab öffnen</UiButtonLink>
+        </div>
+      </section>
+
       <DevActionLogPanel entries={logEntries} onClear={clearLog} />
 
       {!user && (
@@ -866,6 +877,7 @@ export default function DevLab() {
           <UiButtonLink to="/dev/cosmetics" size="sm">Cosmetics</UiButtonLink>
           <UiButtonLink to="/dev/progression" size="sm">Progression</UiButtonLink>
           <UiButtonLink to="/dev/track0-blueprint" size="sm">Track 0 Blueprint</UiButtonLink>
+          <UiButtonLink to="/dev/rink-style" size="sm">Rink Style Lab</UiButtonLink>
         </div>
       </section>
 

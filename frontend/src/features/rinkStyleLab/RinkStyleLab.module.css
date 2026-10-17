@@ -1,0 +1,126 @@
+.lab {
+  display: grid;
+  gap: 1rem;
+}
+
+.banner {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.08);
+  color: rgba(254, 243, 199, 0.95);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.modeRow,
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.compareGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 960px) {
+  .compareGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.designLayout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 960px) {
+  .designLayout {
+    grid-template-columns: minmax(220px, 280px) 1fr;
+    align-items: start;
+  }
+}
+
+.panel {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.panelHead {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(248, 250, 252, 0.95);
+}
+
+.panelMeta {
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.controls {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.controlsTitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(167, 243, 208, 0.9);
+}
+
+.toggleGrid {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.84rem;
+  color: rgba(226, 232, 240, 0.92);
+  cursor: pointer;
+}
+
+.toggle input {
+  accent-color: rgba(45, 212, 191, 0.95);
+}
+
+.toggleDisabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(148, 163, 184, 0.92);
+}
+
+.comparePresets {
+  display: grid;
+  gap: 0.45rem;
+}

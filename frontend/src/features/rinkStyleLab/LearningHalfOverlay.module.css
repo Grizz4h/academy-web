@@ -1,0 +1,23 @@
+.layer {
+  pointer-events: none;
+}
+
+.hitbox {
+  fill: rgba(125, 211, 252, 0);
+  stroke: rgba(125, 211, 252, 0.55);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.hitbox:hover {
+  fill: rgba(125, 211, 252, 0.08);
+}
+
+.feedback {
+  /* Experimental lab token — not production grammar yet */
+  fill: rgba(45, 212, 191, 0.22);
+  stroke: none;
+  pointer-events: none;
+}

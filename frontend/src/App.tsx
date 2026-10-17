@@ -24,6 +24,7 @@ import DevContent from './pages/DevContent'
 import DevCosmetics from './pages/DevCosmetics'
 import DevProgression from './pages/DevProgression'
 import DevTrack0BlueprintPage from './pages/DevTrack0Blueprint'
+import DevRinkStyleLabPage from './pages/DevRinkStyleLab'
 import AccountPage from './pages/Account'
 import LockerPage from './pages/Locker'
 import SportCalendarPage from './pages/SportCalendar'
@@ -104,6 +105,7 @@ function App() {
             <Route path="/dev/cosmetics" element={<DevRouteGuard><DevCosmetics /></DevRouteGuard>} />
             <Route path="/dev/progression" element={<DevRouteGuard><DevProgression /></DevRouteGuard>} />
             <Route path="/dev/track0-blueprint" element={<DevRouteGuard><DevTrack0BlueprintPage /></DevRouteGuard>} />
+            <Route path="/dev/rink-style" element={<DevRouteGuard><DevRinkStyleLabPage /></DevRouteGuard>} />
             <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
