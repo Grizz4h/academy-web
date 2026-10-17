@@ -3,7 +3,7 @@ import type { SceneMarker } from '../../api'
 
 export type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
-export type StarAppearance = 'filled' | 'outline' | 'empty'
+export type StarAppearance = 'filled' | 'outline' | 'dimmed' | 'target' | 'empty'
 
 type Props = {
   rating?: SceneMarker['rating']
@@ -13,9 +13,9 @@ type Props = {
 }
 
 /**
- * Outline preview while hovering a star, except while the pointer stays on the
+ * Outline/dim preview while hovering, except while the pointer stays on the
  * star that was just clicked (confirmation → filled stars).
- * Moving to a different star ends confirmation and resumes outline preview.
+ * Moving to a different star ends confirmation and resumes preview.
  */
 export function resolveEffectiveHoverRating(
   hoverRating: number | null,
@@ -27,27 +27,36 @@ export function resolveEffectiveHoverRating(
 }
 
 /**
- * Saved rating uses filled stars. While hovering (preview), stars 1..N are
- * outline-only — saved fills are hidden for the duration of the preview.
+ * Idle: filled up to saved.
+ * Hover higher: saved stays filled; saved+1..hover are soft outlines.
+ * Hover lower: 1..hover filled (target highlighted); hover+1..saved dimmed.
  */
 export function resolveStarAppearance(
   starIndex: number,
   savedRating: number,
   hoverRating: number | null,
 ): StarAppearance {
-  if (hoverRating != null) {
-    return starIndex <= hoverRating ? 'outline' : 'empty'
+  if (hoverRating == null) {
+    return starIndex <= savedRating ? 'filled' : 'empty'
   }
-  return starIndex <= savedRating ? 'filled' : 'empty'
-}
 
-/** Marker under the saved rating star during outline preview only. */
-export function shouldShowSavedRatingMarker(
-  starIndex: number,
-  savedRating: number,
-  effectiveHover: number | null,
-): boolean {
-  return effectiveHover != null && savedRating >= 1 && starIndex === savedRating
+  if (hoverRating > savedRating) {
+    if (starIndex <= savedRating) return 'filled'
+    if (starIndex <= hoverRating) return 'outline'
+    return 'empty'
+  }
+
+  if (hoverRating < savedRating) {
+    if (starIndex < hoverRating) return 'filled'
+    if (starIndex === hoverRating) return 'target'
+    if (starIndex <= savedRating) return 'dimmed'
+    return 'empty'
+  }
+
+  // hover === saved: keep fills, lightly mark the hovered star
+  if (starIndex < hoverRating) return 'filled'
+  if (starIndex === hoverRating) return 'target'
+  return 'empty'
 }
 
 /** @deprecated Prefer resolveStarAppearance — kept for callers that only need the count. */
@@ -68,7 +77,16 @@ const STAR_STYLES: Record<StarAppearance, { glyph: string; color: string; textSh
   outline: {
     glyph: '☆',
     color: '#fef3c7',
-    textShadow: '0 0 6px rgba(253, 224, 71, 0.55), 0 0 1px rgba(254, 243, 199, 0.9)',
+    textShadow: '0 0 6px rgba(253, 224, 71, 0.45), 0 0 1px rgba(254, 243, 199, 0.85)',
+  },
+  dimmed: {
+    glyph: '★',
+    color: 'rgba(148, 163, 184, 0.42)',
+  },
+  target: {
+    glyph: '★',
+    color: '#fde68a',
+    textShadow: '0 0 5px rgba(254, 243, 199, 0.55), 0 0 1px rgba(253, 224, 71, 0.9)',
   },
   empty: {
     glyph: '☆',
@@ -93,7 +111,6 @@ export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
   const beginHoverOnStar = (star: SceneRatingValue) => {
     if (!supportsFineHover()) return
     setHoverRating(star)
-    // Moving to another star ends the post-click confirmation and resumes preview.
     if (confirmedStar != null && star !== confirmedStar) {
       setConfirmedStar(null)
     }
@@ -109,7 +126,6 @@ export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
         const star = value as SceneRatingValue
         const appearance = resolveStarAppearance(star, currentRating, effectiveHover)
         const look = STAR_STYLES[appearance]
-        const showSavedMarker = shouldShowSavedRatingMarker(star, currentRating, effectiveHover)
         return (
           <button
             key={star}
@@ -125,7 +141,6 @@ export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
             title={currentRating === star ? 'Bewertung entfernen' : `${star} Sterne setzen`}
             aria-label={currentRating === star ? 'Bewertung entfernen' : `${star} Sterne setzen`}
             style={{
-              position: 'relative',
               width: dim,
               height: dim,
               border: 'none',
@@ -139,24 +154,6 @@ export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
             }}
           >
             {look.glyph}
-            {showSavedMarker ? (
-              <span
-                aria-hidden="true"
-                title={`Gespeichert: ${currentRating} Sterne`}
-                style={{
-                  position: 'absolute',
-                  left: '50%',
-                  bottom: '-0.18rem',
-                  width: '0.28rem',
-                  height: '0.28rem',
-                  borderRadius: '999px',
-                  background: 'rgba(125, 211, 252, 0.9)',
-                  boxShadow: '0 0 4px rgba(125, 211, 252, 0.45)',
-                  transform: 'translateX(-50%)',
-                  pointerEvents: 'none',
-                }}
-              />
-            ) : null}
           </button>
         )
       })}

@@ -3,7 +3,6 @@ import {
   resolveDisplayedStarRating,
   resolveEffectiveHoverRating,
   resolveStarAppearance,
-  shouldShowSavedRatingMarker,
 } from './SceneStarRating.tsx'
 
 // Idle: saved fills only
@@ -12,70 +11,61 @@ assert.equal(resolveStarAppearance(2, 1, null), 'empty')
 assert.equal(resolveStarAppearance(5, 5, null), 'filled')
 assert.equal(resolveStarAppearance(1, 0, null), 'empty')
 
-// Preview: outline for 1..N, hide saved fills
-assert.equal(resolveStarAppearance(1, 1, 5), 'outline')
-assert.equal(resolveStarAppearance(5, 1, 5), 'outline')
-assert.equal(resolveStarAppearance(1, 5, 2), 'outline')
-assert.equal(resolveStarAppearance(2, 5, 2), 'outline')
-assert.equal(resolveStarAppearance(3, 5, 2), 'empty')
-assert.equal(resolveStarAppearance(5, 5, 2), 'empty')
-assert.equal(resolveStarAppearance(4, 2, 5), 'outline')
+// Hover higher (saved 2 → hover 5): keep fills, outline extras
+assert.equal(resolveStarAppearance(1, 2, 5), 'filled')
+assert.equal(resolveStarAppearance(2, 2, 5), 'filled')
+assert.equal(resolveStarAppearance(3, 2, 5), 'outline')
+assert.equal(resolveStarAppearance(5, 2, 5), 'outline')
+assert.equal(resolveStarAppearance(1, 0, 3), 'outline')
 
-// Count helper still reflects preview target
+// Hover lower (saved 5 → hover 2): fills to target, dim above, target highlight
+assert.equal(resolveStarAppearance(1, 5, 2), 'filled')
+assert.equal(resolveStarAppearance(2, 5, 2), 'target')
+assert.equal(resolveStarAppearance(3, 5, 2), 'dimmed')
+assert.equal(resolveStarAppearance(5, 5, 2), 'dimmed')
+
+// Hover equals saved
+assert.equal(resolveStarAppearance(3, 3, 3), 'target')
+assert.equal(resolveStarAppearance(2, 3, 3), 'filled')
+assert.equal(resolveStarAppearance(4, 3, 3), 'empty')
+
 assert.equal(resolveDisplayedStarRating(1, null), 1)
-assert.equal(resolveDisplayedStarRating(5, null), 5)
 assert.equal(resolveDisplayedStarRating(1, 5), 5)
-assert.equal(resolveDisplayedStarRating(5, 2), 2)
 
-// Saved marker only during outline preview, under the saved star
-assert.equal(shouldShowSavedRatingMarker(2, 2, 5), true)
-assert.equal(shouldShowSavedRatingMarker(5, 2, 5), false)
-assert.equal(shouldShowSavedRatingMarker(2, 2, null), false)
-assert.equal(shouldShowSavedRatingMarker(1, 0, 3), false)
-
-// Full interaction sequence: hover → click confirm → stay → move → preview again
+// Interaction: hover higher → click confirm → stay → move lower → preview
 {
   let hover: number | null = null
   let confirmed: number | null = null
-  let saved = 1
+  let saved = 2
 
   const effective = () => resolveEffectiveHoverRating(hover, confirmed)
   const look = (star: number) => resolveStarAppearance(star, saved, effective())
 
-  // 1) Hover star 4 → outline preview; saved marker on star 1
+  // Hover 4 (higher): 1–2 filled, 3–4 outline
   hover = 4
-  assert.equal(effective(), 4)
-  assert.equal(look(4), 'outline')
-  assert.equal(shouldShowSavedRatingMarker(1, saved, effective()), true)
+  assert.deepEqual([1, 2, 3, 4, 5].map(look), ['filled', 'filled', 'outline', 'outline', 'empty'])
 
-  // 2) Click star 4 → confirmation on same star → filled (no outline)
+  // Click 4 → confirmation → all filled to 4
   confirmed = 4
   saved = 4
   assert.equal(effective(), null)
-  assert.equal(look(1), 'filled')
-  assert.equal(look(4), 'filled')
-  assert.equal(look(5), 'empty')
-  assert.equal(shouldShowSavedRatingMarker(4, saved, effective()), false)
+  assert.deepEqual([1, 2, 3, 4, 5].map(look), ['filled', 'filled', 'filled', 'filled', 'empty'])
 
-  // 3) Pointer still on star 4 → filled remains
+  // Stay on 4
   hover = 4
   assert.equal(effective(), null)
   assert.equal(look(4), 'filled')
 
-  // 4) Move to star 2 within component → confirmation ends, outline preview resumes
+  // Move to 2 → preview resumes (lower than saved 4)
   hover = 2
   confirmed = null
   assert.equal(effective(), 2)
-  assert.equal(look(1), 'outline')
-  assert.equal(look(2), 'outline')
-  assert.equal(look(3), 'empty')
-  assert.equal(shouldShowSavedRatingMarker(4, saved, effective()), true)
+  assert.deepEqual([1, 2, 3, 4, 5].map(look), ['filled', 'target', 'dimmed', 'dimmed', 'empty'])
 
-  // 5) Leave component → idle filled saved rating
+  // Leave → idle
   hover = null
   confirmed = null
-  assert.equal(look(4), 'filled')
-  assert.equal(shouldShowSavedRatingMarker(4, saved, effective()), false)
+  assert.deepEqual([1, 2, 3, 4, 5].map(look), ['filled', 'filled', 'filled', 'filled', 'empty'])
 }
 
 console.log('SceneStarRating.test.ts OK')
