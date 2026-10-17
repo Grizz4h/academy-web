@@ -17,6 +17,10 @@
     position: sticky;
     top: 0;
     z-index: 50;
+    /* Opaque chrome backdrop: seals the TopNav↔strip seam while page content
+       scrolls underneath. Without this, a translucent nav border (outside the
+       absolute glass fill) let content bleed through as a 1px gap. */
+    background-color: rgba(8, 12, 24, 0.98);
   }
 }
 
