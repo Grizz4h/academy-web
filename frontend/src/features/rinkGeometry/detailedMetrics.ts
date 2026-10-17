@@ -38,11 +38,20 @@ export const DETAILED_END_ZONE_FACEOFF_OF_DEPTH =
   DETAILED_END_ZONE_FACEOFF_FROM_GOAL_FEET / DETAILED_END_ZONE_GOAL_TO_BLUE_FEET
 
 /**
- * Fraction of the ice surface from each end boards to the blue line.
- * Slightly tactical-board compressed vs literal NHL (~0.375 / NZ 25%):
- * end zones read larger, NZ a bit narrower.
+ * Blue-line placement as fraction of ice width from each end boards.
+ *
+ * Prior tactical value: 0.38 → NZ width fraction 0.24 (slightly under NHL 0.25).
+ * Preview: widen NZ by 5% of that prior width (0.24 → 0.252) by moving both
+ * blues toward the goal lines. Revisit after visual review — not locked as
+ * final didactics. See `blue-line-audit.md`.
  */
-export const DETAILED_RINK_BLUE_LINE_FROM_END = 0.38
+export const DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION_BASE = 0.24
+export const DETAILED_RINK_NEUTRAL_ZONE_WIDEN_PREVIEW = 0.05
+export const DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION =
+  DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION_BASE
+  * (1 + DETAILED_RINK_NEUTRAL_ZONE_WIDEN_PREVIEW)
+export const DETAILED_RINK_BLUE_LINE_FROM_END =
+  (1 - DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION) / 2
 
 /** Blue-line x as fraction of the detailed viewBox (for zone_boundaries). Matches painted blue lines. */
 export const DETAILED_RINK_ZONE_BOUNDARIES = {

@@ -6,6 +6,9 @@ import {
   DETAILED_FACEOFF_LATERAL_OF_HEIGHT,
   DETAILED_ICE_WIDTH_FEET,
   DETAILED_RINK_BLUE_LINE_FROM_END,
+  DETAILED_RINK_NEUTRAL_ZONE_WIDEN_PREVIEW,
+  DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION,
+  DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION_BASE,
   DETAILED_RINK_SURFACE,
   DETAILED_RINK_VIEWBOX,
   DETAILED_RINK_ZONE_BOUNDARIES,
@@ -15,7 +18,10 @@ import {
 assert.equal(DETAILED_RINK_VIEWBOX.width, 900)
 assert.equal(DETAILED_RINK_VIEWBOX.height, 620)
 assert.equal(DETAILED_RINK_SURFACE.width, 840)
-assert.equal(DETAILED_RINK_BLUE_LINE_FROM_END, 0.38)
+assert.equal(DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION_BASE, 0.24)
+assert.equal(DETAILED_RINK_NEUTRAL_ZONE_WIDEN_PREVIEW, 0.05)
+assert.equal(DETAILED_RINK_NEUTRAL_ZONE_WIDTH_FRACTION, 0.252)
+assert.equal(DETAILED_RINK_BLUE_LINE_FROM_END, 0.374)
 assert.equal(DETAILED_CREASE_RULE_FEET, 6)
 assert.equal(DETAILED_ICE_WIDTH_FEET, 85)
 assert.equal(DETAILED_CREASE_RADIUS_OF_HEIGHT, 6 / 85)
@@ -24,7 +30,14 @@ assert.equal(DETAILED_END_ZONE_FACEOFF_OF_DEPTH, 20 / 64)
 
 const m = getDetailedRinkMetrics()
 assert.equal(m.rinkWidth, 840)
-assert.equal(m.leftBlueLineX, DETAILED_RINK_SURFACE.x + DETAILED_RINK_SURFACE.width * 0.38)
+assert.equal(
+  m.leftBlueLineX,
+  DETAILED_RINK_SURFACE.x + DETAILED_RINK_SURFACE.width * DETAILED_RINK_BLUE_LINE_FROM_END,
+)
+assert.ok(Math.abs(m.leftBlueLineX - 344.16) < 1e-9)
+assert.ok(Math.abs(m.rightBlueLineX - 555.84) < 1e-9)
+// Symmetry about centre
+assert.ok(Math.abs((m.leftBlueLineX - m.rinkX) - (m.rinkRight - m.rightBlueLineX)) < 1e-9)
 assert.equal(
   DETAILED_RINK_ZONE_BOUNDARIES.left_blue_line_x,
   m.leftBlueLineX / DETAILED_RINK_VIEWBOX.width,
@@ -57,9 +70,12 @@ assert.ok(m.rightZoneFaceoffX > m.rinkRight - m.rinkWidth * 0.26)
 assert.ok(m.leftZoneFaceoffX > m.leftGoalLineX && m.leftZoneFaceoffX < m.leftBlueLineX)
 assert.ok(m.rightZoneFaceoffX < m.rightGoalLineX && m.rightZoneFaceoffX > m.rightBlueLineX)
 
-// NZ length offset unchanged
+// NZ length offset unchanged; dots stay inside the widened NZ
 const neutralOffsetX = m.rinkWidth * 0.08
 assert.ok(m.neutralDots.some((d) => Math.abs(d.x - (m.rinkCenterX - neutralOffsetX)) < 1e-9))
 assert.ok(m.neutralDots.some((d) => Math.abs(d.x - (m.rinkCenterX + neutralOffsetX)) < 1e-9))
+for (const dot of m.neutralDots) {
+  assert.ok(dot.x > m.leftBlueLineX && dot.x < m.rightBlueLineX)
+}
 
 console.log('detailedMetrics.test.ts: all assertions passed')

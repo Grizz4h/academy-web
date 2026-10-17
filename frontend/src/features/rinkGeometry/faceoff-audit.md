@@ -16,7 +16,7 @@
 ## Board mapping
 
 - **Lateral (Y):** short axis — ice height 540 ↔ 85 ft (same scale as crease).
-- **End-zone length (X):** fraction of the **painted** goal→blue span on this compressed board (`DETAILED_RINK_BLUE_LINE_FROM_END = 0.38`), not a literal 200 ft length scale. That keeps spots rule-proportional inside our larger end zones without inventing pixel offsets.
+- **End-zone length (X):** fraction of the **painted** goal→blue span on this compressed board (`DETAILED_RINK_BLUE_LINE_FROM_END`, currently the NZ-widen preview — see `blue-line-audit.md`), not a literal 200 ft length scale. That keeps spots rule-proportional inside the painted end zones without inventing pixel offsets.
 
 ## Old vs new (SVG, surface origin in metrics)
 
