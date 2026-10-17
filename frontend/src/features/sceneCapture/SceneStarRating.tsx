@@ -3,6 +3,8 @@ import type { SceneMarker } from '../../api'
 
 export type SceneRatingValue = 1 | 2 | 3 | 4 | 5
 
+export type StarAppearance = 'filled' | 'outline' | 'empty'
+
 type Props = {
   rating?: SceneMarker['rating']
   onChange: (rating: SceneRatingValue) => void
@@ -10,7 +12,22 @@ type Props = {
   size?: 'sm' | 'md'
 }
 
-/** Displayed fill while hovering — never mutates the saved rating. */
+/**
+ * Saved rating uses filled stars. While hovering (preview), stars 1..N are
+ * outline-only — saved fills are hidden for the duration of the preview.
+ */
+export function resolveStarAppearance(
+  starIndex: number,
+  savedRating: number,
+  hoverRating: number | null,
+): StarAppearance {
+  if (hoverRating != null) {
+    return starIndex <= hoverRating ? 'outline' : 'empty'
+  }
+  return starIndex <= savedRating ? 'filled' : 'empty'
+}
+
+/** @deprecated Prefer resolveStarAppearance — kept for callers that only need the count. */
 export function resolveDisplayedStarRating(savedRating: number, hoverRating: number | null): number {
   return hoverRating == null ? savedRating : hoverRating
 }
@@ -20,11 +37,26 @@ function supportsFineHover(): boolean {
   return window.matchMedia('(hover: hover) and (pointer: fine)').matches
 }
 
+const STAR_STYLES: Record<StarAppearance, { glyph: string; color: string; textShadow?: string }> = {
+  filled: {
+    glyph: '★',
+    color: '#fbbf24',
+  },
+  outline: {
+    glyph: '☆',
+    color: '#fef3c7',
+    textShadow: '0 0 6px rgba(253, 224, 71, 0.55), 0 0 1px rgba(254, 243, 199, 0.9)',
+  },
+  empty: {
+    glyph: '☆',
+    color: '#475569',
+  },
+}
+
 /** Same 1–5 star semantics as RingAbout / ManualSceneForm (toggle off on re-tap). */
 export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
   const currentRating = rating || 0
   const [hoverRating, setHoverRating] = useState<number | null>(null)
-  const displayRating = resolveDisplayedStarRating(currentRating, hoverRating)
   const dim = size === 'sm' ? '1.25rem' : '1.15rem'
   const fontSize = size === 'sm' ? '1.15rem' : '1rem'
 
@@ -36,7 +68,8 @@ export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
     >
       {[1, 2, 3, 4, 5].map((value) => {
         const star = value as SceneRatingValue
-        const active = star <= displayRating
+        const appearance = resolveStarAppearance(star, currentRating, hoverRating)
+        const look = STAR_STYLES[appearance]
         return (
           <button
             key={star}
@@ -57,14 +90,15 @@ export function SceneStarRating({ rating, onChange, size = 'md' }: Props) {
               height: dim,
               border: 'none',
               background: 'transparent',
-              color: active ? '#fbbf24' : '#475569',
+              color: look.color,
+              textShadow: look.textShadow,
               cursor: 'pointer',
               fontSize,
               lineHeight: 1,
               padding: 0,
             }}
           >
-            {active ? '★' : '☆'}
+            {look.glyph}
           </button>
         )
       })}
