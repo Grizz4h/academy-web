@@ -26,6 +26,13 @@
   stroke-width: 1.5;
 }
 
+/** Stick-blade puck in compare mode — slightly brighter outline. */
+.puckBlade {
+  fill: rgba(251, 191, 36, 0.98);
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 1.75;
+}
+
 .caption {
   fill: rgba(241, 245, 249, 0.95);
   font-size: 11px;

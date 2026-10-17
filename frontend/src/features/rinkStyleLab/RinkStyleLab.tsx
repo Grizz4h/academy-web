@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react'
 import FoundationRink from '../foundation/FoundationRink'
 import { UiChip } from '../../components/ui'
+import type { PlayerHandedness } from './boardStudio/playerVisual.ts'
 import { DetailedStage } from './DetailedStage'
 import { PlayerPlayground } from './PlayerPlayground.tsx'
 import { SceneMarkers } from './SceneMarkers'
 import { FOUNDATION_SCENES } from './foundationScenesCatalog'
 import { halfForBand, type IceHalf } from './labGeometry'
+import type { PlayerPuckPlacement } from './playerLocalPoint.ts'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
 import {
   applyMarkerStyleVariant,
@@ -18,6 +20,10 @@ import {
 } from './presets'
 import styles from './RinkStyleLab.module.css'
 import stageStyles from './stages.module.css'
+
+/** Footprint-matched default (radius/12 × 1). Lab range 0.2–1.5. */
+const DEFAULT_SCENE_PLAYER_SCALE = 1
+const DEFAULT_SCENE_PLAYER_ROTATION = 0
 
 function Toggle({
   label,
@@ -57,6 +63,10 @@ export function RinkStyleLab() {
   })
   const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
   const [playerFigureStyle, setPlayerFigureStyle] = useState<PlayerStyleMode>('legacy')
+  const [scenePlayerScale, setScenePlayerScale] = useState(DEFAULT_SCENE_PLAYER_SCALE)
+  const [scenePlayerRotation, setScenePlayerRotation] = useState(DEFAULT_SCENE_PLAYER_ROTATION)
+  const [sceneHandedness, setSceneHandedness] = useState<PlayerHandedness>('right')
+  const [puckPlacement, setPuckPlacement] = useState<PlayerPuckPlacement>('body')
   const [markingIntensity, setMarkingIntensity] = useState(1)
   const [attackArrowOverride, setAttackArrowOverride] = useState<'scene' | 'on' | 'off'>('scene')
   const [showPlayerPlayground, setShowPlayerPlayground] = useState(false)
@@ -223,6 +233,85 @@ export function RinkStyleLab() {
               Wirkt auf Track-0-Szenen im Detailed-Stage (Compare: nur Detailed-Seite).
             </p>
 
+            {playerFigureStyle === 'boardStudio' ? (
+              <>
+                <h2 className={styles.controlsTitle}>Szene · Scale / Rotation</h2>
+                <label className={styles.sliderRow}>
+                  <span>
+                    Scale
+                    {' '}
+                    {scenePlayerScale.toFixed(2)}
+                  </span>
+                  <input
+                    type="range"
+                    min={0.2}
+                    max={1.5}
+                    step={0.05}
+                    value={scenePlayerScale}
+                    onChange={(e) => setScenePlayerScale(Number(e.target.value))}
+                  />
+                </label>
+                <label className={styles.sliderRow}>
+                  <span>
+                    Rotation
+                    {' '}
+                    {scenePlayerRotation}
+                    °
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={359}
+                    step={1}
+                    value={scenePlayerRotation}
+                    onChange={(e) => setScenePlayerRotation(Number(e.target.value))}
+                  />
+                </label>
+                <p className={styles.hint}>
+                  Sofort auf dem Rink · Nummern bleiben aufrecht · Default Scale 1.0
+                </p>
+
+                <h2 className={styles.controlsTitle}>Puck-Lage</h2>
+                <div className={styles.chipRow} role="group" aria-label="Puck-Lage">
+                  <UiChip
+                    active={puckPlacement === 'body'}
+                    onClick={() => setPuckPlacement('body')}
+                  >
+                    Körper
+                  </UiChip>
+                  <UiChip
+                    active={puckPlacement === 'blade'}
+                    onClick={() => setPuckPlacement('blade')}
+                  >
+                    Kelle
+                  </UiChip>
+                  <UiChip
+                    active={puckPlacement === 'compare'}
+                    onClick={() => setPuckPlacement('compare')}
+                  >
+                    Vergleich
+                  </UiChip>
+                </div>
+                <div className={styles.chipRow} role="group" aria-label="Händigkeit">
+                  <UiChip
+                    active={sceneHandedness === 'right'}
+                    onClick={() => setSceneHandedness('right')}
+                  >
+                    Right
+                  </UiChip>
+                  <UiChip
+                    active={sceneHandedness === 'left'}
+                    onClick={() => setSceneHandedness('left')}
+                  >
+                    Left
+                  </UiChip>
+                </div>
+                <p className={styles.hint}>
+                  Puck folgt Rotation/Scale/Handedness (kein fester Welt-Offset).
+                </p>
+              </>
+            ) : null}
+
             <h2 className={styles.controlsTitle}>Learning</h2>
             <div className={styles.toggleGrid}>
               <Toggle
@@ -296,6 +385,10 @@ export function RinkStyleLab() {
                   showMarkers={scene.showMarkers}
                   markerOverrides={markerOverrides}
                   playerFigureStyle={playerFigureStyle}
+                  playerScale={scenePlayerScale}
+                  playerRotation={scenePlayerRotation}
+                  playerHandedness={sceneHandedness}
+                  puckPlacement={puckPlacement}
                 />
               )}
             </DetailedStage>
@@ -348,6 +441,10 @@ export function RinkStyleLab() {
                 showMarkers={scene.showMarkers}
                 markerOverrides={markerOverrides}
                 playerFigureStyle={playerFigureStyle}
+                playerScale={scenePlayerScale}
+                playerRotation={scenePlayerRotation}
+                playerHandedness={sceneHandedness}
+                puckPlacement={puckPlacement}
               />
             </DetailedStage>
           </section>
@@ -358,7 +455,7 @@ export function RinkStyleLab() {
         <header className={styles.panelHead}>
           <h2 className={styles.panelTitle}>Player Playground</h2>
           <p className={styles.panelMeta}>
-            Isolierte Figur · Farbe, Nummer, Rotation, Skater/Goalie
+            Isolierte Figur · dieselben Scale/Rotation/Puck-Regler wie die Rink-Szene
           </p>
         </header>
         <div className={styles.chipRow}>
@@ -370,7 +467,17 @@ export function RinkStyleLab() {
           </UiChip>
         </div>
         {showPlayerPlayground ? (
-          <PlayerPlayground mode={playerFigureStyle} />
+          <PlayerPlayground
+            mode={playerFigureStyle}
+            scale={scenePlayerScale}
+            onScaleChange={setScenePlayerScale}
+            rotation={scenePlayerRotation}
+            onRotationChange={setScenePlayerRotation}
+            handedness={sceneHandedness}
+            onHandednessChange={setSceneHandedness}
+            puckPlacement={puckPlacement}
+            onPuckPlacementChange={setPuckPlacement}
+          />
         ) : null}
       </section>
     </div>

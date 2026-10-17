@@ -35,15 +35,22 @@
   `SceneMarkers` with `playerFigureStyle` Legacy | Board Studio.
 - Player Playground is a panel inside `RinkStyleLab`, not a second page.
 
+## Phase 3 tuning (lab-only)
+
+- Scene **Scale** (0.2–1.5, default 1) multiplies footprint `radius/12`.
+- Scene **Rotation** applies to all Board Studio scene players; jersey label stays upright (overlay).
+- **Puck-Lage** `body` | `blade` | `compare` — local design-space → transform (rotation × bodyScale × outerScale × handedness). No fixed world offsets.
+- Legacy circle markers ignore scale/rotation/puck lab controls.
+
 ## Known visual deviations vs Board Studio Preview
 
 | Topic | Lab behavior vs Board Studio |
 | --- | --- |
 | Label | Jersey number from scene `label`; Board Studio keeps label **world-upright** (does not rotate with body). Scene captions under legacy circles are omitted for Board Studio (number on jersey). |
-| Rotation | Scene markers use `rotation={0}`; Playground exposes free rotation. No attack-direction auto-facing yet. |
-| Scale | Scene scale ≈ `marker.radius / 12` to match prior circle footprint — approximate, not pixel-identical to Board Studio rink scale. |
+| Rotation | Lab slider drives scene players (default 0). No attack-direction auto-facing. |
+| Scale | Base ≈ `marker.radius / 12`, then lab multiplier (default 1). Not pixel-identical to Board Studio rink scale. |
 | Stick flick / skate stride | Omitted (static rest pose). |
 | Selection halo / hit area | Off in lab. |
-| Puck attachment | Still the Style Lab puck circle overlay, not Board Studio puck geometry. |
+| Puck attachment | Style Lab circle at body-local or stick-blade tip (vendored blade geom); not Board Studio puck asset. |
 | Goalie | Playground only; Track-0 scenes do not switch marker kind from region data. |
 | Foundation compare pane | Always Legacy circles (`FoundationRink` unchanged). |
