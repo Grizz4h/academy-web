@@ -16,14 +16,14 @@ export type SceneMarkerEdit = {
   handedness: PlayerHandedness
   hasPuck: boolean
   /**
-   * Optional Detailed-SVG offset from the **global** puck tip.
-   * Non-zero = explicit custom placement for this marker only.
+   * @deprecated Ignored on load/save — global puckLocal is the tip.
+   * Kept for older localStorage payloads only.
    */
   puckOffsetX: number
   puckOffsetY: number
   /** @deprecated Ignored on load — global playerScale wins. */
   scale?: number
-  /** @deprecated Ignored on load — global puckBias wins. */
+  /** @deprecated Ignored on load — global puckLocal wins. */
   puckPlacement?: 'body' | 'blade'
 }
 
@@ -43,6 +43,3 @@ export type DragTarget =
   | { kind: 'player'; id: FoundationRinkRegionId }
   | { kind: 'puck'; id: FoundationRinkRegionId }
 
-export function markerHasCustomPuckOffset(edit: SceneMarkerEdit): boolean {
-  return Math.abs(edit.puckOffsetX) > 1e-6 || Math.abs(edit.puckOffsetY) > 1e-6
-}

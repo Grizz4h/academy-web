@@ -58,8 +58,9 @@ export function mergeMarkerEdits(
       rotation: Number.isFinite(d.rotation) ? d.rotation : base.rotation,
       handedness: d.handedness === 'left' ? 'left' : 'right',
       hasPuck: typeof d.hasPuck === 'boolean' ? d.hasPuck : base.hasPuck,
-      puckOffsetX: Number.isFinite(d.puckOffsetX) ? d.puckOffsetX : 0,
-      puckOffsetY: Number.isFinite(d.puckOffsetY) ? d.puckOffsetY : 0,
+      // Scene puck offsets never load into authority — global puckLocal owns tip.
+      puckOffsetX: 0,
+      puckOffsetY: 0,
     }
   }
   return next
@@ -81,8 +82,8 @@ export function sanitizeMarkerEditsForSave(
       rotation: edit.rotation,
       handedness: edit.handedness,
       hasPuck: edit.hasPuck,
-      puckOffsetX: edit.puckOffsetX,
-      puckOffsetY: edit.puckOffsetY,
+      puckOffsetX: 0,
+      puckOffsetY: 0,
     }
   }
   return next

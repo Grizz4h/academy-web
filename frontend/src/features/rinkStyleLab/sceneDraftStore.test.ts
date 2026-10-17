@@ -42,7 +42,9 @@ import {
   assert.equal(merged.puck_carrier?.rotation, 90)
   assert.equal(merged.puck_carrier?.scale, undefined)
   assert.equal(merged.puck_carrier?.puckPlacement, undefined)
-  assert.equal(merged.puck_carrier?.puckOffsetX, 3)
+  // Scene offsets must not become authority
+  assert.equal(merged.puck_carrier?.puckOffsetX, 0)
+  assert.equal(merged.puck_carrier?.puckOffsetY, 0)
   assert.equal(merged.puck_carrier?.label, 'Blau')
 
   saveSceneDraft('d4_weak_side', merged, storage)

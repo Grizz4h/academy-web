@@ -5,11 +5,18 @@ import {
   foundationPointToDetailed,
   foundationScaleToDetailed,
 } from './foundationCoordAdapter'
-import { clampPlayerScale, clampPuckBias } from './globalPlayerDisplay.ts'
+import { clampPlayerScale } from './globalPlayerDisplay.ts'
 import { resolveScenePuckPoint } from './playerLocalPoint.ts'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
 import type { SceneMarkerEdit } from './sceneDraftTypes.ts'
 import styles from './SceneMarkers.module.css'
+
+export type PuckDragPreview = {
+  id: FoundationRinkRegionId
+  /** Detailed SVG offset from the global tip (session-only until adopted). */
+  dx: number
+  dy: number
+}
 
 type Props = {
   space: 'foundation' | 'detailed'
@@ -17,8 +24,10 @@ type Props = {
   playerFigureStyle?: PlayerStyleMode
   /** Shared Board Studio size (global). */
   globalPlayerScale?: number
-  /** Shared puck tip bias body→blade (global). */
-  globalPuckBias?: number
+  /** Canonical right-handed design-space puck tip (global). */
+  globalPuckLocal?: { x: number; y: number }
+  /** Session drag preview — not persisted to scene drafts. */
+  puckDragPreview?: PuckDragPreview | null
   /** Lab scene editor — select / drag */
   editable?: boolean
   selectedId?: FoundationRinkRegionId | null
@@ -50,7 +59,8 @@ export function SceneMarkers({
   markerEdits,
   playerFigureStyle = 'legacy',
   globalPlayerScale = 1,
-  globalPuckBias = 1,
+  globalPuckLocal,
+  puckDragPreview = null,
   editable = false,
   selectedId = null,
   selectedPuckId = null,
@@ -62,7 +72,6 @@ export function SceneMarkers({
   const useBoardStudio = playerFigureStyle === 'boardStudio'
   const baseR = markerRadius(space)
   const scaleMul = clampPlayerScale(globalPlayerScale)
-  const puckBias = clampPuckBias(globalPuckBias)
   const entries = Object.values(markerEdits).filter(Boolean) as SceneMarkerEdit[]
 
   return (
@@ -86,11 +95,19 @@ export function SceneMarkers({
                 rotationDegrees: edit.rotation,
                 outerScale,
                 handedness: edit.handedness,
-                puckBias,
+                puckLocal: globalPuckLocal,
+                puckBias: 1,
               })
             : null
+          const preview =
+            puckDragPreview && puckDragPreview.id === edit.id
+              ? puckDragPreview
+              : null
           const puckPos = tip
-            ? { x: tip.x + edit.puckOffsetX, y: tip.y + edit.puckOffsetY }
+            ? {
+                x: tip.x + (preview?.dx || 0),
+                y: tip.y + (preview?.dy || 0),
+              }
             : null
 
           return (

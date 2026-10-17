@@ -60,6 +60,46 @@ export function transformPlayerLocalPoint(options: {
   }
 }
 
+/** Inverse of transformPlayerLocalPoint — world Detailed → design-space local. */
+export function inverseTransformPlayerLocalPoint(options: {
+  anchorX: number
+  anchorY: number
+  worldX: number
+  worldY: number
+  rotationDegrees: number
+  outerScale: number
+  bodyScale?: number
+}): { x: number; y: number } {
+  const bodyScale =
+    options.bodyScale !== undefined && Number.isFinite(options.bodyScale) && options.bodyScale > 0
+      ? options.bodyScale
+      : 1
+  const safeOuter =
+    Number.isFinite(options.outerScale) && options.outerScale > 0 ? options.outerScale : 1
+  const deg = Number.isFinite(options.rotationDegrees) ? options.rotationDegrees : 0
+  const rad = (deg * Math.PI) / 180
+  const cos = Math.cos(rad)
+  const sin = Math.sin(rad)
+  const dx = (options.worldX - options.anchorX) / safeOuter
+  const dy = (options.worldY - options.anchorY) / safeOuter
+  // Inverse clockwise rotate(θ): rotate(−θ)
+  const lx = dx * cos + dy * sin
+  const ly = -dx * sin + dy * cos
+  return {
+    x: lx / bodyScale,
+    y: ly / bodyScale,
+  }
+}
+
+/** Canonical (right-handed) local ↔ handedness-specific local (mirror X). */
+export function mirrorLocalForHandedness(
+  local: { x: number; y: number },
+  handedness: PlayerHandedness,
+): { x: number; y: number } {
+  if (handedness !== 'left') return { x: local.x, y: local.y }
+  return { x: -local.x, y: local.y }
+}
+
 export function stickBladeLocal(
   handedness: PlayerHandedness = 'right',
   marker: PlayerMarkerKind = 'skater',
@@ -89,10 +129,15 @@ export function resolveScenePuckPoint(options: {
   outerScale: number
   handedness?: PlayerHandedness
   marker?: PlayerMarkerKind
-  /** @deprecated Prefer puckBias — body|blade maps to 0|1. */
+  /** @deprecated Prefer puckBias / puckLocal — body|blade maps to 0|1. */
   placement?: 'body' | 'blade'
-  /** 0 = body-adjacent, 1 = stick-blade tip. */
+  /** 0 = body-adjacent, 1 = stick-blade tip (fallback when puckLocal omitted). */
   puckBias?: number
+  /**
+   * Canonical right-handed design-space tip. Mirrored for left-handed markers.
+   * Preferred over puckBias when set.
+   */
+  puckLocal?: { x: number; y: number }
 }): { x: number; y: number } {
   const marker = options.marker || 'skater'
   const handedness = options.handedness || 'right'
@@ -102,7 +147,9 @@ export function resolveScenePuckPoint(options: {
       : options.placement === 'body'
         ? 0
         : 1
-  const local = puckLocalByBias(bias, handedness, marker)
+  const canonical = options.puckLocal
+    || puckLocalByBias(bias, 'right', marker)
+  const local = mirrorLocalForHandedness(canonical, handedness)
   return transformPlayerLocalPoint({
     anchorX: options.anchorX,
     anchorY: options.anchorY,
@@ -112,4 +159,32 @@ export function resolveScenePuckPoint(options: {
     outerScale: options.outerScale,
     bodyScale: skaterBodyScale(marker),
   })
+}
+
+/**
+ * World puck (Detailed) → canonical right-handed design-space tip.
+ * Accounts for rotation, outer scale, body scale, and handedness mirror.
+ */
+export function worldPuckToCanonicalLocal(options: {
+  anchorX: number
+  anchorY: number
+  worldX: number
+  worldY: number
+  rotationDegrees: number
+  outerScale: number
+  handedness?: PlayerHandedness
+  marker?: PlayerMarkerKind
+}): { x: number; y: number } {
+  const marker = options.marker || 'skater'
+  const handedness = options.handedness || 'right'
+  const handedLocal = inverseTransformPlayerLocalPoint({
+    anchorX: options.anchorX,
+    anchorY: options.anchorY,
+    worldX: options.worldX,
+    worldY: options.worldY,
+    rotationDegrees: options.rotationDegrees,
+    outerScale: options.outerScale,
+    bodyScale: skaterBodyScale(marker),
+  })
+  return mirrorLocalForHandedness(handedLocal, handedness)
 }
