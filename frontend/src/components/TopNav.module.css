@@ -15,6 +15,10 @@
   .navbar {
     position: relative;
     top: auto;
+    /* Translucent border sits outside .glassBar (absolute inset:0 = padding box).
+       On desktop the strip joins immediately below; keep the seam opaque via
+       .appChrome background instead of a see-through 1px border. */
+    border-bottom: none;
   }
 }
 
