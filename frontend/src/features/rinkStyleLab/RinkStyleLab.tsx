@@ -211,7 +211,7 @@ export function RinkStyleLab() {
   const persistGlobalDisplay = (next: GlobalPlayerDisplaySettings) => {
     const normalized = {
       ...next,
-      version: 1 as const,
+      version: 2 as const,
       playerScale: clampPlayerScale(next.playerScale),
       puckBias: clampPuckBias(next.puckBias),
       puckLocalX: Number.isFinite(next.puckLocalX) ? next.puckLocalX : DEFAULT_GLOBAL_PLAYER_DISPLAY.puckLocalX,
@@ -226,7 +226,7 @@ export function RinkStyleLab() {
       let next: GlobalPlayerDisplaySettings = {
         ...prev,
         ...patch,
-        version: 1,
+        version: 2 as const,
         playerScale: clampPlayerScale(
           patch.playerScale !== undefined ? patch.playerScale : prev.playerScale,
         ),

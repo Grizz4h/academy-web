@@ -1,50 +1,41 @@
-# Crease geometry audit (Style Lab / Detailed rink)
+# Crease geometry audit (Detailed rink)
 
-**Status:** documentation only — no geometry change in this phase.  
-**Date:** 2026-10-17  
+**Status:** corrected in shared `rinkGeometry` (2026-10-17).  
 **Scope:** `getDetailedRinkMetrics()` / `DetailedHockeyRinkLayers` semicircle crease.
-
-## Current implementation
-
-| Quantity | Value |
-| --- | --- |
-| Ice surface | `DETAILED_RINK_SURFACE` 840×540 (viewBox 900×620) |
-| Crease formula | `creaseRadius = rinkHeight * 0.100` → **54** SVG units |
-| Paint | Semicircle from each goal line into the ice (`DetailedHockeyRinkLayers`) |
-| Faceoff circle | Same `rinkHeight * 0.100` (54) — shared constant |
-
-Source: `frontend/src/features/rinkGeometry/detailedMetrics.ts`.
 
 ## Rule reference (NHL / IIHF)
 
 - Goal crease: **semicircle of radius 6 ft (1.83 m)** measured from the center of the goal line into the playing surface.
 - Goal mouth width: also 6 ft — crease diameter along the goal line matches the posts.
 
-## Proportional check on this board
+## Board scale
 
 The Detailed rink is a **tactical board**, not a literal NHL aspect ratio:
 
 - Real NHL ice ≈ 200×85 ft → aspect ≈ **2.35**
 - Detailed ice 840×540 → aspect ≈ **1.56** (compressed length vs width)
 
-Using the **short axis** (ice height ↔ 85 ft rink width) as a length scale:
+Authoritative length scale for crease: **short axis** (ice height ↔ 85 ft rink width), consistent with how radius was derived as a fraction of `rinkHeight`.
 
-- `540 / 85 ≈ 6.35` SVG units per foot  
-- Rule crease 6 ft → ≈ **38.1** units  
-- Drawn crease 54 units → ≈ **8.5 ft** ≈ **1.42×** the rule radius
+- `540 / 85 ≈ 6.353` SVG units per foot  
+- Rule crease 6 ft → `540 × (6/85)` ≈ **38.1176** units
 
-So on this height-based reading, the crease is **proportionally larger than a 6 ft rule crease** (about +42%).
+## Old vs new metrics
 
-A length-axis scale (`840 / 200 = 4.2` u/ft) would make 6 ft ≈ 25 units — then 54 would look even larger. Because the board aspect is non-uniform, a single “true feet” claim is ambiguous; the height-based estimate is the one consistent with how `creaseRadius` is derived today (`rinkHeight * …`).
+| Quantity | Old | New |
+| --- | ---: | ---: |
+| Formula | `rinkHeight * 0.100` | `rinkHeight * (6/85)` (`DETAILED_CREASE_RADIUS_OF_HEIGHT`) |
+| Radius (SVG) | **54** | **≈ 38.1176** |
+| Implied feet (height scale) | ≈ 8.5 ft | **6 ft** |
+| Oversized factor | ≈ **1.42×** | **1.0×** (rule) |
+| Depth into ice | = radius (semicircle) | = radius (unchanged contour type) |
+| Width on goal line | = 2 × radius | = 2 × radius |
+| Position | Semicircle from each goal line into ice | Unchanged attachment to goal line |
+| Faceoff circle radius | 54 (`rinkHeight * 0.100`) | **Unchanged** 54 |
 
-## Conclusion
+Source: `frontend/src/features/rinkGeometry/detailedMetrics.ts`.  
+Paint: both ends share the same `creaseRadius` in `DetailedHockeyRinkLayers` (no Style Lab fork, no CSS scale).
 
-| Question | Finding |
-| --- | --- |
-| Is the crease likely oversized vs rule geometry? | **Yes**, ~1.4× on the height-proportional reading. |
-| Style Lab special crease? | **No** — must stay on shared `rinkGeometry`. |
-| Fix in this phase? | **No** — document only; any correction is a shared Detailed-metrics change (product decision). |
+## Contour note
 
-## Recommended next step (later)
-
-Decide whether Detailed metrics should target rule-true feet on one axis, or keep a deliberately enlarged crease for readability on a compressed board — then adjust **one** shared `creaseRadius` (and review faceoff radius coupling) without a lab fork.
+The crease remains a **true semicircle** (depth = radius, width = diameter). Correcting the single shared radius fixes depth, width, and contour together. Goal-line attachment points (`leftGoalLineX` / `rightGoalLineX`) were already correct and are unchanged.

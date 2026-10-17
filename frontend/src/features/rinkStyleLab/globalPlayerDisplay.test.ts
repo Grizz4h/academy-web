@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import {
+  BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS,
   clampPuckBias,
   clampPlayerScale,
   DEFAULT_GLOBAL_PLAYER_DISPLAY,
@@ -16,16 +17,17 @@ import {
 import { puckLocalByBias } from './playerLocalPoint.ts'
 
 assert.equal(STYLE_LAB_STICK_COLOR, '#9CA3AF')
+assert.equal(GLOBAL_PLAYER_DISPLAY_KEY, 'rink-style-lab:player-display:v2')
 assert.equal(clampPlayerScale(0.1), 0.2)
 assert.equal(clampPlayerScale(2), 1.5)
 assert.equal(clampPuckBias(-1), 0)
 assert.equal(clampPuckBias(2), 1)
 
-{
-  const blade = puckLocalByBias(1, 'right')
-  assert.ok(Math.abs(DEFAULT_GLOBAL_PLAYER_DISPLAY.puckLocalX - blade.x) < 1e-6)
-  assert.ok(Math.abs(DEFAULT_GLOBAL_PLAYER_DISPLAY.puckLocalY - blade.y) < 1e-6)
-}
+// Freigegebene Code-Standards (exact)
+assert.equal(BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.playerScale, 0.6)
+assert.equal(BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.puckLocalX, 16.130289239097504)
+assert.equal(BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.puckLocalY, -8.270109294088925)
+assert.deepEqual(DEFAULT_GLOBAL_PLAYER_DISPLAY, BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS)
 
 {
   const mem: Record<string, string> = {}
@@ -35,9 +37,21 @@ assert.equal(clampPuckBias(2), 1)
       mem[k] = v
     },
   }
+  // Empty storage → standards (not blade default, not old v1)
   assert.deepEqual(readGlobalPlayerDisplay(storage), DEFAULT_GLOBAL_PLAYER_DISPLAY)
-  writeGlobalPlayerDisplay({
+
+  // Legacy v1 key must not affect v2 reader
+  mem['rink-style-lab:player-display:v1'] = JSON.stringify({
     version: 1,
+    playerScale: 1.2,
+    puckLocalX: 99,
+    puckLocalY: 99,
+  })
+  assert.equal(readGlobalPlayerDisplay(storage).playerScale, 0.6)
+  assert.equal(readGlobalPlayerDisplay(storage).puckLocalX, 16.130289239097504)
+
+  writeGlobalPlayerDisplay({
+    version: 2,
     playerScale: 0.75,
     puckBias: 0.4,
     puckLocalX: 10,
@@ -49,8 +63,8 @@ assert.equal(clampPuckBias(2), 1)
   assert.equal(loaded.puckLocalY, -5)
   assert.ok(mem[GLOBAL_PLAYER_DISPLAY_KEY])
 
-  // bias-only legacy payload migrates to local tip
-  mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({ version: 1, playerScale: 1, puckBias: 0 })
+  // bias-only lab payload migrates to local tip
+  mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({ version: 2, playerScale: 1, puckBias: 0 })
   const migrated = readGlobalPlayerDisplay(storage)
   const body = puckLocalByBias(0, 'right')
   assert.ok(Math.abs(migrated.puckLocalX - body.x) < 1e-6)
@@ -81,8 +95,7 @@ assert.equal(normalizeGlobalPlayerDisplay({ playerScale: 99, puckBias: -3 }).puc
     hasKey: false,
   })
 
-  // Partial payload — no defaults filled in for Dev inspect
-  mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({ version: 1, playerScale: 0.65 })
+  mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({ version: 2, playerScale: 0.65 })
   const partial = readStoredGlobalDisplayFields(storage)
   assert.equal(partial.hasKey, true)
   assert.equal(partial.playerScale, 0.65)
@@ -90,7 +103,7 @@ assert.equal(normalizeGlobalPlayerDisplay({ playerScale: 99, puckBias: -3 }).puc
   assert.equal(partial.puckLocalY, null)
 
   mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({
-    version: 1,
+    version: 2,
     playerScale: 0.85,
     puckLocalX: 12.345678901234,
     puckLocalY: -4.25,

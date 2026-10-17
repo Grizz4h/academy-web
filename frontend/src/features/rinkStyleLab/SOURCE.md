@@ -38,12 +38,13 @@
 ## Scene Editor (lab-only)
 
 - Isolated Player Playground **removed** — edit on the Detailed rink (`/dev/rink-style`).
-- **Global display** (`rink-style-lab:player-display:v1`): `playerScale`, `puckLocalX/Y` (right-handed design-space tip), legacy `puckBias` preset, stick `#9CA3AF`.
-- Drag puck → session preview; **Puckposition global übernehmen** writes `puckLocal*` (not ice coords). Applies to all Board Studio puck carriers.
+- **Code standards** (`BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS`): `playerScale` 0.6, freigegebene `puckLocalX/Y`, stick `#9CA3AF`.
+- Lab experiments: `rink-style-lab:player-display:v2` (v1 ignored so old storage cannot silently override).
+- Drag puck → session preview; **Puckposition global übernehmen** writes lab `puckLocal*` (not ice coords).
 - **Scene drafts** (`rink-style-lab:scene-drafts:v1`): position, rotation, label, team, handedness — **never** writes `t0-track.json`. Scene puck offsets ignored.
 - Legacy draft `scale` / `puckPlacement` / `puckOffset*` remain loadable but are **ignored**.
-- **Dev-Werte** panel (lab-only): raw `playerScale` / `puckLocalX/Y` from storage + copy JSON; no defaults.
-- Crease size: see `crease-audit.md` (oversized vs 6 ft rule; no fix in this phase).
+- **Dev-Werte** panel (lab-only): raw storage fields + copy JSON; no default fill-in.
+- Crease: shared Detailed metrics — 6 ft on height↔85 ft scale; see `crease-audit.md`.
 
 ## Known visual deviations vs Board Studio Preview
 

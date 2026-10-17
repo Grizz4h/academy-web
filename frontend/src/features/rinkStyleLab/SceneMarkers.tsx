@@ -5,7 +5,15 @@ import {
   foundationPointToDetailed,
   foundationScaleToDetailed,
 } from './foundationCoordAdapter'
-import { clampPlayerScale } from './globalPlayerDisplay.ts'
+import {
+  BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS,
+  clampPlayerScale,
+} from './globalPlayerDisplay.ts'
+
+const STANDARD_PUCK_LOCAL = {
+  x: BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.puckLocalX,
+  y: BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.puckLocalY,
+}
 import { resolveScenePuckPoint } from './playerLocalPoint.ts'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
 import type { SceneMarkerEdit } from './sceneDraftTypes.ts'
@@ -58,8 +66,8 @@ export function SceneMarkers({
   space,
   markerEdits,
   playerFigureStyle = 'legacy',
-  globalPlayerScale = 1,
-  globalPuckLocal,
+  globalPlayerScale = BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.playerScale,
+  globalPuckLocal = STANDARD_PUCK_LOCAL,
   puckDragPreview = null,
   editable = false,
   selectedId = null,
