@@ -8,6 +8,16 @@ export const DETAILED_RINK_VIEWBOX = { width: 900, height: 620 }
 export const DETAILED_RINK_SURFACE = { x: 30, y: 40, width: 840, height: 540 }
 
 /**
+ * Crease radius as a fraction of ice height.
+ * Maps rule 6 ft crease onto the board short axis (ice height ↔ 85 ft width).
+ * → creaseRadius = 540 * (6/85) ≈ 38.1176 SVG units (was 54 @ 0.100).
+ */
+export const DETAILED_CREASE_RULE_FEET = 6
+export const DETAILED_ICE_WIDTH_FEET = 85
+export const DETAILED_CREASE_RADIUS_OF_HEIGHT =
+  DETAILED_CREASE_RULE_FEET / DETAILED_ICE_WIDTH_FEET
+
+/**
  * Fraction of the ice surface from each end boards to the blue line.
  * Slightly tactical-board compressed vs literal NHL (~0.375 / NZ 25%):
  * end zones read larger, NZ a bit narrower.
@@ -43,7 +53,13 @@ export function getDetailedRinkMetrics() {
   const goalMouth = rinkHeight * 0.078
   const goalHalf = goalMouth / 2
   const goalDepth = rinkWidth * 0.018
-  const creaseRadius = rinkHeight * 0.100
+  /**
+   * Goal crease: NHL/IIHF semicircle radius 6 ft from goal-line center.
+   * Scaled on the short ice axis (height ↔ 85 ft rink width).
+   * Previously `rinkHeight * 0.100` (= 54) ≈ 1.42× rule size — see crease-audit.md.
+   * Faceoff circles keep the prior radius (unchanged marking).
+   */
+  const creaseRadius = rinkHeight * DETAILED_CREASE_RADIUS_OF_HEIGHT
   const faceoffRadius = rinkHeight * 0.100
   const leftZoneFaceoffX = rinkX + rinkWidth * 0.26
   const rightZoneFaceoffX = rinkRight - rinkWidth * 0.26

@@ -1,17 +1,24 @@
 /**
- * Lab-wide Board Studio presentation — separate from per-scene drafts.
+ * Board Studio player presentation standards + Style Lab experiment storage.
  * Never writes curriculum JSON.
+ *
+ * Product / rendering authority is BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.
+ * Style Lab may override via localStorage for experiments only (v2 key).
  */
 
 import { BODY_PUCK_LOCAL, puckLocalByBias } from './playerLocalPoint.ts'
 
-export const GLOBAL_PLAYER_DISPLAY_KEY = 'rink-style-lab:player-display:v1'
+/**
+ * Lab experiment storage. Bumped to v2 so pre-standard v1 values cannot
+ * silently override the freigegebenen Code-Standards.
+ */
+export const GLOBAL_PLAYER_DISPLAY_KEY = 'rink-style-lab:player-display:v2'
 
-/** Cool mid gray for Style Lab sticks (geometry unchanged). */
+/** Cool mid gray for Board Studio sticks (geometry unchanged). */
 export const STYLE_LAB_STICK_COLOR = '#9CA3AF'
 
 export type GlobalPlayerDisplaySettings = {
-  version: 1
+  version: 2
   /** Shared Board Studio footprint multiplier (0.2–1.5). */
   playerScale: number
   /**
@@ -27,19 +34,25 @@ export type GlobalPlayerDisplaySettings = {
   puckLocalY: number
 }
 
-/** Default = stick blade tip (right-handed design space). */
-const DEFAULT_BLADE = puckLocalByBias(1, 'right', 'skater')
-
-export const DEFAULT_GLOBAL_PLAYER_DISPLAY: GlobalPlayerDisplaySettings = {
-  version: 1,
-  playerScale: 1,
+/**
+ * Visually freigegebene Darstellung (Rink Style Lab, 2026-10-17).
+ * Binding for all Board Studio players when no lab experiment is active.
+ */
+export const BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS: GlobalPlayerDisplaySettings = {
+  version: 2,
+  playerScale: 0.6,
   puckBias: 1,
-  puckLocalX: DEFAULT_BLADE.x,
-  puckLocalY: DEFAULT_BLADE.y,
+  puckLocalX: 16.130289239097504,
+  puckLocalY: -8.270109294088925,
+}
+
+/** Alias — code default equals freigegebene Standards. */
+export const DEFAULT_GLOBAL_PLAYER_DISPLAY: GlobalPlayerDisplaySettings = {
+  ...BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS,
 }
 
 export function clampPlayerScale(value: number): number {
-  if (!Number.isFinite(value)) return 1
+  if (!Number.isFinite(value)) return BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.playerScale
   return Math.min(1.5, Math.max(0.2, value))
 }
 
@@ -62,10 +75,10 @@ export function normalizeGlobalPlayerDisplay(
   const hasLocal =
     typeof o.puckLocalX === 'number' && Number.isFinite(o.puckLocalX)
     && typeof o.puckLocalY === 'number' && Number.isFinite(o.puckLocalY)
-  // Migrate bias-only v1 payloads → explicit local tip
+  // Bias-only payloads → explicit local tip (lab experiments)
   const fromBias = puckLocalByBias(puckBias, 'right', 'skater')
   return {
-    version: 1,
+    version: 2,
     playerScale,
     puckBias,
     puckLocalX: hasLocal ? Number(o.puckLocalX) : fromBias.x,
@@ -73,6 +86,10 @@ export function normalizeGlobalPlayerDisplay(
   }
 }
 
+/**
+ * Style Lab only: optional experiment override from v2 storage.
+ * Missing / corrupt / empty → code standards (never legacy v1).
+ */
 export function readGlobalPlayerDisplay(
   storage: Pick<Storage, 'getItem'> = localStorage,
 ): GlobalPlayerDisplaySettings {
@@ -165,7 +182,7 @@ export function globalDisplayWithPuckBias(
   const local = puckLocalByBias(puckBias, 'right', 'skater')
   return {
     ...settings,
-    version: 1,
+    version: 2,
     puckBias,
     puckLocalX: local.x,
     puckLocalY: local.y,
@@ -175,4 +192,12 @@ export function globalDisplayWithPuckBias(
 /** Body-adjacent preset for UI reset. */
 export function bodyPuckLocalCanonical(): { x: number; y: number } {
   return { x: BODY_PUCK_LOCAL.x, y: BODY_PUCK_LOCAL.y }
+}
+
+/** Canonical puck tip from freigegebene Standards. */
+export function standardPuckLocal(): { x: number; y: number } {
+  return {
+    x: BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.puckLocalX,
+    y: BOARD_STUDIO_PLAYER_DISPLAY_STANDARDS.puckLocalY,
+  }
 }

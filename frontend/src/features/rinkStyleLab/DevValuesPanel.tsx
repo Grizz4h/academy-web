@@ -3,13 +3,14 @@ import { UiButton } from '../../components/ui'
 import {
   formatStoredGlobalDisplayCopyPayload,
   formatStoredNumber,
+  GLOBAL_PLAYER_DISPLAY_KEY,
   readStoredGlobalDisplayFields,
   type StoredGlobalDisplayFields,
 } from './globalPlayerDisplay.ts'
 import styles from './DevValuesPanel.module.css'
 
 type Props = {
-  /** Bump when lab writes player-display:v1 so the panel re-reads storage. */
+  /** Bump when lab writes player-display storage so the panel re-reads. */
   refreshKey?: unknown
 }
 
@@ -25,7 +26,7 @@ function FieldRow({ label, value }: { label: string; value: number | null }) {
 }
 
 /**
- * Lab-only inspector for raw `player-display:v1` numbers.
+ * Lab-only inspector for raw player-display storage numbers.
  * Does not affect player/puck rendering.
  */
 export function DevValuesPanel({ refreshKey }: Props) {
@@ -64,7 +65,7 @@ export function DevValuesPanel({ refreshKey }: Props) {
         <p className={styles.meta}>
           Rohwerte aus
           {' '}
-          <code>rink-style-lab:player-display:v1</code>
+          <code>{GLOBAL_PLAYER_DISPLAY_KEY}</code>
           {fields.hasKey ? '' : ' · Key fehlt'}
         </p>
         <dl className={styles.list}>
