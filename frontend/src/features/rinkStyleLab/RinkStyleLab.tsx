@@ -1,14 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import FoundationRink from '../foundation/FoundationRink'
+import type { FoundationRinkRegionId } from '../foundation/types'
 import { UiChip } from '../../components/ui'
 import type { PlayerHandedness } from './boardStudio/playerVisual.ts'
 import { DetailedStage } from './DetailedStage'
-import { PlayerPlayground } from './PlayerPlayground.tsx'
-import { SceneMarkers } from './SceneMarkers'
+import {
+  detailedPointToFoundation,
+  foundationPointToDetailed,
+} from './foundationCoordAdapter'
 import { FOUNDATION_SCENES } from './foundationScenesCatalog'
 import { halfForBand, type IceHalf } from './labGeometry'
-import type { PlayerPuckPlacement } from './playerLocalPoint.ts'
-import type { PlayerStyleMode } from './playerStyleMode.ts'
 import {
   applyMarkerStyleVariant,
   DEFAULT_LEARNING,
@@ -18,12 +20,23 @@ import {
   type StyleLabMarkings,
   type StyleLabMode,
 } from './presets'
+import type { PlayerStyleMode } from './playerStyleMode.ts'
+import {
+  buildBaselineMarkerEdits,
+  editsToFoundationOverrides,
+  mergeMarkerEdits,
+} from './sceneDraftBuild.ts'
+import {
+  clearSceneDraft,
+  clampPlayerScale,
+  loadSceneDraft,
+  saveSceneDraft,
+} from './sceneDraftStore.ts'
+import type { DragTarget, SceneMarkerEdit } from './sceneDraftTypes.ts'
+import { SceneMarkers } from './SceneMarkers'
+import { clientToSvgPoint } from './svgPointer.ts'
 import styles from './RinkStyleLab.module.css'
 import stageStyles from './stages.module.css'
-
-/** Footprint-matched default (radius/12 × 1). Lab range 0.2–1.5. */
-const DEFAULT_SCENE_PLAYER_SCALE = 1
-const DEFAULT_SCENE_PLAYER_ROTATION = 0
 
 function Toggle({
   label,
@@ -53,7 +66,27 @@ const DEFAULT_SCENE_ID = FOUNDATION_SCENES.find((s) => s.id === 'd4_weak_side')?
   || FOUNDATION_SCENES[0]?.id
   || ''
 
+function loadEditsForScene(
+  sceneId: string,
+  showMarkers: FoundationRinkRegionId[],
+  styledOverrides: ReturnType<typeof applyMarkerStyleVariant>,
+): Partial<Record<FoundationRinkRegionId, SceneMarkerEdit>> {
+  const baseline = buildBaselineMarkerEdits(showMarkers, styledOverrides)
+  const draft = loadSceneDraft(sceneId)
+  return mergeMarkerEdits(baseline, draft?.markers)
+}
+
 export function RinkStyleLab() {
+  const svgRef = useRef<SVGSVGElement | null>(null)
+  const dragRef = useRef<{
+    target: DragTarget
+    lastSvg: { x: number; y: number }
+  } | null>(null)
+  const dragListenersRef = useRef<{
+    move: (e: PointerEvent) => void
+    up: () => void
+  } | null>(null)
+
   const [mode, setMode] = useState<StyleLabMode>('design')
   const [sceneId, setSceneId] = useState(DEFAULT_SCENE_ID)
   const [markings, setMarkings] = useState<StyleLabMarkings>(DEFAULT_MARKINGS)
@@ -62,30 +95,45 @@ export function RinkStyleLab() {
     return { ...DEFAULT_LEARNING, ...(scene?.learning || {}) }
   })
   const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
-  const [playerFigureStyle, setPlayerFigureStyle] = useState<PlayerStyleMode>('legacy')
-  const [scenePlayerScale, setScenePlayerScale] = useState(DEFAULT_SCENE_PLAYER_SCALE)
-  const [scenePlayerRotation, setScenePlayerRotation] = useState(DEFAULT_SCENE_PLAYER_ROTATION)
-  const [sceneHandedness, setSceneHandedness] = useState<PlayerHandedness>('right')
-  const [puckPlacement, setPuckPlacement] = useState<PlayerPuckPlacement>('body')
+  const [playerFigureStyle, setPlayerFigureStyle] = useState<PlayerStyleMode>('boardStudio')
   const [markingIntensity, setMarkingIntensity] = useState(1)
   const [attackArrowOverride, setAttackArrowOverride] = useState<'scene' | 'on' | 'off'>('scene')
-  const [showPlayerPlayground, setShowPlayerPlayground] = useState(false)
+  const [sceneEditMode, setSceneEditMode] = useState(true)
+  const [selectedId, setSelectedId] = useState<FoundationRinkRegionId | null>(null)
+  const [selectedPuckId, setSelectedPuckId] = useState<FoundationRinkRegionId | null>(null)
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null)
+  const [markerEdits, setMarkerEdits] = useState<
+    Partial<Record<FoundationRinkRegionId, SceneMarkerEdit>>
+  >({})
 
   const scene = useMemo(
     () => FOUNDATION_SCENES.find((s) => s.id === sceneId) || FOUNDATION_SCENES[0],
     [sceneId],
   )
 
-  const markerOverrides = useMemo(
+  const styledOverrides = useMemo(
     () => (scene
       ? applyMarkerStyleVariant(scene.markerOverrides, scene.showMarkers, markerVariant)
       : {}),
     [scene, markerVariant],
   )
 
+  // Bind edits to scene id — reload baseline+draft on scene or label-style change
+  useEffect(() => {
+    if (!scene) return
+    const next = loadEditsForScene(scene.id, scene.showMarkers, styledOverrides)
+    setMarkerEdits(next)
+    setSelectedId(null)
+    setSelectedPuckId(null)
+    const saved = loadSceneDraft(scene.id)
+    setDraftSavedAt(saved?.updatedAt || null)
+  }, [scene, styledOverrides])
+
   const showAttackArrow = attackArrowOverride === 'scene'
     ? Boolean(scene?.showAttackArrow)
     : attackArrowOverride === 'on'
+
+  const selected = selectedId ? markerEdits[selectedId] : null
 
   const applyScene = (id: string) => {
     const next = FOUNDATION_SCENES.find((s) => s.id === id)
@@ -121,6 +169,112 @@ export function RinkStyleLab() {
     setMarkings((prev) => ({ ...prev, [key]: value }))
   }
 
+  const patchSelected = (patch: Partial<SceneMarkerEdit>) => {
+    if (!selectedId) return
+    setMarkerEdits((prev) => {
+      const cur = prev[selectedId]
+      if (!cur) return prev
+      return {
+        ...prev,
+        [selectedId]: {
+          ...cur,
+          ...patch,
+          id: selectedId,
+          scale: patch.scale !== undefined ? clampPlayerScale(patch.scale) : cur.scale,
+        },
+      }
+    })
+  }
+
+  const handleSaveDraft = () => {
+    if (!scene) return
+    const doc = saveSceneDraft(scene.id, markerEdits)
+    setDraftSavedAt(doc.updatedAt)
+  }
+
+  const handleResetDraft = () => {
+    if (!scene) return
+    clearSceneDraft(scene.id)
+    setMarkerEdits(buildBaselineMarkerEdits(scene.showMarkers, styledOverrides))
+    setDraftSavedAt(null)
+    setSelectedId(null)
+    setSelectedPuckId(null)
+  }
+
+  const endDrag = () => {
+    dragRef.current = null
+    const listeners = dragListenersRef.current
+    if (listeners) {
+      window.removeEventListener('pointermove', listeners.move)
+      window.removeEventListener('pointerup', listeners.up)
+      dragListenersRef.current = null
+    }
+  }
+
+  useEffect(() => () => endDrag(), [])
+
+  const beginDrag = (target: DragTarget, e: ReactPointerEvent) => {
+    if (!sceneEditMode || !svgRef.current) return
+    e.preventDefault()
+    const pt = clientToSvgPoint(svgRef.current, e.clientX, e.clientY)
+    const prevListeners = dragListenersRef.current
+    if (prevListeners) {
+      window.removeEventListener('pointermove', prevListeners.move)
+      window.removeEventListener('pointerup', prevListeners.up)
+      dragListenersRef.current = null
+    }
+    dragRef.current = { target, lastSvg: pt }
+    const move = (ev: PointerEvent) => {
+      const drag = dragRef.current
+      if (!drag || !svgRef.current) return
+      const next = clientToSvgPoint(svgRef.current, ev.clientX, ev.clientY)
+      const dx = next.x - drag.lastSvg.x
+      const dy = next.y - drag.lastSvg.y
+      drag.lastSvg = next
+      if (drag.target.kind === 'player') {
+        const id = drag.target.id
+        setMarkerEdits((prev) => {
+          const cur = prev[id]
+          if (!cur) return prev
+          const detailed = foundationPointToDetailed(cur.cx, cur.cy)
+          const foundation = detailedPointToFoundation(detailed.x + dx, detailed.y + dy)
+          return { ...prev, [id]: { ...cur, cx: foundation.x, cy: foundation.y } }
+        })
+        return
+      }
+      const id = drag.target.id
+      setMarkerEdits((prev) => {
+        const cur = prev[id]
+        if (!cur || !cur.hasPuck) return prev
+        return {
+          ...prev,
+          [id]: {
+            ...cur,
+            puckOffsetX: cur.puckOffsetX + dx,
+            puckOffsetY: cur.puckOffsetY + dy,
+          },
+        }
+      })
+    }
+    const up = () => endDrag()
+    dragListenersRef.current = { move, up }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+  }
+
+  const startPlayerDrag = (id: FoundationRinkRegionId, e: ReactPointerEvent) => {
+    setSelectedId(id)
+    setSelectedPuckId(null)
+    beginDrag({ kind: 'player', id }, e)
+  }
+
+  const startPuckDrag = (id: FoundationRinkRegionId, e: ReactPointerEvent) => {
+    if (playerFigureStyle !== 'boardStudio') return
+    setSelectedId(id)
+    setSelectedPuckId(id)
+    beginDrag({ kind: 'puck', id }, e)
+  }
+
   const foundationLearningSelected =
     learning.showFeedback && learning.feedbackSide === 'weak' ? 'weak_side' : null
 
@@ -129,11 +283,35 @@ export function RinkStyleLab() {
     weakSideBand: learning.weakSideBand || scene?.weakSideBand || 'top',
   }
 
+  const compareOverrides = useMemo(
+    () => editsToFoundationOverrides(markerEdits),
+    [markerEdits],
+  )
+
+  const sceneMarkersProps = {
+    space: 'detailed' as const,
+    markerEdits,
+    playerFigureStyle,
+    editable: sceneEditMode && mode === 'design',
+    selectedId,
+    selectedPuckId,
+    onSelectPlayer: (id: FoundationRinkRegionId) => {
+      setSelectedId(id)
+      setSelectedPuckId(null)
+    },
+    onSelectPuck: (id: FoundationRinkRegionId) => {
+      setSelectedId(id)
+      setSelectedPuckId(id)
+    },
+    onPointerDownPlayer: startPlayerDrag,
+    onPointerDownPuck: startPuckDrag,
+  }
+
   return (
     <div className={styles.lab}>
       <p className={styles.banner} role="status">
-        Phase 3 · Detailed-Geometrie + Spielerfiguren (Legacy-Kreis / Board-Studio-SVG) ·
-        Foundation-Szenen nur gemappt · Keine Curriculum-Änderung · Blueprint unverändert
+        Scene Editor · Track-0-Szenen als Lab-Entwürfe (localStorage) · keine Curriculum-Schreibung ·
+        Blueprint unverändert · siehe crease-audit.md
       </p>
 
       <div className={styles.modeRow} role="group" aria-label="Lab-Modus">
@@ -194,20 +372,13 @@ export function RinkStyleLab() {
             </div>
 
             <h2 className={styles.controlsTitle}>Angriffsrichtung</h2>
-            <p className={styles.hint}>Bande-Chevrons (Detailed Ice-Ads) · keine extra Pfeil-Geometrie</p>
             <div className={styles.chipRow}>
-              <UiChip active={attackArrowOverride === 'scene'} onClick={() => setAttackArrowOverride('scene')}>
-                Szene
-              </UiChip>
-              <UiChip active={attackArrowOverride === 'on'} onClick={() => setAttackArrowOverride('on')}>
-                An
-              </UiChip>
-              <UiChip active={attackArrowOverride === 'off'} onClick={() => setAttackArrowOverride('off')}>
-                Aus
-              </UiChip>
+              <UiChip active={attackArrowOverride === 'scene'} onClick={() => setAttackArrowOverride('scene')}>Szene</UiChip>
+              <UiChip active={attackArrowOverride === 'on'} onClick={() => setAttackArrowOverride('on')}>An</UiChip>
+              <UiChip active={attackArrowOverride === 'off'} onClick={() => setAttackArrowOverride('off')}>Aus</UiChip>
             </div>
 
-            <h2 className={styles.controlsTitle}>Marker-Stil</h2>
+            <h2 className={styles.controlsTitle}>Label-Semantik</h2>
             <div className={styles.chipRow}>
               <UiChip active={markerVariant === 'team'} onClick={() => setMarkerVariant('team')}>Team</UiChip>
               <UiChip active={markerVariant === 'role'} onClick={() => setMarkerVariant('role')}>Rolle</UiChip>
@@ -216,101 +387,159 @@ export function RinkStyleLab() {
 
             <h2 className={styles.controlsTitle}>Spielerfigur</h2>
             <div className={styles.chipRow} role="group" aria-label="Spielerfigur">
-              <UiChip
-                active={playerFigureStyle === 'legacy'}
-                onClick={() => setPlayerFigureStyle('legacy')}
-              >
-                Legacy
-              </UiChip>
-              <UiChip
-                active={playerFigureStyle === 'boardStudio'}
-                onClick={() => setPlayerFigureStyle('boardStudio')}
-              >
-                Board Studio
-              </UiChip>
+              <UiChip active={playerFigureStyle === 'legacy'} onClick={() => setPlayerFigureStyle('legacy')}>Legacy</UiChip>
+              <UiChip active={playerFigureStyle === 'boardStudio'} onClick={() => setPlayerFigureStyle('boardStudio')}>Board Studio</UiChip>
+            </div>
+
+            <h2 className={styles.controlsTitle}>Szenen-Editor</h2>
+            <div className={styles.chipRow}>
+              <UiChip active={sceneEditMode} onClick={() => setSceneEditMode(true)}>Bearbeiten</UiChip>
+              <UiChip active={!sceneEditMode} onClick={() => setSceneEditMode(false)}>Ansicht</UiChip>
             </div>
             <p className={styles.hint}>
-              Wirkt auf Track-0-Szenen im Detailed-Stage (Compare: nur Detailed-Seite).
+              Spieler tippen/ziehen · Entwürfe nur für diese Szenen-ID · kein Curriculum-Write
             </p>
+            <div className={styles.chipRow}>
+              <UiChip active={false} onClick={handleSaveDraft}>Entwurf speichern</UiChip>
+              <UiChip active={false} onClick={handleResetDraft}>Zurücksetzen</UiChip>
+            </div>
+            {draftSavedAt ? (
+              <p className={styles.hint}>
+                Gespeichert:
+                {' '}
+                {new Date(draftSavedAt).toLocaleString()}
+              </p>
+            ) : (
+              <p className={styles.hint}>Kein gespeicherter Entwurf für diese Szene.</p>
+            )}
 
-            {playerFigureStyle === 'boardStudio' ? (
+            {selected ? (
               <>
-                <h2 className={styles.controlsTitle}>Szene · Scale / Rotation</h2>
+                <h2 className={styles.controlsTitle}>
+                  Auswahl ·
+                  {' '}
+                  {selected.id}
+                </h2>
                 <label className={styles.sliderRow}>
-                  <span>
-                    Scale
-                    {' '}
-                    {scenePlayerScale.toFixed(2)}
-                  </span>
+                  <span>Nummer</span>
                   <input
-                    type="range"
-                    min={0.2}
-                    max={1.5}
-                    step={0.05}
-                    value={scenePlayerScale}
-                    onChange={(e) => setScenePlayerScale(Number(e.target.value))}
+                    type="text"
+                    maxLength={8}
+                    value={selected.label}
+                    onChange={(e) => patchSelected({ label: e.target.value })}
                   />
                 </label>
-                <label className={styles.sliderRow}>
-                  <span>
-                    Rotation
-                    {' '}
-                    {scenePlayerRotation}
-                    °
-                  </span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={359}
-                    step={1}
-                    value={scenePlayerRotation}
-                    onChange={(e) => setScenePlayerRotation(Number(e.target.value))}
-                  />
-                </label>
-                <p className={styles.hint}>
-                  Sofort auf dem Rink · Nummern bleiben aufrecht · Default Scale 1.0
-                </p>
-
-                <h2 className={styles.controlsTitle}>Puck-Lage</h2>
-                <div className={styles.chipRow} role="group" aria-label="Puck-Lage">
-                  <UiChip
-                    active={puckPlacement === 'body'}
-                    onClick={() => setPuckPlacement('body')}
-                  >
-                    Körper
-                  </UiChip>
-                  <UiChip
-                    active={puckPlacement === 'blade'}
-                    onClick={() => setPuckPlacement('blade')}
-                  >
-                    Kelle
-                  </UiChip>
-                  <UiChip
-                    active={puckPlacement === 'compare'}
-                    onClick={() => setPuckPlacement('compare')}
-                  >
-                    Vergleich
-                  </UiChip>
+                <div className={styles.chipRow} role="group" aria-label="Teamfarbe">
+                  {(['blue', 'red', 'neutral'] as const).map((t) => (
+                    <UiChip
+                      key={t}
+                      active={selected.team === t}
+                      onClick={() => patchSelected({ team: t })}
+                    >
+                      {t}
+                    </UiChip>
+                  ))}
                 </div>
-                <div className={styles.chipRow} role="group" aria-label="Händigkeit">
-                  <UiChip
-                    active={sceneHandedness === 'right'}
-                    onClick={() => setSceneHandedness('right')}
-                  >
-                    Right
-                  </UiChip>
-                  <UiChip
-                    active={sceneHandedness === 'left'}
-                    onClick={() => setSceneHandedness('left')}
-                  >
-                    Left
-                  </UiChip>
-                </div>
-                <p className={styles.hint}>
-                  Puck folgt Rotation/Scale/Handedness (kein fester Welt-Offset).
-                </p>
+                {playerFigureStyle === 'boardStudio' ? (
+                  <>
+                    <label className={styles.sliderRow}>
+                      <span>
+                        Scale
+                        {' '}
+                        {selected.scale.toFixed(2)}
+                      </span>
+                      <input
+                        type="range"
+                        min={0.2}
+                        max={1.5}
+                        step={0.05}
+                        value={selected.scale}
+                        onChange={(e) => patchSelected({ scale: Number(e.target.value) })}
+                      />
+                    </label>
+                    <label className={styles.sliderRow}>
+                      <span>
+                        Rotation
+                        {' '}
+                        {Math.round(selected.rotation)}
+                        °
+                      </span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={359}
+                        step={1}
+                        value={selected.rotation}
+                        onChange={(e) => patchSelected({ rotation: Number(e.target.value) })}
+                      />
+                    </label>
+                    <div className={styles.chipRow}>
+                      <UiChip
+                        active={selected.handedness === 'right'}
+                        onClick={() => patchSelected({ handedness: 'right' as PlayerHandedness })}
+                      >
+                        Right
+                      </UiChip>
+                      <UiChip
+                        active={selected.handedness === 'left'}
+                        onClick={() => patchSelected({ handedness: 'left' as PlayerHandedness })}
+                      >
+                        Left
+                      </UiChip>
+                    </div>
+                    <Toggle
+                      label="Puckbesitz"
+                      checked={selected.hasPuck}
+                      onChange={(v) => patchSelected({
+                        hasPuck: v,
+                        puckOffsetX: v ? selected.puckOffsetX : 0,
+                        puckOffsetY: v ? selected.puckOffsetY : 0,
+                      })}
+                    />
+                    {selected.hasPuck ? (
+                      <>
+                        <div className={styles.chipRow}>
+                          <UiChip
+                            active={selected.puckPlacement === 'body'}
+                            onClick={() => patchSelected({
+                              puckPlacement: 'body',
+                              puckOffsetX: 0,
+                              puckOffsetY: 0,
+                            })}
+                          >
+                            Körper
+                          </UiChip>
+                          <UiChip
+                            active={selected.puckPlacement === 'blade'}
+                            onClick={() => patchSelected({
+                              puckPlacement: 'blade',
+                              puckOffsetX: 0,
+                              puckOffsetY: 0,
+                            })}
+                          >
+                            Kelle
+                          </UiChip>
+                        </div>
+                        <p className={styles.hint}>
+                          Puck auf dem Rink ziehen = Offset zur Standardlage (folgt Rotation/Scale/Hand).
+                          {selectedPuckId === selected.id ? ' · Puck ausgewählt' : ''}
+                        </p>
+                        <UiChip
+                          active={false}
+                          onClick={() => patchSelected({ puckOffsetX: 0, puckOffsetY: 0 })}
+                        >
+                          Puck-Offset nullen
+                        </UiChip>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  <p className={styles.hint}>Scale/Rotation/Kelle nur im Board-Studio-Modus.</p>
+                )}
               </>
-            ) : null}
+            ) : (
+              <p className={styles.hint}>Spieler auf dem Rink auswählen, um Eigenschaften zu setzen.</p>
+            )}
 
             <h2 className={styles.controlsTitle}>Learning</h2>
             <div className={styles.toggleGrid}>
@@ -352,23 +581,20 @@ export function RinkStyleLab() {
                 Weak = unten
               </UiChip>
             </div>
-            {activeLearning.feedbackSide && (
-              <p className={styles.hint}>
-                Letzte Auswahl:
-                {' '}
-                {activeLearning.feedbackSide === 'weak' ? 'Weak Side' : 'Strong Side'}
-              </p>
-            )}
+            {sceneEditMode ? (
+              <p className={styles.hint}>Editor aktiv · Learning-Hitboxes nicht klickbar (weiter sichtbar).</p>
+            ) : null}
           </aside>
 
           <section className={styles.panel}>
             <header className={styles.panelHead}>
-              <h2 className={styles.panelTitle}>Detailed · Foundation-Szene</h2>
+              <h2 className={styles.panelTitle}>Detailed · Scene Editor</h2>
               <p className={styles.panelMeta}>
-                Layer: Base · Scene · Learning · Intensity
-                {' '}
-                {Math.round(markingIntensity * 100)}
-                %
+                {sceneEditMode ? 'Bearbeiten' : 'Ansicht'}
+                {' · '}
+                {playerFigureStyle === 'boardStudio' ? 'Board Studio' : 'Legacy'}
+                {' · '}
+                {scene?.id}
               </p>
             </header>
             <DetailedStage
@@ -378,19 +604,10 @@ export function RinkStyleLab() {
               showAttackArrow={showAttackArrow}
               attackDirection={scene?.attackDirection || 'right'}
               onSelectHalf={onSelectHalf}
+              learningInteractive={!sceneEditMode}
+              svgRef={svgRef}
             >
-              {scene && (
-                <SceneMarkers
-                  space="detailed"
-                  showMarkers={scene.showMarkers}
-                  markerOverrides={markerOverrides}
-                  playerFigureStyle={playerFigureStyle}
-                  playerScale={scenePlayerScale}
-                  playerRotation={scenePlayerRotation}
-                  playerHandedness={sceneHandedness}
-                  puckPlacement={puckPlacement}
-                />
-              )}
+              {scene ? <SceneMarkers {...sceneMarkersProps} /> : null}
             </DetailedStage>
           </section>
         </div>
@@ -401,13 +618,13 @@ export function RinkStyleLab() {
           <section className={styles.panel}>
             <header className={styles.panelHead}>
               <h2 className={styles.panelTitle}>FoundationRink</h2>
-              <p className={styles.panelMeta}>Original 400×240 · Legacy-Marker</p>
+              <p className={styles.panelMeta}>Original · aktuelle Entwurfspositionen (Legacy)</p>
             </header>
             <div className={stageStyles.foundationWrap}>
               <FoundationRink
                 attackDirection={scene.attackDirection}
                 showMarkers={scene.showMarkers}
-                markerOverrides={markerOverrides}
+                markerOverrides={compareOverrides}
                 hideAttackArrow={!showAttackArrow}
                 weakSideBand={activeLearning.weakSideBand}
                 highlightRegions={
@@ -422,11 +639,7 @@ export function RinkStyleLab() {
           <section className={styles.panel}>
             <header className={styles.panelHead}>
               <h2 className={styles.panelTitle}>Detailed (mapped)</h2>
-              <p className={styles.panelMeta}>
-                Dieselbe Szene · Adapter ·
-                {' '}
-                {playerFigureStyle === 'boardStudio' ? 'Board Studio' : 'Legacy'}
-              </p>
+              <p className={styles.panelMeta}>Dieselbe Entwurfs-Szene · read-only Compare</p>
             </header>
             <DetailedStage
               markings={markings}
@@ -435,51 +648,18 @@ export function RinkStyleLab() {
               showAttackArrow={showAttackArrow}
               attackDirection={scene.attackDirection}
               onSelectHalf={onSelectHalf}
+              learningInteractive
             >
               <SceneMarkers
                 space="detailed"
-                showMarkers={scene.showMarkers}
-                markerOverrides={markerOverrides}
+                markerEdits={markerEdits}
                 playerFigureStyle={playerFigureStyle}
-                playerScale={scenePlayerScale}
-                playerRotation={scenePlayerRotation}
-                playerHandedness={sceneHandedness}
-                puckPlacement={puckPlacement}
+                editable={false}
               />
             </DetailedStage>
           </section>
         </div>
       )}
-
-      <section className={styles.panel} aria-label="Player Playground">
-        <header className={styles.panelHead}>
-          <h2 className={styles.panelTitle}>Player Playground</h2>
-          <p className={styles.panelMeta}>
-            Isolierte Figur · dieselben Scale/Rotation/Puck-Regler wie die Rink-Szene
-          </p>
-        </header>
-        <div className={styles.chipRow}>
-          <UiChip
-            active={showPlayerPlayground}
-            onClick={() => setShowPlayerPlayground((v) => !v)}
-          >
-            {showPlayerPlayground ? 'Playground ausblenden' : 'Playground öffnen'}
-          </UiChip>
-        </div>
-        {showPlayerPlayground ? (
-          <PlayerPlayground
-            mode={playerFigureStyle}
-            scale={scenePlayerScale}
-            onScaleChange={setScenePlayerScale}
-            rotation={scenePlayerRotation}
-            onRotationChange={setScenePlayerRotation}
-            handedness={sceneHandedness}
-            onHandednessChange={setSceneHandedness}
-            puckPlacement={puckPlacement}
-            onPuckPlacementChange={setPuckPlacement}
-          />
-        ) : null}
-      </section>
     </div>
   )
 }

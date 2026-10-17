@@ -1,27 +1,28 @@
-import type { FoundationMarkerOverride, FoundationRinkRegionId } from '../foundation/types'
+import type { PointerEvent as ReactPointerEvent } from 'react'
+import type { FoundationRinkRegionId } from '../foundation/types'
 import { HockeyPlayer } from './boardStudio/HockeyPlayer.tsx'
-import type { PlayerHandedness } from './boardStudio/playerVisual.ts'
-import { resolveSceneMarkers } from './foundationCoordAdapter'
 import {
-  resolveScenePuckPoint,
-  type PlayerPuckPlacement,
-} from './playerLocalPoint.ts'
+  foundationPointToDetailed,
+  foundationScaleToDetailed,
+} from './foundationCoordAdapter'
+import { resolveScenePuckPoint } from './playerLocalPoint.ts'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
+import type { SceneMarkerEdit } from './sceneDraftTypes.ts'
+import { clampPlayerScale } from './sceneDraftStore.ts'
 import styles from './SceneMarkers.module.css'
 
 type Props = {
   space: 'foundation' | 'detailed'
-  showMarkers: FoundationRinkRegionId[]
-  markerOverrides: Partial<Record<FoundationRinkRegionId, FoundationMarkerOverride>>
-  /** Phase 3 — Phase-1/2 circle tokens vs Board Studio compound SVG. */
+  markerEdits: Partial<Record<FoundationRinkRegionId, SceneMarkerEdit>>
   playerFigureStyle?: PlayerStyleMode
-  /** Multiplier on footprint scale (radius/12). Default 1. Range typically 0.2–1.5. */
-  playerScale?: number
-  /** Body facing degrees (SVG clockwise). Labels stay upright via HockeyPlayer overlays. */
-  playerRotation?: number
-  playerHandedness?: PlayerHandedness
-  /** Board Studio only — body vs stick-blade puck (or both for compare). */
-  puckPlacement?: PlayerPuckPlacement
+  /** Lab scene editor — select / drag */
+  editable?: boolean
+  selectedId?: FoundationRinkRegionId | null
+  selectedPuckId?: FoundationRinkRegionId | null
+  onSelectPlayer?: (id: FoundationRinkRegionId) => void
+  onSelectPuck?: (id: FoundationRinkRegionId) => void
+  onPointerDownPlayer?: (id: FoundationRinkRegionId, e: ReactPointerEvent) => void
+  onPointerDownPuck?: (id: FoundationRinkRegionId, e: ReactPointerEvent) => void
 }
 
 function teamToColor(team: 'blue' | 'red' | 'neutral'): string {
@@ -30,124 +31,177 @@ function teamToColor(team: 'blue' | 'red' | 'neutral'): string {
   return 'blue'
 }
 
-function clampScale(value: number | undefined): number {
-  if (!Number.isFinite(value)) return 1
-  return Math.min(1.5, Math.max(0.2, Number(value)))
+function markerRadius(space: 'foundation' | 'detailed'): number {
+  if (space === 'detailed') {
+    return 12 * foundationScaleToDetailed() * 0.85
+  }
+  return 12
 }
 
 /**
- * Scene layer: players / puck. Positions come from Foundation coords via adapter
- * when space === 'detailed'.
+ * Scene layer: players / puck from per-marker lab edits (Foundation positions).
  */
 export function SceneMarkers({
   space,
-  showMarkers,
-  markerOverrides,
+  markerEdits,
   playerFigureStyle = 'legacy',
-  playerScale = 1,
-  playerRotation = 0,
-  playerHandedness = 'right',
-  puckPlacement = 'body',
+  editable = false,
+  selectedId = null,
+  selectedPuckId = null,
+  onSelectPlayer,
+  onSelectPuck,
+  onPointerDownPlayer,
+  onPointerDownPuck,
 }: Props) {
-  const markers = resolveSceneMarkers(showMarkers, markerOverrides, space)
   const useBoardStudio = playerFigureStyle === 'boardStudio'
-  const scaleMul = clampScale(playerScale)
-  const rotation = Number.isFinite(playerRotation) ? playerRotation : 0
+  const baseR = markerRadius(space)
+  const entries = Object.values(markerEdits).filter(Boolean) as SceneMarkerEdit[]
 
   return (
     <g className={styles.scene} aria-label="Scene markers">
-      {markers.map((m) => {
-        const teamClass = m.team === 'red' ? styles.red : m.team === 'neutral' ? styles.neutral : styles.blue
-        const lonePuck = m.kind === 'puck'
-        const captionY = m.radius + (space === 'detailed' ? 16 : 14)
-
-        if (lonePuck) {
-          return (
-            <g key={m.id} transform={`translate(${m.x}, ${m.y})`}>
-              <circle className={styles.puck} r={m.radius} cx={0} cy={0} />
-              <text y={captionY} textAnchor="middle" className={styles.caption}>
-                {m.label}
-              </text>
-            </g>
-          )
-        }
+      {entries.map((edit) => {
+        const pos = space === 'detailed'
+          ? foundationPointToDetailed(edit.cx, edit.cy)
+          : { x: edit.cx, y: edit.cy }
+        const scaleMul = clampPlayerScale(edit.scale)
+        const teamClass = edit.team === 'red' ? styles.red : edit.team === 'neutral' ? styles.neutral : styles.blue
+        const captionY = baseR + (space === 'detailed' ? 16 : 14)
+        const selected = selectedId === edit.id
+        const puckSelected = selectedPuckId === edit.id
 
         if (useBoardStudio) {
-          // Design-space body ~12 units tall; match prior circle footprint, then lab multiplier.
-          const outerScale = (m.radius / 12) * scaleMul
-          const puckR = Math.max(4, m.radius * 0.42 * scaleMul)
-          const showBody = puckPlacement === 'body' || puckPlacement === 'compare'
-          const showBlade = puckPlacement === 'blade' || puckPlacement === 'compare'
-          const bodyPuck = m.hasPuck && showBody
+          const outerScale = (baseR / 12) * scaleMul
+          const puckR = Math.max(4, baseR * 0.42 * scaleMul)
+          const tip = edit.hasPuck
             ? resolveScenePuckPoint({
-                anchorX: m.x,
-                anchorY: m.y,
-                rotationDegrees: rotation,
+                anchorX: pos.x,
+                anchorY: pos.y,
+                rotationDegrees: edit.rotation,
                 outerScale,
-                handedness: playerHandedness,
-                placement: 'body',
+                handedness: edit.handedness,
+                placement: edit.puckPlacement,
               })
             : null
-          const bladePuck = m.hasPuck && showBlade
-            ? resolveScenePuckPoint({
-                anchorX: m.x,
-                anchorY: m.y,
-                rotationDegrees: rotation,
-                outerScale,
-                handedness: playerHandedness,
-                placement: 'blade',
-              })
+          const puckPos = tip
+            ? { x: tip.x + edit.puckOffsetX, y: tip.y + edit.puckOffsetY }
             : null
 
           return (
-            <g key={m.id}>
-              <HockeyPlayer
-                id={`scene-${m.id}`}
-                teamColor={teamToColor(m.team)}
-                number={m.label || ''}
-                rotation={rotation}
-                showStick
-                x={m.x}
-                y={m.y}
-                scale={outerScale}
-                handedness={playerHandedness}
-              />
-              {bodyPuck ? (
+            <g key={edit.id} data-marker-id={edit.id}>
+              {selected ? (
                 <circle
-                  className={styles.puck}
-                  r={puckR}
-                  cx={bodyPuck.x}
-                  cy={bodyPuck.y}
-                  opacity={puckPlacement === 'compare' ? 0.45 : 1}
-                  data-puck-placement="body"
+                  className={styles.selection}
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={baseR * scaleMul + 10}
                 />
               ) : null}
-              {bladePuck ? (
-                <circle
-                  className={puckPlacement === 'compare' ? styles.puckBlade : styles.puck}
-                  r={puckR}
-                  cx={bladePuck.x}
-                  cy={bladePuck.y}
-                  data-puck-placement="blade"
+              <g
+                className={editable ? styles.interactive : undefined}
+                onClick={(e) => {
+                  if (!editable) return
+                  e.stopPropagation()
+                  onSelectPlayer?.(edit.id)
+                }}
+                onPointerDown={(e) => {
+                  if (!editable) return
+                  e.stopPropagation()
+                  onPointerDownPlayer?.(edit.id, e)
+                }}
+              >
+                <HockeyPlayer
+                  id={`scene-${edit.id}`}
+                  teamColor={teamToColor(edit.team)}
+                  number={edit.label || ''}
+                  rotation={edit.rotation}
+                  showStick
+                  x={pos.x}
+                  y={pos.y}
+                  scale={outerScale}
+                  handedness={edit.handedness}
                 />
+                {/* Invisible hit target — compound SVG has no large fill */}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={Math.max(18, baseR * scaleMul)}
+                  fill="transparent"
+                  className={editable ? styles.hitTarget : undefined}
+                />
+              </g>
+              {puckPos ? (
+                <g
+                  className={editable ? styles.interactive : undefined}
+                  onClick={(e) => {
+                    if (!editable) return
+                    e.stopPropagation()
+                    onSelectPuck?.(edit.id)
+                  }}
+                  onPointerDown={(e) => {
+                    if (!editable) return
+                    e.stopPropagation()
+                    onPointerDownPuck?.(edit.id, e)
+                  }}
+                >
+                  {puckSelected ? (
+                    <circle
+                      className={styles.selection}
+                      cx={puckPos.x}
+                      cy={puckPos.y}
+                      r={puckR + 6}
+                    />
+                  ) : null}
+                  <circle
+                    className={styles.puck}
+                    r={puckR}
+                    cx={puckPos.x}
+                    cy={puckPos.y}
+                    data-puck-placement={edit.puckPlacement}
+                  />
+                </g>
               ) : null}
             </g>
           )
         }
 
         return (
-          <g key={m.id} transform={`translate(${m.x}, ${m.y})`}>
-            <circle r={m.radius} className={teamClass} />
-            {m.hasPuck ? (
+          <g
+            key={edit.id}
+            transform={`translate(${pos.x}, ${pos.y})`}
+            className={editable ? styles.interactive : undefined}
+            onClick={(e) => {
+              if (!editable) return
+              e.stopPropagation()
+              onSelectPlayer?.(edit.id)
+            }}
+            onPointerDown={(e) => {
+              if (!editable) return
+              e.stopPropagation()
+              onPointerDownPlayer?.(edit.id, e)
+            }}
+          >
+            {selected ? <circle className={styles.selection} r={baseR + 8} /> : null}
+            <circle r={baseR} className={teamClass} />
+            {edit.hasPuck ? (
               <circle
                 className={styles.puck}
-                r={Math.max(4, m.radius * 0.42)}
-                cx={m.radius * 0.72}
-                cy={m.radius * 0.55}
+                r={Math.max(4, baseR * 0.42)}
+                cx={baseR * 0.72}
+                cy={baseR * 0.55}
+                onClick={(e) => {
+                  if (!editable) return
+                  e.stopPropagation()
+                  onSelectPuck?.(edit.id)
+                }}
+                onPointerDown={(e) => {
+                  if (!editable || !useBoardStudio) return
+                  e.stopPropagation()
+                  onPointerDownPuck?.(edit.id, e)
+                }}
               />
             ) : null}
             <text y={captionY} textAnchor="middle" className={styles.caption}>
-              {m.label}
+              {edit.label}
             </text>
           </g>
         )

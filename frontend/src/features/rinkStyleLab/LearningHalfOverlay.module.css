@@ -15,6 +15,15 @@
   fill: rgba(125, 211, 252, 0.08);
 }
 
+/** Visible hitbox outline without capturing pointers (scene editor). */
+.hitboxPassive {
+  fill: rgba(125, 211, 252, 0);
+  stroke: rgba(125, 211, 252, 0.4);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+
 .feedback {
   /* Experimental lab token — not production grammar yet */
   fill: rgba(45, 212, 191, 0.22);
