@@ -1,4 +1,8 @@
-import type { FoundationMarkerOverride, FoundationRinkRegionId } from '../foundation/types'
+import type {
+  FoundationMarkerOverride,
+  FoundationMarkerTeam,
+  FoundationRinkRegionId,
+} from '../foundation/types'
 
 export type StyleLabMode = 'compare' | 'design'
 export type StyleLabBase = 'foundation' | 'detailed'
@@ -12,7 +16,6 @@ export type StyleLabMarkings = {
   goals: boolean
   crease: boolean
   labels: boolean
-  iceAds: boolean
   centerLine: boolean
   blueLines: boolean
   centerFaceoffCircle: boolean
@@ -33,10 +36,32 @@ export const DEFAULT_MARKINGS: StyleLabMarkings = {
   goals: true,
   crease: true,
   labels: false,
-  iceAds: true,
   centerLine: true,
   blueLines: true,
   centerFaceoffCircle: true,
+}
+
+/** Matches FoundationRink / adapter defaults when a scene omits team. */
+const MARKER_DEFAULT_TEAM: Partial<Record<FoundationRinkRegionId, FoundationMarkerTeam>> = {
+  defense_left: 'red',
+  defense_right: 'red',
+}
+
+function effectiveTeam(
+  id: FoundationRinkRegionId,
+  base: FoundationMarkerOverride,
+): FoundationMarkerTeam {
+  return base.team || MARKER_DEFAULT_TEAM[id] || 'blue'
+}
+
+function roleLabelFor(id: FoundationRinkRegionId): string {
+  if (id === 'puck_carrier') return 'Spieler'
+  if (id === 'support_player') return 'Mitspieler'
+  if (id === 'wing_left' || id === 'wing_right') return 'Flügel'
+  if (id === 'goalie_spot') return 'Torwart'
+  if (id === 'defense_left' || id === 'defense_right') return 'Verteidiger'
+  if (id === 'center_spot') return 'Center'
+  return 'Spieler'
 }
 
 export const DEFAULT_LEARNING: StyleLabLearning = {
@@ -109,7 +134,10 @@ export const SCENE_PRESETS: ScenePreset[] = [
   },
 ]
 
-/** Apply marker style variant without changing positions. */
+/**
+ * Apply marker style variant without changing positions.
+ * Team = Farbe + Blau/Rot-Label · Neutral = graue Marker · Rolle = Rollenlabel (Farbe bleibt).
+ */
 export function applyMarkerStyleVariant(
   overrides: Partial<Record<FoundationRinkRegionId, FoundationMarkerOverride>>,
   markers: FoundationRinkRegionId[],
@@ -119,26 +147,25 @@ export function applyMarkerStyleVariant(
   for (const id of markers) {
     const base = next[id] || {}
     if (variant === 'team') {
+      const team = effectiveTeam(id, base)
       next[id] = {
         ...base,
-        label: base.team === 'red' ? 'Rot' : 'Blau',
-        team: base.team || 'blue',
+        label: team === 'red' ? 'Rot' : 'Blau',
+        team,
       }
     } else if (variant === 'neutral') {
       next[id] = {
         ...base,
-        label: id === 'puck_carrier' && base.hasPuck ? 'Spieler' : 'Spieler',
+        label: 'Spieler',
         team: 'neutral',
       }
     } else {
-      // role-ish defaults
-      const roleLabel =
-        id === 'puck_carrier' ? 'Spieler'
-          : id === 'support_player' ? 'Mitspieler'
-            : id === 'wing_left' || id === 'wing_right' ? 'Flügel'
-              : id === 'goalie_spot' ? 'Torwart'
-                : 'Spieler'
-      next[id] = { ...base, label: roleLabel }
+      // Rolle: keep team colors from scene/defaults; only relabel
+      next[id] = {
+        ...base,
+        label: roleLabelFor(id),
+        team: effectiveTeam(id, base),
+      }
     }
   }
   return next

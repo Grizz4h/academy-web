@@ -177,10 +177,10 @@ export function RinkStyleLab() {
               <Toggle label="Tore" checked={markings.goals} onChange={(v) => setMarking('goals', v)} />
               <Toggle label="Crease" checked={markings.crease} onChange={(v) => setMarking('crease', v)} />
               <Toggle label="Zonen-Labels" checked={markings.labels} onChange={(v) => setMarking('labels', v)} />
-              <Toggle label="Ice-Ads" checked={markings.iceAds} onChange={(v) => setMarking('iceAds', v)} />
             </div>
 
-            <h2 className={styles.controlsTitle}>Angriffspfeil</h2>
+            <h2 className={styles.controlsTitle}>Angriffsrichtung</h2>
+            <p className={styles.hint}>Bande-Chevrons (Detailed Ice-Ads) · keine extra Pfeil-Geometrie</p>
             <div className={styles.chipRow}>
               <UiChip active={attackArrowOverride === 'scene'} onClick={() => setAttackArrowOverride('scene')}>
                 Szene
