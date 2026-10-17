@@ -9,8 +9,8 @@ export default function DevRinkStyleLabPage() {
         <p className={styles.kicker}>Dev · Visual Grammar</p>
         <h1 className="ui-page-title">Rink Style Lab</h1>
         <p className="ui-page-lead">
-          Detailed-Geometrie als Basis: Track-0-Szenen mappen, Markierungsintensität
-          und Learning-Overlays ausprobieren — ohne produktive Migration.
+          Detailed-Geometrie als Basis: Track-0-Szenen mappen, Markierungsintensität,
+          Learning-Overlays und Spielerfiguren (Legacy / Board Studio) — ohne produktive Migration.
         </p>
       </header>
 
