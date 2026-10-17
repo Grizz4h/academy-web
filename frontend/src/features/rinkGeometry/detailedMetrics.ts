@@ -18,6 +18,26 @@ export const DETAILED_CREASE_RADIUS_OF_HEIGHT =
   DETAILED_CREASE_RULE_FEET / DETAILED_ICE_WIDTH_FEET
 
 /**
+ * NHL faceoff lateral offset from the long centre line (22 ft).
+ * Scaled on the short ice axis (height ↔ 85 ft), same as crease.
+ * Shared by end-zone circle centres and NZ faceoff dots.
+ */
+export const DETAILED_FACEOFF_LATERAL_FEET = 22
+export const DETAILED_FACEOFF_LATERAL_OF_HEIGHT =
+  DETAILED_FACEOFF_LATERAL_FEET / DETAILED_ICE_WIDTH_FEET
+
+/**
+ * NHL end-zone faceoff: 20 ft from the goal line toward the blue line.
+ * Placed as a fraction of the painted end-zone depth (goal line → blue),
+ * which on a full NHL rink is 64 ft (75 − 11). Avoids arbitrary pixel offsets
+ * on this length-compressed tactical board.
+ */
+export const DETAILED_END_ZONE_FACEOFF_FROM_GOAL_FEET = 20
+export const DETAILED_END_ZONE_GOAL_TO_BLUE_FEET = 64
+export const DETAILED_END_ZONE_FACEOFF_OF_DEPTH =
+  DETAILED_END_ZONE_FACEOFF_FROM_GOAL_FEET / DETAILED_END_ZONE_GOAL_TO_BLUE_FEET
+
+/**
  * Fraction of the ice surface from each end boards to the blue line.
  * Slightly tactical-board compressed vs literal NHL (~0.375 / NZ 25%):
  * end zones read larger, NZ a bit narrower.
@@ -61,17 +81,24 @@ export function getDetailedRinkMetrics() {
    */
   const creaseRadius = rinkHeight * DETAILED_CREASE_RADIUS_OF_HEIGHT
   const faceoffRadius = rinkHeight * 0.100
-  const leftZoneFaceoffX = rinkX + rinkWidth * 0.26
-  const rightZoneFaceoffX = rinkRight - rinkWidth * 0.26
-  const topFaceoffY = rinkCenterY - rinkHeight * 0.26
-  const bottomFaceoffY = rinkCenterY + rinkHeight * 0.26
+  // Lateral: shared 22 ft axis for end-zone centres and NZ dots
+  const faceoffLateral = rinkHeight * DETAILED_FACEOFF_LATERAL_OF_HEIGHT
+  const topFaceoffY = rinkCenterY - faceoffLateral
+  const bottomFaceoffY = rinkCenterY + faceoffLateral
+  // End-zone X: 20/64 of goal→blue depth (toward goal line vs prior 0.26 fraction)
+  const leftEndZoneDepth = leftBlueLineX - leftGoalLineX
+  const rightEndZoneDepth = rightGoalLineX - rightBlueLineX
+  const leftZoneFaceoffX =
+    leftGoalLineX + leftEndZoneDepth * DETAILED_END_ZONE_FACEOFF_OF_DEPTH
+  const rightZoneFaceoffX =
+    rightGoalLineX - rightEndZoneDepth * DETAILED_END_ZONE_FACEOFF_OF_DEPTH
+  // NZ length positions unchanged (still offset from centre); Y aligns with end zones
   const neutralOffsetX = rinkWidth * 0.08
-  const neutralOffsetY = rinkHeight * 0.22
   const neutralDots = [
-    { x: rinkCenterX - neutralOffsetX, y: rinkCenterY - neutralOffsetY },
-    { x: rinkCenterX - neutralOffsetX, y: rinkCenterY + neutralOffsetY },
-    { x: rinkCenterX + neutralOffsetX, y: rinkCenterY - neutralOffsetY },
-    { x: rinkCenterX + neutralOffsetX, y: rinkCenterY + neutralOffsetY },
+    { x: rinkCenterX - neutralOffsetX, y: topFaceoffY },
+    { x: rinkCenterX - neutralOffsetX, y: bottomFaceoffY },
+    { x: rinkCenterX + neutralOffsetX, y: topFaceoffY },
+    { x: rinkCenterX + neutralOffsetX, y: bottomFaceoffY },
   ]
   return {
     rinkX,
