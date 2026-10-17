@@ -1,1 +1,8 @@
 export { RinkStyleLab } from './RinkStyleLab'
+export { HockeyPlayer } from './boardStudio/HockeyPlayer.tsx'
+export type { HockeyPlayerProps } from './boardStudio/HockeyPlayer.tsx'
+export { LegacyHockeyPlayer } from './legacy/LegacyHockeyPlayer.tsx'
+export type { LegacyHockeyPlayerProps } from './legacy/LegacyHockeyPlayer.tsx'
+export { PlayerPlayground } from './PlayerPlayground.tsx'
+export type { PlayerStyleMode } from './playerStyleMode.ts'
+export { isPlayerStyleMode } from './playerStyleMode.ts'

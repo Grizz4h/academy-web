@@ -2,9 +2,11 @@ import { useMemo, useState } from 'react'
 import FoundationRink from '../foundation/FoundationRink'
 import { UiChip } from '../../components/ui'
 import { DetailedStage } from './DetailedStage'
+import { PlayerPlayground } from './PlayerPlayground.tsx'
 import { SceneMarkers } from './SceneMarkers'
 import { FOUNDATION_SCENES } from './foundationScenesCatalog'
 import { halfForBand, type IceHalf } from './labGeometry'
+import type { PlayerStyleMode } from './playerStyleMode.ts'
 import {
   applyMarkerStyleVariant,
   DEFAULT_LEARNING,
@@ -54,8 +56,10 @@ export function RinkStyleLab() {
     return { ...DEFAULT_LEARNING, ...(scene?.learning || {}) }
   })
   const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
+  const [playerFigureStyle, setPlayerFigureStyle] = useState<PlayerStyleMode>('legacy')
   const [markingIntensity, setMarkingIntensity] = useState(1)
   const [attackArrowOverride, setAttackArrowOverride] = useState<'scene' | 'on' | 'off'>('scene')
+  const [showPlayerPlayground, setShowPlayerPlayground] = useState(false)
 
   const scene = useMemo(
     () => FOUNDATION_SCENES.find((s) => s.id === sceneId) || FOUNDATION_SCENES[0],
@@ -118,8 +122,8 @@ export function RinkStyleLab() {
   return (
     <div className={styles.lab}>
       <p className={styles.banner} role="status">
-        Phase 2 · Detailed-Geometrie als Produktbasis · Foundation-Szenen nur gemappt ·
-        Keine Curriculum-Änderung · Blueprint unverändert
+        Phase 3 · Detailed-Geometrie + Spielerfiguren (Legacy-Kreis / Board-Studio-SVG) ·
+        Foundation-Szenen nur gemappt · Keine Curriculum-Änderung · Blueprint unverändert
       </p>
 
       <div className={styles.modeRow} role="group" aria-label="Lab-Modus">
@@ -200,6 +204,25 @@ export function RinkStyleLab() {
               <UiChip active={markerVariant === 'neutral'} onClick={() => setMarkerVariant('neutral')}>Neutral</UiChip>
             </div>
 
+            <h2 className={styles.controlsTitle}>Spielerfigur</h2>
+            <div className={styles.chipRow} role="group" aria-label="Spielerfigur">
+              <UiChip
+                active={playerFigureStyle === 'legacy'}
+                onClick={() => setPlayerFigureStyle('legacy')}
+              >
+                Legacy
+              </UiChip>
+              <UiChip
+                active={playerFigureStyle === 'boardStudio'}
+                onClick={() => setPlayerFigureStyle('boardStudio')}
+              >
+                Board Studio
+              </UiChip>
+            </div>
+            <p className={styles.hint}>
+              Wirkt auf Track-0-Szenen im Detailed-Stage (Compare: nur Detailed-Seite).
+            </p>
+
             <h2 className={styles.controlsTitle}>Learning</h2>
             <div className={styles.toggleGrid}>
               <Toggle
@@ -272,6 +295,7 @@ export function RinkStyleLab() {
                   space="detailed"
                   showMarkers={scene.showMarkers}
                   markerOverrides={markerOverrides}
+                  playerFigureStyle={playerFigureStyle}
                 />
               )}
             </DetailedStage>
@@ -284,7 +308,7 @@ export function RinkStyleLab() {
           <section className={styles.panel}>
             <header className={styles.panelHead}>
               <h2 className={styles.panelTitle}>FoundationRink</h2>
-              <p className={styles.panelMeta}>Original 400×240</p>
+              <p className={styles.panelMeta}>Original 400×240 · Legacy-Marker</p>
             </header>
             <div className={stageStyles.foundationWrap}>
               <FoundationRink
@@ -305,7 +329,11 @@ export function RinkStyleLab() {
           <section className={styles.panel}>
             <header className={styles.panelHead}>
               <h2 className={styles.panelTitle}>Detailed (mapped)</h2>
-              <p className={styles.panelMeta}>Dieselbe Szene · Adapter</p>
+              <p className={styles.panelMeta}>
+                Dieselbe Szene · Adapter ·
+                {' '}
+                {playerFigureStyle === 'boardStudio' ? 'Board Studio' : 'Legacy'}
+              </p>
             </header>
             <DetailedStage
               markings={markings}
@@ -319,11 +347,32 @@ export function RinkStyleLab() {
                 space="detailed"
                 showMarkers={scene.showMarkers}
                 markerOverrides={markerOverrides}
+                playerFigureStyle={playerFigureStyle}
               />
             </DetailedStage>
           </section>
         </div>
       )}
+
+      <section className={styles.panel} aria-label="Player Playground">
+        <header className={styles.panelHead}>
+          <h2 className={styles.panelTitle}>Player Playground</h2>
+          <p className={styles.panelMeta}>
+            Isolierte Figur · Farbe, Nummer, Rotation, Skater/Goalie
+          </p>
+        </header>
+        <div className={styles.chipRow}>
+          <UiChip
+            active={showPlayerPlayground}
+            onClick={() => setShowPlayerPlayground((v) => !v)}
+          >
+            {showPlayerPlayground ? 'Playground ausblenden' : 'Playground öffnen'}
+          </UiChip>
+        </div>
+        {showPlayerPlayground ? (
+          <PlayerPlayground mode={playerFigureStyle} />
+        ) : null}
+      </section>
     </div>
   )
 }
