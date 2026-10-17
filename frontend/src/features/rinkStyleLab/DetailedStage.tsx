@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import { DetailedHockeyRinkLayers, DETAILED_RINK_VIEWBOX } from '../rinkGeometry'
 import type { RinkOverlays } from '../rinkGeometry'
 import type { FoundationAttackDirection } from '../foundation/types'
@@ -19,6 +19,9 @@ type Props = {
   showAttackArrow?: boolean
   attackDirection?: FoundationAttackDirection
   onSelectHalf?: (half: IceHalf) => void
+  /** When false, learning hitboxes do not capture pointers (scene editor). */
+  learningInteractive?: boolean
+  svgRef?: Ref<SVGSVGElement>
   /** Scene layer children (markers). */
   children?: ReactNode
 }
@@ -30,6 +33,8 @@ export function DetailedStage({
   showAttackArrow = false,
   attackDirection = 'right',
   onSelectHalf,
+  learningInteractive = true,
+  svgRef,
   children,
 }: Props) {
   const overlays: RinkOverlays = {
@@ -52,6 +57,7 @@ export function DetailedStage({
   return (
     <div className={styles.stageFrame}>
       <svg
+        ref={svgRef}
         className={styles.stageSvg}
         viewBox={`0 0 ${DETAILED_RINK_VIEWBOX.width} ${DETAILED_RINK_VIEWBOX.height}`}
         role="img"
@@ -71,7 +77,7 @@ export function DetailedStage({
               showHitboxes={learning.showHitboxes || learning.showWeakStrong}
               showFeedback={learning.showFeedback}
               feedbackSide={learning.feedbackSide}
-              onSelectHalf={onSelectHalf}
+              onSelectHalf={learningInteractive ? onSelectHalf : undefined}
             />
           )}
         </g>

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
+  detailedPointToFoundation,
   foundationPointToDetailed,
   foundationPointToNorm,
   foundationScaleToDetailed,
@@ -35,6 +36,13 @@ assert.equal(DETAILED_ICE.w, DETAILED_RINK_SURFACE.width)
   )
   assert.equal(br.x, DETAILED_ICE.x + DETAILED_ICE.w)
   assert.equal(br.y, DETAILED_ICE.y + DETAILED_ICE.h)
+}
+
+{
+  const d = foundationPointToDetailed(255, 185)
+  const back = detailedPointToFoundation(d.x, d.y)
+  assert.ok(Math.abs(back.x - 255) < 1e-6)
+  assert.ok(Math.abs(back.y - 185) < 1e-6)
 }
 
 {

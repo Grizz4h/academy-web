@@ -52,6 +52,31 @@ export function foundationPointToDetailed(cx: number, cy: number): Point {
   return mapPointBetweenIce(cx, cy, FOUNDATION_ICE, DETAILED_ICE)
 }
 
+/** Detailed SVG px → Foundation ice (inverse of foundationPointToDetailed). */
+export function detailedPointToFoundation(x: number, y: number): Point {
+  return mapPointBetweenIce(x, y, DETAILED_ICE, FOUNDATION_ICE)
+}
+
+/** Curriculum / default Foundation position for a marker id. */
+export function foundationMarkerDefault(
+  id: FoundationRinkRegionId,
+): { cx: number; cy: number; label: string; team: 'blue' | 'red' | 'neutral'; hasPuck: boolean; kind: 'player' | 'puck' } {
+  const def = FOUNDATION_MARKER_DEFAULTS[id] || {
+    cx: FOUNDATION_ICE.x + FOUNDATION_ICE.w / 2,
+    cy: FOUNDATION_ICE.y + FOUNDATION_ICE.h / 2,
+    label: id,
+    team: 'blue' as const,
+  }
+  return {
+    cx: def.cx,
+    cy: def.cy,
+    label: def.label,
+    team: (def.team || 'blue') as 'blue' | 'red' | 'neutral',
+    hasPuck: Boolean(def.hasPuck),
+    kind: (def.kind || 'player') as 'player' | 'puck',
+  }
+}
+
 /** Uniform scale for marker radii / stroke (height-based). */
 export function foundationScaleToDetailed(): number {
   return DETAILED_ICE.h / FOUNDATION_ICE.h

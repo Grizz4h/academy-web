@@ -35,12 +35,18 @@
   `SceneMarkers` with `playerFigureStyle` Legacy | Board Studio.
 - Player Playground is a panel inside `RinkStyleLab`, not a second page.
 
-## Phase 3 tuning (lab-only)
+## Scene Editor (lab-only)
 
-- Scene **Scale** (0.2–1.5, default 1) multiplies footprint `radius/12`.
-- Scene **Rotation** applies to all Board Studio scene players; jersey label stays upright (overlay).
-- **Puck-Lage** `body` | `blade` | `compare` — local design-space → transform (rotation × bodyScale × outerScale × handedness). No fixed world offsets.
-- Legacy circle markers ignore scale/rotation/puck lab controls.
+- Isolated Player Playground **removed** — edit on the Detailed rink (`/dev/rink-style`).
+- Per-marker edits (position, rotation, scale, label, team, handedness, puck) bound to **scene id**.
+- Drafts in `localStorage` (`rink-style-lab:scene-drafts:v1`) — **never** writes `t0-track.json`.
+- Default puck tip = stick **blade** (body optional); free drag stores Detailed offset from tip.
+- Crease size: see `crease-audit.md` (oversized vs 6 ft rule; no fix in this phase).
+
+## Phase 3 tuning (superseded by Scene Editor per-marker controls)
+
+- Scale 0.2–1.5 and rotation are **per selected player**, not global.
+- Puck tip uses local stick/body geometry + optional offset.
 
 ## Known visual deviations vs Board Studio Preview
 

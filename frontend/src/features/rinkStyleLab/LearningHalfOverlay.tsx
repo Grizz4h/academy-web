@@ -34,12 +34,14 @@ export function LearningHalfOverlay({
 
   const feedbackY = feedbackHalf === 'bottom' ? ice.y + halfH : ice.y
 
+  const hitInteractive = Boolean(onSelectHalf)
+
   return (
     <g className={styles.layer} aria-label="Learning layer">
       {showHitboxes && (
         <>
           <rect
-            className={styles.hitbox}
+            className={hitInteractive ? styles.hitbox : styles.hitboxPassive}
             x={ice.x}
             y={ice.y}
             width={ice.w}
@@ -48,7 +50,7 @@ export function LearningHalfOverlay({
             onClick={() => onSelectHalf?.('top')}
           />
           <rect
-            className={styles.hitbox}
+            className={hitInteractive ? styles.hitbox : styles.hitboxPassive}
             x={ice.x}
             y={ice.y + halfH}
             width={ice.w}
