@@ -1,8 +1,11 @@
 import type { FoundationMarkerTeam, FoundationRinkRegionId } from '../foundation/types'
 import type { PlayerHandedness } from './boardStudio/playerVisual.ts'
-import type { PlayerPuckPlacement } from './playerLocalPoint.ts'
 
-/** Per-marker lab edit (Foundation ice coords for position — matches curriculum shape). */
+/**
+ * Per-marker lab edit (Foundation ice coords).
+ * Scale + puck tip are **global** (`globalPlayerDisplay`) — not stored as scene standards.
+ * Legacy draft fields `scale` / `puckPlacement` may still appear in localStorage; loaders ignore them.
+ */
 export type SceneMarkerEdit = {
   id: FoundationRinkRegionId
   cx: number
@@ -10,18 +13,18 @@ export type SceneMarkerEdit = {
   label: string
   team: FoundationMarkerTeam
   rotation: number
-  /** Multiplier on footprint scale (0.2–1.5). */
-  scale: number
   handedness: PlayerHandedness
   hasPuck: boolean
-  /** Default puck tip: body vs stick blade (not compare in drafts). */
-  puckPlacement: Exclude<PlayerPuckPlacement, 'compare'>
   /**
-   * Offset from default tip in Detailed SVG units after placement transform.
-   * (0,0) = puck sits on body/blade tip.
+   * @deprecated Ignored on load/save — global puckLocal is the tip.
+   * Kept for older localStorage payloads only.
    */
   puckOffsetX: number
   puckOffsetY: number
+  /** @deprecated Ignored on load — global playerScale wins. */
+  scale?: number
+  /** @deprecated Ignored on load — global puckLocal wins. */
+  puckPlacement?: 'body' | 'blade'
 }
 
 export type SceneDraftDocument = {
@@ -39,3 +42,4 @@ export type SceneDraftStoreFile = {
 export type DragTarget =
   | { kind: 'player'; id: FoundationRinkRegionId }
   | { kind: 'puck'; id: FoundationRinkRegionId }
+

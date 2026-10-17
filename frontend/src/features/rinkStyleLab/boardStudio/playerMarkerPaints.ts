@@ -8,6 +8,7 @@
  */
 
 import type { PlayerRenderAppearance } from "./playerRenderAppearance.ts";
+import { STYLE_LAB_STICK_COLOR } from "../globalPlayerDisplay.ts";
 
 export interface PlayerMarkerPaints {
   jersey: string;
@@ -30,8 +31,8 @@ export interface PlayerMarkerPaints {
 
 /** Near-black outline for readability on bright ice. */
 const MARKER_OUTLINE = "#152033";
-const STICK_FILL = "#2a3344";
-const STICK_OUTLINE = "#0e1522";
+/** Style Lab stick fill — cool mid gray (geometry unchanged). */
+const STICK_FILL = STYLE_LAB_STICK_COLOR;
 const SELECTION_HALO = "#111111";
 const TRIM_LIGHT = "rgba(255, 255, 255, 0.55)";
 const HIGHLIGHT = "rgba(255, 255, 255, 0.45)";
@@ -82,7 +83,7 @@ export function derivePlayerMarkerPaints(
     helmetVisor: adjustHexTone(jersey, 0.55),
     helmetHighlight: HIGHLIGHT,
     stick: STICK_FILL,
-    stickOutline: STICK_OUTLINE,
+    stickOutline: adjustHexTone(STICK_FILL, 0.72),
     padFill: PAD_FILL,
     blockerFill: BLOCKER_FILL,
     labelFill: appearance.labelFill,

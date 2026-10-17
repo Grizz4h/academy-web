@@ -3,7 +3,11 @@
  */
 
 import type { FoundationRinkRegionId } from '../foundation/types'
+import { sanitizeMarkerEditsForSave } from './sceneDraftBuild.ts'
 import type { SceneDraftDocument, SceneDraftStoreFile, SceneMarkerEdit } from './sceneDraftTypes.ts'
+import { clampPlayerScale } from './globalPlayerDisplay.ts'
+
+export { clampPlayerScale }
 
 export const SCENE_DRAFT_STORAGE_KEY = 'rink-style-lab:scene-drafts:v1'
 
@@ -59,7 +63,7 @@ export function saveSceneDraft(
     version: 1,
     sceneId,
     updatedAt: new Date().toISOString(),
-    markers: { ...markers },
+    markers: sanitizeMarkerEditsForSave(markers),
   }
   store.scenes[sceneId] = doc
   writeSceneDraftStore(store, storage)
@@ -75,7 +79,3 @@ export function clearSceneDraft(
   writeSceneDraftStore(store, storage)
 }
 
-export function clampPlayerScale(value: number): number {
-  if (!Number.isFinite(value)) return 1
-  return Math.min(1.5, Math.max(0.2, value))
-}

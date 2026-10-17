@@ -8,6 +8,7 @@ import { DetailedStage } from './DetailedStage'
 import {
   detailedPointToFoundation,
   foundationPointToDetailed,
+  foundationScaleToDetailed,
 } from './foundationCoordAdapter'
 import { FOUNDATION_SCENES } from './foundationScenesCatalog'
 import { halfForBand, type IceHalf } from './labGeometry'
@@ -22,18 +23,31 @@ import {
 } from './presets'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
 import {
+  clampPlayerScale,
+  clampPuckBias,
+  DEFAULT_GLOBAL_PLAYER_DISPLAY,
+  globalDisplayWithPuckBias,
+  readGlobalPlayerDisplay,
+  STYLE_LAB_STICK_COLOR,
+  writeGlobalPlayerDisplay,
+  type GlobalPlayerDisplaySettings,
+} from './globalPlayerDisplay.ts'
+import {
   buildBaselineMarkerEdits,
   editsToFoundationOverrides,
   mergeMarkerEdits,
 } from './sceneDraftBuild.ts'
 import {
   clearSceneDraft,
-  clampPlayerScale,
   loadSceneDraft,
   saveSceneDraft,
 } from './sceneDraftStore.ts'
 import type { DragTarget, SceneMarkerEdit } from './sceneDraftTypes.ts'
-import { SceneMarkers } from './SceneMarkers'
+import { SceneMarkers, type PuckDragPreview } from './SceneMarkers'
+import {
+  resolveScenePuckPoint,
+  worldPuckToCanonicalLocal,
+} from './playerLocalPoint.ts'
 import { clientToSvgPoint } from './svgPointer.ts'
 import styles from './RinkStyleLab.module.css'
 import stageStyles from './stages.module.css'
@@ -96,6 +110,13 @@ export function RinkStyleLab() {
   })
   const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
   const [playerFigureStyle, setPlayerFigureStyle] = useState<PlayerStyleMode>('boardStudio')
+  const [globalDisplay, setGlobalDisplay] = useState<GlobalPlayerDisplaySettings>(() => (
+    typeof localStorage === 'undefined'
+      ? { ...DEFAULT_GLOBAL_PLAYER_DISPLAY }
+      : readGlobalPlayerDisplay()
+  ))
+  /** Session-only puck drag — never written into scene drafts. */
+  const [puckDragPreview, setPuckDragPreview] = useState<PuckDragPreview | null>(null)
   const [markingIntensity, setMarkingIntensity] = useState(1)
   const [attackArrowOverride, setAttackArrowOverride] = useState<'scene' | 'on' | 'off'>('scene')
   const [sceneEditMode, setSceneEditMode] = useState(true)
@@ -125,6 +146,7 @@ export function RinkStyleLab() {
     setMarkerEdits(next)
     setSelectedId(null)
     setSelectedPuckId(null)
+    setPuckDragPreview(null)
     const saved = loadSceneDraft(scene.id)
     setDraftSavedAt(saved?.updatedAt || null)
   }, [scene, styledOverrides])
@@ -180,10 +202,78 @@ export function RinkStyleLab() {
           ...cur,
           ...patch,
           id: selectedId,
-          scale: patch.scale !== undefined ? clampPlayerScale(patch.scale) : cur.scale,
         },
       }
     })
+  }
+
+  const persistGlobalDisplay = (next: GlobalPlayerDisplaySettings) => {
+    const normalized = {
+      ...next,
+      version: 1 as const,
+      playerScale: clampPlayerScale(next.playerScale),
+      puckBias: clampPuckBias(next.puckBias),
+      puckLocalX: Number.isFinite(next.puckLocalX) ? next.puckLocalX : DEFAULT_GLOBAL_PLAYER_DISPLAY.puckLocalX,
+      puckLocalY: Number.isFinite(next.puckLocalY) ? next.puckLocalY : DEFAULT_GLOBAL_PLAYER_DISPLAY.puckLocalY,
+    }
+    writeGlobalPlayerDisplay(normalized)
+    setGlobalDisplay(normalized)
+  }
+
+  const updateGlobalDisplay = (patch: Partial<GlobalPlayerDisplaySettings>) => {
+    setGlobalDisplay((prev) => {
+      let next: GlobalPlayerDisplaySettings = {
+        ...prev,
+        ...patch,
+        version: 1,
+        playerScale: clampPlayerScale(
+          patch.playerScale !== undefined ? patch.playerScale : prev.playerScale,
+        ),
+        puckBias: clampPuckBias(
+          patch.puckBias !== undefined ? patch.puckBias : prev.puckBias,
+        ),
+        puckLocalX: patch.puckLocalX !== undefined ? patch.puckLocalX : prev.puckLocalX,
+        puckLocalY: patch.puckLocalY !== undefined ? patch.puckLocalY : prev.puckLocalY,
+      }
+      if (patch.puckBias !== undefined && patch.puckLocalX === undefined && patch.puckLocalY === undefined) {
+        next = globalDisplayWithPuckBias(next, patch.puckBias)
+      }
+      writeGlobalPlayerDisplay(next)
+      return next
+    })
+  }
+
+  const adoptPuckPositionGlobally = () => {
+    if (!selectedId || playerFigureStyle !== 'boardStudio') return
+    const edit = markerEdits[selectedId]
+    if (!edit?.hasPuck) return
+    const detailed = foundationPointToDetailed(edit.cx, edit.cy)
+    const baseR = 12 * foundationScaleToDetailed() * 0.85
+    const outerScale = (baseR / 12) * clampPlayerScale(globalDisplay.playerScale)
+    const tip = resolveScenePuckPoint({
+      anchorX: detailed.x,
+      anchorY: detailed.y,
+      rotationDegrees: edit.rotation,
+      outerScale,
+      handedness: edit.handedness,
+      puckLocal: { x: globalDisplay.puckLocalX, y: globalDisplay.puckLocalY },
+    })
+    const preview = puckDragPreview?.id === selectedId ? puckDragPreview : { dx: 0, dy: 0 }
+    const canonical = worldPuckToCanonicalLocal({
+      anchorX: detailed.x,
+      anchorY: detailed.y,
+      worldX: tip.x + preview.dx,
+      worldY: tip.y + preview.dy,
+      rotationDegrees: edit.rotation,
+      outerScale,
+      handedness: edit.handedness,
+    })
+    persistGlobalDisplay({
+      ...globalDisplay,
+      puckLocalX: canonical.x,
+      puckLocalY: canonical.y,
+    })
+    setPuckDragPreview(null)
   }
 
   const handleSaveDraft = () => {
@@ -243,17 +333,9 @@ export function RinkStyleLab() {
         return
       }
       const id = drag.target.id
-      setMarkerEdits((prev) => {
-        const cur = prev[id]
-        if (!cur || !cur.hasPuck) return prev
-        return {
-          ...prev,
-          [id]: {
-            ...cur,
-            puckOffsetX: cur.puckOffsetX + dx,
-            puckOffsetY: cur.puckOffsetY + dy,
-          },
-        }
+      setPuckDragPreview((prev) => {
+        const base = prev?.id === id ? prev : { id, dx: 0, dy: 0 }
+        return { id, dx: base.dx + dx, dy: base.dy + dy }
       })
     }
     const up = () => endDrag()
@@ -292,6 +374,9 @@ export function RinkStyleLab() {
     space: 'detailed' as const,
     markerEdits,
     playerFigureStyle,
+    globalPlayerScale: globalDisplay.playerScale,
+    globalPuckLocal: { x: globalDisplay.puckLocalX, y: globalDisplay.puckLocalY },
+    puckDragPreview,
     editable: sceneEditMode && mode === 'design',
     selectedId,
     selectedPuckId,
@@ -310,8 +395,10 @@ export function RinkStyleLab() {
   return (
     <div className={styles.lab}>
       <p className={styles.banner} role="status">
-        Scene Editor · Track-0-Szenen als Lab-Entwürfe (localStorage) · keine Curriculum-Schreibung ·
-        Blueprint unverändert · siehe crease-audit.md
+        Scene Editor · globale Spielergröße/Pucklage · Szenen-Entwürfe getrennt · keine Curriculum-Schreibung ·
+        Schläger
+        {' '}
+        {STYLE_LAB_STICK_COLOR}
       </p>
 
       <div className={styles.modeRow} role="group" aria-label="Lab-Modus">
@@ -391,6 +478,52 @@ export function RinkStyleLab() {
               <UiChip active={playerFigureStyle === 'boardStudio'} onClick={() => setPlayerFigureStyle('boardStudio')}>Board Studio</UiChip>
             </div>
 
+            {playerFigureStyle === 'boardStudio' ? (
+              <>
+                <h2 className={styles.controlsTitle}>Globale Darstellung</h2>
+                <label className={styles.sliderRow}>
+                  <span>
+                    Spielergröße
+                    {' '}
+                    {globalDisplay.playerScale.toFixed(2)}
+                  </span>
+                  <input
+                    type="range"
+                    min={0.2}
+                    max={1.5}
+                    step={0.05}
+                    value={globalDisplay.playerScale}
+                    onChange={(e) => updateGlobalDisplay({ playerScale: Number(e.target.value) })}
+                  />
+                </label>
+                <label className={styles.sliderRow}>
+                  <span>
+                    Puck-Preset Körper↔Kelle
+                    {' '}
+                    {globalDisplay.puckBias < 0.15
+                      ? 'Körper'
+                      : globalDisplay.puckBias > 0.85
+                        ? 'Kelle'
+                        : `${Math.round(globalDisplay.puckBias * 100)}%`}
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={globalDisplay.puckBias}
+                    onChange={(e) => updateGlobalDisplay({ puckBias: Number(e.target.value) })}
+                  />
+                </label>
+                <p className={styles.hint}>
+                  Größe &amp; Puck-Tip (Design-Raum) global · Schläger
+                  {' '}
+                  {STYLE_LAB_STICK_COLOR}
+                  . Feinposition: Puck ziehen, dann „Global übernehmen“.
+                </p>
+              </>
+            ) : null}
+
             <h2 className={styles.controlsTitle}>Szenen-Editor</h2>
             <div className={styles.chipRow}>
               <UiChip active={sceneEditMode} onClick={() => setSceneEditMode(true)}>Bearbeiten</UiChip>
@@ -444,21 +577,6 @@ export function RinkStyleLab() {
                   <>
                     <label className={styles.sliderRow}>
                       <span>
-                        Scale
-                        {' '}
-                        {selected.scale.toFixed(2)}
-                      </span>
-                      <input
-                        type="range"
-                        min={0.2}
-                        max={1.5}
-                        step={0.05}
-                        value={selected.scale}
-                        onChange={(e) => patchSelected({ scale: Number(e.target.value) })}
-                      />
-                    </label>
-                    <label className={styles.sliderRow}>
-                      <span>
                         Rotation
                         {' '}
                         {Math.round(selected.rotation)}
@@ -490,51 +608,39 @@ export function RinkStyleLab() {
                     <Toggle
                       label="Puckbesitz"
                       checked={selected.hasPuck}
-                      onChange={(v) => patchSelected({
-                        hasPuck: v,
-                        puckOffsetX: v ? selected.puckOffsetX : 0,
-                        puckOffsetY: v ? selected.puckOffsetY : 0,
-                      })}
+                      onChange={(v) => {
+                        patchSelected({ hasPuck: v, puckOffsetX: 0, puckOffsetY: 0 })
+                        if (!v) setPuckDragPreview(null)
+                      }}
                     />
                     {selected.hasPuck ? (
                       <>
-                        <div className={styles.chipRow}>
-                          <UiChip
-                            active={selected.puckPlacement === 'body'}
-                            onClick={() => patchSelected({
-                              puckPlacement: 'body',
-                              puckOffsetX: 0,
-                              puckOffsetY: 0,
-                            })}
-                          >
-                            Körper
-                          </UiChip>
-                          <UiChip
-                            active={selected.puckPlacement === 'blade'}
-                            onClick={() => patchSelected({
-                              puckPlacement: 'blade',
-                              puckOffsetX: 0,
-                              puckOffsetY: 0,
-                            })}
-                          >
-                            Kelle
-                          </UiChip>
-                        </div>
                         <p className={styles.hint}>
-                          Puck auf dem Rink ziehen = Offset zur Standardlage (folgt Rotation/Scale/Hand).
+                          Puck ziehen = Vorschau relativ zu Spieler/Schläger.
                           {selectedPuckId === selected.id ? ' · Puck ausgewählt' : ''}
+                          {puckDragPreview?.id === selected.id
+                            ? ' · Vorschau aktiv (nicht gespeichert)'
+                            : ''}
                         </p>
                         <UiChip
-                          active={false}
-                          onClick={() => patchSelected({ puckOffsetX: 0, puckOffsetY: 0 })}
+                          active={Boolean(puckDragPreview?.id === selected.id)}
+                          onClick={adoptPuckPositionGlobally}
                         >
-                          Puck-Offset nullen
+                          Puckposition global übernehmen
                         </UiChip>
+                        {puckDragPreview?.id === selected.id ? (
+                          <UiChip
+                            active={false}
+                            onClick={() => setPuckDragPreview(null)}
+                          >
+                            Vorschau verwerfen
+                          </UiChip>
+                        ) : null}
                       </>
                     ) : null}
                   </>
                 ) : (
-                  <p className={styles.hint}>Scale/Rotation/Kelle nur im Board-Studio-Modus.</p>
+                  <p className={styles.hint}>Rotation/Händigkeit/Puck nur im Board-Studio-Modus.</p>
                 )}
               </>
             ) : (
@@ -654,6 +760,8 @@ export function RinkStyleLab() {
                 space="detailed"
                 markerEdits={markerEdits}
                 playerFigureStyle={playerFigureStyle}
+                globalPlayerScale={globalDisplay.playerScale}
+                globalPuckLocal={{ x: globalDisplay.puckLocalX, y: globalDisplay.puckLocalY }}
                 editable={false}
               />
             </DetailedStage>

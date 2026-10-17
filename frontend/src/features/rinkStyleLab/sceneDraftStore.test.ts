@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import {
   buildBaselineMarkerEdits,
   mergeMarkerEdits,
+  sanitizeMarkerEditsForSave,
 } from './sceneDraftBuild.ts'
 import {
   clearSceneDraft,
@@ -24,26 +25,43 @@ import {
     { puck_carrier: { cx: 255, cy: 185, label: 'Blau', team: 'blue', hasPuck: true } },
   )
   assert.equal(baseline.puck_carrier?.hasPuck, true)
-  assert.equal(baseline.puck_carrier?.puckPlacement, 'blade')
+  assert.equal(baseline.puck_carrier?.scale, undefined)
 
-  saveSceneDraft('d4_weak_side', {
-    ...baseline,
+  // Legacy draft with per-player scale must NOT leak into merged edits as authority
+  const legacyDraft = {
     puck_carrier: {
       ...baseline.puck_carrier!,
       rotation: 90,
-      scale: 0.8,
-      puckPlacement: 'body',
+      scale: 0.4,
+      puckPlacement: 'body' as const,
+      puckOffsetX: 3,
+      puckOffsetY: -2,
     },
-  }, storage)
+  }
+  const merged = mergeMarkerEdits(baseline, legacyDraft)
+  assert.equal(merged.puck_carrier?.rotation, 90)
+  assert.equal(merged.puck_carrier?.scale, undefined)
+  assert.equal(merged.puck_carrier?.puckPlacement, undefined)
+  // Scene offsets must not become authority
+  assert.equal(merged.puck_carrier?.puckOffsetX, 0)
+  assert.equal(merged.puck_carrier?.puckOffsetY, 0)
+  assert.equal(merged.puck_carrier?.label, 'Blau')
 
+  saveSceneDraft('d4_weak_side', merged, storage)
   const loaded = loadSceneDraft('d4_weak_side', storage)
   assert.ok(loaded)
   assert.equal(loaded?.markers.puck_carrier?.rotation, 90)
+  assert.equal(loaded?.markers.puck_carrier?.scale, undefined)
 
-  const merged = mergeMarkerEdits(baseline, loaded?.markers)
-  assert.equal(merged.puck_carrier?.rotation, 90)
-  assert.equal(merged.puck_carrier?.scale, 0.8)
-  assert.equal(merged.puck_carrier?.label, 'Blau')
+  const sanitized = sanitizeMarkerEditsForSave({
+    puck_carrier: {
+      ...merged.puck_carrier!,
+      scale: 0.2,
+      puckPlacement: 'body',
+    },
+  })
+  assert.equal(sanitized.puck_carrier?.scale, undefined)
+  assert.equal(sanitized.puck_carrier?.puckPlacement, undefined)
 
   clearSceneDraft('d4_weak_side', storage)
   assert.equal(loadSceneDraft('d4_weak_side', storage), null)
