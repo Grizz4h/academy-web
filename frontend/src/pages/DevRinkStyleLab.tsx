@@ -9,8 +9,8 @@ export default function DevRinkStyleLabPage() {
         <p className={styles.kicker}>Dev · Visual Grammar</p>
         <h1 className="ui-page-title">Rink Style Lab</h1>
         <p className="ui-page-lead">
-          Bestehende Rinks vergleichen und Darstellungsvarianten ausprobieren —
-          ohne produktive Drills zu ändern.
+          Detailed-Geometrie als Basis: Track-0-Szenen mappen, Markierungsintensität
+          und Learning-Overlays ausprobieren — ohne produktive Migration.
         </p>
       </header>
 

@@ -15,6 +15,7 @@ export type StyleLabMarkings = {
   iceAds: boolean
   centerLine: boolean
   blueLines: boolean
+  centerFaceoffCircle: boolean
 }
 
 export type StyleLabLearning = {
@@ -35,6 +36,7 @@ export const DEFAULT_MARKINGS: StyleLabMarkings = {
   iceAds: true,
   centerLine: true,
   blueLines: true,
+  centerFaceoffCircle: true,
 }
 
 export const DEFAULT_LEARNING: StyleLabLearning = {

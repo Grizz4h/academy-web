@@ -11,6 +11,17 @@ export type RinkOverlays = {
   attackDirection?: 'left' | 'right'
   /** Style Lab / optional: ice-ad chevrons */
   iceAds?: boolean
+  /** Blue lines (default true when undefined) */
+  blueLines?: boolean
+  /** Center red line (default true when undefined) */
+  centerLine?: boolean
+  /** Center faceoff circle outline (default true when undefined) */
+  centerFaceoffCircle?: boolean
+  /**
+   * Visual intensity of markings (0.25–1). Default 1.
+   * Boards stay full-opacity; lines/dots/crease scale with this.
+   */
+  markingIntensity?: number
 }
 
 export const DETAILED_HOCKEY_RINK_PRESET: Partial<RinkOverlays> = {

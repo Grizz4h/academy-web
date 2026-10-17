@@ -124,3 +124,53 @@
   display: grid;
   gap: 0.45rem;
 }
+
+.sceneBar {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.sceneSelectLabel {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: rgba(203, 213, 225, 0.9);
+}
+
+.sceneSelect {
+  max-width: 100%;
+}
+
+.scenePrompt {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: rgba(248, 250, 252, 0.92);
+}
+
+.sliderRow {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.84rem;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.sliderRow input[type='range'] {
+  width: 100%;
+  accent-color: rgba(45, 212, 191, 0.95);
+}
+
+@media (max-width: 480px) {
+  .scenePrompt {
+    font-size: 0.84rem;
+  }
+
+  .controls {
+    order: 2;
+  }
+
+  .designLayout .panel {
+    order: 1;
+  }
+}

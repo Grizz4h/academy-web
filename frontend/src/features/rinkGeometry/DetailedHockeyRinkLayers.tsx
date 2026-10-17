@@ -135,9 +135,17 @@ export function DetailedHockeyRinkLayers({
   const attackDirection = overlays.attackDirection
     || (overlays.defendingSide === 'left' ? 'right' : 'left')
   const showIceAds = overlays.iceAds !== false
+  const showBlueLines = overlays.blueLines !== false
+  const showCenterLine = overlays.centerLine !== false
+  const showCenterFaceoff = overlays.centerFaceoffCircle !== false
+  const rawIntensity = overlays.markingIntensity
+  const intensity = Number.isFinite(rawIntensity)
+    ? Math.min(1, Math.max(0.25, Number(rawIntensity)))
+    : 1
 
   return (
     <>
+      {/* Boards — full opacity (structure, not marking intensity) */}
       <rect
         x={m.rinkX}
         y={m.rinkY}
@@ -149,94 +157,105 @@ export function DetailedHockeyRinkLayers({
         stroke="rgba(255,255,255,0.38)"
         strokeWidth="4"
       />
-      <line
-        x1={m.rinkCenterX}
-        y1={m.rinkY + 4}
-        x2={m.rinkCenterX}
-        y2={m.rinkY + m.rinkHeight - 4}
-        stroke="rgba(255,120,120,0.55)"
-        strokeWidth="4"
-      />
-      <line
-        x1={m.leftBlueLineX}
-        y1={m.rinkY + 4}
-        x2={m.leftBlueLineX}
-        y2={m.rinkY + m.rinkHeight - 4}
-        stroke="rgba(86,153,255,0.75)"
-        strokeWidth="4"
-      />
-      <line
-        x1={m.rightBlueLineX}
-        y1={m.rinkY + 4}
-        x2={m.rightBlueLineX}
-        y2={m.rinkY + m.rinkHeight - 4}
-        stroke="rgba(86,153,255,0.75)"
-        strokeWidth="4"
-      />
-      <circle
-        cx={m.rinkCenterX}
-        cy={m.rinkCenterY}
-        r={m.faceoffRadius}
-        fill="none"
-        stroke="rgba(255,255,255,0.22)"
-        strokeWidth="3"
-      />
 
-      {overlays.faceoffDots && (
-        <>
-          <circle cx={m.leftZoneFaceoffX} cy={m.topFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-          <circle cx={m.leftZoneFaceoffX} cy={m.bottomFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-          <circle cx={m.rightZoneFaceoffX} cy={m.topFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-          <circle cx={m.rightZoneFaceoffX} cy={m.bottomFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
-          <circle cx={m.leftZoneFaceoffX} cy={m.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-          <circle cx={m.leftZoneFaceoffX} cy={m.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-          <circle cx={m.rightZoneFaceoffX} cy={m.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-          <circle cx={m.rightZoneFaceoffX} cy={m.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
-          {m.neutralDots.map((dot, idx) => (
-            <circle key={`neutral-dot-${idx}`} cx={dot.x} cy={dot.y} r="3.2" fill="rgba(203,213,225,0.78)" />
-          ))}
-        </>
-      )}
+      <g id="rink-markings" opacity={intensity}>
+        {showCenterLine && (
+          <line
+            x1={m.rinkCenterX}
+            y1={m.rinkY + 4}
+            x2={m.rinkCenterX}
+            y2={m.rinkY + m.rinkHeight - 4}
+            stroke="rgba(255,120,120,0.55)"
+            strokeWidth="4"
+          />
+        )}
+        {showBlueLines && (
+          <>
+            <line
+              x1={m.leftBlueLineX}
+              y1={m.rinkY + 4}
+              x2={m.leftBlueLineX}
+              y2={m.rinkY + m.rinkHeight - 4}
+              stroke="rgba(86,153,255,0.75)"
+              strokeWidth="4"
+            />
+            <line
+              x1={m.rightBlueLineX}
+              y1={m.rinkY + 4}
+              x2={m.rightBlueLineX}
+              y2={m.rinkY + m.rinkHeight - 4}
+              stroke="rgba(86,153,255,0.75)"
+              strokeWidth="4"
+            />
+          </>
+        )}
+        {showCenterFaceoff && (
+          <circle
+            cx={m.rinkCenterX}
+            cy={m.rinkCenterY}
+            r={m.faceoffRadius}
+            fill="none"
+            stroke="rgba(255,255,255,0.22)"
+            strokeWidth="3"
+          />
+        )}
 
-      {overlays.zones && (
-        <>
-          <line x1={m.leftGoalLineX} y1={m.rinkY + 6} x2={m.leftGoalLineX} y2={m.rinkY + m.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-          <line x1={m.rightGoalLineX} y1={m.rinkY + 6} x2={m.rightGoalLineX} y2={m.rinkY + m.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
-        </>
-      )}
+        {overlays.faceoffDots && (
+          <>
+            <circle cx={m.leftZoneFaceoffX} cy={m.topFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+            <circle cx={m.leftZoneFaceoffX} cy={m.bottomFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+            <circle cx={m.rightZoneFaceoffX} cy={m.topFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+            <circle cx={m.rightZoneFaceoffX} cy={m.bottomFaceoffY} r={m.faceoffRadius} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="3" />
+            <circle cx={m.leftZoneFaceoffX} cy={m.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+            <circle cx={m.leftZoneFaceoffX} cy={m.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+            <circle cx={m.rightZoneFaceoffX} cy={m.topFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+            <circle cx={m.rightZoneFaceoffX} cy={m.bottomFaceoffY} r="4" fill="rgba(239,68,68,0.92)" />
+            {m.neutralDots.map((dot, idx) => (
+              <circle key={`neutral-dot-${idx}`} cx={dot.x} cy={dot.y} r="3.2" fill="rgba(203,213,225,0.78)" />
+            ))}
+          </>
+        )}
 
-      {overlays.goals && (
-        <>
-          <line x1={m.leftGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-          <line x1={m.leftGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY - m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-          <line x1={m.leftGoalLineX} y1={m.rinkCenterY + m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-          <line x1={m.leftGoalLineX - m.goalDepth} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
-          <path d={`M ${m.leftGoalLineX - m.goalDepth} ${m.rinkCenterY - m.goalHalf} L ${m.leftGoalLineX} ${m.rinkCenterY - m.goalHalf} L ${m.leftGoalLineX} ${m.rinkCenterY + m.goalHalf} L ${m.leftGoalLineX - m.goalDepth} ${m.rinkCenterY + m.goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
+        {overlays.zones && (
+          <>
+            <line x1={m.leftGoalLineX} y1={m.rinkY + 6} x2={m.leftGoalLineX} y2={m.rinkY + m.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
+            <line x1={m.rightGoalLineX} y1={m.rinkY + 6} x2={m.rightGoalLineX} y2={m.rinkY + m.rinkHeight - 6} stroke="rgba(248,113,113,0.62)" strokeWidth="2.5" />
+          </>
+        )}
 
-          <line x1={m.rightGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
-          <line x1={m.rightGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY - m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-          <line x1={m.rightGoalLineX} y1={m.rinkCenterY + m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
-          <line x1={m.rightGoalLineX + m.goalDepth} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
-          <path d={`M ${m.rightGoalLineX + m.goalDepth} ${m.rinkCenterY - m.goalHalf} L ${m.rightGoalLineX} ${m.rinkCenterY - m.goalHalf} L ${m.rightGoalLineX} ${m.rinkCenterY + m.goalHalf} L ${m.rightGoalLineX + m.goalDepth} ${m.rinkCenterY + m.goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
-        </>
-      )}
+        {overlays.goals && (
+          <>
+            <line x1={m.leftGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
+            <line x1={m.leftGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY - m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+            <line x1={m.leftGoalLineX} y1={m.rinkCenterY + m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+            <line x1={m.leftGoalLineX - m.goalDepth} y1={m.rinkCenterY - m.goalHalf} x2={m.leftGoalLineX - m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
+            <path d={`M ${m.leftGoalLineX - m.goalDepth} ${m.rinkCenterY - m.goalHalf} L ${m.leftGoalLineX} ${m.rinkCenterY - m.goalHalf} L ${m.leftGoalLineX} ${m.rinkCenterY + m.goalHalf} L ${m.leftGoalLineX - m.goalDepth} ${m.rinkCenterY + m.goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
 
-      {overlays.crease && (
-        <>
-          <path d={`M ${m.leftGoalLineX} ${m.rinkCenterY - m.creaseRadius} A ${m.creaseRadius} ${m.creaseRadius} 0 0 1 ${m.leftGoalLineX} ${m.rinkCenterY + m.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-          <path d={`M ${m.rightGoalLineX} ${m.rinkCenterY - m.creaseRadius} A ${m.creaseRadius} ${m.creaseRadius} 0 0 0 ${m.rightGoalLineX} ${m.rinkCenterY + m.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
-        </>
-      )}
+            <line x1={m.rightGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(220,38,38,0.94)" strokeWidth="3.2" />
+            <line x1={m.rightGoalLineX} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY - m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+            <line x1={m.rightGoalLineX} y1={m.rinkCenterY + m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(248,113,113,0.84)" strokeWidth="2.2" />
+            <line x1={m.rightGoalLineX + m.goalDepth} y1={m.rinkCenterY - m.goalHalf} x2={m.rightGoalLineX + m.goalDepth} y2={m.rinkCenterY + m.goalHalf} stroke="rgba(203,213,225,0.42)" strokeWidth="1.6" />
+            <path d={`M ${m.rightGoalLineX + m.goalDepth} ${m.rinkCenterY - m.goalHalf} L ${m.rightGoalLineX} ${m.rinkCenterY - m.goalHalf} L ${m.rightGoalLineX} ${m.rinkCenterY + m.goalHalf} L ${m.rightGoalLineX + m.goalDepth} ${m.rinkCenterY + m.goalHalf} Z`} fill="rgba(148,163,184,0.08)" stroke="none" />
+          </>
+        )}
 
-      {showIceAds && <PlayDirectionIceAds metrics={m} attackDirection={attackDirection} />}
+        {overlays.crease && (
+          <>
+            <path d={`M ${m.leftGoalLineX} ${m.rinkCenterY - m.creaseRadius} A ${m.creaseRadius} ${m.creaseRadius} 0 0 1 ${m.leftGoalLineX} ${m.rinkCenterY + m.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
+            <path d={`M ${m.rightGoalLineX} ${m.rinkCenterY - m.creaseRadius} A ${m.creaseRadius} ${m.creaseRadius} 0 0 0 ${m.rightGoalLineX} ${m.rinkCenterY + m.creaseRadius}`} fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.72)" strokeWidth="2.4" />
+          </>
+        )}
 
-      {overlays.labels && overlays.zones && (
-        <>
-          <text x={m.rinkX + m.rinkWidth * 0.08} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{defensiveLabel}</text>
-          <text x={m.rinkCenterX - 32} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">Neutral Zone</text>
-          <text x={m.rinkRight - m.rinkWidth * 0.26} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{offensiveLabel}</text>
-        </>
-      )}
+        {showIceAds && <PlayDirectionIceAds metrics={m} attackDirection={attackDirection} />}
+
+        {overlays.labels && overlays.zones && (
+          <>
+            <text x={m.rinkX + m.rinkWidth * 0.08} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{defensiveLabel}</text>
+            <text x={m.rinkCenterX - 32} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">Neutral Zone</text>
+            <text x={m.rinkRight - m.rinkWidth * 0.26} y={m.rinkY + 18} fontSize="11" fill="rgba(148,163,184,0.62)">{offensiveLabel}</text>
+          </>
+        )}
+      </g>
     </>
   )
 }
