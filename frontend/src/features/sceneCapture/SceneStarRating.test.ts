@@ -3,6 +3,7 @@ import {
   resolveDisplayedStarRating,
   resolveEffectiveHoverRating,
   resolveStarAppearance,
+  shouldShowSavedRatingMarker,
 } from './SceneStarRating.tsx'
 
 // Idle: saved fills only
@@ -26,38 +27,55 @@ assert.equal(resolveDisplayedStarRating(5, null), 5)
 assert.equal(resolveDisplayedStarRating(1, 5), 5)
 assert.equal(resolveDisplayedStarRating(5, 2), 2)
 
-// RT-S-013: after click, suppress preview for the rest of the pointer stay
+// Saved marker only during outline preview, under the saved star
+assert.equal(shouldShowSavedRatingMarker(2, 2, 5), true)
+assert.equal(shouldShowSavedRatingMarker(5, 2, 5), false)
+assert.equal(shouldShowSavedRatingMarker(2, 2, null), false)
+assert.equal(shouldShowSavedRatingMarker(1, 0, 3), false)
+
+// Full interaction sequence: hover → click confirm → stay → move → preview again
 {
-  let hover: number | null = 4
-  let suppressed = false
+  let hover: number | null = null
+  let confirmed: number | null = null
+  let saved = 1
 
-  // 1) Hover star 4 → outline preview
-  assert.equal(resolveEffectiveHoverRating(hover, suppressed), 4)
-  assert.equal(resolveStarAppearance(4, 1, resolveEffectiveHoverRating(hover, suppressed)), 'outline')
+  const effective = () => resolveEffectiveHoverRating(hover, confirmed)
+  const look = (star: number) => resolveStarAppearance(star, saved, effective())
 
-  // 2) Click star 4 → suppress + clear hover → filled saved rating
-  hover = null
-  suppressed = true
-  const afterClick = resolveEffectiveHoverRating(hover, suppressed)
-  assert.equal(afterClick, null)
-  assert.equal(resolveStarAppearance(1, 4, afterClick), 'filled')
-  assert.equal(resolveStarAppearance(4, 4, afterClick), 'filled')
-  assert.equal(resolveStarAppearance(5, 4, afterClick), 'empty')
-
-  // 3) Pointer still over star 4 with stale hover intent → still filled (suppressed)
+  // 1) Hover star 4 → outline preview; saved marker on star 1
   hover = 4
-  assert.equal(resolveEffectiveHoverRating(hover, suppressed), null)
-  assert.equal(resolveStarAppearance(4, 4, resolveEffectiveHoverRating(hover, suppressed)), 'filled')
+  assert.equal(effective(), 4)
+  assert.equal(look(4), 'outline')
+  assert.equal(shouldShowSavedRatingMarker(1, saved, effective()), true)
 
-  // 4) Leave → unsuppress; saved rating remains filled
-  hover = null
-  suppressed = false
-  assert.equal(resolveStarAppearance(4, 4, null), 'filled')
+  // 2) Click star 4 → confirmation on same star → filled (no outline)
+  confirmed = 4
+  saved = 4
+  assert.equal(effective(), null)
+  assert.equal(look(1), 'filled')
+  assert.equal(look(4), 'filled')
+  assert.equal(look(5), 'empty')
+  assert.equal(shouldShowSavedRatingMarker(4, saved, effective()), false)
 
-  // 5) Re-enter hover → outline preview active again
+  // 3) Pointer still on star 4 → filled remains
   hover = 4
-  assert.equal(resolveEffectiveHoverRating(hover, suppressed), 4)
-  assert.equal(resolveStarAppearance(4, 4, resolveEffectiveHoverRating(hover, suppressed)), 'outline')
+  assert.equal(effective(), null)
+  assert.equal(look(4), 'filled')
+
+  // 4) Move to star 2 within component → confirmation ends, outline preview resumes
+  hover = 2
+  confirmed = null
+  assert.equal(effective(), 2)
+  assert.equal(look(1), 'outline')
+  assert.equal(look(2), 'outline')
+  assert.equal(look(3), 'empty')
+  assert.equal(shouldShowSavedRatingMarker(4, saved, effective()), true)
+
+  // 5) Leave component → idle filled saved rating
+  hover = null
+  confirmed = null
+  assert.equal(look(4), 'filled')
+  assert.equal(shouldShowSavedRatingMarker(4, saved, effective()), false)
 }
 
 console.log('SceneStarRating.test.ts OK')
