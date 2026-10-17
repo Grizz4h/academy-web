@@ -1,0 +1,23 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(167, 243, 208, 0.9);
+}
+
+.back {
+  margin: 0.5rem 0 0;
+  font-size: 0.86rem;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.back a {
+  color: rgba(125, 211, 252, 0.95);
+}

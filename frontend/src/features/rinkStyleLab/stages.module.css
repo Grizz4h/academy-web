@@ -1,0 +1,18 @@
+.stageSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 520px;
+  background: rgba(8, 16, 32, 0.55);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.foundationWrap {
+  width: 100%;
+}
+
+.foundationWrap :global(svg) {
+  max-width: none;
+  max-height: 520px;
+}

@@ -1,0 +1,36 @@
+.scene {
+  pointer-events: none;
+}
+
+.blue {
+  fill: rgba(56, 189, 248, 0.95);
+  stroke: rgba(8, 16, 32, 0.9);
+  stroke-width: 1.5;
+}
+
+.red {
+  fill: rgba(248, 113, 113, 0.95);
+  stroke: rgba(8, 16, 32, 0.9);
+  stroke-width: 1.5;
+}
+
+.neutral {
+  fill: rgba(148, 163, 184, 0.92);
+  stroke: rgba(8, 16, 32, 0.9);
+  stroke-width: 1.5;
+}
+
+.puck {
+  fill: rgba(251, 191, 36, 0.95);
+  stroke: rgba(8, 16, 32, 0.9);
+  stroke-width: 1.5;
+}
+
+.caption {
+  fill: rgba(241, 245, 249, 0.95);
+  font-size: 11px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: rgba(8, 16, 32, 0.85);
+  stroke-width: 2.5px;
+}
