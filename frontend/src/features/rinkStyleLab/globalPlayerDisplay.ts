@@ -85,6 +85,69 @@ export function readGlobalPlayerDisplay(
   }
 }
 
+/**
+ * Raw stored fields for Dev inspect — never substitutes code defaults.
+ * Missing / non-finite numbers → null ("Nicht gespeichert").
+ */
+export type StoredGlobalDisplayFields = {
+  playerScale: number | null
+  puckLocalX: number | null
+  puckLocalY: number | null
+  /** Storage key present and JSON parsed as object. */
+  hasKey: boolean
+}
+
+function finiteNumberOrNull(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
+export function readStoredGlobalDisplayFields(
+  storage: Pick<Storage, 'getItem'> = localStorage,
+): StoredGlobalDisplayFields {
+  const empty: StoredGlobalDisplayFields = {
+    playerScale: null,
+    puckLocalX: null,
+    puckLocalY: null,
+    hasKey: false,
+  }
+  try {
+    const raw = storage.getItem(GLOBAL_PLAYER_DISPLAY_KEY)
+    if (!raw) return empty
+    const parsed: unknown = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') {
+      return { ...empty, hasKey: true }
+    }
+    const o = parsed as Record<string, unknown>
+    return {
+      hasKey: true,
+      playerScale: finiteNumberOrNull(o.playerScale),
+      puckLocalX: finiteNumberOrNull(o.puckLocalX),
+      puckLocalY: finiteNumberOrNull(o.puckLocalY),
+    }
+  } catch {
+    return empty
+  }
+}
+
+/** Exact decimal form for display/copy (no toFixed rounding). */
+export function formatStoredNumber(value: number): string {
+  return JSON.stringify(value)
+}
+
+export function formatStoredGlobalDisplayCopyPayload(
+  fields: StoredGlobalDisplayFields,
+): string {
+  return `${JSON.stringify(
+    {
+      playerScale: fields.playerScale,
+      puckLocalX: fields.puckLocalX,
+      puckLocalY: fields.puckLocalY,
+    },
+    null,
+    2,
+  )}\n`
+}
+
 export function writeGlobalPlayerDisplay(
   settings: GlobalPlayerDisplaySettings,
   storage: Pick<Storage, 'setItem'> = localStorage,

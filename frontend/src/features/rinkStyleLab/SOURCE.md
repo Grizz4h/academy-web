@@ -42,6 +42,7 @@
 - Drag puck → session preview; **Puckposition global übernehmen** writes `puckLocal*` (not ice coords). Applies to all Board Studio puck carriers.
 - **Scene drafts** (`rink-style-lab:scene-drafts:v1`): position, rotation, label, team, handedness — **never** writes `t0-track.json`. Scene puck offsets ignored.
 - Legacy draft `scale` / `puckPlacement` / `puckOffset*` remain loadable but are **ignored**.
+- **Dev-Werte** panel (lab-only): raw `playerScale` / `puckLocalX/Y` from storage + copy JSON; no defaults.
 - Crease size: see `crease-audit.md` (oversized vs 6 ft rule; no fix in this phase).
 
 ## Known visual deviations vs Board Studio Preview

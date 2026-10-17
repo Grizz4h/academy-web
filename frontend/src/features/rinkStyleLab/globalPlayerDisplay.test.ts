@@ -3,10 +3,13 @@ import {
   clampPuckBias,
   clampPlayerScale,
   DEFAULT_GLOBAL_PLAYER_DISPLAY,
+  formatStoredGlobalDisplayCopyPayload,
+  formatStoredNumber,
   GLOBAL_PLAYER_DISPLAY_KEY,
   globalDisplayWithPuckBias,
   normalizeGlobalPlayerDisplay,
   readGlobalPlayerDisplay,
+  readStoredGlobalDisplayFields,
   STYLE_LAB_STICK_COLOR,
   writeGlobalPlayerDisplay,
 } from './globalPlayerDisplay.ts'
@@ -62,5 +65,44 @@ assert.equal(clampPuckBias(2), 1)
 
 assert.equal(normalizeGlobalPlayerDisplay({ playerScale: 99, puckBias: -3 }).playerScale, 1.5)
 assert.equal(normalizeGlobalPlayerDisplay({ playerScale: 99, puckBias: -3 }).puckBias, 0)
+
+{
+  const mem: Record<string, string> = {}
+  const storage = {
+    getItem: (k: string) => mem[k] ?? null,
+    setItem: (k: string, v: string) => {
+      mem[k] = v
+    },
+  }
+  assert.deepEqual(readStoredGlobalDisplayFields(storage), {
+    playerScale: null,
+    puckLocalX: null,
+    puckLocalY: null,
+    hasKey: false,
+  })
+
+  // Partial payload — no defaults filled in for Dev inspect
+  mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({ version: 1, playerScale: 0.65 })
+  const partial = readStoredGlobalDisplayFields(storage)
+  assert.equal(partial.hasKey, true)
+  assert.equal(partial.playerScale, 0.65)
+  assert.equal(partial.puckLocalX, null)
+  assert.equal(partial.puckLocalY, null)
+
+  mem[GLOBAL_PLAYER_DISPLAY_KEY] = JSON.stringify({
+    version: 1,
+    playerScale: 0.85,
+    puckLocalX: 12.345678901234,
+    puckLocalY: -4.25,
+  })
+  const full = readStoredGlobalDisplayFields(storage)
+  assert.equal(full.playerScale, 0.85)
+  assert.equal(full.puckLocalX, 12.345678901234)
+  assert.equal(full.puckLocalY, -4.25)
+  assert.equal(formatStoredNumber(12.345678901234), '12.345678901234')
+  const copy = formatStoredGlobalDisplayCopyPayload(full)
+  assert.ok(copy.includes('"playerScale": 0.85'))
+  assert.ok(copy.includes('12.345678901234'))
+}
 
 console.log('globalPlayerDisplay.test.ts: all assertions passed')

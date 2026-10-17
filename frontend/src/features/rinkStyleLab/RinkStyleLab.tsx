@@ -43,6 +43,7 @@ import {
   saveSceneDraft,
 } from './sceneDraftStore.ts'
 import type { DragTarget, SceneMarkerEdit } from './sceneDraftTypes.ts'
+import { DevValuesPanel } from './DevValuesPanel'
 import { SceneMarkers, type PuckDragPreview } from './SceneMarkers'
 import {
   resolveScenePuckPoint,
@@ -523,6 +524,8 @@ export function RinkStyleLab() {
                 </p>
               </>
             ) : null}
+
+            <DevValuesPanel refreshKey={globalDisplay} />
 
             <h2 className={styles.controlsTitle}>Szenen-Editor</h2>
             <div className={styles.chipRow}>
