@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import { DetailedHockeyRinkLayers, DETAILED_RINK_VIEWBOX } from '../rinkGeometry'
 import type { RinkOverlays } from '../rinkGeometry'
 import type { FoundationAttackDirection } from '../foundation/types'
-import { AttackArrow } from './AttackArrow'
 import { DETAILED_ICE } from './labGeometry'
 import { LearningHalfOverlay } from './LearningHalfOverlay'
 import type { StyleLabLearning, StyleLabMarkings } from './presets'
@@ -13,6 +12,10 @@ type Props = {
   markings: StyleLabMarkings
   learning: StyleLabLearning
   markingIntensity?: number
+  /**
+   * Shows Detailed board chevrons (PlayDirectionIceAds), not a Foundation arrow overlay.
+   * Direction comes from attackDirection.
+   */
   showAttackArrow?: boolean
   attackDirection?: FoundationAttackDirection
   onSelectHalf?: (half: IceHalf) => void
@@ -38,7 +41,8 @@ export function DetailedStage({
     defendingSide: 'left',
     showDefendingHint: false,
     attackDirection,
-    iceAds: markings.iceAds,
+    // Angriffspfeil Szene/An/Aus → existing ice-ad chevrons along the boards
+    iceAds: showAttackArrow,
     blueLines: markings.blueLines,
     centerLine: markings.centerLine,
     centerFaceoffCircle: markings.centerFaceoffCircle,
@@ -57,9 +61,6 @@ export function DetailedStage({
           <DetailedHockeyRinkLayers overlays={overlays} />
         </g>
         <g id="scene-layer">
-          {showAttackArrow && (
-            <AttackArrow space="detailed" attackDirection={attackDirection} />
-          )}
           {children}
         </g>
         <g id="learning-layer">
