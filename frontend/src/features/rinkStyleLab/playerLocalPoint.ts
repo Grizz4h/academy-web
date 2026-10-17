@@ -68,6 +68,20 @@ export function stickBladeLocal(
   return { x: geom.stick.blade.x, y: geom.stick.blade.y }
 }
 
+/** Local puck tip: lerp body→blade by bias (0=body, 1=blade). */
+export function puckLocalByBias(
+  bias: number,
+  handedness: PlayerHandedness = 'right',
+  marker: PlayerMarkerKind = 'skater',
+): { x: number; y: number } {
+  const t = Number.isFinite(bias) ? Math.min(1, Math.max(0, bias)) : 1
+  const blade = stickBladeLocal(handedness, marker)
+  return {
+    x: BODY_PUCK_LOCAL.x + (blade.x - BODY_PUCK_LOCAL.x) * t,
+    y: BODY_PUCK_LOCAL.y + (blade.y - BODY_PUCK_LOCAL.y) * t,
+  }
+}
+
 export function resolveScenePuckPoint(options: {
   anchorX: number
   anchorY: number
@@ -75,14 +89,20 @@ export function resolveScenePuckPoint(options: {
   outerScale: number
   handedness?: PlayerHandedness
   marker?: PlayerMarkerKind
-  placement: 'body' | 'blade'
+  /** @deprecated Prefer puckBias — body|blade maps to 0|1. */
+  placement?: 'body' | 'blade'
+  /** 0 = body-adjacent, 1 = stick-blade tip. */
+  puckBias?: number
 }): { x: number; y: number } {
   const marker = options.marker || 'skater'
   const handedness = options.handedness || 'right'
-  const local =
-    options.placement === 'blade'
-      ? stickBladeLocal(handedness, marker)
-      : BODY_PUCK_LOCAL
+  const bias =
+    options.puckBias !== undefined
+      ? options.puckBias
+      : options.placement === 'body'
+        ? 0
+        : 1
+  const local = puckLocalByBias(bias, handedness, marker)
   return transformPlayerLocalPoint({
     anchorX: options.anchorX,
     anchorY: options.anchorY,

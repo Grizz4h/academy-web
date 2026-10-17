@@ -5,16 +5,20 @@ import {
   foundationPointToDetailed,
   foundationScaleToDetailed,
 } from './foundationCoordAdapter'
+import { clampPlayerScale, clampPuckBias } from './globalPlayerDisplay.ts'
 import { resolveScenePuckPoint } from './playerLocalPoint.ts'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
 import type { SceneMarkerEdit } from './sceneDraftTypes.ts'
-import { clampPlayerScale } from './sceneDraftStore.ts'
 import styles from './SceneMarkers.module.css'
 
 type Props = {
   space: 'foundation' | 'detailed'
   markerEdits: Partial<Record<FoundationRinkRegionId, SceneMarkerEdit>>
   playerFigureStyle?: PlayerStyleMode
+  /** Shared Board Studio size (global). */
+  globalPlayerScale?: number
+  /** Shared puck tip bias body→blade (global). */
+  globalPuckBias?: number
   /** Lab scene editor — select / drag */
   editable?: boolean
   selectedId?: FoundationRinkRegionId | null
@@ -45,6 +49,8 @@ export function SceneMarkers({
   space,
   markerEdits,
   playerFigureStyle = 'legacy',
+  globalPlayerScale = 1,
+  globalPuckBias = 1,
   editable = false,
   selectedId = null,
   selectedPuckId = null,
@@ -55,6 +61,8 @@ export function SceneMarkers({
 }: Props) {
   const useBoardStudio = playerFigureStyle === 'boardStudio'
   const baseR = markerRadius(space)
+  const scaleMul = clampPlayerScale(globalPlayerScale)
+  const puckBias = clampPuckBias(globalPuckBias)
   const entries = Object.values(markerEdits).filter(Boolean) as SceneMarkerEdit[]
 
   return (
@@ -63,7 +71,6 @@ export function SceneMarkers({
         const pos = space === 'detailed'
           ? foundationPointToDetailed(edit.cx, edit.cy)
           : { x: edit.cx, y: edit.cy }
-        const scaleMul = clampPlayerScale(edit.scale)
         const teamClass = edit.team === 'red' ? styles.red : edit.team === 'neutral' ? styles.neutral : styles.blue
         const captionY = baseR + (space === 'detailed' ? 16 : 14)
         const selected = selectedId === edit.id
@@ -79,7 +86,7 @@ export function SceneMarkers({
                 rotationDegrees: edit.rotation,
                 outerScale,
                 handedness: edit.handedness,
-                placement: edit.puckPlacement,
+                puckBias,
               })
             : null
           const puckPos = tip

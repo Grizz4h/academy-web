@@ -22,17 +22,26 @@ import {
 } from './presets'
 import type { PlayerStyleMode } from './playerStyleMode.ts'
 import {
+  clampPlayerScale,
+  clampPuckBias,
+  DEFAULT_GLOBAL_PLAYER_DISPLAY,
+  readGlobalPlayerDisplay,
+  STYLE_LAB_STICK_COLOR,
+  writeGlobalPlayerDisplay,
+  type GlobalPlayerDisplaySettings,
+} from './globalPlayerDisplay.ts'
+import {
   buildBaselineMarkerEdits,
   editsToFoundationOverrides,
   mergeMarkerEdits,
 } from './sceneDraftBuild.ts'
 import {
   clearSceneDraft,
-  clampPlayerScale,
   loadSceneDraft,
   saveSceneDraft,
 } from './sceneDraftStore.ts'
 import type { DragTarget, SceneMarkerEdit } from './sceneDraftTypes.ts'
+import { markerHasCustomPuckOffset } from './sceneDraftTypes.ts'
 import { SceneMarkers } from './SceneMarkers'
 import { clientToSvgPoint } from './svgPointer.ts'
 import styles from './RinkStyleLab.module.css'
@@ -96,6 +105,11 @@ export function RinkStyleLab() {
   })
   const [markerVariant, setMarkerVariant] = useState<MarkerStyleVariant>('team')
   const [playerFigureStyle, setPlayerFigureStyle] = useState<PlayerStyleMode>('boardStudio')
+  const [globalDisplay, setGlobalDisplay] = useState<GlobalPlayerDisplaySettings>(() => (
+    typeof localStorage === 'undefined'
+      ? { ...DEFAULT_GLOBAL_PLAYER_DISPLAY }
+      : readGlobalPlayerDisplay()
+  ))
   const [markingIntensity, setMarkingIntensity] = useState(1)
   const [attackArrowOverride, setAttackArrowOverride] = useState<'scene' | 'on' | 'off'>('scene')
   const [sceneEditMode, setSceneEditMode] = useState(true)
@@ -180,9 +194,24 @@ export function RinkStyleLab() {
           ...cur,
           ...patch,
           id: selectedId,
-          scale: patch.scale !== undefined ? clampPlayerScale(patch.scale) : cur.scale,
         },
       }
+    })
+  }
+
+  const updateGlobalDisplay = (patch: Partial<GlobalPlayerDisplaySettings>) => {
+    setGlobalDisplay((prev) => {
+      const next = {
+        version: 1 as const,
+        playerScale: clampPlayerScale(
+          patch.playerScale !== undefined ? patch.playerScale : prev.playerScale,
+        ),
+        puckBias: clampPuckBias(
+          patch.puckBias !== undefined ? patch.puckBias : prev.puckBias,
+        ),
+      }
+      writeGlobalPlayerDisplay(next)
+      return next
     })
   }
 
@@ -292,6 +321,8 @@ export function RinkStyleLab() {
     space: 'detailed' as const,
     markerEdits,
     playerFigureStyle,
+    globalPlayerScale: globalDisplay.playerScale,
+    globalPuckBias: globalDisplay.puckBias,
     editable: sceneEditMode && mode === 'design',
     selectedId,
     selectedPuckId,
@@ -310,8 +341,10 @@ export function RinkStyleLab() {
   return (
     <div className={styles.lab}>
       <p className={styles.banner} role="status">
-        Scene Editor · Track-0-Szenen als Lab-Entwürfe (localStorage) · keine Curriculum-Schreibung ·
-        Blueprint unverändert · siehe crease-audit.md
+        Scene Editor · globale Spielergröße/Pucklage · Szenen-Entwürfe getrennt · keine Curriculum-Schreibung ·
+        Schläger
+        {' '}
+        {STYLE_LAB_STICK_COLOR}
       </p>
 
       <div className={styles.modeRow} role="group" aria-label="Lab-Modus">
@@ -391,6 +424,63 @@ export function RinkStyleLab() {
               <UiChip active={playerFigureStyle === 'boardStudio'} onClick={() => setPlayerFigureStyle('boardStudio')}>Board Studio</UiChip>
             </div>
 
+            {playerFigureStyle === 'boardStudio' ? (
+              <>
+                <h2 className={styles.controlsTitle}>Globale Darstellung</h2>
+                <label className={styles.sliderRow}>
+                  <span>
+                    Spielergröße
+                    {' '}
+                    {globalDisplay.playerScale.toFixed(2)}
+                  </span>
+                  <input
+                    type="range"
+                    min={0.2}
+                    max={1.5}
+                    step={0.05}
+                    value={globalDisplay.playerScale}
+                    onChange={(e) => updateGlobalDisplay({ playerScale: Number(e.target.value) })}
+                  />
+                </label>
+                <label className={styles.sliderRow}>
+                  <span>
+                    Pucklage
+                    {' '}
+                    {globalDisplay.puckBias < 0.15
+                      ? 'Körper'
+                      : globalDisplay.puckBias > 0.85
+                        ? 'Kelle'
+                        : `${Math.round(globalDisplay.puckBias * 100)}% → Kelle`}
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={globalDisplay.puckBias}
+                    onChange={(e) => updateGlobalDisplay({ puckBias: Number(e.target.value) })}
+                  />
+                </label>
+                <p className={styles.hint}>
+                  Größe &amp; Pucklage gelten für alle Board-Studio-Spieler · überlebt Szenenwechsel ·
+                  Schläger
+                  {' '}
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '0.85em',
+                      height: '0.85em',
+                      borderRadius: 2,
+                      background: STYLE_LAB_STICK_COLOR,
+                      verticalAlign: 'middle',
+                      marginRight: 4,
+                    }}
+                  />
+                  {STYLE_LAB_STICK_COLOR}
+                </p>
+              </>
+            ) : null}
+
             <h2 className={styles.controlsTitle}>Szenen-Editor</h2>
             <div className={styles.chipRow}>
               <UiChip active={sceneEditMode} onClick={() => setSceneEditMode(true)}>Bearbeiten</UiChip>
@@ -444,21 +534,6 @@ export function RinkStyleLab() {
                   <>
                     <label className={styles.sliderRow}>
                       <span>
-                        Scale
-                        {' '}
-                        {selected.scale.toFixed(2)}
-                      </span>
-                      <input
-                        type="range"
-                        min={0.2}
-                        max={1.5}
-                        step={0.05}
-                        value={selected.scale}
-                        onChange={(e) => patchSelected({ scale: Number(e.target.value) })}
-                      />
-                    </label>
-                    <label className={styles.sliderRow}>
-                      <span>
                         Rotation
                         {' '}
                         {Math.round(selected.rotation)}
@@ -498,43 +573,32 @@ export function RinkStyleLab() {
                     />
                     {selected.hasPuck ? (
                       <>
-                        <div className={styles.chipRow}>
-                          <UiChip
-                            active={selected.puckPlacement === 'body'}
-                            onClick={() => patchSelected({
-                              puckPlacement: 'body',
-                              puckOffsetX: 0,
-                              puckOffsetY: 0,
-                            })}
-                          >
-                            Körper
-                          </UiChip>
-                          <UiChip
-                            active={selected.puckPlacement === 'blade'}
-                            onClick={() => patchSelected({
-                              puckPlacement: 'blade',
-                              puckOffsetX: 0,
-                              puckOffsetY: 0,
-                            })}
-                          >
-                            Kelle
-                          </UiChip>
-                        </div>
                         <p className={styles.hint}>
-                          Puck auf dem Rink ziehen = Offset zur Standardlage (folgt Rotation/Scale/Hand).
+                          Standard-Pucklage ist global (Körper↔Kelle). Ziehen setzt einen
+                          {' '}
+                          <strong>expliziten Offset</strong>
+                          {' '}
+                          nur für diesen Spieler.
                           {selectedPuckId === selected.id ? ' · Puck ausgewählt' : ''}
                         </p>
-                        <UiChip
-                          active={false}
-                          onClick={() => patchSelected({ puckOffsetX: 0, puckOffsetY: 0 })}
-                        >
-                          Puck-Offset nullen
-                        </UiChip>
+                        {markerHasCustomPuckOffset(selected) ? (
+                          <>
+                            <p className={styles.hint}>
+                              Individueller Puck-Offset aktiv — überschreibt den globalen Tip sichtbar.
+                            </p>
+                            <UiChip
+                              active={false}
+                              onClick={() => patchSelected({ puckOffsetX: 0, puckOffsetY: 0 })}
+                            >
+                              Auf globalen Standard zurück
+                            </UiChip>
+                          </>
+                        ) : null}
                       </>
                     ) : null}
                   </>
                 ) : (
-                  <p className={styles.hint}>Scale/Rotation/Kelle nur im Board-Studio-Modus.</p>
+                  <p className={styles.hint}>Rotation/Händigkeit/Puck-Offset nur im Board-Studio-Modus.</p>
                 )}
               </>
             ) : (
@@ -654,6 +718,8 @@ export function RinkStyleLab() {
                 space="detailed"
                 markerEdits={markerEdits}
                 playerFigureStyle={playerFigureStyle}
+                globalPlayerScale={globalDisplay.playerScale}
+                globalPuckBias={globalDisplay.puckBias}
                 editable={false}
               />
             </DetailedStage>

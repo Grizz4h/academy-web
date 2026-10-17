@@ -13,7 +13,7 @@ assert.equal(appearance.label, '3')
 
 const paints = derivePlayerMarkerPaints(appearance)
 assert.equal(paints.jersey, '#1565c0')
-assert.ok(paints.stick)
+assert.equal(paints.stick.toLowerCase(), '#9ca3af')
 
 const visual = buildPlayerVisual({
   appearance,
